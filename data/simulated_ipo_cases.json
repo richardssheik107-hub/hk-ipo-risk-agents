@@ -1,0 +1,20 @@
+[
+  {
+    "company_id": "SIM-001", "company_name": "星港生物科技（模拟）", "as_of_date": "2026-07-31",
+    "cash_runway_months": 8, "top_customer_ratio": 0.18, "revenue_growth": -0.12,
+    "related_party_ratio": 0.22, "has_redemption_right": true, "litigation_count": 1,
+    "market_volatility": 0.31, "subscription_multiple": 0.9, "sector_return_20d": -0.11
+  },
+  {
+    "company_id": "SIM-002", "company_name": "维港智能制造（模拟）", "as_of_date": "2026-07-31",
+    "cash_runway_months": 19, "top_customer_ratio": 0.48, "revenue_growth": 0.22,
+    "related_party_ratio": 0.05, "has_redemption_right": false, "litigation_count": 0,
+    "market_volatility": 0.18, "subscription_multiple": 3.4, "sector_return_20d": 0.03
+  },
+  {
+    "company_id": "SIM-003", "company_name": "海岚新能源（模拟）", "as_of_date": "2026-07-31",
+    "cash_runway_months": 14, "top_customer_ratio": 0.21, "revenue_growth": 0.08,
+    "related_party_ratio": 0.08, "has_redemption_right": false, "litigation_count": 0,
+    "market_volatility": 0.12, "subscription_multiple": 5.1, "sector_return_20d": 0.06
+  }
+]
