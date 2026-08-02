@@ -224,3 +224,20 @@ Streamlit不得：
 9. 已知限制；
 10. 下一阶段建议。
 
+## 16. 真实模块替换规则
+
+1. 新的真实实现必须先通过现有公共接口的契约测试；
+2. 不得删除 Mock 实现；
+3. Mock 与真实实现必须可通过配置切换；
+4. 不得在 Service 中硬编码真实实现；
+5. 新组件必须注册到 ComponentRegistry；
+6. 真实模块失败时仍需返回结构化 AnalysisError；
+7. 新功能不得破坏 v0.1.0 黄金案例和 Mock 端到端测试。
+
+以下核心文件同样视为受保护的架构边界，修改时必须说明影响并补充测试：
+
+```text
+src/ipo_risk/core/container.py
+src/ipo_risk/domain/risk_codes.py
+```
+
