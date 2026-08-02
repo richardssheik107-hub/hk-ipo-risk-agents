@@ -1,0 +1,251 @@
+"""Stable cross-module data contracts."""
+
+from __future__ import annotations
+
+from datetime import date, datetime, timezone
+from enum import StrEnum
+from typing import Any
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+
+def now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+class RiskCategory(StrEnum):
+    FINANCIAL = "financial"; LEGAL = "legal"; BUSINESS = "business"; MARKET = "market"
+
+
+class RiskLevel(StrEnum):
+    LOW = "low"; MEDIUM = "medium"; HIGH = "high"; CRITICAL = "critical"
+
+
+class VerificationStatus(StrEnum):
+    PENDING = "pending"; VERIFIED = "verified"; REJECTED = "rejected"; NEEDS_REVIEW = "needs_review"
+
+
+class TaskStatus(StrEnum):
+    PENDING = "pending"; RUNNING = "running"; COMPLETED = "completed"; PARTIAL = "partial"; FAILED = "failed"
+
+
+class LogStatus(StrEnum):
+    STARTED = "started"; SUCCESS = "success"; FAILED = "failed"; SKIPPED = "skipped"
+
+
+class EvidenceSourceType(StrEnum):
+    PROSPECTUS = "prospectus"; MARKET_DATA = "market_data"; IPO_DATA = "ipo_data"; CALCULATION = "calculation"
+
+
+class DocumentChunk(BaseModel):
+    document_id: str
+    chunk_id: str
+    page: int = Field(ge=1)
+    section: str = ""
+    text: str = Field(min_length=1)
+    block_type: str = "text"
+    bbox: tuple[float, float, float, float] | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class Evidence(BaseModel):
+    evidence_id: str = Field(default_factory=lambda: str(uuid4()))
+    document_id: str | None = None
+    chunk_id: str | None = None
+    page: int | None = Field(default=None, ge=1)
+    section: str = ""
+    text: str = Field(min_length=1)
+    bbox: tuple[float, float, float, float] | None = None
+    source_type: EvidenceSourceType = EvidenceSourceType.PROSPECTUS
+    relevance_score: float = Field(default=1.0, ge=0, le=1)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class Calculation(BaseModel):
+    skill_name: str
+    skill_version: str = "1.0"
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    formula: str
+    result: float | int | str | None = None
+    unit: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    success: bool = True
+    error: str | None = None
+
+
+class RiskItem(BaseModel):
+    risk_id: str = Field(default_factory=lambda: str(uuid4()))
+    risk_code: str
+    category: RiskCategory
+    risk_type: str
+    level: RiskLevel
+    score: float = Field(ge=0, le=100)
+    conclusion: str
+    evidence: list[Evidence] = Field(default_factory=list)
+    calculation: Calculation | None = None
+    agent_name: str
+    confidence: float = Field(default=0.5, ge=0, le=1)
+    verification_status: VerificationStatus = VerificationStatus.PENDING
+    verification_notes: str = ""
+    created_at: datetime = Field(default_factory=now)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class AnalysisError(BaseModel):
+    stage: str
+    component: str
+    code: str
+    message: str
+    recoverable: bool = True
+    context: dict[str, Any] = Field(default_factory=dict)
+    occurred_at: datetime = Field(default_factory=now)
+
+
+class AgentLog(BaseModel):
+    log_id: str = Field(default_factory=lambda: str(uuid4()))
+    task_id: str
+    step: int
+    agent_name: str
+    action: str
+    tool_name: str = ""
+    status: LogStatus = LogStatus.STARTED
+    input_summary: str = ""
+    output_summary: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    error: AnalysisError | None = None
+    started_at: datetime = Field(default_factory=now)
+    finished_at: datetime | None = None
+    duration_ms: int | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class RiskFactor(BaseModel):
+    feature_name: str
+    feature_value: Any
+    contribution: float
+    direction: str
+    explanation: str
+    source: str
+
+
+class PredictionResult(BaseModel):
+    model_name: str
+    model_version: str = "rule_v1"
+    target: str = "five_day_significant_decline_risk"
+    risk_score: float = Field(ge=0, le=100)
+    risk_level: RiskLevel
+    probabilities: dict[str, float] = Field(default_factory=dict)
+    top_factors: list[RiskFactor] = Field(default_factory=list)
+    explanation: str = ""
+    feature_snapshot: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=now)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class MarketSnapshot(BaseModel):
+    observation_date: date | None = None
+    hsi_return_5d: float | None = None
+    hsi_return_20d: float | None = None
+    industry_return_5d: float | None = None
+    industry_return_20d: float | None = None
+    recent_ipo_break_rate: float | None = None
+    recent_ipo_return_5d: float | None = None
+    market_turnover: float | None = None
+    market_volatility: float | None = None
+    sentiment_score: float | None = None
+    source: str = "mock"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IPOProfile(BaseModel):
+    company_name: str
+    stock_code: str = ""
+    listing_date: date | None = None
+    industry: str = ""
+    issue_price: float | None = None
+    issue_size: float | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class DocumentParseRequest(BaseModel):
+    document_id: str
+    prospectus_path: str
+    options: dict[str, Any] = Field(default_factory=dict)
+
+
+class IPOAnalysisRequest(BaseModel):
+    request_id: str = Field(default_factory=lambda: str(uuid4()))
+    company_name: str
+    stock_code: str = ""
+    listing_date: date | None = None
+    prospectus_path: str = "mock://prospectus"
+    workflow_version: str = "mvp_v1"
+    parser_name: str = "mock"
+    predictor_name: str = "rule_based"
+    market_snapshot: MarketSnapshot | None = None
+    use_mock: bool = True
+    options: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=now)
+
+
+class ReportSection(BaseModel):
+    section_id: str = Field(default_factory=lambda: str(uuid4()))
+    title: str
+    summary: str
+    risks: list[RiskItem] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+    order: int = 0
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ReportContext(BaseModel):
+    analysis_id: str
+    profile: IPOProfile
+    verified_risks: list[RiskItem] = Field(default_factory=list)
+    pending_risks: list[RiskItem] = Field(default_factory=list)
+    rejected_risks: list[RiskItem] = Field(default_factory=list)
+    prediction: PredictionResult | None = None
+    log_summary: str = ""
+    options: dict[str, Any] = Field(default_factory=dict)
+
+
+class VerificationResult(BaseModel):
+    verified_risks: list[RiskItem] = Field(default_factory=list)
+    pending_risks: list[RiskItem] = Field(default_factory=list)
+    rejected_risks: list[RiskItem] = Field(default_factory=list)
+
+
+class SupervisionResult(BaseModel):
+    verified_risks: list[RiskItem] = Field(default_factory=list)
+    summary: str = ""
+
+
+class IPOAnalysisResult(BaseModel):
+    analysis_id: str = Field(default_factory=lambda: str(uuid4()))
+    request_id: str
+    company_name: str
+    stock_code: str = ""
+    workflow_version: str
+    schema_version: str = "1.0"
+    verified_risks: list[RiskItem] = Field(default_factory=list)
+    pending_risks: list[RiskItem] = Field(default_factory=list)
+    rejected_risks: list[RiskItem] = Field(default_factory=list)
+    prediction: PredictionResult | None = None
+    agent_logs: list[AgentLog] = Field(default_factory=list)
+    report_sections: list[ReportSection] = Field(default_factory=list)
+    status: TaskStatus = TaskStatus.PENDING
+    errors: list[AnalysisError] = Field(default_factory=list)
+    started_at: datetime = Field(default_factory=now)
+    finished_at: datetime | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class SkillResult(BaseModel):
+    skill_name: str
+    skill_version: str = "1.0"
+    success: bool
+    value: Any = None
+    evidence_ids: list[str] = Field(default_factory=list)
+    error: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)

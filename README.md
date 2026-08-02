@@ -97,3 +97,27 @@
 * 市场数据与预测模型；
 * 工作流、前端与系统集成。
 
+## MVP运行
+
+第一阶段默认使用离线 Mock 组件；不需要真实招股书、市场数据或 LLM API。
+
+Windows PowerShell：
+
+    python -m pip install -e ".[dev]"
+    $env:PYTHONPATH = "src"
+    pytest -q
+    python scripts/validate_project.py
+    python -m streamlit run app/streamlit_app.py
+
+Unix/Linux/macOS：
+
+    python -m pip install -e '.[dev]'
+    export PYTHONPATH=src
+    pytest -q
+    python scripts/validate_project.py
+    python -m streamlit run app/streamlit_app.py
+
+默认配置为 configs/mock.yaml；使用 IPO_RISK_CONFIG 指向其他 YAML，任意 IPO_RISK_字段名 环境变量覆盖 YAML 值。当前注册名称：mock（Parser、Retriever、专业 Agent、Provider、ReportGenerator）、mock_alt（Parser 验证实现）、rule（Verifier、Supervisor）、rule_based（Predictor）、json（Repository）。
+
+Windows 可运行 `start.bat`，Unix 可运行 `start.sh`。配置默认读取 `configs/mock.yaml`，环境变量优先于 YAML 配置。
+

@@ -518,3 +518,20 @@ lightgbm_v1
 7. 不过度设计；
 8. 不引入与当前规模不匹配的基础设施。
 
+## 13. 已确认公共契约补充
+
+1. DocumentParser接收独立的DocumentParseRequest；
+2. IPODataProvider统一返回IPOProfile；
+3. ReportGenerator只接收ReportContext，不依赖IPOAnalysisResult；
+4. Verifier和Supervisor使用确定性规则实现；
+5. WorkflowState对日志、错误和风险列表定义追加或去重Reducer；
+6. 工作流内执行Predictor和ReportGenerator，Service负责装配依赖和保存结果。
+
+## 14. 加固迭代约束
+
+1. 组件由YAML、环境变量和默认值驱动的注册表装配；
+2. Service不直接获取IPO或市场数据，工作流准备节点负责获取；
+3. 组件失败统一写入AnalysisError和AgentLog，并尽可能返回partial结果；
+4. Verifier和Supervisor使用独立Protocol及结构化结果；
+5. 风险是否需要Evidence或Calculation由domain风险注册表决定。
+
