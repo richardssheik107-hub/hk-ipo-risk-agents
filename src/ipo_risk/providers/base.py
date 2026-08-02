@@ -1,0 +1,9 @@
+from typing import Protocol
+from ipo_risk.schemas import IPOProfile, MarketSnapshot
+
+class LLMProvider(Protocol):
+    def complete(self, prompt: str) -> str: ...
+class MarketDataProvider(Protocol):
+    def get_snapshot(self, profile: IPOProfile) -> MarketSnapshot: ...
+class IPODataProvider(Protocol):
+    def get_profile(self, company_name: str, stock_code: str = "") -> IPOProfile: ...

@@ -255,4 +255,22 @@ five_day_significant_decline_risk
 6. Mock实现和真实实现必须使用相同Schema；
 7. 测试必须验证Schema兼容性。
 
+## 15. 第一阶段补充Schema
+
+### AnalysisError
+
+表示一次可追踪的结构化失败，字段包括stage、component、code、message、recoverable、context和occurred_at。
+
+### DocumentParseRequest
+
+表示Parser输入，字段包括document_id、prospectus_path和options。
+
+### IPOProfile
+
+表示IPO基础信息，字段包括company_name、stock_code、listing_date、industry、issue_price、issue_size和metadata。
+
+### ReportContext
+
+表示ReportGenerator输入，只包含analysis_id、IPOProfile、三类风险列表、PredictionResult、日志摘要和选项。
+
 ---
