@@ -535,3 +535,38 @@ lightgbm_v1
 4. Verifier和Supervisor使用独立Protocol及结构化结果；
 5. 风险是否需要Evidence或Calculation由domain风险注册表决定。
 
+## 15. v0.1.0 已实现架构
+
+v0.1.0-architecture-mvp 已冻结并发布。组件由 ComponentRegistry 和
+DependencyContainer 装配，优先级为环境变量 > YAML > 代码默认值。
+
+实际工作流为：
+
+```text
+load_ipo_profile
+→ load_market_snapshot
+→ document
+→ financial
+→ legal
+→ business
+→ market
+→ verifier
+→ supervisor
+→ predictor
+→ report
+```
+
+IPOAnalysisService 仅负责读取配置、装配依赖、选择并执行工作流、持久化和返回结果；
+IPO 数据、市场快照、Predictor 与 ReportGenerator 均在工作流内执行一次。
+ReportGenerator 接收 ReportContext，避免对 IPOAnalysisResult 的循环依赖。
+
+RiskVerifier 和 RiskSupervisor 是独立接口，分别返回 VerificationResult 和
+SupervisionResult。统一节点包装器将组件异常记录为 AgentLog 与 AnalysisError，
+并尽可能保留已有结果，使分析进入 partial 而非中断。WorkflowState 对风险、日志和
+错误使用追加或去重 Reducer，防止节点结果覆盖先前状态。
+
+### 已实现架构与规划差异
+
+第一阶段规划允许 Verifier 和 Supervisor 使用 Mock。正式实现中两者已调整为真实规则
+实现，以自动验证 Evidence、Calculation 及风险去重规则。
+

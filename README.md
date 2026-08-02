@@ -7,12 +7,12 @@
 当前阶段：
 
 ```text
-第一阶段：架构级MVP设计
+v0.1.0：架构级MVP已完成
 ```
 
-当前目标是建立完整、清晰、可扩展的模块化项目架构，并使用Mock模块跑通端到端流程。
+稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
 
-第一阶段不追求完成全部真实金融分析能力。
+已完成配置驱动装配、LangGraph mvp_v1 工作流、规则核验与预测、故障降级、Streamlit 原型和自动化验收（24 passed）。第一阶段不追求完成全部真实金融分析能力。
 
 ## 核心流程
 
@@ -43,7 +43,7 @@
 9. 工作流和模型支持版本管理；
 10. 稳定版本必须支持回退。
 
-## 第一阶段计划
+## 第一阶段已完成
 
 第一阶段将完成：
 
@@ -60,6 +60,36 @@
 11. Streamlit页面；
 12. 单元测试、契约测试和端到端测试；
 13. 一键启动脚本。
+
+## 当前实现范围
+
+已真实实现：
+
+- ComponentRegistry 与 DependencyContainer 配置装配；
+- RuleVerifier、RuleSupervisor、RuleBasedPredictor 与确定性金融 Skill；
+- JSON Repository、LangGraph 工作流、故障降级与 Streamlit 展示；
+- Schema、契约、工作流、集成、端到端与黄金案例测试。
+
+当前仍为 Mock：
+
+- DocumentParser、DocumentRetriever；
+- Financial、Legal、Business、Market Agent；
+- LLMProvider、MarketDataProvider、IPODataProvider；
+- ReportGenerator。
+
+## v0.2.0 目标
+
+只实现一条可验证的真实纵向闭环：
+
+```text
+真实港股招股书 PDF
+→ PDF 解析
+→ Evidence 检索
+→ 现金与经营现金流提取
+→ 现金跑道计算
+→ 财务风险核验
+→ 前端展示
+```
 
 ## 项目文档
 
@@ -117,7 +147,7 @@ Unix/Linux/macOS：
     python scripts/validate_project.py
     python -m streamlit run app/streamlit_app.py
 
-默认配置为 configs/mock.yaml；使用 IPO_RISK_CONFIG 指向其他 YAML，任意 IPO_RISK_字段名 环境变量覆盖 YAML 值。当前注册名称：mock（Parser、Retriever、专业 Agent、Provider、ReportGenerator）、mock_alt（Parser 验证实现）、rule（Verifier、Supervisor）、rule_based（Predictor）、json（Repository）。
+默认配置为 configs/mock.yaml。配置优先级为：环境变量（任意 IPO_RISK_字段名）> YAML（IPO_RISK_CONFIG 可指定文件）> 代码默认值。Mock 与未来真实实现均通过同一注册表和公共接口切换；当前注册名称：mock（Parser、Retriever、专业 Agent、Provider、ReportGenerator）、mock_alt（Parser 验证实现）、rule（Verifier、Supervisor）、rule_based（Predictor）、json（Repository）。
 
 Windows 可运行 `start.bat`，Unix 可运行 `start.sh`。配置默认读取 `configs/mock.yaml`，环境变量优先于 YAML 配置。
 
