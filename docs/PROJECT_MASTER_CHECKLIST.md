@@ -36,7 +36,9 @@ Output:
 - [ ] 填写 `real_case_001` 标准答案
 - [x] 将第 0 棒“仓库检查任务”提交给 Codex
 - [x] Codex 输出真实文件路径、接口、测试和第 1 棒计划
-- [ ] 将本清单合并到 main 后，开始真实 PDF Parser
+- [x] 将本清单合并到 main 后，开始真实 PDF Parser
+- [ ] 使用真实招股书完成 PyMuPDF Parser 本地页码验收
+- [ ] 开始 Codex 第2棒：关键词 Evidence Retriever
 
 ## 当前负责人
 
@@ -58,10 +60,10 @@ ____________________________________________________________
 ## 最近一次更新
 
 ```text
-更新时间：2026年08月03日 17:24
+更新时间：2026年08月03日 17:35
 更新人：Codex
-当前分支：docs/add-master-checklist
-当前 PR：#10 Docs: add project master checklist
+当前分支：feat/real-pdf-parser
+当前 PR：待创建
 ```
 
 ---
@@ -336,32 +338,32 @@ PDF总页数：___________________
 
 ## 6.4 Codex 第1棒：真实 PDF Parser
 
-- [ ] 新建功能分支
-- [ ] 增加最小必要 PDF 依赖
-- [ ] 实现现有 Parser 接口
-- [ ] 按 PDF 物理页读取文本
-- [ ] 输出 `list[DocumentChunk]`
-- [ ] 每个 Chunk 保留 document_id
-- [ ] 每个 Chunk 保留稳定 chunk_id
-- [ ] 每个 Chunk 保留 PDF 页码
-- [ ] 每个 Chunk 不跨页
-- [ ] 跳过空白文本
-- [ ] 保留数字、负号、括号和单位
-- [ ] 支持中文文件名
-- [ ] 支持 Windows 路径
-- [ ] 处理文件不存在
-- [ ] 处理非 PDF
-- [ ] 处理加密 PDF
-- [ ] 处理空 PDF
-- [ ] 处理单页解析失败
-- [ ] 保留 Mock Parser
-- [ ] 通过配置切换 Parser
-- [ ] 注册真实 Parser
-- [ ] 增加 Parser 契约测试
-- [ ] 增加页码测试
-- [ ] 增加中文文本测试
-- [ ] 增加异常测试
-- [ ] 原有测试全部通过
+- [x] 新建功能分支
+- [x] 增加最小必要 PDF 依赖
+- [x] 实现现有 Parser 接口
+- [x] 按 PDF 物理页读取文本
+- [x] 输出 `list[DocumentChunk]`
+- [x] 每个 Chunk 保留 document_id
+- [x] 每个 Chunk 保留稳定 chunk_id
+- [x] 每个 Chunk 保留 PDF 页码
+- [x] 每个 Chunk 不跨页
+- [x] 跳过空白文本
+- [x] 保留数字、负号、括号和单位
+- [x] 支持中文文件名
+- [x] 支持 Windows 路径
+- [x] 处理文件不存在
+- [x] 处理非 PDF
+- [x] 处理加密 PDF
+- [x] 处理空 PDF
+- [x] 处理单页解析失败
+- [x] 保留 Mock Parser
+- [x] 通过配置切换 Parser
+- [x] 注册真实 Parser
+- [x] 增加 Parser 契约测试
+- [x] 增加页码测试
+- [x] 增加中文文本测试
+- [x] 增加异常测试
+- [x] 原有测试全部通过
 - [ ] 技术备份独立运行
 - [ ] 人工核对目标页码
 - [ ] PR 已合并到 `main`
@@ -369,10 +371,10 @@ PDF总页数：___________________
 完成信息：
 
 ```text
-分支：
-PR：
-测试结果：
-真实PDF手工结果：
+分支：feat/real-pdf-parser
+PR：待创建
+测试结果：pytest -q：30 passed；python -m compileall -q app src：通过；git diff --check：通过
+真实PDF手工结果：待使用 IPO_RISK_REAL_CASE_PDF 进行本地人工页码核对
 负责人：
 完成日期：
 ```
