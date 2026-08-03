@@ -60,10 +60,10 @@ ____________________________________________________________
 ## 最近一次更新
 
 ```text
-更新时间：2026年08月03日 17:35
+更新时间：2026年08月03日 17:39
 更新人：Codex
 当前分支：feat/real-pdf-parser
-当前 PR：待创建
+当前 PR：#11 feat: add PyMuPDF document parser
 ```
 
 ---
@@ -372,7 +372,7 @@ PDF总页数：___________________
 
 ```text
 分支：feat/real-pdf-parser
-PR：待创建
+PR：#11 feat: add PyMuPDF document parser
 测试结果：pytest -q：30 passed；python -m compileall -q app src：通过；git diff --check：通过
 真实PDF手工结果：待使用 IPO_RISK_REAL_CASE_PDF 进行本地人工页码核对
 负责人：
