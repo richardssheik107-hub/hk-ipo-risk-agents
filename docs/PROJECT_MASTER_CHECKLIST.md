@@ -61,10 +61,10 @@ ____________________________________________________________
 ## 最近一次更新
 
 ```text
-更新时间：2026年08月03日 17:50
+更新时间：2026年08月03日（真实案例验收回填）
 更新人：Codex
-当前分支：docs/record-real-case-staging
-当前 PR：#12 data: add real prospectus sample
+当前分支：docs/record-real-parser-acceptance
+当前 PR：#13 docs: record real parser acceptance
 ```
 
 ---
