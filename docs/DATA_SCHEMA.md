@@ -273,4 +273,25 @@ five_day_significant_decline_risk
 
 表示ReportGenerator输入，只包含analysis_id、IPOProfile、三类风险列表、PredictionResult、日志摘要和选项。
 
+### VerificationResult 与 SupervisionResult
+
+VerificationResult 将风险分为 verified_risks、pending_risks 和 rejected_risks；
+SupervisionResult 返回去重后的 verified_risks 及摘要。它们分别是 Verifier 与
+Supervisor 的结构化输入输出边界，同时保持 IPOAnalysisResult 的对外结构兼容。
+
+## 16. v0.1.0 契约与降级语义
+
+风险是否需要 Evidence 或 Calculation 由 domain 风险注册表定义，包含
+requires_evidence 与 requires_calculation 元数据；不得通过解析 conclusion 中是否出现
+数字来判断。
+
+对于 requires_evidence 的风险，Evidence 为空时不得进入 verified_risks。对于
+requires_calculation 的风险，Calculation 缺失、失败，或其 evidence_ids 不能引用该风险
+的 Evidence 时，不得进入 verified_risks。规则型、条款型风险不因没有 Calculation 而被
+拒绝。
+
+IPOAnalysisResult.status 可为 partial：表示部分节点失败但结果仍可返回。
+预测失败时 prediction 允许为空；报告生成失败时 report_sections 允许为空；两类失败均必须
+在 errors 中记录结构化 AnalysisError，并在 agent_logs 中记录失败日志。
+
 ---
