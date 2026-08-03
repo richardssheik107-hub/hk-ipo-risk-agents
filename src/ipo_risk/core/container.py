@@ -5,6 +5,7 @@ from ipo_risk.agents.mock import MockBusinessAgent, MockFinancialAgent, MockLega
 from ipo_risk.agents.rules import RuleSupervisor, RuleVerifier
 from ipo_risk.core.config import ComponentConfigurationError, Settings
 from ipo_risk.parsers.mock import AlternateMockDocumentParser, MockDocumentParser
+from ipo_risk.parsers.pymupdf_parser import PyMuPDFDocumentParser
 from ipo_risk.predictors.rule_based import RuleBasedPredictor
 from ipo_risk.predictors.fault import FaultPredictor
 from ipo_risk.providers.mock import MockIPODataProvider, MockLLMProvider, MockMarketDataProvider
@@ -31,6 +32,7 @@ def default_registry() -> ComponentRegistry:
     }.items(): registry.register(kind, "mock" if kind not in {"verifier", "supervisor", "predictor"} else ("rule" if kind in {"verifier", "supervisor"} else "rule_based"), factory)
     registry.register("predictor", "fault", FaultPredictor)
     registry.register("parser", "mock_alt", AlternateMockDocumentParser)
+    registry.register("parser", "pymupdf", PyMuPDFDocumentParser)
     return registry
 
 @dataclass
