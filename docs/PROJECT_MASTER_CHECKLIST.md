@@ -61,10 +61,10 @@ ____________________________________________________________
 ## 最近一次更新
 
 ```text
-更新时间：2026年08月03日 17:48
+更新时间：2026年08月03日 17:50
 更新人：Codex
-当前分支：feat/real-pdf-parser
-当前 PR：#11 feat: add PyMuPDF document parser
+当前分支：docs/record-real-case-staging
+当前 PR：#12 data: add real prospectus sample
 ```
 
 ---
