@@ -75,6 +75,25 @@ def test_rejects_missing_or_invalid_amounts(raw: str) -> None:
     assert FinancialEvidenceExtractor._normalize_amount(raw) is None
 
 
+@pytest.mark.parametrize(
+    "raw",
+    [
+        "(83,918",
+        "83,918)",
+        "（83,918",
+        "83,918）",
+        "(83,918）",
+        "（83,918)",
+        "(",
+        ")",
+        "（",
+        "）",
+    ],
+)
+def test_rejects_unbalanced_or_mismatched_parentheses(raw: str) -> None:
+    assert FinancialEvidenceExtractor._normalize_amount(raw) is None
+
+
 def test_extracts_latest_cash_column_and_keeps_cash_period_months_empty() -> None:
     source = chunk(table("現金流量表所述現金及現金等價物", ["90,762", "186,830", "111,745", "77,208"]))
     result = extract_one("cash", source)
@@ -352,6 +371,11 @@ def test_same_value_different_currency_requires_review() -> None:
     assert result.status == ExtractionStatus.NEEDS_REVIEW
     assert "conflicting_currency_for_same_period" in result.issues
     assert result.metadata["conflicting_candidates"][0]["conflict_fields"] == ["currency"]
+    assert result.metadata["conflicting_candidates"][0]["currency"] == "HKD"
+    assert all(
+        "extraction_method" in candidate
+        for candidate in result.metadata["evaluated_candidates"]
+    )
 
 
 def test_same_value_different_unit_requires_review() -> None:
@@ -364,6 +388,7 @@ def test_same_value_different_unit_requires_review() -> None:
     ).cash_and_cash_equivalents
     assert result.status == ExtractionStatus.NEEDS_REVIEW
     assert "conflicting_unit_for_same_period" in result.issues
+    assert result.metadata["conflicting_candidates"][0]["unit"] == "million"
 
 
 def test_same_date_different_period_months_requires_review() -> None:
@@ -376,6 +401,7 @@ def test_same_date_different_period_months_requires_review() -> None:
     ).operating_cash_flow
     assert result.status == ExtractionStatus.NEEDS_REVIEW
     assert "conflicting_period_length_for_same_date" in result.issues
+    assert result.metadata["conflicting_candidates"][0]["period_months"] == 6
 
 
 @pytest.mark.parametrize(

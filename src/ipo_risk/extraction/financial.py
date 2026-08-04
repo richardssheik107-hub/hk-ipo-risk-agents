@@ -16,8 +16,9 @@ from ipo_risk.extraction.models import (
 from ipo_risk.schemas import DocumentChunk, Evidence
 
 
+_NUMBER_BODY = r"(?:\d{1,3}(?:(?:[,，]|\s)\d{3})+|\d+)(?:\.\d+)?"
 _AMOUNT_RE = re.compile(
-    r"^\s*(?P<value>(?:[（(]\s*)?[+\-−–—]?\s*(?:\d{1,3}(?:(?:[,，]|\s)\d{3})+|\d+)(?:\.\d+)?\s*(?:[)）])?)\s*$"
+    rf"^\s*(?P<value>(?:\(\s*{_NUMBER_BODY}\s*\)|（\s*{_NUMBER_BODY}\s*）|[+\-−–—]?\s*{_NUMBER_BODY}))\s*$"
 )
 _EMPTY_AMOUNT_RE = re.compile(r"^\s*[-−–—]\s*$")
 _YEAR_RE = re.compile(r"^(20\d{2})\s*年?$", re.IGNORECASE)
@@ -214,8 +215,12 @@ class FinancialEvidenceExtractor:
             "query_intent": value.metadata.get("query_intent"),
             "status": value.status.value,
             "period_end": value.period_end.isoformat() if value.period_end else None,
+            "period_months": value.period_months,
             "raw_value": value.raw_value,
             "normalized_value": str(value.normalized_value) if value.normalized_value is not None else None,
+            "currency": value.currency,
+            "unit": value.unit,
+            "extraction_method": value.extraction_method,
             "relevance_score": candidate.relevance,
             "context_strength": candidate.context_strength,
             "selected": selected,
