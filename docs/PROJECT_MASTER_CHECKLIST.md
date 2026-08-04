@@ -4,9 +4,9 @@
 > 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
 > 当前版本：`v0.2.0-real-document-slice`
 > 当前状态：进行中
-> 当前阶段：A线 A6——已审核并直接提交到`main`，commit `cb954e8`，无PR级CI；B线建立赛事数据清单
-> 当前PR：无A线未合并PR
-> 最近完成：A6真实纵向链路通过275项测试、2410.HK Service级E2E及人工diff审核，直接提交到`main`
+> 当前阶段：A线 A6发布校验——修复异常诊断与上传上限，PR #17等待远端CI
+> 当前PR：#17 `fix/a6-release-validation` → `main`（Draft）
+> 最近完成：A6发布校验本地278项测试及2410.HK Service级E2E通过
 > 最后更新：2026-08-04
 
 ---
@@ -43,7 +43,7 @@
 > A3已完成开发、审查修订、真实案例验收并合并到`main`。
 > A4现金跑道Calculation与RiskItem已完成开发、自动测试、真实案例验收及人工diff审核，并进入`main`。
 > A5现金跑道核验与可信规则评分已完成并提交到`main`，commit `a47b85cd`；未经过PR级CI。
-> A6真实纵向链路、Service级E2E与Streamlit展示已完成审核并直接提交到`main`，commit `cb954e8`；未经过PR级CI。
+> A6真实纵向链路、Service级E2E与Streamlit展示已进入`main`，commit `cb954e8`；发布加固修复通过PR #17补充远端CI证据。
 
 ### B线：赛事数据治理
 
@@ -840,7 +840,7 @@ Predictor可信过滤：
 
 ## A6：Streamlit、E2E与发布
 
-**状态：已完成审核并直接提交到`main`，commit `cb954e8`；未经过PR级CI。**
+**状态：功能已进入`main`，commit `cb954e8`；发布加固PR #17等待远端CI。**
 
 本地实现：
 
@@ -860,7 +860,7 @@ Predictor可信过滤：
 
 - A5基线：`243 passed`；
 - A6新增测试：32项；
-- 最终完整测试：`275 passed`；
+- 发布加固后完整测试：`278 passed`；
 - Mock健康检查、compileall、diff-check、A1—A5真实回归通过；
 - 2410.HK真实Service级E2E通过；
 - 未修改公共Pydantic Schema。
@@ -1329,7 +1329,7 @@ v0.3优先风险类型：
 | 2026-08-04 | A3 财务抽取 | 已完成并合并到`main` | PR #16 / `fa4bf1bc`；134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR CI与人工审查通过 | 从最新`main`创建独立分支启动A4 |
 | 2026-08-04 | A4 现金跑道风险 | 已完成并提交到`main` | 176 passed；2410.HK现金跑道2.76个月；critical/90；pending；Evidence第563、562页；人工diff审核通过 | 从最新`main`创建独立分支启动A5 |
 | 2026-08-04 | A5 Verifier与规则评分 | 已直接提交到`main`，commit `a47b85cd`；无PR级CI | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | A6 |
-| 2026-08-04 | A6 真实纵向链路与E2E | 已审核并直接提交到`main`，commit `cb954e8`；无PR级CI | 275 passed；706 Chunk；cash_runway verified；90/critical；市场缺失降级；Repository往返通过 | v0.2发布前团队验收与B1 |
+| 2026-08-04 | A6 真实纵向链路与E2E | 功能已进入`main`，commit `cb954e8`；发布加固PR #17等待远端CI | 278 passed；706 Chunk；cash_runway verified；90/critical；市场缺失降级；Repository往返通过 | 完成PR #17与发布前团队验收 |
 
 ---
 
@@ -1366,7 +1366,7 @@ A线现在：
 - A3确定性财务数值提取已通过134项自动测试、2410.HK真实案例验收及人工审查，并由PR #16合并到`main`；
 - A4现金跑道Calculation与RiskItem已完成开发、176项自动测试、2410.HK真实验收和人工diff审核，并进入`main`；
 - A5现金跑道核验与可信规则评分已提交到`main`，commit `a47b85cd`；243项测试为本地验收记录，未经过PR级CI；
-- A6真实现金跑道Workflow、Service、Repository和Streamlit闭环已通过275项自动测试、2410.HK真实Service级E2E和人工diff审核，并直接提交到`main`，commit `cb954e8`；未经过PR级CI。
+- A6真实现金跑道Workflow、Service、Repository和Streamlit闭环已通过278项自动测试、2410.HK真实Service级E2E和人工diff审核；功能提交为`cb954e8`，发布加固PR #17等待远端CI。
 
 B线现在：
 - 建立565份招股书manifest；
