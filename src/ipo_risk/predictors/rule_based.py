@@ -82,7 +82,12 @@ class RuleBasedPredictor:
             missing_features.append("verified_risks")
         if not market_available:
             missing_features.append("market_sentiment_score")
-        degraded_mode = not verified and not market_available
+        degradation_reasons = []
+        if not verified:
+            degradation_reasons.append("verified_risks_missing")
+        if not market_available:
+            degradation_reasons.append("market_sentiment_score_missing")
+        degraded_mode = bool(degradation_reasons)
         excluded_count = len(excluded_pending) + len(excluded_review) + len(excluded_rejected)
         explanation = (
             "Deterministic rule score; not a calibrated probability. "
@@ -114,6 +119,7 @@ class RuleBasedPredictor:
                 "available_features": available_features,
                 "missing_features": missing_features,
                 "degraded_mode": degraded_mode,
+                "degradation_reasons": degradation_reasons,
                 "market_adjustment_applied": bool(market_adjustment),
                 "policy_version": "rule_based_predictor_v2",
             },

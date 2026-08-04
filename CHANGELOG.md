@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.2.0-real-document-slice (Unreleased)
+
+### Added
+
+- PyMuPDF真实PDF解析与关键词Evidence检索；
+- 现金和经营现金流确定性提取；
+- 现金跑道Calculation、RiskItem及专用Verifier；
+- 真实CashRunwayFinancialAgent；
+- unavailable专业Agent、市场数据Provider及request IPO Provider；
+- Service metadata、持久化往返验证和真实Service级E2E；
+- Streamlit安全PDF上传、组件模式及完整证据链展示。
+
+### Validation
+
+- 自动化测试：275 passed；
+- 2410.HK：现金第563页、经营现金流第562页；
+- 现金跑道：2.76个月，verified，critical / 90；
+- 无真实市场数据时保持90分并明确进入degraded模式；
+- 规则评分不输出概率。
+
+### Remaining
+
+- A6 PR、CI及合并后main复跑；
+- 第二标注人复核与技术备份独立运行；
+- B1赛事数据治理；
+- v0.2 Tag与Release。
+
 ## v0.1.0-architecture-mvp
 
 ### Added

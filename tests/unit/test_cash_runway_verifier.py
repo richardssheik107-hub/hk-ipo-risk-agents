@@ -260,6 +260,44 @@ def test_duplicate_evidence_id_needs_review() -> None:
     assert_needs_review(risk.model_copy(update={"evidence": [risk.evidence[0], duplicate]}), evidence)
 
 
+@pytest.mark.parametrize("count", [0, 1])
+def test_fewer_than_two_evidence_items_stay_pending(count: int) -> None:
+    risk, evidence = valid_case()
+    shortened = risk.model_copy(update={"evidence": risk.evidence[:count]})
+    result = CashRunwayRiskVerifier().verify(shortened, evidence)
+    assert result.status == CashRunwayVerificationStatus.PENDING
+    assert "risk_evidence_count_invalid" in result.issues
+
+
+def test_three_evidence_items_need_review() -> None:
+    risk, evidence = valid_case()
+    extra = risk.evidence[1].model_copy(
+        update={"evidence_id": "extra-e", "chunk_id": "extra", "page": 12}
+    )
+    evidence[extra.evidence_id] = extra
+    assert risk.calculation is not None
+    changed = risk.model_copy(
+        update={
+            "evidence": [*risk.evidence, extra],
+            "calculation": risk.calculation.model_copy(
+                update={"evidence_ids": [*risk.calculation.evidence_ids, extra.evidence_id]}
+            ),
+        }
+    )
+    result = CashRunwayRiskVerifier().verify(changed, evidence)
+    assert result.status == CashRunwayVerificationStatus.NEEDS_REVIEW
+    assert "risk_evidence_count_invalid" in result.issues
+
+
+def test_calculation_with_extra_evidence_id_needs_review() -> None:
+    risk, evidence = valid_case()
+    assert risk.calculation is not None
+    changed = update_calculation(
+        risk, evidence_ids=[*risk.calculation.evidence_ids, "extra-e"]
+    )
+    assert_needs_review(changed, evidence)
+
+
 def test_empty_evidence_text_needs_review() -> None:
     risk, evidence = valid_case()
     empty = risk.evidence[0].model_copy(update={"text": ""})

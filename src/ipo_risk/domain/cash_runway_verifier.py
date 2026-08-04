@@ -87,7 +87,11 @@ class CashRunwayRiskVerifier:
 
         embedded = list(risk.evidence)
         embedded_ids = [item.evidence_id for item in embedded]
-        record("evidence_count", len(embedded) >= 2, "risk_evidence_insufficient")
+        record(
+            "evidence_count",
+            len(embedded) == 2,
+            "risk_evidence_count_invalid",
+        )
         record(
             "evidence_ids_nonempty",
             all(bool(item) for item in embedded_ids),
@@ -275,8 +279,9 @@ class CashRunwayRiskVerifier:
             record("conclusion", conclusion_ok, "risk_conclusion_invalid")
 
         issues = list(dict.fromkeys(issues))
-        pending_issue_codes = {"risk_evidence_insufficient", "evidence_id_missing"}
-        if "risk_evidence_insufficient" in issues:
+        pending_issue_codes = {"evidence_id_missing"}
+        if len(embedded) < 2 and "risk_evidence_count_invalid" in issues:
+            pending_issue_codes.add("risk_evidence_count_invalid")
             pending_issue_codes.add("calculation_evidence_ids_mismatch")
         pending_only = bool(issues) and all(
             issue in pending_issue_codes or issue.endswith("_evidence_unavailable")

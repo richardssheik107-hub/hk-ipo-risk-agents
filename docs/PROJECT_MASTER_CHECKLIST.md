@@ -4,9 +4,9 @@
 > 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
 > 当前版本：`v0.2.0-real-document-slice`
 > 当前状态：进行中
-> 当前阶段：A线 A5——本地开发、自动测试、2410.HK真实核验及人工diff审查完成，待PR；B线建立赛事数据清单
+> 当前阶段：A线 A6——本地开发、自动测试及真实Service级E2E完成，待人工审查/待PR；B线建立赛事数据清单
 > 当前PR：无A线未合并PR
-> 最近完成：A4现金跑道Calculation与RiskItem通过176项测试、2410.HK真实验收及人工diff审核，并提交到`main`
+> 最近完成：A5已直接提交到`main`，commit `a47b85cd`；243 passed为本地验收记录，未经过PR级CI
 > 最后更新：2026-08-04
 
 ---
@@ -42,8 +42,8 @@
 > A2.5保留为泛化闸门失败基线；A2.6定向整改及复测已通过。
 > A3已完成开发、审查修订、真实案例验收并合并到`main`。
 > A4现金跑道Calculation与RiskItem已完成开发、自动测试、真实案例验收及人工diff审核，并进入`main`。
-> A5现金跑道核验与可信规则评分已完成本地开发、真实链路验收及人工diff审查，当前待PR。
-> A6尚未开始。
+> A5现金跑道核验与可信规则评分已完成并提交到`main`，commit `a47b85cd`；未经过PR级CI。
+> A6真实纵向链路、Service级E2E与Streamlit展示已完成本地开发和自动验收，当前待人工审查/待PR。
 
 ### B线：赛事数据治理
 
@@ -752,7 +752,7 @@ runway >= 12          → low / 20
 
 ## A5：Verifier与规则评分
 
-**状态：本地开发、自动测试、2410.HK真实核验链路及人工diff审查完成，待PR。**
+**状态：已完成并直接提交到`main`，commit `a47b85cd`；243 passed为本地验收记录，未经过PR级CI。**
 
 Verifier检查：
 
@@ -840,7 +840,42 @@ Predictor可信过滤：
 
 ## A6：Streamlit、E2E与发布
 
-**状态：等待A5。**
+**状态：本地开发、自动测试及真实Service级E2E完成，待人工审查/待PR。**
+
+本地实现：
+
+- `CashRunwayFinancialAgent`按公共RiskAgent接口串联Retriever、Extractor和Builder；
+- Legal、Business、Market真实模块明确为`unavailable`，不生成“Mock finding”；
+- 真实市场数据Provider返回缺失状态，不提供虚构情绪值；
+- request IPO Provider只保留请求中的公司和股票身份；
+- cash_runway在Verifier前不再进行通用二次检索；
+- 单风险检索失败可恢复，Verifier失败保留原Evidence和Calculation；
+- candidates按risk_id稳定去重；
+- Service返回component_modes、document、real_slice、configuration及组件诊断；
+- Repository保存后执行读取往返验证；
+- Streamlit增加安全真实PDF上传、组件模式、Evidence、Calculation、预测降级及日志展示；
+- Predictor缺市场数据时保持现金跑道规则分，并明确`degraded_mode=true`及原因。
+
+自动验收：
+
+- A5基线：`243 passed`；
+- A6新增测试：32项；
+- 最终完整测试：`275 passed`；
+- Mock健康检查、compileall、diff-check、A1—A5真实回归通过；
+- 2410.HK真实Service级E2E通过；
+- 未修改公共Pydantic Schema。
+
+2410.HK Service级E2E：
+
+- `status=completed`；
+- Parser：706个有效Chunk，0个页面错误；
+- cash_runway：Evidence第563、562页，Calculation为2.76个月；
+- `verification_status=verified`，`critical / 90`；
+- Predictor：`90 / critical`，`probabilities={}`；
+- 缺真实市场数据：`degraded_mode=true`，原因`market_sentiment_score_missing`；
+- Legal、Business、Market与Market Data均显示`unavailable`；
+- ReportGenerator明确为Mock；
+- Repository往返读取一致。
 
 页面必须展示：
 
@@ -860,14 +895,14 @@ Predictor可信过滤：
 
 E2E场景：
 
-- [ ] Mock正常
-- [ ] 2410.HK真实模式
-- [ ] Retriever无结果
-- [ ] 财务值缺失
-- [ ] 单位或期间缺失
-- [ ] Predictor降级
-- [ ] 组件故障
-- [ ] 结果持久化
+- [x] Mock正常
+- [x] 2410.HK真实模式
+- [x] Retriever无结果
+- [x] 财务值缺失
+- [x] 单位或期间缺失
+- [x] Predictor降级
+- [x] 组件故障
+- [x] 结果持久化
 - [ ] 技术备份独立运行
 - [ ] 产品成员易用性测试
 
@@ -1293,7 +1328,8 @@ v0.3优先风险类型：
 | 2026-08-04 | A2.6 Retriever整改 | 已完成，闸门通过 | 原11份两项均100%；新增6份两项均100%；2410.HK保持第1 | A3财务抽取 |
 | 2026-08-04 | A3 财务抽取 | 已完成并合并到`main` | PR #16 / `fa4bf1bc`；134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR CI与人工审查通过 | 从最新`main`创建独立分支启动A4 |
 | 2026-08-04 | A4 现金跑道风险 | 已完成并提交到`main` | 176 passed；2410.HK现金跑道2.76个月；critical/90；pending；Evidence第563、562页；人工diff审核通过 | 从最新`main`创建独立分支启动A5 |
-| 2026-08-04 | A5 Verifier与规则评分 | 本地开发、真实验收及人工diff审查完成，待PR | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | 创建并审核PR |
+| 2026-08-04 | A5 Verifier与规则评分 | 已直接提交到`main`，commit `a47b85cd`；无PR级CI | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | A6 |
+| 2026-08-04 | A6 真实纵向链路与E2E | 本地开发、自动测试及真实Service级E2E完成，待人工审查/待PR | 275 passed；706 Chunk；cash_runway verified；90/critical；市场缺失降级；Repository往返通过 | 人工diff审查与PR前修订 |
 
 ---
 
@@ -1329,8 +1365,8 @@ A线现在：
 - Retriever泛化阻塞已解除；
 - A3确定性财务数值提取已通过134项自动测试、2410.HK真实案例验收及人工审查，并由PR #16合并到`main`；
 - A4现金跑道Calculation与RiskItem已完成开发、176项自动测试、2410.HK真实验收和人工diff审核，并进入`main`；
-- A5现金跑道核验与可信规则评分已完成本地开发、243项自动测试、2410.HK A1→A5真实验收及人工diff审查，当前待PR；
-- A6尚未开始。
+- A5现金跑道核验与可信规则评分已提交到`main`，commit `a47b85cd`；243项测试为本地验收记录，未经过PR级CI；
+- A6真实现金跑道Workflow、Service、Repository和Streamlit闭环已通过275项自动测试及2410.HK真实Service级E2E，当前待人工审查/待PR。
 
 B线现在：
 - 建立565份招股书manifest；

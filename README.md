@@ -7,12 +7,12 @@
 当前阶段：
 
 ```text
-v0.1.0：架构级MVP已完成
+v0.2.0：真实PDF现金跑道纵向闭环，A6本地验收完成、待审核
 ```
 
 稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
 
-已完成配置驱动装配、LangGraph mvp_v1 工作流、规则核验与预测、故障降级、Streamlit 原型和自动化验收（24 passed）。第一阶段不追求完成全部真实金融分析能力。
+稳定的v0.1.0架构级MVP已经发布。当前v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E及Streamlit真实模式。本地自动化验收为275 passed；v0.2尚未发布。
 
 ## 核心流程
 
@@ -70,12 +70,22 @@ v0.1.0：架构级MVP已完成
 - JSON Repository、LangGraph 工作流、故障降级与 Streamlit 展示；
 - Schema、契约、工作流、集成、端到端与黄金案例测试。
 
-当前仍为 Mock：
+v0.2真实模式已经实现：
 
-- DocumentParser、DocumentRetriever；
-- Financial、Legal、Business、Market Agent；
-- LLMProvider、MarketDataProvider、IPODataProvider；
-- ReportGenerator。
+- PyMuPDF DocumentParser与KeywordDocumentRetriever；
+- CashRunwayFinancialAgent、FinancialEvidenceExtractor和CashRunwayRiskBuilder；
+- CashRunwayRiskVerifier、RuleSupervisor和verified-only RuleBasedPredictor；
+- RequestIPODataProvider与UnavailableMarketDataProvider；
+- JSON Repository与Service级持久化往返验证；
+- 安全临时PDF上传和真实组件状态展示。
+
+真实模式中尚不可用或仍为Mock：
+
+- Legal、Business和Market Agent为`unavailable`，不会生成虚构风险；
+- 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
+- LLMProvider尚未使用；
+- ReportGenerator仍为Mock格式化组件；
+- 扫描版PDF/OCR、统计预测模型和真实概率尚未实现。
 
 ## v0.2.0 目标
 
@@ -147,7 +157,50 @@ Unix/Linux/macOS：
     python scripts/validate_project.py
     python -m streamlit run app/streamlit_app.py
 
-默认配置为 configs/mock.yaml。配置优先级为：环境变量（任意 IPO_RISK_字段名）> YAML（IPO_RISK_CONFIG 可指定文件）> 代码默认值。Mock 与未来真实实现均通过同一注册表和公共接口切换；当前注册名称：mock（Parser、Retriever、专业 Agent、Provider、ReportGenerator）、mock_alt（Parser 验证实现）、rule（Verifier、Supervisor）、rule_based（Predictor）、json（Repository）。
+默认配置为 configs/mock.yaml。配置优先级为：环境变量（任意 IPO_RISK_字段名）> YAML（IPO_RISK_CONFIG 可指定文件）> 代码默认值。Mock、真实与unavailable实现均通过同一注册表和公共接口切换。
+
+## Mock与真实PDF模式
+
+Mock演示：
+
+```powershell
+$env:IPO_RISK_CONFIG = "configs/mock.yaml"
+python -m streamlit run app/streamlit_app.py
+```
+
+```bash
+export IPO_RISK_CONFIG=configs/mock.yaml
+python -m streamlit run app/streamlit_app.py
+```
+
+真实PDF模式由页面中的“真实PDF现金跑道分析”场景加载`configs/real_pdf.yaml`。上传文件必须为非空PDF并具有`%PDF-`文件头；系统使用随机临时文件，分析成功或异常后都会删除。
+
+真实案例命令：
+
+```powershell
+$env:PYTHONPATH = "src"
+$env:IPO_RISK_REAL_CASE_PDF = "data/local/real_case_001/prospectus.pdf"
+python scripts/check_real_v02_e2e.py
+```
+
+```bash
+export PYTHONPATH=src
+export IPO_RISK_REAL_CASE_PDF=data/local/real_case_001/prospectus.pdf
+python scripts/check_real_v02_e2e.py
+```
+
+当前组件注册名称：
+
+- Parser：`mock`、`mock_alt`、`pymupdf`；
+- Retriever：`mock`、`keyword`；
+- Financial Agent：`mock`、`cash_runway`；
+- Legal/Business/Market Agent：`mock`、`disabled`；
+- MarketDataProvider：`mock`、`unavailable`；
+- IPODataProvider：`mock`、`request`；
+- Verifier/Supervisor：`rule`；Predictor：`rule_based`、`fault`；
+- Repository：`json`；ReportGenerator：`mock`。
+
+页面和API中的90分是确定性规则分，不是90%的下跌概率，也不构成投资建议。
 
 Windows 可运行 `start.bat`，Unix 可运行 `start.sh`。配置默认读取 `configs/mock.yaml`，环境变量优先于 YAML 配置。
 

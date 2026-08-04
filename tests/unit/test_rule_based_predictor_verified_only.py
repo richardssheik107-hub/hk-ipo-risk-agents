@@ -62,6 +62,18 @@ def test_prediction_is_explicitly_non_probability_rule_v2() -> None:
     assert "not a calibrated probability" in prediction.explanation
 
 
+def test_verified_risk_without_market_is_degraded_but_keeps_score() -> None:
+    prediction = RuleBasedPredictor().predict(
+        [risk(VerificationStatus.VERIFIED)], None
+    )
+    assert prediction.risk_score == 90
+    assert prediction.risk_level == RiskLevel.CRITICAL
+    assert prediction.metadata["degraded_mode"] is True
+    assert prediction.metadata["degradation_reasons"] == [
+        "market_sentiment_score_missing"
+    ]
+
+
 def test_no_trusted_feature_enters_degraded_mode() -> None:
     prediction = RuleBasedPredictor().predict([], None)
     assert prediction.risk_score == 0
