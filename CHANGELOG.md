@@ -22,7 +22,6 @@
 
 ### Remaining
 
-- A6 PR、CI及合并后main复跑；
 - 第二标注人复核与技术备份独立运行；
 - B1赛事数据治理；
 - v0.2 Tag与Release。

@@ -7,7 +7,7 @@
 当前阶段：
 
 ```text
-v0.2.0：真实PDF现金跑道纵向闭环，A6本地验收完成、待审核
+v0.2.0：真实PDF现金跑道纵向闭环，A6审核完成并直接提交main（`cb954e8`），待发布验收
 ```
 
 稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
