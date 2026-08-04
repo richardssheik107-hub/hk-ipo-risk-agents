@@ -22,7 +22,7 @@ from ipo_risk.schemas import DocumentParseRequest, Evidence
 
 YEAR_QUOTAS = {2020: 5, 2021: 5, 2022: 5, 2023: 4, 2024: 5}
 QUERIES = {
-    "cash": "现金及现金等价物",
+    "cash": "现金流量表期末现金及现金等价物",
     "operating_cash_flow": "经营活动现金流",
 }
 PARSER_FIELDS = (

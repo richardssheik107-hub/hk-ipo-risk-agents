@@ -22,9 +22,21 @@ def chunk(page: int, text: str, *, document_id: str = "case") -> DocumentChunk:
         ("现金及现金等价物", "现金及现金等价物 人民币千元", "cash_and_cash_equivalents"),
         ("現金及現金等價物", "現金及現金等價物 人民幣千元", "cash_and_cash_equivalents"),
         ("CASH AND CASH EQUIVALENTS", "Cash and cash equivalents RMB'000", "cash_and_cash_equivalents"),
+        ("现金余额", "现金及现金等价物余额 人民币千元", "cash_balance"),
+        ("現金流量表期末現金及現金等價物", "期末之現金及現金等價物 港幣千元", "cash_flow_ending_cash"),
+        (
+            "cash and cash equivalents at end of period",
+            "Cash and cash equivalents at the end of the reporting period USD'000",
+            "cash_flow_ending_cash",
+        ),
         ("经营活动现金流", "经营活动所用净现金流量 人民币千元", "operating_cash_flow"),
         ("經營活動現金流", "經營活動所用淨現金流量 人民幣千元", "operating_cash_flow"),
         ("operating cash flow", "Net cash used in operating activities", "operating_cash_flow"),
+        ("经营活动现金流", "經營活動產生╱（所用）現金流量淨額", "operating_cash_flow"),
+        ("经营活动现金流", "經營活動（所用）╱所得現金淨額", "operating_cash_flow"),
+        ("经营活动现金流", "經營活動所得╱（所用）現金淨額", "operating_cash_flow"),
+        ("经营活动现金流", "經營活動所產生的現金淨額", "operating_cash_flow"),
+        ("经营活动现金流", "經營活動所得現金淨額", "operating_cash_flow"),
     ],
 )
 def test_keyword_retriever_supports_cash_and_operating_cash_flow_synonyms(query, text, intent):
@@ -94,6 +106,78 @@ def test_primary_audited_statement_context_beats_a_summary_copy():
     evidence = KeywordDocumentRetriever().retrieve(chunks, "经营活动现金流")
     assert [item.page for item in evidence] == [562, 30]
     assert evidence[0].metadata["primary_statement_context"]
+
+
+def test_statement_title_neighborhood_promotes_later_statement_pages():
+    chunks = [
+        chunk(10, "概 要 現金及現金等價物 500 流動資金及資本資源"),
+        chunk(100, "附錄一 會計師報告 綜合現金流量表 人民幣千元 2022年 2023年"),
+        chunk(101, "經營活動所用現金淨額 (100) (120) 投資活動所用現金淨額 (20) (30)"),
+        chunk(
+            102,
+            "現金及現金等價物增加淨額 10 20 年初現金及現金等價物 100 120 "
+            "匯率變動對現金及現金等價物的影響 1 2 年末現金及現金等價物 111 142",
+        ),
+    ]
+    retriever = KeywordDocumentRetriever()
+
+    cash = retriever.retrieve(chunks, "现金流量表期末现金及现金等价物", limit=5)
+    operating = retriever.retrieve(chunks, "经营活动现金流", limit=5)
+
+    assert cash[0].page == 102
+    assert cash[0].metadata["query_intent"] == "cash_flow_ending_cash"
+    assert cash[0].metadata["statement_distance"] == 2
+    assert set(cash[0].metadata["cash_flow_companions"]) == {
+        "beginning_cash",
+        "net_change",
+        "exchange_effect",
+        "ending_cash",
+    }
+    assert operating[0].page == 101
+    assert operating[0].metadata["statement_distance"] == 1
+
+
+def test_cash_flow_ending_intent_beats_balance_sheet_note_and_policy():
+    chunks = [
+        chunk(20, "財務資料概要 現金及現金等價物期末結餘 300"),
+        chunk(200, "附錄一 會計師報告 合併現金流量表 港幣千元 2021年 2022年"),
+        chunk(
+            201,
+            "現金及現金等價物淨增加 10 20 期初現金及現金等價物 100 200 "
+            "期末現金及現金等價物 110 220 2021年 2022年 "
+            "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20",
+        ),
+        chunk(250, "主要會計政策 現金及現金等價物包括銀行結餘及手頭現金"),
+        chunk(270, "信用風險 現金及銀行結餘 220 借款 30"),
+    ]
+
+    evidence = KeywordDocumentRetriever().retrieve(
+        chunks, "期末现金及现金等价物", limit=5
+    )
+
+    assert evidence[0].page == 201
+    assert evidence[0].metadata["statement_titles"]
+    assert evidence[0].metadata["table_context"]
+    assert next(item for item in evidence if item.page == 20).metadata["summary_context"]
+
+
+def test_cash_flow_ending_intent_accepts_a_concrete_reporting_date_in_statement():
+    chunks = [
+        chunk(210, "附錄一 會計師報告 簡明現金流量表 港幣千元 2021年 2022年"),
+        chunk(
+            211,
+            "現金及現金等價物增加淨額 10 20 於一月一日的現金及現金等價物 100 200 "
+            "於六月三十日的現金及現金等價物 110 220",
+        ),
+    ]
+
+    evidence = KeywordDocumentRetriever().retrieve(
+        chunks, "现金流量表期末现金及现金等价物", limit=5
+    )
+
+    assert evidence[0].page == 211
+    assert evidence[0].metadata["query_intent"] == "cash_flow_ending_cash"
+    assert evidence[0].metadata["statement_distance"] == 1
 
 
 def test_stable_ranking_limit_empty_query_no_match_and_no_fallback():
