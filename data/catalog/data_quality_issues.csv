@@ -1,0 +1,13 @@
+﻿issue_id,scope,case_id,source_file,issue_code,severity,status,description,recommended_action
+DQ-0001,case,ipo_2020_01248,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,1248.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0002,case,ipo_2020_06688,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,6688.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0003,case,ipo_2020_06813,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,6813.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0004,case,ipo_2021_01491,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,1491.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0005,case,ipo_2022_04801,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,4801.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0006,case,ipo_2022_04841,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,4841.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0007,case,ipo_2022_06678,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,6678.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0008,case,ipo_2022_07841,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,7841.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0009,case,ipo_2025_02553,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,2553.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0010,case,ipo_2025_02615,hkshareeodprices.csv,EOD_NOT_AVAILABLE,warning,accepted_degradation,2615.HK has no matching EOD rows,Use for document-chain and degradation tests only
+DQ-0011,dataset,,hksharedescription.csv,SECURITY_MASTER_TRUNCATED,critical,quarantined,Security master is 262144 bytes with 803 records and 1 malformed rows; truncation is suspected,"Do not derive listing date, issue price or company mapping until replaced"
+DQ-0012,dataset,,hkshareeodprices.csv,EOD_AMOUNT_UNIT_UNCONFIRMED,warning,open,The unit of S_DQ_AMOUNT is not confirmed for feature engineering,Confirm against the official data dictionary before v0.4
