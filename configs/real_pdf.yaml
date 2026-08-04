@@ -2,7 +2,7 @@ workflow_version: mvp_v1
 use_mock: false
 enable_verifier: true
 parser: pymupdf
-retriever: mock
+retriever: keyword
 predictor: rule_based
 market_data_provider: mock
 ipo_data_provider: mock

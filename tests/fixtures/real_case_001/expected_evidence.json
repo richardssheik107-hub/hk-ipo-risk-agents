@@ -1,0 +1,27 @@
+{
+  "cash_and_cash_equivalents": {
+    "page": 563,
+    "chunk_id": "real_case_001:page:563",
+    "label": "現金流量表所述現金及現金等價物",
+    "raw_value": "77,208",
+    "normalized_value": 77208,
+    "currency": "CNY",
+    "unit": "thousand",
+    "period_end": "2024-03-31",
+    "evidence_role": "primary",
+    "cross_check_pages": [616]
+  },
+  "operating_cash_flow": {
+    "page": 562,
+    "chunk_id": "real_case_001:page:562",
+    "label": "經營活動所用淨現金流量",
+    "raw_value": "(83,918)",
+    "normalized_value": -83918,
+    "currency": "CNY",
+    "unit": "thousand",
+    "period_months": 3,
+    "period_end": "2024-03-31",
+    "evidence_role": "primary",
+    "cross_check_pages": [500, 30, 114]
+  }
+}

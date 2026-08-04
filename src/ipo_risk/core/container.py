@@ -12,6 +12,7 @@ from ipo_risk.providers.mock import MockIPODataProvider, MockLLMProvider, MockMa
 from ipo_risk.reporting.mock import MockReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
 from ipo_risk.retrieval.mock import MockDocumentRetriever
+from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.workflows.mvp_v1 import MVPWorkflow
 
 class ComponentRegistry:
@@ -33,6 +34,7 @@ def default_registry() -> ComponentRegistry:
     registry.register("predictor", "fault", FaultPredictor)
     registry.register("parser", "mock_alt", AlternateMockDocumentParser)
     registry.register("parser", "pymupdf", PyMuPDFDocumentParser)
+    registry.register("retriever", "keyword", KeywordDocumentRetriever)
     return registry
 
 @dataclass

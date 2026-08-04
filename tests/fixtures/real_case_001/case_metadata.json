@@ -1,0 +1,12 @@
+{
+  "case_id": "real_case_001",
+  "company_name": "浙江同源康醫藥股份有限公司",
+  "stock_code": "2410.HK",
+  "document_path": "data/local/real_case_001/prospectus.pdf",
+  "valid_non_empty_pages": 706,
+  "parser_error_count": 0,
+  "annotation_status": "provisional_gold",
+  "first_annotator_status": "completed",
+  "second_reviewer_status": "pending",
+  "review_status": "pending_second_human_review"
+}
