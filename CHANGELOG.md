@@ -14,11 +14,17 @@
 
 ### Validation
 
-- 自动化测试：275 passed；
+- 自动化测试：278 passed；
+- PR #17 GitHub Actions：pytest与compileall通过；
 - 2410.HK：现金第563页、经营现金流第562页；
 - 现金跑道：2.76个月，verified，critical / 90；
 - 无真实市场数据时保持90分并明确进入degraded模式；
 - 规则评分不输出概率。
+
+### Fixed
+
+- Extractor或Risk Builder异常时刷新Financial Agent结构化失败诊断；
+- Streamlit PDF上传增加200 MB显式大小上限。
 
 ### Remaining
 

@@ -12,7 +12,7 @@ v0.2.0：真实PDF现金跑道纵向闭环，A6审核完成并直接提交main�
 
 稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
 
-稳定的v0.1.0架构级MVP已经发布。当前v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E及Streamlit真实模式。本地自动化验收为275 passed；v0.2尚未发布。
+稳定的v0.1.0架构级MVP已经发布。当前v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E及Streamlit真实模式。本地自动化验收为278 passed；v0.2尚未发布。
 
 ## 核心流程
 

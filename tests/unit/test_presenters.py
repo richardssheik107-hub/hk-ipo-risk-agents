@@ -30,6 +30,12 @@ def test_empty_and_invalid_pdf_content_are_rejected() -> None:
         validate_pdf_upload("case.pdf", b"not a pdf")
 
 
+def test_oversized_pdf_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(_MODULE, "MAX_PDF_UPLOAD_BYTES", 8)
+    with pytest.raises(ValueError, match="200 MB"):
+        validate_pdf_upload("case.pdf", b"%PDF-1.7\n")
+
+
 @pytest.mark.parametrize("filename", ["招股書.pdf", "folder/case.PDF", r"C:\fake\case.pdf"])
 def test_pdf_validation_is_filename_and_platform_compatible(filename: str) -> None:
     validate_pdf_upload(filename, b"%PDF-1.7\n")

@@ -95,9 +95,18 @@ class CashRunwayFinancialAgent:
             return []
 
         chunks_by_id = {chunk.chunk_id: chunk for chunk in chunks}
-        extraction = self.extractor.extract(
-            cash_evidence, cash_flow_evidence, chunks_by_id
-        )
+        try:
+            extraction = self.extractor.extract(
+                cash_evidence, cash_flow_evidence, chunks_by_id
+            )
+        except Exception as exc:
+            self.last_diagnostics = CashRunwayAgentDiagnostics(
+                status=CashRunwayAgentStatus.COMPONENT_FAILURE,
+                issues=["extractor_failure"],
+                metadata={"component": "extractor", "error_type": type(exc).__name__},
+                **counts,
+            )
+            raise
         extraction_status = {
             "cash_and_cash_equivalents": extraction.cash_and_cash_equivalents.status.value,
             "operating_cash_flow": extraction.operating_cash_flow.status.value,
@@ -128,13 +137,28 @@ class CashRunwayFinancialAgent:
         available_evidence = {
             item.evidence_id: item for item in [*cash_evidence, *cash_flow_evidence]
         }
-        built = self.risk_builder.build(extraction, available_evidence)
         selected = [
             extraction.cash_and_cash_equivalents,
             extraction.operating_cash_flow,
         ]
         evidence_ids = [item.evidence_id for item in selected if item.evidence_id]
         pages = [item.page for item in selected if item.page is not None]
+        try:
+            built = self.risk_builder.build(extraction, available_evidence)
+        except Exception as exc:
+            self.last_diagnostics = CashRunwayAgentDiagnostics(
+                status=CashRunwayAgentStatus.COMPONENT_FAILURE,
+                extraction_status=extraction_status,
+                issues=["risk_builder_failure"],
+                evidence_ids=evidence_ids,
+                pages=pages,
+                metadata={
+                    "component": "risk_builder",
+                    "error_type": type(exc).__name__,
+                },
+                **counts,
+            )
+            raise
         if built.status == CashRunwayBuildStatus.NOT_APPLICABLE:
             self.last_diagnostics = CashRunwayAgentDiagnostics(
                 status=CashRunwayAgentStatus.NOT_APPLICABLE,
