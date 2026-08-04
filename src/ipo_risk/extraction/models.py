@@ -37,6 +37,7 @@ class FinancialMetricValue(BaseModel):
     issues: list[str] = Field(default_factory=list)
     context_chunk_ids: list[str] = Field(default_factory=list)
     context_pages: list[int] = Field(default_factory=list)
+    extraction_method: str = "not_applicable"
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 

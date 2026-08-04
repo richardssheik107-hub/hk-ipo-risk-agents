@@ -40,6 +40,7 @@ def test_result_round_trips_through_pydantic_json_contract() -> None:
             metric_name="cash_and_cash_equivalents",
             normalized_value=Decimal("77208"),
             status=ExtractionStatus.EXTRACTED,
+            extraction_method="page_text_rule",
         ),
         operating_cash_flow=FinancialMetricValue(
             metric_name="operating_cash_flow",
@@ -49,6 +50,7 @@ def test_result_round_trips_through_pydantic_json_contract() -> None:
     payload = original.model_dump_json()
     restored = TypeAdapter(FinancialExtractionResult).validate_json(payload)
     assert restored == original
+    assert restored.cash_and_cash_equivalents.extraction_method == "page_text_rule"
 
 
 def test_list_and_dict_defaults_are_not_shared() -> None:

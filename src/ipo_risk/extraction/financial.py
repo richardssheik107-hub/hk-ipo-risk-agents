@@ -131,27 +131,54 @@ class FinancialEvidenceExtractor:
         candidates.sort(key=self._candidate_sort_key)
         chosen_candidate = candidates[0]
         chosen = chosen_candidate.result
-        conflicts = [
-            item.result
-            for item in candidates[1:]
-            if item.intent_priority == chosen_candidate.intent_priority
-            if item.result.period_end == chosen.period_end
-            and item.result.normalized_value is not None
-            and item.result.normalized_value != chosen.normalized_value
-            and item.result.status == ExtractionStatus.EXTRACTED
-        ]
-        if conflicts:
-            chosen.status = ExtractionStatus.NEEDS_REVIEW
-            chosen.issues.append("conflicting_values_for_same_period")
-            chosen.metadata["conflicting_candidates"] = [
+        conflict_records: list[dict[str, object]] = []
+        conflict_issue_codes: set[str] = set()
+        for item in candidates[1:]:
+            if (
+                item.intent_priority != chosen_candidate.intent_priority
+                or item.result.period_end != chosen.period_end
+            ):
+                continue
+            conflict_fields = self._financial_fact_conflicts(chosen, item.result)
+            if not conflict_fields:
+                continue
+            conflict_records.append(
                 {
-                    "evidence_id": item.evidence_id,
-                    "page": item.page,
-                    "raw_value": item.raw_value,
-                    "normalized_value": str(item.normalized_value),
+                    **self._candidate_summary(item, selected=False),
+                    "conflict_fields": conflict_fields,
                 }
-                for item in conflicts
-            ]
+            )
+            conflict_issue_codes.update(
+                {
+                    "normalized_value": "conflicting_values_for_same_period",
+                    "currency": "conflicting_currency_for_same_period",
+                    "unit": "conflicting_unit_for_same_period",
+                    "period_months": "conflicting_period_length_for_same_date",
+                }[field]
+                for field in conflict_fields
+            )
+        if conflict_records:
+            chosen.status = ExtractionStatus.NEEDS_REVIEW
+            chosen.issues.extend(sorted(conflict_issue_codes))
+            chosen.metadata["conflicting_candidates"] = conflict_records
+
+        older_extracted = any(
+            item.intent_priority == chosen_candidate.intent_priority
+            and item.result.status == ExtractionStatus.EXTRACTED
+            and item.result.period_end is not None
+            and chosen.period_end is not None
+            and item.result.period_end < chosen.period_end
+            for item in candidates[1:]
+        )
+        if chosen.status == ExtractionStatus.NEEDS_REVIEW and older_extracted:
+            chosen.issues.append("newer_period_candidate_unresolved")
+            chosen.metadata["selection_reason"] = "latest_period_candidate_requires_review"
+        elif chosen.period_end is not None:
+            chosen.metadata["selection_reason"] = "latest_supported_period"
+        else:
+            chosen.metadata["selection_reason"] = "best_supported_candidate_without_period"
+
+        chosen.issues = list(dict.fromkeys(chosen.issues))
         chosen.metadata["evaluated_candidates"] = [
             self._candidate_summary(item, selected=item is chosen_candidate)
             for item in candidates
@@ -169,9 +196,9 @@ class FinancialEvidenceExtractor:
         }
         return (
             candidate.intent_priority,
+            -(value.period_end.toordinal() if value.period_end else 0),
             status_order[value.status],
             -candidate.context_strength,
-            -(value.period_end.toordinal() if value.period_end else 0),
             -candidate.relevance,
             candidate.rank,
             value.page or 0,
@@ -193,6 +220,18 @@ class FinancialEvidenceExtractor:
             "context_strength": candidate.context_strength,
             "selected": selected,
         }
+
+    @staticmethod
+    def _financial_fact_conflicts(
+        first: FinancialMetricValue, second: FinancialMetricValue
+    ) -> list[str]:
+        conflicts: list[str] = []
+        for field in ("normalized_value", "currency", "unit", "period_months"):
+            first_value = getattr(first, field)
+            second_value = getattr(second, field)
+            if first_value is not None and second_value is not None and first_value != second_value:
+                conflicts.append(field)
+        return conflicts
 
     @staticmethod
     def _intent_priority(metric_name: str, evidence: Evidence) -> int:
@@ -232,6 +271,35 @@ class FinancialEvidenceExtractor:
                 page=evidence.page,
                 status=ExtractionStatus.NEEDS_REVIEW,
                 issues=["source_chunk_not_available"],
+            )
+
+        mismatch_fields = [
+            field
+            for field in ("chunk_id", "document_id", "page")
+            if getattr(evidence, field) != getattr(chunk, field)
+        ]
+        if mismatch_fields:
+            return FinancialMetricValue(
+                metric_name=metric_name,
+                evidence_id=evidence.evidence_id,
+                document_id=evidence.document_id,
+                chunk_id=evidence.chunk_id,
+                page=evidence.page,
+                status=ExtractionStatus.NEEDS_REVIEW,
+                issues=["evidence_chunk_identity_mismatch"],
+                metadata={
+                    "evidence_identity": {
+                        "document_id": evidence.document_id,
+                        "chunk_id": evidence.chunk_id,
+                        "page": evidence.page,
+                    },
+                    "chunk_identity": {
+                        "document_id": chunk.document_id,
+                        "chunk_id": chunk.chunk_id,
+                        "page": chunk.page,
+                    },
+                    "mismatch_fields": mismatch_fields,
+                },
             )
 
         lines = [line.strip() for line in chunk.text.splitlines() if line.strip()]
@@ -274,7 +342,10 @@ class FinancialEvidenceExtractor:
         if unit is None:
             issues.append("unit_missing_or_ambiguous")
 
-        periods, period_source = self._find_periods(lines[:label_index], chunk, context_chunks)
+        periods, period_source, period_issues = self._find_periods(
+            lines[:label_index], chunk, context_chunks
+        )
+        issues.extend(period_issues)
         if period_source:
             field_sources["period"] = period_source.chunk_id
         numeric_values = [(raw, self._normalize_amount(raw)) for raw in raw_values]
@@ -341,6 +412,11 @@ class FinancialEvidenceExtractor:
             issues=list(dict.fromkeys(issues)),
             context_chunk_ids=list(context_used),
             context_pages=sorted({item.page for item in context_used.values()}),
+            extraction_method=(
+                "page_text_with_adjacent_context"
+                if len(context_used) > 1
+                else "page_text_rule"
+            ),
             metadata={
                 "field_sources": field_sources,
                 "row_values": raw_values,
@@ -504,62 +580,47 @@ class FinancialEvidenceExtractor:
         header_lines: Sequence[str],
         target: DocumentChunk,
         context: Sequence[DocumentChunk],
-    ) -> tuple[list[_Period], DocumentChunk | None]:
-        periods = self._parse_periods(header_lines)
+    ) -> tuple[list[_Period], DocumentChunk | None, list[str]]:
+        periods, issues = self._parse_periods(header_lines)
         if periods:
-            return periods, target
+            return periods, target, issues
+        if issues:
+            return [], target, issues
         for chunk in context:
-            periods = self._parse_periods(
+            periods, issues = self._parse_periods(
                 [line.strip() for line in chunk.text.splitlines() if line.strip()]
             )
             if periods:
-                return periods, chunk
-        return [], None
+                return periods, chunk, issues
+            if issues:
+                return [], chunk, issues
+        return [], None, []
 
-    def _parse_periods(self, lines: Sequence[str]) -> list[_Period]:
+    def _parse_periods(self, lines: Sequence[str]) -> tuple[list[_Period], list[str]]:
         explicit: list[_Period] = []
         for line in lines:
-            for pattern in (_CHINESE_DATE_RE, _ISO_DATE_RE):
-                for match in pattern.finditer(line):
-                    try:
-                        explicit.append(
-                            _Period(
-                                date(int(match.group(1)), int(match.group(2)), int(match.group(3))),
-                                self._period_months(line),
-                            )
-                        )
-                    except ValueError:
-                        pass
-            for match in _ENGLISH_DATE_DAY_FIRST_RE.finditer(line):
-                try:
-                    explicit.append(
-                        _Period(
-                            date(
-                                int(match.group(3)),
-                                _MONTH_NAMES.index(match.group(2).lower()) + 1,
-                                int(match.group(1)),
-                            ),
-                            self._period_months(line),
-                        )
-                    )
-                except ValueError:
-                    pass
-            for match in _ENGLISH_DATE_MONTH_FIRST_RE.finditer(line):
-                try:
-                    explicit.append(
-                        _Period(
-                            date(
-                                int(match.group(3)),
-                                _MONTH_NAMES.index(match.group(1).lower()) + 1,
-                                int(match.group(2)),
-                            ),
-                            self._period_months(line),
-                        )
-                    )
-                except ValueError:
-                    pass
+            dates = self._explicit_dates(line)
+            if len(dates) <= 1:
+                explicit.extend(_Period(item, self._period_months(line)) for item in dates)
+                continue
+
+            clauses = re.split(r"\s*(?:以及|及|與|和|；|;|\band\b)\s*", line, flags=re.I)
+            clause_periods: list[_Period] = []
+            for clause in clauses:
+                clause_dates = self._explicit_dates(clause)
+                if not clause_dates:
+                    continue
+                if len(clause_dates) != 1:
+                    return [], ["mixed_period_header_ambiguous"]
+                clause_periods.append(_Period(clause_dates[0], self._period_months(clause)))
+            if len(clause_periods) != len(dates):
+                return [], ["mixed_period_header_ambiguous"]
+            months = [item.months for item in clause_periods]
+            if any(item is None for item in months) and any(item is not None for item in months):
+                return [], ["mixed_period_header_ambiguous"]
+            explicit.extend(clause_periods)
         if explicit:
-            return self._dedupe_periods(explicit)
+            return self._dedupe_periods(explicit), []
 
         years = [int(match.group(1)) for line in lines if (match := _YEAR_RE.fullmatch(line))]
         groups = [
@@ -568,26 +629,70 @@ class FinancialEvidenceExtractor:
             if self._is_period_group(line)
         ]
         if not years or not groups:
-            return []
+            return [], []
         if any(month_day is None for month_day, _ in groups):
-            return []
+            return [], []
 
         counts = self._column_group_counts(years, len(groups))
         if not counts:
-            return []
+            return [], []
         result: list[_Period] = []
         offset = 0
         for (month_day, months), count in zip(groups, counts, strict=True):
             if month_day is None:
-                return []
+                return [], []
             month, day = month_day
             for year in years[offset : offset + count]:
                 try:
                     result.append(_Period(date(year, month, day), months))
                 except ValueError:
-                    return []
+                    return [], []
             offset += count
-        return result if offset == len(years) else []
+        return (result, []) if offset == len(years) else ([], [])
+
+    @staticmethod
+    def _explicit_dates(text: str) -> list[date]:
+        matches: list[tuple[int, date]] = []
+        for pattern in (_CHINESE_DATE_RE, _ISO_DATE_RE):
+            for match in pattern.finditer(text):
+                try:
+                    matches.append(
+                        (
+                            match.start(),
+                            date(int(match.group(1)), int(match.group(2)), int(match.group(3))),
+                        )
+                    )
+                except ValueError:
+                    pass
+        for match in _ENGLISH_DATE_DAY_FIRST_RE.finditer(text):
+            try:
+                matches.append(
+                    (
+                        match.start(),
+                        date(
+                            int(match.group(3)),
+                            _MONTH_NAMES.index(match.group(2).lower()) + 1,
+                            int(match.group(1)),
+                        ),
+                    )
+                )
+            except ValueError:
+                pass
+        for match in _ENGLISH_DATE_MONTH_FIRST_RE.finditer(text):
+            try:
+                matches.append(
+                    (
+                        match.start(),
+                        date(
+                            int(match.group(3)),
+                            _MONTH_NAMES.index(match.group(1).lower()) + 1,
+                            int(match.group(2)),
+                        ),
+                    )
+                )
+            except ValueError:
+                pass
+        return [item for _, item in sorted(matches, key=lambda match: match[0])]
 
     @staticmethod
     def _is_period_group(line: str) -> bool:
@@ -622,7 +727,7 @@ class FinancialEvidenceExtractor:
 
     @staticmethod
     def _period_months(line: str) -> int | None:
-        chinese = re.search(r"([三六九十二0-9]+)\s*[個个]?月", line)
+        chinese = re.search(r"(?:止|為|为|共)\s*([三六九十二0-9]+)\s*[個个]?月", line)
         if chinese:
             values = {"三": 3, "六": 6, "九": 9, "十二": 12}
             return values.get(chinese.group(1), int(chinese.group(1)) if chinese.group(1).isdigit() else None)

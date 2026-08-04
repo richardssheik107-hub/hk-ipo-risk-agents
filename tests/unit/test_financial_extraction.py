@@ -86,6 +86,7 @@ def test_extracts_latest_cash_column_and_keeps_cash_period_months_empty() -> Non
     assert result.period_months is None
     assert result.currency == "CNY"
     assert result.unit == "thousand"
+    assert result.extraction_method == "page_text_rule"
 
 
 def test_extracts_latest_operating_cash_flow_and_period_length() -> None:
@@ -136,6 +137,7 @@ def test_uses_adjacent_page_only_for_missing_header_fields() -> None:
     assert result.period_end == date(2024, 3, 31)
     assert result.normalized_value == Decimal("77208")
     assert result.context_pages == [10, 11]
+    assert result.extraction_method == "page_text_with_adjacent_context"
     assert far.chunk_id not in result.context_chunk_ids
 
 
@@ -241,6 +243,47 @@ def test_missing_source_chunk_requires_review() -> None:
     assert "source_chunk_not_available" in result.cash_and_cash_equivalents.issues
 
 
+def test_evidence_document_id_mismatch_requires_review() -> None:
+    source = chunk("截至2024年3月31日止三個月\n人民幣千元\n現金流量表所述現金及現金等價物\n100")
+    item = evidence(source).model_copy(update={"document_id": "different-document"})
+    result = FinancialEvidenceExtractor().extract(
+        [item], [], {source.chunk_id: source}
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.issues == ["evidence_chunk_identity_mismatch"]
+    assert result.document_id == "different-document"
+    assert result.metadata["mismatch_fields"] == ["document_id"]
+    assert result.metadata["evidence_identity"]["document_id"] == "different-document"
+    assert result.metadata["chunk_identity"]["document_id"] == "doc"
+
+
+def test_evidence_page_mismatch_requires_review() -> None:
+    source = chunk("截至2024年3月31日止三個月\n人民幣千元\n現金流量表所述現金及現金等價物\n100")
+    item = evidence(source).model_copy(update={"page": 99})
+    result = FinancialEvidenceExtractor().extract(
+        [item], [], {source.chunk_id: source}
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.page == 99
+    assert result.metadata["mismatch_fields"] == ["page"]
+
+
+def test_evidence_chunk_id_mismatch_requires_review() -> None:
+    evidence_source = chunk("現金流量表所述現金及現金等價物\n100")
+    mapped_chunk = chunk(
+        "截至2024年3月31日止三個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n100",
+        chunk_id="different-chunk-id",
+    )
+    item = evidence(evidence_source)
+    result = FinancialEvidenceExtractor().extract(
+        [item], [], {item.chunk_id: mapped_chunk}
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.metadata["mismatch_fields"] == ["chunk_id"]
+    assert result.chunk_id == evidence_source.chunk_id
+
+
 def test_selects_best_complete_candidate_from_top_five() -> None:
     incomplete = chunk("人民幣千元\n現金流量表所述現金及現金等價物\n1", page=10)
     complete = chunk("截至3月31日止三個月\n2024年\n人民幣千元\n現金流量表所述現金及現金等價物\n2", page=20)
@@ -281,6 +324,89 @@ def test_older_period_with_different_value_is_not_a_conflict() -> None:
     ).cash_and_cash_equivalents
     assert result.status == ExtractionStatus.EXTRACTED
     assert result.period_end == date(2024, 3, 31)
+
+
+def test_newer_needs_review_candidate_prevents_silent_older_extraction() -> None:
+    older = chunk("截至2023年12月31日止年度\n人民幣千元\n現金流量表所述現金及現金等價物\n100", page=10)
+    newer = chunk("截至2024年3月31日止三個月\n人民幣\n現金流量表所述現金及現金等價物\n80", page=20)
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(older), evidence(newer, score=0.8)],
+        [],
+        {item.chunk_id: item for item in (older, newer)},
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.page == 20
+    assert result.period_end == date(2024, 3, 31)
+    assert result.normalized_value == Decimal("80")
+    assert "unit_missing_or_ambiguous" in result.issues
+    assert "newer_period_candidate_unresolved" in result.issues
+    assert result.metadata["selection_reason"] == "latest_period_candidate_requires_review"
+
+
+def test_same_value_different_currency_requires_review() -> None:
+    cny = chunk("截至2024年3月31日止三個月\n人民幣千元\n現金流量表所述現金及現金等價物\n100", page=10)
+    hkd = chunk("截至2024年3月31日止三個月\n港幣千元\n現金流量表所述現金及現金等價物\n100", page=20)
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(cny), evidence(hkd)], [], {item.chunk_id: item for item in (cny, hkd)}
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_currency_for_same_period" in result.issues
+    assert result.metadata["conflicting_candidates"][0]["conflict_fields"] == ["currency"]
+
+
+def test_same_value_different_unit_requires_review() -> None:
+    thousand = chunk("截至2024年3月31日止三個月\n人民幣千元\n現金流量表所述現金及現金等價物\n100", page=10)
+    million = chunk("截至2024年3月31日止三個月\n人民幣百萬元\n現金流量表所述現金及現金等價物\n100", page=20)
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(thousand), evidence(million)],
+        [],
+        {item.chunk_id: item for item in (thousand, million)},
+    ).cash_and_cash_equivalents
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_unit_for_same_period" in result.issues
+
+
+def test_same_date_different_period_months_requires_review() -> None:
+    three_months = chunk("截至2024年3月31日止三個月\n人民幣千元\n經營活動所用淨現金流量\n100", page=10)
+    six_months = chunk("截至2024年3月31日止六個月\n人民幣千元\n經營活動所用淨現金流量\n100", page=20)
+    result = FinancialEvidenceExtractor().extract(
+        [],
+        [evidence(three_months), evidence(six_months)],
+        {item.chunk_id: item for item in (three_months, six_months)},
+    ).operating_cash_flow
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_period_length_for_same_date" in result.issues
+
+
+@pytest.mark.parametrize(
+    "header",
+    [
+        "截至2023年12月31日止年度及截至2024年3月31日止三個月",
+        "year ended 31 December 2023 and three months ended 31 March 2024",
+    ],
+)
+def test_multiple_explicit_dates_on_one_line_keep_separate_period_lengths(header: str) -> None:
+    source = chunk(f"{header}\n人民幣千元\n經營活動所用淨現金流量\n120\n30")
+    result = extract_one("ocf", source)
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end == date(2024, 3, 31)
+    assert result.period_months == 3
+    assert result.normalized_value == Decimal("30")
+    assert result.metadata["period_candidates"] == [
+        {"period_end": "2023-12-31", "period_months": 12},
+        {"period_end": "2024-03-31", "period_months": 3},
+    ]
+
+
+def test_ambiguous_mixed_period_header_requires_review() -> None:
+    source = chunk(
+        "截至2023年12月31日及2024年3月31日止三個月\n"
+        "人民幣千元\n經營活動所用淨現金流量\n120\n30"
+    )
+    result = extract_one("ocf", source)
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.period_end is None
+    assert "mixed_period_header_ambiguous" in result.issues
 
 
 def test_output_records_source_traceability() -> None:

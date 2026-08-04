@@ -39,6 +39,7 @@ def _assert_metric(
         and metric.period_end.isoformat() == expected["period_end"],
         "evidence_id": metric.evidence_id in {item.evidence_id for item in candidates},
         "issues": metric.issues == [],
+        "extraction_method": metric.extraction_method == "page_text_rule",
     }
     if "period_months" in expected:
         checks["period_months"] = metric.period_months == expected["period_months"]
@@ -71,6 +72,7 @@ def _print_metric(metric: FinancialMetricValue) -> None:
     print(f"  currency={metric.currency} unit={metric.unit}")
     print(f"  period_end={metric.period_end} period_months={metric.period_months}")
     print(f"  context_pages={metric.context_pages}")
+    print(f"  extraction_method={metric.extraction_method}")
     print(f"  issues={metric.issues}")
 
 
