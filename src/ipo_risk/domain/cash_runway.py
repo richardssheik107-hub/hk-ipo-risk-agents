@@ -14,6 +14,7 @@ from ipo_risk.extraction import ExtractionStatus, FinancialExtractionResult, Fin
 from ipo_risk.schemas import (
     Calculation,
     Evidence,
+    EvidenceSourceType,
     RiskCategory,
     RiskItem,
     RiskLevel,
@@ -38,6 +39,18 @@ class CashRunwayBuildResult(BaseModel):
     risk_item: RiskItem | None = None
     issues: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+def cash_runway_risk_policy(runway_months: Decimal) -> tuple[RiskLevel, int]:
+    """Map an exact cash runway to the shared deterministic v1 policy."""
+
+    if runway_months < Decimal("3"):
+        return RiskLevel.CRITICAL, 90
+    if runway_months < Decimal("6"):
+        return RiskLevel.HIGH, 80
+    if runway_months < Decimal("12"):
+        return RiskLevel.MEDIUM, 60
+    return RiskLevel.LOW, 20
 
 
 class CashRunwayRiskBuilder:
@@ -126,7 +139,7 @@ class CashRunwayRiskBuilder:
             success=True,
             error=None,
         )
-        level, score = self._risk_policy(exact_runway)
+        level, score = cash_runway_risk_policy(exact_runway)
         risk_item = RiskItem(
             risk_id=str(
                 uuid5(
@@ -187,6 +200,10 @@ class CashRunwayRiskBuilder:
         cash: FinancialMetricValue, cash_flow: FinancialMetricValue
     ) -> list[str]:
         issues: list[str] = []
+        if cash.metric_name != "cash_and_cash_equivalents":
+            issues.append("cash_metric_name_invalid")
+        if cash_flow.metric_name != "operating_cash_flow":
+            issues.append("operating_cash_flow_metric_name_invalid")
         if cash.status != ExtractionStatus.EXTRACTED:
             issues.append("cash_status_not_extracted")
         if cash_flow.status != ExtractionStatus.EXTRACTED:
@@ -203,6 +220,12 @@ class CashRunwayRiskBuilder:
             issues.append("operating_cash_flow_value_missing")
         if cash_flow.period_months not in {3, 6, 9, 12}:
             issues.append("operating_cash_flow_period_months_invalid")
+        if cash.period_months is not None:
+            issues.append("cash_period_months_should_be_none")
+        if not cash.document_id or not cash_flow.document_id:
+            issues.append("source_document_missing")
+        elif cash.document_id != cash_flow.document_id:
+            issues.append("source_document_mismatch")
         if cash.currency is None or cash_flow.currency is None:
             issues.append("currency_missing")
         elif cash.currency != cash_flow.currency:
@@ -244,7 +267,12 @@ class CashRunwayRiskBuilder:
             if mismatch_fields:
                 issues.extend(f"{label}_evidence_{field}_mismatch" for field in mismatch_fields)
                 continue
+            if evidence.source_type != EvidenceSourceType.PROSPECTUS:
+                issues.append("evidence_source_type_invalid")
+                continue
             resolved.append(evidence)
+        if len(resolved) == 2 and resolved[0].document_id != resolved[1].document_id:
+            issues.append("evidence_document_mismatch")
         return resolved, issues
 
     @staticmethod
@@ -255,13 +283,3 @@ class CashRunwayRiskBuilder:
             return value if isinstance(value, Decimal) else Decimal(str(value))
         except (InvalidOperation, ValueError):
             return None
-
-    @staticmethod
-    def _risk_policy(runway_months: Decimal) -> tuple[RiskLevel, int]:
-        if runway_months < Decimal("3"):
-            return RiskLevel.CRITICAL, 90
-        if runway_months < Decimal("6"):
-            return RiskLevel.HIGH, 80
-        if runway_months < Decimal("12"):
-            return RiskLevel.MEDIUM, 60
-        return RiskLevel.LOW, 20

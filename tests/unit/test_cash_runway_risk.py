@@ -10,7 +10,13 @@ from ipo_risk.domain.cash_runway import (
     CashRunwayRiskBuilder,
 )
 from ipo_risk.extraction import ExtractionStatus, FinancialExtractionResult, FinancialMetricValue
-from ipo_risk.schemas import Evidence, RiskLevel, SkillResult, VerificationStatus
+from ipo_risk.schemas import (
+    Evidence,
+    EvidenceSourceType,
+    RiskLevel,
+    SkillResult,
+    VerificationStatus,
+)
 
 
 def metric(
@@ -256,3 +262,60 @@ def test_builder_has_no_company_page_or_fixture_dependency() -> None:
         evidence,
     )
     assert result.status == CashRunwayBuildStatus.BUILT
+
+
+def test_rejects_swapped_metric_names() -> None:
+    extraction, evidence = inputs()
+    swapped = extraction.model_copy(
+        update={
+            "cash_and_cash_equivalents": extraction.cash_and_cash_equivalents.model_copy(
+                update={"metric_name": "operating_cash_flow"}
+            ),
+            "operating_cash_flow": extraction.operating_cash_flow.model_copy(
+                update={"metric_name": "cash_and_cash_equivalents"}
+            ),
+        }
+    )
+    result = CashRunwayRiskBuilder().build(swapped, evidence)
+    assert result.status == CashRunwayBuildStatus.NEEDS_REVIEW
+    assert {"cash_metric_name_invalid", "operating_cash_flow_metric_name_invalid"}.issubset(
+        result.issues
+    )
+
+
+def test_rejects_cross_document_metrics() -> None:
+    extraction, evidence = inputs()
+    cash_flow = extraction.operating_cash_flow.model_copy(update={"document_id": "other-doc"})
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(update={"operating_cash_flow": cash_flow}), evidence
+    )
+    assert "source_document_mismatch" in result.issues
+
+
+def test_rejects_cash_with_duration() -> None:
+    extraction, evidence = inputs()
+    cash = extraction.cash_and_cash_equivalents.model_copy(update={"period_months": 3})
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(update={"cash_and_cash_equivalents": cash}), evidence
+    )
+    assert "cash_period_months_should_be_none" in result.issues
+
+
+def test_rejects_non_prospectus_evidence() -> None:
+    extraction, evidence = inputs()
+    evidence["cash-e"] = evidence["cash-e"].model_copy(
+        update={"source_type": EvidenceSourceType.MARKET_DATA}
+    )
+    result = CashRunwayRiskBuilder().build(extraction, evidence)
+    assert "evidence_source_type_invalid" in result.issues
+
+
+def test_rejects_cross_document_evidence() -> None:
+    extraction, evidence = inputs()
+    cash_flow = extraction.operating_cash_flow.model_copy(update={"document_id": "other-doc"})
+    evidence["ocf-e"] = evidence["ocf-e"].model_copy(update={"document_id": "other-doc"})
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(update={"operating_cash_flow": cash_flow}), evidence
+    )
+    assert "source_document_mismatch" in result.issues
+    assert "evidence_document_mismatch" in result.issues

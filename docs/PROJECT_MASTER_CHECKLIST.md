@@ -4,7 +4,7 @@
 > 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
 > 当前版本：`v0.2.0-real-document-slice`
 > 当前状态：进行中
-> 当前阶段：A线 A5——Verifier集成与规则评分待启动；B线建立赛事数据清单
+> 当前阶段：A线 A5——本地开发、自动测试、2410.HK真实核验及人工diff审查完成，待PR；B线建立赛事数据清单
 > 当前PR：无A线未合并PR
 > 最近完成：A4现金跑道Calculation与RiskItem通过176项测试、2410.HK真实验收及人工diff审核，并提交到`main`
 > 最后更新：2026-08-04
@@ -42,7 +42,8 @@
 > A2.5保留为泛化闸门失败基线；A2.6定向整改及复测已通过。
 > A3已完成开发、审查修订、真实案例验收并合并到`main`。
 > A4现金跑道Calculation与RiskItem已完成开发、自动测试、真实案例验收及人工diff审核，并进入`main`。
-> A5尚未启动，应从最新`main`创建独立分支后开始。
+> A5现金跑道核验与可信规则评分已完成本地开发、真实链路验收及人工diff审查，当前待PR。
+> A6尚未开始。
 
 ### B线：赛事数据治理
 
@@ -751,7 +752,7 @@ runway >= 12          → low / 20
 
 ## A5：Verifier与规则评分
 
-**状态：等待A4。**
+**状态：本地开发、自动测试、2410.HK真实核验链路及人工diff审查完成，待PR。**
 
 Verifier检查：
 
@@ -770,6 +771,70 @@ Predictor要求：
 - 展示可用和缺失特征；
 - 说明降级模式；
 - 说明风险贡献。
+
+### 本地实现与验收记录
+
+修改文件：
+
+- `src/ipo_risk/domain/cash_runway.py`
+- `src/ipo_risk/agents/rules.py`
+- `src/ipo_risk/predictors/rule_based.py`
+- `tests/unit/test_cash_runway_risk.py`
+- `docs/PROJECT_MASTER_CHECKLIST.md`
+
+新增文件：
+
+- `src/ipo_risk/domain/cash_runway_verifier.py`
+- `tests/unit/test_cash_runway_verifier.py`
+- `tests/unit/test_rule_based_predictor_verified_only.py`
+- `tests/contract/test_cash_runway_verifier_contract.py`
+- `tests/integration/test_cash_runway_verification_pipeline.py`
+- `scripts/check_real_verified_cash_runway.py`
+
+Verifier检查项：
+
+- A4 Builder新增指标身份、同文档、现金时点值和招股书Evidence来源校验；
+- CashRunwayRiskVerifier核对风险身份、Evidence顺序/唯一性/身份/原文数字、Calculation封套及全部输入；
+- 通过`Decimal`拒绝NaN、Infinity、bool、空字符串和不可解析值；
+- 重新调用`cash_runway_from_operating_cash_flow`核对精确跑道、2位展示值和月均现金消耗；
+- Builder与Verifier共用`cash_runway_risk_policy`，不复制风险阈值；
+- 核对规则等级、分数、非概率metadata和保守结论；
+- 完全通过才更新为`verified`；Evidence缺失保持`pending`，冲突或篡改进入`needs_review`；
+- RuleVerifier不再用空外部Evidence覆盖cash_runway内嵌Evidence，外部冲突会被发现；其他Mock风险保持兼容。
+- 人工审查发现并修复同身份外部Evidence原文冲突仍可能通过的问题；金额核验改用确认后的Evidence文本。
+
+Predictor可信过滤：
+
+- 仅`verification_status=verified`的RiskItem参与分数和top_factors；
+- pending、needs_review和rejected均被排除并记录Risk ID；
+- `model_version=rule_v2`，`probabilities={}`，明确规则分不是校准概率；
+- 记录可用/缺失特征、降级模式、市场调整、政策版本及实际使用的verified风险；
+- 无verified风险且无有效市场数据时输出`0 / low`并进入degraded模式。
+
+2410.HK真实A1→A5验收：
+
+- Evidence页码：现金563、经营现金流562；
+- 现金跑道：`2.76`个月；
+- cash_runway：`critical / 90`；
+- `verification_status=verified`，verified=1，pending=0；
+- Predictor：`90 / critical`，`probabilities={}`，`score_is_probability=false`；
+- top_factors只包含已核验cash_runway风险；市场情绪特征明确记录为缺失。
+
+验证结果：
+
+- A5开始前main基线：`176 passed`；
+- A5新增测试：67项；
+- 最终完整测试：`243 passed`；
+- Mock健康检查、compileall、diff-check、Retriever真实回归、A3、A4及A5真实验收均通过；
+- 未修改公共Schema、Workflow图、Parser、Retriever、Extractor、Service、Container、配置或UI。
+
+已知限制与A6输入：
+
+- 当前Verifier只对cash_runway执行完整重算，其他风险仍使用通用规则核验；
+- Predictor是确定性规则评分，不是统计模型或真实概率；
+- 市场调整仍为MVP规则，未做统计校准；
+- 尚未接入真实Financial Agent、Workflow真实现金跑道节点、Service或Streamlit；
+- A6可消费已核验cash_runway RiskItem、verified-only Predictor和完整核验诊断。
 
 ---
 
@@ -1228,6 +1293,7 @@ v0.3优先风险类型：
 | 2026-08-04 | A2.6 Retriever整改 | 已完成，闸门通过 | 原11份两项均100%；新增6份两项均100%；2410.HK保持第1 | A3财务抽取 |
 | 2026-08-04 | A3 财务抽取 | 已完成并合并到`main` | PR #16 / `fa4bf1bc`；134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR CI与人工审查通过 | 从最新`main`创建独立分支启动A4 |
 | 2026-08-04 | A4 现金跑道风险 | 已完成并提交到`main` | 176 passed；2410.HK现金跑道2.76个月；critical/90；pending；Evidence第563、562页；人工diff审核通过 | 从最新`main`创建独立分支启动A5 |
+| 2026-08-04 | A5 Verifier与规则评分 | 本地开发、真实验收及人工diff审查完成，待PR | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | 创建并审核PR |
 
 ---
 
@@ -1263,7 +1329,8 @@ A线现在：
 - Retriever泛化阻塞已解除；
 - A3确定性财务数值提取已通过134项自动测试、2410.HK真实案例验收及人工审查，并由PR #16合并到`main`；
 - A4现金跑道Calculation与RiskItem已完成开发、176项自动测试、2410.HK真实验收和人工diff审核，并进入`main`；
-- A5尚未开始。
+- A5现金跑道核验与可信规则评分已完成本地开发、243项自动测试、2410.HK A1→A5真实验收及人工diff审查，当前待PR；
+- A6尚未开始。
 
 B线现在：
 - 建立565份招股书manifest；
