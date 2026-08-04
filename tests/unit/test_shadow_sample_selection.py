@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 import sys
 from zipfile import ZipFile
@@ -13,6 +14,7 @@ from scripts.run_shadow_tests import ShadowCase, load_selection, run_batch, vali
 
 
 SELECTION_PATH = Path("data/catalog/shadow_sample_24.csv")
+MANUAL_REVIEW_PATH = Path("data/catalog/shadow_manual_review_12.csv")
 
 
 def test_repository_shadow_selection_contract() -> None:
@@ -38,6 +40,33 @@ def test_selection_rejects_blind_test_case() -> None:
 
     with pytest.raises(ValueError, match="2025 blind-test"):
         validate_selection([invalid, *cases[1:]])
+
+
+def test_manual_review_records_gate_result() -> None:
+    with MANUAL_REVIEW_PATH.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+
+    assert len(rows) == 12
+    assert {row["case_id"] for row in rows} == {
+        case.case_id for case in load_selection(SELECTION_PATH) if case.manual_review
+    }
+
+    cash_applicable = [row for row in rows if row["cash_applicable"] == "true"]
+    operating_applicable = [
+        row for row in rows if row["operating_cash_flow_applicable"] == "true"
+    ]
+    assert len(cash_applicable) == 11
+    assert len(operating_applicable) == 11
+    assert sum(row["cash_hit_top5"] == "true" for row in cash_applicable) == 4
+    assert sum(
+        row["operating_cash_flow_hit_top5"] == "true" for row in operating_applicable
+    ) == 7
+    assert all(row["evidence_text_is_source"] == "true" for row in rows)
+    assert not any(row["serious_wrong_page"] == "true" for row in rows)
+
+    prudential = next(row for row in rows if row["stock_code_wind"] == "2378.HK")
+    assert prudential["cash_hit_top5"] == "n/a"
+    assert prudential["operating_cash_flow_hit_top5"] == "n/a"
 
 
 def test_batch_isolates_failure_and_retrieves_real_text(tmp_path: Path) -> None:

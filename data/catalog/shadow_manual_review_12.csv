@@ -1,0 +1,13 @@
+case_id,stock_code_wind,company_short_name,review_date,review_method,cash_applicable,cash_ground_truth_pages,cash_top5_pages,cash_hit_top5,cash_best_rank,operating_cash_flow_applicable,operating_cash_flow_ground_truth_pages,operating_cash_flow_top5_pages,operating_cash_flow_hit_top5,operating_cash_flow_best_rank,evidence_text_is_source,serious_wrong_page,notes
+shadow_2020_01167,1167.HK,加科思－Ｂ,2026-08-04,Codex-assisted visual PDF review,true,426,20|453|301|312|313,false,,true,425,425|20|317|318|321,true,1,true,false,现金结果偏向摘要及附注；经营现金流正式主表命中
+shadow_2020_06688,6688.HK,螞蟻集團,2026-08-04,Codex-assisted visual PDF review,true,451,560|27|356|357|365,false,,true,449,366,false,,true,false,正式现金流量表跨448至451页；两项主表页均未进入Top 5
+shadow_2020_08489,8489.HK,裕程物流,2026-08-04,Codex-assisted visual PDF review,true,309,22|245|309|222|225,true,3,true,308,22|223|222,false,,true,false,现金正式主表命中；经营现金流结果偏向摘要页
+shadow_2021_00013,13.HK,和黃醫藥,2026-08-04,Codex-assisted visual PDF review,true,510|576,524|578|37|48|355,false,,true,510|576,510|557|27|28|37,true,1,true,false,510为年度正式主表且576为最新中期正式主表；现金查询仅命中附注或摘要
+shadow_2021_02378,2378.HK,保誠,2026-08-04,Codex-assisted visual PDF review,false,,96,n/a,,false,,,n/a,,true,false,股份发售文件不含完整正式现金流量表；第96页为相关财务资产表但不是现金流量主表
+shadow_2022_01244,1244.HK,3D MEDICINES-B,2026-08-04,Codex-assisted visual PDF review,true,665,665|678|728|729|28,true,1,true,664,29|546|664|713|30,true,3,true,false,两项正式主表页均进入Top 5
+shadow_2022_01947,1947.HK,美皓集團,2026-08-04,Codex-assisted visual PDF review,true,472,472|506|26|380|383,true,1,true,470,401|470|381,true,2,true,false,两项正式主表页均进入Top 5
+shadow_2022_04801,4801.HK,INTERRA ACQ Z25,2026-08-04,Codex-assisted visual PDF review,true,212,168|212|217|13,true,2,true,212,,false,,true,false,简明现金流量主表位于第212页；经营现金流查询无结果
+shadow_2023_01541,1541.HK,宜明昂科－Ｂ,2026-08-04,Codex-assisted visual PDF review,true,466,30|29|395|397|403,false,,true,465,30|465|524|403|75,true,2,true,false,经营现金流正式主表命中；现金结果偏向摘要和附注
+shadow_2023_02503,2503.HK,中深建業,2026-08-04,Codex-assisted visual PDF review,true,402,17|18|270|333|334,false,,true,402,18|42|43|335|12,false,,true,false,正式主表两项同在第402页但均未进入Top 5
+shadow_2024_00300,300.HK,美的集團,2026-08-04,Codex-assisted visual PDF review,true,465,28|271|276|279|282,false,,true,464,464|553|592|618|303,true,1,true,false,经营现金流正式主表命中；现金正式主表未命中
+shadow_2024_02228,2228.HK,QUANTUMPH-P,2026-08-04,Codex-assisted visual PDF review,true,675,39|40|41|42|581,false,,true,675,675|40|41|582|583,true,1,true,false,两项正式主表同在第675页；仅经营现金流查询命中
