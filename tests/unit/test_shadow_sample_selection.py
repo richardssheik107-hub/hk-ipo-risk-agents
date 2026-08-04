@@ -15,6 +15,7 @@ from scripts.run_shadow_tests import ShadowCase, load_selection, run_batch, vali
 
 SELECTION_PATH = Path("data/catalog/shadow_sample_24.csv")
 MANUAL_REVIEW_PATH = Path("data/catalog/shadow_manual_review_12.csv")
+A2_6_EVALUATION_PATH = Path("data/catalog/shadow_a2_6_evaluation.csv")
 
 
 def test_repository_shadow_selection_contract() -> None:
@@ -69,6 +70,24 @@ def test_manual_review_records_gate_result() -> None:
     assert prudential["operating_cash_flow_hit_top5"] == "n/a"
 
 
+def test_a2_6_evaluation_passes_diagnostic_and_validation_gates() -> None:
+    with A2_6_EVALUATION_PATH.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+
+    assert len(rows) == 18
+    assert sum(row["evaluation_set"] == "diagnostic" for row in rows) == 12
+    assert sum(row["evaluation_set"] == "validation" for row in rows) == 6
+    assert sum(row["review_status"] == "not_applicable" for row in rows) == 1
+
+    for evaluation_set, expected_applicable in (("diagnostic", 11), ("validation", 6)):
+        subset = [row for row in rows if row["evaluation_set"] == evaluation_set]
+        for metric in ("cash", "operating_cash_flow"):
+            applicable = [row for row in subset if row[f"{metric}_applicable"] == "true"]
+            assert len(applicable) == expected_applicable
+            assert all(row[f"{metric}_hit_top5"] == "true" for row in applicable)
+            assert all(1 <= int(row[f"{metric}_best_rank"]) <= 5 for row in applicable)
+
+
 def test_batch_isolates_failure_and_retrieves_real_text(tmp_path: Path) -> None:
     valid = ShadowCase(
         case_id="shadow_valid",
@@ -86,7 +105,11 @@ def test_batch_isolates_failure_and_retrieves_real_text(tmp_path: Path) -> None:
     pdf_path = tmp_path / "source.pdf"
     document = fitz.open()
     page = document.new_page()
-    page.insert_text((72, 72), "cash and cash equivalents 100 net cash used in operating activities (20)")
+    page.insert_text(
+        (72, 72),
+        "cash and cash equivalents at end of period 100 "
+        "net cash used in operating activities (20)",
+    )
     document.save(pdf_path)
     document.close()
     with ZipFile(tmp_path / valid.archive_filename, "w") as archive:
