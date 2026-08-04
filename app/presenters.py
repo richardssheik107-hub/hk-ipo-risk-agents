@@ -11,13 +11,18 @@ from typing import Iterator
 from ipo_risk.schemas import IPOAnalysisRequest, IPOAnalysisResult
 
 
+MAX_PDF_UPLOAD_BYTES = 200 * 1024 * 1024
+
+
 def validate_pdf_upload(filename: str, content: bytes) -> None:
-    """Reject empty, mislabelled, or non-PDF uploads before analysis."""
+    """Reject empty, oversized, mislabelled, or non-PDF uploads."""
 
     if Path(filename).suffix.lower() != ".pdf":
         raise ValueError("Only .pdf files are accepted.")
     if not content:
         raise ValueError("The uploaded PDF is empty.")
+    if len(content) > MAX_PDF_UPLOAD_BYTES:
+        raise ValueError("The uploaded PDF exceeds the 200 MB size limit.")
     if not content.startswith(b"%PDF-"):
         raise ValueError("The uploaded file does not have a valid PDF header.")
 
