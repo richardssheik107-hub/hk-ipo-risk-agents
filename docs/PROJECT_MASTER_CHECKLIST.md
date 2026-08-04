@@ -4,7 +4,7 @@
 > 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
 > 当前版本：`v0.2.0-real-document-slice`
 > 当前状态：进行中
-> 当前阶段：A线 A2.6——Retriever正式报表定位整改完成并通过复测，A3待启动；B线建立赛事数据清单
+> 当前阶段：A线 A3——本地开发、审查修订及真实案例验收完成，待PR；B线建立赛事数据清单
 > 当前PR：无A线未合并PR
 > 最近完成：PR #15已合并到`main`，提交`e1cd9cb`
 > 最后更新：2026-08-04
@@ -39,7 +39,8 @@
 ### A线：核心系统
 
 > A2.5保留为泛化闸门失败基线；A2.6定向整改及复测已通过。
-> 下一棒可进入A3财务数值提取，但不得扩大到现金跑道、Verifier或UI。
+> A3本地开发、审查修订及真实案例验收已完成。
+> 当前只允许完成PR前修订、创建PR、CI和人工审查；A3合并main前不得开始A4。
 
 ### B线：赛事数据治理
 
@@ -528,7 +529,7 @@ R-06 重复候选过多
 
 ## A3：财务数值提取与归一化
 
-**状态：A2.6闸门已通过，等待作为下一棒单独启动。**
+**状态：A3本地开发、审查修订及真实案例验收完成，待PR。**
 
 ### 唯一任务
 
@@ -585,14 +586,56 @@ period_end = 2024-03-31
 
 ### 合并条件
 
-- [ ] 两个系统值与金标准一致
-- [ ] 括号负数正确
-- [ ] 单位、币种和期间正确
-- [ ] 未知信息不猜测
-- [ ] 多候选选择可解释
-- [ ] 引用真实evidence_id
-- [ ] Mock回归通过
+- [x] 两个系统值与金标准一致
+- [x] 括号负数正确
+- [x] 单位、币种和期间正确
+- [x] 未知信息不猜测
+- [x] 多候选选择可解释
+- [x] 引用真实evidence_id
+- [x] Mock回归通过
 - [ ] PR合并
+
+### 本地实现与验收记录
+
+新增文件：
+
+- `src/ipo_risk/extraction/__init__.py`
+- `src/ipo_risk/extraction/models.py`
+- `src/ipo_risk/extraction/financial.py`
+- `tests/unit/test_financial_extraction.py`
+- `tests/contract/test_financial_extraction_contract.py`
+- `scripts/check_real_financial_extraction.py`
+
+验收结果：
+
+- 自动测试：`134 passed`，其中A3新增71个测试用例，原63项回归继续通过；
+- 现金及现金等价物：第563页，`77,208`，归一化为`77208 CNY thousand`，期间为`2024-03-31`；
+- 经营活动现金流：第562页，`(83,918)`，归一化为`-83918 CNY thousand`，期间为截至`2024-03-31`止3个月；
+- 两项均保留真实`evidence_id`、`document_id`、`chunk_id`和物理页码；
+- 未修改公共Schema、Agent、Workflow、Container、配置、Parser、Retriever或现有Skill。
+
+人工审查加固：
+
+- 明确正确`query_intent`优先，错误intent不得直接输出`extracted`；
+- 支持英文分栏标题中的`31 March`日月顺序，无法识别时不再默认12月31日；
+- 禁止从不同币种的相邻页面拼接单位，并记录参与复核的上下文页面；
+- 使用重复年份作为期间组边界证据，无明确边界时返回`needs_review`；
+- 冲突时保留完整候选审计列表；
+- 真实验收脚本强制检查Evidence ID、原文归属、上下文距离和空issues。
+
+PR前审查修订：
+
+- 同一查询意图下优先最新可识别期间；较新候选尚有歧义时返回`needs_review`，不静默回退至较旧完整数据；
+- 相同报告日按金额、币种、单位和期间月数比较完整财务事实，并在metadata列明冲突字段；
+- 同一行的中英文混合期间标题按分段分别解析，无法证明期间对应关系时返回`mixed_period_header_ambiguous`；
+- 显式核对Evidence与Chunk的document、chunk和page身份，不一致时保留双方身份并返回`evidence_chunk_identity_mismatch`；
+- 增加`extraction_method`，区分`page_text_rule`、`page_text_with_adjacent_context`和`not_applicable`。
+
+已知限制与下一棒输入：
+
+- 金标准仍为`provisional_gold`，第二人工复核尚未完成；
+- 当前只处理文本型正式报表及有限相邻页上下文，不处理扫描件、OCR或复杂合并单元格；
+- A4可以消费结构化数值、币种、源单位、期间和Evidence追溯字段；本棒未生成Calculation、RiskItem或现金跑道。
 
 ---
 
@@ -1106,7 +1149,7 @@ v0.3优先风险类型：
 |  | B1 manifest与质量报告 | 未开始 |  | 支持A2.5选样 |
 | 2026-08-04 | A2.5 影子测试 | 人工核对完成，闸门未通过 | 24/24 Parser完成；12份核对中11份适用；现金4/11（36.36%）；经营现金流7/11（63.64%） | 整改Retriever正式主表排序并复测 |
 | 2026-08-04 | A2.6 Retriever整改 | 已完成，闸门通过 | 原11份两项均100%；新增6份两项均100%；2410.HK保持第1 | A3财务抽取 |
-|  | A3 财务抽取 | 未开始 | A2.6已解除Retriever阻塞 | 作为下一棒单独启动 |
+| 2026-08-04 | A3 财务抽取 | 本地开发、审查修订及真实案例验收完成，待PR | 134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR前审查反例通过 | 创建并审核PR |
 
 ---
 
@@ -1139,7 +1182,8 @@ A线现在：
 - A2.5基线为现金36.36%、经营现金流63.64%，真实记录为闸门失败；
 - A2.6整改后原11份及新增6份验证集两项均为100%；
 - 2410.HK两个目标页继续保持第1名；
-- Retriever泛化阻塞已解除，A3等待作为独立下一棒启动。
+- Retriever泛化阻塞已解除；
+- A3确定性财务数值提取已完成审查修订，并通过134项自动测试、2410.HK真实案例验收及PR前人工反例审查，当前待PR。
 
 B线现在：
 - 建立565份招股书manifest；
