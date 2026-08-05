@@ -1,13 +1,34 @@
 from collections import defaultdict
+
+from ipo_risk.domain.cash_runway_verifier import (
+    CashRunwayRiskVerifier,
+    CashRunwayVerificationStatus,
+)
 from ipo_risk.domain.risk_codes import requirement_for
 from ipo_risk.schemas import Evidence, RiskItem, SupervisionResult, VerificationResult, VerificationStatus
 
 class RuleVerifier:
     name = "verifier"
+    def __init__(self, cash_runway_verifier: CashRunwayRiskVerifier | None = None):
+        self.cash_runway_verifier = cash_runway_verifier or CashRunwayRiskVerifier()
+
     def verify(self, risks: list[RiskItem], evidence_by_code: dict[str, list[Evidence]]) -> VerificationResult:
         verified, pending, rejected = [], [], []
         for risk in risks:
-            item = risk.model_copy(update={"evidence": evidence_by_code.get(risk.risk_code, [])})
+            external_evidence = evidence_by_code.get(risk.risk_code, [])
+            if risk.risk_code == "cash_runway":
+                available = {item.evidence_id: item for item in risk.evidence}
+                for item in external_evidence:
+                    available[item.evidence_id] = item
+                outcome = self.cash_runway_verifier.verify(risk, available)
+                if outcome.status == CashRunwayVerificationStatus.VERIFIED:
+                    verified.append(outcome.verified_risk)
+                else:
+                    pending.append(outcome.reviewed_risk)
+                continue
+
+            selected_evidence = external_evidence or risk.evidence
+            item = risk.model_copy(update={"evidence": selected_evidence})
             requirement = requirement_for(item.risk_code)
             evidence_ids = {evidence.evidence_id for evidence in item.evidence}
             calculation_ok = item.calculation and item.calculation.success and set(item.calculation.evidence_ids).issubset(evidence_ids)

@@ -1,56 +1,449 @@
+"""LangGraph workflow for both mock and v0.2 real-document modes."""
+
+from __future__ import annotations
+
 from datetime import datetime, timezone
+from typing import Any
+
 from langgraph.graph import END, START, StateGraph
-from ipo_risk.schemas import AgentLog, AnalysisError, DocumentParseRequest, IPOProfile, LogStatus, ReportContext, TaskStatus, VerificationStatus
+
+from ipo_risk.schemas import (
+    AgentLog,
+    AnalysisError,
+    DocumentParseRequest,
+    IPOProfile,
+    LogStatus,
+    ReportContext,
+    VerificationStatus,
+)
 from ipo_risk.workflows.state import WorkflowState
 
+
 class MVPWorkflow:
-    def __init__(self, parser, retriever, agents, verifier, supervisor, predictor, reporter, market_provider, ipo_provider):
-        self.parser, self.retriever, self.agents, self.verifier = parser, retriever, agents, verifier
+    def __init__(
+        self,
+        parser,
+        retriever,
+        agents,
+        verifier,
+        supervisor,
+        predictor,
+        reporter,
+        market_provider,
+        ipo_provider,
+    ):
+        self.parser, self.retriever, self.agents, self.verifier = (
+            parser,
+            retriever,
+            agents,
+            verifier,
+        )
         self.supervisor, self.predictor, self.reporter = supervisor, predictor, reporter
         self.market_provider, self.ipo_provider = market_provider, ipo_provider
         graph = StateGraph(WorkflowState)
-        nodes = [("load_ipo_profile", self.load_profile), ("load_market_snapshot", self.load_market), ("document", self.document), *[(agent.name, self.agent_node(agent)) for agent in agents], ("verifier", self.verify), ("supervisor", self.supervise), ("predictor", self.predict), ("report", self.report)]
-        for name, node in nodes: graph.add_node(name, node)
-        graph.add_edge(START, "load_ipo_profile"); previous = "load_ipo_profile"
-        for name, _ in nodes[1:]: graph.add_edge(previous, name); previous = name
-        graph.add_edge(previous, END); self.graph = graph.compile()
-    def _log(self, state, name, action, status=LogStatus.SUCCESS, text="", error=None):
-        return AgentLog(task_id=state["request"].request_id, step=len(state.get("agent_logs", [])) + 1, agent_name=name, action=action, status=status, output_summary=text, error=error, finished_at=datetime.now(timezone.utc))
-    def _error(self, component, exc): return AnalysisError(stage=component, component=component, code="component_failure", message=str(exc))
+        nodes = [
+            ("load_ipo_profile", self.load_profile),
+            ("load_market_snapshot", self.load_market),
+            ("document", self.document),
+            *[(agent.name, self.agent_node(agent)) for agent in agents],
+            ("verifier", self.verify),
+            ("supervisor", self.supervise),
+            ("predictor", self.predict),
+            ("report", self.report),
+        ]
+        for name, node in nodes:
+            graph.add_node(name, node)
+        graph.add_edge(START, "load_ipo_profile")
+        previous = "load_ipo_profile"
+        for name, _ in nodes[1:]:
+            graph.add_edge(previous, name)
+            previous = name
+        graph.add_edge(previous, END)
+        self.graph = graph.compile()
+
+    def _log(
+        self,
+        state,
+        name,
+        action,
+        status=LogStatus.SUCCESS,
+        text="",
+        error=None,
+        metadata: dict[str, Any] | None = None,
+    ):
+        return AgentLog(
+            task_id=state["request"].request_id,
+            step=len(state.get("agent_logs", [])) + 1,
+            agent_name=name,
+            action=action,
+            status=status,
+            output_summary=text,
+            error=error,
+            metadata=metadata or {},
+            finished_at=datetime.now(timezone.utc),
+        )
+
+    @staticmethod
+    def _safe_error(error: AnalysisError) -> AnalysisError:
+        context = {
+            key: value
+            for key, value in error.context.items()
+            if key not in {"path", "prospectus_path"}
+        }
+        return error.model_copy(update={"context": context})
+
+    def _error(self, component, exc):
+        embedded = getattr(exc, "error", None)
+        if isinstance(embedded, AnalysisError):
+            return self._safe_error(embedded)
+        return AnalysisError(
+            stage=component,
+            component=component,
+            code="component_failure",
+            message=str(exc),
+        )
+
     def _safe(self, state, component, action, operation, fallback):
         try:
             outcome = operation()
-            return {**outcome, "agent_logs": [self._log(state, component, action, text=outcome.get("_summary", ""))]}
+            summary = outcome.pop("_summary", "")
+            metadata = outcome.pop("_log_metadata", {})
+            return {
+                **outcome,
+                "agent_logs": [
+                    self._log(state, component, action, text=summary, metadata=metadata)
+                ],
+            }
         except Exception as exc:
             error = self._error(component, exc)
-            return {**fallback, "errors": [error], "agent_logs": [self._log(state, component, action, LogStatus.FAILED, str(exc), error)]}
+            return {
+                **fallback,
+                "errors": [error],
+                "agent_logs": [
+                    self._log(
+                        state,
+                        component,
+                        action,
+                        LogStatus.FAILED,
+                        str(exc),
+                        error,
+                    )
+                ],
+            }
+
     def load_profile(self, state):
         request = state["request"]
-        return self._safe(state, "ipo_data_provider", "load_ipo_profile", lambda: {"profile": self.ipo_provider.get_profile(request.company_name, request.stock_code).model_copy(update={"listing_date": request.listing_date}), "_summary": "IPO profile loaded"}, {"profile": IPOProfile(company_name=request.company_name, stock_code=request.stock_code, listing_date=request.listing_date)})
+
+        def operation():
+            profile = self.ipo_provider.get_profile(
+                request.company_name, request.stock_code
+            ).model_copy(update={"listing_date": request.listing_date})
+            return {
+                "profile": profile,
+                "_summary": "IPO profile loaded",
+                "_log_metadata": {"source": profile.metadata.get("source", "mock")},
+            }
+
+        return self._safe(
+            state,
+            "ipo_data_provider",
+            "load_ipo_profile",
+            operation,
+            {
+                "profile": IPOProfile(
+                    company_name=request.company_name,
+                    stock_code=request.stock_code,
+                    listing_date=request.listing_date,
+                )
+            },
+        )
+
     def load_market(self, state):
-        return self._safe(state, "market_data_provider", "load_market_snapshot", lambda: {"market": state["request"].market_snapshot or self.market_provider.get_snapshot(state["profile"]), "_summary": "market snapshot loaded"}, {"market": None})
+        def operation():
+            market = state["request"].market_snapshot or self.market_provider.get_snapshot(
+                state["profile"]
+            )
+            return {
+                "market": market,
+                "_summary": "market snapshot loaded",
+                "_log_metadata": {
+                    "source": market.source,
+                    "available": market.metadata.get(
+                        "available", market.sentiment_score is not None
+                    ),
+                    "reason": market.metadata.get("reason"),
+                },
+            }
+
+        return self._safe(
+            state,
+            "market_data_provider",
+            "load_market_snapshot",
+            operation,
+            {"market": None},
+        )
+
     def document(self, state):
-        return self._safe(state, "document_parser", "parse", lambda: {"chunks": self.parser.parse(DocumentParseRequest(document_id=state["request"].request_id, prospectus_path=state["request"].prospectus_path)), "_summary": "document parsed"}, {"chunks": []})
+        def operation():
+            chunks = self.parser.parse(
+                DocumentParseRequest(
+                    document_id=state["request"].request_id,
+                    prospectus_path=state["request"].prospectus_path,
+                )
+            )
+            parser_errors = [
+                self._safe_error(error)
+                for error in getattr(self.parser, "last_errors", [])
+            ]
+            serialized_errors = [
+                error.model_dump(mode="json") for error in parser_errors
+            ]
+            metadata = {
+                "parser_name": getattr(self.parser, "name", type(self.parser).__name__),
+                "parsed_chunk_count": len(chunks),
+                "parser_error_count": len(parser_errors),
+                "parser_errors": serialized_errors,
+            }
+            return {
+                "chunks": chunks,
+                "document_metadata": metadata,
+                "errors": parser_errors,
+                "_summary": f"document parsed into {len(chunks)} chunks",
+                "_log_metadata": metadata,
+            }
+
+        return self._safe(
+            state,
+            "document_parser",
+            "parse",
+            operation,
+            {
+                "chunks": [],
+                "document_metadata": {
+                    "parser_name": getattr(
+                        self.parser, "name", type(self.parser).__name__
+                    ),
+                    "parsed_chunk_count": 0,
+                    "parser_error_count": 1,
+                    "parser_errors": [],
+                },
+            },
+        )
+
+    @staticmethod
+    def _diagnostics(agent) -> dict[str, Any]:
+        diagnostics = getattr(agent, "last_diagnostics", None)
+        if diagnostics is None:
+            return {}
+        if hasattr(diagnostics, "model_dump"):
+            return diagnostics.model_dump(mode="json")
+        return dict(diagnostics) if isinstance(diagnostics, dict) else {"value": str(diagnostics)}
+
     def agent_node(self, agent):
-        return lambda state: self._safe(state, agent.name, "analyze", lambda: {"candidates": agent.analyze(state["profile"], state.get("chunks", []), state.get("market")), "_summary": "agent completed"}, {"candidates": []})
-    def _pending(self, risks):
-        return [risk.model_copy(update={"evidence": [], "verification_status": VerificationStatus.PENDING, "verification_notes": "Verification unavailable; human review required."}) for risk in risks]
+        def node(state):
+            try:
+                candidates = agent.analyze(
+                    state["profile"], state.get("chunks", []), state.get("market")
+                )
+                diagnostics = self._diagnostics(agent)
+                return {
+                    "candidates": candidates,
+                    "component_diagnostics": {agent.name: diagnostics},
+                    "agent_logs": [
+                        self._log(
+                            state,
+                            agent.name,
+                            "analyze",
+                            text=f"agent completed with {len(candidates)} risk(s)",
+                            metadata=diagnostics,
+                        )
+                    ],
+                }
+            except Exception as exc:
+                error = self._error(agent.name, exc)
+                diagnostics = self._diagnostics(agent)
+                return {
+                    "candidates": [],
+                    "component_diagnostics": {agent.name: diagnostics},
+                    "errors": [error],
+                    "agent_logs": [
+                        self._log(
+                            state,
+                            agent.name,
+                            "analyze",
+                            LogStatus.FAILED,
+                            str(exc),
+                            error,
+                            diagnostics,
+                        )
+                    ],
+                }
+
+        return node
+
+    @staticmethod
+    def _pending(risks):
+        return [
+            risk.model_copy(
+                update={
+                    "verification_status": VerificationStatus.PENDING,
+                    "verification_notes": (
+                        "Verification unavailable; original Evidence and Calculation "
+                        "were preserved for human review."
+                    ),
+                }
+            )
+            for risk in risks
+        ]
+
     def verify(self, state):
         risks = state.get("candidates", [])
+        evidence: dict[str, list] = {}
+        retrieval_errors: list[AnalysisError] = []
+        retrieval_logs: list[AgentLog] = []
+        retrieval_failed_risk_ids: set[str] = set()
+        for risk in risks:
+            if risk.risk_code in {"cash_runway", "precommercial_product"}:
+                evidence[risk.risk_code] = []
+                continue
+            try:
+                evidence[risk.risk_code] = self.retriever.retrieve(
+                    state.get("chunks", []), risk.risk_type
+                )
+            except Exception as exc:
+                error = self._error("document_retriever", exc).model_copy(
+                    update={
+                        "context": {
+                            "risk_id": risk.risk_id,
+                            "risk_code": risk.risk_code,
+                        }
+                    }
+                )
+                retrieval_errors.append(error)
+                retrieval_failed_risk_ids.add(risk.risk_id)
+                retrieval_logs.append(
+                    self._log(
+                        state,
+                        "document_retriever",
+                        "retrieve",
+                        LogStatus.FAILED,
+                        str(exc),
+                        error,
+                        {"risk_id": risk.risk_id, "risk_code": risk.risk_code},
+                    )
+                )
+                evidence[risk.risk_code] = []
+
         try:
-            evidence = {risk.risk_code: ([] if risk.risk_code == "precommercial_product" else self.retriever.retrieve(state.get("chunks", []), risk.risk_type)) for risk in risks}
-        except Exception as exc:
-            error = self._error("document_retriever", exc)
-            return {"pending_risks": self._pending(risks), "errors": [error], "agent_logs": [self._log(state, "document_retriever", "retrieve", LogStatus.FAILED, str(exc), error)]}
-        def operation():
             result = self.verifier.verify(risks, evidence)
-            return {"verified_risks": result.verified_risks, "pending_risks": result.pending_risks, "rejected_risks": result.rejected_risks}
-        return self._safe(state, "verifier", "verify", operation, {"pending_risks": self._pending(risks), "verified_risks": [], "rejected_risks": []})
+            verified = [
+                risk
+                for risk in result.verified_risks
+                if risk.risk_id not in retrieval_failed_risk_ids
+            ]
+            rejected = [
+                risk
+                for risk in result.rejected_risks
+                if risk.risk_id not in retrieval_failed_risk_ids
+            ]
+            pending = [
+                risk
+                for risk in result.pending_risks
+                if risk.risk_id not in retrieval_failed_risk_ids
+            ]
+            pending.extend(
+                risk.model_copy(
+                    update={
+                        "verification_status": VerificationStatus.PENDING,
+                        "verification_notes": (
+                            "Evidence retrieval failed for this risk; original Evidence and "
+                            "Calculation were preserved for human review."
+                        ),
+                    }
+                )
+                for risk in risks
+                if risk.risk_id in retrieval_failed_risk_ids
+            )
+            return {
+                "verified_risks": verified,
+                "pending_risks": pending,
+                "rejected_risks": rejected,
+                "errors": retrieval_errors,
+                "agent_logs": [
+                    *retrieval_logs,
+                    self._log(
+                        state,
+                        "verifier",
+                        "verify",
+                        text=f"verified {len(verified)} risk(s)",
+                    ),
+                ],
+            }
+        except Exception as exc:
+            error = self._error("verifier", exc)
+            return {
+                "pending_risks": self._pending(risks),
+                "verified_risks": [],
+                "rejected_risks": [],
+                "errors": [*retrieval_errors, error],
+                "agent_logs": [
+                    *retrieval_logs,
+                    self._log(
+                        state,
+                        "verifier",
+                        "verify",
+                        LogStatus.FAILED,
+                        str(exc),
+                        error,
+                    ),
+                ],
+            }
+
     def supervise(self, state):
-        return self._safe(state, "supervisor", "supervise", lambda: {"verified_risks": self.supervisor.supervise(state.get("verified_risks", [])).verified_risks}, {"verified_risks": []})
+        return self._safe(
+            state,
+            "supervisor",
+            "supervise",
+            lambda: {
+                "verified_risks": self.supervisor.supervise(
+                    state.get("verified_risks", [])
+                ).verified_risks
+            },
+            {"verified_risks": state.get("verified_risks", [])},
+        )
+
     def predict(self, state):
-        return self._safe(state, "predictor", "predict", lambda: {"prediction": self.predictor.predict(state.get("verified_risks", []) + state.get("pending_risks", []), state.get("market"))}, {"prediction": None})
+        return self._safe(
+            state,
+            "predictor",
+            "predict",
+            lambda: {
+                "prediction": self.predictor.predict(
+                    state.get("verified_risks", [])
+                    + state.get("pending_risks", []),
+                    state.get("market"),
+                )
+            },
+            {"prediction": None},
+        )
+
     def report(self, state):
-        context = ReportContext(analysis_id=state["request"].request_id, profile=state["profile"], verified_risks=state.get("verified_risks", []), pending_risks=state.get("pending_risks", []), rejected_risks=state.get("rejected_risks", []), prediction=state.get("prediction"), log_summary=f"{len(state.get('agent_logs', []))} workflow events")
-        return self._safe(state, "report_generator", "generate", lambda: {"report_sections": self.reporter.generate(context)}, {"report_sections": []})
-    def invoke(self, state): return self.graph.invoke(state)
+        context = ReportContext(
+            analysis_id=state["request"].request_id,
+            profile=state["profile"],
+            verified_risks=state.get("verified_risks", []),
+            pending_risks=state.get("pending_risks", []),
+            rejected_risks=state.get("rejected_risks", []),
+            prediction=state.get("prediction"),
+            log_summary=f"{len(state.get('agent_logs', []))} workflow events",
+        )
+        return self._safe(
+            state,
+            "report_generator",
+            "generate",
+            lambda: {"report_sections": self.reporter.generate(context)},
+            {"report_sections": []},
+        )
+
+    def invoke(self, state):
+        return self.graph.invoke(state)

@@ -4,9 +4,9 @@
 > 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
 > 当前版本：`v0.2.0-real-document-slice`
 > 当前状态：进行中
-> 当前阶段：A线 A2.6——Retriever正式报表定位整改完成并通过复测，A3待启动；B线建立赛事数据清单
+> 当前阶段：v0.2发布候选——等待第二标注人与技术备份独立复跑
 > 当前PR：无A线未合并PR
-> 最近完成：PR #15已合并到`main`，提交`e1cd9cb`
+> 最近完成：PR #17完成A6发布加固并通过GitHub Actions；本地278项测试及2410.HK Service级E2E通过
 > 最后更新：2026-08-04
 
 ---
@@ -33,13 +33,17 @@
 - [x] A2.6整改后原11份适用金标准两项均为11/11（100%）
 - [x] A2.6新增6份验证样本两项均为6/6（100%）
 - [x] 2410.HK现金563页、经营现金流562页继续保持第1名
+- [x] A3财务数值提取与归一化已通过PR #16合并到`main`
 
 ## 0.2 当前只做两件事
 
 ### A线：核心系统
 
 > A2.5保留为泛化闸门失败基线；A2.6定向整改及复测已通过。
-> 下一棒可进入A3财务数值提取，但不得扩大到现金跑道、Verifier或UI。
+> A3已完成开发、审查修订、真实案例验收并合并到`main`。
+> A4现金跑道Calculation与RiskItem已完成开发、自动测试、真实案例验收及人工diff审核，并进入`main`。
+> A5现金跑道核验与可信规则评分已完成并提交到`main`，commit `a47b85cd`；未经过PR级CI。
+> A6真实纵向链路、Service级E2E与Streamlit展示已进入`main`，commit `cb954e8`；发布加固修复由PR #17补充并通过远端CI。
 
 ### B线：赛事数据治理
 
@@ -528,7 +532,13 @@ R-06 重复候选过多
 
 ## A3：财务数值提取与归一化
 
-**状态：A2.6闸门已通过，等待作为下一棒单独启动。**
+**状态：已完成并合并到`main`。**
+
+- PR：#16
+- merge commit：`fa4bf1bc`
+- 自动测试：`134 passed`
+- PR CI：通过
+- 2410.HK真实案例：通过
 
 ### 唯一任务
 
@@ -585,20 +595,62 @@ period_end = 2024-03-31
 
 ### 合并条件
 
-- [ ] 两个系统值与金标准一致
-- [ ] 括号负数正确
-- [ ] 单位、币种和期间正确
-- [ ] 未知信息不猜测
-- [ ] 多候选选择可解释
-- [ ] 引用真实evidence_id
-- [ ] Mock回归通过
-- [ ] PR合并
+- [x] 两个系统值与金标准一致
+- [x] 括号负数正确
+- [x] 单位、币种和期间正确
+- [x] 未知信息不猜测
+- [x] 多候选选择可解释
+- [x] 引用真实evidence_id
+- [x] Mock回归通过
+- [x] PR合并
+
+### 本地实现与验收记录
+
+新增文件：
+
+- `src/ipo_risk/extraction/__init__.py`
+- `src/ipo_risk/extraction/models.py`
+- `src/ipo_risk/extraction/financial.py`
+- `tests/unit/test_financial_extraction.py`
+- `tests/contract/test_financial_extraction_contract.py`
+- `scripts/check_real_financial_extraction.py`
+
+验收结果：
+
+- 自动测试：`134 passed`，其中A3新增71个测试用例，原63项回归继续通过；
+- 现金及现金等价物：第563页，`77,208`，归一化为`77208 CNY thousand`，期间为`2024-03-31`；
+- 经营活动现金流：第562页，`(83,918)`，归一化为`-83918 CNY thousand`，期间为截至`2024-03-31`止3个月；
+- 两项均保留真实`evidence_id`、`document_id`、`chunk_id`和物理页码；
+- 未修改公共Schema、Agent、Workflow、Container、配置、Parser、Retriever或现有Skill。
+
+人工审查加固：
+
+- 明确正确`query_intent`优先，错误intent不得直接输出`extracted`；
+- 支持英文分栏标题中的`31 March`日月顺序，无法识别时不再默认12月31日；
+- 禁止从不同币种的相邻页面拼接单位，并记录参与复核的上下文页面；
+- 使用重复年份作为期间组边界证据，无明确边界时返回`needs_review`；
+- 冲突时保留完整候选审计列表；
+- 真实验收脚本强制检查Evidence ID、原文归属、上下文距离和空issues。
+
+PR前审查修订：
+
+- 同一查询意图下优先最新可识别期间；较新候选尚有歧义时返回`needs_review`，不静默回退至较旧完整数据；
+- 相同报告日按金额、币种、单位和期间月数比较完整财务事实，并在metadata列明冲突字段；
+- 同一行的中英文混合期间标题按分段分别解析，无法证明期间对应关系时返回`mixed_period_header_ambiguous`；
+- 显式核对Evidence与Chunk的document、chunk和page身份，不一致时保留双方身份并返回`evidence_chunk_identity_mismatch`；
+- 增加`extraction_method`，区分`page_text_rule`、`page_text_with_adjacent_context`和`not_applicable`。
+
+已知限制与下一棒输入：
+
+- 金标准仍为`provisional_gold`，第二人工复核尚未完成；
+- 当前只处理文本型正式报表及有限相邻页上下文，不处理扫描件、OCR或复杂合并单元格；
+- A4可以消费结构化数值、币种、源单位、期间和Evidence追溯字段；本棒未生成Calculation、RiskItem或现金跑道。
 
 ---
 
 ## A4：现金跑道Calculation与RiskItem
 
-**状态：等待A3。**
+**状态：已完成并提交到`main`。**
 
 人工参考：
 
@@ -627,11 +679,80 @@ FIN_CASH_RUNWAY RiskItem
 - 缺数据、单位冲突、币种冲突或期间未知时不计算；
 - RiskItem初始状态不是`verified`。
 
+### 本地实现与验收记录
+
+修改文件：
+
+- `src/ipo_risk/skills/financial.py`
+- `docs/PROJECT_MASTER_CHECKLIST.md`
+
+新增文件：
+
+- `src/ipo_risk/domain/cash_runway.py`
+- `tests/unit/test_cash_runway_skill.py`
+- `tests/unit/test_cash_runway_risk.py`
+- `tests/contract/test_cash_runway_risk_contract.py`
+- `scripts/check_real_cash_runway_risk.py`
+
+确定性Skill：
+
+```text
+monthly_burn = abs(operating_cash_flow) / period_months
+cash_runway_months = cash × period_months / abs(operating_cash_flow)
+展示值 = ROUND_HALF_UP保留2位小数
+```
+
+- 核心计算使用`Decimal`，保留未舍入结果、月均现金消耗、2位小数展示值、公式、舍入规则及Evidence ID；
+- 旧调用`cash_runway(120, 10).value == 12`保持兼容；
+- 缺失值、负现金、非负经营现金流、非法期间及证据身份不一致不会生成成功Calculation；
+- 可靠的非负经营现金流返回`not_applicable`，不进行除法。
+
+风险等级规则：
+
+```text
+runway < 3 months      → critical / 90
+3 <= runway < 6       → high / 80
+6 <= runway < 12      → medium / 60
+runway >= 12          → low / 20
+```
+
+- `risk_code="cash_runway"`保持Verifier契约；
+- `metadata.canonical_code="FIN_CASH_RUNWAY"`保留展示规范名；
+- 分数明确标记为规则分数而非概率；
+- RiskItem初始状态固定为`pending`，本棒未调用Verifier。
+
+2410.HK真实验收：
+
+- 现金：`77208 CNY thousand`，Evidence第563页；
+- 三个月经营现金流：`-83918 CNY thousand`，Evidence第562页；
+- 月均现金消耗：`27972.66666666666666666666667`；
+- 精确现金跑道：`2.760122977192020782192139946`个月；
+- 展示值：`2.76`个月；
+- 风险等级与分数：`critical / 90`；
+- `Calculation.success=true`，两条Evidence ID与RiskItem证据完全一致；
+- `verification_status=pending`。
+
+验证结果：
+
+- 基线测试：`134 passed`；
+- A4新增测试：42项；
+- 最终完整测试：`176 passed`；
+- Mock健康检查、compileall、diff-check、Retriever真实回归、A3真实回归和A4真实验收均通过；
+- 生产代码无2410.HK、公司名、562/563页或目标金额硬编码；
+- 未修改公共Schema、Agent、Workflow、Verifier、Predictor、Container、配置、服务层或UI。
+
+已知限制与A5输入：
+
+- 当前风险阈值为`cash_runway_rule_v1`演示规则，未经统计校准，不代表上市后下跌概率；
+- 仅消费A3已核验为`extracted`且币种、单位、报告日、期间和Evidence身份一致的文本型财务结果；
+- 尚未接入Financial Agent、Workflow、Verifier、Predictor或UI；
+- A5可直接消费带两条Evidence、成功Calculation、规则元数据且状态为`pending`的`cash_runway` RiskItem。
+
 ---
 
 ## A5：Verifier与规则评分
 
-**状态：等待A4。**
+**状态：已完成并直接提交到`main`，commit `a47b85cd`；243 passed为本地验收记录，未经过PR级CI。**
 
 Verifier检查：
 
@@ -651,11 +772,110 @@ Predictor要求：
 - 说明降级模式；
 - 说明风险贡献。
 
+### 本地实现与验收记录
+
+修改文件：
+
+- `src/ipo_risk/domain/cash_runway.py`
+- `src/ipo_risk/agents/rules.py`
+- `src/ipo_risk/predictors/rule_based.py`
+- `tests/unit/test_cash_runway_risk.py`
+- `docs/PROJECT_MASTER_CHECKLIST.md`
+
+新增文件：
+
+- `src/ipo_risk/domain/cash_runway_verifier.py`
+- `tests/unit/test_cash_runway_verifier.py`
+- `tests/unit/test_rule_based_predictor_verified_only.py`
+- `tests/contract/test_cash_runway_verifier_contract.py`
+- `tests/integration/test_cash_runway_verification_pipeline.py`
+- `scripts/check_real_verified_cash_runway.py`
+
+Verifier检查项：
+
+- A4 Builder新增指标身份、同文档、现金时点值和招股书Evidence来源校验；
+- CashRunwayRiskVerifier核对风险身份、Evidence顺序/唯一性/身份/原文数字、Calculation封套及全部输入；
+- 通过`Decimal`拒绝NaN、Infinity、bool、空字符串和不可解析值；
+- 重新调用`cash_runway_from_operating_cash_flow`核对精确跑道、2位展示值和月均现金消耗；
+- Builder与Verifier共用`cash_runway_risk_policy`，不复制风险阈值；
+- 核对规则等级、分数、非概率metadata和保守结论；
+- 完全通过才更新为`verified`；Evidence缺失保持`pending`，冲突或篡改进入`needs_review`；
+- RuleVerifier不再用空外部Evidence覆盖cash_runway内嵌Evidence，外部冲突会被发现；其他Mock风险保持兼容。
+- 人工审查发现并修复同身份外部Evidence原文冲突仍可能通过的问题；金额核验改用确认后的Evidence文本。
+
+Predictor可信过滤：
+
+- 仅`verification_status=verified`的RiskItem参与分数和top_factors；
+- pending、needs_review和rejected均被排除并记录Risk ID；
+- `model_version=rule_v2`，`probabilities={}`，明确规则分不是校准概率；
+- 记录可用/缺失特征、降级模式、市场调整、政策版本及实际使用的verified风险；
+- 无verified风险且无有效市场数据时输出`0 / low`并进入degraded模式。
+
+2410.HK真实A1→A5验收：
+
+- Evidence页码：现金563、经营现金流562；
+- 现金跑道：`2.76`个月；
+- cash_runway：`critical / 90`；
+- `verification_status=verified`，verified=1，pending=0；
+- Predictor：`90 / critical`，`probabilities={}`，`score_is_probability=false`；
+- top_factors只包含已核验cash_runway风险；市场情绪特征明确记录为缺失。
+
+验证结果：
+
+- A5开始前main基线：`176 passed`；
+- A5新增测试：67项；
+- 最终完整测试：`243 passed`；
+- Mock健康检查、compileall、diff-check、Retriever真实回归、A3、A4及A5真实验收均通过；
+- 未修改公共Schema、Workflow图、Parser、Retriever、Extractor、Service、Container、配置或UI。
+
+已知限制与A6输入：
+
+- 当前Verifier只对cash_runway执行完整重算，其他风险仍使用通用规则核验；
+- Predictor是确定性规则评分，不是统计模型或真实概率；
+- 市场调整仍为MVP规则，未做统计校准；
+- 尚未接入真实Financial Agent、Workflow真实现金跑道节点、Service或Streamlit；
+- A6可消费已核验cash_runway RiskItem、verified-only Predictor和完整核验诊断。
+
 ---
 
 ## A6：Streamlit、E2E与发布
 
-**状态：等待A5。**
+**状态：功能已进入`main`，commit `cb954e8`；发布加固PR #17通过远端CI。**
+
+本地实现：
+
+- `CashRunwayFinancialAgent`按公共RiskAgent接口串联Retriever、Extractor和Builder；
+- Legal、Business、Market真实模块明确为`unavailable`，不生成“Mock finding”；
+- 真实市场数据Provider返回缺失状态，不提供虚构情绪值；
+- request IPO Provider只保留请求中的公司和股票身份；
+- cash_runway在Verifier前不再进行通用二次检索；
+- 单风险检索失败可恢复，Verifier失败保留原Evidence和Calculation；
+- candidates按risk_id稳定去重；
+- Service返回component_modes、document、real_slice、configuration及组件诊断；
+- Repository保存后执行读取往返验证；
+- Streamlit增加安全真实PDF上传、组件模式、Evidence、Calculation、预测降级及日志展示；
+- Predictor缺市场数据时保持现金跑道规则分，并明确`degraded_mode=true`及原因。
+
+自动验收：
+
+- A5基线：`243 passed`；
+- A6新增测试：32项；
+- 发布加固后完整测试：`278 passed`；
+- Mock健康检查、compileall、diff-check、A1—A5真实回归通过；
+- 2410.HK真实Service级E2E通过；
+- 未修改公共Pydantic Schema。
+
+2410.HK Service级E2E：
+
+- `status=completed`；
+- Parser：706个有效Chunk，0个页面错误；
+- cash_runway：Evidence第563、562页，Calculation为2.76个月；
+- `verification_status=verified`，`critical / 90`；
+- Predictor：`90 / critical`，`probabilities={}`；
+- 缺真实市场数据：`degraded_mode=true`，原因`market_sentiment_score_missing`；
+- Legal、Business、Market与Market Data均显示`unavailable`；
+- ReportGenerator明确为Mock；
+- Repository往返读取一致。
 
 页面必须展示：
 
@@ -675,14 +895,14 @@ Predictor要求：
 
 E2E场景：
 
-- [ ] Mock正常
-- [ ] 2410.HK真实模式
-- [ ] Retriever无结果
-- [ ] 财务值缺失
-- [ ] 单位或期间缺失
-- [ ] Predictor降级
-- [ ] 组件故障
-- [ ] 结果持久化
+- [x] Mock正常
+- [x] 2410.HK真实模式
+- [x] Retriever无结果
+- [x] 财务值缺失
+- [x] 单位或期间缺失
+- [x] Predictor降级
+- [x] 组件故障
+- [x] 结果持久化
 - [ ] 技术备份独立运行
 - [ ] 产品成员易用性测试
 
@@ -1106,7 +1326,10 @@ v0.3优先风险类型：
 |  | B1 manifest与质量报告 | 未开始 |  | 支持A2.5选样 |
 | 2026-08-04 | A2.5 影子测试 | 人工核对完成，闸门未通过 | 24/24 Parser完成；12份核对中11份适用；现金4/11（36.36%）；经营现金流7/11（63.64%） | 整改Retriever正式主表排序并复测 |
 | 2026-08-04 | A2.6 Retriever整改 | 已完成，闸门通过 | 原11份两项均100%；新增6份两项均100%；2410.HK保持第1 | A3财务抽取 |
-|  | A3 财务抽取 | 未开始 | A2.6已解除Retriever阻塞 | 作为下一棒单独启动 |
+| 2026-08-04 | A3 财务抽取 | 已完成并合并到`main` | PR #16 / `fa4bf1bc`；134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR CI与人工审查通过 | 从最新`main`创建独立分支启动A4 |
+| 2026-08-04 | A4 现金跑道风险 | 已完成并提交到`main` | 176 passed；2410.HK现金跑道2.76个月；critical/90；pending；Evidence第563、562页；人工diff审核通过 | 从最新`main`创建独立分支启动A5 |
+| 2026-08-04 | A5 Verifier与规则评分 | 已直接提交到`main`，commit `a47b85cd`；无PR级CI | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | A6 |
+| 2026-08-04 | A6 真实纵向链路与E2E | 功能已进入`main`，commit `cb954e8`；发布加固PR #17通过远端CI | 278 passed；706 Chunk；cash_runway verified；90/critical；市场缺失降级；Repository往返通过 | 发布前团队验收 |
 
 ---
 
@@ -1139,7 +1362,11 @@ A线现在：
 - A2.5基线为现金36.36%、经营现金流63.64%，真实记录为闸门失败；
 - A2.6整改后原11份及新增6份验证集两项均为100%；
 - 2410.HK两个目标页继续保持第1名；
-- Retriever泛化阻塞已解除，A3等待作为独立下一棒启动。
+- Retriever泛化阻塞已解除；
+- A3确定性财务数值提取已通过134项自动测试、2410.HK真实案例验收及人工审查，并由PR #16合并到`main`；
+- A4现金跑道Calculation与RiskItem已完成开发、176项自动测试、2410.HK真实验收和人工diff审核，并进入`main`；
+- A5现金跑道核验与可信规则评分已提交到`main`，commit `a47b85cd`；243项测试为本地验收记录，未经过PR级CI；
+- A6真实现金跑道Workflow、Service、Repository和Streamlit闭环已通过278项自动测试、2410.HK真实Service级E2E和人工diff审核；功能提交为`cb954e8`，发布加固PR #17已通过远端CI。
 
 B线现在：
 - 建立565份招股书manifest；
