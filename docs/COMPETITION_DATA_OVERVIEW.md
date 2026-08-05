@@ -44,3 +44,11 @@
 - 只有通过五位数字校验后才生成`stock_code_wind`，匹配失败不会伪装为成功。
 - 证券主表疑似截断，已隔离；当前不使用它生成上市日期、发行价或公司映射。
 - `disclosure_date`来自招股书文件名，不得当作上市日期。
+
+
+## IPO官方主数据桥接
+
+- `HK_Official_Merged_565_First_with_IPO.xlsx` 已作为只读的原始输入；桥接目录为 `data/catalog/ipo_official_master_bridge.csv`。
+- 招股书案例与官方主数据：562/565 个 `matched`，另有 3 个 `manifest_only_placeholder`，不得补猜公司、上市日期或发行信息。
+- `official_listed_date` 是来源工作簿提供的上市日期；必须结合 `first_eod_trade_date` 和 `listed_date_eod_relation` 使用，不能把日行情最早日期自动当作上市日期。
+- 有 2 个已匹配案例的日行情早于工作簿上市日期；在进入建模标签或时间窗前必须人工复核该日期关系。

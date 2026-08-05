@@ -11,7 +11,11 @@ from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.build_competition_manifest import EXPECTED_TOTAL, EXPECTED_YEAR_COUNTS
+from scripts.build_competition_manifest import (
+    EXPECTED_TOTAL,
+    EXPECTED_YEAR_COUNTS,
+    OFFICIAL_IPO_WORKBOOK_FILENAME,
+)
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
@@ -31,6 +35,7 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
     manifest = read_rows(catalog_dir / "ipo_prospectus_manifest.csv")
     coverage = read_rows(catalog_dir / "eod_coverage_report.csv")
     splits = read_rows(catalog_dir / "dataset_split.csv")
+    official_bridge = read_rows(catalog_dir / "ipo_official_master_bridge.csv")
     issues = read_rows(catalog_dir / "data_quality_issues.csv")
 
     if len(manifest) != EXPECTED_TOTAL:
@@ -83,6 +88,28 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
     if any(row["source_year"] == "2025" and row["is_blind_test"] != "true" for row in splits):
         errors.append("one or more 2025 split rows are not marked blind")
 
+    if len(official_bridge) != EXPECTED_TOTAL:
+        errors.append(f"official bridge rows: expected {EXPECTED_TOTAL}, got {len(official_bridge)}")
+    official_case_ids = [row["case_id"] for row in official_bridge]
+    if set(official_case_ids) != set(case_ids) or len(official_case_ids) != len(set(official_case_ids)):
+        errors.append("official bridge case IDs do not match the manifest")
+    official_status_counts = Counter(row["official_match_status"] for row in official_bridge)
+    if dict(official_status_counts) != {"matched": 562, "manifest_only_placeholder": 3}:
+        errors.append(f"official bridge status counts unexpected: {dict(official_status_counts)}")
+    valid_relations = {
+        "not_applicable_unmatched", "not_comparable_missing_listed_date", "no_eod_coverage",
+        "eod_starts_on_listed_date", "eod_starts_after_listed_date", "eod_starts_before_listed_date",
+    }
+    for row in official_bridge:
+        if row["source_workbook"] != OFFICIAL_IPO_WORKBOOK_FILENAME:
+            errors.append(f"unexpected official source workbook: {row['case_id']}")
+        if not SHA256_PATTERN.fullmatch(row["source_workbook_sha256"]):
+            errors.append(f"invalid official workbook SHA-256: {row['case_id']}")
+        if row["listed_date_eod_relation"] not in valid_relations:
+            errors.append(f"invalid listed-date/EOD relation: {row['case_id']}")
+        if row["official_match_status"] == "matched" and not row["official_listed_date"]:
+            errors.append(f"matched official bridge row lacks listed date: {row['case_id']}")
+
     security_issues = [row for row in issues if row["issue_code"] == "SECURITY_MASTER_TRUNCATED"]
     if len(security_issues) != 1 or security_issues[0]["status"] != "quarantined":
         errors.append("truncated security master is not explicitly quarantined")
@@ -91,6 +118,9 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
         errors.append(f"expected 10 EOD_NOT_AVAILABLE issues, got {len(eod_missing_issues)}")
     if not any(row["issue_code"] == "EOD_AMOUNT_UNIT_UNCONFIRMED" for row in issues):
         errors.append("missing EOD_AMOUNT_UNIT_UNCONFIRMED issue")
+    official_missing_issues = [row for row in issues if row["issue_code"] == "OFFICIAL_IPO_MASTER_MATCH_MISSING"]
+    if len(official_missing_issues) != 3:
+        errors.append(f"expected 3 OFFICIAL_IPO_MASTER_MATCH_MISSING issues, got {len(official_missing_issues)}")
     return errors
 
 

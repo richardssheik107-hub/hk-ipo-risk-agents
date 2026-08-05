@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Iterable
 
 import fitz
+from openpyxl import load_workbook
 
 
 EXPECTED_YEAR_COUNTS = {
@@ -27,6 +28,7 @@ EXPECTED_YEAR_COUNTS = {
 }
 EXPECTED_TOTAL = sum(EXPECTED_YEAR_COUNTS.values())
 REAL_CASE_CODE = "02410"
+OFFICIAL_IPO_WORKBOOK_FILENAME = "HK_Official_Merged_565_First_with_IPO.xlsx"
 YEAR_DIRECTORY_PATTERN = re.compile(r"^(20\d{2})_(\d+)份$")
 PDF_FILENAME_PATTERN = re.compile(
     r"^(?P<stock_code>\d{5})_(?P<date>\d{2}-\d{2}-\d{4})_"
@@ -86,6 +88,36 @@ QUALITY_ISSUE_FIELDS = (
     "status",
     "description",
     "recommended_action",
+)
+OFFICIAL_IPO_BRIDGE_FIELDS = (
+    "case_id",
+    "source_year",
+    "stock_code_raw",
+    "stock_code_wind",
+    "dataset_split",
+    "official_match_status",
+    "official_match_method",
+    "official_listed_date",
+    "institution_id",
+    "security_id",
+    "selected_name",
+    "has_ipo_information",
+    "has_institution_info",
+    "has_delisted_info",
+    "official_ipo_price",
+    "official_offer_price",
+    "official_delisted_date",
+    "official_listing_board_id",
+    "official_list_method",
+    "official_industry_name",
+    "official_funds_raised",
+    "official_net_proceed",
+    "eod_available",
+    "first_eod_trade_date",
+    "listed_date_eod_relation",
+    "source_workbook",
+    "source_workbook_sha256",
+    "notes",
 )
 
 
@@ -272,8 +304,154 @@ def inspect_csv_shape(path: Path) -> dict[str, int]:
     return {"rows": rows, "columns": expected_columns, "malformed_rows": malformed_rows}
 
 
+def _cell_text(value: object) -> str:
+    """Convert an Excel cell to a stable, CSV-friendly representation."""
+    if value is None:
+        return ""
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    return str(value).strip()
+
+
+def _read_workbook_sheet(workbook_path: Path, sheet_name: str) -> list[dict[str, str]]:
+    """Read one workbook sheet using its first row as the field header."""
+    workbook = load_workbook(workbook_path, read_only=True, data_only=True)
+    try:
+        if sheet_name not in workbook.sheetnames:
+            raise ValueError(f"Workbook is missing required sheet: {sheet_name}")
+        worksheet = workbook[sheet_name]
+        rows = worksheet.iter_rows(values_only=True)
+        try:
+            header = [_cell_text(value) for value in next(rows)]
+        except StopIteration as exc:
+            raise ValueError(f"Workbook sheet is empty: {sheet_name}") from exc
+        if not any(header):
+            raise ValueError(f"Workbook sheet has no header: {sheet_name}")
+        result: list[dict[str, str]] = []
+        for values in rows:
+            row = {
+                column: _cell_text(values[index]) if index < len(values) else ""
+                for index, column in enumerate(header)
+                if column
+            }
+            if any(row.values()):
+                result.append(row)
+        return result
+    finally:
+        workbook.close()
+
+
+def _require_workbook_fields(rows: list[dict[str, str]], sheet_name: str, fields: set[str]) -> None:
+    if not rows:
+        raise ValueError(f"Workbook sheet has no data rows: {sheet_name}")
+    missing = fields - set(rows[0])
+    if missing:
+        raise ValueError(f"Workbook sheet {sheet_name} is missing fields: {sorted(missing)}")
+
+
+def _listed_date_eod_relation(match_status: str, listed_date: str, first_eod_trade_date: str) -> str:
+    if match_status != "matched":
+        return "not_applicable_unmatched"
+    if not listed_date:
+        return "not_comparable_missing_listed_date"
+    if not first_eod_trade_date:
+        return "no_eod_coverage"
+    comparable_eod_date = first_eod_trade_date
+    if re.fullmatch(r"\d{8}", comparable_eod_date):
+        comparable_eod_date = f"{comparable_eod_date[:4]}-{comparable_eod_date[4:6]}-{comparable_eod_date[6:]}"
+    if comparable_eod_date == listed_date:
+        return "eod_starts_on_listed_date"
+    if comparable_eod_date > listed_date:
+        return "eod_starts_after_listed_date"
+    return "eod_starts_before_listed_date"
+
+
+def load_official_ipo_bridge(
+    data_root: Path,
+    prospectuses: list[ProspectusSource],
+    eod_stats: dict[str, EODStats],
+) -> list[dict[str, str]]:
+    """Build the PDF-to-official-master bridge from the supplied workbook."""
+    workbook_path = data_root / OFFICIAL_IPO_WORKBOOK_FILENAME
+    if not workbook_path.exists():
+        raise FileNotFoundError(f"Missing required official IPO workbook: {workbook_path}")
+    match_rows = _read_workbook_sheet(workbook_path, "IPO_565_Match")
+    master_rows = _read_workbook_sheet(workbook_path, "Merged_Official_Data")
+    _require_workbook_fields(match_rows, "IPO_565_Match", {
+        "CaseID", "MatchStatus", "MatchedSymbol", "MatchedListedDate", "MatchedInstitutionID",
+        "MatchedSecurityID", "SelectedName", "HasIPOInformation", "HasInstitutionInfo",
+        "HasDelistedInfo", "MatchMethod",
+    })
+    _require_workbook_fields(master_rows, "Merged_Official_Data", {
+        "Symbol", "ListedDate", "InstitutionID", "SecurityID", "IPOPrice", "OfferPrice",
+        "DelistedDate", "ListingBoardID", "ListMethod", "IndustryName2", "INDUSTRYNAME",
+        "FundsRaised", "NetProceed",
+    })
+    matches_by_case = {row["CaseID"]: row for row in match_rows if row.get("CaseID")}
+    source_case_ids = {source.case_id for source in prospectuses}
+    if source_case_ids != set(matches_by_case):
+        raise ValueError(
+            "IPO_565_Match case IDs do not match discovered prospectuses: "
+            f"missing={sorted(source_case_ids - set(matches_by_case))}, "
+            f"unexpected={sorted(set(matches_by_case) - source_case_ids)}"
+        )
+    master_by_key: dict[tuple[str, str, str, str], dict[str, str]] = {}
+    for row in master_rows:
+        # Rows two and three in the supplied workbook describe fields/units.
+        if row.get("Symbol") in {"", "股票代码"}:
+            continue
+        key = (row["Symbol"], row["ListedDate"], row["InstitutionID"], row["SecurityID"])
+        if key in master_by_key:
+            raise ValueError(f"Duplicate official master key: {key}")
+        master_by_key[key] = row
+    workbook_hash = file_sha256(workbook_path)
+    bridge_rows: list[dict[str, str]] = []
+    for source in prospectuses:
+        match = matches_by_case[source.case_id]
+        status = match["MatchStatus"]
+        matched = status == "matched"
+        master: dict[str, str] = {}
+        if matched:
+            key = (match["MatchedSymbol"], match["MatchedListedDate"], match["MatchedInstitutionID"], match["MatchedSecurityID"])
+            if key not in master_by_key:
+                raise ValueError(f"No official master row for matched IPO case {source.case_id}: {key}")
+            master = master_by_key[key]
+        eod = eod_stats.get(source.stock_code_wind, EODStats())
+        first_eod_trade_date = eod.first_trade_date if eod.row_count else ""
+        listed_date = master.get("ListedDate", "") if matched else ""
+        bridge_rows.append({
+            "case_id": source.case_id, "source_year": str(source.source_year),
+            "stock_code_raw": source.stock_code_raw, "stock_code_wind": source.stock_code_wind,
+            "dataset_split": dataset_split_for(source.source_year, source.stock_code_raw)[0],
+            "official_match_status": status, "official_match_method": match["MatchMethod"],
+            "official_listed_date": listed_date,
+            "institution_id": match["MatchedInstitutionID"] if matched else "",
+            "security_id": match["MatchedSecurityID"] if matched else "",
+            "selected_name": match["SelectedName"] if matched else "",
+            "has_ipo_information": _source_bool(match["HasIPOInformation"]) if matched else "",
+            "has_institution_info": _source_bool(match["HasInstitutionInfo"]) if matched else "",
+            "has_delisted_info": _source_bool(match["HasDelistedInfo"]) if matched else "",
+            "official_ipo_price": master.get("IPOPrice", ""), "official_offer_price": master.get("OfferPrice", ""),
+            "official_delisted_date": master.get("DelistedDate", ""),
+            "official_listing_board_id": master.get("ListingBoardID", ""),
+            "official_list_method": master.get("ListMethod", ""),
+            "official_industry_name": master.get("IndustryName2", "") or master.get("INDUSTRYNAME", ""),
+            "official_funds_raised": master.get("FundsRaised", ""), "official_net_proceed": master.get("NetProceed", ""),
+            "eod_available": _bool(eod.row_count > 0), "first_eod_trade_date": first_eod_trade_date,
+            "listed_date_eod_relation": _listed_date_eod_relation(status, listed_date, first_eod_trade_date),
+            "source_workbook": workbook_path.name, "source_workbook_sha256": workbook_hash,
+            "notes": "official master match unavailable" if not matched else "",
+        })
+    return bridge_rows
+
+
 def _bool(value: bool) -> str:
     return "true" if value else "false"
+
+
+def _source_bool(value: str) -> str:
+    """Normalize boolean-like workbook values for stable catalog output."""
+    return "true" if value.strip().lower() in {"true", "1", "yes", "y"} else "false"
 
 
 def build_rows(
@@ -410,6 +588,29 @@ def dataset_issues(data_root: Path, shapes: dict[str, dict[str, int]]) -> list[d
     return issues
 
 
+def official_bridge_issues(bridge_rows: list[dict[str, str]]) -> list[dict[str, object]]:
+    """Record explicit gaps in the supplied official IPO master bridge."""
+    issues: list[dict[str, object]] = []
+    for row in bridge_rows:
+        if row["official_match_status"] != "matched":
+            issues.append({
+                "scope": "case", "case_id": row["case_id"],
+                "source_file": OFFICIAL_IPO_WORKBOOK_FILENAME,
+                "issue_code": "OFFICIAL_IPO_MASTER_MATCH_MISSING", "severity": "warning",
+                "status": "open", "description": "No official IPO master row was supplied for this prospectus case",
+                "recommended_action": "Retain as unavailable; review the official-source matching workflow before enrichment",
+            })
+        elif row["has_institution_info"].lower() != "true":
+            issues.append({
+                "scope": "case", "case_id": row["case_id"],
+                "source_file": OFFICIAL_IPO_WORKBOOK_FILENAME,
+                "issue_code": "OFFICIAL_IPO_INSTITUTION_INFO_MISSING", "severity": "warning",
+                "status": "accepted_degradation", "description": "Official IPO record is matched but InstitutionInfo is unavailable",
+                "recommended_action": "Use available IPO fields only; do not infer missing company-profile values",
+            })
+    return issues
+
+
 def write_csv(path: Path, rows: Iterable[dict[str, object]], fields: tuple[str, ...]) -> None:
     """Write deterministic Excel-friendly UTF-8 CSV output."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -424,6 +625,7 @@ def write_docs(
     manifest_rows: list[dict[str, object]],
     issues: list[dict[str, object]],
     shapes: dict[str, dict[str, int]],
+    official_bridge_rows: list[dict[str, str]],
 ) -> None:
     """Generate concise source-backed overview and quality documentation."""
     year_counts = Counter(int(row["source_year"]) for row in manifest_rows)
@@ -508,6 +710,21 @@ def write_docs(
 5. 无行情覆盖的样本不构造价格标签，只用于文档链路及降级测试。
 6. 所有未匹配、坏行和缺失值必须保留问题记录，不得人工猜测后回填。
 """
+    official_matched = sum(row["official_match_status"] == "matched" for row in official_bridge_rows)
+    official_unmatched = len(official_bridge_rows) - official_matched
+    eod_before_listed = sum(
+        row["listed_date_eod_relation"] == "eod_starts_before_listed_date"
+        for row in official_bridge_rows
+    )
+    overview += f"""
+
+## IPO官方主数据桥接
+
+- `HK_Official_Merged_565_First_with_IPO.xlsx` 已作为只读的原始输入；桥接目录为 `data/catalog/ipo_official_master_bridge.csv`。
+- 招股书案例与官方主数据：{official_matched}/{len(official_bridge_rows)} 个 `matched`，另有 {official_unmatched} 个 `manifest_only_placeholder`，不得补猜公司、上市日期或发行信息。
+- `official_listed_date` 是来源工作簿提供的上市日期；必须结合 `first_eod_trade_date` 和 `listed_date_eod_relation` 使用，不能把日行情最早日期自动当作上市日期。
+- 有 {eod_before_listed} 个已匹配案例的日行情早于工作簿上市日期；在进入建模标签或时间窗前必须人工复核该日期关系。
+"""
     docs_dir.mkdir(parents=True, exist_ok=True)
     (docs_dir / "COMPETITION_DATA_OVERVIEW.md").write_text(overview, encoding="utf-8", newline="\n")
     (docs_dir / "DATA_QUALITY_REPORT.md").write_text(quality, encoding="utf-8", newline="\n")
@@ -515,7 +732,10 @@ def write_docs(
 
 def build(data_root: Path, catalog_dir: Path, docs_dir: Path) -> dict[str, int]:
     """Build all B1 deliverables from a read-only competition data root."""
-    required_files = ("hkcompanyinfo.csv", "hksharedescription.csv", "hkshareeodprices.csv")
+    required_files = (
+        "hkcompanyinfo.csv", "hksharedescription.csv", "hkshareeodprices.csv",
+        OFFICIAL_IPO_WORKBOOK_FILENAME,
+    )
     missing = [name for name in required_files if not (data_root / name).is_file()]
     if missing:
         raise FileNotFoundError(f"missing competition data files: {', '.join(missing)}")
@@ -530,19 +750,24 @@ def build(data_root: Path, catalog_dir: Path, docs_dir: Path) -> dict[str, int]:
     }
     annotations = load_annotation_statuses(catalog_dir)
     manifest_rows, coverage_rows, split_rows, issues = build_rows(sources, eod_stats, annotations)
+    official_bridge_rows = load_official_ipo_bridge(data_root, sources, eod_stats)
     issues.extend(dataset_issues(data_root, shapes))
+    issues.extend(official_bridge_issues(official_bridge_rows))
     for index, issue in enumerate(issues, start=1):
         issue["issue_id"] = f"DQ-{index:04d}"
 
     write_csv(catalog_dir / "ipo_prospectus_manifest.csv", manifest_rows, MANIFEST_FIELDS)
     write_csv(catalog_dir / "eod_coverage_report.csv", coverage_rows, EOD_COVERAGE_FIELDS)
     write_csv(catalog_dir / "dataset_split.csv", split_rows, DATASET_SPLIT_FIELDS)
+    write_csv(catalog_dir / "ipo_official_master_bridge.csv", official_bridge_rows, OFFICIAL_IPO_BRIDGE_FIELDS)
     write_csv(catalog_dir / "data_quality_issues.csv", issues, QUALITY_ISSUE_FIELDS)
-    write_docs(docs_dir, manifest_rows, issues, shapes)
+    write_docs(docs_dir, manifest_rows, issues, shapes, official_bridge_rows)
     return {
         "prospectuses": len(manifest_rows),
         "eod_available": sum(row["eod_available"] == "true" for row in manifest_rows),
         "eod_missing": sum(row["eod_available"] == "false" for row in manifest_rows),
+        "official_matched": sum(row["official_match_status"] == "matched" for row in official_bridge_rows),
+        "official_unmatched": sum(row["official_match_status"] != "matched" for row in official_bridge_rows),
         "quality_issues": len(issues),
     }
 

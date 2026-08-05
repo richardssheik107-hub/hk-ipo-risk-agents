@@ -14,6 +14,8 @@
 |---|---:|---|---|
 | EOD_AMOUNT_UNIT_UNCONFIRMED | 1 | warning | open |
 | EOD_NOT_AVAILABLE | 10 | warning | accepted_degradation |
+| OFFICIAL_IPO_INSTITUTION_INFO_MISSING | 4 | warning | accepted_degradation |
+| OFFICIAL_IPO_MASTER_MATCH_MISSING | 3 | warning | open |
 | SECURITY_MASTER_TRUNCATED | 1 | critical | quarantined |
 
 

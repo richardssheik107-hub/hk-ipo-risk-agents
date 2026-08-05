@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 import fitz
+from openpyxl import Workbook
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -13,6 +14,7 @@ from scripts.build_competition_manifest import (
     dataset_split_for,
     discover_prospectuses,
     normalize_stock_code,
+    OFFICIAL_IPO_WORKBOOK_FILENAME,
 )
 
 
@@ -30,6 +32,29 @@ def _write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
         writer = csv.writer(handle)
         writer.writerow(header)
         writer.writerows(rows)
+
+
+def _write_official_workbook(path: Path) -> None:
+    workbook = Workbook()
+    master = workbook.active
+    master.title = "Merged_Official_Data"
+    master.append([
+        "Symbol", "ListedDate", "InstitutionID", "SecurityID", "IPOPrice", "OfferPrice",
+        "DelistedDate", "ListingBoardID", "ListMethod", "IndustryName2", "INDUSTRYNAME",
+        "FundsRaised", "NetProceed",
+    ])
+    master.append(["00001", "2020-01-02", "inst-1", "sec-1", "10", "10", "", "MAIN", "IPO", "Finance", "", "100", "90"])
+    master.append(["02410", "2024-08-20", "inst-2", "sec-2", "8", "8", "", "MAIN", "IPO", "Health", "", "200", "180"])
+    matches = workbook.create_sheet("IPO_565_Match")
+    matches.append([
+        "CaseID", "MatchStatus", "MatchedSymbol", "MatchedListedDate", "MatchedInstitutionID",
+        "MatchedSecurityID", "SelectedName", "HasIPOInformation", "HasInstitutionInfo",
+        "HasDelistedInfo", "MatchMethod",
+    ])
+    matches.append(["ipo_2020_00001", "matched", "00001", "2020-01-02", "inst-1", "sec-1", "Test One", True, True, False, "symbol+source_year+ipo"])
+    matches.append(["ipo_2024_02410", "matched", "02410", "2024-08-20", "inst-2", "sec-2", "Test Two", True, True, False, "symbol+source_year+ipo"])
+    matches.append(["ipo_2025_00002", "manifest_only_placeholder", "", "", "", "", "", False, False, False, "not_found"])
+    workbook.save(path)
 
 
 def _make_tiny_data_root(root: Path) -> None:
@@ -55,6 +80,7 @@ def _make_tiny_data_root(root: Path) -> None:
             ["eod-3", "2410.HK", "20240820", "200"],
         ],
     )
+    _write_official_workbook(root / OFFICIAL_IPO_WORKBOOK_FILENAME)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -102,13 +128,19 @@ def test_tiny_build_writes_all_b1_deliverables(tmp_path: Path) -> None:
         "prospectuses": 3,
         "eod_available": 2,
         "eod_missing": 1,
-        "quality_issues": 3,
+        "official_matched": 2,
+        "official_unmatched": 1,
+        "quality_issues": 4,
     }
     manifest = _read_csv(catalog_dir / "ipo_prospectus_manifest.csv")
     coverage = _read_csv(catalog_dir / "eod_coverage_report.csv")
     splits = _read_csv(catalog_dir / "dataset_split.csv")
+    official_bridge = _read_csv(catalog_dir / "ipo_official_master_bridge.csv")
     issues = _read_csv(catalog_dir / "data_quality_issues.csv")
     assert len(manifest) == len(coverage) == len(splits) == 3
+    assert len(official_bridge) == 3
+    assert sum(row["official_match_status"] == "matched" for row in official_bridge) == 2
+    assert next(row for row in official_bridge if row["case_id"] == "ipo_2024_02410")["listed_date_eod_relation"] == "eod_starts_on_listed_date"
     assert {row["dataset_split"] for row in splits} == {
         "development",
         "development_exception",
@@ -119,6 +151,7 @@ def test_tiny_build_writes_all_b1_deliverables(tmp_path: Path) -> None:
         "EOD_NOT_AVAILABLE",
         "SECURITY_MASTER_TRUNCATED",
         "EOD_AMOUNT_UNIT_UNCONFIRMED",
+        "OFFICIAL_IPO_MASTER_MATCH_MISSING",
     }
     assert all(not Path(row["relative_path"]).is_absolute() for row in manifest)
     assert all(len(row["sha256"]) == 64 for row in manifest)
