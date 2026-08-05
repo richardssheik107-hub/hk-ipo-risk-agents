@@ -1,0 +1,8 @@
+name: hk-ipo-risk-agents
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - -e .[dev]

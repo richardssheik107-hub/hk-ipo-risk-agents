@@ -1,5 +1,6 @@
 .env
 .venv/
+.conda/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -10,6 +11,9 @@ data/inputs/*
 !data/inputs/.gitkeep
 data/results/*
 !data/results/.gitkeep
+data/competition/*
+!data/competition/.gitignore
+!data/competition/README.md
 reports/*
 !reports/.gitkeep
 models/*
