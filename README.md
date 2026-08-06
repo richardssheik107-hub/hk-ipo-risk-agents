@@ -7,12 +7,12 @@
 当前阶段：
 
 ```text
-v0.2.0：真实PDF现金跑道纵向闭环与B线赛事数据治理已完成，发布闸门已通过
+v0.2.0已正式发布；当前进入v0.3.0真实多Agent文档风险分析
 ```
 
-稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
+稳定版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
-稳定的v0.1.0架构级MVP已经发布。v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式，以及565份赛事招股书的数据治理和24份影子样本对账。自动化验收为284 passed，独立克隆安装、第二次证据复核和界面验收均已通过，当前进入正式发布操作。
+v0.2.0已于2026-08-06正式发布。在不改变公共Schema的前提下，该版本完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式，以及565份赛事招股书的数据治理和24份影子样本对账。自动化验收为284 passed，独立克隆安装、第二次证据复核和界面验收均已通过。
 
 ## 核心流程
 
@@ -95,9 +95,9 @@ v0.2赛事数据治理已经完成：
 - ReportGenerator仍为Mock格式化组件；
 - 扫描版PDF/OCR、统计预测模型和真实概率尚未实现。
 
-## v0.2.0 目标
+## v0.2.0 已实现范围
 
-只实现一条可验证的真实纵向闭环：
+已实现一条可验证的真实纵向闭环：
 
 ```text
 真实港股招股书 PDF
@@ -132,14 +132,13 @@ v0.3.0命名为`multi-agent-risk-analysis`，目标是在保留v0.2现金跑道�
 
 ## 后续开发方向
 
-1. 完成v0.2发布验收、独立复跑和版本复盘；
-2. 在v0.3扩展多案例处理与黄金案例集；
-3. 将Financial、Legal和Business Agent逐步替换为真实实现；
-4. 建立正式人工标注和Evidence评测体系；
-5. 在v0.4确认上市日期、发行价、行情单位和时间窗口；
-6. 构造无未来数据泄漏的上市后风险标签和市场特征；
-7. 增加Logistic、LightGBM及时间外评测；
-8. 增加SHAP解释、证据截图和自动报告。
+1. 在v0.3扩展多案例处理与黄金案例集；
+2. 将Financial、Legal和Business Agent逐步替换为真实实现；
+3. 建立正式人工标注和Evidence评测体系；
+4. 在v0.4确认上市日期、发行价、行情单位和时间窗口；
+5. 构造无未来数据泄漏的上市后风险标签和市场特征；
+6. 增加Logistic、LightGBM及时间外评测；
+7. 增加SHAP解释、证据截图和自动报告。
 
 ## 团队分工方向
 

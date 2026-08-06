@@ -2,6 +2,8 @@
 
 ## v0.2.0-real-document-slice - 2026-08-06
 
+Release: https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice
+
 ### Added
 
 - PyMuPDF真实PDF解析与关键词Evidence检索；
