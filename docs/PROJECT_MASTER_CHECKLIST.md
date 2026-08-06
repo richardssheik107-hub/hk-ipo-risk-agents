@@ -4,8 +4,6 @@
 >
 > 正式发布基线：`v0.2.0-real-document-slice@916df5d`，2026-08-06
 >
-> Word 版：`docs/PROJECT_MASTER_PLAN_v0.3.docx`
-
 <table>
 <colgroup>
 <col style="width: 100%" />
@@ -48,25 +46,7 @@
 </tbody>
 </table>
 
-## 1.1 v0.2已经完成的能力
-
-- [x] 真实PyMuPDF解析：保留物理页码、原文和稳定Chunk。
-
-- [x] 确定性关键词Evidence检索：现金及现金等价物、经营活动现金流。
-
-- [x] 财务数值提取：币种、单位、报告期、期间长度和括号负数。
-
-- [x] 现金跑道Skill：以Decimal完成月度消耗和可持续月数计算。
-
-- [x] 现金跑道RiskItem、专用Verifier和verified-only规则评分。
-
-- [x] Workflow、IPOAnalysisService、JSON Repository和Streamlit真实模式。
-
-- [x] 565份招股书manifest、555/10行情覆盖和562/3官方IPO主数据桥接。
-
-- [x] 24份影子样本、12份人工核对、A2.6复测与全量manifest自动对账。
-
-## 1.2 当前尚未真实实现的能力
+## 1.1 当前能力边界
 
 - □ Legal Agent仍为unavailable，不输出虚构法律风险。
 
@@ -80,7 +60,7 @@
 
 - □ 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
 
-## 1.3 数据基线
+## 1.2 数据基线
 
 | **数据范围** | **数量** | **用途**                 |
 |:-------------|:---------|:-------------------------|
@@ -119,40 +99,16 @@
 </tbody>
 </table>
 
-# 3. 阶段R0：v0.2正式发布收尾
+# 3. 当前稳定基线
 
-v0.2的开发代码已进入main，本阶段不得新增大功能，只完成发布、复盘和v0.3输入冻结。
+| **项目** | **值** |
+|:---|:---|
+| Release | `v0.2.0-real-document-slice` |
+| 冻结提交 | `916df5d442030e3443249a881f995b5d039a5b33` |
+| 自动测试 | 284 passed |
+| 真实回归 | 2410.HK第563/562页，现金跑道2.76个月，verified，90/critical |
 
-| **编号** | **任务** | **主要交付物** | **负责人** | **完成标准** |
-|:---|:---|:---|:---|:---|
-| R0-1（自动验收完成） | 最新main完整复跑 | 测试日志与环境记录 | 技术负责人 | 全部测试、校验、编译和真实E2E通过 |
-| R0-2（独立环境复跑完成） | 技术备份独立复跑 | `V0.2_RELEASE_ACCEPTANCE.md` | 技术备份 | 新环境安装、Mock、真实PDF和数据验证成功 |
-| R0-3（独立证据复核完成） | 第二次复核2410.HK | `V0.2_RELEASE_ACCEPTANCE.md` | Codex独立复核 | 第562/563页、金额、单位、期间及2.76个月确认 |
-| R0-4（数据治理完成） | 特殊证券治理记录 | 02191/04801/04841说明 | 数据成员 | 明确REIT、SPAC股份/权证映射及资格 |
-| R0-5（本次同步完成） | 发布文档同步 | README、CHANGELOG、ROADMAP、总清单 | 技术负责人 | 所有文档口径一致 |
-| R0-6（完成） | 创建Tag与Release | v0.2.0 Release | 技术负责人 | 冻结SHA、已知限制和回退点 |
-| R0-7（完成） | 版本复盘 | `V0.2_RETROSPECTIVE.md` | 全组 | 明确成功项、问题和v0.3输入 |
-
-## 3.1 建议Release名称
-
-| v0.2.0-real-document-slice |
-|----------------------------|
-
-## 3.2 v0.2发布门
-
-- ☑ 审核基线完整测试通过：284 passed
-
-- ☑ 2410.HK真实E2E保持：706 chunks、Evidence第563/562页、现金跑道2.76个月、verified、90/critical
-
-- ☑ 第二次独立证据复核完成；执行者为Codex，方法和结论已披露
-
-- ☑ 远程main全新克隆和Python 3.12.10独立虚拟环境复跑完成
-
-- ☑ README、ROADMAP、CHANGELOG和总清单已于本次同步
-
-- ☑ 已记录证券主表截断、10份无行情、3份特殊证券和金额单位等限制
-
-- ☑ Tag、Release Notes和回退SHA完成：`916df5d`
+v0.3开发必须保持该Tag可回退、Mock模式可运行、2410.HK真实E2E不回归。
 
 # 4. v0.3.0总体设计
 
@@ -604,25 +560,19 @@ v0.3批量评测完成后增加：
 
 # 15. 当前立即执行顺序
 
-**1.** v0.2独立复跑和第二次金标准证据复核已完成。
+**1.** 建立v0.3黄金案例和标注规范。
 
-**2.** v0.2 Tag、GitHub Release和版本复盘文档已完成。
+**2.** 开发CatalogIPODataProvider并正式治理三个特殊证券。
 
-**3. 本计划已写入ROADMAP和PROJECT_MASTER_CHECKLIST，v0.3范围已冻结。**
+**3.** 扩展Retriever并建立可替换LLMProvider。
 
-**4.** 建立v0.3黄金案例和标注规范。
+**4.** 分别实现Financial、Legal、Business Agent。
 
-**5.** 开发CatalogIPODataProvider并正式治理三个特殊证券。
+**5.** 建立专用Verifier、Supervisor和enhanced_v2工作流。
 
-**6.** 扩展Retriever并建立可替换LLMProvider。
+**6.** 完成批量评测、Streamlit和证据化报告。
 
-**7.** 分别实现Financial、Legal、Business Agent。
-
-**8.** 建立专用Verifier、Supervisor和enhanced_v2工作流。
-
-**9.** 完成批量评测、Streamlit和证据化报告。
-
-**10.** 完成独立复跑并发布v0.3。
+**7.** 完成独立复跑并发布v0.3。
 
 <table>
 <colgroup>
@@ -678,20 +628,10 @@ v0.3批量评测完成后增加：
 
 - □ 独立环境复跑通过
 
-- ☑ README、ROADMAP、CHANGELOG和总清单已于本次同步
-
 - □ 创建v0.3 Tag和Release
 
 # 附录B：来源基准与版本说明
 
-本计划基于GitHub仓库 richardssheik107-hub/hk-ipo-risk-agents 的main分支审核基线编制；文档提交后的main SHA会前移，因此以附录所列审核基线复现实证。
-
-- 发布候选基准提交：cdc3c69d9f638077593e73f08acc673b995ae1db
-
-- 提交说明：docs: replace master plan with audited v0.3 roadmap
-
-- 提交记录：284 passing tests and GitHub Actions
-
-- v0.2正式Tag为`v0.2.0-real-document-slice`，冻结提交为`916df5d442030e3443249a881f995b5d039a5b33`，GitHub Release已发布。
+本计划以`v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33`为稳定回归与回退基线。
 
 - 后续如公共Schema、赛题要求或数据源发生变化，应先更新本计划再启动新开发棒。

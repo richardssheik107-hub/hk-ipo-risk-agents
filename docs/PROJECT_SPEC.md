@@ -55,9 +55,9 @@ HK IPO Risk Agents
 9. 智能体执行日志；
 10. 风险预警报告。
 
-## 4. 第一阶段目标
+## 4. 稳定架构基线
 
-第一阶段的目标不是一次完成全部真实金融分析能力，而是完成一个“架构级MVP”。
+项目以已发布的架构级MVP为稳定基础。
 
 架构级MVP应满足：
 
@@ -65,7 +65,7 @@ HK IPO Risk Agents
 2. 前端、应用服务、工作流、Agent、Skill、预测模型、数据接口和评测模块相互分离；
 3. 所有模块通过统一的数据Schema进行通信；
 4. 使用LangGraph建立完整多智能体工作流；
-5. 暂未完成的业务模块允许使用Mock实现；
+5. 暂未完成的业务模块允许使用Mock或unavailable实现；
 6. 使用Mock数据时，端到端流程也必须能够运行；
 7. 后续五名成员可以分别替换各自负责的Mock模块；
 8. 替换某个Mock模块时，不需要重构其他模块；
@@ -165,9 +165,9 @@ HK IPO Risk Agents
 5. 生成结构化分析摘要；
 6. 组织最终报告内容。
 
-## 7. 第一阶段核心风险类型
+## 7. 风险类型范围
 
-第一阶段预留以下风险类型：
+公共Schema和风险注册表支持以下风险类型：
 
 1. 连续亏损；
 2. 经营现金流为负；
@@ -182,45 +182,21 @@ HK IPO Risk Agents
 11. 监管审批风险；
 12. IPO市场环境较弱。
 
-第一阶段不要求以上风险全部通过真实PDF准确识别，但公共Schema、Agent接口和风险分类体系必须支持这些风险。
+真实实现范围按版本逐步扩展，不得为尚未实现的风险生成虚构结论。
 
-## 8. 第一阶段允许使用Mock的模块
+## 8. 当前组件状态
 
-以下模块第一阶段允许使用Mock实现：
+真实或确定性实现：
 
-1. PDF解析器；
-2. 文档检索器；
-3. 财务Agent；
-4. 法务Agent；
-5. 业务Agent；
-6. 市场Agent；
-7. 市场数据Provider；
-8. 报告生成器；
-9. 部分风险预测特征。
+1. PyMuPDF DocumentParser；
+2. KeywordDocumentRetriever；
+3. 现金跑道Financial Agent及确定性Skill；
+4. RuleVerifier、RuleSupervisor和RuleBasedPredictor；
+5. LangGraph、IPOAnalysisService、JSON Repository和Streamlit。
 
-Mock实现必须遵守与未来真实实现相同的接口和数据Schema。
+尚未真实实现：Legal、Business、Market Agent和真实市场数据Provider；ReportGenerator仍为Mock格式化组件。所有Mock、真实和unavailable实现必须遵守相同公共接口和Schema。
 
-## 9. 第一阶段必须真实实现的内容
-
-以下内容不能仅创建空文件：
-
-1. Pydantic公共Schema；
-2. 抽象接口或Protocol；
-3. IPOAnalysisService；
-4. LangGraph工作流；
-5. 配置加载；
-6. 结构化Agent日志；
-7. RuleBasedPredictor；
-8. 至少两个确定性Skill；
-9. Streamlit页面；
-10. 单元测试；
-11. 契约测试；
-12. 端到端测试；
-13. Windows启动脚本；
-14. Unix启动脚本；
-15. README和开发文档。
-
-## 10. 第一阶段不做的内容
+## 9. 当前范围边界
 
 暂时不实现：
 
@@ -239,52 +215,23 @@ Mock实现必须遵守与未来真实实现相同的接口和数据Schema。
 13. 高频实时行情系统；
 14. 完整企业级权限系统。
 
-## 11. MVP验收标准
+## 10. 当前迭代方向
 
-第一阶段完成时，必须满足：
+v0.3.0按以下顺序推进：
 
-1. 项目不是依靠一个大型Python文件运行；
-2. Streamlit只能调用IPOAnalysisService；
-3. IPOAnalysisService能够运行完整工作流；
-4. 所有Agent使用统一输入和输出格式；
-5. 所有RiskItem支持Evidence；
-6. Parser、Retriever、Agent、Predictor和Provider均可替换；
-7. Mock模式下端到端流程能够运行；
-8. 页面能够展示公司信息；
-9. 页面能够展示综合风险评分；
-10. 页面能够展示已核验风险；
-11. 页面能够展示待核验风险；
-12. 页面能够展示Evidence；
-13. 页面能够展示Agent执行日志；
-14. 所有测试能够通过；
-15. 项目能够通过一条命令启动；
-16. 项目包含完整的开发说明。
+1. 建立5—10份黄金案例和统一标注规范；
+2. 扩展Retriever查询族；
+3. 实现Financial、Legal和Business真实Agent及专用Verifier；
+4. 建立批量分析、Evidence评测和`enhanced_v2`工作流；
+5. 保持Mock模式、`mvp_v1`和2410.HK现金跑道回归稳定。
 
-## 12. 后续迭代方向
+真实市场数据、Market Agent、上市后标签、Logistic、LightGBM和SHAP延后至v0.4及后续版本。
 
-第一阶段完成后，按以下顺序迭代：
+## 11. 当前实施状态
 
-1. 将Mock PDF Parser替换为真实解析器；
-2. 建立文档检索和证据定位；
-3. 将Mock Financial Agent替换为真实财务Agent；
-4. 将Mock Legal Agent替换为真实法务Agent；
-5. 将Mock Business Agent替换为真实业务Agent；
-6. 接入真实港股市场数据；
-7. 建立人工标注集；
-8. 建立抽取和证据评测体系；
-9. 增加独立Verifier能力；
-10. 增加Logistic模型；
-11. 增加LightGBM模型；
-12. 增加SHAP模型解释；
-13. 增加PDF证据截图；
-14. 增加批量IPO分析；
-15. 增加自动风险报告。
+稳定版本为`v0.2.0-real-document-slice`，已经实现真实PDF解析、Evidence检索、现金与经营
+现金流提取、现金跑道Calculation、财务风险核验、规则评分、Service级E2E和Streamlit展示。
 
-## 13. 当前实施状态
-
-v0.1.0-architecture-mvp 已完成并发布。第一阶段已经实现架构、配置、工作流、规则核验、
-规则预测、故障降级、前端和自动化测试。
-
-下一阶段进入 v0.2.0 真实纵向案例，优先完成真实 PDF 解析、Evidence 检索和现金跑道风险
-闭环；不在该阶段同时替换全部 Mock 模块。
+当前进入v0.3.0真实多Agent文档风险分析。详细范围、任务顺序和退出门槛以
+`docs/PROJECT_MASTER_CHECKLIST.md`为准。
 

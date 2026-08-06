@@ -39,16 +39,6 @@ Release: https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag
 - LLMProvider未进入生产链路，ReportGenerator仍为Mock格式化实现；
 - 规则分不是上市后下跌概率；扫描型PDF/OCR和统计预测模型尚未实现。
 
-## v0.3.0-multi-agent-risk-analysis (Planned)
-
-### Scope Frozen
-
-- Financial、Legal、Business三个真实专业Agent；
-- 八类证据驱动风险与专用Verifier；
-- 五至十份黄金案例、批量评测和`enhanced_v2`工作流；
-- 保留`mvp_v1`、Mock模式、v0.2现金跑道回归和无API Key确定性链路；
-- 市场标签、Market Agent与预测模型延后至v0.4。
-
 ## v0.1.0-architecture-mvp
 
 ### Added

@@ -255,7 +255,7 @@ five_day_significant_decline_risk
 6. Mock实现和真实实现必须使用相同Schema；
 7. 测试必须验证Schema兼容性。
 
-## 15. 第一阶段补充Schema
+## 15. 补充Schema
 
 ### AnalysisError
 
@@ -279,7 +279,7 @@ VerificationResult 将风险分为 verified_risks、pending_risks 和 rejected_r
 SupervisionResult 返回去重后的 verified_risks 及摘要。它们分别是 Verifier 与
 Supervisor 的结构化输入输出边界，同时保持 IPOAnalysisResult 的对外结构兼容。
 
-## 16. v0.1.0 契约与降级语义
+## 16. 当前契约与降级语义
 
 风险是否需要 Evidence 或 Calculation 由 domain 风险注册表定义，包含
 requires_evidence 与 requires_calculation 元数据；不得通过解析 conclusion 中是否出现

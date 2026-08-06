@@ -505,9 +505,9 @@ logistic_v1
 lightgbm_v1
 ```
 
-## 12. 第一阶段架构原则
+## 12. 架构原则
 
-第一阶段必须坚持：
+所有版本必须坚持：
 
 1. 架构完整；
 2. 实现简化；
@@ -535,9 +535,9 @@ lightgbm_v1
 4. Verifier和Supervisor使用独立Protocol及结构化结果；
 5. 风险是否需要Evidence或Calculation由domain风险注册表决定。
 
-## 15. v0.1.0 已实现架构
+## 15. 当前实现基线
 
-v0.1.0-architecture-mvp 已冻结并发布。组件由 ComponentRegistry 和
+当前稳定版本`v0.2.0-real-document-slice`沿用该架构。组件由 ComponentRegistry 和
 DependencyContainer 装配，优先级为环境变量 > YAML > 代码默认值。
 
 实际工作流为：
@@ -565,8 +565,5 @@ SupervisionResult。统一节点包装器将组件异常记录为 AgentLog 与 A
 并尽可能保留已有结果，使分析进入 partial 而非中断。WorkflowState 对风险、日志和
 错误使用追加或去重 Reducer，防止节点结果覆盖先前状态。
 
-### 已实现架构与规划差异
-
-第一阶段规划允许 Verifier 和 Supervisor 使用 Mock。正式实现中两者已调整为真实规则
-实现，以自动验证 Evidence、Calculation 及风险去重规则。
+Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Calculation及风险去重规则。
 
