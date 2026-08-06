@@ -11,11 +11,13 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.run_shadow_tests import ShadowCase, load_selection, run_batch, validate_selection
+from scripts.validate_competition_data import read_rows, validate_shadow_manifest_alignment
 
 
 SELECTION_PATH = Path("data/catalog/shadow_sample_24.csv")
 MANUAL_REVIEW_PATH = Path("data/catalog/shadow_manual_review_12.csv")
 A2_6_EVALUATION_PATH = Path("data/catalog/shadow_a2_6_evaluation.csv")
+MANIFEST_PATH = Path("data/catalog/ipo_prospectus_manifest.csv")
 
 
 def test_repository_shadow_selection_contract() -> None:
@@ -35,6 +37,25 @@ def test_repository_shadow_selection_contract() -> None:
     assert all(case.stock_code_raw != "02410" for case in cases)
 
 
+def test_repository_shadow_selection_is_traceable_to_manifest() -> None:
+    manifest = read_rows(MANIFEST_PATH)
+    shadow_selection = read_rows(SELECTION_PATH)
+
+    assert validate_shadow_manifest_alignment(manifest, shadow_selection) == []
+
+
+def test_shadow_manifest_alignment_rejects_filename_drift() -> None:
+    manifest = read_rows(MANIFEST_PATH)
+    shadow_selection = read_rows(SELECTION_PATH)
+    changed = [dict(row) for row in shadow_selection]
+    changed[0]["source_filename"] = "unexpected.pdf"
+
+    errors = validate_shadow_manifest_alignment(manifest, changed)
+
+    assert any("filename differs from manifest" in error for error in errors)
+    assert any("relative path differs from manifest" in error for error in errors)
+
+
 def test_selection_rejects_blind_test_case() -> None:
     cases = load_selection(SELECTION_PATH)
     invalid = ShadowCase(**{**cases[0].__dict__, "source_year": 2025})
@@ -48,9 +69,13 @@ def test_manual_review_records_gate_result() -> None:
         rows = list(csv.DictReader(handle))
 
     assert len(rows) == 12
+    selection_codes = {
+        case.case_id: case.stock_code_wind for case in load_selection(SELECTION_PATH)
+    }
     assert {row["case_id"] for row in rows} == {
         case.case_id for case in load_selection(SELECTION_PATH) if case.manual_review
     }
+    assert all(row["stock_code_wind"] == selection_codes[row["case_id"]] for row in rows)
 
     cash_applicable = [row for row in rows if row["cash_applicable"] == "true"]
     operating_applicable = [
@@ -75,9 +100,17 @@ def test_a2_6_evaluation_passes_diagnostic_and_validation_gates() -> None:
         rows = list(csv.DictReader(handle))
 
     assert len(rows) == 18
+    selection_codes = {
+        case.case_id: case.stock_code_wind for case in load_selection(SELECTION_PATH)
+    }
     assert sum(row["evaluation_set"] == "diagnostic" for row in rows) == 12
     assert sum(row["evaluation_set"] == "validation" for row in rows) == 6
     assert sum(row["review_status"] == "not_applicable" for row in rows) == 1
+    assert all(
+        row["stock_code_wind"] == selection_codes[row["case_id"]]
+        for row in rows
+        if row["case_id"] in selection_codes
+    )
 
     for evaluation_set, expected_applicable in (("diagnostic", 11), ("validation", 6)):
         subset = [row for row in rows if row["evaluation_set"] == evaluation_set]

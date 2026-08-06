@@ -19,6 +19,7 @@ from scripts.build_competition_manifest import (
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
+EXPECTED_SHADOW_YEAR_COUNTS = {2020: 5, 2021: 5, 2022: 5, 2023: 4, 2024: 5}
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:
@@ -29,6 +30,57 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def validate_shadow_manifest_alignment(
+    manifest: list[dict[str, str]],
+    shadow_selection: list[dict[str, str]],
+) -> list[str]:
+    """Validate that every frozen shadow case is traceable to the B1 manifest."""
+    errors: list[str] = []
+    manifest_by_key = {
+        (row["source_year"], row["stock_code_raw"]): row
+        for row in manifest
+    }
+
+    if len(shadow_selection) != 24:
+        errors.append(f"shadow selection rows: expected 24, got {len(shadow_selection)}")
+    shadow_year_counts = Counter(int(row["source_year"]) for row in shadow_selection)
+    if dict(sorted(shadow_year_counts.items())) != EXPECTED_SHADOW_YEAR_COUNTS:
+        errors.append(
+            "shadow year counts: "
+            f"expected {EXPECTED_SHADOW_YEAR_COUNTS}, got {dict(shadow_year_counts)}"
+        )
+    if sum(row["manual_review"] == "true" for row in shadow_selection) != 12:
+        errors.append("shadow selection must contain exactly 12 manual-review cases")
+
+    seen_keys: set[tuple[str, str]] = set()
+    for shadow in shadow_selection:
+        key = (shadow["source_year"], shadow["stock_code_raw"])
+        if key in seen_keys:
+            errors.append(f"duplicate shadow manifest key: {key[0]}/{key[1]}")
+            continue
+        seen_keys.add(key)
+        manifest_row = manifest_by_key.get(key)
+        if manifest_row is None:
+            errors.append(f"shadow case missing from manifest: {shadow['case_id']}")
+            continue
+        if shadow["source_filename"] != manifest_row["source_filename"]:
+            errors.append(f"shadow filename differs from manifest: {shadow['case_id']}")
+        if shadow["stock_code_wind"] != manifest_row["stock_code_wind"]:
+            errors.append(f"shadow Wind code differs from manifest: {shadow['case_id']}")
+        if PurePosixPath(manifest_row["relative_path"]).name != shadow["source_filename"]:
+            errors.append(f"shadow relative path differs from manifest: {shadow['case_id']}")
+        if not SHA256_PATTERN.fullmatch(manifest_row["sha256"]):
+            errors.append(f"shadow case lacks a valid manifest SHA-256: {shadow['case_id']}")
+        if manifest_row["dataset_split"] not in {"development", "validation"}:
+            errors.append(
+                f"shadow case uses disallowed split {manifest_row['dataset_split']}: "
+                f"{shadow['case_id']}"
+            )
+        if shadow["source_year"] == "2025" or shadow["stock_code_raw"] == "02410":
+            errors.append(f"shadow selection contains a frozen exclusion: {shadow['case_id']}")
+    return errors
+
+
 def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
     """Return all B1 acceptance failures instead of stopping at the first."""
     errors: list[str] = []
@@ -37,6 +89,7 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
     splits = read_rows(catalog_dir / "dataset_split.csv")
     official_bridge = read_rows(catalog_dir / "ipo_official_master_bridge.csv")
     issues = read_rows(catalog_dir / "data_quality_issues.csv")
+    shadow_selection = read_rows(catalog_dir / "shadow_sample_24.csv")
 
     if len(manifest) != EXPECTED_TOTAL:
         errors.append(f"manifest rows: expected {EXPECTED_TOTAL}, got {len(manifest)}")
@@ -64,8 +117,17 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
         if data_root is not None and not (data_root / relative_path).is_file():
             errors.append(f"manifest source file missing: {relative_path}")
 
+    errors.extend(validate_shadow_manifest_alignment(manifest, shadow_selection))
+
     if len(coverage) != EXPECTED_TOTAL:
         errors.append(f"coverage rows: expected {EXPECTED_TOTAL}, got {len(coverage)}")
+    coverage_by_case = {row["case_id"]: row for row in coverage}
+    if len(coverage_by_case) != len(coverage) or set(coverage_by_case) != set(case_ids):
+        errors.append("coverage case IDs do not match the manifest")
+    for row in manifest:
+        coverage_row = coverage_by_case.get(row["case_id"])
+        if coverage_row is not None and coverage_row["eod_available"] != row["eod_available"]:
+            errors.append(f"coverage availability differs from manifest: {row['case_id']}")
     available = sum(row["eod_available"] == "true" for row in coverage)
     missing = sum(row["eod_available"] == "false" for row in coverage)
     if (available, missing) != (555, 10):
@@ -73,6 +135,13 @@ def validate(catalog_dir: Path, data_root: Path | None = None) -> list[str]:
 
     if len(splits) != EXPECTED_TOTAL:
         errors.append(f"split rows: expected {EXPECTED_TOTAL}, got {len(splits)}")
+    splits_by_case = {row["case_id"]: row for row in splits}
+    if len(splits_by_case) != len(splits) or set(splits_by_case) != set(case_ids):
+        errors.append("split case IDs do not match the manifest")
+    for row in manifest:
+        split_row = splits_by_case.get(row["case_id"])
+        if split_row is not None and split_row["dataset_split"] != row["dataset_split"]:
+            errors.append(f"dataset split differs from manifest: {row['case_id']}")
     split_counts = Counter(row["dataset_split"] for row in splits)
     expected_splits = {
         "development": 376,

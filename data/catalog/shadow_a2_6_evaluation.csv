@@ -2,14 +2,14 @@ case_id,stock_code_wind,evaluation_set,review_status,cash_applicable,cash_gold_p
 shadow_2020_01167,1167.HK,diagnostic,reviewed,true,426,20|453|318|426|452,true,4,true,425,425|20|318|321|59,true,1,2026-08-04,原人工金标准复测
 shadow_2020_06688,6688.HK,diagnostic,reviewed,true,451,27|451|366|560|452,true,2,true,449,449|366,true,1,2026-08-04,原人工金标准复测
 shadow_2020_08489,8489.HK,diagnostic,reviewed,true,309,22|309|222|301|358,true,2,true,308,308|22|23|222|223,true,1,2026-08-04,原人工金标准复测
-shadow_2021_00013,13.HK,diagnostic,reviewed,true,510|576,510|557|511|37|576,true,1,true,510|576,510|557|28|37|576,true,1,2026-08-04,原人工金标准复测
+shadow_2021_00013,0013.HK,diagnostic,reviewed,true,510|576,510|557|511|37|576,true,1,true,510|576,510|557|28|37|576,true,1,2026-08-04,原人工金标准复测
 shadow_2021_02378,2378.HK,diagnostic,not_applicable,false,,,n/a,,false,,,n/a,,2026-08-04,股份发售文件不含完整正式现金流量表
 shadow_2022_01244,1244.HK,diagnostic,reviewed,true,665,30|665|548|678|666,true,2,true,664,664|30|29|546|713,true,1,2026-08-04,原人工金标准复测
 shadow_2022_01947,1947.HK,diagnostic,reviewed,true,472,380|472|26|484|516,true,2,true,470,470|381|401,true,1,2026-08-04,原人工金标准复测
 shadow_2022_04801,4801.HK,diagnostic,reviewed,true,212,212|13|217,true,1,true,212,212,true,1,2026-08-04,原人工金标准复测
 shadow_2023_01541,1541.HK,diagnostic,reviewed,true,466,30|466|524|403|461,true,2,true,465,30|465|524|403,true,2,2026-08-04,原人工金标准复测
 shadow_2023_02503,2503.HK,diagnostic,reviewed,true,402,18|402|412|396|338,true,2,true,402,402|335|18|334|42,true,1,2026-08-04,原人工金标准复测
-shadow_2024_00300,300.HK,diagnostic,reviewed,true,465,28|323|465|592|535,true,3,true,464,464|553|592|618|28,true,1,2026-08-04,原人工金标准复测
+shadow_2024_00300,0300.HK,diagnostic,reviewed,true,465,28|323|465|592|535,true,3,true,464,464|553|592|618|28,true,1,2026-08-04,原人工金标准复测
 shadow_2024_02228,2228.HK,diagnostic,reviewed,true,675,40|582|675|735|684,true,3,true,675,675|583|40|582|41,true,1,2026-08-04,原人工金标准复测
 shadow_2020_02126,2126.HK,validation,reviewed,true,600,33|463|445|600|704,true,4,true,599,599|704|463|464|746,true,1,2026-08-04,未参与A2.5诊断的新增验证样本
 shadow_2021_02161,2161.HK,validation,reviewed,true,320,320|387|336|316|317,true,1,true,320,320|387|19|260|256,true,1,2026-08-04,未参与A2.5诊断的新增验证样本
