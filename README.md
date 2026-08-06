@@ -7,12 +7,12 @@
 当前阶段：
 
 ```text
-v0.2.0：真实PDF现金跑道纵向闭环与B线赛事数据治理已完成，进入发布验收
+v0.2.0：真实PDF现金跑道纵向闭环与B线赛事数据治理已完成，发布闸门已通过
 ```
 
 稳定版本：[v0.1.0-architecture-mvp](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.1.0-architecture-mvp)。
 
-稳定的v0.1.0架构级MVP已经发布。当前v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式，以及565份赛事招股书的数据治理和24份影子样本对账。当前自动化验收为284 passed；v0.2尚未发布。
+稳定的v0.1.0架构级MVP已经发布。v0.2.0在不改变公共Schema的前提下，已完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式，以及565份赛事招股书的数据治理和24份影子样本对账。自动化验收为284 passed，独立克隆安装、第二次证据复核和界面验收均已通过，当前进入正式发布操作。
 
 ## 核心流程
 

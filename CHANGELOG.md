@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.2.0-real-document-slice (Unreleased)
+## v0.2.0-real-document-slice - 2026-08-06
 
 ### Added
 
@@ -22,16 +22,20 @@
 - 规则评分不输出概率。
 - 赛事数据校验、项目校验与编译检查通过；
 - 565份招股书manifest、555/10行情覆盖与562/3官方IPO主数据桥接完成。
+- 远程main全新克隆、Python 3.12.10虚拟环境安装和完整验收通过；
+- 2410.HK第562/563页已完成第二次独立证据复核；
+- Streamlit真实场景与Predictor故障降级场景人工验收通过。
 
 ### Fixed
 
 - Extractor或Risk Builder异常时刷新Financial Agent结构化失败诊断；
 - Streamlit PDF上传增加200 MB显式大小上限。
 
-### Remaining
+### Known Limitations
 
-- 第二标注人复核与技术备份独立运行；
-- v0.2 Tag与Release。
+- 真实链路只覆盖现金跑道，Legal、Business和Market Agent仍不可用；
+- LLMProvider未进入生产链路，ReportGenerator仍为Mock格式化实现；
+- 规则分不是上市后下跌概率；扫描型PDF/OCR和统计预测模型尚未实现。
 
 ## v0.3.0-multi-agent-risk-analysis (Planned)
 
