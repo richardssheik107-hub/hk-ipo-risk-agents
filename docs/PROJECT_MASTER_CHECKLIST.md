@@ -184,8 +184,8 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | 1 | cash_runway | 现金跑道不足 | Financial | v0.2已有，保持回归 |
 | 2 | continuous_loss | 持续亏损 | Financial | 表格提取 + 亏损趋势Skill |
 | 3 | revenue_growth | 收入增长异常或放缓 | Financial | 期间对齐 + 增长率Skill |
-| 4 | customer_concentration | 客户集中度过高 | Financial / Business | 占比提取 + 规则 |
-| 5 | supplier_concentration | 供应商集中度过高 | Financial / Business | 占比提取 + 规则 |
+| 4 | customer_concentration | 客户集中度过高 | Financial | 占比提取 + 规则；Business仅提供依赖事实 |
+| 5 | supplier_concentration | 供应商集中度过高 | Financial | 占比提取 + 规则；Business仅提供依赖事实 |
 | 6 | redemption_rights | 赎回权及特殊股东权利 | Legal | 检索 + LLM候选提取 + 规则 |
 | 7 | material_litigation_compliance | 重大诉讼与合规 | Legal | 语义提取 + 重大性与状态核验 |
 | 8 | precommercial_product | 未商业化及核心产品依赖 | Business | 业务事实提取 + 规则 |
@@ -208,7 +208,8 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 
 | **棒次** | **唯一任务** | **主要输出** | **负责人** | **验收重点** |
 |:---|:---|:---|:---|:---|
-| V3-0（本次完成） | 冻结v0.3范围与文档 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结风险目录、接力顺序和退出门槛。 | 技术负责人 | 只改文档，不改业务代码和公共Schema。 |
+| V3-0A（已完成） | 冻结v0.3范围与路线 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结接力顺序和退出门槛。 | 技术负责人 | 文档范围与发布基线一致。 |
+| V3-0B（已完成） | 冻结开发契约 | 冻结角色输入输出、唯一风险所有权、候选模型、诊断、Supervisor和LLMProvider契约；新增兼容Schema和契约测试。 | 技术负责人 | 公共接口只做带默认值的兼容扩展；全量回归通过。 |
 | V3-1 | 黄金案例与标注规范 | 选择5—10份真实招股书，建立风险适用性、主证据页、原文、数值、单位、期间和标准核验状态。 | 财务/法务/业务 | 每类风险至少一个正例，关键案例双人复核，2025盲测不得进入。 |
 | V3-2 | IPO基础信息Provider | 从官方主数据桥接生成IPOProfile，处理匹配、占位、代码复用和特殊证券。 | 技术备份/数据 | 562个匹配案例稳定加载，缺失案例结构化降级。 |
 | V3-3 | Retriever查询族泛化 | 增加收入、亏损、客户、供应商、特殊权利、诉讼、商业化和核心管线等查询族。 | 技术负责人 | 接口不变，支持简繁英、章节权重、稳定Evidence ID和无匹配空结果。 |
@@ -635,3 +636,18 @@ v0.3批量评测完成后增加：
 本计划以`v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33`为稳定回归与回退基线。
 
 - 后续如公共Schema、赛题要求或数据源发生变化，应先更新本计划再启动新开发棒。
+
+## 附录C：v0.3开发契约冻结状态
+
+- [x] 统一Agent输入与`list[RiskItem]`输出保持不变
+- [x] 8类v0.3风险代码及唯一owner已冻结
+- [x] `material_litigation_compliance`已补入风险注册表
+- [x] `weak_ipo_market`保留但在v0.3禁用
+- [x] Financial、Legal、Business内部候选Pydantic模型已冻结
+- [x] `ComponentDiagnostic`与`last_diagnostics`旁路诊断契约已冻结
+- [x] Supervisor去重、冲突和组合发现兼容字段已冻结
+- [x] LLMProvider结构化调用、元数据、环境变量与降级规则已冻结
+- [x] 黄金案例CSV与双人复核规范已冻结
+- [x] PR模板和契约测试已建立
+
+正式编码入口以`V03_DEVELOPMENT_CONTRACT.md`、`V03_RISK_RULES.md`、`V03_ANNOTATION_GUIDE.md`和`V03_LLM_PROVIDER_SPEC.md`为准。契约版本为`v03_contract_v1`；变更必须升级版本并由技术负责人审核。

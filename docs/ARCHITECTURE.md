@@ -567,3 +567,9 @@ SupervisionResult。统一节点包装器将组件异常记录为 AgentLog 与 A
 
 Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Calculation及风险去重规则。
 
+## v0.3 契约冻结边界
+
+v0.3 继续使用统一 `RiskAgent.analyze(...) -> list[RiskItem]`，不为三类专业 Agent 建立不兼容的公共返回类型。结构化候选模型保留在各 Agent 内部；`DiagnosticSource.last_diagnostics` 是不改变风险返回类型的旁路诊断接口。
+
+风险所有权为 Financial 5 类、Legal 2 类、Business 1 类。Market 节点在 `enhanced_v2` 中保留，但 v0.3 数据不可用时必须记录 skipped/unavailable，禁止生成 Mock 市场风险。阈值由 `configs/v03_risk_rules.yaml` 版本化管理，完整边界见 `V03_DEVELOPMENT_CONTRACT.md`。
+

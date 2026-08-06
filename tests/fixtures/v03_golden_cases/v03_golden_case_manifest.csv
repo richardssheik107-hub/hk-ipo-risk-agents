@@ -1,0 +1,4 @@
+case_id,stock_code,company_name,document_id,risk_code,applicable,gold_page,exact_text,expected_status,expected_level,reviewer,second_reviewer,review_status,notes
+synthetic-fin-001,0000.HK,合成测试公司,synthetic-doc-001,continuous_loss,true,10,本公司于两个可比期间持续录得亏损,needs_review,medium,test_reviewer,test_reviewer_2,double_reviewed,synthetic fixture only
+synthetic-legal-001,0000.HK,合成测试公司,synthetic-doc-001,redemption_rights,true,20,有关赎回权将于上市时终止,needs_review,medium,test_reviewer,test_reviewer_2,double_reviewed,synthetic fixture only
+synthetic-business-001,0000.HK,合成测试公司,synthetic-doc-001,precommercial_product,false,,,rejected,not_applicable,test_reviewer,test_reviewer_2,double_reviewed,synthetic fixture only

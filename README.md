@@ -152,3 +152,14 @@ python scripts/check_real_v02_e2e.py
 
 Windows 可运行 `start.bat`，Unix 可运行 `start.sh`。配置默认读取 `configs/mock.yaml`，环境变量优先于 YAML 配置。
 
+## v0.3 开发契约
+
+v0.3 正式编码前已冻结角色输入输出、8 类启用风险的唯一所有权、诊断通道、Supervisor 扩展、LLM 结构化调用和金标准格式。开发人员必须先阅读：
+
+1. [v0.3 开发契约](docs/V03_DEVELOPMENT_CONTRACT.md)
+2. [v0.3 风险规则](docs/V03_RISK_RULES.md)
+3. [v0.3 标注指南](docs/V03_ANNOTATION_GUIDE.md)
+4. [v0.3 LLMProvider 规范](docs/V03_LLM_PROVIDER_SPEC.md)
+
+`weak_ipo_market` 为 v0.4 兼容而保留，但在 v0.3 禁用。任何真实 LLM 密钥只允许通过环境变量注入；曾出现在聊天或日志中的密钥必须先轮换。
+

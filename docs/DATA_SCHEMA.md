@@ -294,4 +294,15 @@ IPOAnalysisResult.status 可为 partial：表示部分节点失败但结果仍�
 预测失败时 prediction 允许为空；报告生成失败时 report_sections 允许为空；两类失败均必须
 在 errors 中记录结构化 AnalysisError，并在 agent_logs 中记录失败日志。
 
+## v0.3 兼容扩展
+
+v0.3 仅新增带默认值的公共模型/字段，不删除或改名既有字段：
+
+- `ComponentDiagnostic`：记录未产生风险、证据缺失、抽取失败、值冲突、不支持布局、人工复核和组件失败；
+- `LLMCallMetadata`：记录 Provider、模型、Prompt 版本、延迟、token、请求 ID 和原始响应哈希；
+- `DuplicateRiskGroup`、`RiskConflict`、`CompositeFinding`：分别承载 Supervisor 的去重、冲突和组合发现；
+- `SupervisionResult.duplicate_groups/conflicts/composite_findings/metadata`：均使用安全默认值，旧调用方保持兼容。
+
+Financial、Legal、Business 的候选抽取模型属于 Agent 内部 Pydantic 模型，不直接进入 `IPOAnalysisResult`。它们必须先转换为带 Evidence 的 `RiskItem`，才能进入工作流公共边界。
+
 ---

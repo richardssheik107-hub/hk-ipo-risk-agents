@@ -1,0 +1,33 @@
+version: v03_contract_v1
+status: frozen
+
+risks:
+  cash_runway:
+    owner: financial
+    thresholds_months: {critical_lt: 3, high_lt: 6, medium_lt: 12}
+  continuous_loss:
+    owner: financial
+    thresholds: {high_min_comparable_periods: 3, medium_min_comparable_periods: 2}
+  revenue_growth:
+    owner: financial
+    thresholds_pct: {high_lte: -20, medium_lt: 0}
+  customer_concentration:
+    owner: financial
+    thresholds_pct: {high_largest_gte: 50, high_top_five_gte: 80, medium_largest_gte: 30, medium_top_five_gte: 60}
+  supplier_concentration:
+    owner: financial
+    thresholds_pct: {high_largest_gte: 50, high_top_five_gte: 80, medium_largest_gte: 30, medium_top_five_gte: 60}
+  redemption_rights:
+    owner: legal
+    rule: effective_or_restorable_rights_require_review
+  material_litigation_compliance:
+    owner: legal
+    rule: material_pending_matter_or_unresolved_regulatory_impact
+  precommercial_product:
+    owner: business
+    rule: core_product_not_commercialized_and_no_product_revenue
+
+disabled_in_v03:
+  weak_ipo_market:
+    planned_version: v0.4
+    reason: market feature engineering is outside v0.3 scope

@@ -38,6 +38,17 @@ class EvidenceSourceType(StrEnum):
     PROSPECTUS = "prospectus"; MARKET_DATA = "market_data"; IPO_DATA = "ipo_data"; CALCULATION = "calculation"
 
 
+class DiagnosticCode(StrEnum):
+    RISK_GENERATED = "risk_generated"
+    NOT_APPLICABLE = "not_applicable"
+    EVIDENCE_NOT_FOUND = "evidence_not_found"
+    EXTRACTION_FAILED = "extraction_failed"
+    CONFLICTING_VALUES = "conflicting_values"
+    UNSUPPORTED_LAYOUT = "unsupported_layout"
+    NEEDS_REVIEW = "needs_review"
+    COMPONENT_FAILURE = "component_failure"
+
+
 class DocumentChunk(BaseModel):
     document_id: str
     chunk_id: str
@@ -100,6 +111,27 @@ class AnalysisError(BaseModel):
     recoverable: bool = True
     context: dict[str, Any] = Field(default_factory=dict)
     occurred_at: datetime = Field(default_factory=now)
+
+
+class ComponentDiagnostic(BaseModel):
+    """Structured explanation for a component decision that emitted no risk."""
+
+    risk_code: str
+    code: DiagnosticCode
+    message: str
+    recoverable: bool = True
+    evidence_ids: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class LLMCallMetadata(BaseModel):
+    provider_name: str
+    model_name: str
+    prompt_version: str
+    latency_ms: int = Field(ge=0)
+    token_usage: dict[str, int] = Field(default_factory=dict)
+    request_id: str
+    raw_response_hash: str
 
 
 class AgentLog(BaseModel):
@@ -216,9 +248,35 @@ class VerificationResult(BaseModel):
     rejected_risks: list[RiskItem] = Field(default_factory=list)
 
 
+class DuplicateRiskGroup(BaseModel):
+    risk_code: str
+    source_risk_ids: list[str] = Field(default_factory=list)
+    kept_risk_id: str | None = None
+    reason: str = ""
+
+
+class RiskConflict(BaseModel):
+    risk_code: str
+    risk_ids: list[str] = Field(default_factory=list)
+    description: str
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
+class CompositeFinding(BaseModel):
+    finding_code: str
+    related_risk_ids: list[str] = Field(default_factory=list)
+    summary: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class SupervisionResult(BaseModel):
     verified_risks: list[RiskItem] = Field(default_factory=list)
     summary: str = ""
+    duplicate_groups: list[DuplicateRiskGroup] = Field(default_factory=list)
+    conflicts: list[RiskConflict] = Field(default_factory=list)
+    composite_findings: list[CompositeFinding] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class IPOAnalysisResult(BaseModel):
