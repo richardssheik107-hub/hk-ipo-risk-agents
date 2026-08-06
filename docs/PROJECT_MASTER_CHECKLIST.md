@@ -1,1397 +1,697 @@
-# HK IPO Risk Agents：版本化双线接力执行计划（修订版）
-
-> 仓库：`richardssheik107-hub/hk-ipo-risk-agents`
-> 建议仓库路径：`docs/PROJECT_MASTER_CHECKLIST.md`
-> 当前版本：`v0.2.0-real-document-slice`
-> 当前状态：进行中
-> 当前阶段：v0.2发布候选——等待第二标注人与技术备份独立复跑
-> 当前PR：无A线未合并PR
-> 最近完成：PR #17完成A6发布加固并通过GitHub Actions；本地278项测试及2410.HK Service级E2E通过
-> 最后更新：2026-08-04
-
----
-
-# 0. 当前一页看板
-
-## 0.1 已完成
-
-- [x] `v0.1.0-architecture-mvp` 已发布
-- [x] v0.2 第1棒：真实 PDF Parser
-- [x] 2410.HK 招股书解析：706个有效非空页，0个单页错误
-- [x] 人工定位现金主证据：PDF第563页
-- [x] 人工定位经营现金流主证据：PDF第562页
-- [x] v0.2 第2棒：确定性关键词 Retriever 已开发
-- [x] 第2棒本地与CI测试：47 passed
-- [x] 现金查询：第563页排名第1
-- [x] 经营现金流查询：第562页排名第1
-- [x] 第665、683页法律/章程误命中未进入结果
-- [x] PR #15 已合并到`main`，提交`e1cd9cb`
-- [x] 赛事方全部数据完成只读盘点
-- [x] 已确认565份招股书中555份存在日行情
-- [x] A2.5完成24份自动测试及12份正式主表页视觉核对
-- [x] A2.5命中率已计算：现金36.36%，经营现金流63.64%（适用样本口径）
-- [x] A2.6整改后原11份适用金标准两项均为11/11（100%）
-- [x] A2.6新增6份验证样本两项均为6/6（100%）
-- [x] 2410.HK现金563页、经营现金流562页继续保持第1名
-- [x] A3财务数值提取与归一化已通过PR #16合并到`main`
-
-## 0.2 当前只做两件事
-
-### A线：核心系统
-
-> A2.5保留为泛化闸门失败基线；A2.6定向整改及复测已通过。
-> A3已完成开发、审查修订、真实案例验收并合并到`main`。
-> A4现金跑道Calculation与RiskItem已完成开发、自动测试、真实案例验收及人工diff审核，并进入`main`。
-> A5现金跑道核验与可信规则评分已完成并提交到`main`，commit `a47b85cd`；未经过PR级CI。
-> A6真实纵向链路、Service级E2E与Streamlit展示已进入`main`，commit `cb954e8`；发布加固修复由PR #17补充并通过远端CI。
-
-### B线：赛事数据治理
-
-> 建立全量manifest、质量问题表、数据集划分和24份影子测试样本。
-> 不修改Parser、Retriever、Agent、Workflow、Predictor或UI。
-
-## 0.3 暂时禁止
-
-- [ ] 不提前开始第3棒财务抽取
-- [ ] 不批量处理565份招股书的完整风险
-- [ ] 不训练市场预测模型
-- [ ] 不把2025盲测样本用于调规则
-- [ ] 不把6.74GB原始压缩包或7.78GB PDF提交Git
-- [ ] 不依赖疑似截断的证券主表生成上市日期或标签
-
-## 0.4 当前阻塞
-
-| 编号 | 问题 | 影响 | 处理时间 |
-|---|---|---|---|
-| B-001 | 第二标注人尚未独立复核2410.HK金标准 | v0.2发布 | 发布前完成 |
-| B-002 | 技术备份尚未独立复跑Parser/Retriever | v0.2发布 | 发布前完成 |
-| B-003 | `hksharedescription.csv`疑似截断 | 上市日期、发行价、公司映射 | v0.4前补齐 |
-| B-004 | 行情成交金额单位未明确 | 成交金额类特征 | v0.4前确认 |
-| B-005 | 10份招股书无行情覆盖 | 价格标签 | 仅用于文档链路和降级测试 |
-
----
-
-# 1. 项目工作原则
-
-## 1.1 版本循环
-
-每个版本统一执行：
-
-```text
-版本规划
-→ 分棒开发
-→ PR与CI
-→ 真实案例验收
-→ 泛化测试
-→ 版本冻结
-→ 完整复跑
-→ 发布
-→ 复盘并重写下一版计划
-```
-
-规则：
-
-- 当前版本写详细任务；
-- 下一版本只写候选目标；
-- 更远版本只保留路线图；
-- 当前版本没有通过退出门槛，不展开下一版本详细清单；
-- 每个版本结束后必须暂停，不直接连续堆功能。
-
-## 1.2 每棒规则
-
-每一棒必须有：
-
-```text
-输入
-唯一任务
-输出
-允许修改
-禁止修改
-自动测试
-人工验收
-合并条件
-下一棒输入
-```
-
-每棒至少运行：
-
-```bash
-pytest -q
-python scripts/validate_project.py
-python -m compileall -q app src
-git diff --check
-```
-
-未获明确授权时，不自动：
-
-```text
-commit
-push
-创建PR
-合并PR
-创建Release
-```
-
-## 1.3 双线并行、单点集成
-
-```text
-A线：真实文档闭环
-B线：赛事数据治理
-```
-
-两线可以并行，但不得同时修改共享边界。
-
-共享边界：
-
-```text
-src/ipo_risk/schemas/
-src/ipo_risk/core/container.py
-src/ipo_risk/workflows/
-src/ipo_risk/services/
-configs/
-docs/PROJECT_MASTER_CHECKLIST.md
-```
-
-共享文件修改规则：
-
-1. 各线先在PR中提出需求；
-2. 技术负责人决定集成顺序；
-3. 必要时由技术负责人建立单独集成分支；
-4. 禁止两个分支同时重写共享文件后直接合并。
-
----
-
-# 2. 五人分工
-
-| 角色 | 当前职责 | 当前交付物 |
-|---|---|---|
-| 1. 技术负责人 | 控制A线代码主线、审查PR、发布版本 | 代码、测试、PR、版本结论 |
-| 2. 技术备份兼数据脚本复核 | 独立安装复跑，复核数据脚本 | 独立测试记录、Bug清单 |
-| 3. 财务/业务标注 | 核对现金、现金流和后续业务风险 | 页码、原文、数值、单位、期间 |
-| 4. 法务/第二复核 | 二次复核金标准，检查法律误命中 | 复核记录、分歧与最终结论 |
-| 5. 数据治理兼产品材料 | manifest、质量报告、页面验收、材料 | 数据清单、报告、截图、说明 |
-
-## 团队红线
-
-- 正式代码主线由技术负责人统一控制；
-- 不让多个AI同时修改同一核心模块；
-- 所有数值必须追溯到Evidence；
-- 精确计算由Skill完成；
-- 不提交Token、密码、API Key和`.env`；
-- 不把本地绝对路径写入仓库；
-- 不删除Mock实现；
-- 不通过放松断言“修复”测试；
-- 不把规则评分宣传为真实概率；
-- 不把招股书披露日期当作上市日期；
-- 不在标签或特征中使用未来数据；
-- 截断、坏行、字段差异必须显式记录，不得静默忽略。
-
----
-
-# 3. 版本路线图
-
-| 版本 | 唯一核心目标 | 主要交付物 | 退出条件 | 状态 |
-|---|---|---|---|---|
-| `v0.1.0` | 建立架构级MVP | Mock闭环、接口、工作流、页面、测试 | Mock链路稳定 | 已完成 |
-| `v0.2.0` | 单案例真实风险闭环，并建立赛事数据清单 | Parser、Retriever、财务值、现金跑道、Verifier、UI、manifest、影子测试 | 2410.HK闭环 + 24份影子测试通过 | 进行中 |
-| `v0.3.0` | 多案例与财务/法务/业务Agent真实化 | 5—10个黄金案例、3类Agent、8类风险 | 多案例风险可追溯 | 待规划 |
-| `v0.4.0` | 市场数据、标签和预测 | 可靠上市日期、特征、基线模型、时间外测试 | 无泄漏、预测链路可复现 | 待规划 |
-| `v0.5.0` | 正式标注与评测 | 20—30家公司、200—300条风险、消融与失败分析 | 正式指标可复现 | 待规划 |
-| 提交准备 | 产品、报告和演示 | 页面、报告、PPT、视频、手册 | 材料一致完整 | 待规划 |
-| RC | 冻结与稳定性验收 | 离线演示、新电脑复跑 | 无阻塞Bug | 待规划 |
-| `v1.0.0` | 正式提交 | 源码、日志、结果和材料包 | 官方提交并备份 | 待规划 |
-
----
-
-# 4. 当前版本共同目标
-
-## 4.1 A线目标
-
-```text
-真实PDF
-→ DocumentChunk
-→ Evidence
-→ 现金与经营活动现金流
-→ Calculation
-→ FIN_CASH_RUNWAY RiskItem
-→ Verifier
-→ 规则风险评分
-→ Streamlit
-```
+# HK IPO Risk Agents 项目主计划
 
-## 4.2 B线目标
-
-v0.2中B线只负责：
-
-```text
-赛事原始资料
-→ manifest
-→ 数据质量问题
-→ 年份划分
-→ 行情覆盖表
-→ 24份影子测试样本
-→ 影子测试报告
-```
-
-## 4.3 v0.2明确不做
-
-- 不做完整OCR；
-- 不做向量数据库；
-- 不做复杂语义检索；
-- 不做真实Legal Agent；
-- 不做真实Business Agent；
-- 不做机器学习预测；
-- 不建立完整市场数据Provider；
-- 不在v0.2实现GB18030大文件生产级Loader；
-- 不在v0.2构造正式上市后风险标签；
-- 不对565份招股书做完整人工标注；
-- 不大改公共Schema；
-- 不重写Workflow或Service。
-
-> 原计划中的“B2流式Loader”和“B3标签准备”移出v0.2，分别放入v0.3数据基础和v0.4预测阶段，避免扩大当前版本范围。
-
----
-
-# 5. 真实案例与金标准
-
-```text
-case_id：real_case_001
-公司：浙江同源康醫藥股份有限公司
-股票代码：2410.HK
-PDF：data/local/real_case_001/prospectus.pdf
-有效非空页：706
-Parser错误：0
-```
+> 审核版本：v0.3 开发路线（覆盖旧版总清单）
+>
+> 审核基线：`main@fbeb279`，2026-08-06
+>
+> Word 版：`docs/PROJECT_MASTER_PLAN_v0.3.docx`
 
-| 字段 | 原始值 | 标准化值 | 单位/期间 | 主证据页 | 交叉页 |
-|---|---:|---:|---|---:|---|
-| 现金及现金等价物 | 77,208 | 77,208 | CNY千元；2024-03-31 | 563 | 616 |
-| 经营活动所用净现金流量 | (83,918) | -83,918 | CNY千元；截至2024-03-31止3个月 | 562 | 500、30、114 |
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>当前正式基线</strong></p>
+<p>审核基线为 main 提交 fbeb279（2026-08-06）：真实 PDF 现金跑道纵向闭环与 B 线赛事数据治理均已合入主线。Codex 已在该基线复跑 284 项测试、项目校验、赛事数据校验、编译检查和 2410.HK 真实 E2E，结果全部通过。v0.2 代码开发完成；尚待团队独立复跑、第二标注人复核、Tag 与 Release。</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+| **项目**       | **当前状态**                             |
+|:---------------|:-----------------------------------------|
+| v0.1.0         | 架构级MVP已发布                          |
+| v0.2.0代码     | 已全部进入main                           |
+| v0.2.0 Release | 待完成Tag、Release与独立复跑             |
+| 下一开发版本   | v0.3.0真实多Agent文档风险分析            |
+| 远期版本       | v0.4市场预测、v0.5正式评测、RC与v1.0提交 |
+
+适用对象：5人参赛团队 / 技术负责人 / 数据治理 / 财务 / 法务 / 业务与产品
+
+# 1. 项目总体目标与当前基线
+
+项目目标是构建一个证据驱动的港股IPO招股书解析与上市后风险预警系统。系统以招股书PDF为核心输入，将文档解析、证据检索、专业Agent分析、确定性计算、Verifier核验、Supervisor协同和市场预测逐层组合。
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>最终完整链路</strong></p>
+<p>招股书PDF → Parser → Retriever → Financial / Legal / Business Agent → Skills → Verifier → Supervisor → IPO与市场数据 → Market Agent / Predictor → Evidence化报告与风险预警。</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
 
-当前标注状态：
+## 1.1 v0.2已经完成的能力
 
-```text
-first_annotator = completed
-second_reviewer = pending
-gold_status = provisional
-```
+- [x] 真实PyMuPDF解析：保留物理页码、原文和稳定Chunk。
 
----
+- [x] 确定性关键词Evidence检索：现金及现金等价物、经营活动现金流。
 
-# 6. A线：v0.2真实文档闭环
+- [x] 财务数值提取：币种、单位、报告期、期间长度和括号负数。
 
-## A0：接口与仓库检查
+- [x] 现金跑道Skill：以Decimal完成月度消耗和可持续月数计算。
 
-**状态：已完成。**
+- [x] 现金跑道RiskItem、专用Verifier和verified-only规则评分。
 
-结果：
+- [x] Workflow、IPOAnalysisService、JSON Repository和Streamlit真实模式。
 
-- Parser、Retriever、Agent、Skill、Verifier、Predictor和Service边界明确；
-- 保留Mock和配置切换；
-- 默认不修改公共接口。
+- [x] 565份招股书manifest、555/10行情覆盖和562/3官方IPO主数据桥接。
 
----
+- [x] 24份影子样本、12份人工核对、A2.6复测与全量manifest自动对账。
 
-## A1：真实PDF Parser
+## 1.2 当前尚未真实实现的能力
 
-**状态：已完成。**
+- □ Legal Agent仍为unavailable，不输出虚构法律风险。
 
-完成记录：
+- □ Business Agent仍为unavailable，不输出虚构业务风险。
 
-```text
-PR：#11
-测试：30 passed
-真实案例：706个有效非空页
-错误：0
-主证据页：562、563
-```
+- □ Market Agent和正式MarketDataProvider尚未接入。
 
-尚待：
-
-- [ ] 技术备份独立环境复跑
-
----
-
-## A2：真实关键词Evidence Retriever
-
-**状态：已完成并进入`main`。**
-
-已实现：
+- □ LLMProvider尚未作为生产组件接入。
 
-- 简体、繁体、英文同义词；
-- NFKC、大小写、空格、换行和点线归一化；
-- 可解释打分；
-- UUID5稳定ID；
-- 连续原文片段；
-- 无结果返回空列表；
-- Mock Retriever保留；
-- `real_pdf.yaml`使用`retriever: keyword`。
+- □ 当前规则风险分不是经过校准的上市后下跌概率。
 
-结果：
-
-```text
-47 passed
-现金页563：第1名
-经营现金流页562：第1名
-665、683：未命中
-```
-
-### 完成检查
-
-- [x] 生产代码无562、563、616、665、683等页码特判
-- [x] 生产代码不读取`tests/fixtures`
-- [x] `Evidence.text`属于原Chunk连续子串
-- [x] evidence_id稳定
-- [x] 无匹配返回`[]`
-- [x] Mock行为未改变
-- [x] 无无关文件
-- [x] CI通过
-- [x] 合并PR #15，提交`e1cd9cb`
-
-### v0.2发布前补齐
-
-- [ ] 第二标注人复核2410.HK
-- [ ] 技术备份独立复跑Parser与Retriever
-
----
-
-## A2.5：24份招股书影子测试
-
-**状态：自动测试与12份正式主表页核对完成；命中率未过门槛，暂停A3并整改Retriever。**
-
-这是第2棒与第3棒之间的强制暂停点。
-
-### 目的
-
-验证Parser和Retriever不是只对2410.HK有效。
-
-### 选样范围
-
-只从2020—2024选样，不使用2025盲测集：
-
-```text
-2020：5份
-2021：5份
-2022：5份
-2023：4份
-2024：5份
-合计：24份
-```
-
-样本覆盖：
-
-- 生物科技与传统盈利行业；
-- 不同招股书长度；
-- 全球发售、股份发售、公开发售和特殊发行形式；
-- 中英混排；
-- 正常表格与复杂表格；
-- H股；
-- 至少2份低文本质量或疑似扫描PDF。
-
-### 自动运行内容
-
-Parser：
-
-```text
-是否成功
-总页数
-有效非空页
-错误数
-空文本比例
-是否疑似扫描
-```
+- □ 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
 
-Retriever：
+## 1.3 数据基线
 
-```text
-现金及现金等价物Top5
-经营活动现金流Top5
-命中页码
-命中原文
-分数
-是否有法律/章程误命中
-```
+| **数据范围** | **数量** | **用途**                 |
+|:-------------|:---------|:-------------------------|
+| 2020—2023    | 376份    | 开发集                   |
+| 2024         | 72份     | 验证集                   |
+| 2410.HK      | 1份      | v0.2开发例外             |
+| 2025         | 116份    | 盲测集，禁止调规则或调参 |
+| 全部招股书   | 565份    | 文档分析主宇宙           |
+| 有日行情覆盖 | 555份    | 未来市场标签候选         |
+| 无日行情覆盖 | 10份     | 仅文档链路与降级测试     |
+
+# 2. 更新后的版本总路线图
+
+| **版本** | **核心问题** | **主要交付物** | **当前状态** |
+|:---|:---|:---|:---|
+| v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
+| v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已合入main，待Release |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、黄金案例、批量评测 | 下一开发版本 |
+| v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
+| v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
+| 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
+| RC | 别人能否稳定复现 | 冻结、独立环境、异常测试、离线演示 | 待规划 |
+| v1.0.0 | 正式参赛提交 | 完整源码、模型、结果和材料包 | 待规划 |
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>路线原则</strong></p>
+<p>v0.2解决“读得出来并算得正确”；v0.3解决“分专业分析得全面”；v0.4解决“连接市场并预测”；v0.5解决“证明系统有效”；随后完成产品化、RC冻结和正式提交。</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+# 3. 阶段R0：v0.2正式发布收尾
+
+v0.2的开发代码已进入main，本阶段不得新增大功能，只完成发布、复盘和v0.3输入冻结。
+
+| **编号** | **任务** | **主要交付物** | **负责人** | **完成标准** |
+|:---|:---|:---|:---|:---|
+| R0-1（自动验收完成） | 最新main完整复跑 | 测试日志与环境记录 | 技术负责人 | 全部测试、校验、编译和真实E2E通过 |
+| R0-2 | 技术备份独立复跑 | 独立环境验收记录 | 技术备份 | 新环境安装、Mock、真实PDF和数据验证成功 |
+| R0-3 | 第二标注人复核2410.HK | 金标准复核表 | 法务/第二复核 | 第562/563页、金额、单位、期间及2.76个月确认 |
+| R0-4（数据治理完成） | 特殊证券治理记录 | 02191/04801/04841说明 | 数据成员 | 明确REIT、SPAC股份/权证映射及资格 |
+| R0-5（本次同步完成） | 发布文档同步 | README、CHANGELOG、ROADMAP、总清单 | 技术负责人 | 所有文档口径一致 |
+| R0-6 | 创建Tag与Release | v0.2.0 Release | 技术负责人 | 冻结SHA、已知限制和回退点 |
+| R0-7 | 版本复盘 | v0.2复盘文档 | 全组 | 明确成功项、问题和v0.3输入 |
+
+## 3.1 建议Release名称
+
+| v0.2.0-real-document-slice |
+|----------------------------|
+
+## 3.2 v0.2发布门
+
+- ☑ 审核基线完整测试通过：284 passed
+
+- ☑ 2410.HK真实E2E保持：706 chunks、Evidence第563/562页、现金跑道2.76个月、verified、90/critical
+
+- □ 第二标注人完成金标准复核
+
+- □ 技术备份完成独立环境复跑
+
+- ☑ README、ROADMAP、CHANGELOG和总清单已于本次同步
 
-### 人工核对
+- ☑ 已记录证券主表截断、10份无行情、3份特殊证券和金额单位等限制
 
-从24份中选择12份，人工核对：
+- □ Tag、Release Notes和回退SHA完成
 
-- 正式现金主表页；
-- 正式经营现金流主表页；
-- 系统Top5是否覆盖；
-- 是否存在严重错页；
-- Evidence是否是原文。
+# 4. v0.3.0总体设计
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>版本名称</strong></p>
+<p>v0.3.0-multi-agent-risk-analysis</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+v0.3的唯一目标是：将当前单一现金跑道真实闭环，升级为Financial、Legal、Business三个真实Agent协同运行，并在5—10份真实招股书上完成可重复的多案例评测。
+
+## 4.1 最终运行流程
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>PDF上传<br />
+↓<br />
+Parser：一次解析，生成带物理页码的DocumentChunk<br />
+↓<br />
+Retriever：按财务、法务、业务查询族寻找Evidence<br />
+↓<br />
+Financial / Legal / Business Agent：提取结构化事实<br />
+↓<br />
+Skills：完成精确计算<br />
+↓<br />
+RiskItem(pending)<br />
+↓<br />
+专用Verifier：verified / needs_review / rejected<br />
+↓<br />
+Supervisor：去重、冲突识别、组合风险和降级<br />
+↓<br />
+规则风险评分、报告、Repository和Streamlit展示</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
 
-### 输出
+## 4.2 v0.3明确不做
 
-```text
-data/catalog/shadow_sample_24.csv
-data/catalog/shadow_manual_review_12.csv
-reports/v0.2_shadow_parser_results.csv
-reports/v0.2_shadow_retriever_results.csv
-docs/V0.2_SHADOW_TEST_REPORT.md
-```
+- 不训练Logistic、LightGBM或深度学习市场预测模型
 
-### 失败代码
+- 不输出经过校准的真实下跌概率
 
-```text
-P-01 PDF无法打开
-P-02 扫描型PDF无文本
-P-03 表格顺序异常
-P-04 字符异常
-P-05 页面错误过多
+- 不正式构造上市后1/5/20/60日标签
 
-R-01 现金无结果
-R-02 经营现金流无结果
-R-03 法律/章程误命中
-R-04 摘要页压过正式报表
-R-05 同义词未覆盖
-R-06 重复候选过多
-```
+- 不实现完整Market Agent
 
-### 进入A3的门槛
+- 不使用2025盲测集调规则、选特征或调参
 
-硬门槛：
+- 不把565份PDF全部人工标注
 
-- [x] 24份均成功运行或有结构化失败记录
-- [x] 单个失败不导致整批任务中断
-- [x] 每个失败都有错误代码
-- [x] 生产代码没有公司名或页码特判
-- [x] 2025盲测集未使用
-- [x] 12份人工式视觉核对已完成，其中11份适用、1份不适用
-- [x] Evidence文本可追溯到原始PDF，未发现法律或章程页进入Top 5
+- 不引入微服务、Kafka、Redis、Neo4j或Kubernetes
 
-12份人工核对门槛：
+- 不让LLM完成精确财务计算或直接决定最终分数
 
-```text
-现金主证据Top5命中率 ≥ 75%
-经营现金流主证据Top5命中率 ≥ 75%
-```
+# 5. v0.3正式风险目录
 
-本轮结果：
+| **序号** | **风险代码** | **风险名称** | **Agent** | **核心方法** |
+|:---|:---|:---|:---|:---|
+| 1 | cash_runway | 现金跑道不足 | Financial | v0.2已有，保持回归 |
+| 2 | continuous_loss | 持续亏损 | Financial | 表格提取 + 亏损趋势Skill |
+| 3 | revenue_growth | 收入增长异常或放缓 | Financial | 期间对齐 + 增长率Skill |
+| 4 | customer_concentration | 客户集中度过高 | Financial / Business | 占比提取 + 规则 |
+| 5 | supplier_concentration | 供应商集中度过高 | Financial / Business | 占比提取 + 规则 |
+| 6 | redemption_rights | 赎回权及特殊股东权利 | Legal | 检索 + LLM候选提取 + 规则 |
+| 7 | material_litigation_compliance | 重大诉讼与合规 | Legal | 语义提取 + 重大性与状态核验 |
+| 8 | precommercial_product | 未商业化及核心产品依赖 | Business | 业务事实提取 + 规则 |
+
+## 5.1 RiskItem统一要求
+
+- 所有正式风险必须具有Evidence，包含物理页码和原文。
+
+- 涉及数字的风险必须具有Calculation，记录输入、公式、结果、单位和Evidence ID。
+
+- Agent生成的候选风险初始状态为pending，不能自我宣布verified。
+
+- Verifier决定verified、needs_review或rejected。
+
+- 无证据、计算失败、币种/单位/期间冲突的风险不得进入正式评分。
+
+- 规则型或条款型风险可不包含Calculation，但必须有足够Evidence。
+
+# 6. v0.3分棒任务清单
+
+| **棒次** | **唯一任务** | **主要输出** | **负责人** | **验收重点** |
+|:---|:---|:---|:---|:---|
+| V3-0（本次完成） | 冻结v0.3范围与文档 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结风险目录、接力顺序和退出门槛。 | 技术负责人 | 只改文档，不改业务代码和公共Schema。 |
+| V3-1 | 黄金案例与标注规范 | 选择5—10份真实招股书，建立风险适用性、主证据页、原文、数值、单位、期间和标准核验状态。 | 财务/法务/业务 | 每类风险至少一个正例，关键案例双人复核，2025盲测不得进入。 |
+| V3-2 | IPO基础信息Provider | 从官方主数据桥接生成IPOProfile，处理匹配、占位、代码复用和特殊证券。 | 技术备份/数据 | 562个匹配案例稳定加载，缺失案例结构化降级。 |
+| V3-3 | Retriever查询族泛化 | 增加收入、亏损、客户、供应商、特殊权利、诉讼、商业化和核心管线等查询族。 | 技术负责人 | 接口不变，支持简繁英、章节权重、稳定Evidence ID和无匹配空结果。 |
+| V3-4 | 可替换LLMProvider | 建立Mock、真实和Unavailable Provider；只处理Retriever筛选后的少量Evidence。 | 技术负责人 | 输出Pydantic结构化事实，无API Key时确定性链路仍可运行。 |
+| V3-5 | Financial Agent扩展 | 持续亏损、收入增长、客户集中度、供应商集中度及相关Skills。 | 财务成员 | Decimal、单位、期间严格一致；不破坏2410.HK回归。 |
+| V3-6 | Legal Agent真实化 | 特殊股东权利、重大诉讼和合规事项。 | 法务成员 | 识别权利是否有效、是否终止、是否恢复；防止模板化章节误报。 |
+| V3-7 | Business Agent真实化 | 未商业化、核心产品和管线依赖。 | 业务成员 | 区分产品销售收入、授权收入和研发服务收入。 |
+| V3-8 | 专用Verifier体系 | 财务趋势、集中度、法律权利、诉讼合规、业务管线及整体一致性核验。 | 技术负责人+专业成员 | 错误结论可被拒绝，歧义进入needs_review。 |
+| V3-9 | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、组合风险、单Agent失败降级和新工作流。 | 技术负责人 | 保留mvp_v1；单个Agent失败时整体返回partial。 |
+| V3-10 | 批量运行与评测 | 批量分析脚本、黄金案例评测、断点续跑、失败报告和指标JSON。 | 技术备份/数据 | 默认禁止2025盲测；单案例失败不终止批次。 |
+| V3-11 | Streamlit与报告 | 三Agent页签、Evidence、Calculation、核验状态、诊断和规则分构成。 | 业务/产品+技术 | 前端只调用IPOAnalysisService，不直接调用Agent或LLM。 |
+| V3-12 | 发布加固 | 完整测试、独立复跑、文档同步、Tag和Release。 | 全组 | 黄金案例100%运行、v0.2回归不变、无非预期崩溃。 |
+
+# 7. 黄金案例与人工标注计划
+
+## 7.1 推荐案例构成
+
+| **案例类型**           | **建议数量** | **主要覆盖风险**                       |
+|:-----------------------|:-------------|:---------------------------------------|
+| 18A未商业化生物科技    | 2            | 未商业化、核心管线、持续亏损、现金跑道 |
+| 持续亏损但已有收入公司 | 1—2          | 持续亏损、收入增长、现金消耗           |
+| 高客户集中度公司       | 1            | 客户集中度、业务依赖                   |
+| 高供应商集中度公司     | 1            | 供应商集中度、经营稳定性               |
+| 特殊股东权利案例       | 1            | 赎回权、清算优先权、反摊薄等           |
+| 重大诉讼或合规案例     | 1            | 诉讼、处罚、牌照或整改状态             |
+| 相对低风险对照案例     | 1—2          | 负例、误报控制                         |
+
+## 7.2 每条金标准必须包含
+
+- case_id和股票代码
+
+- risk_code及是否适用
+
+- 标准风险等级或不适用原因
+
+- 物理PDF页码和章节
+
+- 支持原文
+
+- 金额、比例、币种和单位
+
+- 报告期与期间长度
+
+- 标准Calculation
+
+- 标准verification_status
+
+- 第一标注人、第二复核人和分歧记录
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>重要原则</strong></p>
+<p>“没有找到证据”不等于“风险不存在”。黄金案例必须区分 not_applicable、evidence_not_found、extraction_failed、conflicting_values、needs_review 和 component_failure。</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+# 8. 三类真实Agent的实现边界
+
+| **Agent** | **主要职责** | **优先实现方式** | **禁止事项** |
+|:---|:---|:---|:---|
+| Financial | 现金、亏损、收入、客户和供应商集中度 | 规则、表格解析、Decimal Skill为主 | 不得用LLM做精确计算 |
+| Legal | 特殊股东权利、诉讼、处罚和合规 | 关键词检索 + LLM结构化提取 + 规则核验 | 不得仅凭章节标题判风险 |
+| Business | 商业化状态、产品、管线和合作依赖 | 规则/LLM混合提取 + 业务规则 | 不得重复计算财务指标 |
+| Verifier | 检查证据、数值、条款状态和结论 | 确定性规则为主 | 不得放过无证据正式风险 |
+| Supervisor | 去重、冲突、组合摘要和失败降级 | 确定性规则，LLM仅可选摘要 | 不得创造新事实或新证据 |
+
+## 8.1 LLM在v0.3中的正确位置
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>Retriever选出5—10段相关Evidence<br />
+↓<br />
+LLM只提取结构化候选事实<br />
+↓<br />
+Pydantic校验<br />
+↓<br />
+Python Skill / 规则判断<br />
+↓<br />
+Verifier核验<br />
+↓<br />
+正式RiskItem</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+不应把整份数百页PDF直接交给通用大模型，也不应让大模型直接生成最终分数。没有API Key时，财务确定性链路和部分规则型法务/业务链路仍应运行。
+
+# 9. enhanced_v2工作流与失败语义
+
+## 9.1 建议工作流
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>load_ipo_profile<br />
+→ load_market_snapshot<br />
+→ document<br />
+→ financial<br />
+→ legal<br />
+→ business<br />
+→ market<br />
+→ specialized_verifiers<br />
+→ supervisor<br />
+→ predictor<br />
+→ report<br />
+<br />
+Repository不进入LangGraph；IPOAnalysisService在工作流返回后负责持久化。</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+## 9.2 必须保留的兼容性
+
+- 保留mvp_v1，不删除v0.1/v0.2工作流。
+
+- 保留Mock实现，Mock与真实实现通过配置切换。
+
+- 不改变专业Agent统一返回list\[RiskItem\]的公共契约。
+
+- 不改变IPOAnalysisService对外返回IPOAnalysisResult的契约。
+
+- 公共Schema新增字段优先提供默认值，避免破坏旧结果。
+
+- Repository由IPOAnalysisService在工作流完成后调用；必须能够读取旧结果并记录schema_version。
+
+## 9.3 v0.3内部结构化诊断码
+
+| **诊断码** | **含义** | **前端/评测处理** |
+|:---|:---|:---|
+| not_applicable | 该风险对当前文档或证券不适用 | 不计为漏报 |
+| evidence_not_found | 未找到足够证据 | 显示检索失败，不能当作无风险 |
+| extraction_failed | 找到了候选页但提取失败 | 记录失败原因 |
+| conflicting_values | 存在相互冲突的金额、单位或期间 | 进入needs_review |
+| unsupported_layout | 跨页表格或版式超出当前能力 | 记录能力边界 |
+| component_failure | Agent、Provider或Skill异常 | 整体可返回partial |
+| needs_review | 有证据但结论存在歧义 | 人工复核，不进入满额评分 |
+
+# 10. v0.3多案例评测体系
+
+| **评测层级** | **核心指标** | **建议退出门槛** |
+|:---|:---|:---|
+| Retriever | Recall@1、Recall@3、Recall@5、主证据页命中率 | 主证据Recall@3 ≥ 90% |
+| Extractor | 金额、比例、币种、单位、期间准确率 | 确定性数值准确率 ≥ 95% |
+| Agent | RiskItem Precision、Recall、F1、误报与漏报 | 核心风险可稳定复现 |
+| Verifier | verified precision、错误拒绝率、needs_review合理性 | verified precision ≥ 90% |
+| Supervisor | 重复风险数、冲突处理正确率、证据覆盖率 | 无明显重复与无证据综合结论 |
+| 系统 | 案例完成率、partial比例、Agent失败率、平均耗时 | 黄金案例完整运行率100%，崩溃0 |
+| 回归 | 2410.HK现金跑道和Mock模式 | 结果100%保持 |
+
+## 10.1 批量输出文件
+
+- analysis_results.jsonl
+
+- risk_items.csv
+
+- evidence_results.csv
+
+- case_summary.csv
+
+- failure_report.csv
+
+- evaluation_metrics.json
+
+## 10.2 数据泄漏防线
+
+- 2025年116份盲测案例默认禁止批量运行和调试。
+
+- v0.3只分析招股书中的文档风险，不使用上市后行情作为特征。
+
+- 2024验证集不用于反复修改黄金规则；只用于时间外验证。
+
+- 任何提示词、规则和阈值的修改必须记录版本。
+
+# 11. 五人团队分工
+
+| **成员角色** | **v0.3主责任** | **关键产出** | **避免事项** |
+|:---|:---|:---|:---|
+| 1号 技术负责人 | 架构、Retriever、LLM接口、Verifier、Supervisor、Workflow和发布 | 公共接口审查、集成PR、版本冻结 | 不要独自承担全部专业标注 |
+| 2号 技术备份/数据 | IPO Provider、特殊证券、批量运行、评测和独立复跑 | Provider、评测脚本、部署记录 | 不要修改核心Workflow边界 |
+| 3号 财务成员 | 持续亏损、收入增长、客户和供应商集中度 | 财务黄金案例、Skills、规则和测试 | 不要在前端计算财务指标 |
+| 4号 法务成员 | 特殊股东权利、诉讼合规和第二复核 | 法律词典、标注、Legal Verifier规则 | 不要把一般性风险提示当成已发生事实 |
+| 5号 业务/产品 | 未商业化、核心产品依赖、UI和报告验收 | 业务黄金案例、页面原型、演示材料 | 不要直接调用Agent或LLM |
+
+## 11.1 受保护的共享边界
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>src/ipo_risk/schemas/<br />
+src/ipo_risk/agents/base.py<br />
+src/ipo_risk/parsers/base.py<br />
+src/ipo_risk/retrieval/base.py<br />
+src/ipo_risk/providers/<br />
+src/ipo_risk/core/container.py<br />
+src/ipo_risk/domain/risk_codes.py<br />
+src/ipo_risk/workflows/<br />
+src/ipo_risk/services/</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+这些文件由技术负责人统一集成，多个成员不得在不同分支同时进行大范围重写。
+
+# 12. 分支、接力顺序与阶段里程碑
+
+## 12.1 建议分支
+
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>docs/v03-master-plan<br />
+feat/v03-golden-cases<br />
+feat/catalog-ipo-provider<br />
+feat/retrieval-query-families<br />
+feat/llm-provider<br />
+feat/financial-multi-risk-agent<br />
+feat/legal-risk-agent<br />
+feat/business-risk-agent<br />
+feat/v03-risk-verifiers<br />
+feat/enhanced-v2-workflow<br />
+feat/v03-batch-evaluation<br />
+feat/v03-reporting-ui<br />
+fix/v03-release-validation</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+## 12.2 建议阶段节奏
+
+| **阶段** | **主要任务** | **可并行事项** | **阶段出口** |
+|:---|:---|:---|:---|
+| 第1阶段 | R0发布收尾 + V3-0计划冻结 | 文档复核、独立复跑 | v0.2正式Release |
+| 第2阶段 | V3-1黄金案例 + V3-2 IPO Provider | 财务/法务/业务标注可并行 | 案例和基础信息可稳定加载 |
+| 第3阶段 | V3-3 Retriever + V3-4 LLMProvider | 词典和Prompt设计 | 三类Evidence查询可运行 |
+| 第4阶段 | V3-5/6/7三个真实Agent | 专业Agent可分支并行 | 每个Agent完成最小风险闭环 |
+| 第5阶段 | V3-8 Verifier + V3-9 Supervisor/Workflow | Verifier规则复核 | 完整单案例多Agent闭环 |
+| 第6阶段 | V3-10批量评测 + V3-11 UI/报告 | 评测与页面可并行 | 5—10案例评测完成 |
+| 第7阶段 | V3-12发布加固 | 独立复跑、材料同步 | v0.3正式Release |
+
+# 13. 每一棒统一验收命令
 
-```text
-现金主证据：4/11 = 36.36%（未通过）
-经营现金流主证据：7/11 = 63.64%（未通过）
-保誠2378.HK不含完整正式现金流量表，不纳入适用样本分母。
-```
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th>pytest -q<br />
+python scripts/validate_project.py<br />
+python scripts/validate_competition_data.py<br />
+python -m compileall -q app src<br />
+git diff --check</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+涉及真实PDF时增加：
+
+| python scripts/check_real_v02_e2e.py |
+|--------------------------------------|
+
+v0.3批量评测完成后增加：
 
-处理规则：
+| python scripts/evaluate_v03_golden_cases.py |
+|---------------------------------------------|
 
-```text
-两项均≥75%：
-进入A3，问题进入v0.3改进清单。
+## 13.1 每一棒汇报模板
 
-任一项60%—75%：
-只做一次小范围Retriever修复，再重测。
+- 创建了哪些文件
 
-任一项<60%：
-暂停A3，重新审查Retriever设计。
-```
+- 修改了哪些文件
 
-> 75%是v0.2内部工程门槛，不是比赛最终指标。
+- 实现了哪些功能
 
----
-
-## A2.6：Retriever正式报表定位整改
+- 是否影响公共接口
 
-**状态：已完成并通过复测。**
+- 执行了哪些测试及结果
 
-唯一目标：提升正式现金流量表中期末现金和经营活动现金流的Top 5命中率，不进行财务数值抽取。
+- 如何启动和复现
 
-完成内容：
-
-- 拆分普通现金余额、现金流量表期末现金和经营活动现金流语义；
-- 建立正式现金流量表标题页后0—4页邻域；
-- 加入审计章节、主表末尾组合上下文和表格结构加分；
-- 降低概要、流动资金说明、会计政策、信用风险和附注权重；
-- 支持繁体、简体、英文及港股报表复合表头；
-- 无公司名、股票代码或页码特判。
-
-复测结果：
+- 当前仍使用哪些Mock或Unavailable组件
 
-```text
-原11份适用金标准：
-现金Top 5 = 11/11，100%
-经营现金流Top 5 = 11/11，100%
-
-新增6份验证样本：
-现金Top 5 = 6/6，100%
-经营现金流Top 5 = 6/6，100%
+- 已知限制
 
-2410.HK：
-现金第563页 = 第1名
-经营现金流第562页 = 第1名
-
-自动化测试：63 passed
-```
+- 下一棒的明确输入
 
-评测索引：`data/catalog/shadow_a2_6_evaluation.csv`。
-
----
-
-## A3：财务数值提取与归一化
-
-**状态：已完成并合并到`main`。**
-
-- PR：#16
-- merge commit：`fa4bf1bc`
-- 自动测试：`134 passed`
-- PR CI：通过
-- 2410.HK真实案例：通过
-
-### 唯一任务
-
-从Evidence提取：
-
-- 现金及现金等价物；
-- 经营活动现金流；
-- raw_value；
-- normalized_value；
-- currency；
-- unit；
-- period_end；
-- period_months；
-- evidence_id。
+# 14. v0.4及后续版本计划
 
-### 必须处理
+## 14.1 v0.4.0-market-risk-prediction
 
-- 逗号与小数；
-- 括号负数与负号；
-- 元、千元、万元、百万元；
-- CNY、HKD、USD；
-- 时点余额；
-- 3、6、9、12个月期间；
-- 多候选值；
-- 单位、币种或期间缺失。
+| **编号** | **任务** | **主要输出** |
+|:---|:---|:---|
+| V4-1 | 证券类别、上市日期和发行价语义治理 | 普通股/REIT/SPAC/权证资格与时间边界 |
+| V4-2 | 正式MarketDataProvider | 按证券和交易日读取OHLCV |
+| V4-3 | 上市后标签 | 首日、5日、20日、60日收益、破发和回撤 |
+| V4-4 | 上市前市场特征 | 恒指、行业、近期IPO、波动率和市场活跃度 |
+| V4-5 | 真实Market Agent | 上市前市场风险Evidence和MarketSnapshot |
+| V4-6 | 模型基线 | Rule、Logistic和LightGBM |
+| V4-7 | 时间外验证 | 2020—2023开发、2024验证 |
+| V4-8 | 最终盲测 | 2025一次性评估，不再调参 |
 
-### 主案例目标
+## 14.2 v0.5.0-evaluation-and-validation
 
-```text
-cash:
-raw = "77,208"
-normalized = 77208
-currency = CNY
-unit = thousand
-period_end = 2024-03-31
+- 选择20—30家公司，建立200—300条人工风险标注。
 
-operating_cash_flow:
-raw = "(83,918)"
-normalized = -83918
-currency = CNY
-unit = thousand
-period_months = 3
-period_end = 2024-03-31
-```
+- 系统评测覆盖Parser、Retriever、Extractor、Agent、Verifier和市场模型。
 
-### 禁止越界
+- 开展无LLM、无Verifier、单Agent、多Agent、无市场特征等消融实验。
 
-- 不计算现金跑道；
-- 不修改Verifier；
-- 不修改Predictor；
-- 不修改UI；
-- 不批量处理565份；
-- 不引入LLM。
+- 形成错误分类、失败案例、模型校准和可复现实验报告。
 
-### 合并条件
+## 14.3 提交准备、RC和v1.0
 
-- [x] 两个系统值与金标准一致
-- [x] 括号负数正确
-- [x] 单位、币种和期间正确
-- [x] 未知信息不猜测
-- [x] 多候选选择可解释
-- [x] 引用真实evidence_id
-- [x] Mock回归通过
-- [x] PR合并
+| **阶段** | **核心任务** | **退出标准** |
+|:---|:---|:---|
+| 提交准备 | 页面、自动报告、PPT、视频、操作与部署手册 | 评委能理解、运行和验证 |
+| RC | 依赖、Prompt、规则、模型、黄金案例冻结；新电脑和异常复跑 | 无阻塞Bug，核心链路100%复现 |
+| v1.0 | 完整源码、模型、配置、结果、报告和材料包 | 完成正式参赛提交并保留备份 |
 
-### 本地实现与验收记录
+# 15. 当前立即执行顺序
 
-新增文件：
+**1.** 完成v0.2独立复跑和第二标注人金标准复核。
 
-- `src/ipo_risk/extraction/__init__.py`
-- `src/ipo_risk/extraction/models.py`
-- `src/ipo_risk/extraction/financial.py`
-- `tests/unit/test_financial_extraction.py`
-- `tests/contract/test_financial_extraction_contract.py`
-- `scripts/check_real_financial_extraction.py`
+**2.** 创建v0.2 Tag、GitHub Release和版本复盘文档。
 
-验收结果：
+**3. 本计划已写入ROADMAP和PROJECT_MASTER_CHECKLIST，v0.3范围已冻结。**
 
-- 自动测试：`134 passed`，其中A3新增71个测试用例，原63项回归继续通过；
-- 现金及现金等价物：第563页，`77,208`，归一化为`77208 CNY thousand`，期间为`2024-03-31`；
-- 经营活动现金流：第562页，`(83,918)`，归一化为`-83918 CNY thousand`，期间为截至`2024-03-31`止3个月；
-- 两项均保留真实`evidence_id`、`document_id`、`chunk_id`和物理页码；
-- 未修改公共Schema、Agent、Workflow、Container、配置、Parser、Retriever或现有Skill。
+**4.** 建立v0.3黄金案例和标注规范。
 
-人工审查加固：
+**5.** 开发CatalogIPODataProvider并正式治理三个特殊证券。
 
-- 明确正确`query_intent`优先，错误intent不得直接输出`extracted`；
-- 支持英文分栏标题中的`31 March`日月顺序，无法识别时不再默认12月31日；
-- 禁止从不同币种的相邻页面拼接单位，并记录参与复核的上下文页面；
-- 使用重复年份作为期间组边界证据，无明确边界时返回`needs_review`；
-- 冲突时保留完整候选审计列表；
-- 真实验收脚本强制检查Evidence ID、原文归属、上下文距离和空issues。
+**6.** 扩展Retriever并建立可替换LLMProvider。
 
-PR前审查修订：
+**7.** 分别实现Financial、Legal、Business Agent。
 
-- 同一查询意图下优先最新可识别期间；较新候选尚有歧义时返回`needs_review`，不静默回退至较旧完整数据；
-- 相同报告日按金额、币种、单位和期间月数比较完整财务事实，并在metadata列明冲突字段；
-- 同一行的中英文混合期间标题按分段分别解析，无法证明期间对应关系时返回`mixed_period_header_ambiguous`；
-- 显式核对Evidence与Chunk的document、chunk和page身份，不一致时保留双方身份并返回`evidence_chunk_identity_mismatch`；
-- 增加`extraction_method`，区分`page_text_rule`、`page_text_with_adjacent_context`和`not_applicable`。
+**8.** 建立专用Verifier、Supervisor和enhanced_v2工作流。
 
-已知限制与下一棒输入：
+**9.** 完成批量评测、Streamlit和证据化报告。
 
-- 金标准仍为`provisional_gold`，第二人工复核尚未完成；
-- 当前只处理文本型正式报表及有限相邻页上下文，不处理扫描件、OCR或复杂合并单元格；
-- A4可以消费结构化数值、币种、源单位、期间和Evidence追溯字段；本棒未生成Calculation、RiskItem或现金跑道。
+**10.** 完成独立复跑并发布v0.3。
 
----
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr>
+<th><p><strong>项目主线总结</strong></p>
+<p>v0.2已经完成真实单风险闭环和赛事数据治理；当前先完成正式发布。v0.3集中实现真实多Agent文档分析，v0.4再进入市场标签和预测，v0.5负责正式评测与实证证明，随后完成产品化、RC冻结和v1.0正式提交。</p></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
 
-## A4：现金跑道Calculation与RiskItem
+# 附录A：v0.3退出条件检查表
 
-**状态：已完成并提交到`main`。**
+- □ Financial、Legal、Business三个真实Agent可用
 
-人工参考：
+- □ 8类风险进入正式风险注册表
 
-```text
-3个月现金消耗 = 83,918千元
-年化现金消耗 = 83,918 × 4 = 335,672千元
-现金 = 77,208千元
-现金跑道 = 77,208 / 335,672 × 12 ≈ 2.76个月
-```
+- □ 至少5份、建议8—10份黄金案例
 
-### 唯一任务
+- □ 所有正式风险都有Evidence
 
-生成：
+- □ 所有数字风险都有Calculation
 
-```text
-Calculation
-FIN_CASH_RUNWAY RiskItem
-```
+- □ 专用Verifier能够拒绝错误结论
 
-### 要求
+- □ Supervisor能够去重、处理冲突和失败降级
 
-- 由确定性Skill计算；
-- 记录输入、公式、过程和结果；
-- 引用现金和现金流Evidence；
-- Agent不重复实现公式；
-- 缺数据、单位冲突、币种冲突或期间未知时不计算；
-- RiskItem初始状态不是`verified`。
+- □ enhanced_v2工作流可配置运行
 
-### 本地实现与验收记录
+- □ 批量运行器和评测脚本可运行
 
-修改文件：
+- □ Streamlit能展示多Agent结果
 
-- `src/ipo_risk/skills/financial.py`
-- `docs/PROJECT_MASTER_CHECKLIST.md`
+- □ mvp_v1和Mock模式继续可用
 
-新增文件：
+- □ 2410.HK现金跑道结果不回归
 
-- `src/ipo_risk/domain/cash_runway.py`
-- `tests/unit/test_cash_runway_skill.py`
-- `tests/unit/test_cash_runway_risk.py`
-- `tests/contract/test_cash_runway_risk_contract.py`
-- `scripts/check_real_cash_runway_risk.py`
+- □ 无LLM API时确定性功能可运行
 
-确定性Skill：
+- □ 黄金主证据Recall@3达到90%
 
-```text
-monthly_burn = abs(operating_cash_flow) / period_months
-cash_runway_months = cash × period_months / abs(operating_cash_flow)
-展示值 = ROUND_HALF_UP保留2位小数
-```
+- □ 确定性金额/比例准确率达到95%
 
-- 核心计算使用`Decimal`，保留未舍入结果、月均现金消耗、2位小数展示值、公式、舍入规则及Evidence ID；
-- 旧调用`cash_runway(120, 10).value == 12`保持兼容；
-- 缺失值、负现金、非负经营现金流、非法期间及证据身份不一致不会生成成功Calculation；
-- 可靠的非负经营现金流返回`not_applicable`，不进行除法。
+- □ verified风险精确率达到90%
 
-风险等级规则：
+- □ 黄金案例完整运行率100%
 
-```text
-runway < 3 months      → critical / 90
-3 <= runway < 6       → high / 80
-6 <= runway < 12      → medium / 60
-runway >= 12          → low / 20
-```
+- □ 2025盲测集未参与开发调试
 
-- `risk_code="cash_runway"`保持Verifier契约；
-- `metadata.canonical_code="FIN_CASH_RUNWAY"`保留展示规范名；
-- 分数明确标记为规则分数而非概率；
-- RiskItem初始状态固定为`pending`，本棒未调用Verifier。
+- □ 独立环境复跑通过
 
-2410.HK真实验收：
+- ☑ README、ROADMAP、CHANGELOG和总清单已于本次同步
 
-- 现金：`77208 CNY thousand`，Evidence第563页；
-- 三个月经营现金流：`-83918 CNY thousand`，Evidence第562页；
-- 月均现金消耗：`27972.66666666666666666666667`；
-- 精确现金跑道：`2.760122977192020782192139946`个月；
-- 展示值：`2.76`个月；
-- 风险等级与分数：`critical / 90`；
-- `Calculation.success=true`，两条Evidence ID与RiskItem证据完全一致；
-- `verification_status=pending`。
+- □ 创建v0.3 Tag和Release
 
-验证结果：
+# 附录B：来源基准与版本说明
 
-- 基线测试：`134 passed`；
-- A4新增测试：42项；
-- 最终完整测试：`176 passed`；
-- Mock健康检查、compileall、diff-check、Retriever真实回归、A3真实回归和A4真实验收均通过；
-- 生产代码无2410.HK、公司名、562/563页或目标金额硬编码；
-- 未修改公共Schema、Agent、Workflow、Verifier、Predictor、Container、配置、服务层或UI。
+本计划基于GitHub仓库 richardssheik107-hub/hk-ipo-risk-agents 的main分支审核基线编制；文档提交后的main SHA会前移，因此以附录所列审核基线复现实证。
 
-已知限制与A5输入：
+- 基准提交：fbeb279309094cdf488d0522e6f3ca8eabff31ab
 
-- 当前风险阈值为`cash_runway_rule_v1`演示规则，未经统计校准，不代表上市后下跌概率；
-- 仅消费A3已核验为`extracted`且币种、单位、报告日、期间和Evidence身份一致的文本型财务结果；
-- 尚未接入Financial Agent、Workflow、Verifier、Predictor或UI；
-- A5可直接消费带两条Evidence、成功Calculation、规则元数据且状态为`pending`的`cash_runway` RiskItem。
+- 提交说明：data: close out B-line competition data governance (#19)
 
----
+- 提交记录：284 passing tests and GitHub Actions
 
-## A5：Verifier与规则评分
+- 本文件不等同于GitHub Release；v0.2仍需完成团队独立复跑、第二标注人复核、Tag与Release。
 
-**状态：已完成并直接提交到`main`，commit `a47b85cd`；243 passed为本地验收记录，未经过PR级CI。**
-
-Verifier检查：
-
-- Evidence存在；
-- evidence_id正确；
-- Calculation成功；
-- 引用链正确；
-- 单位、币种、期间一致；
-- 风险结论与计算一致；
-- 不确定信息进入`needs_review`。
-
-Predictor要求：
-
-- 明确是规则风险评分；
-- 不宣传为真实下跌概率；
-- 展示可用和缺失特征；
-- 说明降级模式；
-- 说明风险贡献。
-
-### 本地实现与验收记录
-
-修改文件：
-
-- `src/ipo_risk/domain/cash_runway.py`
-- `src/ipo_risk/agents/rules.py`
-- `src/ipo_risk/predictors/rule_based.py`
-- `tests/unit/test_cash_runway_risk.py`
-- `docs/PROJECT_MASTER_CHECKLIST.md`
-
-新增文件：
-
-- `src/ipo_risk/domain/cash_runway_verifier.py`
-- `tests/unit/test_cash_runway_verifier.py`
-- `tests/unit/test_rule_based_predictor_verified_only.py`
-- `tests/contract/test_cash_runway_verifier_contract.py`
-- `tests/integration/test_cash_runway_verification_pipeline.py`
-- `scripts/check_real_verified_cash_runway.py`
-
-Verifier检查项：
-
-- A4 Builder新增指标身份、同文档、现金时点值和招股书Evidence来源校验；
-- CashRunwayRiskVerifier核对风险身份、Evidence顺序/唯一性/身份/原文数字、Calculation封套及全部输入；
-- 通过`Decimal`拒绝NaN、Infinity、bool、空字符串和不可解析值；
-- 重新调用`cash_runway_from_operating_cash_flow`核对精确跑道、2位展示值和月均现金消耗；
-- Builder与Verifier共用`cash_runway_risk_policy`，不复制风险阈值；
-- 核对规则等级、分数、非概率metadata和保守结论；
-- 完全通过才更新为`verified`；Evidence缺失保持`pending`，冲突或篡改进入`needs_review`；
-- RuleVerifier不再用空外部Evidence覆盖cash_runway内嵌Evidence，外部冲突会被发现；其他Mock风险保持兼容。
-- 人工审查发现并修复同身份外部Evidence原文冲突仍可能通过的问题；金额核验改用确认后的Evidence文本。
-
-Predictor可信过滤：
-
-- 仅`verification_status=verified`的RiskItem参与分数和top_factors；
-- pending、needs_review和rejected均被排除并记录Risk ID；
-- `model_version=rule_v2`，`probabilities={}`，明确规则分不是校准概率；
-- 记录可用/缺失特征、降级模式、市场调整、政策版本及实际使用的verified风险；
-- 无verified风险且无有效市场数据时输出`0 / low`并进入degraded模式。
-
-2410.HK真实A1→A5验收：
-
-- Evidence页码：现金563、经营现金流562；
-- 现金跑道：`2.76`个月；
-- cash_runway：`critical / 90`；
-- `verification_status=verified`，verified=1，pending=0；
-- Predictor：`90 / critical`，`probabilities={}`，`score_is_probability=false`；
-- top_factors只包含已核验cash_runway风险；市场情绪特征明确记录为缺失。
-
-验证结果：
-
-- A5开始前main基线：`176 passed`；
-- A5新增测试：67项；
-- 最终完整测试：`243 passed`；
-- Mock健康检查、compileall、diff-check、Retriever真实回归、A3、A4及A5真实验收均通过；
-- 未修改公共Schema、Workflow图、Parser、Retriever、Extractor、Service、Container、配置或UI。
-
-已知限制与A6输入：
-
-- 当前Verifier只对cash_runway执行完整重算，其他风险仍使用通用规则核验；
-- Predictor是确定性规则评分，不是统计模型或真实概率；
-- 市场调整仍为MVP规则，未做统计校准；
-- 尚未接入真实Financial Agent、Workflow真实现金跑道节点、Service或Streamlit；
-- A6可消费已核验cash_runway RiskItem、verified-only Predictor和完整核验诊断。
-
----
-
-## A6：Streamlit、E2E与发布
-
-**状态：功能已进入`main`，commit `cb954e8`；发布加固PR #17通过远端CI。**
-
-本地实现：
-
-- `CashRunwayFinancialAgent`按公共RiskAgent接口串联Retriever、Extractor和Builder；
-- Legal、Business、Market真实模块明确为`unavailable`，不生成“Mock finding”；
-- 真实市场数据Provider返回缺失状态，不提供虚构情绪值；
-- request IPO Provider只保留请求中的公司和股票身份；
-- cash_runway在Verifier前不再进行通用二次检索；
-- 单风险检索失败可恢复，Verifier失败保留原Evidence和Calculation；
-- candidates按risk_id稳定去重；
-- Service返回component_modes、document、real_slice、configuration及组件诊断；
-- Repository保存后执行读取往返验证；
-- Streamlit增加安全真实PDF上传、组件模式、Evidence、Calculation、预测降级及日志展示；
-- Predictor缺市场数据时保持现金跑道规则分，并明确`degraded_mode=true`及原因。
-
-自动验收：
-
-- A5基线：`243 passed`；
-- A6新增测试：32项；
-- 发布加固后完整测试：`278 passed`；
-- Mock健康检查、compileall、diff-check、A1—A5真实回归通过；
-- 2410.HK真实Service级E2E通过；
-- 未修改公共Pydantic Schema。
-
-2410.HK Service级E2E：
-
-- `status=completed`；
-- Parser：706个有效Chunk，0个页面错误；
-- cash_runway：Evidence第563、562页，Calculation为2.76个月；
-- `verification_status=verified`，`critical / 90`；
-- Predictor：`90 / critical`，`probabilities={}`；
-- 缺真实市场数据：`degraded_mode=true`，原因`market_sentiment_score_missing`；
-- Legal、Business、Market与Market Data均显示`unavailable`；
-- ReportGenerator明确为Mock；
-- Repository往返读取一致。
-
-页面必须展示：
-
-- PDF解析状态；
-- 页数和Chunk数；
-- 现金与经营现金流；
-- 单位、币种与期间；
-- 现金跑道；
-- RiskItem；
-- Evidence ID、页码与原文；
-- Calculation过程；
-- Verifier状态；
-- 规则风险评分；
-- 真实组件与Mock组件；
-- 市场数据缺失和降级说明；
-- 结构化错误。
-
-E2E场景：
-
-- [x] Mock正常
-- [x] 2410.HK真实模式
-- [x] Retriever无结果
-- [x] 财务值缺失
-- [x] 单位或期间缺失
-- [x] Predictor降级
-- [x] 组件故障
-- [x] 结果持久化
-- [ ] 技术备份独立运行
-- [ ] 产品成员易用性测试
-
----
-
-# 7. B线：v0.2赛事数据治理
-
-## B0：只读数据审计
-
-**状态：已完成。**
-
-已确认：
-
-| 数据 | 规模 | 结论 |
-|---|---:|---|
-| 招股书 | 565份 | 2020—2025，代码不重复 |
-| 公司资料 | 4,501行 | GB18030，实际25列 |
-| 证券资料 | 802条完整+1条残缺 | 高度疑似截断 |
-| 日行情 | 4,117,539行 | 3,756代码，GB18030 |
-| 行情覆盖 | 555/565 | 10份无行情 |
-
----
-
-## B1：manifest、质量报告与数据划分
-
-**状态：已完成；全量产物已由提交`b5bfbd0`进入`main`，本轮补齐验收状态与影子样本对账。**
-
-### 交付物
-
-```text
-docs/COMPETITION_DATA_OVERVIEW.md
-docs/DATA_QUALITY_REPORT.md
-data/catalog/ipo_prospectus_manifest.csv
-data/catalog/ipo_official_master_bridge.csv
-data/catalog/eod_coverage_report.csv
-data/catalog/dataset_split.csv
-data/catalog/data_quality_issues.csv
-scripts/build_competition_manifest.py
-scripts/validate_competition_data.py
-tests/fixtures/competition_data/
-tests/unit/test_competition_manifest.py
-```
-
-### manifest最低字段
-
-```text
-case_id
-source_year
-source_filename
-relative_path
-stock_code_raw
-stock_code_wind
-code_match_method
-disclosure_date
-company_short_name
-offering_type
-file_size_bytes
-sha256
-pdf_page_count
-is_text_pdf
-parser_status
-parser_error_count
-eod_available
-dataset_split
-annotation_status
-notes
-```
-
-### 股票代码规则
-
-保留原代码和规范化代码：
-
-```text
-stock_code_raw = 02410
-stock_code_wind = 2410.HK
-```
-
-不得：
-
-- 覆盖原始代码；
-- 假设所有代码都可简单删除前导零；
-- 对特殊证券使用普通股票规则；
-- 把未匹配代码伪装成成功匹配。
-
-### 数据集划分
-
-```text
-开发：2020—2023，共376份
-验证：2024，共72份
-开发例外：2024，共1份，即2410.HK
-盲测：2025，共116份
-```
-
-2410.HK记录为：
-
-```text
-dataset_split = development_exception
-reason = used by v0.2 real_case_001
-```
-
-### B1验收
-
-- [x] 565份PDF全部进入manifest
-- [x] 年度数量与138/88/87/63/73/116一致
-- [x] 每份文件有相对路径和SHA-256
-- [x] 555/10覆盖关系可复现
-- [x] 证券主表明确标记`quarantined`
-- [x] 2025全部保留为盲测
-- [x] 没有本地绝对路径
-- [x] 没有提交原始大文件
-- [x] 测试使用微型Fixture
-- [x] 脚本可重复运行
-
----
-
-## B2：影子样本与批量测试支持
-
-**状态：已完成。24份选样、批量测试、12份人工核对、A2.6复测及全量manifest对账均已有可复现记录。**
-
-24份样本已按`source_year + stock_code_raw`与565份全量manifest逐项关联，并核对文件名、相对路径、SHA-256和数据集划分。校验由`scripts/validate_competition_data.py`执行；2025盲测和2410.HK开发例外均不会进入影子样本。
-
-B2只负责：
-
-- 从manifest选择24份样本；
-- 生成`shadow_sample_24.csv`；
-- 批量调用现有Parser和Retriever；
-- 保存结构化结果；
-- 不修改Parser和Retriever算法。
-
-B2的验收与A2.5共用，不单独增加新的版本范围。
-
----
-
-## 移出v0.2的B线任务
-
-以下任务不再作为v0.2发布门槛：
-
-```text
-生产级GB18030流式Provider
-完整证券与公司映射
-可靠上市日期重建
-发行价抽取
-上市后风险标签
-市场特征工程
-预测模型
-```
-
-安排：
-
-- 通用数据Loader与多案例批处理：v0.3；
-- 上市日期、发行价、标签与行情模型：v0.4。
-
-这样v0.2不会因赛事数据缺口而长期无法发布。
-
----
-
-# 8. v0.2版本暂停与退出门槛
-
-A6完成后停止新增功能。
-
-## 8.1 自动测试门
-
-- [ ] `pytest -q`
-- [ ] `python scripts/validate_project.py`
-- [ ] `python -m compileall -q app src`
-- [ ] `git diff --check`
-- [ ] CI通过
-- [ ] 工作区干净
-- [ ] Mock回归
-- [ ] 真实E2E
-
-## 8.2 2410.HK闭环门
-
-- [ ] 现金 = 77,208
-- [ ] 经营现金流 = -83,918
-- [ ] 现金页 = 563
-- [ ] 经营现金流页 = 562
-- [ ] 现金跑道约2.76个月
-- [ ] Calculation引用真实Evidence
-- [ ] Verifier状态符合预期
-- [ ] Streamlit展示完整
-
-## 8.3 泛化门
-
-- [ ] 24份影子样本运行完成
-- [ ] 12份人工核对完成
-- [ ] 两项Top5命中率达到内部门槛，或形成明确整改结论
-- [ ] 失败代码和失败案例完整
-- [ ] 2025盲测未参与调参
-- [ ] v0.3改进清单形成
-
-## 8.4 B线数据治理门
-
-- [x] manifest覆盖565份
-- [x] 年度统计可复现
-- [x] 555/10行情覆盖可复现
-- [x] 数据集划分固定
-- [x] 证券主表隔离
-- [x] 原始大文件未进入Git
-- [x] 未解决字段没有被猜测
-- [x] 数据脚本可重复运行
-
-## 8.5 独立复跑门
-
-- [ ] 技术备份在新环境克隆
-- [ ] 安装依赖
-- [ ] 自动测试
-- [ ] Mock案例
-- [ ] 2410.HK真实案例
-- [ ] Streamlit启动
-- [ ] 记录Bug和缺失步骤
-- [ ] README按实际流程修正
-
-## 8.6 发布门
-
-- [ ] 第二标注人复核
-- [ ] README更新
-- [ ] CHANGELOG更新
-- [ ] ROADMAP更新
-- [ ] 已知限制
-- [ ] Release notes
-- [ ] 所有v0.2 PR合并
-- [ ] 创建`v0.2.0-real-document-slice` Release
-
----
-
-# 9. v0.2结束后的复盘
-
-发布后必须填写：
-
-```text
-版本目标：
-实际完成：
-未完成：
-自动测试总数：
-2410.HK结果：
-24份影子测试结果：
-Parser主要失败：
-Retriever主要失败：
-财务抽取主要失败：
-返工最多模块：
-哪些接口需要保留：
-哪些模块需要重构：
-是否需要OCR：
-是否需要语义检索：
-v0.3黄金案例数量：
-v0.3优先风险类型：
-团队实际标注能力：
-```
-
-只有复盘完成后，才详细展开v0.3。
-
----
-
-# 10. 后续版本候选范围
-
-## v0.3：多案例与专业Agent
-
-候选规模：
-
-```text
-自动批量运行：50—100份
-轻量人工核对：20—30份
-黄金标注：10—20份
-```
-
-候选风险：
-
-- 连续亏损；
-- 收入与毛利率；
-- 经营现金流和现金跑道；
-- 客户/供应商集中度；
-- 赎回条款与特殊股东权利；
-- 关联交易、诉讼与牌照；
-- 产品未商业化；
-- 单一产品依赖。
-
-候选交付物：
-
-- 真实Financial Agent；
-- 真实Legal Agent；
-- 真实Business Agent；
-- 至少8类标准风险；
-- Prompt版本化；
-- 双人标注；
-- 多案例Verifier；
-- 通用数据Loader与批处理工具。
-
-## v0.4：行情、标签与预测
-
-正式样本：
-
-```text
-555份文档—行情匹配样本
-10份无行情样本用于降级测试
-```
-
-开始前必须解决：
-
-- 可靠上市日期；
-- 发行价；
-- 复权口径；
-- 成交金额单位；
-- 公司映射；
-- 特征时间戳；
-- 未来数据泄漏。
-
-时间划分：
-
-```text
-训练：2020—2023
-验证：2024
-测试：2025
-```
-
-模型候选：
-
-- 规则模型；
-- Logistic；
-- LightGBM；
-- 时间外评测；
-- 概率校准；
-- 可解释性。
-
-## v0.5：正式标注与评测
-
-目标：
-
-```text
-最低20家公司、200条风险
-理想30家公司、300条以上风险
-```
-
-指标：
-
-- Risk Precision、Recall、F1；
-- Evidence Precision、Recall；
-- 页码命中率；
-- 数值、单位和期间准确率；
-- 幻觉率；
-- needs_review比例；
-- 时间外预测指标；
-- 消融与失败分析。
-
----
-
-# 11. 接下来严格按此顺序
-
-1. 完成B1 manifest与质量报告；
-2. 从2020—2024选择24份影子样本；
-3. 批量运行Parser和Retriever；
-4. 人工核对其中12份；
-5. 根据门槛决定进入A3或修复Retriever；
-6. 完成A3—A6；
-7. 冻结v0.2并完整复跑；
-8. 发布v0.2；
-9. 召开复盘；
-10. 根据真实结果重新编写v0.3详细计划。
-
----
-
-# 12. 接力卡模板
-
-```markdown
-## 当前版本
-
-## 工作线
-- A线 / B线：
-
-## 当前棒次
-
-## 当前main状态
-- 最新提交：
-- 当前测试：
-- 未合并PR：
-- 工作区：
-
-## 本次唯一任务
-
-## 输入
-
-## 输出
-
-## 允许修改
-
-## 禁止修改
-
-## 是否触及共享文件
-- 是 / 否：
-- 集成负责人：
-
-## 自动测试
-
-## 人工验收
-
-## 数据质量验收（B线）
-
-## 合并条件
-
-## 完成后报告
-1. 新增文件
-2. 修改文件
-3. 公共接口影响
-4. 测试结果
-5. 真实案例结果
-6. 数据质量结果
-7. 已知限制
-8. 下一棒输入
-
-## Git限制
-未经明确授权，不自动commit、push、创建PR、合并或发布。
-```
-
----
-
-# 13. 进度记录
-
-| 日期 | 工作项 | 状态 | 结果 | 下一步 |
-|---|---|---|---|---|
-| 2026-08-03 | A1 Parser | 已完成 | PR #11；30 passed；706页；0错误 | A2 |
-| 2026-08-04 | A2 Retriever | 已完成 | PR #15 / `e1cd9cb`；47 passed | 主证据均第1；进入A2.5影子测试 |
-| 2026-08-04 | B0 数据审计 | 已完成 | 565 PDF；555有行情；证券表截断 | B1 |
-| 2026-08-05 | B1 manifest与质量报告 | 已完成并进入`main` | 提交`b5bfbd0`；565份manifest；555/10行情覆盖；562/3官方主数据桥接；证券表隔离 | B2样本对账 |
-| 2026-08-06 | B2 manifest对账 | 已完成 | 24/24样本关联全量manifest；文件名、相对路径、SHA-256和数据集划分纳入自动校验 | v0.2发布验收 |
-| 2026-08-04 | A2.5 影子测试 | 人工核对完成，闸门未通过 | 24/24 Parser完成；12份核对中11份适用；现金4/11（36.36%）；经营现金流7/11（63.64%） | 整改Retriever正式主表排序并复测 |
-| 2026-08-04 | A2.6 Retriever整改 | 已完成，闸门通过 | 原11份两项均100%；新增6份两项均100%；2410.HK保持第1 | A3财务抽取 |
-| 2026-08-04 | A3 财务抽取 | 已完成并合并到`main` | PR #16 / `fa4bf1bc`；134 passed；2410.HK现金563页与经营现金流562页均匹配provisional gold；PR CI与人工审查通过 | 从最新`main`创建独立分支启动A4 |
-| 2026-08-04 | A4 现金跑道风险 | 已完成并提交到`main` | 176 passed；2410.HK现金跑道2.76个月；critical/90；pending；Evidence第563、562页；人工diff审核通过 | 从最新`main`创建独立分支启动A5 |
-| 2026-08-04 | A5 Verifier与规则评分 | 已直接提交到`main`，commit `a47b85cd`；无PR级CI | 243 passed；cash_runway verified；Predictor 90/critical；概率为空；Evidence第563、562页；外部Evidence原文冲突回归通过 | A6 |
-| 2026-08-04 | A6 真实纵向链路与E2E | 功能已进入`main`，commit `cb954e8`；发布加固PR #17通过远端CI | 278 passed；706 Chunk；cash_runway verified；90/critical；市场缺失降级；Repository往返通过 | 发布前团队验收 |
-
----
-
-# 14. 决策记录
-
-| 编号 | 决策 | 原因 |
-|---|---|---|
-| D-001 | 核心代码顺序接力 | 减少接口冲突 |
-| D-002 | v0.2不使用LLM、Embedding和向量数据库 | 先建立可验证闭环 |
-| D-003 | A2后增加24份影子测试 | 防止只对2410.HK过拟合 |
-| D-004 | 2025保留为盲测 | 支持时间外评测 |
-| D-005 | 2410.HK标记为开发例外 | 已用于当前规则和验收 |
-| D-006 | 证券主表隔离 | 文件疑似截断 |
-| D-007 | v0.2 B线只做治理和影子测试 | 防止当前版本范围失控 |
-| D-008 | 生产级Loader移至v0.3 | 服务多案例批处理 |
-| D-009 | 标签与市场模型移至v0.4 | 依赖可靠上市日期和发行价 |
-| D-010 | 五人团队合并数据工程与产品职责 | 避免计划出现第六个无人角色 |
-| D-011 | 主计划只保留当前版本细节 | 降低维护成本 |
-| D-012 | 每个版本发布后强制复盘 | 下一版基于真实结果重写 |
-
----
-
-# 15. 当前结论
-
-```text
-A线现在：
-- A2已完成并进入main；
-- 24份影子样本已选定并完成自动测试；
-- 12份正式主表页视觉核对已完成，其中11份适用、1份不适用；
-- A2.5基线为现金36.36%、经营现金流63.64%，真实记录为闸门失败；
-- A2.6整改后原11份及新增6份验证集两项均为100%；
-- 2410.HK两个目标页继续保持第1名；
-- Retriever泛化阻塞已解除；
-- A3确定性财务数值提取已通过134项自动测试、2410.HK真实案例验收及人工审查，并由PR #16合并到`main`；
-- A4现金跑道Calculation与RiskItem已完成开发、176项自动测试、2410.HK真实验收和人工diff审核，并进入`main`；
-- A5现金跑道核验与可信规则评分已提交到`main`，commit `a47b85cd`；243项测试为本地验收记录，未经过PR级CI；
-- A6真实现金跑道Workflow、Service、Repository和Streamlit闭环已通过278项自动测试、2410.HK真实Service级E2E和人工diff审核；功能提交为`cb954e8`，发布加固PR #17已通过远端CI。
-
-B线现在：
-- 565份招股书manifest及年度统计已完成并进入`main`；
-- 555/10行情覆盖、562/3官方主数据桥接和19项质量问题已固化；
-- 2020—2023开发、2024验证与2410.HK开发例外、2025盲测划分已固定；
-- 证券主表保持`quarantined`，未解决字段未被猜测补齐；
-- 24份影子样本、12份人工核对与A2.6复测已完成；
-- 24/24影子样本已通过全量manifest文件名、相对路径、SHA-256和数据集划分自动对账。
-
-v0.2不做：
-- 生产级大行情Loader；
-- 正式上市后标签；
-- 预测模型；
-- 565份完整风险抽取。
-
-v0.2完成后：
-- 冻结；
-- 完整测试；
-- 独立复跑；
-- 发布；
-- 复盘；
-- 重写v0.3计划。
-```
-
-> 项目状态以GitHub、测试结果、人工验收、数据清单和本文件为准。
+- 后续如公共Schema、赛题要求或数据源发生变化，应先更新本计划再启动新开发棒。

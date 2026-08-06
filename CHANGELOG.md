@@ -14,12 +14,14 @@
 
 ### Validation
 
-- 自动化测试：278 passed；
+- 自动化测试：284 passed；
 - PR #17 GitHub Actions：pytest与compileall通过；
 - 2410.HK：现金第563页、经营现金流第562页；
 - 现金跑道：2.76个月，verified，critical / 90；
 - 无真实市场数据时保持90分并明确进入degraded模式；
 - 规则评分不输出概率。
+- 赛事数据校验、项目校验与编译检查通过；
+- 565份招股书manifest、555/10行情覆盖与562/3官方IPO主数据桥接完成。
 
 ### Fixed
 
@@ -29,8 +31,17 @@
 ### Remaining
 
 - 第二标注人复核与技术备份独立运行；
-- B1赛事数据治理；
 - v0.2 Tag与Release。
+
+## v0.3.0-multi-agent-risk-analysis (Planned)
+
+### Scope Frozen
+
+- Financial、Legal、Business三个真实专业Agent；
+- 八类证据驱动风险与专用Verifier；
+- 五至十份黄金案例、批量评测和`enhanced_v2`工作流；
+- 保留`mvp_v1`、Mock模式、v0.2现金跑道回归和无API Key确定性链路；
+- 市场标签、Market Agent与预测模型延后至v0.4。
 
 ## v0.1.0-architecture-mvp
 

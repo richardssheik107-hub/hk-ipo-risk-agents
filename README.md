@@ -45,7 +45,7 @@ v0.2.0：真实PDF现金跑道纵向闭环与B线赛事数据治理已完成，�
 
 ## 第一阶段已完成
 
-第一阶段将完成：
+第一阶段已完成：
 
 1. 完整工程目录；
 2. 公共Schema；
@@ -116,7 +116,13 @@ v0.2赛事数据治理已经完成：
 1. docs/PROJECT_SPEC.md
 2. docs/ARCHITECTURE.md
 3. docs/DATA_SCHEMA.md
-4. AGENTS.md
+4. docs/PROJECT_MASTER_CHECKLIST.md
+5. docs/ROADMAP.md
+6. AGENTS.md
+
+## v0.3.0 目标
+
+v0.3.0命名为`multi-agent-risk-analysis`，目标是在保留v0.2现金跑道回归和Mock模式的前提下，实现Financial、Legal、Business三个真实专业Agent、8类正式风险、5—10份黄金案例与批量评测。详细范围、接力顺序和退出门槛以[项目主计划](docs/PROJECT_MASTER_CHECKLIST.md)为准。
 
 ## 开发规范
 
