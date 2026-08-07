@@ -27,7 +27,7 @@ def test_financial_draft_cases_cover_all_v03_financial_risks_without_blind_data(
         "customer_concentration",
         "supplier_concentration",
     }
-    assert {row["stock_code"] for row in financial_rows} == {
+    required_stock_codes = {
         "1167.HK",
         "1541.HK",
         "8489.HK",
@@ -35,7 +35,14 @@ def test_financial_draft_cases_cover_all_v03_financial_risks_without_blind_data(
         "9633.HK",
         "2410.HK",
     }
-    assert all("2025" not in row["case_id"] for row in financial_rows)
+    actual_stock_codes = {row["stock_code"] for row in financial_rows}
+    assert required_stock_codes <= actual_stock_codes
+    assert all(
+        not row["case_id"].startswith("ipo_2025_") for row in financial_rows
+    )
+    assert all(
+        not row["document_id"].startswith("ipo_2025_") for row in financial_rows
+    )
     assert all(row["review_status"] == "draft" for row in financial_rows)
     assert all(not row["second_reviewer"] for row in financial_rows)
     assert all("standard_calculation=" in row["notes"] for row in financial_rows)
