@@ -9,9 +9,13 @@ from datetime import date
 from decimal import Decimal, InvalidOperation
 
 from ipo_risk.extraction.models import (
+    ConcentrationFact,
     ExtractionStatus,
     FinancialExtractionResult,
     FinancialMetricValue,
+    FinancialPeriodFact,
+    FinancialPeriodSeriesResult,
+    V03FinancialExtractionResult,
 )
 from ipo_risk.schemas import DocumentChunk, Evidence
 
@@ -33,6 +37,56 @@ _ENGLISH_DATE_MONTH_FIRST_RE = re.compile(
     re.I,
 )
 _MONTH_NAMES = "january february march april may june july august september october november december".split()
+
+_ROW_NUMBER_BODY = r"(?:\d{1,3}(?:[,，]\d{3})+|\d+)(?:\.\d+)?"
+_ROW_AMOUNT_TOKEN_RE = re.compile(
+    rf"(?:\(\s*{_ROW_NUMBER_BODY}\s*\)|（\s*{_ROW_NUMBER_BODY}\s*）|[+\-−]?\s*{_ROW_NUMBER_BODY}|[-–—])"
+)
+_PERCENT_RE = re.compile(
+    r"(?P<value>[+\-−]?\s*\d+(?:\.\d+)?)\s*(?:[%％]|per\s+cent|percent)", re.I
+)
+
+_V03_LABELS = {
+    "net_result": (
+        re.compile(r"年[內内][╱／/]期[內内](?:虧損|亏损|溢利)"),
+        re.compile(r"年[╱／/]期[內内](?:虧損|亏损|溢利)"),
+        re.compile(r"(?:年|期)[內内](?:虧損|亏损|溢利|利潤|利润)"),
+        re.compile(r"(?:淨|净)(?:虧損|亏损|利潤|利润)"),
+        re.compile(r"本公司[擁拥]有人(?:應佔|应占).*?(?:虧損|亏损|溢利|利潤|利润)"),
+        re.compile(r"(?:溢利|利润)[╱／/]（?(?:虧損|亏损)）?"),
+        re.compile(r"(?:loss|profit)(?:/loss)? for the (?:year|period)", re.I),
+        re.compile(r"(?:loss|profit) attributable to (?:the )?owners", re.I),
+        re.compile(r"net (?:loss|profit)", re.I),
+    ),
+    "revenue": (
+        re.compile(r"^(?:收入|收益|營業收入|营业收入|收入總額|收入总额|收益總額|收益总额)(?:\s|$)"),
+        re.compile(r"^(?:total revenue|revenue|turnover)(?:\s|$)", re.I),
+    ),
+}
+
+_EXCLUDED_NET_RESULT_LABELS = re.compile(
+    r"經營活動|经营活动|經營虧損|经营亏损|毛利|研發開支|研发开支|綜合開支|综合开支|operating (?:cash|loss)|gross profit|research and development",
+    re.I,
+)
+_EXCLUDED_REVENUE_LABELS = re.compile(
+    r"^(?:利息收入|其他收入|政府補助|政府补助|interest income|other income|government grant)",
+    re.I,
+)
+_EXCLUDED_REVENUE_ROWS = re.compile(
+    r"^(?:收入|收益|revenue).*?(?:來自|来自|from|產品|产品|客[戶户]|segment|分部|尚未|not yet|has not)",
+    re.I,
+)
+
+_CONCENTRATION_LABELS = {
+    "customer": {
+        "largest": re.compile(r"(?:單一|单一)?最大客[戶户]|(?:single )?largest customer", re.I),
+        "top_five": re.compile(r"(?:五大|前五大)客[戶户]|(?:five largest|top five) customers", re.I),
+    },
+    "supplier": {
+        "largest": re.compile(r"(?:單一|单一)?最大供應商|(?:single )?largest supplier", re.I),
+        "top_five": re.compile(r"(?:五大|前五大)供應商|(?:five largest|top five) suppliers", re.I),
+    },
+}
 
 _LABELS = {
     "cash_and_cash_equivalents": (
@@ -492,7 +546,12 @@ class FinancialEvidenceExtractor:
             units.add("ten_thousand")
         if re.search(r"百萬元|百万元|\bmillion\b", text, re.I):
             units.add("million")
-        text_without_scaled_units = re.sub(r"千元|萬元|万元|百萬元|百万元", "", text)
+        text_without_scaled_units = re.sub(
+            r"千元|萬元|万元|百萬元|百万元|人民幣|人民币|港元|港幣|港币|美元|HK\$|US\$|\bRMB\b|\bCNY\b|\bHKD\b|\bUSD\b",
+            "",
+            text,
+            flags=re.I,
+        )
         if re.search(r"(?<!千)(?<!萬)(?<!万)(?<!百)元|\bunit\b", text_without_scaled_units, re.I):
             units.add("unit")
         return currencies, units
@@ -732,9 +791,22 @@ class FinancialEvidenceExtractor:
 
     @staticmethod
     def _period_months(line: str) -> int | None:
-        chinese = re.search(r"(?:止|為|为|共)\s*([三六九十二0-9]+)\s*[個个]?月", line)
+        chinese = re.search(r"(?:止|為|为|共)\s*([一二三四五六七八九十0-9]+)\s*[個个]?月", line)
         if chinese:
-            values = {"三": 3, "六": 6, "九": 9, "十二": 12}
+            values = {
+                "一": 1,
+                "二": 2,
+                "三": 3,
+                "四": 4,
+                "五": 5,
+                "六": 6,
+                "七": 7,
+                "八": 8,
+                "九": 9,
+                "十": 10,
+                "十一": 11,
+                "十二": 12,
+            }
             return values.get(chinese.group(1), int(chinese.group(1)) if chinese.group(1).isdigit() else None)
         english = re.search(r"(3|6|9|12|three|six|nine|twelve)\s+months?", line, re.I)
         if english:
@@ -771,3 +843,614 @@ class FinancialEvidenceExtractor:
                 seen.add(key)
                 result.append(period)
         return result
+
+
+class V03FinancialFactExtractor(FinancialEvidenceExtractor):
+    """Extract typed v0.3 financial facts from already-retrieved evidence."""
+
+    def extract_v03(
+        self,
+        net_result_candidates: Sequence[Evidence],
+        revenue_candidates: Sequence[Evidence],
+        customer_concentration_candidates: Sequence[Evidence],
+        supplier_concentration_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> V03FinancialExtractionResult:
+        """Extract four fact families without retrieval, LLMs, or risk decisions."""
+
+        return V03FinancialExtractionResult(
+            net_results=self._extract_period_series(
+                "net_result", net_result_candidates, chunks_by_id
+            ),
+            revenues=self._extract_period_series(
+                "revenue", revenue_candidates, chunks_by_id
+            ),
+            customer_concentration=self._extract_concentration(
+                "customer", customer_concentration_candidates, chunks_by_id
+            ),
+            supplier_concentration=self._extract_concentration(
+                "supplier", supplier_concentration_candidates, chunks_by_id
+            ),
+        )
+
+    def _extract_period_series(
+        self,
+        metric_name: str,
+        evidence_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> FinancialPeriodSeriesResult:
+        observations: list[FinancialPeriodFact] = []
+        issues: list[str] = []
+        known_evidence_ids = self._evidence_ids(evidence_candidates)
+        if not evidence_candidates:
+            return FinancialPeriodSeriesResult(
+                metric_name=metric_name,
+                status=ExtractionStatus.NOT_FOUND,
+                issues=["evidence_candidates_empty"],
+            )
+
+        for evidence in evidence_candidates:
+            facts, candidate_issues = self._period_facts_from_evidence(
+                metric_name, evidence, chunks_by_id
+            )
+            observations.extend(facts)
+            issues.extend(candidate_issues)
+
+        if not observations:
+            return FinancialPeriodSeriesResult(
+                metric_name=metric_name,
+                status=(
+                    ExtractionStatus.NEEDS_REVIEW
+                    if issues and any(item != "metric_label_not_found" for item in issues)
+                    else ExtractionStatus.NOT_FOUND
+                ),
+                issues=self._dedupe_strings(issues or ["metric_label_not_found"]),
+                evidence_ids=known_evidence_ids,
+            )
+
+        issues.extend(issue for item in observations for issue in item.issues)
+        conflicts = self._period_fact_conflicts(observations)
+        issues.extend(conflicts)
+        observations.sort(
+            key=lambda item: (
+                item.period_end is None,
+                item.period_end or date.min,
+                item.page or 0,
+                item.chunk_id or "",
+            )
+        )
+        status = (
+            ExtractionStatus.EXTRACTED
+            if not issues
+            and all(item.status == ExtractionStatus.EXTRACTED for item in observations)
+            else ExtractionStatus.NEEDS_REVIEW
+        )
+        return FinancialPeriodSeriesResult(
+            metric_name=metric_name,
+            observations=observations,
+            status=status,
+            issues=self._dedupe_strings(issues),
+            evidence_ids=self._evidence_ids_from_period_facts(observations),
+            metadata={
+                "observation_count": len(observations),
+                "extraction_method": "deterministic_financial_row_v03",
+            },
+        )
+
+    def _period_facts_from_evidence(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[list[FinancialPeriodFact], list[str]]:
+        identity_issues = self._evidence_identity_issues(evidence, chunks_by_id)
+        if identity_issues:
+            return [], identity_issues
+        target = chunks_by_id[evidence.chunk_id or ""]
+        lines = [line.strip() for line in target.text.splitlines() if line.strip()]
+        label_index, raw_label = self._find_v03_label(lines, metric_name)
+        if label_index is None:
+            return [], ["metric_label_not_found"]
+
+        raw_values = self._row_values(lines, label_index, raw_label)
+        if not raw_values:
+            return [], ["unsupported_layout"]
+
+        context = self._context_chunks(target, chunks_by_id)
+        periods, period_source, period_issues = self._best_v03_periods(
+            lines[:label_index], target, context
+        )
+        issues = list(period_issues)
+        if self._review_only_context(evidence, target):
+            issues.append("summary_or_risk_context_requires_review")
+        if not periods:
+            issues.append("missing_period")
+        if periods and len(periods) != len(raw_values):
+            issues.append("value_period_count_mismatch")
+
+        resolution = self._find_currency_unit(target, context)
+        issues.extend(resolution.issues)
+        if resolution.currency is None:
+            issues.append("missing_currency")
+        if resolution.unit is None:
+            issues.append("missing_unit")
+
+        context_used = self._dedupe_chunks(
+            [
+                item
+                for item in [
+                    period_source if period_source != target else None,
+                    resolution.currency_source if resolution.currency_source != target else None,
+                    resolution.unit_source if resolution.unit_source != target else None,
+                    *resolution.reviewed_context,
+                ]
+                if item is not None
+            ]
+        )
+        facts: list[FinancialPeriodFact] = []
+        for index, raw_value in enumerate(raw_values):
+            period = periods[index] if index < len(periods) else None
+            value, value_issues, normalization = self._normalize_period_value(
+                metric_name, raw_label, raw_value, evidence, target
+            )
+            fact_issues = list(issues) + value_issues
+            if period is not None and period.months is None:
+                fact_issues.append("missing_period_months")
+            fact_status = (
+                ExtractionStatus.EXTRACTED
+                if value is not None
+                and period is not None
+                and period.months is not None
+                and resolution.currency is not None
+                and resolution.unit is not None
+                and not fact_issues
+                else ExtractionStatus.NEEDS_REVIEW
+            )
+            facts.append(
+                FinancialPeriodFact(
+                    metric_name=metric_name,
+                    period_end=period.end if period else None,
+                    period_months=period.months if period else None,
+                    normalized_value=value,
+                    currency=resolution.currency,
+                    unit=resolution.unit,
+                    evidence_ids=[evidence.evidence_id],
+                    document_id=target.document_id,
+                    chunk_id=target.chunk_id,
+                    page=target.page,
+                    raw_label=raw_label,
+                    raw_value=raw_value,
+                    status=fact_status,
+                    issues=self._dedupe_strings(fact_issues),
+                    context_chunk_ids=[item.chunk_id for item in context_used],
+                    context_pages=self._dedupe_ints([item.page for item in context_used]),
+                    metadata={
+                        "value_index": index,
+                        "normalization": normalization,
+                        "source_context": evidence.metadata.get("source_context"),
+                        "period_source_chunk_id": period_source.chunk_id if period_source else None,
+                        "currency_source_chunk_id": (
+                            resolution.currency_source.chunk_id
+                            if resolution.currency_source
+                            else None
+                        ),
+                        "unit_source_chunk_id": (
+                            resolution.unit_source.chunk_id if resolution.unit_source else None
+                        ),
+                    },
+                )
+            )
+        return facts, self._dedupe_strings(issues)
+
+    @staticmethod
+    def _find_v03_label(lines: Sequence[str], metric_name: str) -> tuple[int | None, str]:
+        for index, line in enumerate(lines):
+            if metric_name == "net_result" and _EXCLUDED_NET_RESULT_LABELS.search(line):
+                continue
+            if metric_name == "revenue" and _EXCLUDED_REVENUE_LABELS.search(line):
+                continue
+            if metric_name == "revenue" and _EXCLUDED_REVENUE_ROWS.search(line):
+                continue
+            for pattern in _V03_LABELS[metric_name]:
+                match = pattern.search(line)
+                if match:
+                    return index, match.group(0)
+        return None, ""
+
+    @staticmethod
+    def _row_values(lines: Sequence[str], label_index: int, raw_label: str) -> list[str]:
+        row = lines[label_index]
+        label_position = row.find(raw_label)
+        suffix = row[label_position + len(raw_label) :] if label_position >= 0 else ""
+        values = [match.group(0).strip() for match in _ROW_AMOUNT_TOKEN_RE.finditer(suffix)]
+        if values and not re.search(r"[,，()]|（|）", suffix):
+            grouped: list[str] = []
+            index = 0
+            while index < len(values):
+                if (
+                    index + 1 < len(values)
+                    and re.fullmatch(r"[+\-−]?\d{1,2}", values[index])
+                    and re.fullmatch(r"\d{3}", values[index + 1])
+                ):
+                    grouped.append(f"{values[index]} {values[index + 1]}")
+                    index += 2
+                else:
+                    grouped.append(values[index])
+                    index += 1
+            values = grouped
+        if values:
+            return values
+        for line in lines[label_index + 1 :]:
+            if _AMOUNT_RE.fullmatch(line) or _EMPTY_AMOUNT_RE.fullmatch(line):
+                values.append(line.strip())
+                continue
+            if values:
+                break
+        return values
+
+    def _normalize_period_value(
+        self,
+        metric_name: str,
+        raw_label: str,
+        raw_value: str,
+        evidence: Evidence,
+        target: DocumentChunk,
+    ) -> tuple[Decimal | None, list[str], str]:
+        if _EMPTY_AMOUNT_RE.fullmatch(raw_value):
+            if metric_name == "revenue" and self._is_primary_statement(evidence, target):
+                return Decimal("0"), [], "formal_revenue_dash_to_zero"
+            return None, ["ambiguous_empty_value_symbol"], "dash_unresolved"
+        value = self._normalize_amount(raw_value)
+        if value is None:
+            return None, ["invalid_numeric_value"], "invalid"
+        if metric_name == "net_result" and self._loss_only_label(raw_label):
+            value = -abs(value)
+        return value, [], "decimal_amount"
+
+    @staticmethod
+    def _loss_only_label(label: str) -> bool:
+        lowered = label.lower()
+        has_loss = bool(re.search(r"虧損|亏损|\bloss\b", lowered, re.I))
+        has_profit = bool(re.search(r"溢利|利潤|利润|\bprofit\b", lowered, re.I))
+        return has_loss and not has_profit
+
+    @staticmethod
+    def _is_primary_statement(evidence: Evidence, target: DocumentChunk) -> bool:
+        if evidence.metadata.get("primary_statement_context") is True:
+            return True
+        if target.metadata.get("primary_statement_context") is True:
+            return True
+        return bool(
+            re.search(
+                r"財務報表|财务报表|損益表|损益表|全面收益表|auditor.s report|statement of profit or loss",
+                f"{target.section}\n{target.text}",
+                re.I,
+            )
+        )
+
+    @staticmethod
+    def _review_only_context(evidence: Evidence, target: DocumentChunk) -> bool:
+        if evidence.metadata.get("source_context") in {"summary", "risk_factors"}:
+            return True
+        return bool(
+            re.search(
+                r"摘要|風險因素|风险因素|\bsummary\b|\brisk factors?\b",
+                target.section,
+                re.I,
+            )
+        )
+
+    def _extract_concentration(
+        self,
+        concentration_type: str,
+        evidence_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> ConcentrationFact:
+        known_evidence_ids = self._evidence_ids(evidence_candidates)
+        if not evidence_candidates:
+            return ConcentrationFact(
+                concentration_type=concentration_type,
+                status=ExtractionStatus.NOT_FOUND,
+                issues=["evidence_candidates_empty"],
+            )
+
+        facts: list[ConcentrationFact] = []
+        issues: list[str] = []
+        for evidence in evidence_candidates:
+            fact = self._concentration_from_evidence(
+                concentration_type, evidence, chunks_by_id
+            )
+            if fact.status != ExtractionStatus.NOT_FOUND:
+                facts.append(fact)
+            issues.extend(fact.issues)
+        if not facts:
+            return ConcentrationFact(
+                concentration_type=concentration_type,
+                status=(
+                    ExtractionStatus.NEEDS_REVIEW
+                    if issues and any(item != "concentration_label_not_found" for item in issues)
+                    else ExtractionStatus.NOT_FOUND
+                ),
+                issues=self._dedupe_strings(issues or ["concentration_label_not_found"]),
+                evidence_ids=known_evidence_ids,
+            )
+
+        return self._merge_concentration_facts(concentration_type, facts)
+
+    def _concentration_from_evidence(
+        self,
+        concentration_type: str,
+        evidence: Evidence,
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> ConcentrationFact:
+        identity_issues = self._evidence_identity_issues(evidence, chunks_by_id)
+        if identity_issues:
+            return ConcentrationFact(
+                concentration_type=concentration_type,
+                status=ExtractionStatus.NEEDS_REVIEW,
+                issues=identity_issues,
+                evidence_ids=[evidence.evidence_id],
+            )
+        target = chunks_by_id[evidence.chunk_id or ""]
+        labels = _CONCENTRATION_LABELS[concentration_type]
+        matches: list[tuple[int, int, str]] = []
+        for name, pattern in labels.items():
+            matches.extend((match.start(), match.end(), name) for match in pattern.finditer(target.text))
+        matches.sort()
+        if not matches:
+            return ConcentrationFact(
+                concentration_type=concentration_type,
+                status=ExtractionStatus.NOT_FOUND,
+                issues=["concentration_label_not_found"],
+                evidence_ids=[evidence.evidence_id],
+            )
+
+        values: dict[str, list[Decimal]] = {"largest": [], "top_five": []}
+        raw_percentages: dict[str, list[str]] = {"largest": [], "top_five": []}
+        for index, (_, start_after_label, name) in enumerate(matches):
+            end = matches[index + 1][0] if index + 1 < len(matches) else len(target.text)
+            segment = target.text[start_after_label:end]
+            for match in _PERCENT_RE.finditer(segment):
+                raw = match.group("value").replace("−", "-").replace(" ", "")
+                try:
+                    value = Decimal(raw)
+                except InvalidOperation:
+                    continue
+                values[name].append(value)
+                raw_percentages[name].append(match.group(0))
+
+        context = self._context_chunks(target, chunks_by_id)
+        periods, period_source, period_issues = self._best_v03_periods(
+            [line.strip() for line in target.text.splitlines() if line.strip()],
+            target,
+            context,
+        )
+        issues = list(period_issues)
+        if self._review_only_context(evidence, target):
+            issues.append("summary_or_risk_context_requires_review")
+        if not periods:
+            issues.append("missing_period")
+        if not values["largest"] and not values["top_five"]:
+            issues.append("concentration_percentage_missing")
+
+        largest, largest_issue = self._latest_concentration_value(values["largest"], periods)
+        top_five, top_five_issue = self._latest_concentration_value(values["top_five"], periods)
+        issues.extend(largest_issue)
+        issues.extend(top_five_issue)
+        if largest is None or top_five is None:
+            issues.append("incomplete_concentration_values")
+        if any(value < 0 or value > 100 for value in [largest, top_five] if value is not None):
+            issues.append("percentage_out_of_range")
+        if largest is not None and top_five is not None and largest > top_five:
+            issues.append("largest_percentage_exceeds_top_five")
+
+        selected_period = periods[-1] if periods else None
+        context_used = self._dedupe_chunks(
+            [item for item in [period_source if period_source != target else None] if item]
+        )
+        status = ExtractionStatus.EXTRACTED if not issues else ExtractionStatus.NEEDS_REVIEW
+        return ConcentrationFact(
+            concentration_type=concentration_type,
+            period_end=selected_period.end if selected_period else None,
+            period_months=selected_period.months if selected_period else None,
+            largest_counterparty_pct=largest,
+            top_five_pct=top_five,
+            evidence_ids=[evidence.evidence_id],
+            document_id=target.document_id,
+            chunk_id=target.chunk_id,
+            page=target.page,
+            status=status,
+            issues=self._dedupe_strings(issues),
+            context_chunk_ids=[item.chunk_id for item in context_used],
+            context_pages=self._dedupe_ints([item.page for item in context_used]),
+            metadata={
+                "raw_percentages": raw_percentages,
+                "source_context": evidence.metadata.get("source_context"),
+                "period_candidates": [
+                    {"period_end": item.end.isoformat(), "period_months": item.months}
+                    for item in periods
+                ],
+                "percentage_semantics": "0_to_100_percent",
+                "period_source_chunk_id": period_source.chunk_id if period_source else None,
+            },
+        )
+
+    @staticmethod
+    def _latest_concentration_value(
+        values: Sequence[Decimal], periods: Sequence[_Period]
+    ) -> tuple[Decimal | None, list[str]]:
+        if not values:
+            return None, []
+        if not periods:
+            return values[-1], []
+        if len(values) != len(periods):
+            return values[-1], ["value_period_count_mismatch"]
+        return values[-1], []
+
+    def _merge_concentration_facts(
+        self, concentration_type: str, facts: Sequence[ConcentrationFact]
+    ) -> ConcentrationFact:
+        dated = [item for item in facts if item.period_end is not None]
+        selected_date = max((item.period_end for item in dated), default=None)
+        selected = [item for item in facts if item.period_end == selected_date] if selected_date else list(facts)
+        largest_values = {
+            item.largest_counterparty_pct
+            for item in selected
+            if item.largest_counterparty_pct is not None
+        }
+        top_five_values = {
+            item.top_five_pct for item in selected if item.top_five_pct is not None
+        }
+        issues = [issue for item in selected for issue in item.issues]
+        if len(largest_values) > 1 or len(top_five_values) > 1:
+            issues.append("conflicting_values_for_same_period")
+        if "conflicting_values_for_same_period" in issues and any(
+            item.metadata.get("source_context") == "summary" for item in selected
+        ) and any(item.metadata.get("source_context") == "primary_statement" for item in selected):
+            issues.append("summary_primary_statement_conflict")
+        largest = next(iter(largest_values)) if len(largest_values) == 1 else None
+        top_five = next(iter(top_five_values)) if len(top_five_values) == 1 else None
+        evidence_ids = self._dedupe_strings(
+            [evidence_id for item in selected for evidence_id in item.evidence_ids]
+        )
+        first = selected[0]
+        period_month_values = {item.period_months for item in selected if item.period_months is not None}
+        if len(period_month_values) > 1:
+            issues.append("period_months_conflict")
+        if largest is None or top_five is None:
+            issues.append("incomplete_concentration_values")
+        else:
+            issues = [item for item in issues if item != "incomplete_concentration_values"]
+        if largest is not None and top_five is not None and largest > top_five:
+            issues.append("largest_percentage_exceeds_top_five")
+        issues = self._dedupe_strings(issues)
+        return ConcentrationFact(
+            concentration_type=concentration_type,
+            period_end=selected_date,
+            period_months=next(iter(period_month_values)) if len(period_month_values) == 1 else None,
+            largest_counterparty_pct=largest,
+            top_five_pct=top_five,
+            evidence_ids=evidence_ids,
+            document_id=first.document_id,
+            chunk_id=first.chunk_id,
+            page=first.page,
+            status=ExtractionStatus.EXTRACTED if not issues else ExtractionStatus.NEEDS_REVIEW,
+            issues=issues,
+            context_chunk_ids=self._dedupe_strings(
+                [chunk_id for item in selected for chunk_id in item.context_chunk_ids]
+            ),
+            context_pages=self._dedupe_ints(
+                [page for item in selected for page in item.context_pages]
+            ),
+            metadata={
+                "candidate_count": len(selected),
+                "percentage_semantics": "0_to_100_percent",
+                "candidate_pages": [item.page for item in selected],
+            },
+        )
+
+    @staticmethod
+    def _period_fact_conflicts(observations: Sequence[FinancialPeriodFact]) -> list[str]:
+        values_by_period: dict[tuple[date, int | None], set[tuple[Decimal | None, str | None, str | None]]] = {}
+        for item in observations:
+            if item.period_end is None:
+                continue
+            key = (item.period_end, item.period_months)
+            values_by_period.setdefault(key, set()).add(
+                (item.normalized_value, item.currency, item.unit)
+            )
+        if any(len(values) > 1 for values in values_by_period.values()):
+            issues = ["conflicting_values_for_same_period"]
+            contexts = {item.metadata.get("source_context") for item in observations}
+            if {"summary", "primary_statement"} <= contexts:
+                issues.append("summary_primary_statement_conflict")
+            return issues
+        return []
+
+    @classmethod
+    def _narrative_periods(cls, text: str) -> list[_Period]:
+        located: list[tuple[int, _Period]] = []
+        for pattern in (_CHINESE_DATE_RE, _ISO_DATE_RE):
+            for match in pattern.finditer(text):
+                try:
+                    end = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+                except ValueError:
+                    continue
+                clause_start = max(0, text.rfind("。", 0, match.start()) + 1)
+                clause_end = text.find("。", match.end())
+                clause = text[clause_start : clause_end if clause_end >= 0 else len(text)]
+                located.append((match.start(), _Period(end, cls._period_months(clause))))
+        located.sort(key=lambda item: item[0])
+        return cls._dedupe_periods([period for _, period in located])
+
+    def _best_v03_periods(
+        self,
+        target_lines: Sequence[str],
+        target: DocumentChunk,
+        context: Sequence[DocumentChunk],
+    ) -> tuple[list[_Period], DocumentChunk | None, list[str]]:
+        candidates: list[tuple[list[_Period], DocumentChunk, list[str]]] = []
+        target_periods, target_issues = self._parse_periods(target_lines)
+        if target_periods or target_issues:
+            candidates.append((target_periods, target, target_issues))
+        narrative_periods = self._narrative_periods(target.text)
+        if narrative_periods:
+            candidates.append((narrative_periods, target, []))
+        for chunk in context:
+            lines = [line.strip() for line in chunk.text.splitlines() if line.strip()]
+            periods, issues = self._parse_periods(lines)
+            if periods or issues:
+                candidates.append((periods, chunk, issues))
+        if not candidates:
+            return [], None, []
+        periods, source, issues = max(
+            candidates,
+            key=lambda item: (len(item[0]), not item[2], item[1] == target),
+        )
+        return periods, source, issues
+
+    @staticmethod
+    def _evidence_identity_issues(
+        evidence: Evidence, chunks_by_id: Mapping[str, DocumentChunk]
+    ) -> list[str]:
+        if not evidence.evidence_id:
+            return ["evidence_id_missing"]
+        if not evidence.chunk_id or evidence.chunk_id not in chunks_by_id:
+            return ["evidence_chunk_missing"]
+        chunk = chunks_by_id[evidence.chunk_id]
+        issues: list[str] = []
+        if evidence.document_id and evidence.document_id != chunk.document_id:
+            issues.append("evidence_document_mismatch")
+        if evidence.page and evidence.page != chunk.page:
+            issues.append("evidence_page_mismatch")
+        return issues
+
+    @staticmethod
+    def _evidence_ids(evidence_candidates: Sequence[Evidence]) -> list[str]:
+        return V03FinancialFactExtractor._dedupe_strings(
+            [item.evidence_id for item in evidence_candidates if item.evidence_id]
+        )
+
+    @staticmethod
+    def _evidence_ids_from_period_facts(facts: Sequence[FinancialPeriodFact]) -> list[str]:
+        return V03FinancialFactExtractor._dedupe_strings(
+            [evidence_id for item in facts for evidence_id in item.evidence_ids]
+        )
+
+    @staticmethod
+    def _dedupe_chunks(chunks: Sequence[DocumentChunk]) -> list[DocumentChunk]:
+        result: list[DocumentChunk] = []
+        seen: set[str] = set()
+        for chunk in chunks:
+            if chunk.chunk_id not in seen:
+                seen.add(chunk.chunk_id)
+                result.append(chunk)
+        return result
+
+    @staticmethod
+    def _dedupe_strings(values: Sequence[str]) -> list[str]:
+        return list(dict.fromkeys(values))
+
+    @staticmethod
+    def _dedupe_ints(values: Sequence[int]) -> list[int]:
+        return list(dict.fromkeys(values))
