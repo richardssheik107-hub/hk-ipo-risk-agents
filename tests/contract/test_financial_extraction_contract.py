@@ -9,6 +9,8 @@ from ipo_risk.extraction import (
     FinancialEvidenceExtractor,
     FinancialExtractionResult,
     FinancialMetricValue,
+    V03FinancialExtractionResult,
+    V03FinancialFactExtractor,
 )
 from ipo_risk.schemas import DocumentChunk, Evidence
 
@@ -95,3 +97,65 @@ def test_extractor_does_not_mutate_evidence_or_chunks() -> None:
     FinancialEvidenceExtractor().extract([item], [], {source.chunk_id: source})
     assert source.model_dump() == source_before
     assert item.model_dump() == item_before
+
+
+def test_v03_extractor_returns_typed_deterministic_internal_contract() -> None:
+    header = DocumentChunk(
+        document_id="doc",
+        chunk_id="header",
+        page=1,
+        text="人民币千元\n截至2022年12月31日止年度\n截至2023年12月31日止年度",
+    )
+    row = DocumentChunk(
+        document_id="doc", chunk_id="row", page=2, text="收入 100 80"
+    )
+    evidence = Evidence(
+        evidence_id="revenue-evidence",
+        document_id="doc",
+        chunk_id="row",
+        page=2,
+        text=row.text,
+    )
+    chunks = {header.chunk_id: header, row.chunk_id: row}
+    extractor = V03FinancialFactExtractor()
+
+    first = extractor.extract_v03([], [evidence], [], [], chunks)
+    second = extractor.extract_v03([], [evidence], [], [], chunks)
+
+    assert isinstance(first, V03FinancialExtractionResult)
+    assert first == second
+    assert first.revenues.observations[1].normalized_value == Decimal("80")
+    assert first.revenues.observations[1].evidence_ids == ["revenue-evidence"]
+    assert first.customer_concentration.status == ExtractionStatus.NOT_FOUND
+
+
+def test_v03_result_round_trips_json_without_mutating_inputs() -> None:
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="concentration",
+        page=3,
+        text=(
+            "截至2023年12月31日止年度，最大客戶佔總收益30%，"
+            "五大客戶佔總收益60%。"
+        ),
+    )
+    evidence = Evidence(
+        evidence_id="customer-evidence",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+    chunk_before = chunk.model_dump()
+    evidence_before = evidence.model_dump()
+
+    original = V03FinancialFactExtractor().extract_v03(
+        [], [], [evidence], [], {chunk.chunk_id: chunk}
+    )
+    restored = TypeAdapter(V03FinancialExtractionResult).validate_json(
+        original.model_dump_json()
+    )
+
+    assert restored == original
+    assert chunk.model_dump() == chunk_before
+    assert evidence.model_dump() == evidence_before

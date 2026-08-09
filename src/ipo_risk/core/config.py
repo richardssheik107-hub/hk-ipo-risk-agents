@@ -1,5 +1,5 @@
 """Configuration precedence: environment variables > YAML > code defaults."""
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 import os
 import yaml
@@ -13,11 +13,18 @@ class Settings:
     legal_agent: str = "mock"; business_agent: str = "mock"; market_agent: str = "mock"
     verifier: str = "rule"; supervisor: str = "rule"; predictor: str = "rule_based"
     llm_provider: str = "mock"; market_data_provider: str = "mock"; ipo_data_provider: str = "mock"
+    llm_api_key: str = field(default="", repr=False)
+    llm_base_url: str = ""; llm_model: str = ""
+    llm_timeout_seconds: int = 60; llm_max_retries: int = 2
     repository: str = "json"; report_generator: str = "mock"
     data_dir: str = "data"; report_dir: str = "reports"; log_level: str = "INFO"
 
 def _coerce(value: str, current):
-    return value.lower() in {"1", "true", "yes", "on"} if isinstance(current, bool) else value
+    if isinstance(current, bool):
+        return value.lower() in {"1", "true", "yes", "on"}
+    if isinstance(current, int):
+        return int(value)
+    return value
 
 def load_settings(path: str | None = None) -> Settings:
     config_path = Path(path or os.getenv("IPO_RISK_CONFIG", "configs/mock.yaml"))
