@@ -1,0 +1,370 @@
+from __future__ import annotations
+
+from typing import Any
+
+from ipo_risk.agents.legal import LegalAgent
+from ipo_risk.providers.mock import MockLLMProvider
+from ipo_risk.schemas import (
+    DiagnosticCode,
+    DocumentChunk,
+    Evidence,
+    IPOProfile,
+    VerificationStatus,
+)
+
+
+RIGHT_TEXT = (
+    "Under the Pre-IPO Investment Agreement, Series B investors hold redemption rights "
+    "that survive the Listing and remain effective after Listing."
+)
+LITIGATION_TEXT = (
+    "Proceedings remain pending before the High Court. Management considers the claim "
+    "material, involving RMB 2 million and possible operational loss."
+)
+
+
+def _evidence(text: str, evidence_id: str, page: int) -> Evidence:
+    return Evidence(
+        evidence_id=evidence_id,
+        document_id="ipo-case",
+        chunk_id=f"ipo-case:{page}",
+        page=page,
+        text=text,
+    )
+
+
+RIGHT_EVIDENCE = _evidence(RIGHT_TEXT, "e-right", 20)
+LITIGATION_EVIDENCE = _evidence(LITIGATION_TEXT, "e-litigation", 30)
+
+
+class RoutedRetriever:
+    def __init__(
+        self,
+        rights: list[Evidence] | None = None,
+        litigation: list[Evidence] | None = None,
+        fail_rights: bool = False,
+    ) -> None:
+        self.rights = rights or []
+        self.litigation = litigation or []
+        self.fail_rights = fail_rights
+
+    def retrieve(self, chunks, query, limit=3):
+        if query in LegalAgent.rights_queries:
+            if self.fail_rights:
+                raise RuntimeError("rights retrieval failed")
+            return self.rights[:limit]
+        if query in LegalAgent.litigation_queries:
+            return self.litigation[:limit]
+        return []
+
+
+class ExplodingRightsBuilder:
+    def build(self, fact, evidence_by_id):
+        raise RuntimeError("rights builder failed")
+
+
+def _profile() -> IPOProfile:
+    return IPOProfile(company_name="IPO Case")
+
+
+def _responses(
+    *,
+    rights: dict[str, Any] | None = None,
+    litigation: dict[str, Any] | None = None,
+) -> dict[str, dict[str, Any]]:
+    return {
+        "shareholder_rights_extract": rights
+        or {
+            "right_type": "redemption_right",
+            "holder": "Series B investors",
+            "is_effective": True,
+            "survives_listing": True,
+            "termination_event": "",
+            "termination_timing": "after_listing",
+            "restoration_clause": False,
+            "restoration_condition": "",
+            "impact_on_public_shareholders": "preferential exit right",
+            "evidence_ids": ["e-right"],
+        },
+        "litigation_compliance_extract": litigation
+        or {
+            "matter_type": "litigation",
+            "subject": "supplier claim",
+            "counterparty_or_authority": "supplier",
+            "event_date": "2023-01-01",
+            "amount": "2",
+            "currency": "RMB",
+            "amount_unit": "million",
+            "current_status": "pending",
+            "is_pending": True,
+            "is_resolved": False,
+            "management_materiality": "material",
+            "potential_impact": "operational loss",
+            "evidence_ids": ["e-litigation"],
+        },
+    }
+
+
+def _diagnostic(agent: LegalAgent, risk_code: str):
+    return next(item for item in agent.last_diagnostics if item.risk_code == risk_code)
+
+
+def test_legal_agent_aggregates_both_risks_as_pending_candidates() -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
+        llm_provider=MockLLMProvider(_responses()),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert [item.risk_code for item in risks] == [
+        "redemption_rights",
+        "material_litigation_compliance",
+    ]
+    assert all(item.verification_status == VerificationStatus.PENDING for item in risks)
+    assert all(item.evidence for item in risks)
+    assert all(item.verification_status != VerificationStatus.VERIFIED for item in risks)
+    assert len(agent.last_diagnostics) == 2
+    assert all(item.code == DiagnosticCode.RISK_GENERATED for item in agent.last_diagnostics)
+
+
+def test_invalid_rights_llm_json_does_not_stop_litigation_component() -> None:
+    responses = _responses()
+    responses["shareholder_rights_extract"] = {"right_type": "redemption_right"}
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert [item.risk_code for item in risks] == ["material_litigation_compliance"]
+    rights = _diagnostic(agent, "redemption_rights")
+    litigation = _diagnostic(agent, "material_litigation_compliance")
+    assert rights.code == DiagnosticCode.EXTRACTION_FAILED
+    assert "llm_structured_output_invalid" in rights.metadata["internal_issue_codes"]
+    assert rights.metadata["failure_isolated"] is True
+    assert litigation.code == DiagnosticCode.RISK_GENERATED
+
+
+def test_rights_builder_failure_does_not_stop_litigation_component() -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
+        llm_provider=MockLLMProvider(_responses()),
+        rights_builder=ExplodingRightsBuilder(),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert [item.risk_code for item in risks] == ["material_litigation_compliance"]
+    rights = _diagnostic(agent, "redemption_rights")
+    assert rights.code == DiagnosticCode.COMPONENT_FAILURE
+    assert rights.metadata["component"] == "risk_builder"
+
+
+def test_rights_retrieval_failure_does_not_stop_litigation_component() -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever(
+            [RIGHT_EVIDENCE], [LITIGATION_EVIDENCE], fail_rights=True
+        ),
+        llm_provider=MockLLMProvider(_responses()),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert [item.risk_code for item in risks] == ["material_litigation_compliance"]
+    assert _diagnostic(agent, "redemption_rights").code == DiagnosticCode.COMPONENT_FAILURE
+
+
+def test_terminated_right_is_not_a_current_risk() -> None:
+    responses = _responses(
+        rights={
+            "right_type": "redemption_right",
+            "holder": "Series B investors",
+            "is_effective": False,
+            "survives_listing": False,
+            "termination_event": "listing",
+            "termination_timing": "on_listing",
+            "restoration_clause": False,
+            "restoration_condition": "",
+            "impact_on_public_shareholders": "",
+            "evidence_ids": ["e-right"],
+        }
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], []),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert not any(item.risk_code == "redemption_rights" for item in risks)
+    diagnostic = _diagnostic(agent, "redemption_rights")
+    assert diagnostic.code == DiagnosticCode.NOT_APPLICABLE
+    assert "historical_right_only" in diagnostic.metadata["internal_issue_codes"]
+
+
+def test_restorable_right_generates_pending_candidate() -> None:
+    responses = _responses(
+        rights={
+            "right_type": "redemption_right",
+            "holder": "Series B investors",
+            "is_effective": False,
+            "survives_listing": False,
+            "termination_event": "listing",
+            "termination_timing": "on_listing",
+            "restoration_clause": True,
+            "restoration_condition": "the Listing does not occur",
+            "impact_on_public_shareholders": "conditional preferential exit right",
+            "evidence_ids": ["e-right"],
+        }
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], []),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    rights = next(item for item in risks if item.risk_code == "redemption_rights")
+    assert rights.verification_status == VerificationStatus.PENDING
+    assert rights.metadata["restoration_clause"] is True
+
+
+def test_ambiguous_rights_state_emits_needs_review_risk_and_diagnostic() -> None:
+    responses = _responses(
+        rights={
+            "right_type": "redemption_right",
+            "holder": "Series B investors",
+            "is_effective": None,
+            "survives_listing": None,
+            "termination_event": "",
+            "termination_timing": "",
+            "restoration_clause": None,
+            "restoration_condition": "",
+            "impact_on_public_shareholders": "unclear",
+            "evidence_ids": ["e-right"],
+        }
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], []),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    rights = next(item for item in risks if item.risk_code == "redemption_rights")
+    assert rights.verification_status == VerificationStatus.NEEDS_REVIEW
+    diagnostic = _diagnostic(agent, "redemption_rights")
+    assert diagnostic.code == DiagnosticCode.NEEDS_REVIEW
+    assert "termination_clause_not_found" in diagnostic.metadata["internal_issue_codes"]
+
+
+def test_negative_litigation_short_circuits_without_llm_key() -> None:
+    negative = _evidence(
+        "The Group is not involved in any material litigation.", "e-negative", 30
+    )
+    agent = LegalAgent(retriever=RoutedRetriever([], [negative]))
+
+    risks = agent.analyze(_profile(), [])
+
+    assert risks == []
+    diagnostic = _diagnostic(agent, "material_litigation_compliance")
+    assert diagnostic.code == DiagnosticCode.NOT_APPLICABLE
+    assert "negation_detected" in diagnostic.metadata["internal_issue_codes"]
+
+
+def test_actual_legal_text_without_llm_key_has_structured_unavailable_diagnostics() -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE])
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert risks == []
+    assert len(agent.last_diagnostics) == 2
+    for diagnostic in agent.last_diagnostics:
+        assert diagnostic.code == DiagnosticCode.EXTRACTION_FAILED
+        assert "llm_provider_unavailable" in diagnostic.metadata["internal_issue_codes"]
+        assert diagnostic.metadata["failure_isolated"] is True
+
+
+def test_resolved_litigation_is_not_a_current_risk() -> None:
+    resolved = _evidence(
+        "The historical litigation was settled and closed after payment.",
+        "e-litigation",
+        30,
+    )
+    responses = _responses(
+        litigation={
+            "matter_type": "litigation",
+            "subject": "historical supplier claim",
+            "counterparty_or_authority": "supplier",
+            "event_date": "2020-01-01",
+            "amount": "2",
+            "currency": "RMB",
+            "amount_unit": "million",
+            "current_status": "resolved",
+            "is_pending": False,
+            "is_resolved": True,
+            "management_materiality": "not_material",
+            "potential_impact": "paid with no continuing impact",
+            "evidence_ids": ["e-litigation"],
+        }
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([], [resolved]),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert not any(item.risk_code == "material_litigation_compliance" for item in risks)
+    diagnostic = _diagnostic(agent, "material_litigation_compliance")
+    assert diagnostic.code == DiagnosticCode.NOT_APPLICABLE
+    assert "matter_resolved" in diagnostic.metadata["internal_issue_codes"]
+
+
+def test_unclear_litigation_materiality_emits_needs_review() -> None:
+    responses = _responses(
+        litigation={
+            "matter_type": "litigation",
+            "subject": "supplier claim",
+            "counterparty_or_authority": "supplier",
+            "event_date": "2023-01-01",
+            "amount": "2",
+            "currency": "RMB",
+            "amount_unit": "million",
+            "current_status": "pending",
+            "is_pending": True,
+            "is_resolved": False,
+            "management_materiality": "",
+            "potential_impact": "operational loss",
+            "evidence_ids": ["e-litigation"],
+        }
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([], [LITIGATION_EVIDENCE]),
+        llm_provider=MockLLMProvider(responses),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    litigation = next(
+        item for item in risks if item.risk_code == "material_litigation_compliance"
+    )
+    assert litigation.verification_status == VerificationStatus.NEEDS_REVIEW
+    diagnostic = _diagnostic(agent, "material_litigation_compliance")
+    assert diagnostic.code == DiagnosticCode.NEEDS_REVIEW
+    assert "materiality_unclear" in diagnostic.metadata["internal_issue_codes"]
+
+
+def test_no_evidence_returns_empty_with_two_explicit_diagnostics() -> None:
+    agent = LegalAgent(retriever=RoutedRetriever())
+
+    assert agent.analyze(_profile(), []) == []
+    assert len(agent.last_diagnostics) == 2
+    assert all(
+        item.code == DiagnosticCode.EVIDENCE_NOT_FOUND
+        for item in agent.last_diagnostics
+    )

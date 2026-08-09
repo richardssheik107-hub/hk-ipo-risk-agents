@@ -1,0 +1,186 @@
+version: v03_legal_dictionary_v1
+status: frozen_for_v03_implementation
+owner: legal
+
+# This dictionary supports Evidence retrieval only. A term hit is not a risk
+# conclusion and must not set verification_status or determine final severity.
+risk_query_families:
+  redemption_rights:
+    owner: legal
+    right_terms:
+      redemption:
+        - "赎回权"
+        - "贖回權"
+        - "redemption right"
+        - "redemption rights"
+      liquidation_preference:
+        - "清算优先权"
+        - "清算優先權"
+        - "liquidation preference"
+      anti_dilution:
+        - "反摊薄"
+        - "反攤薄"
+        - "anti-dilution"
+        - "anti-dilution right"
+        - "anti-dilution rights"
+      pre_emptive:
+        - "优先认购权"
+        - "優先認購權"
+        - "pre-emptive right"
+        - "pre-emptive rights"
+        - "pre-emption right"
+        - "pre-emption rights"
+      repurchase:
+        - "回购权"
+        - "回購權"
+        - "repurchase right"
+        - "repurchase rights"
+        - "buyback right"
+        - "buyback rights"
+      veto:
+        - "否决权"
+        - "否決權"
+        - "veto right"
+        - "veto rights"
+      director_nomination:
+        - "董事提名权"
+        - "董事提名權"
+        - "director nomination right"
+        - "director nomination rights"
+      special_rights:
+        - "特殊权利"
+        - "特殊權利"
+        - "special right"
+        - "special rights"
+      valuation_adjustment:
+        - "对赌安排"
+        - "對賭安排"
+        - "valuation adjustment mechanism"
+        - "VAM"
+    status_terms:
+      terminated_or_lapsed:
+        - "terminate"
+        - "terminated"
+        - "termination"
+        - "cease"
+        - "ceases"
+        - "ceased"
+        - "lapse"
+        - "lapsed"
+        - "expire"
+        - "expired"
+        - "终止"
+        - "終止"
+        - "失效"
+      waived:
+        - "waive"
+        - "waived"
+        - "waiver"
+        - "豁免"
+      restored_or_restorable:
+        - "restore"
+        - "restored"
+        - "restorable"
+        - "revive"
+        - "revived"
+        - "reinstated"
+        - "resume"
+        - "resumed"
+        - "恢复"
+        - "恢復"
+        - "重新生效"
+    context_terms:
+      - "上市"
+      - "listing"
+      - "首次公开发售"
+      - "首次公開發售"
+      - "initial public offering"
+      - "股东协议"
+      - "股東協議"
+      - "shareholders agreement"
+      - "pre-IPO investment"
+
+  material_litigation_compliance:
+    owner: legal
+    matter_terms:
+      litigation:
+        - "重大诉讼"
+        - "重大訴訟"
+        - "material litigation"
+        - "诉讼"
+        - "訴訟"
+        - "litigation"
+      arbitration:
+        - "仲裁"
+        - "arbitration"
+      administrative_penalty:
+        - "行政处罚"
+        - "行政處罰"
+        - "administrative penalty"
+      regulatory_investigation:
+        - "监管调查"
+        - "監管調查"
+        - "regulatory investigation"
+      non_compliance:
+        - "不合规"
+        - "不合規"
+        - "non-compliance"
+        - "noncompliance"
+      licence_permit:
+        - "牌照"
+        - "许可"
+        - "許可"
+        - "license"
+        - "licence"
+        - "permit"
+      tax:
+        - "税务"
+        - "稅務"
+        - "tax"
+      environmental_penalty:
+        - "环境处罚"
+        - "環境處罰"
+        - "environmental penalty"
+      data_privacy:
+        - "数据隐私"
+        - "數據隱私"
+        - "data privacy"
+    status_terms:
+      active_or_unresolved:
+        - "pending"
+        - "ongoing"
+        - "尚未解决"
+        - "尚未解決"
+        - "仍在进行"
+        - "仍在進行"
+      resolved_or_remediated:
+        - "resolved"
+        - "settled"
+        - "closed"
+        - "remediated"
+        - "rectified"
+        - "已解决"
+        - "已解決"
+        - "已结案"
+        - "已結案"
+        - "已和解"
+        - "已整改"
+        - "整改完成"
+    materiality_terms:
+      - "重大"
+      - "重大性"
+      - "material"
+      - "significant"
+      - "潜在影响"
+      - "潛在影響"
+      - "potential impact"
+
+retrieval_contract:
+  output_type: Evidence
+  no_match_result: empty_list
+  preserve_source_text: true
+  preserve_physical_page: true
+  stable_evidence_id: true
+  term_hit_is_risk: false
+  status_pairing_required_for_ranking: true
+  verifier_decides_final_status: true

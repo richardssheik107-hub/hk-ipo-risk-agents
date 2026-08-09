@@ -46,3 +46,48 @@ class FinancialExtractionResult(BaseModel):
 
     cash_and_cash_equivalents: FinancialMetricValue
     operating_cash_flow: FinancialMetricValue
+
+
+class ShareholderRightsFact(BaseModel):
+    """Normalized shareholder-rights fact; never a final risk decision."""
+
+    right_type: str
+    holder: str = ""
+    is_effective: bool | None = None
+    survives_listing: bool | None = None
+    termination_event: str = ""
+    termination_timing: str = ""
+    restoration_clause: bool | None = None
+    restoration_condition: str = ""
+    impact_on_public_shareholders: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    uncertainty_reason: str = ""
+    status: ExtractionStatus = ExtractionStatus.NOT_FOUND
+    issues: list[str] = Field(default_factory=list)
+    extraction_method: str = "llm_structured_candidate+deterministic_normalization"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class LegalMatterObservation(BaseModel):
+    """Normalized litigation/compliance fact; never a final risk decision."""
+
+    matter_type: str
+    subject: str = ""
+    counterparty_or_regulator: str = ""
+    event_date: date | None = None
+    amount: Decimal | None = None
+    currency: str = ""
+    amount_unit: str = ""
+    current_status: str = "unknown"
+    is_pending: bool | None = None
+    is_resolved: bool | None = None
+    is_remediated: bool | None = None
+    management_materiality: str = ""
+    potential_impact: str = ""
+    license_impact: str = ""
+    evidence_ids: list[str] = Field(default_factory=list)
+    uncertainty_reason: str = ""
+    status: ExtractionStatus = ExtractionStatus.NOT_FOUND
+    issues: list[str] = Field(default_factory=list)
+    extraction_method: str = "llm_structured_candidate+deterministic_normalization"
+    metadata: dict[str, Any] = Field(default_factory=dict)
