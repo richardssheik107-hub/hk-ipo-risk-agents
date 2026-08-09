@@ -3,7 +3,7 @@ document_type: coordination_roadmap
 owner: lead-1-tech-lead
 status: DRAFT
 updated_at: 2026-08-09
-snapshot_main: ae41dcee3a042c0098c16c711d97ea499310af69
+snapshot_main: affaa28c03c22590ffc36cf34595b635357bf8ee
 ---
 
 # 1号负责人 v0.3 主执行路线图
@@ -19,7 +19,7 @@ snapshot_main: ae41dcee3a042c0098c16c711d97ea499310af69
 当前 `main` 快照：
 
 ```text
-ae41dcee3a042c0098c16c711d97ea499310af69
+affaa28c03c22590ffc36cf34595b635357bf8ee
 ```
 
 已完成或已进入主线：
@@ -29,14 +29,17 @@ ae41dcee3a042c0098c16c711d97ea499310af69
 - V3-2：`CatalogIPODataProvider`、特殊证券治理已合并。
 - V3-10 基础设施：批量运行、断点续跑、2025 盲测保护、黄金案例评测框架与 CI 加固已合并。
 - Planner → Executor 基础设施已进入 `main`。
-- V3-3：`docs/execution/plans/V3-3_RETRIEVER_PLAN.md` 已批准并进入 `main`，等待 Codex Executor 执行。
+- V3-3：Retriever查询族泛化已通过PR #23合并。
+- V3-4：可替换LLMProvider基础设施已通过PR #24合并；离线契约已验证，外部live smoke未执行。
+- V3-5：Financial五类风险核心模块与`V03FinancialVerifier`已通过PR #22合并，可独立调用。
 
 尚未完成的关键前置：
 
-- V3-1 真实黄金案例仍需由财务、法务、业务成员完成 5—10 份真实招股书标注与双人复核。
-- V3-4 LLMProvider 尚未开始正式实现。
-- V3-5 / V3-6 / V3-7 三个真实专业 Agent 尚未正式合入 `main`。
+- V3-1为PARTIAL：6个真实Financial案例共23行仍为draft且缺少second_reviewer；Legal/Business没有真实案例。
+- V3-5核心虽已合并，但尚未进入共享Container/Workflow/Service。
+- V3-6 Legal与V3-7 Business尚未合入`main`。
 - V3-8 专用 Verifier、V3-9 Supervisor / enhanced_v2、V3-11 UI / 报告和 V3-12 发布加固尚未完成。
+- `CatalogIPODataProvider`尚未加入全局ComponentRegistry。
 
 ## 2. 1号负责人的核心职责
 
@@ -53,15 +56,26 @@ ae41dcee3a042c0098c16c711d97ea499310af69
 推荐主链：
 
 ```text
-V3-3 Retriever
+V3-3 Retriever                  MERGED
     ↓
-V3-4 LLMProvider
+V3-4 LLMProvider                MERGED
     ↓
-接收并审核 V3-1 / V3-5 / V3-6 / V3-7 专业成员产出
+V3-5 Financial core             MERGED / STANDALONE-READY
+    ↓
+Gate A
+ ├─ V3-1 golden review          PARTIAL
+ ├─ V3-6 Legal                  PENDING
+ └─ V3-7 Business               PENDING
     ↓
 V3-8 专用 Verifier
     ↓
-V3-9 Supervisor + enhanced_v2 + 共享组件集成
+共享组件集成：
+ - V03FinancialAgent
+ - LegalAgent
+ - BusinessAgent
+ - CatalogIPODataProvider
+    ↓
+V3-9 Supervisor + enhanced_v2
     ↓
 真实黄金案例批量评测复跑
     ↓
@@ -74,72 +88,51 @@ v0.3 Release
 
 并行原则：
 
-- 3号财务成员可以继续准备 Financial Skills / Agent / 黄金案例，但涉及共享文件的改动必须等 1号集成。
-- 4号 Legal Agent 和 5号 Business Agent 可以先做标注、Prompt、规则和本模块测试，但真实 LLM 链路正式合并应等待 V3-4 稳定。
+- 3号财务成员当前重点是Financial黄金案例第二人复核；涉及共享文件的改动由1号后续统一集成。
+- 4号 Legal Agent 和 5号 Business Agent 现在可以基于已合并V3-4完成各自最小闭环、标注、Prompt、规则和本模块测试。
 - V3-8 只能在三个 Agent 最小闭环清晰后收口。
 - V3-9 必须在 V3-8 之后完成整体工作流闭环。
 - V3-11 可以由 5号先做页面原型，但正式集成必须基于稳定的 Service / enhanced_v2 输出。
 
-## 4. 当前立即任务：V3-3 Retriever 查询族泛化
+## 4. 当前立即任务：Gate A
 
-### 目标
-
-将现有现金 / 经营现金流关键词 Retriever 泛化为 v0.3 财务、法务、业务查询族，同时保持 `DocumentRetriever.retrieve()` 公共接口不变。
+**Gate A — Professional Agent Completion & Golden Review** 是当前唯一阶段。1号此时不启动V3-8，也不抢写全部专业业务逻辑。
 
 ### 1号当前动作
 
-- [ ] 本地同步最新 `main`。
-- [ ] 在新 Codex 会话确认 `$execute-approved-plan` 可发现。
-- [ ] 执行：
+- [ ] 作为Gatekeeper审核V3-5后续复核、V3-6和V3-7交付；
+- [ ] 保护Schema、Registry、Container、Workflow和Service共享边界；
+- [ ] 确认三类Agent继续返回`list[RiskItem]`；
+- [ ] 确认LLM候选事实只使用Retriever选出的Evidence，并保留Evidence ID；
+- [ ] 推动关键黄金案例完成第二人复核，禁止2025盲测参与调优；
+- [ ] 记录Catalog Provider全局注册和Financial共享装配两个后续Integration Task；
+- [ ] 只有Gate A退出条件满足后才生成`V3-8_SPECIALIZED_VERIFIER_PLAN.md`。
 
-```text
-Use $execute-approved-plan to execute:
-docs/execution/plans/V3-3_RETRIEVER_PLAN.md
-```
+### 成员依赖
 
-- [ ] 等待 Codex 生成 `docs/execution/reports/V3-3_RETRIEVER_EXECUTION_REPORT.md`。
-- [ ] 审核 Plan / Report / Diff 三方一致性。
-- [ ] 确认没有修改 `retrieval/base.py`、Schema、Container、Agent、Workflow、Service 等 Forbidden Files。
-- [ ] 确认全量回归与 2410.HK 回归通过。
-- [ ] 仅在审核通过后提交、push、PR、CI、merge。
+- 3号财务：将23行真实Financial草稿从`draft`推进到`double_reviewed`或`adjudicated`，处理分歧；
+- 4号法务：完成`redemption_rights`与`material_litigation_compliance`正/负/歧义/终止权利最小闭环；
+- 5号业务：完成`precommercial_product`正负例，区分产品销售、授权、milestone、研发服务和合作收入。
 
-### V3-3 退出门槛
+## 5. 已完成基础设施与保留限制
 
-- 八类新查询族存在并有简体 / 繁体 / 英文覆盖。
-- 相关章节优先于模板化、错误章节或泛关键词诱饵。
-- Evidence ID 与排序稳定。
-- 无匹配仍为空结果，不允许 fallback 假证据。
-- 不硬编码公司名、股票代码、案例 ID 或页码。
-- 不引入 LLM、Embedding、向量库或新依赖。
-- 现有现金与经营现金流回归保持稳定。
+### V3-3 Retriever
 
-## 5. 下一棒：V3-4 可替换 LLMProvider
+- 状态：COMPLETED / MERGED（PR #23）。
+- 已实现八类查询族、简繁英别名、章节权重、稳定Evidence ID和无匹配空结果。
+- 后续只在复核后的真实黄金集上做指标评测，不使用2025盲测调优。
 
-### 依赖
+### V3-4 LLMProvider
 
-- V3-3 必须完成审核并合并至 `main`。
-- 生成 V3-4 Plan 时重新读取最新 `main` SHA，不沿用 V3-3 的 `base_commit`。
+- 状态：COMPLETED / MERGED（PR #24）。
+- Mock、OpenAI-compatible和Unavailable Provider已注册；结构化输出、重试、安全异常和缺配置降级已离线验证。
+- 真实外部endpoint smoke未执行；Legal/Business尚未正式消费该Provider。
 
-### 1号需要实现
+### V3-5 Financial core
 
-- [ ] 冻结 LLMProvider 的最小公共协议与结构化输出边界。
-- [ ] 保留 Mock Provider。
-- [ ] 实现 Unavailable Provider，缺少 API Key 时返回结构化不可用状态，而不是崩溃。
-- [ ] 实现真实 Provider 适配层，只消费 Retriever 筛选后的少量 Evidence。
-- [ ] 输出必须经过 Pydantic 校验；不得直接返回任意字典作为跨模块接口。
-- [ ] API Key 只能来自环境变量，不写入配置仓库。
-- [ ] Prompt / 模型名必须配置化和版本化。
-- [ ] LLM 不参与 Decimal 精确金融计算，也不直接给最终风险分。
-- [ ] 无 API Key 时 Financial 确定性链路和 Mock 回归必须继续运行。
-- [ ] 增加 Mock / Unavailable / malformed output / timeout / provider error 等契约测试。
-
-### V3-4 退出门槛
-
-- Mock / Real / Unavailable 可替换。
-- 结构化事实输出稳定可校验。
-- 无密钥环境不崩溃。
-- 真实 Provider 失败可被转换为结构化诊断 / AnalysisError。
-- 不改变 Agent、Service 的公共返回契约。
+- 状态：MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING（PR #22）。
+- `V03FinancialAgent`拥有五类Financial风险，`V03FinancialVerifier`可确定性复算与分类。
+- 共享Container仍只注册`mock`与`cash_runway`；后续由1号统一集成，不将模块合并误写为`enhanced_v2`完成。
 
 ## 6. 专业成员交付的接收与集成
 
@@ -156,7 +149,7 @@ docs/execution/plans/V3-3_RETRIEVER_PLAN.md
 
 ### V3-5 Financial Agent
 
-3号主开发，1号主要做边界与集成审核：
+核心实现已合并；3号负责黄金复核，1号主要做边界与后续共享集成审核：
 
 - [ ] 检查 Financial Agent 只拥有 `cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`、`supplier_concentration`。
 - [ ] 检查 Decimal、单位、币种和期间严格一致。
@@ -367,24 +360,23 @@ GitHub CI
 
 ## 15. 1号任务优先级
 
-### P0：当前必须完成
+### P0：Gate A
 
-1. V3-3 Retriever 执行、审核、PR、合并。
-2. 生成并完成 V3-4 LLMProvider Plan。
-3. 推动 3/4/5号完成 V3-1 真实黄金案例和双人复核。
+1. 审核V3-6 Legal与V3-7 Business最小闭环；
+2. 推动Financial真实黄金草稿第二人复核，并补齐Legal/Business真实正负例；
+3. 保护共享边界，暂不启动V3-8。
 
-### P1：专业 Agent 进入后立即完成
+### P1：Gate A通过后
 
-4. 审核并集成 V3-5 / V3-6 / V3-7。
-5. 补 Catalog Provider 全局 Registry / config 集成。
-6. V3-8 专用 Verifier。
-7. V3-9 Supervisor + enhanced_v2。
+4. 生成并执行独立V3-8 Approved Plan；
+5. 用独立Integration Plan接入`V03FinancialAgent`、Legal、Business与Catalog Provider；
+6. 完成V3-9 Supervisor + `enhanced_v2`。
 
 ### P2：系统收口
 
-8. 真实黄金案例批量评测与针对性修复。
-9. V3-11 UI / 报告技术集成与边界审核。
-10. V3-12 发布加固、独立复跑、文档冻结和 v0.3 Release。
+7. 真实黄金案例批量评测与针对性修复；
+8. V3-11 UI / 报告技术集成与边界审核；
+9. V3-12 发布加固、独立复跑、文档冻结和 v0.3 Release。
 
 ## 16. 1号最终完成定义
 

@@ -28,6 +28,37 @@
 
 适用对象：5人参赛团队 / 技术负责人 / 数据治理 / 财务 / 法务 / 业务与产品
 
+# 0. 当前权威状态快照
+
+本文件是项目进度的唯一主入口。README、ROADMAP和负责人路线图只保留摘要并链接本文件。
+
+| 项目 | 当前事实 |
+| --- | --- |
+| 当前main | `affaa28c03c22590ffc36cf34595b635357bf8ee`（Merge PR #24） |
+| 当前验证 | 625 passed；项目、赛事数据、黄金Manifest与编译校验通过 |
+| 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
+| v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
+| v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
+| 当前稳定工作流 | `mvp_v1`；`enhanced_v2`尚未完成 |
+
+## 0.1 Workstream状态
+
+| Workstream | Status | Main evidence | Remaining gate |
+| --- | --- | --- | --- |
+| Planner → Executor | COMPLETED / MERGED | PR #21 | 每一棒继续使用独立Approved Plan |
+| V3-1 Golden Cases | PARTIAL | 23行真实Financial草稿、6个真实案例 | 第二人复核；Legal/Business真实正负例 |
+| V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
+| V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal/Business消费；可选外部smoke |
+| V3-5 Financial core | MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING | PR #22 | 共享Container/Workflow/Service与金标复核 |
+| V3-6 Legal | PENDING | 共享实现仍为`DisabledLegalAgent` | 两类风险最小闭环及真实正负例 |
+| V3-7 Business | PENDING | 共享实现仍为`DisabledBusinessAgent` | `precommercial_product`最小闭环及真实正负例 |
+| V3-8 Specialized Verifier | BLOCKED | Financial verifier模块已合并 | 等待Legal/Business最小闭环与关键金标复核 |
+| V3-9 Supervisor / enhanced_v2 | PENDING | 仅`mvp_v1`稳定 | 三Agent、Verifier与Catalog共享装配 |
+| V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
+| V3-11 UI / Report | PENDING | v0.2 UI仍可用 | `enhanced_v2` Service输出稳定 |
+| V3-12 Hardening / Release | PENDING | 尚未启动 | 前述门槛全部完成 |
+
 # 1. 项目总体目标与当前基线
 
 项目目标是构建一个证据驱动的港股IPO招股书解析与上市后风险预警系统。系统以招股书PDF为核心输入，将文档解析、证据检索、专业Agent分析、确定性计算、Verifier核验、Supervisor协同和市场预测逐层组合。
@@ -48,17 +79,13 @@
 
 ## 1.1 当前能力边界
 
-- □ Legal Agent仍为unavailable，不输出虚构法律风险。
-
-- □ Business Agent仍为unavailable，不输出虚构业务风险。
-
-- □ Market Agent和正式MarketDataProvider尚未接入。
-
-- □ LLMProvider尚未作为生产组件接入。
-
-- □ 当前规则风险分不是经过校准的上市后下跌概率。
-
-- □ 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
+- Legal与Business真实Agent尚未合并，共享Container仍使用disabled/Mock实现。
+- Market Agent和正式MarketDataProvider尚未接入。
+- LLMProvider基础设施已合并，但尚未被真实Legal/Business Agent消费；真实外部endpoint smoke未执行。
+- `V03FinancialAgent`与`V03FinancialVerifier`已合并并可独立调用，但尚未进入共享Container/Workflow/Service。
+- `CatalogIPODataProvider`已实现；批量运行器可运行时注册，但全局ComponentRegistry尚未注册`catalog`。
+- 当前规则风险分不是经过校准的上市后下跌概率。
+- 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
 
 ## 1.2 数据基线
 
@@ -78,7 +105,7 @@
 |:---|:---|:---|:---|
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
-| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、黄金案例、批量评测 | 下一开发版本 |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、黄金案例、批量评测 | IN PROGRESS — Gate A |
 | v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
@@ -210,20 +237,38 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 |:---|:---|:---|:---|:---|
 | V3-0A（已完成） | 冻结v0.3范围与路线 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结接力顺序和退出门槛。 | 技术负责人 | 文档范围与发布基线一致。 |
 | V3-0B（已完成） | 冻结开发契约 | 冻结角色输入输出、唯一风险所有权、候选模型、诊断、Supervisor和LLMProvider契约；新增兼容Schema和契约测试。 | 技术负责人 | 公共接口只做带默认值的兼容扩展；全量回归通过。 |
-| V3-1 | 黄金案例与标注规范 | 选择5—10份真实招股书，建立风险适用性、主证据页、原文、数值、单位、期间和标准核验状态。 | 财务/法务/业务 | 每类风险至少一个正例，关键案例双人复核，2025盲测不得进入。 |
-| V3-2 | IPO基础信息Provider | 从官方主数据桥接生成IPOProfile，处理匹配、占位、代码复用和特殊证券。 | 技术备份/数据 | 562个匹配案例稳定加载，缺失案例结构化降级。 |
-| V3-3 | Retriever查询族泛化 | 增加收入、亏损、客户、供应商、特殊权利、诉讼、商业化和核心管线等查询族。 | 技术负责人 | 接口不变，支持简繁英、章节权重、稳定Evidence ID和无匹配空结果。 |
-| V3-4 | 可替换LLMProvider | 建立Mock、真实和Unavailable Provider；只处理Retriever筛选后的少量Evidence。 | 技术负责人 | 输出Pydantic结构化事实，无API Key时确定性链路仍可运行。 |
-| V3-5 | Financial Agent扩展 | 持续亏损、收入增长、客户集中度、供应商集中度及相关Skills。 | 财务成员 | Decimal、单位、期间严格一致；不破坏2410.HK回归。 |
-| V3-6 | Legal Agent真实化 | 特殊股东权利、重大诉讼和合规事项。 | 法务成员 | 识别权利是否有效、是否终止、是否恢复；防止模板化章节误报。 |
-| V3-7 | Business Agent真实化 | 未商业化、核心产品和管线依赖。 | 业务成员 | 区分产品销售收入、授权收入和研发服务收入。 |
-| V3-8 | 专用Verifier体系 | 财务趋势、集中度、法律权利、诉讼合规、业务管线及整体一致性核验。 | 技术负责人+专业成员 | 错误结论可被拒绝，歧义进入needs_review。 |
-| V3-9 | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、组合风险、单Agent失败降级和新工作流。 | 技术负责人 | 保留mvp_v1；单个Agent失败时整体返回partial。 |
-| V3-10 | 批量运行与评测 | 批量分析脚本、黄金案例评测、断点续跑、失败报告和指标JSON。 | 技术备份/数据 | 默认禁止2025盲测；单案例失败不终止批次。 |
-| V3-11 | Streamlit与报告 | 三Agent页签、Evidence、Calculation、核验状态、诊断和规则分构成。 | 业务/产品+技术 | 前端只调用IPOAnalysisService，不直接调用Agent或LLM。 |
-| V3-12 | 发布加固 | 完整测试、独立复跑、文档同步、Tag和Release。 | 全组 | 黄金案例100%运行、v0.2回归不变、无非预期崩溃。 |
+| V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial草稿已进入main；继续第二人复核并补Legal/Business案例。 | 财务/法务/业务 | 每类风险至少一个正例，关键案例双人复核，2025盲测不得进入。 |
+| V3-2（MERGED / INTEGRATION-PENDING） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理已合并。 | 技术备份/数据 | 全局Registry和共享Service接入仍待1号完成。 |
+| V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
+| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | 专业Agent消费；可选安全外部smoke。 |
+| V3-5（MERGED / STANDALONE-READY） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 共享装配与真实金标复核。 |
+| V3-6（PENDING） | Legal Agent真实化 | 特殊股东权利、重大诉讼和合规事项。 | 法务成员 | 识别权利状态并完成正/负/歧义案例。 |
+| V3-7（PENDING） | Business Agent真实化 | 未商业化、核心产品和管线依赖。 | 业务成员 | 区分各类收入并完成正/负例。 |
+| V3-8（BLOCKED） | 专用Verifier体系 | 等待三个专业Agent最小闭环。 | 技术负责人+专业成员 | 错误结论可被拒绝，歧义进入needs_review。 |
+| V3-9（PENDING） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、失败降级和共享工作流。 | 技术负责人 | 保留mvp_v1；完成共享装配。 |
+| V3-10（INFRASTRUCTURE MERGED） | 批量运行与评测 | 批量、resume、blind guard和评测框架已合并。 | 技术备份/数据 | 复核后真实黄金批量评测。 |
+| V3-11（PENDING） | Streamlit与报告 | 三Agent页签、证据、核验状态和诊断。 | 业务/产品+技术 | 等待enhanced_v2 Service输出。 |
+| V3-12（PENDING） | 发布加固 | 完整测试、独立复跑、文档同步、Tag和Release。 | 全组 | 黄金案例100%运行、v0.2回归不变、无非预期崩溃。 |
 
 # 7. 黄金案例与人工标注计划
+
+## 7.0 当前Manifest审计
+
+对`tests/fixtures/v03_golden_cases/v03_golden_case_manifest.csv`的实际统计：
+
+| 指标 | 当前值 |
+| --- | ---: |
+| 总行数 | 26 |
+| synthetic rows | 3 |
+| real rows | 23 |
+| unique real cases/documents | 6 |
+| review_status=double_reviewed | 3（全部synthetic） |
+| review_status=draft | 23（全部real） |
+| second_reviewer缺失 | 23 |
+| 全部risk_code覆盖 | 7/8 |
+| 真实risk_code覆盖 | 5/8（全部Financial） |
+
+真实Financial覆盖`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`和`supplier_concentration`。真实Legal与Business覆盖均为0；synthetic各有一条`redemption_rights`和`precommercial_product`。`material_litigation_compliance`当前没有Manifest记录。因此V3-1状态为PARTIAL，不能将合成双人复核或真实草稿描述为正式黄金集完成。
 
 ## 7.1 推荐案例构成
 
@@ -561,19 +606,27 @@ v0.3批量评测完成后增加：
 
 # 15. 当前立即执行顺序
 
-**1.** 建立v0.3黄金案例和标注规范。
+当前统一阶段：**Gate A — Professional Agent Completion & Golden Review**。
 
-**2.** 开发CatalogIPODataProvider并正式治理三个特殊证券。
+| 角色 | 当前任务 |
+| --- | --- |
+| 1号技术负责人 | Gatekeeper；审核共享边界与成员交付；暂不启动V3-8；准备后续Catalog、Agent、Workflow、Service统一集成 |
+| 3号财务 | 对23行真实Financial草稿完成第二人复核，处理分歧并保持2025 blind guard |
+| 4号法务 | 完成V3-6：`redemption_rights`、`material_litigation_compliance`最小闭环与正/负/歧义/终止权利案例 |
+| 5号业务 | 完成V3-7：`precommercial_product`最小闭环，区分产品销售、授权、milestone、研发服务与合作收入 |
 
-**3.** 扩展Retriever并建立可替换LLMProvider。
+### V3-8进入条件
 
-**4.** 分别实现Financial、Legal、Business Agent。
+- Financial Agent独立可调用；
+- Legal两类风险最小闭环完成；
+- Business `precommercial_product`最小闭环完成；
+- 三者保持`list[RiskItem]`公共契约；
+- LLM候选事实可追溯Evidence ID；
+- Legal/Business至少具有真实正例和负例；
+- 关键黄金案例完成第二人复核；
+- 2025盲测案例未参与调优。
 
-**5.** 建立专用Verifier、Supervisor和enhanced_v2工作流。
-
-**6.** 完成批量评测、Streamlit和证据化报告。
-
-**7.** 完成独立复跑并发布v0.3。
+只有全部满足后，1号才生成`V3-8_SPECIALIZED_VERIFIER_PLAN.md`。之后顺序为：共享组件集成 → V3-9 Supervisor/`enhanced_v2` → 真实黄金批量评测 → V3-11 UI/报告 → V3-12加固 → v0.3 Release。
 
 <table>
 <colgroup>

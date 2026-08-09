@@ -189,12 +189,14 @@ HK IPO Risk Agents
 真实或确定性实现：
 
 1. PyMuPDF DocumentParser；
-2. KeywordDocumentRetriever；
-3. 现金跑道Financial Agent及确定性Skill；
-4. RuleVerifier、RuleSupervisor和RuleBasedPredictor；
-5. LangGraph、IPOAnalysisService、JSON Repository和Streamlit。
+2. 已泛化到八类v0.3查询族的KeywordDocumentRetriever；
+3. Mock、OpenAI-compatible与Unavailable LLMProvider基础设施；
+4. 现金跑道链路，以及独立可调用的`V03FinancialAgent`、`V03FinancialVerifier`、财务事实抽取和Decimal Skills；
+5. RuleVerifier、RuleSupervisor和RuleBasedPredictor；
+6. `CatalogIPODataProvider`、批量运行和黄金评测基础设施；
+7. LangGraph `mvp_v1`、IPOAnalysisService、JSON Repository和Streamlit。
 
-尚未真实实现：Legal、Business、Market Agent和真实市场数据Provider；ReportGenerator仍为Mock格式化组件。所有Mock、真实和unavailable实现必须遵守相同公共接口和Schema。
+实现与共享集成必须区分：Financial v0.3核心模块已经合并，但尚未进入共享Container/Workflow/Service；Catalog Provider尚未进入全局ComponentRegistry。Legal、Business、Market Agent和真实市场数据Provider仍未真实实现；`enhanced_v2`尚未完成，ReportGenerator仍为Mock格式化组件。所有Mock、真实和unavailable实现必须遵守相同公共接口和Schema。
 
 ## 9. 当前范围边界
 
@@ -217,13 +219,14 @@ HK IPO Risk Agents
 
 ## 10. 当前迭代方向
 
-v0.3.0按以下顺序推进：
+v0.3.0当前处于Gate A，按以下顺序推进：
 
-1. 建立5—10份黄金案例和统一标注规范；
-2. 扩展Retriever查询族；
-3. 实现Financial、Legal和Business真实Agent及专用Verifier；
-4. 建立批量分析、Evidence评测和`enhanced_v2`工作流；
-5. 保持Mock模式、`mvp_v1`和2410.HK现金跑道回归稳定。
+1. 完成真实黄金案例第二人复核，并补齐Legal/Business正负例；
+2. 完成Legal与Business真实Agent最小闭环；
+3. 达到Gate A退出门槛后建立三专业Verifier体系；
+4. 统一集成Financial/Legal/Business、Catalog Provider、Workflow和Service；
+5. 建立`enhanced_v2`并运行真实黄金案例批量评测；
+6. 保持Mock模式、`mvp_v1`和2410.HK现金跑道回归稳定。
 
 真实市场数据、Market Agent、上市后标签、Logistic、LightGBM和SHAP延后至v0.4及后续版本。
 
@@ -234,4 +237,6 @@ v0.3.0按以下顺序推进：
 
 当前进入v0.3.0真实多Agent文档风险分析。详细范围、任务顺序和退出门槛以
 `docs/PROJECT_MASTER_CHECKLIST.md`为准。
+
+截至`main@affaa28c03c22590ffc36cf34595b635357bf8ee`，V3-3 Retriever、V3-4 LLMProvider和V3-5 Financial核心模块已合并。当前统一阶段是Gate A；Legal、Business、专业Verifier、共享`enhanced_v2`和v0.3 Release仍未完成。
 
