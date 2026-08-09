@@ -10,6 +10,7 @@ from unicodedata import normalize
 from uuid import NAMESPACE_URL, uuid5
 
 from ipo_risk.schemas import DocumentChunk, Evidence, EvidenceSourceType
+from ipo_risk.retrieval.query_families import QUERY_FAMILIES, QUERY_FAMILY_BY_NAME
 
 
 # Keep phrase definitions centralized: the scoring rules must never depend on
@@ -214,6 +215,14 @@ class KeywordDocumentRetriever:
             compact_aliases = {"".join(char for char in alias if not char.isspace()) for alias in normalized_aliases}
             if compact_query in compact_aliases:
                 return intent, aliases
+        for family in QUERY_FAMILIES:
+            family_terms = (family.name, *family.aliases)
+            compact_terms = {
+                "".join(char for char in normalize_for_match(term) if not char.isspace())
+                for term in family_terms
+            }
+            if compact_query in compact_terms:
+                return family.name, family.aliases
         # A generic query is already scored as the exact query. Returning it
         # again as an alias would double-count the same match.
         return "generic_keyword", ()
@@ -244,6 +253,28 @@ class KeywordDocumentRetriever:
         statement_neighborhood = page_context is not None and page_context.statement_distance is not None
         audited_context = list(page_context.audited_context) if page_context else []
         table_context = self._looks_like_financial_table(chunk.text)
+        query_family = QUERY_FAMILY_BY_NAME.get(intent)
+        domain_context = (
+            self._matching_context(source.text, query_family.positive_context)
+            if query_family
+            else []
+        )
+        domain_negative_context = (
+            self._matching_context(source.text, query_family.negative_context)
+            if query_family
+            else []
+        )
+        normalized_section = normalize_for_match(chunk.section or "")
+        preferred_section_context = (
+            self._matching_context(normalized_section, query_family.preferred_sections)
+            if query_family
+            else []
+        )
+        discouraged_section_context = (
+            self._matching_context(normalized_section, query_family.discouraged_sections)
+            if query_family
+            else []
+        )
         exact_query = any(match.kind == "exact_query" for match in matches)
         aliases_matched = {match.keyword for match in matches if match.kind == "full_alias"}
         compact_query = "".join(character for character in normalized_query if not character.isspace())
@@ -251,25 +282,39 @@ class KeywordDocumentRetriever:
             "".join(character for character in normalize_for_match(term) if not character.isspace())
             for term in _BROAD_QUERY_TERMS
         }
-        breakdown = {
-            "exact_query": (0.08 if broad_query else 0.24) if exact_query else 0.0,
-            "full_alias": 0.18 if aliases_matched else 0.0,
-            "additional_aliases": min(0.08, max(0, len(aliases_matched) - 1) * 0.04),
-            "financial_context": 0.08 if financial_context else 0.0,
-            "statement_neighborhood": (
-                max(0.20, 0.38 - 0.04 * (page_context.statement_distance or 0))
-                if statement_neighborhood
-                else 0.0
-            ),
-            "audited_context": 0.12 if audited_context else 0.0,
-            "primary_statement_context": 0.18 if primary_statement_context else 0.0,
-            "ending_cash_context": 0.24 if ending_cash_context and intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
-            "cash_flow_companions": min(0.18, len(cash_flow_companions) * 0.06) if intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
-            "table_context": 0.08 if table_context else 0.0,
-            "summary_context": -0.28 if summary_context else 0.0,
-            "note_context": -0.16 if note_context and not statement_neighborhood else 0.0,
-            "negative_context": -0.45 if negative_context else 0.0,
-        }
+        if query_family is not None:
+            breakdown = {
+                "exact_query": 0.24 if exact_query else 0.0,
+                "full_alias": 0.24 if aliases_matched else 0.0,
+                "additional_aliases": min(0.10, max(0, len(aliases_matched) - 1) * 0.05),
+                "domain_context": min(0.24, len(domain_context) * 0.06),
+                "preferred_section": 0.18 if preferred_section_context else 0.0,
+                "financial_table": (
+                    0.10 if query_family.financial_table_weight and table_context else 0.0
+                ),
+                "discouraged_section": -0.12 if discouraged_section_context else 0.0,
+                "domain_negative_context": -0.14 if domain_negative_context else 0.0,
+            }
+        else:
+            breakdown = {
+                "exact_query": (0.08 if broad_query else 0.24) if exact_query else 0.0,
+                "full_alias": 0.18 if aliases_matched else 0.0,
+                "additional_aliases": min(0.08, max(0, len(aliases_matched) - 1) * 0.04),
+                "financial_context": 0.08 if financial_context else 0.0,
+                "statement_neighborhood": (
+                    max(0.20, 0.38 - 0.04 * (page_context.statement_distance or 0))
+                    if statement_neighborhood
+                    else 0.0
+                ),
+                "audited_context": 0.12 if audited_context else 0.0,
+                "primary_statement_context": 0.18 if primary_statement_context else 0.0,
+                "ending_cash_context": 0.24 if ending_cash_context and intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
+                "cash_flow_companions": min(0.18, len(cash_flow_companions) * 0.06) if intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
+                "table_context": 0.08 if table_context else 0.0,
+                "summary_context": -0.28 if summary_context else 0.0,
+                "note_context": -0.16 if note_context and not statement_neighborhood else 0.0,
+                "negative_context": -0.45 if negative_context else 0.0,
+            }
         score = max(0.0, min(1.0, sum(breakdown.values())))
         if not isfinite(score) or score <= 0.0:
             return None
@@ -293,6 +338,7 @@ class KeywordDocumentRetriever:
                 "retriever": self.name,
                 "normalized_query": normalized_query,
                 "query_intent": intent,
+                "query_family": query_family.name if query_family else None,
                 "broad_query": broad_query,
                 "matched_keywords": sorted({match.keyword for match in matches}),
                 "match_type": "exact_query" if exact_query else "full_alias",
@@ -311,6 +357,10 @@ class KeywordDocumentRetriever:
                 "summary_context": summary_context,
                 "note_context": note_context,
                 "negative_context": negative_context,
+                "domain_context": domain_context,
+                "domain_negative_context": domain_negative_context,
+                "preferred_section_context": preferred_section_context,
+                "discouraged_section_context": discouraged_section_context,
             },
         )
 
