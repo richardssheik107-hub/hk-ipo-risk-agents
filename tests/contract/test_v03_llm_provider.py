@@ -209,6 +209,21 @@ class BadRequestError(Exception):
     status_code = 400
 
 
+@pytest.mark.parametrize("status_code", [408, 409])
+def test_recoverable_http_status_retries(status_code):
+    class APIStatusError(Exception):
+        pass
+
+    error = APIStatusError("sensitive remote detail")
+    error.status_code = status_code
+    instance, client = provider(
+        [error, response("recovered")],
+        max_retries=1,
+    )
+    assert instance.complete("hello") == "recovered"
+    assert len(client.completions.calls) == 2
+
+
 def test_recoverable_transport_failure_respects_total_attempt_budget():
     instance, client = provider(
         [RateLimitError("remote secret"), RateLimitError("remote secret"), RateLimitError("remote secret")],
@@ -292,6 +307,37 @@ def test_container_injects_complete_real_configuration(monkeypatch):
     assert result.model == "runtime-model"
     assert result.timeout_seconds == 23
     assert result.max_retries == 1
+
+
+@pytest.mark.parametrize(
+    "initialization_error",
+    [
+        ValueError("sensitive runtime detail"),
+        TypeError("sensitive SDK argument detail"),
+    ],
+)
+def test_client_initialization_failure_is_structured_and_safe(
+    monkeypatch, initialization_error
+):
+    def fail_to_build(**kwargs):
+        raise initialization_error
+
+    monkeypatch.setattr(
+        OpenAICompatibleLLMProvider,
+        "_build_client",
+        staticmethod(fail_to_build),
+    )
+    with pytest.raises(LLMProviderError) as caught:
+        OpenAICompatibleLLMProvider(
+            api_key="runtime-secret",
+            base_url="https://runtime.invalid/v1",
+            model="runtime-model",
+        )
+    assert caught.value.kind == LLMFailureKind.REQUEST
+    assert caught.value.recoverable is False
+    assert caught.value.attempts == 0
+    assert str(initialization_error) not in str(caught.value)
+    assert "runtime-secret" not in str(caught.value)
 
 
 def test_openai_dependency_is_declared_without_vendor_sdk():

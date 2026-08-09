@@ -100,11 +100,23 @@ class OpenAICompatibleLLMProvider:
         self.timeout_seconds = int(timeout_seconds)
         self.max_retries = max(0, int(max_retries))
         self.last_call_metadata: LLMCallMetadata | None = None
-        self._client = client or self._build_client(
-            api_key=api_key,
-            base_url=base_url,
-            timeout_seconds=self.timeout_seconds,
-        )
+        if client is not None:
+            self._client = client
+        else:
+            try:
+                self._client = self._build_client(
+                    api_key=api_key,
+                    base_url=base_url,
+                    timeout_seconds=self.timeout_seconds,
+                )
+            except LLMProviderError:
+                raise
+            except Exception:
+                raise LLMProviderError(
+                    LLMFailureKind.REQUEST,
+                    "LLM client initialization failed",
+                    recoverable=False,
+                ) from None
 
     @staticmethod
     def _build_client(*, api_key: str, base_url: str, timeout_seconds: int) -> Any:
@@ -274,7 +286,7 @@ class OpenAICompatibleLLMProvider:
         name = type(exc).__name__.lower()
         if status in {401, 403} or "authentication" in name or "permission" in name:
             return LLMFailureKind.AUTHENTICATION, False
-        if status == 429 or status is not None and status >= 500:
+        if status in {408, 409, 429} or status is not None and status >= 500:
             return LLMFailureKind.TRANSPORT, True
         if any(term in name for term in ("timeout", "connection", "ratelimit")):
             return LLMFailureKind.TRANSPORT, True

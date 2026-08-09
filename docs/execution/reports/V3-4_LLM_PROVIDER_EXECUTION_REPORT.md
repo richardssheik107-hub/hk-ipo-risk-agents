@@ -4,7 +4,7 @@ plan_revision: 1
 execution_status: COMPLETED
 base_commit: 4ed73b1561b1b5a517f4856b9b7cef187afd1b84
 start_head: aad7d65530630abe0adeb145a4db89d508183a12
-end_head: aad7d65530630abe0adeb145a4db89d508183a12
+end_head: 33ee35de89c1667c8a303c2f714dea735bc8c22e
 branch: feat/v03-llm-provider
 executor: codex
 ---
@@ -17,6 +17,16 @@ adds bounded retries, safe failure classification, exact Pydantic validation,
 safe call metadata, deterministic unavailable behavior, configuration-driven
 assembly, network-free contract tests, and an optional synthetic live-smoke
 script. Existing Mock and v0.2 deterministic paths remain stable.
+
+## Review Follow-up
+
+The branch was integrated with `origin/main@f9c74f67756c7ae5bb60aed8b674adbe209d3764`
+using merge commit `33ee35de89c1667c8a303c2f714dea735bc8c22e` without
+conflicts. The follow-up classifies HTTP 408 and 409 as recoverable transport
+failures under the existing bounded retry loop. It also converts unexpected
+client-construction failures into non-recoverable, safe `LLMProviderError`
+instances without exposing the underlying exception text or runtime settings.
+Network-free regressions cover both changes.
 
 # Plan Compliance
 
@@ -101,13 +111,14 @@ None.
 
 - Command: `pytest -q tests/contract/test_v03_agent_contract.py`
   - Result: PASS
-  - Details: `7 passed in 0.28s`.
+  - Details: `9 passed in 0.39s` after integrating the latest main.
 - Command: `pytest -q tests/contract/test_v03_llm_provider.py`
   - Result: PASS
-  - Details: `18 passed in 0.30s`; all tests are network-free.
+  - Details: `22 passed in 0.34s`; all tests are network-free, including the
+    HTTP 408/409 and client-initialization review regressions.
 - Command: `pytest -q`
   - Result: PASS
-  - Details: `409 passed in 10.13s`.
+  - Details: `625 passed in 13.45s` on the combined latest-main branch.
 - Command: `python scripts/validate_project.py`
   - Result: PASS
   - Details: `status=completed verified=3 pending=1`.
@@ -230,17 +241,21 @@ tests/contract/test_v03_llm_provider.py
 docs/execution/reports/V3-4_LLM_PROVIDER_EXECUTION_REPORT.md
 ```
 
+Review follow-up `git diff --stat` after integrating the latest main:
+
+```text
+ .../reports/V3-4_LLM_PROVIDER_EXECUTION_REPORT.md  | 39 ++++++++++++------
+ src/ipo_risk/providers/llm.py                      | 24 ++++++++---
+ tests/contract/test_v03_llm_provider.py            | 46 ++++++++++++++++++++++
+ 3 files changed, 91 insertions(+), 18 deletions(-)
+```
+
 # Final Git Status
 
 ```text
- M pyproject.toml
- M src/ipo_risk/core/config.py
- M src/ipo_risk/core/container.py
- M src/ipo_risk/providers/mock.py
-?? docs/execution/reports/V3-4_LLM_PROVIDER_EXECUTION_REPORT.md
-?? scripts/check_v03_llm_provider_smoke.py
-?? src/ipo_risk/providers/llm.py
-?? tests/contract/test_v03_llm_provider.py
+ M docs/execution/reports/V3-4_LLM_PROVIDER_EXECUTION_REPORT.md
+ M src/ipo_risk/providers/llm.py
+ M tests/contract/test_v03_llm_provider.py
 ```
 
 # Next Action
