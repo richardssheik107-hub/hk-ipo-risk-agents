@@ -567,6 +567,17 @@ SupervisionResult。统一节点包装器将组件异常记录为 AgentLog 与 A
 
 Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Calculation及风险去重规则。
 
+### v0.3实现状态（`main@affaa28c`）
+
+- Retriever查询族已泛化并合并；
+- Mock、OpenAI-compatible与Unavailable LLMProvider已注册，Settings与Container支持运行时配置、安全重试和缺配置降级；
+- `V03FinancialAgent`与`V03FinancialVerifier`核心模块已合并并可独立调用，但尚未加入共享Container、Workflow或Service；
+- `CatalogIPODataProvider`与批量评测基础设施已合并，但Catalog目前只由批量运行器运行时注册，尚未进入全局ComponentRegistry；
+- 共享Legal与Business仍使用disabled/Mock实现；
+- 稳定工作流仍为`mvp_v1`，`enhanced_v2`尚未实现。
+
+因此“模块已实现”不等同于“共享工作流已集成”。后续由技术负责人统一完成受保护的Container、Workflow和Service装配，避免专业成员并行修改共享边界。
+
 ## v0.3 契约冻结边界
 
 v0.3 继续使用统一 `RiskAgent.analyze(...) -> list[RiskItem]`，不为三类专业 Agent 建立不兼容的公共返回类型。结构化候选模型保留在各 Agent 内部；`DiagnosticSource.last_diagnostics` 是不改变风险返回类型的旁路诊断接口。

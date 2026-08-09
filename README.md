@@ -7,12 +7,14 @@
 当前阶段：
 
 ```text
-v0.2.0已正式发布；当前进入v0.3.0真实多Agent文档风险分析
+v0.2.0已正式发布；v0.3.0处于Gate A——专业Agent闭环与黄金案例复核
 ```
 
 稳定版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
 v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式和赛事数据治理。发布验收为284 passed，完整版本记录见[CHANGELOG](CHANGELOG.md)。
+
+截至`main@affaa28c03c22590ffc36cf34595b635357bf8ee`，v0.3已合并Retriever查询族泛化、可替换LLMProvider基础设施和Financial五类风险核心模块。Legal与Business真实Agent、共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口。
 
 ## 核心流程
 
@@ -48,18 +50,23 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 真实或确定性实现：
 
 - ComponentRegistry 与 DependencyContainer 配置装配；
-- PyMuPDF DocumentParser与KeywordDocumentRetriever；
-- CashRunwayFinancialAgent、FinancialEvidenceExtractor和CashRunwayRiskBuilder；
+- PyMuPDF DocumentParser与已泛化到财务、法务、业务查询族的KeywordDocumentRetriever；
+- `OpenAICompatibleLLMProvider`、Mock/Unavailable Provider、安全重试与Pydantic结构化校验；
+- CashRunwayFinancialAgent，以及独立可调用的`V03FinancialAgent`和`V03FinancialVerifier`；
+- 财务事实抽取、Decimal确定性Skills及五类Financial风险核心模块；
 - CashRunwayRiskVerifier、RuleSupervisor和verified-only RuleBasedPredictor；
 - RequestIPODataProvider与UnavailableMarketDataProvider；
 - JSON Repository、LangGraph工作流、结构化故障降级和Streamlit证据链展示；
-- 565份招股书manifest、固定数据集划分和IPO主数据桥接。
+- `CatalogIPODataProvider`、565份招股书manifest、固定数据集划分、批量运行与黄金评测基础设施。
 
 当前边界：
 
-- Legal、Business和Market Agent为`unavailable`，不会生成虚构风险；
+- Legal、Business和Market Agent在共享Container中仍为`disabled`/Mock，真实Legal与Business Agent尚未合并；
+- `V03FinancialAgent`与`V03FinancialVerifier`已合并且可独立调用，但尚未注册到共享Container/Workflow/Service；
+- `CatalogIPODataProvider`可由批量运行器运行时注册，但尚未进入全局ComponentRegistry；
+- LLMProvider基础设施已合并，但尚未被真实Legal/Business Agent消费，外部真实endpoint smoke未执行；
+- `enhanced_v2`与v0.3多Agent Service/UI尚未完成，当前稳定工作流仍为`mvp_v1`；
 - 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
-- LLMProvider尚未使用；
 - ReportGenerator仍为Mock格式化组件；
 - 扫描版PDF/OCR、统计预测模型和真实概率尚未实现；
 - 页面中的90分是确定性规则分，不是下跌概率，也不构成投资建议。
@@ -143,10 +150,11 @@ python scripts/check_real_v02_e2e.py
 
 - Parser：`mock`、`mock_alt`、`pymupdf`；
 - Retriever：`mock`、`keyword`；
-- Financial Agent：`mock`、`cash_runway`；
+- Financial Agent（共享注册表）：`mock`、`cash_runway`；`V03FinancialAgent`尚待共享集成；
 - Legal/Business/Market Agent：`mock`、`disabled`；
+- LLMProvider：`mock`、`openai_compatible`、`unavailable`；
 - MarketDataProvider：`mock`、`unavailable`；
-- IPODataProvider：`mock`、`request`；
+- IPODataProvider（共享注册表）：`mock`、`request`；`catalog`尚待全局注册；
 - Verifier/Supervisor：`rule`；Predictor：`rule_based`、`fault`；
 - Repository：`json`；ReportGenerator：`mock`。
 
