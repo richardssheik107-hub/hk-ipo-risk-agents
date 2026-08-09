@@ -6,9 +6,9 @@
 
 - branch start SHA: `ff7ff53d4b7cb372266f73c3664d294f860a1848`
 - hardening commit: `fe18fed37c93f938e7bd85c5f58d22c9c030c460`
-- merged `origin/main`: `da317612768828a27e37da679e2205625164a1f4`
-- merge/validated code commit: `21cfef5c8292b51543e283ca668a0f20f9f38e71`
-- final relation after this report-only commit: ahead 6 / behind 0
+- merged `origin/main`: `dd44b203bd9318644a104dd368c444022fd79ce0`
+- merge/validated code commit: `36ce34959932f84a89158eaf23893c88218df3cd`
+- final relation after this report-only commit: ahead 8 / behind 0
 
 Git commit无法在自身正文中稳定记录自己的SHA；本文件记录已验证代码和merge SHA，最终report-only commit SHA记录在交付汇报中。
 
@@ -78,7 +78,7 @@ Legal Agent没有第二套Retriever。仍缺的aliases、lifecycle、status、ne
 - V3-3 Retriever contract：`40 passed`；
 - V3-4 LLMProvider contract：`22 passed`；
 - Financial v0.3 tests：`207 passed`；
-- full suite：`771 passed in 64.85s`；
+- full suite：`771 passed in 45.66s`；
 - `python scripts/validate_project.py`：`status=completed verified=3 pending=1`；
 - `python scripts/validate_competition_data.py`：`competition_data_validation=passed`；
 - `python -m compileall -q app src scripts`：passed；
