@@ -1,0 +1,65 @@
+[
+  {
+    "case_id": "precommercial_simplified",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "业务概要：我们的核心产品尚未获准进行商业销售，我们尚未从产品销售产生任何收入。",
+    "expected_terms": ["尚未获准进行商业销售", "尚未从产品销售产生任何收入"]
+  },
+  {
+    "case_id": "precommercial_traditional",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "業務概要：我們的核心產品尚未獲准進行商業銷售，我們尚未從產品銷售產生任何收入。",
+    "expected_terms": ["尚未獲准進行商業銷售", "尚未從產品銷售產生任何收入"]
+  },
+  {
+    "case_id": "precommercial_english",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "Business overview: We currently have no products approved for commercial sale and have not generated revenue from product sales.",
+    "expected_terms": ["no products approved for commercial sale", "have not generated revenue from product sales"]
+  },
+  {
+    "case_id": "commercial_traditional",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "業務：我們生產及銷售主要產品，產品所產生的收益佔本集團總收益的大部分。",
+    "expected_terms": ["生產及銷售", "產品所產生的收益"]
+  },
+  {
+    "case_id": "commercial_english",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "Business: We manufacture and sell our principal products and generate revenue from product sales.",
+    "expected_terms": ["manufacture and sell", "revenue from product sales"]
+  },
+  {
+    "case_id": "approval_without_sales",
+    "family": "commercialization_status",
+    "section": "unknown",
+    "text": "Business: We received marketing approval but have not commenced commercial sales.",
+    "expected_terms": ["not commenced commercial sales"]
+  },
+  {
+    "case_id": "principal_product_traditional",
+    "family": "core_product_pipeline",
+    "section": "unknown",
+    "text": "業務：包裝產品為我們的主要產品類別，我們生產及銷售該等產品。",
+    "expected_terms": ["主要產品類別", "生產及銷售"]
+  },
+  {
+    "case_id": "pipeline_simplified",
+    "family": "core_product_pipeline",
+    "section": "unknown",
+    "text": "概要：下表说明临床阶段候选药物的研发状态、适应症及商业权利。",
+    "expected_terms": ["临床阶段候选药物", "研发状态"]
+  },
+  {
+    "case_id": "portfolio_english",
+    "family": "core_product_pipeline",
+    "section": "unknown",
+    "text": "Business: Our principal products and product portfolio include products already launched and sold.",
+    "expected_terms": ["principal products", "product portfolio"]
+  }
+]
