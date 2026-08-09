@@ -65,4 +65,18 @@ Copy these components to the same relative paths in another Git repository:
 
 Also copy this README and the contract tests when practical. The destination repository supplies its own `AGENTS.md`, project-rule files, plans, validation commands, and file scope. The skill contains no business-specific assumptions.
 
-For personal use across repositories, copy the skill directory to `$HOME/.agents/skills/execute-approved-plan/`. This repository does not install or modify user-level Codex configuration.
+For personal use, the skill directory may be installed at
+`$HOME/.agents/skills/execute-approved-plan/`. This makes the skill discoverable
+across repositories.
+
+The current implementation is not fully self-contained. Each target repository
+must still contain these runtime scripts:
+
+- `scripts/execution_plan.py`
+- `scripts/validate_execution_plan.py`
+- `scripts/check_execution_scope.py`
+
+Installing only the user-level skill will not make a new repository executable
+until those scripts are present. A future self-contained distribution may remove
+this repository-level runtime dependency. This repository does not install or
+modify user-level Codex configuration.
