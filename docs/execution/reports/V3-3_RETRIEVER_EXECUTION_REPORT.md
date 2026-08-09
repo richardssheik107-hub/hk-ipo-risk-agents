@@ -4,7 +4,7 @@ plan_revision: 1
 execution_status: COMPLETED
 base_commit: 6847f67df0e275576e6689c62a50b0269d4cfd84
 start_head: 6a64f53de0864626ad4a9462c59e39aeb154a0e0
-end_head: 6a64f53de0864626ad4a9462c59e39aeb154a0e0
+end_head: 17c47cb76f87ad4a046cbe435cdf402503276ea1
 branch: feat/v03-retriever-query-families
 executor: codex
 ---
@@ -18,6 +18,12 @@ aliases with positive, negative, preferred-section, and discouraged-section
 signals. Existing cash and operating-cash-flow scoring remains on its original
 path. No public interface, dependency, configuration, Agent, Workflow, Service,
 Provider, Schema, or golden-case data was changed.
+
+Review follow-up confirmed that the real PyMuPDF parser currently emits
+`section="unknown"`. Section weighting now consumes both the explicit section
+field and visible headings in the page text, so real parsed chunks can produce
+preferred/discouraged section signals. The overly broad ASCII context fragments
+`ind` and `nda` were replaced by explicit drug-application phrases.
 
 # Plan Compliance
 
@@ -67,13 +73,13 @@ None.
 
 - Command: `pytest -q tests/contract/test_v03_retriever_query_families.py`
 - Result: PASS
-- Details: 35 passed in 0.35s; covered eight families in three languages, eight decoy rankings, stable IDs, traceability, no fallback, catalog membership, and method signature.
+- Details: 40 passed in 0.36s; covered eight families in three languages, eight decoy rankings, stable IDs, traceability, no fallback, catalog membership, method signature, three `section="unknown"` real-parser-shape rankings, and short ASCII context-token regressions.
 
 ## 3
 
 - Command: `pytest -q`
 - Result: PASS
-- Details: 386 passed in 11.74s.
+- Details: 391 passed in 12.46s.
 
 ## 4
 
@@ -133,6 +139,8 @@ None.
 - PASS — Financial `revenue`: relevant financial page 20 ranked above industry-overview decoy page 3, scores 0.78 and 0.34.
 - PASS — Legal `redemption_rights`: relevant history/reorganisation page 20 ranked above statutory decoy page 3, scores 0.78 and 0.22.
 - PASS — Business `core_product_pipeline`: relevant business page 20 ranked above definitions decoy page 3, scores 0.88 and 0.32.
+- PASS — Review follow-up: Financial, Legal, and Business relevant pages ranked above decoys with every synthetic `DocumentChunk.section` explicitly set to `unknown`.
+- PASS — Review follow-up: ordinary English words containing `ind`/`nda` fragments did not create context matches; explicit `IND application` and `new drug application` phrases remained positive signals.
 - A first PowerShell-piped synthetic inspection attempt corrupted Chinese stdin and ended with `IndexError` after the real E2E had already passed. It did not change files. The inspection was rerun successfully by importing the UTF-8 contract fixture data directly.
 - No 2025 blind-test document or result was inspected.
 
@@ -144,7 +152,7 @@ None.
 
 - The committed v0.3 golden manifest still contains synthetic fixtures only, so real multi-case retrieval metrics are not a completion gate for this Plan.
 - Ranking remains deterministic lexical/contextual scoring; it does not attempt semantic retrieval for wording absent from the maintained aliases.
-- Query-family context is evaluated on each matching `DocumentChunk`; existing formal-statement page-neighborhood inheritance remains specific to the established cash-flow behavior.
+- Query-family context is evaluated on each matching `DocumentChunk` using its section field plus visible page text; cross-page formal-statement neighborhood inheritance remains specific to the established cash-flow behavior.
 
 # Suggested Follow-ups
 
@@ -165,13 +173,24 @@ src/ipo_risk/retrieval/keyword.py | 88 ++++++++++++++++++++++++++++++---------
 The three newly created untracked files are listed under `Files Created`; Git
 does not include untracked files in plain `git diff --stat` output.
 
+Review follow-up diff relative to commit `17c47cb76f87ad4a046cbe435cdf402503276ea1`
+before this final report annotation:
+
+```text
+.../reports/V3-3_RETRIEVER_EXECUTION_REPORT.md     | 22 ++++---
+src/ipo_risk/retrieval/keyword.py                  |  8 ++-
+src/ipo_risk/retrieval/query_families.py           |  8 ++-
+.../contract/test_v03_retriever_query_families.py  | 70 ++++++++++++++++++++++
+4 files changed, 97 insertions(+), 11 deletions(-)
+```
+
 # Final Git Status
 
 ```text
+ M docs/execution/reports/V3-3_RETRIEVER_EXECUTION_REPORT.md
  M src/ipo_risk/retrieval/keyword.py
-?? docs/execution/reports/V3-3_RETRIEVER_EXECUTION_REPORT.md
-?? src/ipo_risk/retrieval/query_families.py
-?? tests/contract/test_v03_retriever_query_families.py
+ M src/ipo_risk/retrieval/query_families.py
+ M tests/contract/test_v03_retriever_query_families.py
 ```
 
 # Next Action

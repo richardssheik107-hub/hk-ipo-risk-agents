@@ -44,7 +44,10 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "financial", "财务资料", "財務資料", "accountants report",
             "historical financial information",
         ),
-        discouraged_sections=("summary", "概要", "risk factors", "风险因素", "風險因素"),
+        discouraged_sections=(
+            "summary", "概要", "risk factors", "风险因素", "風險因素",
+            "industry overview", "行业概览", "行業概覽",
+        ),
         financial_table_weight=True,
     ),
     QueryFamily(
@@ -189,7 +192,8 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "临床前", "臨床前", "临床一期", "臨床一期", "临床二期", "臨床二期",
             "临床三期", "臨床三期", "适应症", "適應症", "研发进度", "研發進度",
             "preclinical", "phase i", "phase ii", "phase iii", "indication",
-            "clinical trial", "development status", "ind", "nda",
+            "clinical trial", "development status", "ind application",
+            "investigational new drug", "nda application", "new drug application",
         ),
         negative_context=(
             "释义", "釋義", "行业概览", "行業概覽", "监管概览", "監管概覽",

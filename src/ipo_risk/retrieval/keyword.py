@@ -264,14 +264,18 @@ class KeywordDocumentRetriever:
             if query_family
             else []
         )
+        # PyMuPDF currently emits ``section="unknown"``.  Include visible page
+        # headings in the deterministic section signal so real parsed pages can
+        # still benefit from preferred/discouraged section weighting.
         normalized_section = normalize_for_match(chunk.section or "")
+        section_context_source = f"{normalized_section} {source.text}".strip()
         preferred_section_context = (
-            self._matching_context(normalized_section, query_family.preferred_sections)
+            self._matching_context(section_context_source, query_family.preferred_sections)
             if query_family
             else []
         )
         discouraged_section_context = (
-            self._matching_context(normalized_section, query_family.discouraged_sections)
+            self._matching_context(section_context_source, query_family.discouraged_sections)
             if query_family
             else []
         )

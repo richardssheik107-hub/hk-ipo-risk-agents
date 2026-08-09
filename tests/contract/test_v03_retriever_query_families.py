@@ -138,6 +138,76 @@ def test_domain_context_ranks_relevant_section_ahead_of_decoy(
     )
 
 
+@pytest.mark.parametrize(
+    ("family", "query", "relevant_text", "decoy_text"),
+    (
+        (
+            "revenue",
+            "收入",
+            "财务资料 综合损益表列示收入及分部资料",
+            "行业概览仅说明市场收入定义",
+        ),
+        (
+            "redemption_rights",
+            "赎回权",
+            "历史及重组 投资协议项下赎回权将于上市时终止",
+            "法定及一般资料 公司条例及组织章程细则概要载列一般赎回权",
+        ),
+        (
+            "core_product_pipeline",
+            "核心产品管线",
+            "业务 核心产品管线列示临床二期候选药物及研发进度",
+            "释义 核心产品管线属于行业概览术语",
+        ),
+    ),
+)
+def test_unknown_parser_section_uses_visible_page_heading_signals(
+    family: str,
+    query: str,
+    relevant_text: str,
+    decoy_text: str,
+) -> None:
+    chunks = [
+        chunk(3, decoy_text, section="unknown"),
+        chunk(20, relevant_text, section="unknown"),
+    ]
+
+    evidence = KeywordDocumentRetriever().retrieve(chunks, query, limit=5)
+
+    assert [item.page for item in evidence] == [20, 3], family
+    assert evidence[0].relevance_score > evidence[1].relevance_score
+    assert evidence[0].metadata["preferred_section_context"]
+    assert evidence[1].metadata["discouraged_section_context"]
+
+
+def test_short_ascii_fragments_do_not_create_pipeline_context_matches() -> None:
+    source = chunk(
+        12,
+        "Core product pipeline terminology appears in an industry standard and mandatory disclosure.",
+        section="unknown",
+    )
+
+    evidence = KeywordDocumentRetriever().retrieve([source], "core_product_pipeline")
+
+    assert len(evidence) == 1
+    assert "ind" not in evidence[0].metadata["domain_context"]
+    assert "nda" not in evidence[0].metadata["domain_context"]
+
+
+def test_explicit_drug_application_phrases_remain_positive_context() -> None:
+    source = chunk(
+        13,
+        "Core product pipeline includes an IND application and a new drug application.",
+        section="unknown",
+    )
+
+    evidence = KeywordDocumentRetriever().retrieve([source], "core_product_pipeline")
+
+    assert {"ind application", "new drug application"}.issubset(
+        set(evidence[0].metadata["domain_context"])
+    )
+
+
 def test_v03_family_ranking_ids_and_traceability_are_stable() -> None:
     chunks = [
         chunk(9, "来自五大客户的收入占总收入80%", section="customers", document_id="doc-v03"),
