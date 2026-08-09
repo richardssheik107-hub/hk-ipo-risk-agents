@@ -43,13 +43,6 @@ class MaterialLitigationComplianceRiskBuilder:
     policy_version = "v03_contract_v1"
     provisional_level = RiskLevel.MEDIUM
     provisional_score = 50
-    amount_relevant_types = {
-        "litigation",
-        "arbitration",
-        "administrative_penalty",
-        "tax",
-        "environmental_penalty",
-    }
     remediation_relevant_types = {
         "administrative_penalty",
         "non_compliance",
@@ -133,8 +126,6 @@ class MaterialLitigationComplianceRiskBuilder:
 
         decision, decision_reason, decision_issues = self._decide(observation)
         blocking_issues.extend(decision_issues)
-        if decision != MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE:
-            blocking_issues.extend(self._required_candidate_issues(observation))
         blocking_issues = list(dict.fromkeys(blocking_issues))
         reported_issues = list(dict.fromkeys([*reported_issues, *blocking_issues]))
         if blocking_issues:
@@ -192,17 +183,6 @@ class MaterialLitigationComplianceRiskBuilder:
                 "decision_reason": decision_reason,
             },
         )
-
-    def _required_candidate_issues(
-        self, observation: LegalMatterObservation
-    ) -> list[str]:
-        issues: list[str] = []
-        if (
-            observation.matter_type in self.amount_relevant_types
-            and observation.amount is None
-        ):
-            issues.append("amount_not_established")
-        return issues
 
     def _decide(
         self,

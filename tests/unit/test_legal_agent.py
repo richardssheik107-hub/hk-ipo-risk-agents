@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from ipo_risk.agents.legal import LegalAgent
+from ipo_risk.providers.llm import LLMFailureKind, LLMProviderError, UnavailableLLMProvider
 from ipo_risk.providers.mock import MockLLMProvider
 from ipo_risk.schemas import (
     DiagnosticCode,
@@ -49,11 +52,11 @@ class RoutedRetriever:
         self.fail_rights = fail_rights
 
     def retrieve(self, chunks, query, limit=3):
-        if query in LegalAgent.rights_queries:
+        if query == LegalAgent.rights_query:
             if self.fail_rights:
                 raise RuntimeError("rights retrieval failed")
             return self.rights[:limit]
-        if query in LegalAgent.litigation_queries:
+        if query == LegalAgent.litigation_query:
             return self.litigation[:limit]
         return []
 
@@ -61,6 +64,26 @@ class RoutedRetriever:
 class ExplodingRightsBuilder:
     def build(self, fact, evidence_by_id):
         raise RuntimeError("rights builder failed")
+
+
+class FailingLLMProvider:
+    name = "failing"
+    last_call_metadata = None
+
+    def __init__(self, kind: LLMFailureKind, attempts: int = 2) -> None:
+        self.kind = kind
+        self.attempts = attempts
+
+    def complete(self, prompt: str) -> str:
+        raise AssertionError("unused")
+
+    def generate_structured(self, **kwargs):
+        raise LLMProviderError(
+            self.kind,
+            "safe test failure",
+            recoverable=self.kind == LLMFailureKind.TRANSPORT,
+            attempts=self.attempts,
+        )
 
 
 def _profile() -> IPOProfile:
@@ -264,7 +287,10 @@ def test_negative_litigation_short_circuits_without_llm_key() -> None:
     negative = _evidence(
         "The Group is not involved in any material litigation.", "e-negative", 30
     )
-    agent = LegalAgent(retriever=RoutedRetriever([], [negative]))
+    agent = LegalAgent(
+        retriever=RoutedRetriever([], [negative]),
+        llm_provider=UnavailableLLMProvider("test unavailable"),
+    )
 
     risks = agent.analyze(_profile(), [])
 
@@ -276,7 +302,8 @@ def test_negative_litigation_short_circuits_without_llm_key() -> None:
 
 def test_actual_legal_text_without_llm_key_has_structured_unavailable_diagnostics() -> None:
     agent = LegalAgent(
-        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE])
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
+        llm_provider=UnavailableLLMProvider("test unavailable"),
     )
 
     risks = agent.analyze(_profile(), [])
@@ -287,6 +314,53 @@ def test_actual_legal_text_without_llm_key_has_structured_unavailable_diagnostic
         assert diagnostic.code == DiagnosticCode.EXTRACTION_FAILED
         assert "llm_provider_unavailable" in diagnostic.metadata["internal_issue_codes"]
         assert diagnostic.metadata["failure_isolated"] is True
+        assert diagnostic.metadata["failure_kind"] == "unavailable"
+        assert diagnostic.metadata["attempts"] == 0
+
+
+@pytest.mark.parametrize(
+    ("kind", "expected_code", "expected_issue"),
+    [
+        (
+            LLMFailureKind.UNAVAILABLE,
+            DiagnosticCode.EXTRACTION_FAILED,
+            "llm_provider_unavailable",
+        ),
+        (
+            LLMFailureKind.RESPONSE_VALIDATION,
+            DiagnosticCode.EXTRACTION_FAILED,
+            "llm_structured_output_invalid",
+        ),
+        (
+            LLMFailureKind.AUTHENTICATION,
+            DiagnosticCode.COMPONENT_FAILURE,
+            "llm_authentication_failure",
+        ),
+        (
+            LLMFailureKind.TRANSPORT,
+            DiagnosticCode.COMPONENT_FAILURE,
+            "llm_transport_failure",
+        ),
+    ],
+)
+def test_public_llm_failures_map_to_safe_diagnostics(
+    kind: LLMFailureKind,
+    expected_code: DiagnosticCode,
+    expected_issue: str,
+) -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
+        llm_provider=FailingLLMProvider(kind, attempts=3),
+    )
+
+    assert agent.analyze(_profile(), []) == []
+
+    for diagnostic in agent.last_diagnostics:
+        assert diagnostic.code == expected_code
+        assert expected_issue in diagnostic.metadata["internal_issue_codes"]
+        assert diagnostic.metadata["failure_kind"] == kind.value
+        assert diagnostic.metadata["attempts"] == 3
+        assert "safe test failure" not in diagnostic.message
 
 
 def test_resolved_litigation_is_not_a_current_risk() -> None:

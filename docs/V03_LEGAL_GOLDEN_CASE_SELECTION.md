@@ -25,11 +25,11 @@
 
 | 案例 | 风险码 | 公司 | 预期结论 | 关键区别 |
 |---|---|---|---|---|
-| A | `redemption_rights` | 微博－ＳＷ | `verified / high` | 董事会代表权和注册权明确预计上市后继续有效 |
+| A | `redemption_rights` | 微博－ＳＷ | draft `verified / high` | 上市后持续；`high`尚无冻结severity policy |
 | B | `redemption_rights` | 零跑汽車 | `rejected / not_applicable` | 历史特殊权利在最后实际可行日期前已失效并终止 |
-| C | `redemption_rights` | 鍋圈 | `needs_review / medium` | 仅在上市申请撤回、拒绝或长期未完成时自动恢复，不能机械判定为持续风险 |
+| C | `redemption_rights` | 鍋圈 | draft `needs_review / medium` | 明确恢复条件按冻结规则进入Verifier；draft状态待人工仲裁 |
 | D | `redemption_rights` | 九尊數字互娛 | `needs_review / medium` | 披露提早赎回权，但具体行使方式外引至债券工具，终止状态不完整 |
-| E | `material_litigation_compliance` | 星空華文 | `verified / high` | 两起重大未决诉讼、被告身份及约人民币 140.9 百万元总索赔均明确 |
+| E | `material_litigation_compliance` | 星空華文 | draft `verified / high` | 重大未决；`high`尚无冻结severity policy |
 | F | `material_litigation_compliance` | 綠源集團控股 | `rejected / not_applicable` | 历史案件已结案、判决已支付，未披露持续重大影响 |
 | G | `material_litigation_compliance` | 新紐科技 | `rejected / not_applicable` | 董事明确确认不存在可能产生重大不利影响的未决或潜在重大诉讼 |
 | H | `material_litigation_compliance` | MOG HOLDINGS | `rejected / not_applicable` | 风险因素仅描述未来可能发生的诉讼，没有实际已发生事项 |
@@ -52,5 +52,7 @@
 
 - `draft` 行可以用于讨论检索需求和设计测试边界，但不能用于宣称模型准确率。
 - C 只表示存在恢复条件，需要结合上市结果和条款条件核验；它不等于权利当前持续有效。
+- C的`needs_review`与Builder的`BUILT + PENDING`差异等待独立人工仲裁，不得反向修改冻结规则。
+- A和E的`high`仅为draft建议；正式Legal severity policy尚未冻结。
 - D 的“证据不足”不等于“不存在风险”；Retriever 应尝试获取完整工具条款，未取得时保持 `needs_review`。
 - F、G、H 分别代表已结案、明确否认和一般性未来风险，Legal Agent 必须将三者与实际未决事项区分。

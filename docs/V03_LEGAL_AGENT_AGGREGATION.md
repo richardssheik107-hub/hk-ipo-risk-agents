@@ -35,7 +35,7 @@ Litigation Retriever / Extractor / Builder失败
 → 保留已经生成的redemption_rights结果
 ```
 
-某一查询执行异常时，该风险组件停止生成候选，因为不完整检索可能漏掉后页的终止、豁免、恢复、结案或整改条款；另一个风险组件仍继续。
+每个风险组件只调用一次正式query family。该调用异常时，对应组件停止生成候选，因为不完整检索可能漏掉后页的终止、豁免、恢复、结案或整改条款；另一个风险组件仍继续。
 
 ## 3. Diagnostics
 
@@ -71,12 +71,14 @@ Agent通过现有可选通道`last_diagnostics: list[ComponentDiagnostic]`报告
 
 ## 4. 无LLM配置
 
-未传入`llm_provider`时，Agent使用内部的诚实unavailable provider：
+未传入`llm_provider`时，Agent使用V3-4公共`UnavailableLLMProvider`：
 
 - 需要LLM理解的真实复杂条款返回`extraction_failed`，内部原因包含`llm_provider_unavailable`；
 - 明确否定、一般未来风险或模板文本仍可由诉讼抽取器的确定性L6分类器短路为`not_applicable`；
 - Retriever无结果仍返回`evidence_not_found`；
 - 不生成Mock事实，也不把不可用解释为无风险。
+
+公共`LLMProviderError`会记录安全的`failure_kind`和`attempts`，但不记录异常消息或远端原始响应。`UNAVAILABLE`和`RESPONSE_VALIDATION`映射为`extraction_failed`；`AUTHENTICATION`、`REQUEST`和`TRANSPORT`映射为结构化`component_failure`，且仍保持双风险失败隔离。
 
 ## 5. 1号集成边界
 

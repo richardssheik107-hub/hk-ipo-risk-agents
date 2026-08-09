@@ -91,6 +91,27 @@ def test_pending_material_litigation_is_normalized_with_amount_and_date() -> Non
     assert result.issues == []
 
 
+def test_missing_optional_event_date_and_amount_do_not_force_review() -> None:
+    result = _extract(
+        {
+            "matter_type": "litigation",
+            "subject": "High Court claim",
+            "counterparty_or_authority": "claimant",
+            "current_status": "pending",
+            "is_pending": True,
+            "is_resolved": False,
+            "management_materiality": "material",
+            "potential_impact": "operational loss",
+            "evidence_ids": ["e-legal"],
+        }
+    )
+
+    assert result.event_date is None
+    assert result.amount is None
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+
+
 def test_resolved_historical_litigation_infers_closed_flags() -> None:
     result = _extract(
         {

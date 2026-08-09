@@ -104,7 +104,7 @@ def test_unrenewed_license_with_operational_impact_generates_candidate() -> None
     assert result.risk_item.metadata["decision_reason"] == "unresolved_core_license_impact"
 
 
-def test_actual_matter_with_unclear_closure_amount_or_materiality_needs_review() -> None:
+def test_actual_matter_with_unclear_closure_or_materiality_needs_review() -> None:
     result = _build(
         _observation(
             current_status="unknown",
@@ -120,8 +120,27 @@ def test_actual_matter_with_unclear_closure_amount_or_materiality_needs_review()
     assert result.status == MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW
     assert result.risk_item is not None
     assert result.risk_item.verification_status == VerificationStatus.NEEDS_REVIEW
-    assert "amount_not_established" in result.issues
     assert "management_materiality_not_established" in result.issues
+
+
+def test_material_pending_litigation_without_disclosed_amount_builds_candidate() -> None:
+    result = _build(
+        _observation(
+            amount=None,
+            currency="",
+            amount_unit="",
+            current_status="pending",
+            is_pending=True,
+            is_resolved=False,
+            management_materiality="material",
+            potential_impact="operational and legal costs",
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert result.risk_item.verification_status == VerificationStatus.PENDING
+    assert result.risk_item.metadata["amount"] is None
 
 
 def test_resolved_penalty_with_unclear_remediation_needs_review() -> None:
@@ -197,7 +216,6 @@ def test_pending_but_expressly_non_material_without_continuing_impact_is_not_app
     assert result.metadata["decision_reason"] == (
         "matter_expressly_not_material_without_continuing_impact"
     )
-    assert "amount_not_established" not in result.issues
 
 
 def test_resolved_material_litigation_is_not_reopened_by_missing_amount() -> None:
@@ -216,7 +234,6 @@ def test_resolved_material_litigation_is_not_reopened_by_missing_amount() -> Non
 
     assert result.status == MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE
     assert result.risk_item is None
-    assert "amount_not_established" not in result.issues
 
 
 def test_material_matter_with_unknown_closure_status_needs_review() -> None:

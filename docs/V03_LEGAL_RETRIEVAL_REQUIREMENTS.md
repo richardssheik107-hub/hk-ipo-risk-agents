@@ -1,8 +1,8 @@
 # v0.3 Legal 词典与 Retriever 查询需求
 
-词典版本：`v03_legal_dictionary_v1`
+正式运行时查询族：`src/ipo_risk/retrieval/query_families.py`
 
-机器可读词典：`configs/v03_legal_query_dictionary.yaml`
+Legal领域补充词只作为需求交接记录在`docs/V03_LEGAL_RETRIEVAL_GAP_REPORT.md`，不再维护第二套运行时YAML词典。
 
 负责人边界：法务成员维护专业词典和查询需求；Retriever 框架、公共接口、排序实现及集成由1号技术负责人修改。
 
@@ -122,7 +122,7 @@ Retriever（最多取前10段候选Evidence）
 - 管理层重大性判断、潜在影响及牌照运营影响；
 - Evidence ID和不确定性原因。
 
-抽取器统一状态词并检查布尔状态冲突、金额币种关系和Evidence来源。没有精确发生日期、管理层重大性或潜在影响时，不得编造值，应保留`None/空值`并进入`needs_review`。明确“无实际事项”可形成`matter_type=none`的负面事实；没有Evidence仍是`not_found`，二者不得混淆。LLM输出风险等级、评分或最终状态会被Pydantic模型拒绝。
+抽取器统一状态词并检查布尔状态冲突、金额币种关系和Evidence来源。没有精确发生日期、金额、管理层重大性或潜在影响时不得编造值，应保留`None/空值`；是否进入`needs_review`由冻结规则所需字段决定，不能把所有辅助字段都升级为硬门槛。明确“无实际事项”可形成`matter_type=none`的负面事实；没有Evidence仍是`not_found`，二者不得混淆。LLM输出风险等级、评分或最终状态会被Pydantic模型拒绝。
 
 在调用LLM前，`LegalMatterEvidenceClassifier`先对候选Evidence进行确定性分类。判定优先级为：局部语法否定 > 明确实际事项 > 明确否定 > 一般未来风险 > 监管或章节模板 > 语义不清。局部语法否定优先用于避免把`not currently subject to`、`no proceedings remain pending`等句子误判为实际事项；若不同Evidence同时包含实际事项和否定声明，实际事项仍阻止整批候选被短路。该分类只用于阻止明显负例被抽成已发生事项，不替代LLM处理复杂事实：
 
@@ -139,7 +139,7 @@ Retriever（最多取前10段候选Evidence）
 2. 真实事项明确不重大且无持续经营或牌照影响时返回`not_applicable`，不能因为金额等非决策字段缺失重新升级；
 3. 重大或可能影响经营/牌照的事项仍未解决时生成`pending`风险候选；
 4. 已结案诉讼在结案状态明确时返回`not_applicable`；监管处罚及合规事项还必须明确已整改，许可事项还必须明确牌照影响已经消除；
-5. 重大性或结案状态不清时返回`needs_review`；未决候选的金额不清、处罚整改状态不清或核心牌照影响不清也进入`needs_review`；
+5. 重大性或结案状态不清时返回`needs_review`；处罚整改状态不清或核心牌照影响不清也进入`needs_review`；金额和发生日期属于可选支持事实，未披露本身不阻塞明确重大未决事项；
 6. Builder按“真实事项 → 重大性/影响 → 当前状态 → 候选完整性”执行，Evidence缺失、Evidence ID错误、状态冲突和LLM主动报告的不确定性始终优先进入复核；
 7. Builder仅输出供Verifier核验的候选，不输出`verified`，也不自动判为`high`。
 

@@ -20,6 +20,11 @@ from ipo_risk.extraction import (
     LitigationComplianceExtractor,
     ShareholderRightsExtractor,
 )
+from ipo_risk.providers.llm import (
+    LLMFailureKind,
+    LLMProviderError,
+    UnavailableLLMProvider,
+)
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.schemas import (
     ComponentDiagnostic,
@@ -32,21 +37,6 @@ from ipo_risk.schemas import (
 )
 
 
-class LLMProviderUnavailableError(RuntimeError):
-    """Internal honest-degradation signal when no structured LLM is configured."""
-
-
-class _UnavailableStructuredLLMProvider:
-    name = "unavailable"
-    last_call_metadata = None
-
-    def complete(self, prompt: str) -> str:
-        raise LLMProviderUnavailableError("Structured LLM provider is unavailable.")
-
-    def generate_structured(self, **kwargs):
-        raise LLMProviderUnavailableError("Structured LLM provider is unavailable.")
-
-
 class LegalAgent:
     """Retrieve, extract and build both legal risks without cross-component failure."""
 
@@ -55,32 +45,8 @@ class LegalAgent:
     litigation_risk_code = "material_litigation_compliance"
     max_evidence = 10
 
-    rights_queries = (
-        "redemption right",
-        "赎回权",
-        "贖回權",
-        "special rights",
-        "特殊权利",
-        "特殊權利",
-        "liquidation preference",
-        "anti-dilution right",
-        "termination",
-        "restoration",
-    )
-    litigation_queries = (
-        "material litigation",
-        "重大诉讼",
-        "重大訴訟",
-        "arbitration",
-        "administrative penalty",
-        "行政处罚",
-        "行政處罰",
-        "regulatory investigation",
-        "non-compliance",
-        "licence",
-        "牌照",
-        "remediation",
-    )
+    rights_query = "redemption_rights"
+    litigation_query = "material_litigation_compliance"
 
     def __init__(
         self,
@@ -91,7 +57,9 @@ class LegalAgent:
         rights_builder: RedemptionRightsRiskBuilder | None = None,
         litigation_builder: MaterialLitigationComplianceRiskBuilder | None = None,
     ) -> None:
-        provider = llm_provider or _UnavailableStructuredLLMProvider()
+        provider = llm_provider or UnavailableLLMProvider(
+            reason="Legal structured extraction provider is unavailable"
+        )
         self.retriever = retriever or KeywordDocumentRetriever()
         self.rights_extractor = rights_extractor or ShareholderRightsExtractor(provider)
         self.litigation_extractor = litigation_extractor or LitigationComplianceExtractor(
@@ -130,7 +98,7 @@ class LegalAgent:
     ) -> tuple[list[RiskItem], ComponentDiagnostic]:
         risk_code = self.rights_risk_code
         evidence, retrieval_failure = self._retrieve_component(
-            chunks, self.rights_queries, risk_code
+            chunks, self.rights_query, risk_code
         )
         if retrieval_failure is not None:
             return [], retrieval_failure
@@ -203,7 +171,7 @@ class LegalAgent:
     ) -> tuple[list[RiskItem], ComponentDiagnostic]:
         risk_code = self.litigation_risk_code
         evidence, retrieval_failure = self._retrieve_component(
-            chunks, self.litigation_queries, risk_code
+            chunks, self.litigation_query, risk_code
         )
         if retrieval_failure is not None:
             return [], retrieval_failure
@@ -276,42 +244,24 @@ class LegalAgent:
     def _retrieve_component(
         self,
         chunks: list[DocumentChunk],
-        queries: Sequence[str],
+        query: str,
         risk_code: str,
     ) -> tuple[list[Evidence], ComponentDiagnostic | None]:
-        collected: list[Evidence] = []
-        for query in queries:
-            try:
-                collected.extend(self.retriever.retrieve(chunks, query, limit=5))
-            except Exception as exc:
-                return [], self._component_failure(
-                    risk_code,
-                    "retriever",
-                    exc,
-                    collected,
-                    extra_metadata={"failed_query": query},
-                )
-        unique: dict[tuple[Any, ...], Evidence] = {}
-        for item in collected:
-            key = (
-                item.document_id,
-                item.chunk_id,
-                item.page,
-                " ".join(item.text.split()),
+        try:
+            candidates = self.retriever.retrieve(
+                chunks, query, limit=self.max_evidence
             )
-            existing = unique.get(key)
-            if existing is None or item.relevance_score > existing.relevance_score:
-                unique[key] = item
-        evidence = sorted(
-            unique.values(),
-            key=lambda item: (
-                -item.relevance_score,
-                item.page or 0,
-                item.chunk_id or "",
-                item.evidence_id,
-            ),
-        )[: self.max_evidence]
-        return evidence, None
+            if any(not isinstance(item, Evidence) for item in candidates):
+                raise TypeError("retriever_item_type_invalid")
+            return list(candidates), None
+        except Exception as exc:
+            return [], self._component_failure(
+                risk_code,
+                "retriever",
+                exc,
+                (),
+                extra_metadata={"query_family": query},
+            )
 
     def _extraction_failure(
         self,
@@ -320,22 +270,44 @@ class LegalAgent:
         evidence: Sequence[Evidence],
     ) -> ComponentDiagnostic:
         issues = ["extraction_failed"]
+        code = DiagnosticCode.EXTRACTION_FAILED
+        metadata: dict[str, Any] = {
+            "stage": "extraction",
+            "component": "structured_extractor",
+            "error_type": type(exc).__name__,
+            "failure_isolated": True,
+        }
         if isinstance(exc, ValidationError):
             issues.append("llm_structured_output_invalid")
-        if isinstance(exc, LLMProviderUnavailableError):
-            issues.append("llm_provider_unavailable")
+        if isinstance(exc, LLMProviderError):
+            metadata.update(
+                {
+                    "failure_kind": exc.kind.value,
+                    "attempts": exc.attempts,
+                    "recoverable": exc.recoverable,
+                }
+            )
+            issue_by_kind = {
+                LLMFailureKind.UNAVAILABLE: "llm_provider_unavailable",
+                LLMFailureKind.RESPONSE_VALIDATION: "llm_structured_output_invalid",
+                LLMFailureKind.AUTHENTICATION: "llm_authentication_failure",
+                LLMFailureKind.REQUEST: "llm_request_failure",
+                LLMFailureKind.TRANSPORT: "llm_transport_failure",
+            }
+            issues.append(issue_by_kind[exc.kind])
+            if exc.kind in {
+                LLMFailureKind.AUTHENTICATION,
+                LLMFailureKind.REQUEST,
+                LLMFailureKind.TRANSPORT,
+            }:
+                code = DiagnosticCode.COMPONENT_FAILURE
         return self._diagnostic(
             risk_code,
-            DiagnosticCode.EXTRACTION_FAILED,
+            code,
             "Structured legal fact extraction failed; the other legal component continued.",
             issues,
             evidence,
-            metadata={
-                "stage": "extraction",
-                "component": "structured_extractor",
-                "error_type": type(exc).__name__,
-                "failure_isolated": True,
-            },
+            metadata=metadata,
         )
 
     def _component_failure(

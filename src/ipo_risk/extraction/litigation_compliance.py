@@ -237,10 +237,6 @@ class LitigationComplianceExtractor:
         if matter_type != "none" and not counterparty_or_regulator:
             issues.append("counterparty_or_regulator_not_identified")
             uncertainty.append("The counterparty or regulator was not identified.")
-        if matter_type != "none" and candidate.event_date is None:
-            issues.append("event_date_not_established")
-            uncertainty.append("The event date was not established.")
-
         current_status = _STATUS_ALIASES.get(_key(candidate.current_status), "unknown")
         if matter_type == "none" and current_status == "unknown":
             current_status = "not_applicable"
