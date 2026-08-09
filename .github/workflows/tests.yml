@@ -16,5 +16,24 @@ jobs:
           python-version: "3.11"
       - run: python -m pip install --upgrade pip
       - run: pip install -e .[dev]
-      - run: pytest -q
-      - run: python -m compileall -q app src
+      - name: Unit and integration tests
+        run: pytest -q
+      - name: Byte-compile
+        run: python -m compileall -q app src scripts
+      - name: Project structure validation
+        run: python scripts/validate_project.py
+      - name: Competition data validation
+        run: python scripts/validate_competition_data.py
+      - name: Golden-case manifest integrity
+        run: >-
+          python scripts/validate_v03_golden_manifest.py
+          tests/fixtures/v03_golden_cases/v03_golden_case_manifest.csv --integrity
+      - name: v0.3 batch + evaluation smoke (mock, no PDFs)
+        run: |
+          python scripts/run_v03_batch_analysis.py \
+            --case-ids ipo_2020_00368,ipo_2020_00589 \
+            --output-dir "$RUNNER_TEMP/v03_batch"
+          python scripts/evaluate_v03_golden_cases.py \
+            --results "$RUNNER_TEMP/v03_batch/analysis_results.jsonl" \
+            --golden-manifest tests/fixtures/v03_golden_cases/v03_golden_case_manifest.csv \
+            --output-dir "$RUNNER_TEMP/v03_eval"
