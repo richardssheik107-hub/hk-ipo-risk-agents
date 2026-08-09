@@ -11,6 +11,7 @@ from ipo_risk.parsers.pymupdf_parser import PyMuPDFDocumentParser
 from ipo_risk.predictors.rule_based import RuleBasedPredictor
 from ipo_risk.predictors.fault import FaultPredictor
 from ipo_risk.providers.mock import MockIPODataProvider, MockLLMProvider, MockMarketDataProvider
+from ipo_risk.providers.llm import OpenAICompatibleLLMProvider, UnavailableLLMProvider
 from ipo_risk.providers.unavailable import RequestIPODataProvider, UnavailableMarketDataProvider
 from ipo_risk.reporting.mock import MockReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
@@ -50,6 +51,8 @@ def default_registry() -> ComponentRegistry:
         "market_data_provider", "unavailable", UnavailableMarketDataProvider
     )
     registry.register("ipo_data_provider", "request", RequestIPODataProvider)
+    registry.register("llm_provider", "openai_compatible", OpenAICompatibleLLMProvider)
+    registry.register("llm_provider", "unavailable", UnavailableLLMProvider)
     return registry
 
 @dataclass
@@ -77,4 +80,26 @@ class DependencyContainer:
         return self.registry.create("repository", self.settings.repository)
     def create_llm_provider(self):
         """Create the configured provider for future real Agent implementations."""
-        return self.registry.create("llm_provider", self.settings.llm_provider)
+        if self.settings.llm_provider != "openai_compatible":
+            return self.registry.create("llm_provider", self.settings.llm_provider)
+        if not all(
+            (
+                self.settings.llm_api_key,
+                self.settings.llm_base_url,
+                self.settings.llm_model,
+            )
+        ):
+            return self.registry.create(
+                "llm_provider",
+                "unavailable",
+                reason="OpenAI-compatible LLM configuration is incomplete",
+            )
+        return self.registry.create(
+            "llm_provider",
+            "openai_compatible",
+            api_key=self.settings.llm_api_key,
+            base_url=self.settings.llm_base_url,
+            model=self.settings.llm_model,
+            timeout_seconds=self.settings.llm_timeout_seconds,
+            max_retries=self.settings.llm_max_retries,
+        )

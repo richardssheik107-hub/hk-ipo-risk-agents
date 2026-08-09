@@ -15,7 +15,19 @@ class MockLLMProvider:
         self.responses = responses or {}
         self.last_call_metadata: LLMCallMetadata | None = None
 
-    def complete(self, prompt: str) -> str: return "mock response"
+    def complete(self, prompt: str) -> str:
+        started = perf_counter()
+        raw = "mock response"
+        self.last_call_metadata = LLMCallMetadata(
+            provider_name=self.name,
+            model_name="mock-complete",
+            prompt_version="legacy_complete",
+            latency_ms=max(0, int((perf_counter() - started) * 1000)),
+            token_usage={},
+            request_id=str(uuid4()),
+            raw_response_hash=sha256(raw.encode("utf-8")).hexdigest(),
+        )
+        return raw
 
     def generate_structured(
         self,
