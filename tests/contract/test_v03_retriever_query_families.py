@@ -3,12 +3,19 @@
 from __future__ import annotations
 
 import inspect
+import json
+from pathlib import Path
 
 import pytest
 
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.query_families import QUERY_FAMILY_BY_NAME
 from ipo_risk.schemas import DocumentChunk
+
+
+BUSINESS_RECALL_FIXTURE = (
+    Path(__file__).parents[1] / "fixtures" / "v03_retriever" / "business_recall_cases.json"
+)
 
 
 def chunk(page: int, text: str, *, section: str, document_id: str = "synthetic-v03") -> DocumentChunk:
@@ -246,3 +253,90 @@ def test_v03_query_family_catalog_and_public_signature_are_stable() -> None:
     signature = inspect.signature(KeywordDocumentRetriever.retrieve)
     assert list(signature.parameters) == ["self", "chunks", "query", "limit"]
     assert signature.parameters["limit"].default == 3
+
+
+@pytest.mark.parametrize(
+    "case",
+    json.loads(BUSINESS_RECALL_FIXTURE.read_text(encoding="utf-8")),
+    ids=lambda case: case["case_id"],
+)
+def test_business_fact_query_families_cover_multilingual_status_and_product_facts(
+    case: dict[str, object],
+) -> None:
+    source = chunk(
+        20,
+        str(case["text"]),
+        section=str(case["section"]),
+        document_id=f"synthetic-{case['case_id']}",
+    )
+
+    evidence = KeywordDocumentRetriever().retrieve(
+        [source], str(case["family"]), limit=5
+    )
+
+    assert len(evidence) == 1
+    assert evidence[0].page == 20
+    assert evidence[0].metadata["query_family"] == case["family"]
+    assert set(case["expected_terms"]).issubset(
+        set(evidence[0].metadata["matched_keywords"])
+        | set(evidence[0].metadata["domain_context"])
+    )
+    assert evidence[0].document_id == source.document_id
+    assert evidence[0].chunk_id == source.chunk_id
+    assert evidence[0].text in source.text
+
+
+@pytest.mark.parametrize(
+    ("family", "primary_text", "decoy_text"),
+    (
+        (
+            "commercialization_status",
+            "業務 我們生產及銷售主要產品，產品所產生的收益佔總收益的大部分。",
+            "行業概覽 一般製造商可能生產及銷售不同產品。",
+        ),
+        (
+            "core_product_pipeline",
+            "業務 我們的主要產品類別及產品組合如下，並列示產品所產生的收益。",
+            "行業概覽 市場參與者通常擁有多種產品組合。",
+        ),
+    ),
+)
+def test_primary_business_facts_rank_ahead_of_generic_industry_decoys(
+    family: str,
+    primary_text: str,
+    decoy_text: str,
+) -> None:
+    sources = [
+        chunk(3, decoy_text, section="unknown", document_id="business-ranking"),
+        chunk(20, primary_text, section="unknown", document_id="business-ranking"),
+    ]
+
+    evidence = KeywordDocumentRetriever().retrieve(sources, family, limit=5)
+
+    assert evidence[0].page == 20
+    assert evidence[0].metadata["preferred_section_context"]
+    decoy = next((item for item in evidence if item.page == 3), None)
+    if decoy is not None:
+        assert evidence[0].relevance_score > decoy.relevance_score
+        assert decoy.metadata["domain_negative_context"]
+
+
+def test_business_recall_keeps_top_five_limit_and_stable_traceability() -> None:
+    sources = [
+        chunk(
+            page,
+            f"業務 我們生產及銷售第{page}類主要產品，並錄得產品所產生的收益。",
+            section="unknown",
+            document_id="business-limit",
+        )
+        for page in range(1, 8)
+    ]
+    retriever = KeywordDocumentRetriever()
+
+    first = retriever.retrieve(sources, "commercialization_status", limit=5)
+    second = retriever.retrieve(sources, "commercialization_status", limit=5)
+
+    assert len(first) == 5
+    assert [item.page for item in first] == [1, 2, 3, 4, 5]
+    assert [item.evidence_id for item in first] == [item.evidence_id for item in second]
+    assert all(item.document_id == "business-limit" for item in first)
