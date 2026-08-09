@@ -3,12 +3,10 @@
 from datetime import date
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
 class ShareholderRightCandidate(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
     right_type: str
     holder: str = ""
     trigger_or_termination: str = ""
@@ -24,8 +22,6 @@ class ShareholderRightCandidate(BaseModel):
 
 
 class LitigationComplianceCandidate(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
     matter_type: str
     subject: str = ""
     counterparty_or_authority: str = ""

@@ -4,6 +4,11 @@ from ipo_risk.domain.legal_verifiers import (
     LegalRightsVerifier,
     LitigationComplianceVerifier,
 )
+from ipo_risk.domain.material_litigation_compliance import (
+    MaterialLitigationComplianceBuildStatus,
+    MaterialLitigationComplianceRiskBuilder,
+)
+from ipo_risk.extraction import ExtractionStatus, LegalMatterObservation
 from ipo_risk.schemas import (
     Evidence,
     RiskCategory,
@@ -338,3 +343,66 @@ def test_legal_verifier_without_available_evidence_stays_pending() -> None:
 
     assert result.status == VerificationStatus.PENDING
     assert result.verified_risk is None
+
+
+def test_builder_and_verifier_allow_nonblocking_missing_subject_label() -> None:
+    evidence = _evidence(
+        "Material litigation is pending before the High Court. Management considers "
+        "the claim material and it may cause operational loss."
+    )
+    observation = LegalMatterObservation(
+        matter_type="litigation",
+        subject="",
+        counterparty_or_regulator="claimant",
+        current_status="pending",
+        is_pending=True,
+        is_resolved=False,
+        management_materiality="material",
+        potential_impact="operational loss",
+        evidence_ids=[evidence.evidence_id],
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["subject_not_identified"],
+    )
+
+    built = MaterialLitigationComplianceRiskBuilder().build(
+        observation, {evidence.evidence_id: evidence}
+    )
+
+    assert built.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert built.risk_item is not None
+    verified = LitigationComplianceVerifier().verify(
+        built.risk_item, {evidence.evidence_id: evidence}
+    )
+    assert verified.status == VerificationStatus.VERIFIED
+
+
+def test_unresolved_penalty_builder_candidate_is_not_rejected_for_nonmaterial_label() -> None:
+    evidence = _evidence(
+        "The regulator imposed a penalty that remains pending. Management considers it "
+        "not material, but follow-up enforcement remains possible."
+    )
+    observation = LegalMatterObservation(
+        matter_type="administrative_penalty",
+        subject="regulatory fine",
+        counterparty_or_regulator="the regulator",
+        current_status="pending",
+        is_pending=True,
+        is_resolved=False,
+        is_remediated=False,
+        management_materiality="not_material",
+        potential_impact="follow-up enforcement",
+        evidence_ids=[evidence.evidence_id],
+        status=ExtractionStatus.EXTRACTED,
+    )
+
+    built = MaterialLitigationComplianceRiskBuilder().build(
+        observation, {evidence.evidence_id: evidence}
+    )
+
+    assert built.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert built.risk_item is not None
+    verified = LitigationComplianceVerifier().verify(
+        built.risk_item, {evidence.evidence_id: evidence}
+    )
+    assert verified.status == VerificationStatus.NEEDS_REVIEW
+    assert verified.status != VerificationStatus.REJECTED

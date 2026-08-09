@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from ipo_risk.agents.legal_models import LitigationComplianceCandidate
 from ipo_risk.extraction import (
@@ -73,16 +72,18 @@ def test_existing_litigation_candidate_is_compatibly_extended() -> None:
     assert candidate.uncertainty_reason == ""
 
 
-def test_candidate_schema_rejects_llm_risk_decisions() -> None:
-    with pytest.raises(ValidationError):
-        LitigationComplianceCandidate.model_validate(
-            {
-                "matter_type": "litigation",
-                "current_status": "pending",
-                "evidence_ids": ["e-1"],
-                "risk_level": "high",
-            }
-        )
+def test_candidate_preserves_frozen_default_extra_field_compatibility() -> None:
+    candidate = LitigationComplianceCandidate.model_validate(
+        {
+            "matter_type": "litigation",
+            "current_status": "pending",
+            "evidence_ids": ["e-1"],
+            "risk_level": "high",
+        }
+    )
+
+    assert candidate.matter_type == "litigation"
+    assert not hasattr(candidate, "risk_level")
 
 
 def test_unified_extractor_uses_one_typed_task_and_limits_evidence() -> None:

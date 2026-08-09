@@ -36,8 +36,10 @@
 | `license_impact` | 判断核心牌照影响是否消除 | 否 | 无法执行许可影响规则 | 默认空串 | 是 |
 | `uncertainty_reason` | 将事实歧义安全送入needs_review | 否 | 丢失人工复核原因 | 默认空串 | 是 |
 
-两个模型还设置`extra="forbid"`，旧的合法Mock payload仍可使用，但未知字段从忽略变为拒绝，属于验证行为收紧，也需要成员1确认。
+## Validation behavior delta: RESOLVED / REMOVED
+
+本轮已移除两个Candidate上的`ConfigDict(extra="forbid")`，恢复Pydantic默认的额外字段兼容行为。原冻结最小payload、当前扩展payload和Mock Provider均继续使用同一模型校验。Contract delta不再包含validation behavior change。
 
 ## MEMBER_1_CONTRACT_CHANGE_REQUIRED
 
-当前Legal规则无法仅依靠冻结候选字段完整表达termination timing、restoration condition、remediation和license impact。建议成员1批准上述带默认值扩展及`extra="forbid"`行为；批准前不得称`legal_models.py`已成为新的正式冻结契约。
+当前Legal规则无法仅依靠冻结候选字段完整表达termination timing、restoration condition、remediation和license impact。剩余审批请求只涉及上述带默认值的additive candidate fields；批准前不得称`legal_models.py`已成为新的正式冻结契约。

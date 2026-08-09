@@ -461,10 +461,18 @@ class LitigationComplianceVerifier(_LegalVerifierBase):
         if declared_materiality == "not_material" and not not_material:
             issues.append("non_materiality_not_supported_by_evidence")
 
+        nonblocking_observation_issues = {
+            "subject_not_identified",
+            "counterparty_or_regulator_not_identified",
+            "potential_impact_not_established",
+        }
+        substantive_observation_issues = set(
+            risk.metadata.get("observation_issues", [])
+        ) - nonblocking_observation_issues
         human_review = (
             risk.verification_status == VerificationStatus.NEEDS_REVIEW
             or bool(risk.metadata.get("builder_issues"))
-            or bool(risk.metadata.get("observation_issues"))
+            or bool(substantive_observation_issues)
         )
         checks["no_prior_legal_uncertainty"] = not human_review
         if human_review:

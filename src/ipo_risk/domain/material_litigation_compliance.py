@@ -43,6 +43,12 @@ class MaterialLitigationComplianceRiskBuilder:
     policy_version = "v03_contract_v1"
     provisional_level = RiskLevel.MEDIUM
     provisional_score = 50
+    proceeding_types = {
+        "litigation",
+        "arbitration",
+        "tax",
+        "regulatory_investigation",
+    }
     remediation_relevant_types = {
         "administrative_penalty",
         "non_compliance",
@@ -53,8 +59,6 @@ class MaterialLitigationComplianceRiskBuilder:
         "unsupported_matter_type",
         "unknown_evidence_ids",
         "evidence_not_found",
-        "subject_not_identified",
-        "counterparty_or_regulator_not_identified",
         "amount_negative",
         "currency_missing_for_amount",
         "currency_unsupported",
@@ -126,6 +130,7 @@ class MaterialLitigationComplianceRiskBuilder:
 
         decision, decision_reason, decision_issues = self._decide(observation)
         blocking_issues.extend(decision_issues)
+        blocking_issues.extend(self._review_signal_issues(observation, decision))
         blocking_issues = list(dict.fromkeys(blocking_issues))
         reported_issues = list(dict.fromkeys([*reported_issues, *blocking_issues]))
         if blocking_issues:
@@ -148,7 +153,7 @@ class MaterialLitigationComplianceRiskBuilder:
                 observation,
                 evidence,
                 VerificationStatus.NEEDS_REVIEW,
-                "An actual legal matter is disclosed, but its closure, remediation, amount, "
+                "An actual legal matter is disclosed, but its identity, closure, remediation, "
                 "materiality, or operational impact is not sufficiently established.",
                 review_issues,
                 decision_reason or "legal_matter_requires_review",
@@ -223,11 +228,47 @@ class MaterialLitigationComplianceRiskBuilder:
                 ["management_materiality_not_established"],
             )
 
-        impact_text = (
-            observation.license_impact
-            if observation.matter_type == "license_permit"
-            else observation.potential_impact
+        if observation.matter_type in self.proceeding_types:
+            return self._decide_proceeding(
+                pending=pending,
+                resolved=resolved,
+                materiality=materiality,
+                impact_text=observation.potential_impact,
+            )
+        if observation.matter_type in self.remediation_relevant_types:
+            return self._decide_remediation(
+                observation,
+                pending=pending,
+                resolved=resolved,
+                remediated=remediated,
+            )
+        if observation.matter_type == "license_permit":
+            return self._decide_license(
+                observation,
+                pending=pending,
+                resolved=resolved,
+            )
+
+        return (
+            MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+            "legal_matter_status_unclear",
+            ["current_status_not_established"],
         )
+
+    def _decide_proceeding(
+        self,
+        *,
+        pending: bool,
+        resolved: bool,
+        materiality: str,
+        impact_text: str,
+    ) -> tuple[MaterialLitigationComplianceBuildStatus, str, list[str]]:
+        if resolved and not pending:
+            return (
+                MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
+                "matter_resolved",
+                [],
+            )
         if materiality == "not_material" and self._impact_unclear(impact_text):
             return (
                 MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
@@ -242,86 +283,131 @@ class MaterialLitigationComplianceRiskBuilder:
                 "matter_expressly_not_material_without_continuing_impact",
                 [],
             )
+        if pending:
+            return (
+                MaterialLitigationComplianceBuildStatus.BUILT,
+                (
+                    "material_pending_matter"
+                    if materiality == "material"
+                    else "impactful_pending_matter"
+                ),
+                [],
+            )
+        return (
+            MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+            "matter_closure_status_unclear",
+            ["current_status_not_established"],
+        )
 
-        if observation.matter_type in {
-            "litigation",
-            "arbitration",
-            "tax",
-            "regulatory_investigation",
-            "non_compliance",
-            "data_privacy",
-        }:
-            if resolved and not pending:
+    def _decide_remediation(
+        self,
+        observation: LegalMatterObservation,
+        *,
+        pending: bool,
+        resolved: bool,
+        remediated: bool,
+    ) -> tuple[MaterialLitigationComplianceBuildStatus, str, list[str]]:
+        if pending or observation.is_remediated is False:
+            return (
+                MaterialLitigationComplianceBuildStatus.BUILT,
+                "unresolved_compliance_or_penalty_matter",
+                [],
+            )
+        if remediated:
+            if self._impact_unclear(observation.potential_impact):
                 return (
-                    MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
-                    "matter_resolved",
-                    [],
+                    MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+                    "remediated_matter_impact_unclear",
+                    ["potential_impact_not_established"],
                 )
-            if pending:
+            if self._impact_unresolved(observation.potential_impact):
                 return (
                     MaterialLitigationComplianceBuildStatus.BUILT,
-                    (
-                        "material_pending_matter"
-                        if materiality == "material"
-                        else "impactful_pending_matter"
-                    ),
+                    "remediation_completed_but_impact_unresolved",
                     [],
                 )
             return (
-                MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
-                "matter_closure_status_unclear",
-                ["current_status_not_established"],
+                MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
+                "matter_remediated",
+                [],
             )
-
-        if observation.matter_type in self.remediation_relevant_types:
-            if remediated and not pending:
-                return (
-                    MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
-                    "matter_remediated",
-                    [],
-                )
-            if pending or observation.is_remediated is False:
-                return (
-                    MaterialLitigationComplianceBuildStatus.BUILT,
-                    "unresolved_compliance_or_penalty_matter",
-                    [],
-                )
+        if resolved:
             return (
                 MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
                 "remediation_status_unclear",
                 ["remediation_status_not_established"],
             )
-
-        if observation.matter_type == "license_permit":
-            if not observation.license_impact:
-                return (
-                    MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
-                    "license_impact_unclear",
-                    ["license_impact_not_established"],
-                )
-            if resolved and self._license_impact_cleared(observation.license_impact):
-                return (
-                    MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
-                    "license_issue_resolved",
-                    [],
-                )
-            if pending or self._license_impact_unresolved(observation.license_impact):
-                return (
-                    MaterialLitigationComplianceBuildStatus.BUILT,
-                    "unresolved_core_license_impact",
-                    [],
-                )
-            return (
-                MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
-                "license_status_unclear",
-                ["license_status_not_established"],
-            )
-
         return (
             MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
-            "legal_matter_status_unclear",
-            ["current_status_not_established"],
+            "matter_closure_and_remediation_status_unclear",
+            ["current_status_not_established", "remediation_status_not_established"],
         )
+
+    def _decide_license(
+        self,
+        observation: LegalMatterObservation,
+        *,
+        pending: bool,
+        resolved: bool,
+    ) -> tuple[MaterialLitigationComplianceBuildStatus, str, list[str]]:
+        if not observation.license_impact:
+            return (
+                MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+                "license_impact_unclear",
+                ["license_impact_not_established"],
+            )
+        impact_cleared = self._license_impact_cleared(observation.license_impact)
+        impact_unresolved = self._license_impact_unresolved(observation.license_impact)
+        if impact_unresolved:
+            return (
+                MaterialLitigationComplianceBuildStatus.BUILT,
+                "unresolved_core_license_impact",
+                [],
+            )
+        if resolved and impact_cleared:
+            return (
+                MaterialLitigationComplianceBuildStatus.NOT_APPLICABLE,
+                "license_issue_resolved",
+                [],
+            )
+        if pending and impact_cleared:
+            return (
+                MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+                "license_status_impact_conflict",
+                ["license_status_conflict"],
+            )
+        if pending:
+            return (
+                MaterialLitigationComplianceBuildStatus.BUILT,
+                "unresolved_core_license_impact",
+                [],
+            )
+        return (
+            MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW,
+            "license_status_unclear",
+            ["license_status_not_established"],
+        )
+
+    def _review_signal_issues(
+        self,
+        observation: LegalMatterObservation,
+        decision: MaterialLitigationComplianceBuildStatus,
+    ) -> list[str]:
+        if decision != MaterialLitigationComplianceBuildStatus.BUILT:
+            return []
+        if not observation.subject and not observation.counterparty_or_regulator:
+            return ["matter_identity_not_established"]
+        regulator_required_types = {
+            "regulatory_investigation",
+            *self.remediation_relevant_types,
+            "license_permit",
+        }
+        if (
+            observation.matter_type in regulator_required_types
+            and not observation.counterparty_or_regulator
+        ):
+            return ["regulator_not_identified"]
+        return []
 
     @staticmethod
     def _impact_cleared(value: str) -> bool:
@@ -355,6 +441,25 @@ class MaterialLitigationComplianceRiskBuilder:
             "未确定",
             "未確定",
         }
+
+    @staticmethod
+    def _impact_unresolved(value: str) -> bool:
+        normalized = value.lower()
+        return any(
+            term in normalized
+            for term in (
+                "continuing impact",
+                "ongoing impact",
+                "follow-up enforcement",
+                "operations remain affected",
+                "持续影响",
+                "持續影響",
+                "后续执法",
+                "後續執法",
+                "经营仍受影响",
+                "經營仍受影響",
+            )
+        )
 
     @staticmethod
     def _license_impact_cleared(value: str) -> bool:
@@ -464,10 +569,10 @@ class MaterialLitigationComplianceRiskBuilder:
                 f" with a disclosed amount of {observation.amount} "
                 f"{observation.currency} {observation.amount_unit}"
             )
+        subject = f" concerning {observation.subject}" if observation.subject else ""
         return (
-            f"The prospectus discloses an unresolved {observation.matter_type} matter "
-            f"concerning {observation.subject}{amount}; its legal and operational effect "
-            "requires verification."
+            f"The prospectus discloses an unresolved {observation.matter_type} matter"
+            f"{subject}{amount}; its legal and operational effect requires verification."
         )
 
     def _diagnostic_result(

@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from ipo_risk.agents.legal_models import ShareholderRightCandidate
 from ipo_risk.extraction import ExtractionStatus, ShareholderRightsExtractor, ShareholderRightsFact
@@ -66,17 +65,19 @@ def test_existing_candidate_model_is_compatibly_extended_for_structured_legal_fa
     assert candidate.uncertainty_reason == ""
 
 
-def test_candidate_schema_rejects_llm_risk_decisions() -> None:
-    with pytest.raises(ValidationError):
-        ShareholderRightCandidate.model_validate(
-            {
-                "right_type": "redemption_right",
-                "holder": "Series B investors",
-                "is_effective": True,
-                "evidence_ids": ["e-1"],
-                "risk_level": "high",
-            }
-        )
+def test_candidate_preserves_frozen_default_extra_field_compatibility() -> None:
+    candidate = ShareholderRightCandidate.model_validate(
+        {
+            "right_type": "redemption_right",
+            "holder": "Series B investors",
+            "is_effective": True,
+            "evidence_ids": ["e-1"],
+            "risk_level": "high",
+        }
+    )
+
+    assert candidate.right_type == "redemption_right"
+    assert not hasattr(candidate, "risk_level")
 
 
 def test_extractor_calls_llm_for_typed_candidate_only_and_limits_retrieved_evidence() -> None:

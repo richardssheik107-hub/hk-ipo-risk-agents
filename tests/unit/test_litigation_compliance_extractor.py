@@ -91,6 +91,46 @@ def test_pending_material_litigation_is_normalized_with_amount_and_date() -> Non
     assert result.issues == []
 
 
+def test_negative_disclosed_amount_requires_review() -> None:
+    result = _extract(
+        {
+            "matter_type": "litigation",
+            "subject": "claim",
+            "counterparty_or_authority": "claimant",
+            "current_status": "pending",
+            "amount": "-1",
+            "currency": "CNY",
+            "amount_unit": "million",
+            "management_materiality": "material",
+            "potential_impact": "cash claim",
+            "evidence_ids": ["e-legal"],
+        }
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "amount_negative" in result.issues
+
+
+def test_disclosed_amount_without_currency_requires_review_and_keeps_unit() -> None:
+    result = _extract(
+        {
+            "matter_type": "litigation",
+            "subject": "claim",
+            "counterparty_or_authority": "claimant",
+            "current_status": "pending",
+            "amount": "2.5",
+            "amount_unit": "million",
+            "management_materiality": "material",
+            "potential_impact": "cash claim",
+            "evidence_ids": ["e-legal"],
+        }
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "currency_missing_for_amount" in result.issues
+    assert result.amount_unit == "million"
+
+
 def test_missing_optional_event_date_and_amount_do_not_force_review() -> None:
     result = _extract(
         {

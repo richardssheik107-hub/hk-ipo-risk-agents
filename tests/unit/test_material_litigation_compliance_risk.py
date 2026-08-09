@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import date
 from decimal import Decimal
 
+import pytest
+
 from ipo_risk.domain.material_litigation_compliance import (
     MaterialLitigationComplianceBuildStatus,
     MaterialLitigationComplianceRiskBuilder,
@@ -57,6 +59,18 @@ def test_current_pending_material_litigation_generates_candidate() -> None:
     assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
     assert result.risk_item is not None
     assert result.risk_item.verification_status == VerificationStatus.PENDING
+    assert result.risk_item.metadata["decision_reason"] == "material_pending_matter"
+
+
+@pytest.mark.parametrize(
+    "matter_type",
+    ["litigation", "arbitration", "tax", "regulatory_investigation"],
+)
+def test_proceeding_types_use_status_decision_family(matter_type: str) -> None:
+    result = _build(_observation(matter_type=matter_type))
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
     assert result.risk_item.metadata["decision_reason"] == "material_pending_matter"
 
 
@@ -141,6 +155,107 @@ def test_material_pending_litigation_without_disclosed_amount_builds_candidate()
     assert result.risk_item is not None
     assert result.risk_item.verification_status == VerificationStatus.PENDING
     assert result.risk_item.metadata["amount"] is None
+
+
+def test_material_pending_litigation_without_event_date_builds_candidate() -> None:
+    result = _build(_observation(event_date=None))
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert result.risk_item.verification_status == VerificationStatus.PENDING
+    assert result.risk_item.metadata["event_date"] is None
+
+
+def test_material_pending_litigation_with_subject_missing_still_builds() -> None:
+    result = _build(
+        _observation(
+            subject="",
+            status=ExtractionStatus.NEEDS_REVIEW,
+            issues=["subject_not_identified"],
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
+
+
+def test_material_pending_litigation_with_counterparty_missing_still_builds() -> None:
+    result = _build(
+        _observation(
+            counterparty_or_regulator="",
+            status=ExtractionStatus.NEEDS_REVIEW,
+            issues=["counterparty_or_regulator_not_identified"],
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
+
+
+def test_pending_regulatory_penalty_without_regulator_needs_review() -> None:
+    result = _build(
+        _observation(
+            matter_type="administrative_penalty",
+            subject="regulatory fine",
+            counterparty_or_regulator="",
+            is_remediated=False,
+            status=ExtractionStatus.NEEDS_REVIEW,
+            issues=["counterparty_or_regulator_not_identified"],
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW
+    assert result.risk_item is not None
+    assert "regulator_not_identified" in result.issues
+
+
+def test_pending_matter_without_subject_or_counterparty_needs_review() -> None:
+    result = _build(
+        _observation(
+            subject="",
+            counterparty_or_regulator="",
+            status=ExtractionStatus.NEEDS_REVIEW,
+            issues=[
+                "subject_not_identified",
+                "counterparty_or_regulator_not_identified",
+            ],
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.NEEDS_REVIEW
+    assert result.risk_item is not None
+    assert "matter_identity_not_established" in result.issues
+
+
+@pytest.mark.parametrize(
+    "matter_type",
+    [
+        "administrative_penalty",
+        "non_compliance",
+        "environmental_penalty",
+        "data_privacy",
+    ],
+)
+def test_unremediated_compliance_types_reach_remediation_path(
+    matter_type: str,
+) -> None:
+    result = _build(
+        _observation(
+            matter_type=matter_type,
+            current_status="resolved",
+            is_pending=False,
+            is_resolved=True,
+            is_remediated=False,
+            management_materiality="not_material",
+            potential_impact="limited historical impact",
+        )
+    )
+
+    assert result.status == MaterialLitigationComplianceBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert result.risk_item.metadata["decision_reason"] == (
+        "unresolved_compliance_or_penalty_matter"
+    )
 
 
 def test_resolved_penalty_with_unclear_remediation_needs_review() -> None:
