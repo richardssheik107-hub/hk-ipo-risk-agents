@@ -30,12 +30,12 @@
 
 # 0. 当前权威状态快照
 
-本文件是项目进度的唯一主入口。README、ROADMAP和负责人路线图只保留摘要并链接本文件。
+本文件是项目进度的唯一主入口。README和ROADMAP只保留摘要；Gate A的专项PASS/FAIL门槛由`V03_GATE_A_CLOSEOUT.md`维护并链接回本文件。
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 功能状态基线 | `main@affaa28c03c22590ffc36cf34595b635357bf8ee`（Merge PR #24） |
-| 当前验证 | 625 passed；项目、赛事数据、黄金Manifest与编译校验通过 |
+| 功能状态基线 | `main@f9449fc1330404bf5d711d437162bc04baea017b`（Merge PR #28） |
+| 当前验证 | 825 passed；项目、赛事数据、黄金Manifest与编译校验通过 |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
 | v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
@@ -48,14 +48,14 @@
 | Workstream | Status | Main evidence | Remaining gate |
 | --- | --- | --- | --- |
 | Planner → Executor | COMPLETED / MERGED | PR #21 | 每一棒继续使用独立Approved Plan |
-| V3-1 Golden Cases | PARTIAL | 23行真实Financial草稿、6个真实案例 | 第二人复核；Legal/Business真实正负例 |
+| V3-1 Golden Cases | PARTIAL | canonical Manifest含26行真实Financial/Business草稿、6个真实案例；Legal A—H另为draft | 独立第二复核；Legal review/adjudication/canonical merge |
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal/Business消费；可选外部smoke |
-| V3-5 Financial core | MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING | PR #22 | 共享Container/Workflow/Service与金标复核 |
-| V3-6 Legal | PENDING | 共享实现仍为`DisabledLegalAgent` | 两类风险最小闭环及真实正负例 |
-| V3-7 Business | PENDING | 共享实现仍为`DisabledBusinessAgent` | `precommercial_product`最小闭环及真实正负例 |
-| V3-8 Specialized Verifier | BLOCKED | Financial verifier模块已合并 | 等待Legal/Business最小闭环与关键金标复核 |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选外部smoke |
+| V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享Container/Workflow/Service装配 |
+| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING | PR #26 | contract、severity、Retriever、runtime prompt、A—H复核与并表 |
+| V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
+| V3-8 Specialized Verifier | BLOCKED — Gate A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 等待全部mandatory Gate A criteria通过 |
 | V3-9 Supervisor / enhanced_v2 | PENDING | 仅`mvp_v1`稳定 | 三Agent、Verifier与Catalog共享装配 |
 | V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
 | V3-11 UI / Report | PENDING | v0.2 UI仍可用 | `enhanced_v2` Service输出稳定 |
@@ -81,9 +81,9 @@
 
 ## 1.1 当前能力边界
 
-- Legal与Business真实Agent尚未合并，共享Container仍使用disabled/Mock实现。
+- Financial、Legal与Business三个standalone真实Agent均已合并；共享Container仍未装配v0.3三Agent，Legal/Business共享实现仍为disabled/Mock。
 - Market Agent和正式MarketDataProvider尚未接入。
-- LLMProvider基础设施已合并，但尚未被真实Legal/Business Agent消费；真实外部endpoint smoke未执行。
+- LLMProvider基础设施已合并；Legal domain prompt尚未进入real-provider runtime routing，真实外部endpoint smoke未执行。
 - `V03FinancialAgent`与`V03FinancialVerifier`已合并并可独立调用，但尚未进入共享Container/Workflow/Service。
 - `CatalogIPODataProvider`已实现；批量运行器可运行时注册，但全局ComponentRegistry尚未注册`catalog`。
 - 当前规则风险分不是经过校准的上市后下跌概率。
@@ -239,14 +239,14 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 |:---|:---|:---|:---|:---|
 | V3-0A（已完成） | 冻结v0.3范围与路线 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结接力顺序和退出门槛。 | 技术负责人 | 文档范围与发布基线一致。 |
 | V3-0B（已完成） | 冻结开发契约 | 冻结角色输入输出、唯一风险所有权、候选模型、诊断、Supervisor和LLMProvider契约；新增兼容Schema和契约测试。 | 技术负责人 | 公共接口只做带默认值的兼容扩展；全量回归通过。 |
-| V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial草稿已进入main；继续第二人复核并补Legal/Business案例。 | 财务/法务/业务 | 每类风险至少一个正例，关键案例双人复核，2025盲测不得进入。 |
+| V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial与Business草稿已进入canonical Manifest；Legal A—H仍为独立draft。 | 财务/法务/业务 | 完成独立二审、Legal仲裁与并表，2025盲测不得进入。 |
 | V3-2（MERGED / INTEGRATION-PENDING） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理已合并。 | 技术备份/数据 | 全局Registry和共享Service接入仍待1号完成。 |
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
-| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | 专业Agent消费；可选安全外部smoke。 |
-| V3-5（MERGED / STANDALONE-READY） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 共享装配与真实金标复核。 |
-| V3-6（PENDING） | Legal Agent真实化 | 特殊股东权利、重大诉讼和合规事项。 | 法务成员 | 识别权利状态并完成正/负/歧义案例。 |
-| V3-7（PENDING） | Business Agent真实化 | 未商业化、核心产品和管线依赖。 | 业务成员 | 区分各类收入并完成正/负例。 |
-| V3-8（BLOCKED） | 专用Verifier体系 | 等待三个专业Agent最小闭环。 | 技术负责人+专业成员 | 错误结论可被拒绝，歧义进入needs_review。 |
+| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | Legal domain prompt runtime routing；可选安全外部smoke。 |
+| V3-5（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 真实金标独立二审与共享装配。 |
+| V3-6（MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离与domain Verifiers已合并。 | 法务成员+技术负责人 | contract、severity、Retriever、runtime prompt、A—H复核与并表。 |
+| V3-7（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Business Agent真实化 | `precommercial_product`独立正/负例闭环已合并。 | 业务成员 | 三条真实Golden独立二审与共享装配。 |
+| V3-8（BLOCKED — Gate A） | 专用Verifier体系 | 不得在Gate A强制门槛完成前启动。 | 技术负责人+专业成员 | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md)全部mandatory criteria通过。 |
 | V3-9（PENDING） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、失败降级和共享工作流。 | 技术负责人 | 保留mvp_v1；完成共享装配。 |
 | V3-10（INFRASTRUCTURE MERGED） | 批量运行与评测 | 批量、resume、blind guard和评测框架已合并。 | 技术备份/数据 | 复核后真实黄金批量评测。 |
 | V3-11（PENDING） | Streamlit与报告 | 三Agent页签、证据、核验状态和诊断。 | 业务/产品+技术 | 等待enhanced_v2 Service输出。 |
@@ -260,17 +260,17 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 
 | 指标 | 当前值 |
 | --- | ---: |
-| 总行数 | 26 |
+| 总行数 | 29 |
 | synthetic rows | 3 |
-| real rows | 23 |
+| real rows | 26 |
 | unique real cases/documents | 6 |
 | review_status=double_reviewed | 3（全部synthetic） |
-| review_status=draft | 23（全部real） |
-| second_reviewer缺失 | 23 |
+| review_status=draft | 26（全部real） |
+| second_reviewer缺失 | 26 |
 | 全部risk_code覆盖 | 7/8 |
-| 真实risk_code覆盖 | 5/8（全部Financial） |
+| 真实risk_code覆盖 | 6/8（Financial五类、Business一类） |
 
-真实Financial覆盖`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`和`supplier_concentration`。真实Legal与Business覆盖均为0；synthetic各有一条`redemption_rights`和`precommercial_product`。`material_litigation_compliance`当前没有Manifest记录。因此V3-1状态为PARTIAL，不能将合成双人复核或真实草稿描述为正式黄金集完成。
+canonical Manifest中的真实Financial覆盖`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`和`supplier_concentration`；真实Business覆盖`precommercial_product`三条draft。Legal A—H仍保存在独立draft Manifest，尚未完成人工复核、Case C仲裁和canonical并表；`material_litigation_compliance`仍没有canonical Manifest记录。因此V3-1状态保持PARTIAL，不能将synthetic双人复核、真实draft或Legal预选描述为正式黄金集完成。
 
 ## 7.1 推荐案例构成
 
@@ -612,23 +612,20 @@ v0.3批量评测完成后增加：
 
 | 角色 | 当前任务 |
 | --- | --- |
-| 1号技术负责人 | Gatekeeper；审核共享边界与成员交付；暂不启动V3-8；准备后续Catalog、Agent、Workflow、Service统一集成 |
-| 3号财务 | 对23行真实Financial草稿完成第二人复核，处理分歧并保持2025 blind guard |
-| 4号法务 | 完成V3-6：`redemption_rights`、`material_litigation_compliance`最小闭环与正/负/歧义/终止权利案例 |
-| 5号业务 | 完成V3-7：`precommercial_product`最小闭环，区分产品销售、授权、milestone、研发服务与合作收入 |
+| 1号技术负责人 | Gatekeeper；按[Gate A收口验收表](V03_GATE_A_CLOSEOUT.md)关闭Legal contract/severity/Retriever/runtime prompt门槛；暂不启动V3-8 |
+| 3号财务 | 对真实Financial草稿完成独立第二复核，处理分歧并保持2025 blind guard |
+| 4号法务 | 组织Legal A—H primary/second review、Case C仲裁和canonical并表；配合contract与severity审批 |
+| 5号业务 | V3-7本体冻结；组织1167.HK两条正例与9633.HK负例的独立第二复核，不继续扩写Business Agent |
 
 ### V3-8进入条件
 
-- Financial Agent独立可调用；
-- Legal两类风险最小闭环完成；
-- Business `precommercial_product`最小闭环完成；
-- 三者保持`list[RiskItem]`公共契约；
-- LLM候选事实可追溯Evidence ID；
-- Legal/Business至少具有真实正例和负例；
-- 关键黄金案例完成第二人复核；
-- 2025盲测案例未参与调优。
+V3-8当前状态为`BLOCKED — Gate A`。完整mandatory criteria及当前PASS/FAIL状态以
+[V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)为准，不在本节复制维护。
 
-只有全部满足后，1号才生成`V3-8_SPECIALIZED_VERIFIER_PLAN.md`。之后顺序为：共享组件集成 → V3-9 Supervisor/`enhanced_v2` → 真实黄金批量评测 → V3-11 UI/报告 → V3-12加固 → v0.3 Release。
+只有全部mandatory Gate A criteria通过后，1号才生成独立的
+`V3-8_SPECIALIZED_VERIFIER_PLAN.md`。之后顺序为：共享组件集成 → V3-9
+Supervisor/`enhanced_v2` → 真实黄金批量评测 → V3-11 UI/报告 → V3-12加固 →
+v0.3 Release。
 
 <table>
 <colgroup>

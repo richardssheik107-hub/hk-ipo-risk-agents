@@ -14,7 +14,7 @@ v0.2.0已正式发布；v0.3.0处于Gate A——专业Agent闭环与黄金案例
 
 v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式和赛事数据治理。发布验收为284 passed，完整版本记录见[CHANGELOG](CHANGELOG.md)。
 
-截至`main@affaa28c03c22590ffc36cf34595b635357bf8ee`，v0.3已合并Retriever查询族泛化、可替换LLMProvider基础设施和Financial五类风险核心模块。Legal与Business真实Agent、共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口。
+截至`main@f9449fc1330404bf5d711d437162bc04baea017b`（Merge PR #28），v0.3已合并Retriever查询族泛化、可替换LLMProvider、Financial核心与Verifier、standalone Legal Agent及Legal domain Verifiers、standalone `V03BusinessAgent`，以及Catalog Provider与批量评测基础设施。三个专业Agent的standalone core均已存在，但共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口，当前Gate A门槛见[Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)。
 
 ## 核心流程
 
@@ -54,6 +54,8 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 - `OpenAICompatibleLLMProvider`、Mock/Unavailable Provider、安全重试与Pydantic结构化校验；
 - CashRunwayFinancialAgent，以及独立可调用的`V03FinancialAgent`和`V03FinancialVerifier`；
 - 财务事实抽取、Decimal确定性Skills及五类Financial风险核心模块；
+- standalone Legal Agent、两类Legal风险链路及Legal domain Verifiers；
+- standalone `V03BusinessAgent`及`precommercial_product`确定性规则；
 - CashRunwayRiskVerifier、RuleSupervisor和verified-only RuleBasedPredictor；
 - RequestIPODataProvider与UnavailableMarketDataProvider；
 - JSON Repository、LangGraph工作流、结构化故障降级和Streamlit证据链展示；
@@ -61,10 +63,11 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 
 当前边界：
 
-- Legal、Business和Market Agent在共享Container中仍为`disabled`/Mock，真实Legal与Business Agent尚未合并；
+- Financial、Legal、Business三个专业Agent的standalone core均已合并，但共享Container尚未装配这些v0.3真实实现；
+- Financial共享注册表仍主要使用`cash_runway`，Legal与Business共享注册表仍为`disabled`/Mock；Market Agent也仍为`disabled`/Mock；
 - `V03FinancialAgent`与`V03FinancialVerifier`已合并且可独立调用，但尚未注册到共享Container/Workflow/Service；
 - `CatalogIPODataProvider`可由批量运行器运行时注册，但尚未进入全局ComponentRegistry；
-- LLMProvider基础设施已合并，但尚未被真实Legal/Business Agent消费，外部真实endpoint smoke未执行；
+- LLMProvider基础设施已合并；standalone专业Agent已具备结构化Provider消费或安全降级路径，但Legal domain prompt尚未进入real-provider runtime routing，外部真实endpoint smoke未执行；
 - `enhanced_v2`与v0.3多Agent Service/UI尚未完成，当前稳定工作流仍为`mvp_v1`；
 - 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
 - ReportGenerator仍为Mock格式化组件；
@@ -79,10 +82,11 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 2. [架构设计](docs/ARCHITECTURE.md)
 3. [公共Schema](docs/DATA_SCHEMA.md)
 4. [v0.3主计划](docs/PROJECT_MASTER_CHECKLIST.md)
-5. [版本路线](docs/ROADMAP.md)
-6. [赛事数据概览](docs/COMPETITION_DATA_OVERVIEW.md)与[数据质量报告](docs/DATA_QUALITY_REPORT.md)
-7. [Retriever影子测试基线](docs/V0.2_SHADOW_TEST_REPORT.md)
-8. [开发规则](AGENTS.md)
+5. [Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)
+6. [版本路线](docs/ROADMAP.md)
+7. [赛事数据概览](docs/COMPETITION_DATA_OVERVIEW.md)与[数据质量报告](docs/DATA_QUALITY_REPORT.md)
+8. [Retriever影子测试基线](docs/V0.2_SHADOW_TEST_REPORT.md)
+9. [开发规则](AGENTS.md)
 
 ## v0.3.0 目标
 
@@ -150,8 +154,8 @@ python scripts/check_real_v02_e2e.py
 
 - Parser：`mock`、`mock_alt`、`pymupdf`；
 - Retriever：`mock`、`keyword`；
-- Financial Agent（共享注册表）：`mock`、`cash_runway`；`V03FinancialAgent`尚待共享集成；
-- Legal/Business/Market Agent：`mock`、`disabled`；
+- Financial Agent（共享注册表）：`mock`、`cash_runway`；standalone `V03FinancialAgent`尚待共享集成；
+- Legal/Business/Market Agent（共享注册表）：`mock`、`disabled`；standalone Legal与Business实现已合并但尚待共享集成；
 - LLMProvider：`mock`、`openai_compatible`、`unavailable`；
 - MarketDataProvider：`mock`、`unavailable`；
 - IPODataProvider（共享注册表）：`mock`、`request`；`catalog`尚待全局注册；
