@@ -46,6 +46,10 @@ level, verification status or investment merit.
 
 当前`OpenAICompatibleLLMProvider.generate_structured(...)`只把`task_name`、`prompt_version`、JSON schema和Evidence放入请求，system prompt仅要求返回匹配schema的JSON。不存在正式prompt registry或prompt resolver。因此，Legal domain prompt现在**没有真正进入real LLM请求**；存在`prompt_version`字符串不等于Prompt已接入。
 
+```text
+LEGAL_DOMAIN_PROMPT_RUNTIME_STATUS = NOT_INTEGRATED
+```
+
 Pydantic字段描述可以改善JSON schema语义，但不足以替代跨字段、否定、历史状态和禁止事项的完整domain prompt。
 
 ## MEMBER_1_PROMPT_INTEGRATION_REQUEST
