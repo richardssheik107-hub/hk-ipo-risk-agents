@@ -12,7 +12,7 @@
 
 ### Current validation
 
-- 当前主线快照：`affaa28c03c22590ffc36cf34595b635357bf8ee`；
+- 本次状态对齐基线：`main@affaa28c03c22590ffc36cf34595b635357bf8ee`；
 - 完整自动化测试：625 passed；
 - 2410.HK回归：706页、0解析错误、Evidence第563/562页、现金跑道2.76个月、verified、90/critical。
 

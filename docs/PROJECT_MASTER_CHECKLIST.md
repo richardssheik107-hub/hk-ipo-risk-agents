@@ -34,12 +34,14 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 当前main | `affaa28c03c22590ffc36cf34595b635357bf8ee`（Merge PR #24） |
+| 功能状态基线 | `main@affaa28c03c22590ffc36cf34595b635357bf8ee`（Merge PR #24） |
 | 当前验证 | 625 passed；项目、赛事数据、黄金Manifest与编译校验通过 |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
 | v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
 | 当前稳定工作流 | `mvp_v1`；`enhanced_v2`尚未完成 |
+
+上述SHA是本轮文档状态核验所依据的功能实现基线，不要求等于本文档PR合并后的`main` HEAD。
 
 ## 0.1 Workstream状态
 

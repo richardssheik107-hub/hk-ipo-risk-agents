@@ -24,10 +24,10 @@
 | Workstream | Status | Main evidence | Remaining gate |
 | --- | --- | --- | --- |
 | V3-1 Golden Cases | PARTIAL | 6个真实Financial案例、23行真实草稿已进入main | 第二人复核；补齐Legal/Business真实正负例 |
-| V3-2 Catalog Provider | MERGED | PR #20 | 全局ComponentRegistry与共享Service集成 |
+| V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service集成 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 在复核后的真实黄金集上执行指标评测 |
 | V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal/Business消费；可选安全外部smoke |
-| V3-5 Financial core | MERGED / STANDALONE-READY | PR #22 | 共享Container/Workflow/Service集成与黄金复核 |
+| V3-5 Financial core | MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING | PR #22 | 共享Container/Workflow/Service集成与黄金复核 |
 | V3-6 Legal | PENDING | `DisabledLegalAgent`仍为共享实现 | 两类风险最小闭环及真实正负例 |
 | V3-7 Business | PENDING | `DisabledBusinessAgent`仍为共享实现 | `precommercial_product`最小闭环及真实正负例 |
 | V3-8 Specialized Verifier | BLOCKED | Financial verifier模块已存在 | 等待Legal、Business最小闭环与关键金标复核 |

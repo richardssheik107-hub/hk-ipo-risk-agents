@@ -12,11 +12,11 @@ snapshot_main: affaa28c03c22590ffc36cf34595b635357bf8ee
 >
 > **禁止直接使用 `$execute-approved-plan` 执行本文件。**
 >
-> 每一棒仍必须单独生成、审核并批准对应的 `APPROVED` Plan，例如 `V3-3_RETRIEVER_PLAN.md`、后续 `V3-4_LLM_PROVIDER_PLAN.md` 等。
+> 每一棒仍必须单独生成、审核并批准对应的 `APPROVED` Plan。V3-3与V3-4的历史Approved Plans已经完成；后续技术负责人棒次（例如V3-8）仍须生成独立Approved Plan。
 
 ## 1. 当前状态快照
 
-当前 `main` 快照：
+本路线状态核验基线：
 
 ```text
 affaa28c03c22590ffc36cf34595b635357bf8ee
@@ -60,7 +60,7 @@ V3-3 Retriever                  MERGED
     ↓
 V3-4 LLMProvider                MERGED
     ↓
-V3-5 Financial core             MERGED / STANDALONE-READY
+V3-5 Financial core             MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING
     ↓
 Gate A
  ├─ V3-1 golden review          PARTIAL
