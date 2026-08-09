@@ -17,23 +17,23 @@
 - 保留`mvp_v1`、Mock模式、v0.2回归及无API Key确定性运行能力；
 - 不在v0.3训练市场预测模型，不使用2025盲测集调试。
 
-完整计划见[PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md)。
+完整计划见[PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md)，当前Gate A强制门槛见[V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。
 
 ## v0.3 当前路线
 
 | Workstream | Status | Main evidence | Remaining gate |
 | --- | --- | --- | --- |
-| V3-1 Golden Cases | PARTIAL | 6个真实Financial案例、23行真实草稿已进入main | 第二人复核；补齐Legal/Business真实正负例 |
+| V3-1 Golden Cases | PARTIAL | canonical中已有Financial/Business真实draft；Legal A—H为独立draft | 独立二审、Legal仲裁与canonical并表 |
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service集成 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 在复核后的真实黄金集上执行指标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal/Business消费；可选安全外部smoke |
-| V3-5 Financial core | MERGED / STANDALONE-READY / SHARED-INTEGRATION-PENDING | PR #22 | 共享Container/Workflow/Service集成与黄金复核 |
-| V3-6 Legal | PENDING | `DisabledLegalAgent`仍为共享实现 | 两类风险最小闭环及真实正负例 |
-| V3-7 Business | PENDING | `DisabledBusinessAgent`仍为共享实现 | `precommercial_product`最小闭环及真实正负例 |
-| V3-8 Specialized Verifier | BLOCKED | Financial verifier模块已存在 | 等待Legal、Business最小闭环与关键金标复核 |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选安全外部smoke |
+| V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享装配 |
+| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING | PR #26 | contract、severity、Retriever、runtime prompt、A—H复核与并表 |
+| V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
+| V3-8 Specialized Verifier | BLOCKED BY GATE A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 全部mandatory Gate A criteria通过 |
 | V3-9 Supervisor / enhanced_v2 | PENDING | 稳定工作流仍为`mvp_v1` | 三Agent、Verifier和Catalog共享装配完成 |
 | Real golden batch evaluation | PENDING | V3-10基础设施已由PR #20合并 | 复核后的真实黄金案例与共享工作流 |
 | V3-11 UI / Report | PENDING | v0.2 UI仍可用 | `enhanced_v2` Service输出稳定 |
 | V3-12 Hardening / Release | PENDING | 尚未启动 | 前述门槛全部完成 |
 
-当前统一阶段为 **Gate A — Professional Agent Completion & Golden Review**。V3-8不得在Legal、Business最小闭环和关键黄金案例第二人复核前启动。
+当前统一阶段为 **Gate A — Professional Agent Completion & Golden Review**。三个专业Agent的standalone core均已进入`main`，但`standalone-ready`不等于共享集成完成。Financial与Business canonical draft已存在；Legal A—H仍需人工review、Case C adjudication及canonical merge。V3-8在全部mandatory Gate A criteria通过前不得启动。

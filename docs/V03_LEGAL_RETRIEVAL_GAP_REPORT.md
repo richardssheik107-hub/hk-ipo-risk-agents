@@ -41,3 +41,18 @@
 ## Member-1 handoff
 
 建议成员1只修改正式`QueryFamily`的aliases/context，不改Retriever接口、不加入发行人或页码特例。修改后应补充query-family契约测试，确认稳定Evidence ID、物理页码、负面文本仍可召回、排序可重复。
+
+## Gate A关闭约束
+
+关闭本报告所列缺口时必须同时满足：
+
+1. aliases覆盖简体、繁体与英文，并兼容大小写、连字符、换行和PDF空格差异；
+2. 权利生命周期、事项状态、整改状态和牌照影响上下文参与排序，不能只按宽泛事项词命中；
+3. 已终止、已结案、已整改、明确否定等negative Evidence仍应召回供Agent与Verifier判断，不得因其可能是负例而过滤；
+4. Evidence继续保留稳定`evidence_id`、`document_id`、`chunk_id`、物理页码及连续原文；
+5. 不加入发行人、股票代码、文档ID、已知页码或Evidence ID特判；
+6. 每个query family只返回小规模Top-N候选集，不得通过无限扩大`limit`伪造召回改善；
+7. 使用2020—2023 development-set正例、负例和边界例验证真实召回及排序，并保持现金跑道等既有Retriever回归；
+8. 2025 blind set不得用于词表、权重、Prompt或排序调优。
+
+本报告只描述Retriever领域缺口，不复制Agent、Builder或Verifier实现说明。实际修改必须由独立Approved Plan授权，并在修改后以query-family契约测试和真实development-set召回结果关闭`GATE-A-09`。
