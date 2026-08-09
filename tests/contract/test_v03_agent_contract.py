@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from inspect import signature
 from pathlib import Path
 
 import yaml
@@ -7,6 +8,8 @@ from pydantic import BaseModel
 
 from ipo_risk.agents.business_models import CommercializationCandidate
 from ipo_risk.agents.financial_models import ConcentrationObservation, LossObservation
+from ipo_risk.agents.financial import CashRunwayAgentDiagnostics, CashRunwayAgentStatus
+from ipo_risk.agents.financial_v03 import V03FinancialAgent
 from ipo_risk.agents.legal_models import LitigationComplianceCandidate
 from ipo_risk.agents.mock import MockBusinessAgent, MockFinancialAgent, MockLegalAgent
 from ipo_risk.domain.risk_codes import RISK_REQUIREMENTS, V03_ENABLED_RISK_CODES, V03_RISK_OWNERS
@@ -17,6 +20,15 @@ from ipo_risk.schemas import (
     IPOProfile,
     SupervisionResult,
 )
+
+
+class _NoCashRunway:
+    last_diagnostics = CashRunwayAgentDiagnostics(
+        status=CashRunwayAgentStatus.NOT_APPLICABLE
+    )
+
+    def analyze(self, profile, chunks, market=None):
+        return []
 
 
 def test_v03_risk_catalog_has_unique_owners_and_requirements():
@@ -115,3 +127,33 @@ def test_mock_llm_provider_validates_structured_output_and_records_metadata():
     assert provider.last_call_metadata is not None
     assert provider.last_call_metadata.prompt_version == "legal_v1"
     assert len(provider.last_call_metadata.raw_response_hash) == 64
+
+
+def test_v03_financial_agent_keeps_common_protocol_and_typed_diagnostics():
+    agent = V03FinancialAgent(cash_runway_agent=_NoCashRunway())
+
+    result = agent.analyze(IPOProfile(company_name="Contract Test"), [])
+
+    assert result == []
+    assert agent.name == "financial"
+    assert list(signature(agent.analyze).parameters) == ["profile", "chunks", "market"]
+    assert len(agent.last_diagnostics) == 5
+    assert all(isinstance(item, ComponentDiagnostic) for item in agent.last_diagnostics)
+    assert {item.risk_code for item in agent.last_diagnostics} == {
+        "cash_runway",
+        "continuous_loss",
+        "revenue_growth",
+        "customer_concentration",
+        "supplier_concentration",
+    }
+
+
+def test_concentration_observation_contract_remains_frozen_without_period_months():
+    assert set(ConcentrationObservation.model_fields) == {
+        "concentration_type",
+        "period_end",
+        "largest_counterparty_pct",
+        "top_five_pct",
+        "evidence_ids",
+    }
+    assert "period_months" not in ConcentrationObservation.model_fields
