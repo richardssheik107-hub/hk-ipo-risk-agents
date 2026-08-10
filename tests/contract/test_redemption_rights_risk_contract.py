@@ -4,6 +4,7 @@ from ipo_risk.domain.redemption_rights import (
     RedemptionRightsBuildStatus,
     RedemptionRightsRiskBuilder,
 )
+from ipo_risk.domain.legal_verifiers import LegalRightsVerifier
 from ipo_risk.extraction import ExtractionStatus, ShareholderRightsFact
 from ipo_risk.schemas import (
     DiagnosticCode,
@@ -50,10 +51,20 @@ def test_builder_keeps_public_risk_contract_and_never_auto_verifies_or_auto_high
     assert result.risk_item.agent_name == "legal"
     assert result.risk_item.verification_status == VerificationStatus.PENDING
     assert result.risk_item.level == RiskLevel.MEDIUM
+    assert result.risk_item.score == 50
     assert result.risk_item.level != RiskLevel.HIGH
+    assert result.risk_item.level != RiskLevel.CRITICAL
     assert result.risk_item.calculation is None
     assert result.risk_item.metadata["level_is_provisional"] is True
+    assert result.risk_item.metadata["score_is_rule_based"] is True
+    assert result.risk_item.metadata["score_is_probability"] is False
     assert result.risk_item.evidence == [evidence]
+
+    verified = LegalRightsVerifier().verify(
+        result.risk_item, {evidence.evidence_id: evidence}
+    )
+    assert verified.reviewed_risk.level == RiskLevel.MEDIUM
+    assert verified.reviewed_risk.score == 50
 
 
 def test_explicit_absence_is_not_applicable_but_missing_evidence_is_not() -> None:

@@ -28,6 +28,14 @@
 - 重大诉讼合规：重大未决事项、监管处罚或许可影响未消除时进入核验；重大性或结案状态不清时 needs_review。
 - 未商业化产品：核心产品尚未商业化且无产品销售收入时进入核验；产品阶段或收入归属不清时 needs_review。
 
+### Legal v0.3候选严重性
+
+`redemption_rights`与`material_litigation_compliance`统一使用provisional
+`medium / 50`。生成的RiskItem必须标记`level_is_provisional=true`、
+`score_is_rule_based=true`、`score_is_probability=false`。Legal Agent和专业Legal
+Verifier均不得在v0.3自动升级为`high`或`critical`；Verifier只改变核验状态。
+未来的等级提升规则必须使用新的、显式版本化severity policy。
+
 ## 3. 通用核验规则
 
 1. `requires_evidence=true` 且 Evidence 为空，不得 verified。

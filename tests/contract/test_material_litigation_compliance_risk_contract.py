@@ -7,6 +7,7 @@ from ipo_risk.domain.material_litigation_compliance import (
     MaterialLitigationComplianceBuildStatus,
     MaterialLitigationComplianceRiskBuilder,
 )
+from ipo_risk.domain.legal_verifiers import LitigationComplianceVerifier
 from ipo_risk.extraction import ExtractionStatus, LegalMatterObservation
 from ipo_risk.schemas import (
     DiagnosticCode,
@@ -62,9 +63,19 @@ def test_builder_keeps_public_contract_without_auto_verified_or_auto_high() -> N
     assert result.risk_item.agent_name == "legal"
     assert result.risk_item.verification_status == VerificationStatus.PENDING
     assert result.risk_item.level == RiskLevel.MEDIUM
+    assert result.risk_item.score == 50
     assert result.risk_item.level != RiskLevel.HIGH
+    assert result.risk_item.level != RiskLevel.CRITICAL
     assert result.risk_item.metadata["level_is_provisional"] is True
+    assert result.risk_item.metadata["score_is_rule_based"] is True
+    assert result.risk_item.metadata["score_is_probability"] is False
     assert result.risk_item.evidence == [evidence]
+
+    verified = LitigationComplianceVerifier().verify(
+        result.risk_item, {evidence.evidence_id: evidence}
+    )
+    assert verified.reviewed_risk.level == RiskLevel.MEDIUM
+    assert verified.reviewed_risk.score == 50
 
 
 def test_clear_negative_is_not_applicable_but_missing_evidence_is_not() -> None:

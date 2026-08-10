@@ -1,5 +1,11 @@
 # LEGAL_FIELD_REQUIREMENT_MATRIX
 
+状态：`APPROVED / FROZEN FOR v0.3`
+
+本矩阵适用于已批准的内部Legal候选字段。字段获得契约批准不改变以下分类，也不表示
+每个字段在所有决策路径上都必须出现。候选字段`counterparty_or_authority`在标准化
+observation层对应`counterparty_or_regulator`，候选层名称保持不变。
+
 分类定义：
 
 - `MUST_HAVE_FOR_DECISION`：缺失时冻结规则无法判断，进入`needs_review`；

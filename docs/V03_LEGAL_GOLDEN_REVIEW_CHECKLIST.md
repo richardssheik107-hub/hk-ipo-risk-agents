@@ -18,11 +18,11 @@
 
 | Case | 风险 | 当前状态 | 人工重点页/问题 |
 |---|---|---|---|
-| A | redemption_rights | draft | 页300；上市后持续，但severity未冻结 |
+| A | redemption_rights | draft | 页300；上市后持续；按已冻结provisional `medium / 50` policy复核draft `high` |
 | B | redemption_rights | draft | 页207；确认全部特殊权利已终止 |
 | C | redemption_rights | draft | 页152；明确conditional restoration与draft needs_review争议 |
 | D | redemption_rights | draft | 页78及外引工具条款；termination不完整 |
-| E | material_litigation_compliance | draft | 页26；重大未决，但severity未冻结 |
+| E | material_litigation_compliance | draft | 页26；重大未决；按已冻结provisional `medium / 50` policy复核draft `high` |
 | F | material_litigation_compliance | draft | 页298；已结案并支付 |
 | G | material_litigation_compliance | draft | 页222；明确否定重大诉讼 |
 | H | material_litigation_compliance | draft | 页44；一般未来风险因素 |
@@ -31,10 +31,21 @@
 
 Case C的draft为`needs_review`，但冻结规则规定“存在明确restoration condition时进入Verifier”，现有Builder因此输出`BUILT + PENDING`。不得为了draft CSV修改Builder；请第二复核人决定gold status应表达“候选进入核验”还是“条款仍需人工判断”。
 
-## MEMBER_1_LEGAL_SEVERITY_POLICY_QUESTION
+## v0.3 Legal severity review guidance
 
-Case A和Case E的draft `expected_level=high`，但v0.3没有冻结Legal high/medium映射。当前Builder保持provisional `medium/50`、`level_is_provisional=true`、`score_is_probability=false`。请成员1确认v0.3是否统一采用provisional level，以及draft golden的`expected_level`应标为provisional、空值还是另设非评分字段。
+Case A和Case E的draft `expected_level=high`是severity policy冻结前的建议，不是v0.3
+权威等级。v0.3已经冻结为provisional `medium / 50`，并要求
+`level_is_provisional=true`、`score_is_rule_based=true`、
+`score_is_probability=false`。人工复核必须依据该政策处理A/E的draft差异，记录分歧和
+仲裁理由；本治理任务不修改CSV，不伪造second reviewer，也不改变review status。
 
-## Member-2 handoff
+## Legal Golden review ownership
 
-成员2需要：组织8个案例人工二审；复核上述物理页和相邻页；仲裁Case C；等待Legal severity policy答复后处理Case A/E；仅在人工流程完成后决定是否并入正式canonical golden manifest。
+Legal A—H必须经过真实人工primary review和independent second review。
+`codex_preselection`不是人工primary review；primary reviewer与second reviewer必须是
+真实、相互独立的人类复核人，不得由同一人自审，也不得自动填写复核人姓名或状态。
+
+4号法务成员承担Legal专业复核职责，并参与Case C的专业仲裁；复核时依据已冻结的
+Legal severity policy处理Case A/E。2号技术备份／数据成员仅负责manifest完整性检查、
+reviewed rows的数据治理与canonical并表支持、batch/evaluation技术复跑及独立复现记录。
+2号成员不替代Legal专业人工复核责任。

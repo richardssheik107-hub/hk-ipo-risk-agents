@@ -20,9 +20,21 @@ risks:
   redemption_rights:
     owner: legal
     rule: effective_or_restorable_rights_require_review
+    candidate_severity:
+      level: medium
+      score: 50
+      level_is_provisional: true
+      score_is_rule_based: true
+      score_is_probability: false
   material_litigation_compliance:
     owner: legal
     rule: material_pending_matter_or_unresolved_regulatory_impact
+    candidate_severity:
+      level: medium
+      score: 50
+      level_is_provisional: true
+      score_is_rule_based: true
+      score_is_probability: false
   precommercial_product:
     owner: business
     rule: core_product_not_commercialized_and_no_product_revenue
