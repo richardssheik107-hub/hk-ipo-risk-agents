@@ -1,5 +1,5 @@
 ---
-snapshot_main: 6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc
+snapshot_main: 9dd4e9249a106a600366364c95570d883034e857
 phase: Gate A — Professional Agent Completion & Golden Review
 overall_status: BLOCKED
 ---
@@ -9,8 +9,8 @@ overall_status: BLOCKED
 本文件是 Gate A 的专项验收入口。项目总体状态仍以
 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为唯一入口。
 
-状态核验基线为 `main@6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc`
-（Merge PR #30）。该 SHA 是GATE-A-09执行采用的`main`审计基线，不要求等于
+状态核验基线为 `main@9dd4e9249a106a600366364c95570d883034e857`
+（Merge PR #34）。该 SHA 是本次Legal formal Golden promotion采用的`main`基线，不要求等于
 本次变更未来合并后的`main` HEAD。
 
 ## 1. 三条专业线冻结状态
@@ -36,13 +36,15 @@ CONTRACT-APPROVED
 SEVERITY-POLICY-FROZEN
 RETRIEVER-GAP-CLOSED
 RUNTIME-PROMPT-INTEGRATED
-HUMAN-GOLDEN-REVIEW-PENDING
+HUMAN-GOLDEN-REVIEWED
+CANONICAL-GOLDEN-PROMOTED
 SHARED-INTEGRATION-PENDING
 ```
 
 Legal Agent 本体不重新实现。候选字段契约与severity policy已经冻结，Retriever缺口
-已经关闭，domain prompt已进入real-provider runtime。Gate A剩余工作是Legal A—H
-人工primary/second review、Case C仲裁与canonical并表。
+已经关闭，domain prompt已进入real-provider runtime。Legal A—H已完成人工primary、
+独立second review及必要仲裁，正式reviewed rows已并入canonical fixture。本次promotion
+没有修改Legal实现或severity policy。
 
 ### Business
 
@@ -64,8 +66,8 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 | GATE-A-02 | 三个Agent均保持 `RiskAgent.analyze() -> list[RiskItem]`，且不自行标记 `verified` | PASS | Agent契约测试与合并审核 |
 | GATE-A-03 | 真实Financial Golden完成独立second review | FAIL | 组织第二复核、记录分歧与仲裁 |
 | GATE-A-04 | Business三条真实Golden完成独立second review | FAIL | 1167.HK两条正例、9633.HK一条负例 |
-| GATE-A-05 | Legal A—H完成人工primary review、独立second review及Case C adjudication | FAIL | `V03_LEGAL_GOLDEN_REVIEW_CHECKLIST.md` |
-| GATE-A-06 | Reviewed Legal rows并入canonical v0.3 Golden Manifest | FAIL | 仅在人工复核完成后由数据维护者并表 |
+| GATE-A-05 | Legal A—H完成人工primary review、独立second review及Case C adjudication | PASS | `review/V03_LEGAL_FORMAL_REVIEW_AUDIT.md` |
+| GATE-A-06 | Reviewed Legal rows并入canonical v0.3 Golden Manifest | PASS | canonical与Legal fixture中的8条正式reviewed rows |
 | GATE-A-07 | Legal candidate additive contract fields由Member-1明确APPROVE或REJECT | PASS | additive内部候选字段已APPROVE；`V03_LEGAL_CONTRACT_DELTA.md` |
 | GATE-A-08 | Legal severity policy冻结 | PASS | 两类Legal风险冻结为provisional `medium / 50`；A/E转人工复核 |
 | GATE-A-09 | Legal Retriever alias、lifecycle、status、remediation及licence gap关闭 | PASS | 2020—2023 development draft A—H固定`limit=5`全部命中；`V03_LEGAL_RETRIEVAL_GAP_REPORT.md` |
@@ -80,8 +82,9 @@ GATE_A_OVERALL_STATUS = BLOCKED
 V3-8_START_STATUS = BLOCKED
 ```
 
-只有全部mandatory Gate A标准转为PASS后，Planner才可以基于届时最新的`main`生成
-独立的 `V3-8_SPECIALIZED_VERIFIER_PLAN.md`。当前不得提前编写或执行V3-8。
+Legal Golden门槛已经关闭；Gate A仍因Financial和Business真实Golden独立second review
+未完成而保持BLOCKED。只有全部mandatory Gate A标准转为PASS后，Planner才可以基于
+届时最新的`main`生成独立的 `V3-8_SPECIALIZED_VERIFIER_PLAN.md`。当前不得提前编写或执行V3-8。
 
 ## 4. 当前收口顺序
 
@@ -106,6 +109,7 @@ Gate A
 - Retriever缺口：[V03_LEGAL_RETRIEVAL_GAP_REPORT.md](V03_LEGAL_RETRIEVAL_GAP_REPORT.md)
 - Verifier规则：[V03_LEGAL_VERIFIER_RULES.md](V03_LEGAL_VERIFIER_RULES.md)
 - A—H人工复核：[V03_LEGAL_GOLDEN_REVIEW_CHECKLIST.md](V03_LEGAL_GOLDEN_REVIEW_CHECKLIST.md)
+- A—H正式双审审计：[review/V03_LEGAL_FORMAL_REVIEW_AUDIT.md](review/V03_LEGAL_FORMAL_REVIEW_AUDIT.md)
 
 历史实现过程继续由Git历史、Approved Plans和Execution Reports保存，不通过重复的活跃
 说明文档继续维护。

@@ -8,6 +8,7 @@ from ipo_risk.evaluation.v03_manifest import validate_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
 LEGAL_GOLDEN = ROOT / "tests" / "fixtures" / "v03_golden_cases" / "v03_legal_golden_case_manifest.csv"
+CANONICAL_GOLDEN = ROOT / "tests" / "fixtures" / "v03_golden_cases" / "v03_golden_case_manifest.csv"
 PROSPECTUS_MANIFEST = ROOT / "data" / "catalog" / "ipo_prospectus_manifest.csv"
 
 
@@ -42,21 +43,35 @@ def test_legal_golden_manifest_covers_pre_rule_cases_a_through_h() -> None:
 def test_legal_golden_expected_outcomes_preserve_key_legal_distinctions() -> None:
     by_case = {_gold_case(row): row for row in _rows(LEGAL_GOLDEN)}
 
-    assert (by_case["A"]["applicable"], by_case["A"]["expected_status"]) == ("true", "verified")
+    assert (by_case["A"]["applicable"], by_case["A"]["expected_status"]) == ("false", "rejected")
     assert (by_case["B"]["applicable"], by_case["B"]["expected_status"]) == ("false", "rejected")
-    assert by_case["C"]["expected_status"] == "needs_review"
-    assert by_case["D"]["expected_status"] == "needs_review"
+    assert (by_case["C"]["applicable"], by_case["C"]["expected_status"]) == ("true", "verified")
+    assert (by_case["D"]["applicable"], by_case["D"]["expected_status"]) == ("true", "verified")
     assert (by_case["E"]["applicable"], by_case["E"]["expected_status"]) == ("true", "verified")
     assert all(by_case[key]["expected_status"] == "rejected" for key in "FGH")
-    assert all(by_case[key]["expected_level"] == "not_applicable" for key in "BFGH")
+    assert all(by_case[key]["expected_level"] == "medium" for key in "CDE")
+    assert all(by_case[key]["expected_level"] == "not_applicable" for key in "ABFGH")
 
 
-def test_legal_golden_cases_are_development_only_and_not_claimed_double_reviewed() -> None:
+def test_legal_golden_cases_are_formally_reviewed_development_cases() -> None:
     golden_rows = _rows(LEGAL_GOLDEN)
     source_rows = {row["case_id"]: row for row in _rows(PROSPECTUS_MANIFEST)}
+    by_case = {_gold_case(row): row for row in golden_rows}
 
     assert all(source_rows[row["case_id"]]["dataset_split"] == "development" for row in golden_rows)
     assert all(int(source_rows[row["case_id"]]["source_year"]) <= 2023 for row in golden_rows)
-    assert all(row["review_status"] == "draft" for row in golden_rows)
-    assert all(not row["second_reviewer"].strip() for row in golden_rows)
+    assert all(row["reviewer"] == "Ap" for row in golden_rows)
+    assert all(row["second_reviewer"] == "Pan***" for row in golden_rows)
+    assert all(by_case[key]["review_status"] == "adjudicated" for key in "ACDF")
+    assert all(by_case[key]["review_status"] == "double_reviewed" for key in "BEGH")
     assert all(row["document_id"] == row["case_id"] for row in golden_rows)
+
+
+def test_formal_legal_rows_are_promoted_unchanged_to_canonical_manifest() -> None:
+    canonical_rows = {
+        (row["case_id"], row["risk_code"], row["gold_page"]): row for row in _rows(CANONICAL_GOLDEN)
+    }
+
+    for legal_row in _rows(LEGAL_GOLDEN):
+        key = (legal_row["case_id"], legal_row["risk_code"], legal_row["gold_page"])
+        assert canonical_rows[key] == legal_row

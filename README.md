@@ -14,7 +14,7 @@ v0.2.0已正式发布；v0.3.0处于Gate A——专业Agent闭环与黄金案例
 
 v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式和赛事数据治理。发布验收为284 passed，完整版本记录见[CHANGELOG](CHANGELOG.md)。
 
-截至`main@f9449fc1330404bf5d711d437162bc04baea017b`（Merge PR #28），v0.3已合并Retriever查询族泛化、可替换LLMProvider、Financial核心与Verifier、standalone Legal Agent及Legal domain Verifiers、standalone `V03BusinessAgent`，以及Catalog Provider与批量评测基础设施。三个专业Agent的standalone core均已存在，但共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口，当前Gate A门槛见[Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)。
+截至`main@9dd4e9249a106a600366364c95570d883034e857`（Merge PR #34），v0.3已合并Retriever查询族泛化、可替换LLMProvider、Financial核心与Verifier、standalone Legal Agent及Legal domain Verifiers、standalone `V03BusinessAgent`，以及Catalog Provider与批量评测基础设施。本分支进一步完成Legal A—H正式双审、必要仲裁和canonical Golden promotion。三个专业Agent的standalone core均已存在，但Financial/Business Golden二审、共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口，当前Gate A门槛见[Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)。
 
 ## 核心流程
 
