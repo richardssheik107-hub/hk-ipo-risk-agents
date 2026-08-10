@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "active_liquidation_preference_zh_cn",
+    "family": "redemption_rights",
+    "section": "unknown",
+    "text": "历史及重组 投资协议授予投资者清算优先权，该项特殊权利仍然有效。",
+    "expected_aliases": ["清算优先权"],
+    "expected_context": ["投资协议"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "terminated_anti_dilution_zh_tw_pdf_break",
+    "family": "redemption_rights",
+    "section": "unknown",
+    "text": "歷史及重組 股東協議項下反攤\n薄已終止並停止生效。",
+    "expected_aliases": ["反攤薄"],
+    "expected_context": ["終止", "停止生效"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "waived_pre_emption_en",
+    "family": "redemption_rights",
+    "section": "history",
+    "text": "The pre-emption rights under the shareholders agreement were WAIVED before listing.",
+    "expected_aliases": ["pre-emption rights"],
+    "expected_context": ["waived"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "conditional_repurchase_restoration_zh_cn",
+    "family": "redemption_rights",
+    "section": "历史及重组",
+    "text": "回购权已终止，但上市申请拒绝时将恢复并重新生效。",
+    "expected_aliases": ["回购权"],
+    "expected_context": ["终止", "上市申请拒绝", "恢复", "重新生效"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "listing_failure_veto_reinstatement_en",
+    "family": "redemption_rights",
+    "section": "history",
+    "text": "The veto rights will be reinstated if the listing application is rejected or the IPO is not completed.",
+    "expected_aliases": ["veto rights"],
+    "expected_context": ["reinstated", "listing application is rejected", "ipo is not completed"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "vam_arrangement_en_case_normalization",
+    "family": "redemption_rights",
+    "section": "history",
+    "text": "The shareholders agreement contains a VAM that will cease upon listing.",
+    "expected_aliases": ["vam"],
+    "expected_context": ["cease"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "pending_litigation_zh_tw",
+    "family": "material_litigation_compliance",
+    "section": "unknown",
+    "text": "業務 合規與訴訟：本集團有兩起重大未決訴訟，仍在進行。",
+    "expected_aliases": ["合規與訴訟", "訴訟"],
+    "expected_context": ["未決訴訟", "仍在進行"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "resolved_litigation_en",
+    "family": "material_litigation_compliance",
+    "section": "legal",
+    "text": "The litigation was settled and closed; the legal claims are resolved.",
+    "expected_aliases": ["litigation"],
+    "expected_context": ["settled", "closed", "resolved"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "no_material_litigation_zh_cn",
+    "family": "material_litigation_compliance",
+    "section": "legal",
+    "text": "截至最后实际可行日期，本集团不存在重大诉讼或仲裁。",
+    "expected_aliases": ["诉讼", "仲裁"],
+    "expected_context": ["仲裁"],
+    "negative_evidence": true
+  },
+  {
+    "case_id": "remediated_regulatory_investigation_zh_tw",
+    "family": "material_litigation_compliance",
+    "section": "業務",
+    "text": "監管調查已結束，相關不合規事項已整改且整改完成。",
+    "expected_aliases": ["監管調查"],
+    "expected_context": ["整改", "已整改", "整改完成"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "licence_suspended_not_renewed_en",
+    "family": "material_litigation_compliance",
+    "section": "regulatory",
+    "text": "The operating LICENCE was not renewed and operations were suspended.",
+    "expected_aliases": ["licence"],
+    "expected_context": ["not renewed"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "licence_renewed_zh_tw",
+    "family": "material_litigation_compliance",
+    "section": "業務",
+    "text": "有關牌照已續期，許可影響已消除。",
+    "expected_aliases": ["牌照", "許可"],
+    "expected_context": ["已續期"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "generic_future_litigation_decoy_en",
+    "family": "material_litigation_compliance",
+    "section": "risk factors",
+    "text": "Companies may become subject to litigation in the ordinary course of business as a future exposure.",
+    "expected_aliases": ["litigation"],
+    "expected_context": [],
+    "negative_evidence": true
+  },
+  {
+    "case_id": "environmental_penalty_zh_tw",
+    "family": "material_litigation_compliance",
+    "section": "業務",
+    "text": "本集團曾受到環境處罰，其後已整改。",
+    "expected_aliases": ["環境處罰"],
+    "expected_context": ["已整改"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "data_privacy_investigation_zh_cn",
+    "family": "material_litigation_compliance",
+    "section": "legal",
+    "text": "数据隐私事项仍在进行监管调查，尚未解决。",
+    "expected_aliases": ["数据隐私", "监管调查"],
+    "expected_context": ["监管调查", "仍在进行", "尚未解决"],
+    "negative_evidence": false
+  },
+  {
+    "case_id": "tax_arbitration_en_pdf_whitespace",
+    "family": "material_litigation_compliance",
+    "section": "legal",
+    "text": "An unresolved TAX\n arbitration remains pending.",
+    "expected_aliases": ["tax", "arbitration"],
+    "expected_context": ["arbitration", "pending", "unresolved"],
+    "negative_evidence": false
+  }
+]

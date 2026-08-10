@@ -1,5 +1,5 @@
 ---
-snapshot_main: 41b4528b820fff1738449703d745aed8d2c4b2f9
+snapshot_main: 6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc
 phase: Gate A — Professional Agent Completion & Golden Review
 overall_status: BLOCKED
 ---
@@ -9,8 +9,8 @@ overall_status: BLOCKED
 本文件是 Gate A 的专项验收入口。项目总体状态仍以
 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为唯一入口。
 
-状态核验基线为 `main@41b4528b820fff1738449703d745aed8d2c4b2f9`
-（Merge PR #29）。该 SHA 是GATE-A-07-08执行采用的`main`审计基线，不要求等于
+状态核验基线为 `main@6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc`
+（Merge PR #30）。该 SHA 是GATE-A-09执行采用的`main`审计基线，不要求等于
 本次变更未来合并后的`main` HEAD。
 
 ## 1. 三条专业线冻结状态
@@ -34,14 +34,14 @@ MERGED
 STANDALONE-READY
 CONTRACT-APPROVED
 SEVERITY-POLICY-FROZEN
-RETRIEVER-GAP-PENDING
+RETRIEVER-GAP-CLOSED
 RUNTIME-PROMPT-INTEGRATION-PENDING
 HUMAN-GOLDEN-REVIEW-PENDING
 SHARED-INTEGRATION-PENDING
 ```
 
-Legal Agent 本体不重新实现。候选字段契约与severity policy已经冻结。Gate A剩余工作
-是Retriever缺口关闭、domain prompt运行时接入、Legal A—H人工复核与并表。
+Legal Agent 本体不重新实现。候选字段契约与severity policy已经冻结，Retriever缺口
+已经关闭。Gate A剩余工作是domain prompt运行时接入、Legal A—H人工复核与并表。
 
 ### Business
 
@@ -67,7 +67,7 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 | GATE-A-06 | Reviewed Legal rows并入canonical v0.3 Golden Manifest | FAIL | 仅在人工复核完成后由数据维护者并表 |
 | GATE-A-07 | Legal candidate additive contract fields由Member-1明确APPROVE或REJECT | PASS | additive内部候选字段已APPROVE；`V03_LEGAL_CONTRACT_DELTA.md` |
 | GATE-A-08 | Legal severity policy冻结 | PASS | 两类Legal风险冻结为provisional `medium / 50`；A/E转人工复核 |
-| GATE-A-09 | Legal Retriever alias、lifecycle、status、remediation及licence gap关闭 | FAIL | `V03_LEGAL_RETRIEVAL_GAP_REPORT.md` |
+| GATE-A-09 | Legal Retriever alias、lifecycle、status、remediation及licence gap关闭 | PASS | 2020—2023 development draft A—H固定`limit=5`全部命中；`V03_LEGAL_RETRIEVAL_GAP_REPORT.md` |
 | GATE-A-10 | Legal domain prompt正式进入real-provider runtime routing | FAIL | `V03_LEGAL_PROMPT_SPEC.md` |
 | GATE-A-11 | 2025 blind set未参与开发、检索调优、Prompt调优或规则调参 | PASS | blind guard保持fail-closed |
 | GATE-A-12 | Mock、2410.HK与完整回归保持稳定 | PASS | 每个后续Gate任务重新验证 |

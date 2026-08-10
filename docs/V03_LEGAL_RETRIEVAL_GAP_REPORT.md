@@ -1,5 +1,15 @@
 # v0.3 Legal Retriever Gap Report
 
+```text
+STATUS = RESOLVED
+EXECUTION_BASE = main@6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc
+ACCEPTANCE = 2020—2023 DEVELOPMENT DRAFT CASES, NOT FORMAL GOLDEN RECALL
+```
+
+GATE-A-09 已在不修改 Retriever 接口、排序实现或 Evidence Schema 的前提下关闭。
+正式 `redemption_rights` 与 `material_litigation_compliance` 查询族已补齐本报告列出的
+简体、繁体、英文 alias，以及权利生命周期、事项状态、整改和牌照影响上下文。
+
 基准：`src/ipo_risk/retrieval/query_families.py`
 
 本报告是成员4向成员1提交的领域词表差异，不是第二套运行时Retriever配置。Legal Agent只调用正式查询族`redemption_rights`和`material_litigation_compliance`，不复制排序、章节权重或Evidence ID逻辑。
@@ -56,3 +66,27 @@
 8. 2025 blind set不得用于词表、权重、Prompt或排序调优。
 
 本报告只描述Retriever领域缺口，不复制Agent、Builder或Verifier实现说明。实际修改必须由独立Approved Plan授权，并在修改后以query-family契约测试和真实development-set召回结果关闭`GATE-A-09`。
+
+## GATE-A-09关闭结果
+
+修改前八份 development draft 案例的 Top-5 命中为 4/8；整改后在固定
+`limit=5` 下为：
+
+| 案例 | 股票代码 | 查询族 | 目标物理页 | 最终排名 | Top-5 |
+|---|---|---|---:|---:|---|
+| A | 9898.HK | `redemption_rights` | 300 | 4 | HIT |
+| B | 9863.HK | `redemption_rights` | 207 | 4 | HIT |
+| C | 2517.HK | `redemption_rights` | 152 | 2 | HIT |
+| D | 1961.HK | `redemption_rights` | 78 | 3 | HIT |
+| E | 6698.HK | `material_litigation_compliance` | 26 | 2 | HIT |
+| F | 2451.HK | `material_litigation_compliance` | 298 | 2 | HIT |
+| G | 9600.HK | `material_litigation_compliance` | 222 | 2 | HIT |
+| H | 1942.HK | `material_litigation_compliance` | 44 | 1 | HIT |
+
+汇总：Top-1 1/8、Top-3 6/8、Top-5 8/8。以上仅为 2020—2023 开发集
+验收，不代表经过人工 primary/second review 的正式 Golden Recall。A—H 的 Golden
+治理状态没有因此改变。
+
+验证结果：Legal 查询族契约 71 passed、既有 Keyword Retriever 契约 28 passed、
+全量测试 849 passed；2410.HK 现金及现金流主证据页、现金跑道 2.76 个月、
+verified 与 90/critical 回归保持稳定。未访问 2025 blind set。
