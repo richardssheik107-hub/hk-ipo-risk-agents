@@ -26,7 +26,7 @@
 | V3-1 Golden Cases | PARTIAL | canonical中已有Financial/Business真实draft及8条正式Legal reviewed Golden | Financial与Business独立二审 |
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service集成 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 在复核后的真实黄金集上执行指标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选安全外部smoke |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke尚未执行；后续共享集成 |
 | V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享装配 |
 | V3-6 Legal | MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING | PR #26；Legal formal review audit与canonical rows | 共享Container/Workflow/Service装配 |
 | V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |

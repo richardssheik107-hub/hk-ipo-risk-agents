@@ -51,7 +51,7 @@
 | V3-1 Golden Cases | PARTIAL | canonical Manifest含26行Financial/Business真实draft及8行正式Legal reviewed Golden | Financial与Business独立第二复核 |
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选外部smoke |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke（尚未执行）；后续共享集成 |
 | V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享Container/Workflow/Service装配 |
 | V3-6 Legal | MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING | PR #26；Legal A—H formal review audit与canonical rows | 共享Container/Workflow/Service装配 |
 | V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
@@ -83,7 +83,7 @@
 
 - Financial、Legal与Business三个standalone真实Agent均已合并；共享Container仍未装配v0.3三Agent，Legal/Business共享实现仍为disabled/Mock。
 - Market Agent和正式MarketDataProvider尚未接入。
-- LLMProvider基础设施已合并；Legal domain prompt尚未进入real-provider runtime routing，真实外部endpoint smoke未执行。
+- LLMProvider基础设施与Legal domain prompt real-provider runtime routing均已合并，GATE-A-10为PASS；真实外部endpoint smoke仍未执行。
 - `V03FinancialAgent`与`V03FinancialVerifier`已合并并可独立调用，但尚未进入共享Container/Workflow/Service。
 - `CatalogIPODataProvider`已实现；批量运行器可运行时注册，但全局ComponentRegistry尚未注册`catalog`。
 - 当前规则风险分不是经过校准的上市后下跌概率。
@@ -242,7 +242,7 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial与Business草稿已进入canonical Manifest；Legal A—H已完成正式双审、仲裁与并表。 | 财务/法务/业务 | 完成Financial与Business独立二审，2025盲测不得进入。 |
 | V3-2（MERGED / INTEGRATION-PENDING） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理已合并。 | 技术备份/数据 | 全局Registry和共享Service接入仍待1号完成。 |
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
-| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | Legal domain prompt runtime routing；可选安全外部smoke。 |
+| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider及Legal domain prompt runtime routing已合并。 | 技术负责人 | 可选安全外部smoke尚未执行；后续共享集成。 |
 | V3-5（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 真实金标独立二审与共享装配。 |
 | V3-6（MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离、domain Verifiers、runtime prompt及8条正式reviewed Golden均已完成。 | 法务成员+技术负责人 | 共享Container/Workflow/Service装配。 |
 | V3-7（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Business Agent真实化 | `precommercial_product`独立正/负例闭环已合并。 | 业务成员 | 三条真实Golden独立二审与共享装配。 |

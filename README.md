@@ -67,7 +67,7 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 - Financial共享注册表仍主要使用`cash_runway`，Legal与Business共享注册表仍为`disabled`/Mock；Market Agent也仍为`disabled`/Mock；
 - `V03FinancialAgent`与`V03FinancialVerifier`已合并且可独立调用，但尚未注册到共享Container/Workflow/Service；
 - `CatalogIPODataProvider`可由批量运行器运行时注册，但尚未进入全局ComponentRegistry；
-- LLMProvider基础设施已合并；standalone专业Agent已具备结构化Provider消费或安全降级路径，但Legal domain prompt尚未进入real-provider runtime routing，外部真实endpoint smoke未执行；
+- LLMProvider基础设施与Legal domain prompt real-provider runtime routing已合并，GATE-A-10为PASS；standalone专业Agent已具备结构化Provider消费或安全降级路径，但外部真实endpoint smoke仍未执行；
 - `enhanced_v2`与v0.3多Agent Service/UI尚未完成，当前稳定工作流仍为`mvp_v1`；
 - 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
 - ReportGenerator仍为Mock格式化组件；
