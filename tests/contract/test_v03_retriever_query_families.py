@@ -9,12 +9,16 @@ from pathlib import Path
 import pytest
 
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
+from ipo_risk.retrieval.keyword import normalize_for_match
 from ipo_risk.retrieval.query_families import QUERY_FAMILY_BY_NAME
 from ipo_risk.schemas import DocumentChunk
 
 
 BUSINESS_RECALL_FIXTURE = (
     Path(__file__).parents[1] / "fixtures" / "v03_retriever" / "business_recall_cases.json"
+)
+LEGAL_RECALL_FIXTURE = (
+    Path(__file__).parents[1] / "fixtures" / "v03_retriever" / "legal_recall_cases.json"
 )
 
 
@@ -340,3 +344,96 @@ def test_business_recall_keeps_top_five_limit_and_stable_traceability() -> None:
     assert [item.page for item in first] == [1, 2, 3, 4, 5]
     assert [item.evidence_id for item in first] == [item.evidence_id for item in second]
     assert all(item.document_id == "business-limit" for item in first)
+
+
+@pytest.mark.parametrize(
+    "case",
+    json.loads(LEGAL_RECALL_FIXTURE.read_text(encoding="utf-8")),
+    ids=lambda case: case["case_id"],
+)
+def test_legal_query_families_cover_multilingual_lifecycle_and_status_facts(
+    case: dict[str, object],
+) -> None:
+    source = chunk(
+        20,
+        str(case["text"]),
+        section=str(case["section"]),
+        document_id=f"synthetic-{case['case_id']}",
+    )
+
+    evidence = KeywordDocumentRetriever().retrieve(
+        [source], str(case["family"]), limit=5
+    )
+
+    assert len(evidence) == 1
+    item = evidence[0]
+    assert item.page == 20
+    assert item.metadata["query_family"] == case["family"]
+    assert {
+        normalize_for_match(value) for value in case["expected_aliases"]
+    }.issubset(set(item.metadata["matched_keywords"]))
+    assert set(case["expected_context"]).issubset(
+        set(item.metadata["domain_context"])
+    )
+    if case["negative_evidence"]:
+        assert item.metadata["domain_negative_context"]
+    assert item.document_id == source.document_id
+    assert item.chunk_id == source.chunk_id
+    assert item.text in source.text
+
+
+@pytest.mark.parametrize(
+    ("family", "primary_text", "decoy_text"),
+    (
+        (
+            "redemption_rights",
+            "歷史及重組 股東協議授予投資者清算優先權，上市申請被拒絕時將恢復。",
+            "公司章程載列一般股東權利，包括普通股份的法定贖回及贖回權。",
+        ),
+        (
+            "material_litigation_compliance",
+            "業務 本集團有兩起重大未決訴訟並擔任被告，索賠金額尚未解決。",
+            "風險因素 公司未來可能在日常業務中面臨一般訴訟風險。",
+        ),
+    ),
+)
+def test_direct_legal_facts_rank_ahead_of_generic_boilerplate(
+    family: str,
+    primary_text: str,
+    decoy_text: str,
+) -> None:
+    sources = [
+        chunk(3, decoy_text, section="unknown", document_id="legal-ranking"),
+        chunk(20, primary_text, section="unknown", document_id="legal-ranking"),
+    ]
+
+    evidence = KeywordDocumentRetriever().retrieve(sources, family, limit=5)
+
+    assert [item.page for item in evidence] == [20, 3]
+    assert evidence[0].relevance_score > evidence[1].relevance_score
+    assert evidence[0].metadata["domain_context"]
+    assert evidence[1].metadata["domain_negative_context"]
+
+
+def test_legal_recall_keeps_top_five_limit_stable_ids_and_traceability() -> None:
+    sources = [
+        chunk(
+            page,
+            f"歷史及重組 投資協議項下第{page}項清算優先權已終止。",
+            section="unknown",
+            document_id="legal-limit",
+        )
+        for page in range(1, 8)
+    ]
+    retriever = KeywordDocumentRetriever()
+
+    first = retriever.retrieve(sources, "redemption_rights", limit=5)
+    second = retriever.retrieve(sources, "redemption_rights", limit=5)
+
+    assert len(first) == 5
+    assert [item.page for item in first] == [1, 2, 3, 4, 5]
+    assert [item.evidence_id for item in first] == [
+        item.evidence_id for item in second
+    ]
+    assert all(item.document_id == "legal-limit" for item in first)
+    assert all(item.chunk_id == f"legal-limit:page:{item.page}" for item in first)
