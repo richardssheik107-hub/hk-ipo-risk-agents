@@ -9,19 +9,22 @@
 - PR #23：完成八类v0.3 Retriever查询族、简繁英别名、确定性章节权重和稳定Evidence追溯；
 - PR #22：合并Financial v0.3核心链路，包括财务事实抽取、Decimal Skills、`V03FinancialAgent`和`V03FinancialVerifier`；
 - PR #24：合并OpenAI-compatible、Mock和Unavailable LLMProvider，配置驱动装配、有限重试、安全异常分类及Pydantic结构化校验。
+- PR #26、#28：合并standalone Legal与Business Agent；三个专业Agent core均已进入`main`。
+- PR #30、#31：冻结Legal候选契约与severity policy，并关闭Legal Retriever gap。
+- PR #32：完成版本化Legal domain prompt real-provider runtime routing与pre-human checkpoint审计。
 
 ### Current validation
 
-- 本次状态对齐基线：`main@affaa28c03c22590ffc36cf34595b635357bf8ee`；
-- 完整自动化测试：625 passed；
+- 本次状态同步基线：`main@f1e792a85dd4266471509c76e0079ed042c1f175`；
+- GATE-A-10专项：52 passed；完整自动化测试：860 passed；Manifest/blind guard：17 passed；CI通过；
 - 2410.HK回归：706页、0解析错误、Evidence第563/562页、现金跑道2.76个月、verified、90/critical。
 
 ### Remaining limitations
 
-- Legal与Business真实Agent尚未进入main；
-- Financial v0.3核心模块尚待共享Container、Workflow和Service集成；
+- Financial、Legal与Business standalone core均已进入main，但仍待共享Container、Workflow和Service集成；
 - `CatalogIPODataProvider`尚待全局ComponentRegistry注册；
-- LLMProvider尚未被真实Legal/Business Agent消费，真实外部endpoint smoke未执行；
+- Legal domain prompt runtime integration已完成并通过GATE-A-10；真实外部endpoint smoke未执行；
+- GATE-A-03/A04/A05/A06仍因真实人工Golden复核、Case C仲裁及canonical并表缺失而FAIL；Gate A与V3-8保持BLOCKED；
 - `enhanced_v2`、完整黄金案例双人复核、真实批量评测和v0.3 Release尚未完成。
 
 本节是开发中状态，不代表已创建v0.3 Release。

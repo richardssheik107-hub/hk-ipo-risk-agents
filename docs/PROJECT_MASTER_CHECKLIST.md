@@ -34,8 +34,8 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 功能状态基线 | `main@f9449fc1330404bf5d711d437162bc04baea017b`（Merge PR #28） |
-| 当前验证 | 825 passed；项目、赛事数据、黄金Manifest与编译校验通过 |
+| 本次状态同步基线 | `main@f1e792a85dd4266471509c76e0079ed042c1f175`（Merge PR #32） |
+| 当前验证 | GATE-A-10专项52 passed；全量860 passed；Manifest/blind guard 17 passed；CI、项目、赛事数据与编译校验通过 |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
 | v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
@@ -51,7 +51,7 @@
 | V3-1 Golden Cases | PARTIAL | canonical Manifest含26行真实Financial/Business草稿、6个真实案例；Legal A—H另为draft | 独立第二复核；Legal review/adjudication/canonical merge |
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选外部smoke |
+| V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke（尚未执行）；后续共享集成 |
 | V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享Container/Workflow/Service装配 |
 | V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-HUMAN-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #26；GATE-A-07/08/09/10技术项已关闭 | A—H真实人工primary/second review、Case C仲裁与并表 |
 | V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
@@ -83,7 +83,7 @@
 
 - Financial、Legal与Business三个standalone真实Agent均已合并；共享Container仍未装配v0.3三Agent，Legal/Business共享实现仍为disabled/Mock。
 - Market Agent和正式MarketDataProvider尚未接入。
-- LLMProvider基础设施已合并；Legal domain prompt尚未进入real-provider runtime routing，真实外部endpoint smoke未执行。
+- LLMProvider基础设施与Legal domain prompt real-provider runtime routing均已合并，GATE-A-10为PASS；真实外部endpoint smoke仍未执行。
 - `V03FinancialAgent`与`V03FinancialVerifier`已合并并可独立调用，但尚未进入共享Container/Workflow/Service。
 - `CatalogIPODataProvider`已实现；批量运行器可运行时注册，但全局ComponentRegistry尚未注册`catalog`。
 - 当前规则风险分不是经过校准的上市后下跌概率。
@@ -242,7 +242,7 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial与Business草稿已进入canonical Manifest；Legal A—H仍为独立draft。 | 财务/法务/业务 | 完成独立二审、Legal仲裁与并表，2025盲测不得进入。 |
 | V3-2（MERGED / INTEGRATION-PENDING） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理已合并。 | 技术备份/数据 | 全局Registry和共享Service接入仍待1号完成。 |
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
-| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | Legal domain prompt runtime routing；可选安全外部smoke。 |
+| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider及Legal domain prompt runtime routing已合并。 | 技术负责人 | 可选安全外部smoke尚未执行；后续共享集成。 |
 | V3-5（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 真实金标独立二审与共享装配。 |
 | V3-6（MERGED / STANDALONE-READY / GATE-A-HUMAN-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离、domain Verifiers及Legal runtime prompt routing已完成。 | 法务成员+技术负责人 | A—H真实人工primary/second review、Case C仲裁与并表。 |
 | V3-7（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Business Agent真实化 | `precommercial_product`独立正/负例闭环已合并。 | 业务成员 | 三条真实Golden独立二审与共享装配。 |
@@ -612,10 +612,11 @@ v0.3批量评测完成后增加：
 
 | 角色 | 当前任务 |
 | --- | --- |
-| 1号技术负责人 | Gatekeeper；Legal contract/severity/Retriever/runtime prompt技术门槛已关闭；等待真实人工Golden门槛，不启动V3-8 |
-| 3号财务 | 对真实Financial草稿完成独立第二复核，处理分歧并保持2025 blind guard |
-| 4号法务 | 组织Legal A—H primary/second review、Case C仲裁和canonical并表；配合contract与severity审批 |
-| 5号业务 | V3-7本体冻结；组织1167.HK两条正例与9633.HK负例的独立第二复核，不继续扩写Business Agent |
+| 1号技术负责人 | Gatekeeper；协调最终Gate A审计；人工门槛完成前不启动V3-8 |
+| 2号技术备份/数据 | 在Legal人工复核完成后提供数据治理、canonical并表支持与独立技术复跑；不得代替Legal专业复核 |
+| 3号财务 | 23条真实Financial记录由另一名真实人员完成独立第二复核，处理分歧并保持2025 blind guard |
+| 4号法务 | 对Legal A—H组织真实人工primary review、独立second review及Case C仲裁；完成后交由2号支持canonical并表 |
+| 5号业务 | V3-7本体冻结；3条真实Business记录由另一名真实人员完成独立第二复核，不继续扩写Business Agent |
 
 ### V3-8进入条件
 

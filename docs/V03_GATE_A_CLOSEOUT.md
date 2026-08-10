@@ -1,5 +1,6 @@
 ---
 snapshot_main: 6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc
+current_authoritative_main: f1e792a85dd4266471509c76e0079ed042c1f175
 phase: Gate A — Professional Agent Completion & Golden Review
 overall_status: BLOCKED
 ---
@@ -12,6 +13,10 @@ overall_status: BLOCKED
 状态核验基线为 `main@6c7ba02fd18e4ce778f43b1756c9bb11a026f8cc`
 （Merge PR #30）。该 SHA 是GATE-A-09执行采用的`main`审计基线，不要求等于
 本次变更未来合并后的`main` HEAD。
+
+当前权威主线为
+`main@f1e792a85dd4266471509c76e0079ed042c1f175`（Merge PR #32）。历史
+`snapshot_main`继续保留为GATE-A-09审计来源，不以当前主线覆盖。
 
 ## 1. 三条专业线冻结状态
 
