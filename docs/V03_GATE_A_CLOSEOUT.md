@@ -35,13 +35,14 @@ STANDALONE-READY
 CONTRACT-APPROVED
 SEVERITY-POLICY-FROZEN
 RETRIEVER-GAP-CLOSED
-RUNTIME-PROMPT-INTEGRATION-PENDING
+RUNTIME-PROMPT-INTEGRATED
 HUMAN-GOLDEN-REVIEW-PENDING
 SHARED-INTEGRATION-PENDING
 ```
 
 Legal Agent 本体不重新实现。候选字段契约与severity policy已经冻结，Retriever缺口
-已经关闭。Gate A剩余工作是domain prompt运行时接入、Legal A—H人工复核与并表。
+已经关闭，domain prompt已进入real-provider runtime。Gate A剩余工作是Legal A—H
+人工primary/second review、Case C仲裁与canonical并表。
 
 ### Business
 
@@ -68,7 +69,7 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 | GATE-A-07 | Legal candidate additive contract fields由Member-1明确APPROVE或REJECT | PASS | additive内部候选字段已APPROVE；`V03_LEGAL_CONTRACT_DELTA.md` |
 | GATE-A-08 | Legal severity policy冻结 | PASS | 两类Legal风险冻结为provisional `medium / 50`；A/E转人工复核 |
 | GATE-A-09 | Legal Retriever alias、lifecycle、status、remediation及licence gap关闭 | PASS | 2020—2023 development draft A—H固定`limit=5`全部命中；`V03_LEGAL_RETRIEVAL_GAP_REPORT.md` |
-| GATE-A-10 | Legal domain prompt正式进入real-provider runtime routing | FAIL | `V03_LEGAL_PROMPT_SPEC.md` |
+| GATE-A-10 | Legal domain prompt正式进入real-provider runtime routing | PASS | 精确版本registry、错配fail-closed及真实request message契约测试；`V03_LEGAL_PROMPT_SPEC.md` |
 | GATE-A-11 | 2025 blind set未参与开发、检索调优、Prompt调优或规则调参 | PASS | blind guard保持fail-closed |
 | GATE-A-12 | Mock、2410.HK与完整回归保持稳定 | PASS | 每个后续Gate任务重新验证 |
 

@@ -17,8 +17,8 @@ Extract only shareholder-right facts explicitly supported by the supplied Eviden
 Distinguish historical from current rights and before-listing, on-listing and
 after-listing timing. Treat termination and restoration as separate facts. Never
 invent a holder, termination event or restoration condition. Use null/empty values
-when the Evidence is incomplete. Cite only supplied evidence_ids. Do not assess risk
-level, verification status or investment merit.
+when the Evidence is incomplete. Cite only supplied evidence_ids. Do not assess a
+final risk score, risk level, verification status or investment recommendation.
 ```
 
 ## B. Litigation and Compliance
@@ -37,21 +37,32 @@ level, verification status or investment merit.
 Extract only actual litigation or compliance facts supported by the supplied
 Evidence. Distinguish actual events from generic future-risk language and explicit
 negative statements. Preserve historical/current and pending/resolved/settled/
-remediated status. Do not infer materiality, amount, regulator, counterparty or case
-status unless explicit. Cite only supplied evidence_ids. Do not assess final risk
-level, verification status or investment merit.
+closed/remediated status. Do not infer materiality, amount, regulator, counterparty
+or case status unless explicit. Cite only supplied evidence_ids. Do not assess a
+final risk score, risk level, verification status or investment recommendation.
 ```
 
 ## 当前接入状态
 
-当前`OpenAICompatibleLLMProvider.generate_structured(...)`只把`task_name`、`prompt_version`、JSON schema和Evidence放入请求，system prompt仅要求返回匹配schema的JSON。不存在正式prompt registry或prompt resolver。因此，Legal domain prompt现在**没有真正进入real LLM请求**；存在`prompt_version`字符串不等于Prompt已接入。
+`OpenAICompatibleLLMProvider.generate_structured(...)`现通过内部、版本受控的
+prompt registry按精确`(task_name, prompt_version)`解析本文件冻结的两份Legal
+instruction，并把解析结果加入实际OpenAI-compatible请求的system message。JSON
+schema和调用方提供的Evidence仍随请求传入；公共`generate_structured(...)`签名未变。
+
+已知Legal task或Legal prompt version发生错配时，Provider在网络调用前安全失败，
+不会回退到未版本化的通用Legal prompt。非Legal调用继续使用原有通用结构化生成
+约束。Mock Provider复用相同Legal identity guard，并继续确定性返回配置payload。
 
 ```text
-LEGAL_DOMAIN_PROMPT_RUNTIME_STATUS = NOT_INTEGRATED
+LEGAL_DOMAIN_PROMPT_RUNTIME_STATUS = INTEGRATED
+PROMPT_REGISTRY = src/ipo_risk/providers/prompt_registry.py
+PUBLIC_LLM_PROVIDER_SIGNATURE_CHANGED = false
 ```
 
-Pydantic字段描述可以改善JSON schema语义，但不足以替代跨字段、否定、历史状态和禁止事项的完整domain prompt。
+Pydantic字段描述继续用于JSON schema语义，但不替代本文件中的跨字段、否定、历史
+状态和禁止事项domain prompt。
 
 ## MEMBER_1_PROMPT_INTEGRATION_REQUEST
 
-建议成员1在不改变冻结`generate_structured(...)`签名的前提下增加内部prompt registry：以`(task_name, prompt_version)`解析受版本控制的domain instruction，并由Provider在通用JSON约束之外加入对应system/developer message。未知版本应安全失败，不应静默回退为通用抽取。成员4提供本文件中的两份规范和后续prompt测试；Provider实现仍由成员1维护。
+本请求已在`feat/v03-completion-one-shot`中按上述边界实现并通过网络隔离契约测试。
+后续prompt版本必须新增显式registry映射和测试，不得原位覆盖v1或改变公共Provider签名。

@@ -6,6 +6,11 @@ from uuid import uuid4
 
 from pydantic import BaseModel
 
+from ipo_risk.providers.llm import LLMFailureKind, LLMProviderError
+from ipo_risk.providers.prompt_registry import (
+    PromptResolutionError,
+    resolve_domain_instruction,
+)
 from ipo_risk.schemas import Evidence, IPOProfile, LLMCallMetadata, MarketSnapshot
 
 class MockLLMProvider:
@@ -38,6 +43,15 @@ class MockLLMProvider:
         response_model: type[BaseModel],
     ) -> BaseModel:
         started = perf_counter()
+        try:
+            resolve_domain_instruction(task_name, prompt_version)
+        except PromptResolutionError:
+            raise LLMProviderError(
+                LLMFailureKind.REQUEST,
+                "LLM prompt identity is not registered",
+                recoverable=False,
+                attempts=0,
+            ) from None
         payload = self.responses.get(task_name, {})
         result = response_model.model_validate(payload)
         raw = result.model_dump_json()

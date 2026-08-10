@@ -28,7 +28,7 @@
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 在复核后的真实黄金集上执行指标评测 |
 | V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选安全外部smoke |
 | V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享装配 |
-| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING | PR #26 | contract、severity、Retriever、runtime prompt、A—H复核与并表 |
+| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-HUMAN-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #26；GATE-A-07/08/09/10技术项已关闭 | A—H真实人工复核、Case C仲裁与并表 |
 | V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
 | V3-8 Specialized Verifier | BLOCKED BY GATE A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 全部mandatory Gate A criteria通过 |
 | V3-9 Supervisor / enhanced_v2 | PENDING | 稳定工作流仍为`mvp_v1` | 三Agent、Verifier和Catalog共享装配完成 |

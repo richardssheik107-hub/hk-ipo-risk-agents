@@ -11,6 +11,10 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
+from ipo_risk.providers.prompt_registry import (
+    PromptResolutionError,
+    resolve_domain_instruction,
+)
 from ipo_risk.schemas import Evidence, LLMCallMetadata
 
 
@@ -155,16 +159,32 @@ class OpenAICompatibleLLMProvider:
     ) -> StructuredModel:
         """Request JSON and return only an exactly validated Pydantic model."""
 
+        try:
+            domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+        except PromptResolutionError:
+            raise LLMProviderError(
+                LLMFailureKind.REQUEST,
+                "LLM prompt identity is not registered",
+                recoverable=False,
+                attempts=0,
+            ) from None
+
         request = {
             "task_name": task_name,
             "prompt_version": prompt_version,
             "response_schema": response_model.model_json_schema(),
             "evidence": [self._serialize_evidence(item) for item in evidence],
         }
+        system_instruction = "Return exactly one JSON object matching response_schema."
+        if domain_instruction is not None:
+            system_instruction = (
+                f"{system_instruction}\n\nDomain extraction instruction:\n"
+                f"{domain_instruction}"
+            )
         messages = [
             {
                 "role": "system",
-                "content": "Return exactly one JSON object matching response_schema.",
+                "content": system_instruction,
             },
             {
                 "role": "user",

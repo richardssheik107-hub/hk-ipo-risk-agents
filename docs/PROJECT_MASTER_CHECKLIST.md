@@ -53,7 +53,7 @@
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
 | V3-4 LLMProvider | COMPLETED / MERGED | PR #24 | Legal domain prompt runtime routing；可选外部smoke |
 | V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享Container/Workflow/Service装配 |
-| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING | PR #26 | contract、severity、Retriever、runtime prompt、A—H复核与并表 |
+| V3-6 Legal | MERGED / STANDALONE-READY / GATE-A-HUMAN-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #26；GATE-A-07/08/09/10技术项已关闭 | A—H真实人工primary/second review、Case C仲裁与并表 |
 | V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
 | V3-8 Specialized Verifier | BLOCKED — Gate A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 等待全部mandatory Gate A criteria通过 |
 | V3-9 Supervisor / enhanced_v2 | PENDING | 仅`mvp_v1`稳定 | 三Agent、Verifier与Catalog共享装配 |
@@ -244,7 +244,7 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
 | V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider已合并。 | 技术负责人 | Legal domain prompt runtime routing；可选安全外部smoke。 |
 | V3-5（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 真实金标独立二审与共享装配。 |
-| V3-6（MERGED / STANDALONE-READY / GATE-A-CLOSEOUT-PENDING / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离与domain Verifiers已合并。 | 法务成员+技术负责人 | contract、severity、Retriever、runtime prompt、A—H复核与并表。 |
+| V3-6（MERGED / STANDALONE-READY / GATE-A-HUMAN-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离、domain Verifiers及Legal runtime prompt routing已完成。 | 法务成员+技术负责人 | A—H真实人工primary/second review、Case C仲裁与并表。 |
 | V3-7（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Business Agent真实化 | `precommercial_product`独立正/负例闭环已合并。 | 业务成员 | 三条真实Golden独立二审与共享装配。 |
 | V3-8（BLOCKED — Gate A） | 专用Verifier体系 | 不得在Gate A强制门槛完成前启动。 | 技术负责人+专业成员 | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md)全部mandatory criteria通过。 |
 | V3-9（PENDING） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、失败降级和共享工作流。 | 技术负责人 | 保留mvp_v1；完成共享装配。 |
@@ -612,7 +612,7 @@ v0.3批量评测完成后增加：
 
 | 角色 | 当前任务 |
 | --- | --- |
-| 1号技术负责人 | Gatekeeper；按[Gate A收口验收表](V03_GATE_A_CLOSEOUT.md)关闭Legal contract/severity/Retriever/runtime prompt门槛；暂不启动V3-8 |
+| 1号技术负责人 | Gatekeeper；Legal contract/severity/Retriever/runtime prompt技术门槛已关闭；等待真实人工Golden门槛，不启动V3-8 |
 | 3号财务 | 对真实Financial草稿完成独立第二复核，处理分歧并保持2025 blind guard |
 | 4号法务 | 组织Legal A—H primary/second review、Case C仲裁和canonical并表；配合contract与severity审批 |
 | 5号业务 | V3-7本体冻结；组织1167.HK两条正例与9633.HK负例的独立第二复核，不继续扩写Business Agent |
