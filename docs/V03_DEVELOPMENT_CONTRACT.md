@@ -48,6 +48,70 @@ IPOProfile + DocumentChunk + MarketSnapshot?
 - 初始 `verification_status` 为 `pending` 或 `needs_review`，Agent 不自证为 verified；
 - 不适用、未找到证据、抽取失败和冲突不伪装为风险。
 
+### 3.1 Legal 内部候选契约
+
+`v03_contract_v1` 的公共接口和公共 Schema 保持不变。以下模型是 Legal Agent 内部、
+带默认值且向后兼容的冻结候选契约，不作为新的跨模块公共返回类型。
+
+`ShareholderRightCandidate` 字段：
+
+```text
+right_type
+holder
+trigger_or_termination
+survives_listing
+is_effective
+termination_event
+termination_timing
+restoration_clause
+restoration_condition
+impact_on_public_shareholders
+uncertainty_reason
+evidence_ids
+```
+
+`LitigationComplianceCandidate` 字段：
+
+```text
+matter_type
+subject
+counterparty_or_authority
+current_status
+event_date
+amount
+currency
+amount_unit
+is_pending
+is_resolved
+is_remediated
+management_materiality
+potential_impact
+license_impact
+materiality_stated
+uncertainty_reason
+evidence_ids
+```
+
+审批这些 additive fields 不表示每条决策路径都必须提供全部字段。字段继续按
+`MUST_HAVE_FOR_DECISION`、`REVIEW_SIGNAL` 和 `OPTIONAL_SUPPORTING_FACT` 分类。
+候选层字段名保持 `counterparty_or_authority`；抽取后的标准化 observation 层可使用
+`counterparty_or_regulator`，两者不得通过重命名候选字段来混同。
+
+### 3.2 Legal v0.3 severity policy
+
+`redemption_rights` 与 `material_litigation_compliance` 的 v0.3 候选等级统一冻结为
+`medium / 50`。每条生成的 Legal 风险必须记录：
+
+```text
+level_is_provisional = true
+score_is_rule_based = true
+score_is_probability = false
+```
+
+Legal Agent 不自动升级为 `high` 或 `critical`；专业 Legal Verifier 只改变核验状态，
+不升级 level 或 score。因此已核验风险仍可保持 provisional `medium / 50`。未来若需
+Legal 高等级映射，必须建立独立、显式版本化的 severity policy。
+
 ## 4. 诊断与异常契约
 
 `RiskAgent` 公共返回保持不变。需要解释“为什么没有产生风险”的真实组件实现 `DiagnosticSource.last_diagnostics`，返回 `list[ComponentDiagnostic]`。允许的诊断码：
