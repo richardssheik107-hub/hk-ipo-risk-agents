@@ -18,11 +18,11 @@
 
 | Case | 风险 | 当前状态 | 人工重点页/问题 |
 |---|---|---|---|
-| A | redemption_rights | draft | 页300；上市后持续，但severity未冻结 |
+| A | redemption_rights | draft | 页300；上市后持续；按已冻结provisional `medium / 50` policy复核draft `high` |
 | B | redemption_rights | draft | 页207；确认全部特殊权利已终止 |
 | C | redemption_rights | draft | 页152；明确conditional restoration与draft needs_review争议 |
 | D | redemption_rights | draft | 页78及外引工具条款；termination不完整 |
-| E | material_litigation_compliance | draft | 页26；重大未决，但severity未冻结 |
+| E | material_litigation_compliance | draft | 页26；重大未决；按已冻结provisional `medium / 50` policy复核draft `high` |
 | F | material_litigation_compliance | draft | 页298；已结案并支付 |
 | G | material_litigation_compliance | draft | 页222；明确否定重大诉讼 |
 | H | material_litigation_compliance | draft | 页44；一般未来风险因素 |
