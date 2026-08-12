@@ -1,7 +1,7 @@
 ---
-snapshot_main: 885afe7b6584886433f5ed584aa85f2a805f270e
-phase: Gate A — Professional Agent Completion & Golden Review
-overall_status: BLOCKED
+snapshot_main: b60570ef0854b198c6e4827336cb4a3b529fe462
+phase: v0.3 Technical Completion — Owner Waiver
+overall_status: TECHNICAL_CONTINUATION_AUTHORIZED_BY_OWNER_WAIVER
 ---
 
 # v0.3 Gate A 收口验收表
@@ -9,8 +9,8 @@ overall_status: BLOCKED
 本文件是 Gate A 的专项验收入口。项目总体状态仍以
 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为唯一入口。
 
-状态核验基线为 `main@885afe7b6584886433f5ed584aa85f2a805f270e`
-（Merge PR #35）。该 SHA 是本次A03/A04人工二审准备采用的功能基线，不要求等于
+状态核验基线为 `main@b60570ef0854b198c6e4827336cb4a3b529fe462`
+（Merge PR #37）。该 SHA 是本次 owner-waived 技术收口采用的功能基线，不要求等于
 本次变更未来合并后的`main` HEAD。
 
 ## 1. 三条专业线冻结状态
@@ -64,8 +64,8 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 | --- | --- | --- | --- |
 | GATE-A-01 | Financial、Legal、Business standalone Agents 全部进入 `main` | PASS | PR #22、#26、#28 |
 | GATE-A-02 | 三个Agent均保持 `RiskAgent.analyze() -> list[RiskItem]`，且不自行标记 `verified` | PASS | Agent契约测试与合并审核 |
-| GATE-A-03 | 真实Financial Golden完成独立second review | FAIL | 组织第二复核、记录分歧与仲裁 |
-| GATE-A-04 | Business三条真实Golden完成独立second review | FAIL | 1167.HK两条正例、9633.HK一条负例 |
+| GATE-A-03 | 真实Financial Golden完成独立second review | DEFERRED_BY_OWNER_WAIVER | 23条记录保持primary-only，不伪造二审 |
+| GATE-A-04 | Business三条真实Golden完成独立second review | DEFERRED_BY_OWNER_WAIVER | 3条记录保持primary-only，不伪造二审 |
 | GATE-A-05 | Legal A—H完成人工primary review、独立second review及Case C adjudication | PASS | `review/V03_LEGAL_FORMAL_REVIEW_AUDIT.md` |
 | GATE-A-06 | Reviewed Legal rows并入canonical v0.3 Golden Manifest | PASS | canonical与Legal fixture中的8条正式reviewed rows |
 | GATE-A-07 | Legal candidate additive contract fields由Member-1明确APPROVE或REJECT | PASS | additive内部候选字段已APPROVE；`V03_LEGAL_CONTRACT_DELTA.md` |
@@ -78,10 +78,11 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 ## 3. Gate结论
 
 ```text
-GATE_A_OVERALL_STATUS = BLOCKED
-V3-8_START_STATUS = BLOCKED
+GATE_A_OVERALL_STATUS = TECHNICAL_CONTINUATION_AUTHORIZED_BY_OWNER_WAIVER
+V3-8_START_STATUS = AUTHORIZED_BY_OWNER_WAIVER
 formal_financial_second_review_complete = false
 formal_business_second_review_complete = false
+formal_legal_golden_certified = true
 ```
 
 Legal Golden门槛已经关闭；Gate A仍因Financial和Business真实Golden独立second review
