@@ -34,12 +34,12 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 功能状态基线 | `main@885afe7b6584886433f5ed584aa85f2a805f270e`（Merge PR #35） |
-| 当前验证 | A03/A04 pre-human准备基线：876 passed；项目、赛事数据、Golden schema/integrity、blind guard、compileall及2410.HK真实回归通过 |
+| 功能状态基线 | `main@b60570ef0854b198c6e4827336cb4a3b529fe462`（Merge PR #37） |
+| 当前验证 | v0.3 owner-waived 技术收口；共享多Agent runtime、Verifier、Supervisor、UI/Report已实现；最终测试结果见Execution Report |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
-| v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
-| 当前稳定工作流 | `mvp_v1`；`enhanced_v2`尚未完成 |
+| v0.3当前阶段 | **TECHNICALLY COMPLETE / DEMO READY / OWNER-WAIVED HUMAN CERTIFICATION** |
+| 当前稳定工作流 | `mvp_v1`继续兼容；`enhanced_v2`已完成 |
 
 上述SHA是本轮文档状态核验所依据的功能实现基线，不要求等于本文档PR合并后的`main` HEAD。
 
@@ -52,14 +52,14 @@
 | V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
 | V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke（尚未执行）；后续共享集成 |
-| V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享Container/Workflow/Service装配 |
-| V3-6 Legal | MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING | PR #26；Legal A—H formal review audit与canonical rows | 共享Container/Workflow/Service装配 |
-| V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
-| V3-8 Specialized Verifier | BLOCKED — Gate A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 等待全部mandatory Gate A criteria通过 |
-| V3-9 Supervisor / enhanced_v2 | PENDING | 仅`mvp_v1`稳定 | 三Agent、Verifier与Catalog共享装配 |
+| V3-5 Financial core | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #22 + final integration | 人工认证为延期验证项 |
+| V3-6 Legal | INTEGRATED / FORMAL-GOLDEN-PROMOTED | PR #26 + final integration | 已进入共享runtime |
+| V3-7 Business | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #28 + final integration | 人工认证为延期验证项 |
+| V3-8 Specialized Verifier | COMPLETE_BY_OWNER_WAIVER | [Owner Waiver](V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) | 专业规则路由已集成 |
+| V3-9 Supervisor / enhanced_v2 | COMPLETE | final integration | `mvp_v1`兼容保留 |
 | V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
-| V3-11 UI / Report | PENDING | v0.2 UI仍可用 | `enhanced_v2` Service输出稳定 |
-| V3-12 Hardening / Release | PENDING | 尚未启动 | 前述门槛全部完成 |
+| V3-11 UI / Report | COMPLETE | v0.3 Streamlit + Markdown/JSON | PDF导出不在本版范围 |
+| V3-12 Hardening / Release | COMPLETE / PR-PENDING | final integration | 等待独立PR审核，不自动合并 |
 
 # 1. 项目总体目标与当前基线
 
@@ -81,11 +81,11 @@
 
 ## 1.1 当前能力边界
 
-- Financial、Legal与Business三个standalone真实Agent均已合并；共享Container仍未装配v0.3三Agent，Legal/Business共享实现仍为disabled/Mock。
+- Financial、Legal与Business三个真实Agent已合并并进入共享Container与`enhanced_v2`；旧流程仍保留disabled/Mock回退。
 - Market Agent和正式MarketDataProvider尚未接入。
 - LLMProvider基础设施与Legal domain prompt real-provider runtime routing均已合并，GATE-A-10为PASS；真实外部endpoint smoke仍未执行。
-- `V03FinancialAgent`与`V03FinancialVerifier`已合并并可独立调用，但尚未进入共享Container/Workflow/Service。
-- `CatalogIPODataProvider`已实现；批量运行器可运行时注册，但全局ComponentRegistry尚未注册`catalog`。
+- `V03FinancialAgent`、`V03FinancialVerifier`及其他专业组件既可独立调用，也已进入共享Container/Workflow/Service。
+- `CatalogIPODataProvider`已进入全局ComponentRegistry；默认v0.3单文档配置仍使用请求字段，避免缺失catalog阻断分析。
 - 当前规则风险分不是经过校准的上市后下跌概率。
 - 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
 
@@ -107,7 +107,7 @@
 |:---|:---|:---|:---|
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
-| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、黄金案例、批量评测 | IN PROGRESS — Gate A |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与开发评测 | TECHNICALLY COMPLETE / OWNER-WAIVED HUMAN CERTIFICATION |
 | v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |

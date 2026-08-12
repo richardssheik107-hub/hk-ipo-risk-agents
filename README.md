@@ -7,14 +7,28 @@
 当前阶段：
 
 ```text
-v0.2.0已正式发布；v0.3.0处于Gate A——专业Agent闭环与黄金案例复核
+v0.2.0已正式发布；v0.3.0技术实现已完成，当前为 owner-waived human-Golden certification
 ```
 
 稳定版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
 v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式和赛事数据治理。发布验收为284 passed，完整版本记录见[CHANGELOG](CHANGELOG.md)。
 
-截至`main@885afe7b6584886433f5ed584aa85f2a805f270e`（Merge PR #35），v0.3已合并Retriever查询族泛化、可替换LLMProvider、Financial核心与Verifier、standalone Legal Agent及Legal domain Verifiers、standalone `V03BusinessAgent`、Business Verifier，以及Catalog Provider与批量评测基础设施。Legal A—H已完成正式双审、必要仲裁和canonical Golden promotion；Financial 23条与Business 3条真实记录仍待独立人工二审。共享`enhanced_v2`工作流和v0.3发布尚未完成。完整进度以[项目主清单](docs/PROJECT_MASTER_CHECKLIST.md)为唯一入口，当前Gate A门槛见[Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)。
+以`main@b60570ef0854b198c6e4827336cb4a3b529fe462`为本轮功能起点，v0.3 已完成三个真实专业 Agent、Specialized Verifier Router、共享 Registry / Container、`enhanced_v2`、Supervisor、AnalysisService、Streamlit 和结构化报告。`mvp_v1`、Mock 与 v0.2 现金跑道链路继续保留。Legal Golden 已正式复核；Financial 23 条与 Business 3 条独立人工二审按[Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md)延期，不能用于正式跨域准确率声明。
+
+运行模式：
+
+```powershell
+$env:IPO_RISK_CONFIG="configs/v03_offline.yaml"  # 无网络、无 LLM 也可运行
+start.bat
+```
+
+```bash
+export IPO_RISK_CONFIG=configs/v03_ai.yaml        # 凭证仅来自环境变量
+./start.sh
+```
+
+UI 中也可直接选择 Mock、v0.2、v0.3 离线或 v0.3 AI 增强模式。
 
 ## 核心流程
 
@@ -63,14 +77,13 @@ v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现
 
 当前边界：
 
-- Financial、Legal、Business三个专业Agent的standalone core均已合并，但共享Container尚未装配这些v0.3真实实现；
-- Financial共享注册表仍主要使用`cash_runway`，Legal与Business共享注册表仍为`disabled`/Mock；Market Agent也仍为`disabled`/Mock；
-- `V03FinancialAgent`与`V03FinancialVerifier`已合并且可独立调用，但尚未注册到共享Container/Workflow/Service；
-- `CatalogIPODataProvider`可由批量运行器运行时注册，但尚未进入全局ComponentRegistry；
+- Financial、Legal、Business三个专业Agent已进入共享Container和`enhanced_v2`；
+- Specialized Verifier、Supervisor、Catalog Provider和v0.3报告组件已进入全局ComponentRegistry；Market Agent仍为`disabled`，留待v0.4；
+- `V03FinancialAgent`、Legal Agent与`V03BusinessAgent`均可独立调用，也可由共享Service装配；
 - LLMProvider基础设施与Legal domain prompt real-provider runtime routing已合并，GATE-A-10为PASS；standalone专业Agent已具备结构化Provider消费或安全降级路径，但外部真实endpoint smoke仍未执行；
-- `enhanced_v2`与v0.3多Agent Service/UI尚未完成，当前稳定工作流仍为`mvp_v1`；
+- `enhanced_v2`与v0.3多Agent Service/UI已完成；`mvp_v1`继续作为兼容工作流；
 - 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
-- ReportGenerator仍为Mock格式化组件；
+- v0.3使用结构化ReportGenerator；Mock报告组件仍为旧流程保留；
 - 扫描版PDF/OCR、统计预测模型和真实概率尚未实现；
 - 页面中的90分是确定性规则分，不是下跌概率，也不构成投资建议。
 

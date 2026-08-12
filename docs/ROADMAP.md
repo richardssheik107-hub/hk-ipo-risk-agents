@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | v0.1.0 | 架构级 MVP | 已完成并发布 |
 | v0.2.0 | 真实文档纵向闭环与赛事数据治理 | 已完成并发布 |
-| v0.3.0 | Financial、Legal、Business真实Agent与多案例评测 | IN PROGRESS — Gate A |
+| v0.3.0 | Financial、Legal、Business真实Agent与多案例评测 | TECHNICALLY COMPLETE / DEMO READY / HUMAN CERTIFICATION DEFERRED |
 | v0.4.0 | 市场数据与预测模型 | 计划中 |
 | v0.5.0 | 评测体系与人工标注 | 计划中 |
 | v1.0.0 | 正式参赛版本 | 计划中 |
