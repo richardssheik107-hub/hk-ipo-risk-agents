@@ -1,5 +1,18 @@
 # 港股IPO多智能体风险预警系统项目规格
 
+## v0.3 technical completion status
+
+v0.3.0 is technically complete and demo-ready with eight frozen document-risk
+types, three real professional Agents, deterministic specialized verification,
+`enhanced_v2`, cross-domain supervision, Service integration, Streamlit and
+Markdown/JSON reporting. `mvp_v1`, Mock mode and the released v0.2 cash-runway
+slice remain compatible.
+
+Financial and Business independent human second review is
+`DEFERRED_BY_OWNER_WAIVER`; formal cross-domain Golden performance is not
+claimed. Legal reviewed Golden remains certified. v0.4 market prediction,
+calibrated decline probabilities and 1/5/20/60-day labels have not started.
+
 ## 1. 项目名称
 
 中文名称：
@@ -198,7 +211,7 @@ HK IPO Risk Agents
 8. `CatalogIPODataProvider`、批量运行和黄金评测基础设施；
 9. LangGraph `mvp_v1`、IPOAnalysisService、JSON Repository和Streamlit。
 
-实现与共享集成必须区分：Financial、Legal与Business三个v0.3 standalone核心已经合并，但尚未进入共享Container/Workflow/Service；共享Legal/Business仍使用disabled/Mock。Catalog Provider尚未进入全局ComponentRegistry；Market Agent和真实市场数据Provider仍未真实实现；`enhanced_v2`尚未完成，ReportGenerator仍为Mock格式化组件。所有Mock、真实和unavailable实现必须遵守相同公共接口和Schema。
+实现与共享集成必须区分：Financial、Legal与Business三个v0.3核心已进入共享Container/Workflow/Service；Catalog Provider、Specialized Verifier、Supervisor和v0.3 ReportGenerator已完成注册与装配。`enhanced_v2`已经完成，同时保留`mvp_v1`、Mock与unavailable回退。Market Agent和真实市场数据Provider仍未实现，属于v0.4范围。所有Mock、真实和unavailable实现继续遵守相同公共接口和Schema。
 
 ## 9. 当前范围边界
 
@@ -240,5 +253,5 @@ v0.3.0当前处于Gate A，按以下顺序推进：
 当前进入v0.3.0真实多Agent文档风险分析。详细范围、任务顺序和退出门槛以
 `docs/PROJECT_MASTER_CHECKLIST.md`为准。
 
-截至`main@885afe7b6584886433f5ed584aa85f2a805f270e`，V3-3 Retriever、V3-4 LLMProvider及Financial、Legal、Business三个standalone核心均已合并；Legal formal Golden promotion与Business Verifier也已进入主线。当前统一阶段仍是Gate A；Financial 23条和Business 3条真实Golden记录的独立人工二审，以及三个专业模块的共享Container/Workflow/Service装配尚未完成，`enhanced_v2`和v0.3 Release仍未启动。具体PASS/FAIL门槛见`docs/V03_GATE_A_CLOSEOUT.md`。
+以`main@b60570ef0854b198c6e4827336cb4a3b529fe462`为技术收口起点，V3-3 Retriever、V3-4 LLMProvider以及Financial、Legal、Business三个真实核心均已进入共享Registry、Container、`enhanced_v2`与Service。Specialized Verifier、Supervisor、Streamlit及Report也已完成。Financial 23条和Business 3条真实Golden记录的独立人工二审按owner waiver延期，不能声明正式跨域Golden精度；Legal formal Golden保持已认证。具体治理语义见`docs/V03_GATE_A_CLOSEOUT.md`与owner waiver记录。
 

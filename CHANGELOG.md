@@ -1,6 +1,31 @@
 # Changelog
 
-## Unreleased — v0.3 development
+## Unreleased — v0.3.0-multi-agent-risk-analysis
+
+### Final technical completion (owner-waived human certification)
+
+- integrated real Financial, Legal and Business Agents into the shared registry and container;
+- added deterministic `SpecializedVerifierRouter`, `V03Supervisor` and `enhanced_v2`;
+- exposed offline and optional AI-enhanced runtime modes through `IPOAnalysisService`;
+- added Streamlit domain views and Markdown/JSON downloads;
+- added structured v0.3 reporting and explicit evaluation provenance;
+- preserved `mvp_v1`, Mock mode and the released v0.2 regression;
+- deferred Financial 23-row and Business 3-row independent human second review by explicit owner waiver;
+- did not claim formal Financial/Business or combined cross-domain Golden metrics;
+- did not access the 2025 blind set or start v0.4 market prediction work.
+
+### Final product completion
+
+- completed the product-first Streamlit experience with IPO Profile, overall rule-score
+  dashboard, domain status, risk cards, Supervisor and runtime diagnostics;
+- expanded Markdown/JSON downloads to preserve Evidence, Calculation, Verifier and
+  structured section metadata;
+- froze the deterministic v0.3 report at ten auditable sections;
+- added explicit cross-domain supervisory synthesis and rule-score components without
+  inventing a new verified risk or probability;
+- kept Golden governance `PARTIAL` while classifying it as a research-validation
+  limitation rather than a software release blocker;
+- preserved public Schema/Protocol boundaries, `mvp_v1`, Mock and v0.2 behavior.
 
 ### Merged
 
@@ -12,17 +37,19 @@
 
 ### Current validation
 
-- 本次状态对齐基线：`main@affaa28c03c22590ffc36cf34595b635357bf8ee`；
-- 完整自动化测试：625 passed；
+- 本次技术收口基线：`main@b60570ef0854b198c6e4827336cb4a3b529fe462`；
+- 完整自动化测试：893 passed；
+- 项目校验、赛事数据校验、Golden manifest integrity、compileall与diff check通过；
+- Streamlit Mock与v0.3 offline真实PDF浏览器smoke通过；
 - 2410.HK回归：706页、0解析错误、Evidence第563/562页、现金跑道2.76个月、verified、90/critical。
 
 ### Remaining limitations
 
-- Legal与Business真实Agent尚未进入main；
-- Financial v0.3核心模块尚待共享Container、Workflow和Service集成；
-- `CatalogIPODataProvider`尚待全局ComponentRegistry注册；
-- LLMProvider尚未被真实Legal/Business Agent消费，真实外部endpoint smoke未执行；
-- `enhanced_v2`、完整黄金案例双人复核、真实批量评测和v0.3 Release尚未完成。
+- Financial与Business独立人工二审按owner waiver延期，不能声明正式跨域Golden精度；
+- 真实外部LLM endpoint smoke未执行；
+- 1167.HK、9633.HK和Legal真实demo fixture在本次本地执行中不可用；
+- PDF报告导出未加入，本版支持Markdown和结构化JSON；
+- v0.4 Market Agent、标签、概率模型尚未开始。
 
 本节是开发中状态，不代表已创建v0.3 Release。
 

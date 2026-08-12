@@ -1,5 +1,22 @@
 # 港股IPO风险预警系统架构设计
 
+> v0.3 current implementation: `mvp_v1` remains the compatibility workflow;
+> `enhanced_v2` assembles the real Financial, Legal and Business Agents through
+> `ComponentRegistry` / `DependencyContainer`, routes their candidates through
+> deterministic specialized Verifiers, supervises cross-domain results, and
+> returns one structured result through `IPOAnalysisService`.
+
+```text
+PDF -> Parser (once) -> shared DocumentChunks
+    -> Financial / Legal / Business Agents
+    -> SpecializedVerifierRouter -> V03Supervisor
+    -> RuleBasedPredictor -> V03ReportGenerator
+```
+
+Offline mode uses `UnavailableLLMProvider` and degrades safely. AI-enhanced mode
+reuses the existing OpenAI-compatible Provider and environment-only credentials.
+Neither mode lets an LLM calculate financial values or override Verifier rules.
+
 ## 1. 架构形式
 
 本项目采用模块化单体架构。

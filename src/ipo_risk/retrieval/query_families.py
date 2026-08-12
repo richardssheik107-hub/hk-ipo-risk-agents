@@ -176,6 +176,8 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "监管调查", "監管調查", "regulatory investigation",
             "牌照", "许可", "許可", "licence", "license", "permit",
             "税务", "稅務", "tax",
+            "社会保险", "社會保險", "社保", "住房公积金", "住房公積金", "公积金", "公積金",
+            "social insurance", "housing provident fund", "provident fund contribution",
             "环境处罚", "環境處罰", "environmental penalty",
             "数据隐私", "數據隱私", "data privacy",
         ),
@@ -229,6 +231,8 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "manufacture and sell", "manufactured and sold", "products we manufacture and sell",
             "revenue generated from product sales", "revenue from product sales",
             "commercial product sales", "commercial launch", "launched products",
+            "licensing agreement", "licence agreement", "collaboration agreement",
+            "strategic partnership", "milestone payment", "research and development services",
         ),
         positive_context=(
             "核心产品", "核心產品", "产品销售收入", "產品銷售收入", "商业销售", "商業銷售",
@@ -238,6 +242,8 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "主要产品", "主要產品", "产品收益", "產品收益", "产品所产生的收益",
             "產品所產生的收益", "向市场推出", "向市場推出", "销售网络", "銷售網絡",
             "principal products", "main products", "product revenue", "sales network",
+            "licensing revenue", "licence revenue", "milestone revenue",
+            "collaboration revenue", "research and development service revenue",
         ),
         negative_context=(
             "行业概览", "行業概覽", "监管概览", "監管概覽", "一般药品", "一般藥品",

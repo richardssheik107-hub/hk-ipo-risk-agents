@@ -65,7 +65,17 @@ def _evidence_pages(risks: list[dict], risk_code: str) -> list[int]:
 
 
 def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[str]) -> dict:
-    """Compute the aggregate v0.3 evaluation metrics."""
+    """Compute metrics and disclose whether their labels had formal human review."""
+    formally_reviewed = [
+        row
+        for row in golden_rows
+        if row.get("review_status") in {"double_reviewed", "adjudicated"}
+        and bool(row.get("second_reviewer", "").strip())
+    ]
+    real_rows = [row for row in golden_rows if not row.get("case_id", "").startswith("synthetic-")]
+    real_formally_reviewed = [
+        row for row in formally_reviewed if not row.get("case_id", "").startswith("synthetic-")
+    ]
     golden_by_case: dict[str, list[dict]] = defaultdict(list)
     stock_to_case: dict[str, str] = {}
     for row in golden_rows:
@@ -153,6 +163,24 @@ def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[s
     agent_failures = sum(bucket["failed"] for bucket in per_agent.values())
 
     return {
+        "evaluation_provenance": {
+            "classification": (
+                "formal_reviewed_golden"
+                if real_rows and len(real_formally_reviewed) == len(real_rows)
+                else "development_or_mixed_review"
+            ),
+            "development_validation_only": len(real_formally_reviewed) != len(real_rows),
+            "formal_reviewed_golden_metric": bool(real_rows)
+            and len(real_formally_reviewed) == len(real_rows),
+            "total_rows": len(golden_rows),
+            "formally_reviewed_rows": len(formally_reviewed),
+            "real_rows": len(real_rows),
+            "real_formally_reviewed_rows": len(real_formally_reviewed),
+            "owner_waiver": {
+                "financial_second_review_deferred": True,
+                "business_second_review_deferred": True,
+            },
+        },
         "cases": {
             "golden": len(golden_by_case),
             "evaluated": len(evaluable),

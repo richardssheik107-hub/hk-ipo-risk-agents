@@ -88,6 +88,8 @@ def test_metrics_precision_recall_and_evidence(tmp_path: Path) -> None:
     assert evidence["applicable_gold_rows"] == 2
     assert evidence["recall_at_1"] == 0.5  # page 10 hit, page 20 missed
     assert evidence["recall_at_5"] == 0.5
+    assert metrics["evaluation_provenance"]["formal_reviewed_golden_metric"] is True
+    assert metrics["evaluation_provenance"]["development_validation_only"] is False
 
     assert metrics["extraction"]["available"] is False
 
