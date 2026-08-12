@@ -1,8 +1,8 @@
 # 港股IPO多智能体风险预警系统项目规格
 
-## v0.3 technical completion status
+## v0.3 released status
 
-v0.3.0 is technically complete and demo-ready with eight frozen document-risk
+`v0.3.0-multi-agent-risk-analysis` is released and frozen with eight document-risk
 types, three real professional Agents, deterministic specialized verification,
 `enhanced_v2`, cross-domain supervision, Service integration, Streamlit and
 Markdown/JSON reporting. `mvp_v1`, Mock mode and the released v0.2 cash-runway

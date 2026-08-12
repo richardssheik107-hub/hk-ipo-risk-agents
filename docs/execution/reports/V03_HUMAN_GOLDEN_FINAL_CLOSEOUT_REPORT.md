@@ -74,4 +74,5 @@ V04_MARKET_WORK = NOT_STARTED
 - Formal recall and F1 are materially below project targets.
 - Extraction metrics are unavailable with the current canonical columns.
 - External real-LLM smoke and disposable clean-environment validation were not run.
-- PR #39 and this stacked closeout PR remain unmerged; no tag or Release exists.
+- PR #39 and PR #40 were merged before the v0.3 release freeze. The formal
+  release tag is `v0.3.0-multi-agent-risk-analysis`.

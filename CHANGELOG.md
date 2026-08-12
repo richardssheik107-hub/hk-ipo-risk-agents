@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased — v0.3.0-multi-agent-risk-analysis
+## v0.3.0-multi-agent-risk-analysis — 2026-08-12
+
+Released as the frozen multi-Agent document-risk analysis product. Formal
+Golden metrics are published as measured and remain below planned research
+targets; no post-evaluation tuning was performed.
 
 ### Final technical completion (owner-waived human certification)
 

@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | v0.1.0 | 架构级 MVP | 已完成并发布 |
 | v0.2.0 | 真实文档纵向闭环与赛事数据治理 | 已完成并发布 |
-| v0.3.0 | Financial、Legal、Business 多 Agent 招股书风险分析产品 | SOFTWARE COMPLETE / DEMO READY / RELEASE-READY |
+| v0.3.0 | Financial、Legal、Business 多 Agent 招股书风险分析产品 | 已完成并发布 |
 | v0.4.0 | 市场数据、收益标签与预测模型 | NOT STARTED |
 | v0.5.0 | 扩展人工标注与正式评测 | 计划中 |
 | v1.0.0 | 正式参赛版本 | 计划中 |

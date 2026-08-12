@@ -1,6 +1,6 @@
 # HK IPO Risk Agents 项目主计划
 
-> 审核版本：v0.3 开发路线（覆盖旧版总清单）
+> 审核版本：v0.3 正式发布冻结版
 >
 > 正式发布基线：`v0.2.0-real-document-slice@916df5d`，2026-08-06
 >
@@ -23,7 +23,8 @@
 | v0.1.0         | 架构级MVP已发布                          |
 | v0.2.0代码     | 已全部进入main                           |
 | v0.2.0 Release | 已发布：Tag `v0.2.0-real-document-slice` |
-| 下一开发版本   | v0.3.0真实多Agent文档风险分析            |
+| v0.3.0 Release | 已发布：Tag `v0.3.0-multi-agent-risk-analysis` |
+| 下一规划版本   | v0.4市场预测（尚未开始）                 |
 | 远期版本       | v0.4市场预测、v0.5正式评测、RC与v1.0提交 |
 
 适用对象：5人参赛团队 / 技术负责人 / 数据治理 / 财务 / 法务 / 业务与产品
@@ -34,11 +35,11 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 功能状态基线 | `main@b60570ef0854b198c6e4827336cb4a3b529fe462`（Merge PR #37） |
-| 当前验证 | v0.3 owner-waived 技术收口；共享多Agent runtime、Verifier、Supervisor、UI/Report已实现；最终测试结果见Execution Report |
+| 功能状态基线 | PR #39与PR #40合并后的v0.3发布主线 |
+| 当前验证 | 900项测试、Mock健康检查、赛事数据校验、Golden integrity、2410.HK真实回归与`enhanced_v2`验收通过 |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
-| v0.3当前阶段 | **SOFTWARE COMPLETE / PRODUCT COMPLETE / DEMO READY / RELEASE-READY** |
+| v0.3当前阶段 | **RELEASED / FROZEN** |
 | 当前稳定工作流 | `mvp_v1`继续兼容；`enhanced_v2`已完成 |
 
 上述SHA是本轮文档状态核验所依据的功能实现基线，不要求等于本文档PR合并后的`main` HEAD。
@@ -59,7 +60,7 @@
 | V3-9 Supervisor / enhanced_v2 | COMPLETE | final integration | `mvp_v1`兼容保留 |
 | V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
 | V3-11 UI / Report | COMPLETE | v0.3 Streamlit + Markdown/JSON | PDF导出不在本版范围 |
-| V3-12 Hardening / Release | COMPLETE / RELEASE-READY | final product completion | 本任务不自动Tag或Release |
+| V3-12 Hardening / Release | COMPLETE / RELEASED | `v0.3.0-multi-agent-risk-analysis` | v0.3冻结；不在该版本继续开发 |
 
 # 1. 项目总体目标与当前基线
 
@@ -107,7 +108,7 @@
 |:---|:---|:---|:---|
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
-| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | SOFTWARE COMPLETE / RELEASE-READY / HUMAN GOLDEN COMPLETE |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | RELEASED / FROZEN / HUMAN GOLDEN COMPLETE |
 | v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
@@ -250,7 +251,7 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | V3-9（COMPLETE） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、跨域综合、失败降级和共享工作流已完成。 | 技术负责人 | 保留`mvp_v1`兼容。 |
 | V3-10（INFRASTRUCTURE MERGED） | 批量运行与评测 | 批量、resume、blind guard和评测框架已合并。 | 技术备份/数据 | 复核后真实黄金批量评测。 |
 | V3-11（COMPLETE） | Streamlit与报告 | IPO画像、Dashboard、三Agent、证据、Calculation、核验、Supervisor、诊断及Markdown/JSON。 | 业务/产品+技术 | PDF报告不在v0.3范围。 |
-| V3-12（COMPLETE / RELEASE-READY） | 发布加固 | 完整测试、真实回归、文档同步与安全检查。 | 全组 | Tag和Release由Owner另行授权。 |
+| V3-12（COMPLETE / RELEASED） | 发布加固 | 完整测试、真实回归、文档同步与安全检查。 | 全组 | Tag `v0.3.0-multi-agent-risk-analysis`。 |
 
 # 7. 黄金案例与人工标注计划
 
@@ -613,7 +614,7 @@ v0.3批量评测完成后增加：
 
 # 15. 当前状态与下一步
 
-当前统一阶段：**v0.3 Final Product Completion — Release Ready**。
+当前统一阶段：**v0.3 Released / Frozen**。v0.4仍为`NOT STARTED`。
 
 | 角色 | 当前任务 |
 | --- | --- |
@@ -671,7 +672,7 @@ Owner waiver已被当前政策取代。完整语义见
 
 - [ ] 独立干净环境复跑（尚未安全执行）
 
-- [ ] 创建v0.3 Tag和Release（需Owner另行授权）
+- [x] 创建v0.3 Tag和Release：`v0.3.0-multi-agent-risk-analysis`
 
 # 附录B：来源基准与版本说明
 

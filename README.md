@@ -11,7 +11,7 @@ Evidence-backed multi-agent risk analysis for Hong Kong IPO prospectuses.
 
 ```text
 v0.2.0-real-document-slice = RELEASED
-v0.3.0-multi-agent-risk-analysis = SOFTWARE COMPLETE / DEMO READY / RELEASE-READY
+v0.3.0-multi-agent-risk-analysis = RELEASED
 v0.3 Human Golden governance = COMPLETE (single named human review policy)
 v0.4 Market prediction work = NOT STARTED
 ```
@@ -21,6 +21,7 @@ Service、Streamlit、Markdown/JSON 报告和故障降级。Financial 23 条与 
 具名人工一审已按`single_named_human_review_v1`晋级；Legal 8 条原双审/仲裁记录保持。
 历史 [Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) 已被当前政策取代。
 
+当前稳定版本：[v0.3.0-multi-agent-risk-analysis](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.3.0-multi-agent-risk-analysis)。
 稳定回退版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
 ## 产品能力
