@@ -4,36 +4,35 @@
 | --- | --- | --- |
 | v0.1.0 | 架构级 MVP | 已完成并发布 |
 | v0.2.0 | 真实文档纵向闭环与赛事数据治理 | 已完成并发布 |
-| v0.3.0 | Financial、Legal、Business真实Agent与多案例评测 | TECHNICALLY COMPLETE / DEMO READY / HUMAN CERTIFICATION DEFERRED |
-| v0.4.0 | 市场数据与预测模型 | 计划中 |
-| v0.5.0 | 评测体系与人工标注 | 计划中 |
+| v0.3.0 | Financial、Legal、Business 多 Agent 招股书风险分析产品 | SOFTWARE COMPLETE / DEMO READY / RELEASE-READY |
+| v0.4.0 | 市场数据、收益标签与预测模型 | NOT STARTED |
+| v0.5.0 | 扩展人工标注与正式评测 | 计划中 |
 | v1.0.0 | 正式参赛版本 | 计划中 |
 
-## v0.3.0 范围
+## v0.3 已完成范围
 
-- 三个真实专业Agent：Financial、Legal、Business；
-- 八类正式风险：现金跑道、持续亏损、收入增长、客户集中度、供应商集中度、特殊股东权利、重大诉讼与合规、未商业化及核心产品依赖；
-- 五至十份黄金案例、结构化诊断码、专用Verifier、Supervisor与`enhanced_v2`；
-- 保留`mvp_v1`、Mock模式、v0.2回归及无API Key确定性运行能力；
-- 不在v0.3训练市场预测模型，不使用2025盲测集调试。
+| Workstream | 状态 | 说明 |
+| --- | --- | --- |
+| Golden governance | PARTIAL / OWNER-WAIVED | Legal 正式双审完成；Financial/Business 二审延期，不声明跨域正式指标 |
+| Catalog Provider | COMPLETE | 已注册；单文档配置可选 request/catalog |
+| Shared Retriever | COMPLETE | 财务、法务、业务简繁英查询族 |
+| LLMProvider | COMPLETE | Mock/OpenAI-compatible/Unavailable；外部 smoke 可选且尚未执行 |
+| Financial Agent | COMPLETE / INTEGRATED | 五类风险、确定性抽取/计算、Verifier |
+| Legal Agent | COMPLETE / INTEGRATED | 两类风险、Prompt routing、Verifier、Legal formal Golden |
+| Business Agent | COMPLETE / INTEGRATED | `precommercial_product`、正负例语义、Verifier |
+| Specialized Verifier | COMPLETE | 按 domain/risk_code 路由，失败隔离 |
+| Supervisor / `enhanced_v2` | COMPLETE | 去重、冲突、跨域观察、规则分构成 |
+| Batch/evaluation infrastructure | COMPLETE | 保留正式/开发 provenance 边界 |
+| Streamlit / Report | COMPLETE | Service-only UI、十章报告、Markdown/JSON |
+| Hardening | PASS | Mock、mvp_v1、v0.2 与真实 2410.HK 回归保留 |
 
-完整计划见[PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md)，当前Gate A强制门槛见[V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。
+## 当前边界
 
-## v0.3 当前路线
+- `mvp_v1` 是兼容工作流；`enhanced_v2` 是 v0.3 共享多 Agent 工作流；
+- Golden 人工治理仍为 `PARTIAL`，属于研究验证限制，不是软件 Release blocker；
+- 不把规则分描述为概率，不提供市场收益预测；
+- 2025 blind 数据未参与开发调优；
+- v0.4 Market Agent、市场标签、统计/机器学习模型尚未开始。
 
-| Workstream | Status | Main evidence | Remaining gate |
-| --- | --- | --- | --- |
-| V3-1 Golden Cases | PARTIAL | canonical中已有Financial/Business真实draft及8条正式Legal reviewed Golden | Financial与Business独立二审 |
-| V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service集成 |
-| V3-3 Retriever | COMPLETED / MERGED | PR #23 | 在复核后的真实黄金集上执行指标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke尚未执行；后续共享集成 |
-| V3-5 Financial core | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #22 | 真实金标二审与共享装配 |
-| V3-6 Legal | MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING | PR #26；Legal formal review audit与canonical rows | 共享Container/Workflow/Service装配 |
-| V3-7 Business | MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING | PR #28 | 三条真实Golden独立二审与共享装配 |
-| V3-8 Specialized Verifier | BLOCKED BY GATE A | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md) | 全部mandatory Gate A criteria通过 |
-| V3-9 Supervisor / enhanced_v2 | PENDING | 稳定工作流仍为`mvp_v1` | 三Agent、Verifier和Catalog共享装配完成 |
-| Real golden batch evaluation | PENDING | V3-10基础设施已由PR #20合并 | 复核后的真实黄金案例与共享工作流 |
-| V3-11 UI / Report | PENDING | v0.2 UI仍可用 | `enhanced_v2` Service输出稳定 |
-| V3-12 Hardening / Release | PENDING | 尚未启动 | 前述门槛全部完成 |
-
-当前统一阶段为 **Gate A — Professional Agent Completion & Golden Review**。三个专业Agent的standalone core均已进入`main`，但`standalone-ready`不等于共享集成完成。Legal A—H已完成正式双审、必要仲裁及canonical promotion；Gate A仍等待Financial与Business真实Golden独立二审。V3-8在全部mandatory Gate A criteria通过前不得启动。
+详细状态以 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为准，
+Golden/waiver 语义见 [V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。

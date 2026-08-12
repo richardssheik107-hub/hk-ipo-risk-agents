@@ -57,6 +57,11 @@ class IPOAnalysisService:
         prediction_metadata = prediction.metadata if prediction is not None else {}
         metadata = {
             "component_modes": self._component_modes(),
+            "ipo_profile": (
+                state["profile"].model_dump(mode="json")
+                if state.get("profile") is not None
+                else {}
+            ),
             "document": state.get("document_metadata", {}),
             "real_slice": {
                 "cash_runway_attempted": self.settings.financial_agent == "cash_runway",

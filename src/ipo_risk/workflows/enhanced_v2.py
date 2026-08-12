@@ -159,6 +159,11 @@ class EnhancedV2Workflow(MVPWorkflow):
                     "supervisor", {}
                 ),
                 "component_diagnostics": state.get("component_diagnostics", {}),
+                "runtime": {
+                    "status": "partial" if state.get("errors") else "completed",
+                    "event_count": len(state.get("agent_logs", [])),
+                    "error_count": len(state.get("errors", [])),
+                },
                 "owner_waiver": {
                     "financial_second_review_deferred": True,
                     "business_second_review_deferred": True,

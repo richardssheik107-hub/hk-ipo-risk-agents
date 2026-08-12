@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — v0.3 development
+## Unreleased — v0.3.0-multi-agent-risk-analysis
 
 ### Final technical completion (owner-waived human certification)
 
@@ -14,6 +14,19 @@
 - did not claim formal Financial/Business or combined cross-domain Golden metrics;
 - did not access the 2025 blind set or start v0.4 market prediction work.
 
+### Final product completion
+
+- completed the product-first Streamlit experience with IPO Profile, overall rule-score
+  dashboard, domain status, risk cards, Supervisor and runtime diagnostics;
+- expanded Markdown/JSON downloads to preserve Evidence, Calculation, Verifier and
+  structured section metadata;
+- froze the deterministic v0.3 report at ten auditable sections;
+- added explicit cross-domain supervisory synthesis and rule-score components without
+  inventing a new verified risk or probability;
+- kept Golden governance `PARTIAL` while classifying it as a research-validation
+  limitation rather than a software release blocker;
+- preserved public Schema/Protocol boundaries, `mvp_v1`, Mock and v0.2 behavior.
+
 ### Merged
 
 - PR #20：新增`CatalogIPODataProvider`、特殊证券治理、批量运行、断点续跑、2025盲测保护和黄金案例评测基础设施；
@@ -25,7 +38,9 @@
 ### Current validation
 
 - 本次技术收口基线：`main@b60570ef0854b198c6e4827336cb4a3b529fe462`；
-- 完整自动化测试：887 passed；
+- 完整自动化测试：893 passed；
+- 项目校验、赛事数据校验、Golden manifest integrity、compileall与diff check通过；
+- Streamlit Mock与v0.3 offline真实PDF浏览器smoke通过；
 - 2410.HK回归：706页、0解析错误、Evidence第563/562页、现金跑道2.76个月、verified、90/critical。
 
 ### Remaining limitations

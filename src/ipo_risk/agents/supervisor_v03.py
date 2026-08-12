@@ -51,6 +51,7 @@ class V03Supervisor:
                 )
 
         conflicts, findings = self._revenue_semantics(merged)
+        findings.extend(self._cross_domain_observations(merged))
         verified = [
             risk for risk in merged if risk.verification_status == VerificationStatus.VERIFIED
         ]
@@ -58,7 +59,8 @@ class V03Supervisor:
             verified_risks=verified,
             summary=(
                 f"Supervised {len(risks)} risks into {len(merged)} unique risks; "
-                f"{len(conflicts)} unresolved conflict(s)."
+                f"{len(conflicts)} unresolved conflict(s) and "
+                f"{len(findings)} supervisory finding(s)."
             ),
             duplicate_groups=duplicates,
             conflicts=conflicts,
@@ -76,8 +78,60 @@ class V03Supervisor:
                     risk.verification_status == VerificationStatus.REJECTED
                     for risk in merged
                 ),
+                "rule_score_components": [
+                    {
+                        "risk_code": risk.risk_code,
+                        "domain": risk.category.value,
+                        "score": risk.score,
+                        "level": risk.level.value,
+                        "verification_status": risk.verification_status.value,
+                    }
+                    for risk in verified
+                ],
+                "excluded_non_verified_risk_ids": [
+                    risk.risk_id
+                    for risk in merged
+                    if risk.verification_status != VerificationStatus.VERIFIED
+                ],
             },
         )
+
+    @staticmethod
+    def _cross_domain_observations(risks: list[RiskItem]) -> list[CompositeFinding]:
+        financial = [
+            risk
+            for risk in risks
+            if risk.category.value == "financial"
+            and risk.verification_status != VerificationStatus.REJECTED
+        ]
+        business = [
+            risk
+            for risk in risks
+            if risk.risk_code == "precommercial_product"
+            and risk.verification_status != VerificationStatus.REJECTED
+        ]
+        if not financial or not business:
+            return []
+        related = [risk.risk_id for risk in [*financial, *business]]
+        return [
+            CompositeFinding(
+                finding_code="financial_business_execution_risk_coexistence",
+                related_risk_ids=related,
+                summary=(
+                    "Financial pressure and commercialization uncertainty coexist and may "
+                    "amplify execution risk. This is supervisory synthesis, not a new "
+                    "verified risk or probability."
+                ),
+                evidence_ids=list(
+                    dict.fromkeys(
+                        evidence.evidence_id
+                        for risk in [*financial, *business]
+                        for evidence in risk.evidence
+                    )
+                ),
+                metadata={"classification": "SUPERVISORY_SYNTHESIS"},
+            )
+        ]
 
     @staticmethod
     def _revenue_semantics(

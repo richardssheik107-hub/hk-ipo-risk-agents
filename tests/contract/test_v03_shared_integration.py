@@ -128,6 +128,13 @@ def test_v03_supervisor_distinguishes_generic_and_product_revenue() -> None:
     assert result.composite_findings[0].metadata["classification"] == (
         "NO_CONFLICT_DIFFERENT_REVENUE_SEMANTICS"
     )
+    assert result.composite_findings[1].finding_code == (
+        "financial_business_execution_risk_coexistence"
+    )
+    assert result.composite_findings[1].metadata["classification"] == (
+        "SUPERVISORY_SYNTHESIS"
+    )
+    assert len(result.metadata["rule_score_components"]) == 2
     assert len(result.verified_risks) == 2
 
 
@@ -149,6 +156,23 @@ def test_v03_supervisor_deduplicates_different_risk_ids() -> None:
     assert result.duplicate_groups[0].source_risk_ids == [first.risk_id, "different-id"]
 
 
+def test_v03_supervisor_rule_score_components_only_include_verified_risks() -> None:
+    verified = _risk(
+        "redemption_rights",
+        RiskCategory.LEGAL,
+        "legal",
+        status=VerificationStatus.VERIFIED,
+    )
+    pending = _risk("continuous_loss", RiskCategory.FINANCIAL, "financial")
+
+    result = V03Supervisor().supervise([verified, pending])
+
+    assert [item["risk_code"] for item in result.metadata["rule_score_components"]] == [
+        "redemption_rights"
+    ]
+    assert result.metadata["excluded_non_verified_risk_ids"] == [pending.risk_id]
+
+
 def test_v03_report_has_stable_governance_sections() -> None:
     pending = _risk("precommercial_product", RiskCategory.BUSINESS, "business")
     sections = V03ReportGenerator().generate(
@@ -167,8 +191,20 @@ def test_v03_report_has_stable_governance_sections() -> None:
     )
 
     assert [item.order for item in sections] == list(range(1, 11))
-    assert sections[-1].title == "Limitations and Governance"
-    assert "must not be represented as completed" in sections[-1].summary
+    assert [item.title for item in sections] == [
+        "IPO Profile",
+        "System Runtime and Executive Risk Summary",
+        "Financial Risks",
+        "Legal Risks",
+        "Business Risks",
+        "Multi-Agent Supervisor Summary",
+        "Evidence Index",
+        "Calculation Index",
+        "Needs Human Review",
+        "Methodology, Limitations and Governance",
+    ]
+    assert "not probabilities" in sections[-1].summary
+    assert "owner waiver" in sections[-1].summary
 
 
 def test_v03_configs_select_enhanced_workflow_and_preserve_mvp_default() -> None:

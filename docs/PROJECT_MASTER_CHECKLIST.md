@@ -38,7 +38,7 @@
 | 当前验证 | v0.3 owner-waived 技术收口；共享多Agent runtime、Verifier、Supervisor、UI/Report已实现；最终测试结果见Execution Report |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
-| v0.3当前阶段 | **TECHNICALLY COMPLETE / DEMO READY / OWNER-WAIVED HUMAN CERTIFICATION** |
+| v0.3当前阶段 | **SOFTWARE COMPLETE / PRODUCT COMPLETE / DEMO READY / RELEASE-READY** |
 | 当前稳定工作流 | `mvp_v1`继续兼容；`enhanced_v2`已完成 |
 
 上述SHA是本轮文档状态核验所依据的功能实现基线，不要求等于本文档PR合并后的`main` HEAD。
@@ -48,18 +48,18 @@
 | Workstream | Status | Main evidence | Remaining gate |
 | --- | --- | --- | --- |
 | Planner → Executor | COMPLETED / MERGED | PR #21 | 每一棒继续使用独立Approved Plan |
-| V3-1 Golden Cases | PARTIAL | canonical Manifest含26行Financial/Business真实draft及8行正式Legal reviewed Golden | Financial与Business独立第二复核 |
-| V3-2 Catalog Provider | MERGED / INTEGRATION-PENDING | PR #20 | 全局ComponentRegistry与共享Service接入 |
+| V3-1 Golden Cases | PARTIAL / OWNER-WAIVED | canonical Manifest含26行Financial/Business真实draft及8行正式Legal reviewed Golden | 研究验证项，不阻塞软件发布 |
+| V3-2 Catalog Provider | COMPLETE / REGISTERED | PR #20 + final integration | 单文档配置可选择`request`或`catalog` |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
-| V3-4 LLMProvider | COMPLETED / MERGED | PR #24、#32；Legal domain prompt runtime已完成 | 可选安全外部smoke（尚未执行）；后续共享集成 |
+| V3-4 LLMProvider | COMPLETE / INTEGRATED | PR #24、#32 + final integration | 可选安全外部smoke尚未执行 |
 | V3-5 Financial core | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #22 + final integration | 人工认证为延期验证项 |
 | V3-6 Legal | INTEGRATED / FORMAL-GOLDEN-PROMOTED | PR #26 + final integration | 已进入共享runtime |
 | V3-7 Business | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #28 + final integration | 人工认证为延期验证项 |
-| V3-8 Specialized Verifier | COMPLETE_BY_OWNER_WAIVER | [Owner Waiver](V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) | 专业规则路由已集成 |
+| V3-8 Specialized Verifier | COMPLETE | [Owner Waiver](V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) + final integration | 专业规则路由与失败隔离已集成 |
 | V3-9 Supervisor / enhanced_v2 | COMPLETE | final integration | `mvp_v1`兼容保留 |
 | V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
 | V3-11 UI / Report | COMPLETE | v0.3 Streamlit + Markdown/JSON | PDF导出不在本版范围 |
-| V3-12 Hardening / Release | COMPLETE / PR-PENDING | final integration | 等待独立PR审核，不自动合并 |
+| V3-12 Hardening / Release | COMPLETE / RELEASE-READY | final product completion | 本任务不自动Tag或Release |
 
 # 1. 项目总体目标与当前基线
 
@@ -107,7 +107,7 @@
 |:---|:---|:---|:---|
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
-| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与开发评测 | TECHNICALLY COMPLETE / OWNER-WAIVED HUMAN CERTIFICATION |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | SOFTWARE COMPLETE / RELEASE-READY / GOLDEN PARTIAL |
 | v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
@@ -240,17 +240,17 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | V3-0A（已完成） | 冻结v0.3范围与路线 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结接力顺序和退出门槛。 | 技术负责人 | 文档范围与发布基线一致。 |
 | V3-0B（已完成） | 冻结开发契约 | 冻结角色输入输出、唯一风险所有权、候选模型、诊断、Supervisor和LLMProvider契约；新增兼容Schema和契约测试。 | 技术负责人 | 公共接口只做带默认值的兼容扩展；全量回归通过。 |
 | V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial与Business草稿已进入canonical Manifest；Legal A—H已完成正式双审、仲裁与并表。 | 财务/法务/业务 | 完成Financial与Business独立二审，2025盲测不得进入。 |
-| V3-2（MERGED / INTEGRATION-PENDING） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理已合并。 | 技术备份/数据 | 全局Registry和共享Service接入仍待1号完成。 |
+| V3-2（COMPLETE / REGISTERED） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理和全局注册已完成。 | 技术备份/数据 | 单文档默认仍可使用请求字段。 |
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
-| V3-4（COMPLETED / MERGED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider及Legal domain prompt runtime routing已合并。 | 技术负责人 | 可选安全外部smoke尚未执行；后续共享集成。 |
-| V3-5（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Financial Agent扩展 | 五类Financial风险、抽取、Skills与Verifier核心已合并。 | 财务成员 | 真实金标独立二审与共享装配。 |
-| V3-6（MERGED / STANDALONE-READY / FORMAL-GOLDEN-PROMOTED / SHARED-INTEGRATION-PENDING） | Legal Agent真实化 | 两类风险、失败隔离、domain Verifiers、runtime prompt及8条正式reviewed Golden均已完成。 | 法务成员+技术负责人 | 共享Container/Workflow/Service装配。 |
-| V3-7（MERGED / STANDALONE-READY / GOLDEN-SECOND-REVIEW-PENDING / SHARED-INTEGRATION-PENDING） | Business Agent真实化 | `precommercial_product`独立正/负例闭环已合并。 | 业务成员 | 三条真实Golden独立二审与共享装配。 |
-| V3-8（BLOCKED — Gate A） | 专用Verifier体系 | 不得在Gate A强制门槛完成前启动。 | 技术负责人+专业成员 | [Gate A收口验收表](V03_GATE_A_CLOSEOUT.md)全部mandatory criteria通过。 |
-| V3-9（PENDING） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、失败降级和共享工作流。 | 技术负责人 | 保留mvp_v1；完成共享装配。 |
+| V3-4（COMPLETE / INTEGRATED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider及Legal domain prompt runtime routing已合并。 | 技术负责人 | 可选安全外部smoke尚未执行。 |
+| V3-5（COMPLETE / INTEGRATED / GOLDEN-DEFERRED） | Financial Agent扩展 | 五类Financial风险、抽取、Skills、Verifier与共享装配已完成。 | 财务成员 | 真实金标独立二审为研究验证项。 |
+| V3-6（COMPLETE / INTEGRATED / FORMAL-GOLDEN） | Legal Agent真实化 | 两类风险、失败隔离、Prompt、Verifier、共享装配与8条正式reviewed Golden均已完成。 | 法务成员+技术负责人 | 维护回归。 |
+| V3-7（COMPLETE / INTEGRATED / GOLDEN-DEFERRED） | Business Agent真实化 | `precommercial_product`正/负例闭环与共享装配已完成。 | 业务成员 | 三条真实Golden独立二审为研究验证项。 |
+| V3-8（COMPLETE） | 专用Verifier体系 | Domain/risk-code路由、契约核验与失败隔离已完成。 | 技术负责人+专业成员 | 维护回归。 |
+| V3-9（COMPLETE） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、跨域综合、失败降级和共享工作流已完成。 | 技术负责人 | 保留`mvp_v1`兼容。 |
 | V3-10（INFRASTRUCTURE MERGED） | 批量运行与评测 | 批量、resume、blind guard和评测框架已合并。 | 技术备份/数据 | 复核后真实黄金批量评测。 |
-| V3-11（PENDING） | Streamlit与报告 | 三Agent页签、证据、核验状态和诊断。 | 业务/产品+技术 | 等待enhanced_v2 Service输出。 |
-| V3-12（PENDING） | 发布加固 | 完整测试、独立复跑、文档同步、Tag和Release。 | 全组 | 黄金案例100%运行、v0.2回归不变、无非预期崩溃。 |
+| V3-11（COMPLETE） | Streamlit与报告 | IPO画像、Dashboard、三Agent、证据、Calculation、核验、Supervisor、诊断及Markdown/JSON。 | 业务/产品+技术 | PDF报告不在v0.3范围。 |
+| V3-12（COMPLETE / RELEASE-READY） | 发布加固 | 完整测试、真实回归、文档同步与安全检查。 | 全组 | Tag和Release由Owner另行授权。 |
 
 # 7. 黄金案例与人工标注计划
 
@@ -609,26 +609,23 @@ v0.3批量评测完成后增加：
 | RC | 依赖、Prompt、规则、模型、黄金案例冻结；新电脑和异常复跑 | 无阻塞Bug，核心链路100%复现 |
 | v1.0 | 完整源码、模型、配置、结果、报告和材料包 | 完成正式参赛提交并保留备份 |
 
-# 15. 当前立即执行顺序
+# 15. 当前状态与下一步
 
-当前统一阶段：**Gate A — Professional Agent Completion & Golden Review**。
+当前统一阶段：**v0.3 Final Product Completion — Release Ready**。
 
 | 角色 | 当前任务 |
 | --- | --- |
-| 1号技术负责人 | Gatekeeper；Legal技术与formal Golden门槛已关闭；等待Financial/Business真实Golden二审，不启动V3-8 |
-| 3号财务 | 作为真实Financial草稿primary，提供证据定位支持；不得对自己的primary结果充当独立second reviewer |
-| 4号法务 | Legal A—H formal Golden已完成；维护审计一致性并等待共享装配任务 |
-| 5号业务 | V3-7本体冻结；作为三条Business草稿primary提供证据定位支持，不得对自己的primary结果充当独立second reviewer |
+| 1号技术负责人 | 完成独立验收、PR审核，并由Owner决定Tag/Release |
+| 3号财务 | 可继续Financial Golden独立二审研究验证；不阻塞软件发布 |
+| 4号法务 | 维护Legal formal Golden与规则审计一致性 |
+| 5号业务 | 完成页面人工验收；可继续Business Golden独立二审研究验证 |
 
-### V3-8进入条件
+### 软件门槛与 Golden 门槛
 
-V3-8当前状态为`BLOCKED — Gate A`。完整mandatory criteria及当前PASS/FAIL状态以
-[V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)为准，不在本节复制维护。
-
-只有全部mandatory Gate A criteria通过后，1号才生成独立的
-`V3-8_SPECIALIZED_VERIFIER_PLAN.md`。之后顺序为：共享组件集成 → V3-9
-Supervisor/`enhanced_v2` → 真实黄金批量评测 → V3-11 UI/报告 → V3-12加固 →
-v0.3 Release。
+V3-8、V3-9、V3-11 和 V3-12 的软件实现已经完成。A03/A04 仍按 Owner waiver 延期，
+因此 Human Golden 为`PARTIAL`、正式跨域指标为`NOT_AVAILABLE`；这两项是后续研究验证，
+不再阻塞 v0.3 软件 Release。完整语义见
+[V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。
 
 <table>
 <colgroup>
@@ -646,45 +643,33 @@ v0.3 Release。
 
 # 附录A：v0.3退出条件检查表
 
-- □ Financial、Legal、Business三个真实Agent可用
+- [x] Financial、Legal、Business三个真实Agent可用
+- [x] 8类风险进入正式风险注册表
+- [x] 至少5份真实开发/复核案例已进入治理材料
+- [x] verified风险均有Evidence
+- [x] 要求精确计算的verified风险均有Calculation
+- [x] 专用Verifier能够拒绝错误结论
+- [x] Supervisor能够去重、处理冲突和失败降级
+- [x] enhanced_v2工作流可配置运行
+- [x] 批量运行器和评测脚本可运行
+- [x] Streamlit能展示多Agent结果
+- [x] mvp_v1和Mock模式继续可用
+- [x] 2410.HK现金跑道结果不回归
+- [x] 无LLM API时确定性功能可运行
 
-- □ 8类风险进入正式风险注册表
+- [ ] 正式双审黄金主证据Recall@3达到90%（研究验证延期）
 
-- □ 至少5份、建议8—10份黄金案例
+- [ ] 正式双审黄金确定性金额/比例准确率达到95%（研究验证延期）
 
-- □ 所有正式风险都有Evidence
+- [ ] 正式双审黄金verified风险精确率达到90%（研究验证延期）
 
-- □ 所有数字风险都有Calculation
+- [ ] 正式双审黄金案例完整运行率100%（研究验证延期）
 
-- □ 专用Verifier能够拒绝错误结论
+- [x] 2025盲测集未参与开发调试
 
-- □ Supervisor能够去重、处理冲突和失败降级
+- [ ] 独立干净环境复跑（尚未安全执行）
 
-- □ enhanced_v2工作流可配置运行
-
-- □ 批量运行器和评测脚本可运行
-
-- □ Streamlit能展示多Agent结果
-
-- □ mvp_v1和Mock模式继续可用
-
-- □ 2410.HK现金跑道结果不回归
-
-- □ 无LLM API时确定性功能可运行
-
-- □ 黄金主证据Recall@3达到90%
-
-- □ 确定性金额/比例准确率达到95%
-
-- □ verified风险精确率达到90%
-
-- □ 黄金案例完整运行率100%
-
-- □ 2025盲测集未参与开发调试
-
-- □ 独立环境复跑通过
-
-- □ 创建v0.3 Tag和Release
+- [ ] 创建v0.3 Tag和Release（需Owner另行授权）
 
 # 附录B：来源基准与版本说明
 

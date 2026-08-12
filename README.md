@@ -1,190 +1,184 @@
 # HK IPO Risk Agents
 
-基于证据驱动多智能体协同的港股IPO招股书解析与上市后风险预警系统。
+Evidence-backed multi-agent risk analysis for Hong Kong IPO prospectuses.
 
-## 项目状态
+系统读取港股招股书 PDF，以共享 Evidence 为基础，协同运行 Financial、Legal、Business
+三个专业 Agent，再由专用 Verifier、Supervisor 和确定性规则评分生成可审计报告。
 
-当前阶段：
+> 输出中的分数是确定性规则分，不是下跌概率、上市失败概率或投资建议。
+
+## 当前版本状态
 
 ```text
-v0.2.0已正式发布；v0.3.0技术实现已完成，当前为 owner-waived human-Golden certification
+v0.2.0-real-document-slice = RELEASED
+v0.3.0-multi-agent-risk-analysis = SOFTWARE COMPLETE / DEMO READY / RELEASE-READY
+v0.3 Human Golden governance = PARTIAL (research-validation limitation)
+v0.4 Market prediction work = NOT STARTED
 ```
 
-稳定版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
+v0.3 已完成真实 PDF、多专业 Agent、专用核验、跨域 Supervisor、`enhanced_v2`、
+Service、Streamlit、Markdown/JSON 报告和故障降级。Financial 23 条与 Business 3 条
+独立人工二审仍按 [Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md)
+延期，因此不声明正式跨域 Golden 指标；该限制不再阻塞软件版本验收。
 
-v0.2.0完成真实PDF解析、关键词Evidence检索、财务数值提取、现金跑道计算与核验、规则评分、Service级E2E、Streamlit真实模式和赛事数据治理。发布验收为284 passed，完整版本记录见[CHANGELOG](CHANGELOG.md)。
+稳定回退版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
-以`main@b60570ef0854b198c6e4827336cb4a3b529fe462`为本轮功能起点，v0.3 已完成三个真实专业 Agent、Specialized Verifier Router、共享 Registry / Container、`enhanced_v2`、Supervisor、AnalysisService、Streamlit 和结构化报告。`mvp_v1`、Mock 与 v0.2 现金跑道链路继续保留。Legal Golden 已正式复核；Financial 23 条与 Business 3 条独立人工二审按[Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md)延期，不能用于正式跨域准确率声明。
+## 产品能力
 
-运行模式：
+- PyMuPDF 按物理页解析真实招股书，保留繁简中文、英文、数字、括号、负号和单位；
+- 财务、法务、业务简繁英查询族和稳定 Evidence ID；
+- Financial：现金跑道、持续亏损、收入增长、客户集中度、供应商集中度；
+- Legal：特殊股东权利、重大诉讼与合规；
+- Business：未商业化及核心产品依赖；
+- 金融计算由确定性 Python Skill 完成并关联 Evidence；
+- 专用 Verifier 不允许无 Evidence 或缺少必要 Calculation 的风险进入 verified；
+- Supervisor 去重、保留域所有权、识别语义冲突并输出跨域观察；
+- `mvp_v1`、`enhanced_v2`、Mock、v0.2、v0.3 offline 和可选 AI 模式并存；
+- Streamlit 展示 IPO Profile、总体规则分、三域风险、Evidence、Calculation、Verifier、
+  Supervisor、诊断和结构化错误；
+- 支持完整 Markdown 与 JSON 下载。
+
+## 架构
+
+```text
+Prospectus PDF
+      ↓
+DocumentParser → DocumentChunk
+      ↓
+Shared DocumentRetriever → Evidence
+      ↓
+Financial Agent ─┐
+Legal Agent ─────┼→ Specialized Verifier Router → V03 Supervisor
+Business Agent ──┘                                  ↓
+                                             RuleBasedPredictor
+                                                     ↓
+                                              V03 ReportGenerator
+                                                     ↓
+                                              IPOAnalysisService
+                                                     ↓
+                                     Streamlit / Markdown / JSON
+```
+
+项目采用模块化单体架构。Streamlit 只构造 `IPOAnalysisRequest`、调用
+`IPOAnalysisService` 并展示 `IPOAnalysisResult`；不会直接调用 Agent、Parser、
+Provider、Predictor 或 Repository。
+
+## Quick Start
+
+### Windows PowerShell
 
 ```powershell
-$env:IPO_RISK_CONFIG="configs/v03_offline.yaml"  # 无网络、无 LLM 也可运行
+python -m pip install -e ".[dev]"
+$env:PYTHONPATH = "src"
+pytest -q
+python scripts/validate_project.py
 start.bat
 ```
 
+也可直接启动：
+
+```powershell
+$env:IPO_RISK_CONFIG = "configs/v03_offline.yaml"
+python -m streamlit run app/streamlit_app.py
+```
+
+### Linux / macOS
+
 ```bash
-export IPO_RISK_CONFIG=configs/v03_ai.yaml        # 凭证仅来自环境变量
+python -m pip install -e '.[dev]'
+export PYTHONPATH=src
+pytest -q
+python scripts/validate_project.py
 ./start.sh
 ```
 
-UI 中也可直接选择 Mock、v0.2、v0.3 离线或 v0.3 AI 增强模式。
-
-## 核心流程
-
-```text
-招股书PDF
-→ 文档解析
-→ 文档检索
-→ 财务Agent
-→ 法务Agent
-→ 业务Agent
-→ 市场Agent
-→ Verifier Agent
-→ Supervisor Agent
-→ 风险预测
-→ 风险报告
-```
-
-## 核心设计原则
-
-1. 采用模块化单体架构；
-2. 不将业务逻辑集中在一个Python文件；
-3. 所有模块使用统一Pydantic Schema；
-4. 精确金融计算由Python Skill完成；
-5. 风险结论必须支持Evidence；
-6. Mock实现和真实实现使用相同接口；
-7. Streamlit只能调用IPOAnalysisService；
-8. 新功能必须具有测试；
-9. 工作流和模型支持版本管理；
-10. 稳定版本必须支持回退。
-
-## 当前实现范围
-
-真实或确定性实现：
-
-- ComponentRegistry 与 DependencyContainer 配置装配；
-- PyMuPDF DocumentParser与已泛化到财务、法务、业务查询族的KeywordDocumentRetriever；
-- `OpenAICompatibleLLMProvider`、Mock/Unavailable Provider、安全重试与Pydantic结构化校验；
-- CashRunwayFinancialAgent，以及独立可调用的`V03FinancialAgent`和`V03FinancialVerifier`；
-- 财务事实抽取、Decimal确定性Skills及五类Financial风险核心模块；
-- standalone Legal Agent、两类Legal风险链路及Legal domain Verifiers；
-- standalone `V03BusinessAgent`及`precommercial_product`确定性规则；
-- CashRunwayRiskVerifier、RuleSupervisor和verified-only RuleBasedPredictor；
-- RequestIPODataProvider与UnavailableMarketDataProvider；
-- JSON Repository、LangGraph工作流、结构化故障降级和Streamlit证据链展示；
-- `CatalogIPODataProvider`、565份招股书manifest、固定数据集划分、批量运行与黄金评测基础设施。
-
-当前边界：
-
-- Financial、Legal、Business三个专业Agent已进入共享Container和`enhanced_v2`；
-- Specialized Verifier、Supervisor、Catalog Provider和v0.3报告组件已进入全局ComponentRegistry；Market Agent仍为`disabled`，留待v0.4；
-- `V03FinancialAgent`、Legal Agent与`V03BusinessAgent`均可独立调用，也可由共享Service装配；
-- LLMProvider基础设施与Legal domain prompt real-provider runtime routing已合并，GATE-A-10为PASS；standalone专业Agent已具备结构化Provider消费或安全降级路径，但外部真实endpoint smoke仍未执行；
-- `enhanced_v2`与v0.3多Agent Service/UI已完成；`mvp_v1`继续作为兼容工作流；
-- 真实市场数据为`unavailable`，不会使用Mock市场情绪加分；
-- v0.3使用结构化ReportGenerator；Mock报告组件仍为旧流程保留；
-- 扫描版PDF/OCR、统计预测模型和真实概率尚未实现；
-- 页面中的90分是确定性规则分，不是下跌概率，也不构成投资建议。
-
-## 项目文档
-
-请先阅读：
-
-1. [项目规格](docs/PROJECT_SPEC.md)
-2. [架构设计](docs/ARCHITECTURE.md)
-3. [公共Schema](docs/DATA_SCHEMA.md)
-4. [v0.3主计划](docs/PROJECT_MASTER_CHECKLIST.md)
-5. [Gate A收口验收表](docs/V03_GATE_A_CLOSEOUT.md)
-6. [版本路线](docs/ROADMAP.md)
-7. [赛事数据概览](docs/COMPETITION_DATA_OVERVIEW.md)与[数据质量报告](docs/DATA_QUALITY_REPORT.md)
-8. [Retriever影子测试基线](docs/V0.2_SHADOW_TEST_REPORT.md)
-9. [开发规则](AGENTS.md)
-
-## v0.3.0 目标
-
-v0.3.0命名为`multi-agent-risk-analysis`，目标是在保留v0.2现金跑道回归和Mock模式的前提下，实现Financial、Legal、Business三个真实专业Agent、8类正式风险、5—10份黄金案例与批量评测。详细范围、接力顺序和退出门槛以[项目主计划](docs/PROJECT_MASTER_CHECKLIST.md)为准。
-
-## 开发规范
-
-任何开发任务开始前，应先阅读AGENTS.md。
-
-公共Schema、基础Agent接口、工作流State和AnalysisService属于受保护的公共接口，修改时必须说明影响。
-
-## MVP运行
-
-Mock演示模式默认使用离线组件，不需要真实招股书、市场数据或LLM API。
-
-Windows PowerShell：
-
-    python -m pip install -e ".[dev]"
-    $env:PYTHONPATH = "src"
-    pytest -q
-    python scripts/validate_project.py
-    python -m streamlit run app/streamlit_app.py
-
-Unix/Linux/macOS：
-
-    python -m pip install -e '.[dev]'
-    export PYTHONPATH=src
-    pytest -q
-    python scripts/validate_project.py
-    python -m streamlit run app/streamlit_app.py
-
-默认配置为 configs/mock.yaml。配置优先级为：环境变量（任意 IPO_RISK_字段名）> YAML（IPO_RISK_CONFIG 可指定文件）> 代码默认值。Mock、真实与unavailable实现均通过同一注册表和公共接口切换。
-
-## Mock与真实PDF模式
-
-Mock演示：
-
-```powershell
-$env:IPO_RISK_CONFIG = "configs/mock.yaml"
-python -m streamlit run app/streamlit_app.py
-```
+也可直接启动：
 
 ```bash
-export IPO_RISK_CONFIG=configs/mock.yaml
+export IPO_RISK_CONFIG=configs/v03_offline.yaml
 python -m streamlit run app/streamlit_app.py
 ```
 
-真实PDF模式由页面中的“真实PDF现金跑道分析”场景加载`configs/real_pdf.yaml`。上传文件必须为非空PDF并具有`%PDF-`文件头；系统使用随机临时文件，分析成功或异常后都会删除。
+## 运行模式
 
-真实案例命令：
+| UI 场景 | 配置 | 网络/凭证 | 用途 |
+| --- | --- | --- | --- |
+| Mock architecture demo | `configs/mock.yaml` | 不需要 | 架构和降级演示 |
+| v0.2 real cash-runway slice | `configs/real_pdf.yaml` | 不需要 | 2410.HK 现金跑道回归 |
+| v0.3 enhanced offline | `configs/v03_offline.yaml` | 不需要 | 默认真实多 Agent 产品演示 |
+| v0.3 enhanced AI | `configs/v03_ai.yaml` | 环境变量 | 可选结构化语义增强 |
+| Predictor failure degradation | `configs/mock.yaml` | 不需要 | partial/错误日志演示 |
+
+配置优先级：环境变量 `IPO_RISK_*` > `IPO_RISK_CONFIG` 指定的 YAML > 代码默认值。
+密钥只允许来自环境变量；不得提交 `.env`、Token 或 API Key。AI 凭证不可用时会安全降级，
+offline 路径仍完整可运行。
+
+## 注册组件
+
+- Parser：`mock`、`mock_alt`、`pymupdf`；
+- Retriever：`mock`、`keyword`；
+- Financial Agent：`mock`、`cash_runway`、`v03`；
+- Legal Agent：`mock`、`disabled`、`v03`；
+- Business Agent：`mock`、`disabled`、`v03`；
+- Market Agent：`mock`、`disabled`；
+- Verifier：`rule`、`specialized_v03`；
+- Supervisor：`rule`、`v03`；
+- Predictor：`rule_based`、`fault`；
+- LLMProvider：`mock`、`openai_compatible`、`unavailable`；
+- MarketDataProvider：`mock`、`unavailable`；
+- IPODataProvider：`mock`、`request`、`catalog`；
+- ReportGenerator：`mock`、`v03`；Repository：`json`。
+
+## 风险结果如何理解
+
+每条 `RiskItem` 包含风险码、域、等级、规则分、结论、Verification 状态和证据。
+
+- `verified`：Evidence 与必需 Calculation 契约均通过；
+- `needs_review`：证据、计算、语义或组件状态需要人工复核；
+- `pending`：候选尚未完成正式核验；
+- `rejected`：规则明确拒绝该候选。
+
+含精确数字的风险会展示 `Calculation.inputs / formula / result / unit / evidence_ids`。
+报告保留 PDF 物理页码和原文，便于逐条回查。
+
+## 真实案例回归
+
+本地放置 2410.HK 招股书后运行：
 
 ```powershell
-$env:PYTHONPATH = "src"
 $env:IPO_RISK_REAL_CASE_PDF = "data/local/real_case_001/prospectus.pdf"
 python scripts/check_real_v02_e2e.py
 ```
 
 ```bash
-export PYTHONPATH=src
 export IPO_RISK_REAL_CASE_PDF=data/local/real_case_001/prospectus.pdf
 python scripts/check_real_v02_e2e.py
 ```
 
-当前组件注册名称：
+冻结期望：706 个非空页/Chunk、0 个单页解析错误、现金页 563、经营现金流页 562、
+现金跑道 2.76 个月、verified、规则分 90、critical。
 
-- Parser：`mock`、`mock_alt`、`pymupdf`；
-- Retriever：`mock`、`keyword`；
-- Financial Agent（共享注册表）：`mock`、`cash_runway`；standalone `V03FinancialAgent`尚待共享集成；
-- Legal/Business/Market Agent（共享注册表）：`mock`、`disabled`；standalone Legal与Business实现已合并但尚待共享集成；
-- LLMProvider：`mock`、`openai_compatible`、`unavailable`；
-- MarketDataProvider：`mock`、`unavailable`；
-- IPODataProvider（共享注册表）：`mock`、`request`；`catalog`尚待全局注册；
-- Verifier/Supervisor：`rule`；Predictor：`rule_based`、`fault`；
-- Repository：`json`；ReportGenerator：`mock`。
+## 方法与限制
 
-Windows 可运行 `start.bat`，Unix 可运行 `start.sh`。配置默认读取 `configs/mock.yaml`，环境变量优先于 YAML 配置。
+- v0.3 是招股书证据驱动的文档风险系统，不包含市场收益预测；
+- Market Agent、真实 MarketDataProvider、1/5/20/60 日标签、LightGBM、SHAP 和概率校准
+  均属于 v0.4，当前未开始；
+- 扫描型 PDF 的 OCR 和 PDF 格式报告导出不在本版范围；本版提供 Markdown/JSON；
+- Financial/Business 正式人工 Golden 二审延期，不能据此宣称正式跨域准确率；
+- 真实外部 LLM endpoint smoke 为可选项，未提供凭证时明确跳过；
+- 2025 blind 数据未用于 Retriever、Prompt、规则或阈值调优。
 
-## v0.3 开发契约
+## 项目文档
 
-v0.3 正式编码前已冻结角色输入输出、8 类启用风险的唯一所有权、诊断通道、Supervisor 扩展、LLM 结构化调用和金标准格式。开发人员必须先阅读：
+1. [项目主状态](docs/PROJECT_MASTER_CHECKLIST.md)
+2. [项目规格](docs/PROJECT_SPEC.md)
+3. [架构设计](docs/ARCHITECTURE.md)
+4. [公共 Schema](docs/DATA_SCHEMA.md)
+5. [Gate A / Golden 治理状态](docs/V03_GATE_A_CLOSEOUT.md)
+6. [v0.3 页面验收](docs/V03_STREAMLIT_ACCEPTANCE_CHECKLIST.md)
+7. [v0.3 报告模板](docs/V03_REPORT_TEMPLATE.md)
+8. [版本路线](docs/ROADMAP.md)
+9. [开发规则](AGENTS.md)
 
-1. [v0.3 开发契约](docs/V03_DEVELOPMENT_CONTRACT.md)
-2. [v0.3 风险规则](docs/V03_RISK_RULES.md)
-3. [v0.3 标注指南](docs/V03_ANNOTATION_GUIDE.md)
-4. [v0.3 LLMProvider 规范](docs/V03_LLM_PROVIDER_SPEC.md)
-
-`weak_ipo_market` 为 v0.4 兼容而保留，但在 v0.3 禁用。任何真实 LLM 密钥只允许通过环境变量注入；曾出现在聊天或日志中的密钥必须先轮换。
-
+开发前必须阅读 `AGENTS.md`。公共 Schema、Protocol、WorkflowState 和
+`IPOAnalysisService` 是受保护边界；本轮产品收口未改变这些公共接口。
