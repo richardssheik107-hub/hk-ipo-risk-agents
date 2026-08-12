@@ -34,8 +34,8 @@
 
 | 项目 | 当前事实 |
 | --- | --- |
-| 功能状态基线 | `main@9dd4e9249a106a600366364c95570d883034e857`（Merge PR #34） |
-| 当前验证 | Legal formal Golden promotion：861 passed；项目、Golden schema/integrity、PDF exact-text与blind guard校验通过 |
+| 功能状态基线 | `main@885afe7b6584886433f5ed584aa85f2a805f270e`（Merge PR #35） |
+| 当前验证 | A03/A04 pre-human准备基线：876 passed；项目、赛事数据、Golden schema/integrity、blind guard、compileall及2410.HK真实回归通过 |
 | 稳定回退基线 | `v0.2.0-real-document-slice@916df5d442030e3443249a881f995b5d039a5b33` |
 | v0.2真实回归 | 706页、0解析错误、Evidence第563/562页、2.76个月、verified、90/critical |
 | v0.3当前阶段 | **Gate A — Professional Agent Completion & Golden Review** |
@@ -272,6 +272,8 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | 真实risk_code覆盖 | 8/8（Financial五类、Business一类、Legal两类） |
 
 canonical Manifest中的真实Financial覆盖`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`和`supplier_concentration`；真实Business覆盖`precommercial_product`三条draft。Legal A—H已完成人工primary、独立second review、必要仲裁并以4条`double_reviewed`和4条`adjudicated`记录并入canonical。V3-1仍保持PARTIAL，仅因为Financial和Business真实记录尚待独立二审；不得把其draft状态描述为正式黄金集完成。
+
+当前剩余二审必须保持盲审与人员独立：Financial primary为`member-3`，其second reviewer必须是与`member-3`不同的真实独立人工复核人；Business primary为`member-5`，其second reviewer必须是与`member-5`不同的真实独立人工复核人。实际二审人尚未在仓库中指派，不得由Codex/AI代填。盲审入口见[剩余人工复核包](review/V03_REMAINING_HUMAN_GOLDEN_REVIEW_PACKET.md)。
 
 ## 7.1 推荐案例构成
 
@@ -614,9 +616,9 @@ v0.3批量评测完成后增加：
 | 角色 | 当前任务 |
 | --- | --- |
 | 1号技术负责人 | Gatekeeper；Legal技术与formal Golden门槛已关闭；等待Financial/Business真实Golden二审，不启动V3-8 |
-| 3号财务 | 对真实Financial草稿完成独立第二复核，处理分歧并保持2025 blind guard |
+| 3号财务 | 作为真实Financial草稿primary，提供证据定位支持；不得对自己的primary结果充当独立second reviewer |
 | 4号法务 | Legal A—H formal Golden已完成；维护审计一致性并等待共享装配任务 |
-| 5号业务 | V3-7本体冻结；组织1167.HK两条正例与9633.HK负例的独立第二复核，不继续扩写Business Agent |
+| 5号业务 | V3-7本体冻结；作为三条Business草稿primary提供证据定位支持，不得对自己的primary结果充当独立second reviewer |
 
 ### V3-8进入条件
 
