@@ -13,6 +13,9 @@ class WorkflowState(TypedDict, total=False):
     verified_risks: Annotated[list[RiskItem], reduce_risks]
     pending_risks: Annotated[list[RiskItem], reduce_risks]
     rejected_risks: Annotated[list[RiskItem], reduce_risks]
+    # enhanced_v2 replacement snapshot; unlike candidate reducers this must allow
+    # Supervisor deduplication to remove semantically duplicate risk IDs.
+    supervised_verified_risks: list[RiskItem]
     agent_logs: Annotated[list[AgentLog], append]
     errors: Annotated[list[AnalysisError], append]
     prediction: Any; report_sections: list[Any]
