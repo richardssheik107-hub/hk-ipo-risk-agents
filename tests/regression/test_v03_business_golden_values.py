@@ -20,10 +20,10 @@ def business_rows() -> list[dict[str, str]]:
         ]
 
 
-def test_real_business_draft_annotations_are_positive_negative_and_unreviewed() -> None:
+def test_real_business_single_human_annotations_are_positive_and_negative() -> None:
     rows = business_rows()
     assert {row["applicable"] for row in rows} == {"true", "false"}
-    assert all(row["review_status"] == "draft" for row in rows)
+    assert all(row["review_status"] == "first_reviewed" for row in rows)
     assert all(row["second_reviewer"] == "" for row in rows)
     assert all(row["case_id"].startswith("ipo_2020_") for row in rows)
 

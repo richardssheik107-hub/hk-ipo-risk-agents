@@ -1,4 +1,4 @@
-"""Small numeric regressions from draft financial annotations; no PDF access."""
+"""Small numeric regressions from formally first-reviewed annotations; no PDF access."""
 
 from datetime import date
 from decimal import Decimal
@@ -186,7 +186,7 @@ def test_1167_two_comparable_annual_losses_verify_as_medium() -> None:
         ("2410.HK", "44242", "0", "-100.00", RiskLevel.HIGH),
     ],
 )
-def test_draft_revenue_golden_values_verify(
+def test_first_reviewed_revenue_golden_values_verify(
     case_id: str, previous: str, current: str, rounded: str, level: RiskLevel
 ) -> None:
     risk = verify(revenue_risk(previous, current))
@@ -203,7 +203,7 @@ def test_draft_revenue_golden_values_verify(
         ("8489.HK", "supplier", "22.6", "68.0", RiskLevel.MEDIUM),
     ],
 )
-def test_draft_concentration_golden_values_verify(
+def test_first_reviewed_concentration_golden_values_verify(
     case_id: str, kind: str, largest: str, top_five: str, level: RiskLevel
 ) -> None:
     risk = verify(concentration_risk(kind, largest, top_five))

@@ -18,6 +18,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+from ipo_risk.evaluation.v03_manifest import is_formally_eligible
+
 EXTRACTION_COLUMNS = ("gold_amount", "gold_unit", "gold_period")
 
 
@@ -65,20 +67,17 @@ def _evidence_pages(risks: list[dict], risk_code: str) -> list[int]:
 
 
 def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[str]) -> dict:
-    """Compute metrics and disclose whether their labels had formal human review."""
-    formally_reviewed = [
-        row
-        for row in golden_rows
-        if row.get("review_status") in {"double_reviewed", "adjudicated"}
-        and bool(row.get("second_reviewer", "").strip())
-    ]
+    """Compute metrics from formally eligible real Human Golden rows only."""
+    formally_reviewed = [row for row in golden_rows if is_formally_eligible(row)]
     real_rows = [row for row in golden_rows if not row.get("case_id", "").startswith("synthetic-")]
     real_formally_reviewed = [
         row for row in formally_reviewed if not row.get("case_id", "").startswith("synthetic-")
     ]
+    metric_rows = real_formally_reviewed
+    metric_risk_codes = {row.get("risk_code") for row in metric_rows}
     golden_by_case: dict[str, list[dict]] = defaultdict(list)
     stock_to_case: dict[str, str] = {}
-    for row in golden_rows:
+    for row in metric_rows:
         case_id = row["case_id"].strip()
         golden_by_case[case_id].append(row)
         if row.get("stock_code"):
@@ -104,7 +103,11 @@ def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[s
             if r["applicable"] == "true" and r["expected_status"] == "verified"
         }
         expected_verified |= {(case_id, code) for code in exp_verified}
-        verified_codes = {r.get("risk_code") for r in results_by_case[case_id].get("verified_risks", [])}
+        verified_codes = {
+            risk.get("risk_code")
+            for risk in results_by_case[case_id].get("verified_risks", [])
+            if risk.get("risk_code") in metric_risk_codes
+        }
         predicted_verified |= {(case_id, code) for code in verified_codes}
         for code in verified_codes:
             if code in gold_codes:
@@ -165,7 +168,7 @@ def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[s
     return {
         "evaluation_provenance": {
             "classification": (
-                "formal_reviewed_golden"
+                "formal_single_human_or_stronger_golden"
                 if real_rows and len(real_formally_reviewed) == len(real_rows)
                 else "development_or_mixed_review"
             ),
@@ -176,9 +179,10 @@ def evaluate(results: list[dict], golden_rows: list[dict], golden_fields: list[s
             "formally_reviewed_rows": len(formally_reviewed),
             "real_rows": len(real_rows),
             "real_formally_reviewed_rows": len(real_formally_reviewed),
-            "owner_waiver": {
-                "financial_second_review_deferred": True,
-                "business_second_review_deferred": True,
+            "human_review_policy": {
+                "policy": "single_named_human_review_v1",
+                "independent_second_review_required": False,
+                "double_review_preserved_when_available": True,
             },
         },
         "cases": {
@@ -346,6 +350,22 @@ def run_evaluation(results_path: Path, golden_path: Path, output_dir: Path) -> d
     results = load_results(results_path)
     golden_rows, golden_fields = load_golden(golden_path)
     metrics = evaluate(results, golden_rows, golden_fields)
+    domain_codes = {
+        "financial": {
+            "cash_runway", "continuous_loss", "revenue_growth",
+            "customer_concentration", "supplier_concentration",
+        },
+        "legal": {"redemption_rights", "material_litigation_compliance"},
+        "business": {"precommercial_product"},
+    }
+    metrics["domains"] = {
+        domain: evaluate(
+            results,
+            [row for row in golden_rows if row.get("risk_code") in codes],
+            golden_fields,
+        )
+        for domain, codes in domain_codes.items()
+    }
     write_tables(results, golden_rows, output_dir)
     (output_dir / "evaluation_metrics.json").write_text(
         json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8"

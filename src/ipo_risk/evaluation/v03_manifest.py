@@ -16,10 +16,48 @@ REQUIRED_COLUMNS = (
 STATUSES = {"verified", "needs_review", "rejected"}
 LEVELS = {"low", "medium", "high", "critical", "not_applicable"}
 REVIEW_STATUSES = {"draft", "first_reviewed", "double_reviewed", "adjudicated"}
+FORMAL_REVIEW_STATUSES = {"first_reviewed", "double_reviewed", "adjudicated"}
+_NON_HUMAN_REVIEWERS = {
+    "ai", "auto", "chatgpt", "codex", "generated", "llm", "placeholder", "unknown",
+}
 # Golden regression may only draw from these splits; the 2025 blind test is barred.
 ALLOWED_GOLDEN_SPLITS = {"development", "validation", "development_exception"}
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 _REAL_CASE_ID_PATTERN = re.compile(r"^ipo_(?P<year>\d{4})_\w+$")
+
+
+def is_human_reviewer(value: str) -> bool:
+    """Return whether a reviewer identifier is present and not an AI placeholder."""
+
+    normalized = value.strip().casefold()
+    return bool(normalized) and normalized not in _NON_HUMAN_REVIEWERS
+
+
+def formal_eligibility_reason(row: dict[str, str]) -> str:
+    """Explain whether a row satisfies the owner-approved single-review policy."""
+
+    status = row.get("review_status", "").strip()
+    primary = row.get("reviewer", "").strip()
+    second = row.get("second_reviewer", "").strip()
+    if status not in FORMAL_REVIEW_STATUSES:
+        return "review_status_not_formal"
+    if not is_human_reviewer(primary):
+        return "primary_reviewer_missing_or_non_human"
+    if status == "first_reviewed":
+        return "eligible_single_named_human_review"
+    if not is_human_reviewer(second):
+        return "second_reviewer_missing_or_non_human"
+    if primary.casefold() == second.casefold():
+        return "reviewers_not_independent"
+    if status == "adjudicated" and "adjudicated_by=" not in row.get("notes", ""):
+        return "adjudication_provenance_missing"
+    return "eligible_independent_double_review"
+
+
+def is_formally_eligible(row: dict[str, str]) -> bool:
+    """Apply the frozen v0.3 Human Golden eligibility policy."""
+
+    return formal_eligibility_reason(row).startswith("eligible_")
 
 
 def validate_manifest(path: Path) -> list[str]:
@@ -43,6 +81,10 @@ def validate_manifest(path: Path) -> list[str]:
                 errors.append(f"{prefix}: invalid expected_level")
             if row["review_status"] not in REVIEW_STATUSES:
                 errors.append(f"{prefix}: invalid review_status")
+            elif row["review_status"] in FORMAL_REVIEW_STATUSES and not is_formally_eligible(row):
+                errors.append(
+                    f"{prefix}: formal review is ineligible: {formal_eligibility_reason(row)}"
+                )
             if row["applicable"] == "true":
                 try:
                     page = int(row["gold_page"])
