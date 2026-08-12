@@ -240,5 +240,5 @@ v0.3.0当前处于Gate A，按以下顺序推进：
 当前进入v0.3.0真实多Agent文档风险分析。详细范围、任务顺序和退出门槛以
 `docs/PROJECT_MASTER_CHECKLIST.md`为准。
 
-截至`main@9dd4e9249a106a600366364c95570d883034e857`，V3-3 Retriever、V3-4 LLMProvider及Financial、Legal、Business三个standalone核心均已合并；本分支完成Legal formal Golden promotion。当前统一阶段仍是Gate A；Financial/Business真实Golden二审及三个专业模块的共享Container/Workflow/Service装配尚未完成，专业Verifier、`enhanced_v2`和v0.3 Release仍未启动。具体PASS/FAIL门槛见`docs/V03_GATE_A_CLOSEOUT.md`。
+截至`main@885afe7b6584886433f5ed584aa85f2a805f270e`，V3-3 Retriever、V3-4 LLMProvider及Financial、Legal、Business三个standalone核心均已合并；Legal formal Golden promotion与Business Verifier也已进入主线。当前统一阶段仍是Gate A；Financial 23条和Business 3条真实Golden记录的独立人工二审，以及三个专业模块的共享Container/Workflow/Service装配尚未完成，`enhanced_v2`和v0.3 Release仍未启动。具体PASS/FAIL门槛见`docs/V03_GATE_A_CLOSEOUT.md`。
 

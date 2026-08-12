@@ -1,5 +1,5 @@
 ---
-snapshot_main: 9dd4e9249a106a600366364c95570d883034e857
+snapshot_main: 885afe7b6584886433f5ed584aa85f2a805f270e
 phase: Gate A — Professional Agent Completion & Golden Review
 overall_status: BLOCKED
 ---
@@ -9,8 +9,8 @@ overall_status: BLOCKED
 本文件是 Gate A 的专项验收入口。项目总体状态仍以
 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为唯一入口。
 
-状态核验基线为 `main@9dd4e9249a106a600366364c95570d883034e857`
-（Merge PR #34）。该 SHA 是本次Legal formal Golden promotion采用的`main`基线，不要求等于
+状态核验基线为 `main@885afe7b6584886433f5ed584aa85f2a805f270e`
+（Merge PR #35）。该 SHA 是本次A03/A04人工二审准备采用的功能基线，不要求等于
 本次变更未来合并后的`main` HEAD。
 
 ## 1. 三条专业线冻结状态
@@ -80,11 +80,20 @@ Business Agent 本体已经冻结，不继续扩写 V3-7。后续只进行三条
 ```text
 GATE_A_OVERALL_STATUS = BLOCKED
 V3-8_START_STATUS = BLOCKED
+formal_financial_second_review_complete = false
+formal_business_second_review_complete = false
 ```
 
 Legal Golden门槛已经关闭；Gate A仍因Financial和Business真实Golden独立second review
 未完成而保持BLOCKED。只有全部mandatory Gate A标准转为PASS后，Planner才可以基于
 届时最新的`main`生成独立的 `V3-8_SPECIALIZED_VERIFIER_PLAN.md`。当前不得提前编写或执行V3-8。
+
+## 3.1 剩余二审独立性
+
+- Financial primary为`member-3`；second reviewer必须是与`member-3`不同的真实独立人工复核人。
+- Business primary为`member-5`；second reviewer必须是与`member-5`不同的真实独立人工复核人。
+- 仓库当前不指定具体second reviewer。不得由primary自审，也不得把Codex/AI记录为reviewer或adjudicator。
+- 二审人必须先完成盲审，之后才能与primary结果比较；分歧交给真实第三人仲裁。
 
 ## 4. 当前收口顺序
 
