@@ -49,6 +49,7 @@ def build_analysis_request(
     listing_date: date | None,
     prospectus_path: str,
     use_mock: bool,
+    workflow_version: str = "mvp_v1",
 ) -> IPOAnalysisRequest:
     """Build the only request object the UI sends to the service boundary."""
 
@@ -58,6 +59,7 @@ def build_analysis_request(
         listing_date=listing_date,
         prospectus_path=prospectus_path,
         use_mock=use_mock,
+        workflow_version=workflow_version,
     )
 
 
@@ -69,6 +71,11 @@ def result_payload(result: IPOAnalysisResult) -> dict[str, object]:
         "component_modes": result.metadata.get("component_modes", {}),
         "document": result.metadata.get("document", {}),
         "real_slice": result.metadata.get("real_slice", {}),
+        "workflow_version": result.workflow_version,
+        "configuration": result.metadata.get("configuration", {}),
+        "supervision": result.metadata.get("supervision", {}),
+        "governance": result.metadata.get("governance", {}),
+        "component_diagnostics": result.metadata.get("component_diagnostics", {}),
         "verified_risks": [item.model_dump(mode="json") for item in result.verified_risks],
         "pending_risks": [item.model_dump(mode="json") for item in result.pending_risks],
         "rejected_risks": [item.model_dump(mode="json") for item in result.rejected_risks],
@@ -81,3 +88,25 @@ def result_payload(result: IPOAnalysisResult) -> dict[str, object]:
         "errors": [item.model_dump(mode="json") for item in result.errors],
         "agent_logs": [item.model_dump(mode="json") for item in result.agent_logs],
     }
+
+
+def markdown_report(result: IPOAnalysisResult) -> str:
+    """Render existing ReportSections without adding business conclusions."""
+
+    lines = [
+        f"# {result.company_name} IPO risk analysis",
+        "",
+        f"- Status: `{result.status.value}`",
+        f"- Workflow: `{result.workflow_version}`",
+        "",
+    ]
+    for section in sorted(result.report_sections, key=lambda item: item.order):
+        lines.extend([f"## {section.title}", "", section.summary, ""])
+        for risk in section.risks:
+            lines.append(
+                f"- `{risk.risk_code}` — {risk.conclusion} "
+                f"({risk.verification_status.value})"
+            )
+        if section.risks:
+            lines.append("")
+    return "\n".join(lines)
