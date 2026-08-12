@@ -34,13 +34,15 @@ second_reviewer,review_status,notes
 - `precommercial_product`：标注核心产品、开发/审批/上市阶段以及是否已有产品收入。
 - 摘要页可作为交叉验证，不得在正式主表存在时替代主证据。
 
-## 4. 双人复核流程
+## 4. 人工复核与正式晋级流程
 
-```text
-第一标注 → 第一复核 → 第二标注独立复核 → 分歧仲裁 → double_reviewed/adjudicated
-```
+Owner 于 2026-08-12 冻结 `single_named_human_review_v1`：具名真实人工完成一次复核即可
+使用`first_reviewed`进入正式 Golden。`second_reviewer`必须保持为空，不得把一审写成
+`double_reviewed`。若自愿开展第二复核，则仍需盲审、人员独立；一致时使用
+`double_reviewed`，有分歧且完成人工仲裁时使用`adjudicated`。
 
-第二标注不得先看第一标注的结论。页码、原文、适用性、状态和等级任一不同均算分歧。评测集进入黄金回归前必须为 `double_reviewed` 或 `adjudicated`。
+Codex、ChatGPT、AI、LLM、自动生成或占位身份不得成为 reviewer。`draft`和缺少具名
+人工 reviewer 的记录不能进入正式评测。
 
 ## 5. 数据隔离
 

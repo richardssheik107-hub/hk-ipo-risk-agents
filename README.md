@@ -12,14 +12,14 @@ Evidence-backed multi-agent risk analysis for Hong Kong IPO prospectuses.
 ```text
 v0.2.0-real-document-slice = RELEASED
 v0.3.0-multi-agent-risk-analysis = SOFTWARE COMPLETE / DEMO READY / RELEASE-READY
-v0.3 Human Golden governance = PARTIAL (research-validation limitation)
+v0.3 Human Golden governance = COMPLETE (single named human review policy)
 v0.4 Market prediction work = NOT STARTED
 ```
 
 v0.3 已完成真实 PDF、多专业 Agent、专用核验、跨域 Supervisor、`enhanced_v2`、
 Service、Streamlit、Markdown/JSON 报告和故障降级。Financial 23 条与 Business 3 条
-独立人工二审仍按 [Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md)
-延期，因此不声明正式跨域 Golden 指标；该限制不再阻塞软件版本验收。
+具名人工一审已按`single_named_human_review_v1`晋级；Legal 8 条原双审/仲裁记录保持。
+历史 [Owner Waiver](docs/V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) 已被当前政策取代。
 
 稳定回退版本：[v0.2.0-real-document-slice](https://github.com/richardssheik107-hub/hk-ipo-risk-agents/releases/tag/v0.2.0-real-document-slice)。
 
@@ -164,7 +164,7 @@ python scripts/check_real_v02_e2e.py
 - Market Agent、真实 MarketDataProvider、1/5/20/60 日标签、LightGBM、SHAP 和概率校准
   均属于 v0.4，当前未开始；
 - 扫描型 PDF 的 OCR 和 PDF 格式报告导出不在本版范围；本版提供 Markdown/JSON；
-- Financial/Business 正式人工 Golden 二审延期，不能据此宣称正式跨域准确率；
+- 正式指标基于单次具名人工复核政策；它不是独立双审指标，实际数值见最终收口报告；
 - 真实外部 LLM endpoint smoke 为可选项，未提供凭证时明确跳过；
 - 2025 blind 数据未用于 Retriever、Prompt、规则或阈值调优。
 

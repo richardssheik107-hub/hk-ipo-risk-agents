@@ -1,6 +1,12 @@
 # v0.3 Owner Waiver for Final Technical Completion
 
-状态：`AUTHORIZED_BY_OWNER_WAIVER`
+历史状态：`AUTHORIZED_BY_OWNER_WAIVER`
+
+当前效力：`SUPERSEDED_BY_SINGLE_REVIEW_POLICY`
+
+> 本文件保留当时有效的治理决定。Owner 于 2026-08-12 永久取消 Financial / Business
+> 独立二审硬门槛，并冻结`single_named_human_review_v1`。因此本 waiver 不再是当前
+> Human Golden 治理入口，但其历史内容不得删除或改写为“从未有效”。
 
 功能基线：`main@b60570ef0854b198c6e4827336cb4a3b529fe462`（PR #37 合并后）
 

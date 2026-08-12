@@ -13,7 +13,7 @@
 
 | Workstream | 状态 | 说明 |
 | --- | --- | --- |
-| Golden governance | PARTIAL / OWNER-WAIVED | Legal 正式双审完成；Financial/Business 二审延期，不声明跨域正式指标 |
+| Golden governance | COMPLETE | Financial/Business具名一审正式晋级；Legal双审/仲裁保持；正式评测完成 |
 | Catalog Provider | COMPLETE | 已注册；单文档配置可选 request/catalog |
 | Shared Retriever | COMPLETE | 财务、法务、业务简繁英查询族 |
 | LLMProvider | COMPLETE | Mock/OpenAI-compatible/Unavailable；外部 smoke 可选且尚未执行 |
@@ -29,7 +29,7 @@
 ## 当前边界
 
 - `mvp_v1` 是兼容工作流；`enhanced_v2` 是 v0.3 共享多 Agent 工作流；
-- Golden 人工治理仍为 `PARTIAL`，属于研究验证限制，不是软件 Release blocker；
+- Golden 人工治理按`single_named_human_review_v1`完成；不将一审表述为独立双审；
 - 不把规则分描述为概率，不提供市场收益预测；
 - 2025 blind 数据未参与开发调优；
 - v0.4 Market Agent、市场标签、统计/机器学习模型尚未开始。

@@ -8,10 +8,14 @@ types, three real professional Agents, deterministic specialized verification,
 Markdown/JSON reporting. `mvp_v1`, Mock mode and the released v0.2 cash-runway
 slice remain compatible.
 
-Financial and Business independent human second review is
-`DEFERRED_BY_OWNER_WAIVER`; formal cross-domain Golden performance is not
-claimed. Legal reviewed Golden remains certified. v0.4 market prediction,
-calibrated decline probabilities and 1/5/20/60-day labels have not started.
+Human Golden governance now uses the permanent
+`single_named_human_review_v1` policy: one named human review is sufficient
+for formal promotion, while independent second review remains optional and
+must stay traceable when it exists. Financial, Legal and Business formal
+Golden evaluation is complete; actual cross-domain metrics are reported
+without tuning. The historical Owner Waiver is superseded. v0.4 market
+prediction, calibrated decline probabilities and 1/5/20/60-day labels have
+not started.
 
 ## 1. 项目名称
 
