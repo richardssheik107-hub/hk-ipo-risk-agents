@@ -48,13 +48,13 @@
 | Workstream | Status | Main evidence | Remaining gate |
 | --- | --- | --- | --- |
 | Planner → Executor | COMPLETED / MERGED | PR #21 | 每一棒继续使用独立Approved Plan |
-| V3-1 Golden Cases | PARTIAL / OWNER-WAIVED | canonical Manifest含26行Financial/Business真实draft及8行正式Legal reviewed Golden | 研究验证项，不阻塞软件发布 |
+| V3-1 Golden Cases | COMPLETE / FORMAL-EVALUATED | 23行Financial与3行Business具名一审正式晋级；8行Legal双审/仲裁保持 | 维护审计与回归 |
 | V3-2 Catalog Provider | COMPLETE / REGISTERED | PR #20 + final integration | 单文档配置可选择`request`或`catalog` |
 | V3-3 Retriever | COMPLETED / MERGED | PR #23 | 复核后真实金标评测 |
 | V3-4 LLMProvider | COMPLETE / INTEGRATED | PR #24、#32 + final integration | 可选安全外部smoke尚未执行 |
-| V3-5 Financial core | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #22 + final integration | 人工认证为延期验证项 |
+| V3-5 Financial core | COMPLETE / INTEGRATED / FORMAL-GOLDEN | PR #22 + final integration | 23条`first_reviewed`正式评测 |
 | V3-6 Legal | INTEGRATED / FORMAL-GOLDEN-PROMOTED | PR #26 + final integration | 已进入共享runtime |
-| V3-7 Business | INTEGRATED / GOLDEN-SECOND-REVIEW-DEFERRED | PR #28 + final integration | 人工认证为延期验证项 |
+| V3-7 Business | COMPLETE / INTEGRATED / FORMAL-GOLDEN | PR #28 + final integration | 3条`first_reviewed`正式评测 |
 | V3-8 Specialized Verifier | COMPLETE | [Owner Waiver](V03_OWNER_WAIVER_FOR_FINAL_TECHNICAL_COMPLETION.md) + final integration | 专业规则路由与失败隔离已集成 |
 | V3-9 Supervisor / enhanced_v2 | COMPLETE | final integration | `mvp_v1`兼容保留 |
 | V3-10 batch/evaluation infrastructure | MERGED | PR #20 | 复核后的真实黄金批量评测 |
@@ -107,7 +107,7 @@
 |:---|:---|:---|:---|
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
-| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | SOFTWARE COMPLETE / RELEASE-READY / GOLDEN PARTIAL |
+| v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | SOFTWARE COMPLETE / RELEASE-READY / HUMAN GOLDEN COMPLETE |
 | v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
@@ -239,13 +239,13 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 |:---|:---|:---|:---|:---|
 | V3-0A（已完成） | 冻结v0.3范围与路线 | 以本文件替换旧版总清单，并同步README、ROADMAP和CHANGELOG；冻结接力顺序和退出门槛。 | 技术负责人 | 文档范围与发布基线一致。 |
 | V3-0B（已完成） | 冻结开发契约 | 冻结角色输入输出、唯一风险所有权、候选模型、诊断、Supervisor和LLMProvider契约；新增兼容Schema和契约测试。 | 技术负责人 | 公共接口只做带默认值的兼容扩展；全量回归通过。 |
-| V3-1（PARTIAL） | 黄金案例与标注规范 | 真实Financial与Business草稿已进入canonical Manifest；Legal A—H已完成正式双审、仲裁与并表。 | 财务/法务/业务 | 完成Financial与Business独立二审，2025盲测不得进入。 |
+| V3-1（COMPLETE） | 黄金案例与标注规范 | Financial/Business具名一审按当前政策晋级；Legal A—H正式双审、仲裁保持。 | 财务/法务/业务 | 2025盲测不得进入调优。 |
 | V3-2（COMPLETE / REGISTERED） | IPO基础信息Provider | `CatalogIPODataProvider`、特殊证券治理和全局注册已完成。 | 技术备份/数据 | 单文档默认仍可使用请求字段。 |
 | V3-3（COMPLETED / MERGED） | Retriever查询族泛化 | 八类查询族、简繁英、章节权重与稳定Evidence已合并。 | 技术负责人 | 复核后真实金标评测。 |
 | V3-4（COMPLETE / INTEGRATED） | 可替换LLMProvider | Mock、OpenAI-compatible、Unavailable Provider及Legal domain prompt runtime routing已合并。 | 技术负责人 | 可选安全外部smoke尚未执行。 |
-| V3-5（COMPLETE / INTEGRATED / GOLDEN-DEFERRED） | Financial Agent扩展 | 五类Financial风险、抽取、Skills、Verifier与共享装配已完成。 | 财务成员 | 真实金标独立二审为研究验证项。 |
+| V3-5（COMPLETE / INTEGRATED / FORMAL-GOLDEN） | Financial Agent扩展 | 五类Financial风险、抽取、Skills、Verifier、共享装配与正式评测已完成。 | 财务成员 | 维护回归。 |
 | V3-6（COMPLETE / INTEGRATED / FORMAL-GOLDEN） | Legal Agent真实化 | 两类风险、失败隔离、Prompt、Verifier、共享装配与8条正式reviewed Golden均已完成。 | 法务成员+技术负责人 | 维护回归。 |
-| V3-7（COMPLETE / INTEGRATED / GOLDEN-DEFERRED） | Business Agent真实化 | `precommercial_product`正/负例闭环与共享装配已完成。 | 业务成员 | 三条真实Golden独立二审为研究验证项。 |
+| V3-7（COMPLETE / INTEGRATED / FORMAL-GOLDEN） | Business Agent真实化 | `precommercial_product`正/负例闭环、共享装配与正式评测已完成。 | 业务成员 | 维护回归。 |
 | V3-8（COMPLETE） | 专用Verifier体系 | Domain/risk-code路由、契约核验与失败隔离已完成。 | 技术负责人+专业成员 | 维护回归。 |
 | V3-9（COMPLETE） | Supervisor与enhanced_v2 | 多Agent去重、冲突识别、跨域综合、失败降级和共享工作流已完成。 | 技术负责人 | 保留`mvp_v1`兼容。 |
 | V3-10（INFRASTRUCTURE MERGED） | 批量运行与评测 | 批量、resume、blind guard和评测框架已合并。 | 技术备份/数据 | 复核后真实黄金批量评测。 |
@@ -264,16 +264,18 @@ Supervisor：去重、冲突识别、组合风险和降级<br />
 | synthetic rows | 3 |
 | real rows | 34 |
 | unique real cases/documents | 14 |
+| review_status=first_reviewed | 26（23条Financial、3条Business） |
 | review_status=double_reviewed | 7（3条synthetic、4条Legal） |
 | review_status=adjudicated | 4（全部Legal） |
-| review_status=draft | 26（Financial/Business真实草稿） |
-| second_reviewer缺失 | 26 |
+| review_status=draft | 0 |
+| second_reviewer为空 | 26（`first_reviewed`政策预期，不伪造二审） |
 | 全部risk_code覆盖 | 8/8 |
 | 真实risk_code覆盖 | 8/8（Financial五类、Business一类、Legal两类） |
 
-canonical Manifest中的真实Financial覆盖`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`和`supplier_concentration`；真实Business覆盖`precommercial_product`三条draft。Legal A—H已完成人工primary、独立second review、必要仲裁并以4条`double_reviewed`和4条`adjudicated`记录并入canonical。V3-1仍保持PARTIAL，仅因为Financial和Business真实记录尚待独立二审；不得把其draft状态描述为正式黄金集完成。
-
-当前剩余二审必须保持盲审与人员独立：Financial primary为`member-3`，其second reviewer必须是与`member-3`不同的真实独立人工复核人；Business primary为`member-5`，其second reviewer必须是与`member-5`不同的真实独立人工复核人。实际二审人尚未在仓库中指派，不得由Codex/AI代填。盲审入口见[剩余人工复核包](review/V03_REMAINING_HUMAN_GOLDEN_REVIEW_PACKET.md)。
+canonical Manifest中的真实Financial覆盖五类风险，Business覆盖`precommercial_product`，
+均按Owner于2026-08-12冻结的`single_named_human_review_v1`以`first_reviewed`
+正式晋级。Legal A—H原有4条`double_reviewed`和4条`adjudicated`保持不变。
+一审政策不等于独立双审；`second_reviewer`继续为空且不得伪造。
 
 ## 7.1 推荐案例构成
 
@@ -616,15 +618,15 @@ v0.3批量评测完成后增加：
 | 角色 | 当前任务 |
 | --- | --- |
 | 1号技术负责人 | 完成独立验收、PR审核，并由Owner决定Tag/Release |
-| 3号财务 | 可继续Financial Golden独立二审研究验证；不阻塞软件发布 |
+| 3号财务 | 维护Financial Human Golden与计算证据一致性 |
 | 4号法务 | 维护Legal formal Golden与规则审计一致性 |
-| 5号业务 | 完成页面人工验收；可继续Business Golden独立二审研究验证 |
+| 5号业务 | 维护Business Human Golden与页面验收 |
 
 ### 软件门槛与 Golden 门槛
 
-V3-8、V3-9、V3-11 和 V3-12 的软件实现已经完成。A03/A04 仍按 Owner waiver 延期，
-因此 Human Golden 为`PARTIAL`、正式跨域指标为`NOT_AVAILABLE`；这两项是后续研究验证，
-不再阻塞 v0.3 软件 Release。完整语义见
+V3-8、V3-9、V3-11 和 V3-12 的软件实现已经完成。A03/A04按
+`single_named_human_review_v1`关闭，Human Golden与正式跨域评测均已完成；历史
+Owner waiver已被当前政策取代。完整语义见
 [V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。
 
 <table>

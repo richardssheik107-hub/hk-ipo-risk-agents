@@ -32,6 +32,12 @@ V04_MARKET_WORK = NOT_STARTED
 This is a technical-completion result, not a statement that all Golden data has
 completed human certification. No reviewer or adjudication was fabricated.
 
+> Historical execution snapshot: the later Human Golden governance decision and
+> formal results are recorded in
+> [V03_HUMAN_GOLDEN_FINAL_CLOSEOUT_REPORT.md](V03_HUMAN_GOLDEN_FINAL_CLOSEOUT_REPORT.md).
+> That closeout supersedes the current-state Golden/waiver lines in this report
+> without rewriting what was true when this execution finished.
+
 ## Implemented production changes
 
 - `src/ipo_risk/agents/verifier_router.py`: deterministic domain ownership routing and per-domain failure isolation;
@@ -255,3 +261,17 @@ The partial Human Golden state is retained as an explicit research-validation
 limitation under the Owner waiver; it is not represented as complete and is not a
 software release blocker. No commit, push, merge, tag or Release was performed by
 this execution.
+
+## Subsequent Human Golden closeout
+
+The Owner later froze `single_named_human_review_v1`. Financial 23 rows and
+Business 3 rows were promoted as `first_reviewed`; Legal review provenance was
+preserved. The current state is:
+
+```text
+V03_HUMAN_GOLDEN_GOVERNANCE = COMPLETE
+V03_FORMAL_CROSS_DOMAIN_GOLDEN_METRIC = AVAILABLE
+OWNER_WAIVER_STATUS = SUPERSEDED_BY_SINGLE_REVIEW_POLICY
+```
+
+See the dedicated closeout report for actual metrics and limitations.

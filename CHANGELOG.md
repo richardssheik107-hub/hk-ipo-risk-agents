@@ -27,6 +27,17 @@
   limitation rather than a software release blocker;
 - preserved public Schema/Protocol boundaries, `mvp_v1`, Mock and v0.2 behavior.
 
+### Human Golden final closeout
+
+- froze `single_named_human_review_v1`, permanently removing independent second
+  review as a Financial/Business release requirement;
+- promoted 23 Financial and 3 Business named-human primary reviews as
+  `first_reviewed`, without populating `second_reviewer`;
+- preserved all eight Legal double-reviewed/adjudicated judgments unchanged;
+- completed provenance-filtered Financial, Legal, Business and cross-domain evaluation;
+- superseded the active Owner waiver while preserving it as historical audit provenance;
+- closed all Gate A items without using 2025 blind data or tuning production behavior.
+
 ### Merged
 
 - PR #20：新增`CatalogIPODataProvider`、特殊证券治理、批量运行、断点续跑、2025盲测保护和黄金案例评测基础设施；
@@ -45,7 +56,7 @@
 
 ### Remaining limitations
 
-- Financial与Business独立人工二审按owner waiver延期，不能声明正式跨域Golden精度；
+- 正式Golden采用一次具名人工复核政策，不应误称为独立双审评测；
 - 真实外部LLM endpoint smoke未执行；
 - 1167.HK、9633.HK和Legal真实demo fixture在本次本地执行中不可用；
 - PDF报告导出未加入，本版支持Markdown和结构化JSON；

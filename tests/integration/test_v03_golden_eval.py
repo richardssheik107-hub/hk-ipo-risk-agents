@@ -106,6 +106,76 @@ def test_missing_case_lowers_completion_rate(tmp_path: Path) -> None:
     assert metrics["cases"]["completion_rate"] == 0.5
 
 
+def test_formal_metrics_include_single_human_review_and_exclude_draft() -> None:
+    first_reviewed = _golden_row(
+        "ipo_2020_00368",
+        "continuous_loss",
+        page="10",
+        extra={
+            "reviewer": "member-3",
+            "second_reviewer": "",
+            "review_status": "first_reviewed",
+        },
+    )
+    draft = _golden_row(
+        "ipo_2020_00589",
+        "continuous_loss",
+        page="12",
+        extra={
+            "reviewer": "member-3",
+            "second_reviewer": "",
+            "review_status": "draft",
+        },
+    )
+    results = [
+        _result("ipo_2020_00368", verified=[_risk("continuous_loss", page=10)]),
+        _result("ipo_2020_00589", verified=[_risk("continuous_loss", page=12)]),
+    ]
+
+    metrics = evaluate(results, [first_reviewed, draft], _GOLDEN_FIELDS)
+
+    assert metrics["cases"]["golden"] == 1
+    assert metrics["cases"]["evaluated"] == 1
+    assert metrics["evaluation_provenance"]["real_formally_reviewed_rows"] == 1
+    assert metrics["evaluation_provenance"]["formal_reviewed_golden_metric"] is False
+    assert metrics["risk"]["expected_verified"] == 1
+
+
+def test_run_evaluation_reports_formal_metrics_per_domain(tmp_path: Path) -> None:
+    golden_path = tmp_path / "golden.csv"
+    rows = [
+        _golden_row(
+            "ipo_2020_00368",
+            "continuous_loss",
+            page="10",
+            extra={"review_status": "first_reviewed", "second_reviewer": ""},
+        ),
+        _golden_row("ipo_2020_00589", "redemption_rights", applicable="false", status="rejected"),
+        _golden_row("ipo_2020_00999", "precommercial_product", applicable="false", status="rejected"),
+    ]
+    _write_golden(golden_path, rows)
+    results_path = tmp_path / "analysis_results.jsonl"
+    results_path.write_text(
+        "\n".join(
+            json.dumps(item)
+            for item in (
+                _result("ipo_2020_00368", verified=[_risk("continuous_loss", page=10)]),
+                _result("ipo_2020_00589"),
+                _result("ipo_2020_00999"),
+            )
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = run_evaluation(results_path, golden_path, tmp_path / "eval")
+
+    assert set(metrics["domains"]) == {"financial", "legal", "business"}
+    assert metrics["domains"]["financial"]["risk"]["recall"] == 1.0
+    assert metrics["domains"]["legal"]["cases"]["evaluated"] == 1
+    assert metrics["domains"]["business"]["cases"]["evaluated"] == 1
+
+
 def test_extraction_accuracy_when_gold_numeric_present(tmp_path: Path) -> None:
     fields = _GOLDEN_FIELDS + ["gold_amount", "gold_unit", "gold_period"]
     golden = [

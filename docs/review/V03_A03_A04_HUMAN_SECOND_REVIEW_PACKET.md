@@ -1,5 +1,12 @@
 # v0.3 A03/A04 独立人工二审盲审包
 
+> **OPTIONAL / HISTORICAL MATERIAL**
+>
+> This packet is no longer required for Golden promotion or Gate A. Under the
+> permanent `single_named_human_review_v1` policy, one named human review is
+> formally eligible. Teams may still use this packet for optional additional
+> review; any such review must remain independent and traceable.
+
 状态核验基线：`main@885afe7b6584886433f5ed584aa85f2a805f270e`。
 
 本文件是独立人工二审的证据定位工具，不是Golden答案。下表只提供定位字段和候选物理PDF页，不公开primary的适用性、原文、状态、等级、理由、备注或结论。复核人必须打开原始招股书并自行判断。

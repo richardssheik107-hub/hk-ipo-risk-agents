@@ -1,5 +1,13 @@
 # v0.3 剩余人工 Golden 复核入口
 
+> **SUPERSEDED / HISTORICAL MATERIAL**
+>
+> Independent second review is no longer a required Gate or formal-Golden
+> condition. The permanent policy is `single_named_human_review_v1`; see
+> `docs/V03_ANNOTATION_GUIDE.md` and `docs/V03_GATE_A_CLOSEOUT.md`. This file
+> is retained only as historical audit material and must not be treated as an
+> active blocker or required workflow.
+
 状态核验基线：`main@885afe7b6584886433f5ed584aa85f2a805f270e`。
 
 本文件只管理当前仍未关闭的人工 Golden 门槛。Legal A—H 已完成真实人工 primary、独立 second review、必要仲裁及 canonical promotion；其正式结果见 [V03_LEGAL_FORMAL_REVIEW_AUDIT.md](V03_LEGAL_FORMAL_REVIEW_AUDIT.md)，不再列入待复核范围。
