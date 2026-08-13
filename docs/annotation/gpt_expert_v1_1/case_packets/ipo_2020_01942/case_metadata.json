@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2020_01942",
+  "stock_code": "1942.HK",
+  "company_name": "MOG HOLDINGS",
+  "document_id": "ipo_2020_01942",
+  "dataset_split": "development",
+  "page_count": 422,
+  "pdf_sha256": "3ebcaf5da05e1b9f32b1aa14098ed396b04fdcf0543dc87703125f5c56caf3bb",
+  "annotation_version": "gpt_expert_v1.1"
+}

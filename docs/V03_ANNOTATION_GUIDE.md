@@ -57,3 +57,19 @@ Codex、ChatGPT、AI、LLM、自动生成或占位身份不得成为 reviewer。
 ```powershell
 python scripts/validate_v03_golden_manifest.py tests/fixtures/v03_golden_cases/v03_golden_case_manifest.csv
 ```
+
+## 7. Expert Golden v1.1 research track
+
+现有 `v03_annotation_v1` Human Golden 是历史正式评测资产，不在 Phase 0.6B 修改。
+新的 Expert Golden 使用独立 evaluation-only `gpt_expert_v1.1` 协议，支持一个
+risk instance 对应多条 Evidence，并显式记录 role、required/alternative/
+supporting-only、confidence 和 Calculation inputs。
+
+新方法不是 pure human annotation，也不是 GPT output = gold，而是：Blind GPT
+investigation、deterministic validation、independent GPT audit、conflict detection
+和 selective human adjudication。第一轮 2410 GPT 输出仅为诊断材料。
+
+Protocol v1.1 已冻结现金口径、negative status、Calculation 要求和 dash/blank
+语义；zero-revenue concentration、`precommercial_product` severity 与 Fact/Label
+分层仍是 open policy。协作材料见
+[annotation/gpt_expert_v1_1/README.md](annotation/gpt_expert_v1_1/README.md)。

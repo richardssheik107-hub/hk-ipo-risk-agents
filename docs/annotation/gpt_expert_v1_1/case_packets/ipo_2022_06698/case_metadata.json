@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2022_06698",
+  "stock_code": "6698.HK",
+  "company_name": "星空華文",
+  "document_id": "ipo_2022_06698",
+  "dataset_split": "development",
+  "page_count": 729,
+  "pdf_sha256": "1c90b9375beccdcffaf6c3ad8d20057b0ba0497c0be09fae4e9d7446e9b9fb92",
+  "annotation_version": "gpt_expert_v1.1"
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2020_08489",
+  "stock_code": "8489.HK",
+  "company_name": "裕程物流",
+  "document_id": "ipo_2020_08489",
+  "dataset_split": "development",
+  "page_count": 430,
+  "pdf_sha256": "44b6b4041bc32772c62b176b882f66f7878d176f1864194f5208c4258064b592",
+  "annotation_version": "gpt_expert_v1.1"
+}

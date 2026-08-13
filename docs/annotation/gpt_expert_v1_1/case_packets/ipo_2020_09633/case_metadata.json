@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2020_09633",
+  "stock_code": "9633.HK",
+  "company_name": "農夫山泉",
+  "document_id": "ipo_2020_09633",
+  "dataset_split": "development",
+  "page_count": 549,
+  "pdf_sha256": "0ccd4fd34d53384bab305753d8884ecae9d72c2df949865b1741b61caf314bce",
+  "annotation_version": "gpt_expert_v1.1"
+}

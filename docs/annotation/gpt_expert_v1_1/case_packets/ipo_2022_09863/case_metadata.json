@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2022_09863",
+  "stock_code": "9863.HK",
+  "company_name": "零跑汽車",
+  "document_id": "ipo_2022_09863",
+  "dataset_split": "development",
+  "page_count": 740,
+  "pdf_sha256": "6eb1b59f728ffad582efa6f62d578bfe81ee833665d9f2ad4933ac8e5fcc6290",
+  "annotation_version": "gpt_expert_v1.1"
+}

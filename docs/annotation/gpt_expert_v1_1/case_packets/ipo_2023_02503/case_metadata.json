@@ -1,0 +1,10 @@
+{
+  "case_id": "ipo_2023_02503",
+  "stock_code": "2503.HK",
+  "company_name": "中深建業",
+  "document_id": "ipo_2023_02503",
+  "dataset_split": "development",
+  "page_count": 522,
+  "pdf_sha256": "5fb0c2f720d6b2854056f3f0de856dfc47aace16bb32423c9e44e4e5dc30d883",
+  "annotation_version": "gpt_expert_v1.1"
+}

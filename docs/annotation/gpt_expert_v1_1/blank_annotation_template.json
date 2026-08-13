@@ -1,0 +1,13 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "",
+  "stock_code": "",
+  "company_name": "",
+  "document_id": "",
+  "risks": [],
+  "evidence": [],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false
+  }
+}

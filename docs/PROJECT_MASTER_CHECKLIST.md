@@ -616,12 +616,64 @@ v0.3批量评测完成后增加：
 
 当前统一阶段：**v0.3 Released / Frozen**。v0.4仍为`NOT STARTED`。
 
+## v0.3.5 Evidence Intelligence 当前主任务
+
+v0.3 Release 保持冻结。Phase 0.5 已完成真实 Responses API、2410.HK real-LLM
+gate 与 14-case Human Golden A/B。结论是 Precision 改善但 Risk Recall 未改善，
+Evidence Recall@3 仍低；静态共享检索覆盖是主要瓶颈，LLM 抽取/运行是次要瓶颈，
+Legal downstream Verifier 是额外瓶颈。
+
+现有 Human Golden 同时暴露 evidence-role ambiguity、主证据权威性不一致、risk
+instance/evidence row 混合与评测语义不一致。直接 Retriever 调优暂停，优先建立
+Expert Golden v2 和 Evidence Intelligence 架构。
+
+| 阶段 | 状态 | 验收 |
+|---|---|---|
+| Phase 0.6A Blind preparation | COMPLETED | 3-case inventory、schema、packet、validator、importer、tests |
+| Phase 0.6B Protocol/collaboration | CURRENT | Protocol v1.1、14-case safe packets、assignment、research docs |
+| Phase 0.6C Three-case pilot | NOT STARTED | 2410 Financial、2517 Legal、1167 Business |
+| Phase 0.6D Expert Golden v2 | NOT STARTED | Risk/Evidence/relationship/calculation/confidence/policy provenance |
+| Phase 0.7 Architecture | NOT STARTED | Shared Index、domain search、bounded iteration、completeness |
+| Phase 0.8 A/B | NOT STARTED | 同 PDF/LLM/policy/verifier/Expert Golden |
+| Phase 0.9 Retrieval optimization | NOT STARTED | 算法选择与排序优化 |
+| v0.4 Market Prediction | NOT STARTED | 必须通过 v0.3.5 Gate 后启动 |
+
+### Expert Golden 治理
+
+```text
+Original Prospectus
+-> GPT Expert Blind Annotation
+-> Deterministic Validation
+-> Independent GPT Audit
+-> Conflict Detection
+-> Selective Human Adjudication
+-> Expert Golden v2
+```
+
+第一轮 2410 结果状态为 `PILOT_DIAGNOSTIC_ONLY` / informative-but-not-gold，不能
+作为 Retriever tuning target。当前协作目录不包含该答案、Human Golden、PDF、
+本地路径、Retriever/Agent 输出或 2025 blind。
+
+已冻结：cash-flow-statement cash 口径；non-applicable 的 rejected/not_applicable
+一致性；四类财务风险 Calculation；dash/blank/N/A 不自动视为 zero。
+
+未冻结：OPEN-01 zero-revenue concentration；OPEN-02 precommercial severity；
+OPEN-03 Expert Fact Layer 与 policy-derived Label Layer 分层。
+
+权威研究入口：
+
+- `docs/research/GPT_EXPERT_GOLDEN_PLAN.md`
+- `docs/research/EXPERT_GOLDEN_OPEN_POLICY_ITEMS.md`
+- `docs/research/EVIDENCE_INTELLIGENCE_ARCHITECTURE_PLAN.md`
+- `docs/annotation/gpt_expert_v1_1/README.md`
+
 | 角色 | 当前任务 |
 | --- | --- |
-| 1号技术负责人 | 完成独立验收、PR审核，并由Owner决定Tag/Release |
-| 3号财务 | 维护Financial Human Golden与计算证据一致性 |
-| 4号法务 | 维护Legal formal Golden与规则审计一致性 |
-| 5号业务 | 维护Business Human Golden与页面验收 |
+| 1号技术负责人 | 维护Protocol、确定性校验、协作隔离与v0.3.5 A/B设计 |
+| 2号数据治理 | 维护source manifest、Case分工与结果导入审计 |
+| 3号财务 | 负责Financial expert pilot与计算事实核对 |
+| 4号法务 | 负责Legal expert pilot与政策歧义升级 |
+| 5号业务 | 负责Business expert pilot与产品/收入语义核对 |
 
 ### 软件门槛与 Golden 门槛
 
@@ -637,7 +689,7 @@ Owner waiver已被当前政策取代。完整语义见
 <thead>
 <tr>
 <th><p><strong>项目主线总结</strong></p>
-<p>v0.2已经完成真实单风险闭环、赛事数据治理并正式发布。v0.3集中实现真实多Agent文档分析，v0.4再进入市场标签和预测，v0.5负责正式评测与实证证明，随后完成产品化、RC冻结和v1.0正式提交。</p></th>
+<p>v0.2完成真实单风险闭环，v0.3完成真实多Agent文档分析并发布冻结。当前以v0.3.5重建Expert Golden和Evidence Intelligence，经架构A/B与检索优化Gate后再进入v0.4市场标签与预测。</p></th>
 </tr>
 </thead>
 <tbody>
