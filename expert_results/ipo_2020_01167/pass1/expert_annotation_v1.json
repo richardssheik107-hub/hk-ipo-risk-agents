@@ -1,0 +1,397 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "cash_runway",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "截至2020年6月30日，现金流量表口径现金及现金等价物为人民币336,000千元；截至该日止六个月经营活动所用现金净额为人民币72,003千元，绝对月均经营现金消耗为12,000.5千元，现金跑道约28.0个月，高于12个月风险阈值。三个月以上定期存款69,481千元已从现金及现金等价物中扣除，符合Protocol v1.1现金定义。",
+"calculation_required": true,
+"calculation_method": "cash_runway_months = cash_and_cash_equivalents / (abs(net_cash_used_in_operating_activities) / period_months)",
+"calculation_inputs": {
+"period": "six months ended 2020-06-30",
+"currency": "RMB",
+"unit": "thousand",
+"cash_and_cash_equivalents": 336000,
+"net_cash_used_in_operating_activities": -72003,
+"period_months": 6
+},
+"calculation_result": {
+"monthly_operating_cash_burn": 12000.5,
+"cash_runway_months": 27.9988
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "continuous_loss",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "medium",
+"confidence": 0.98,
+"reasoning": "会计师报告显示2018年及2019年两个可比完整年度均录得亏损，分别为人民币155,935千元及425,817千元；按冻结规则，2个可比亏损期间对应medium。2019年及2020年上半年也均亏损，但属于与完整年度重叠的中期比较期间，不用于把可比完整年度数量人为提高至3。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "thousand",
+"comparable_full_year_periods": [
+{
+"period": "year ended 2018-12-31",
+"loss": -155935
+},
+{
+"period": "year ended 2019-12-31",
+"loss": -425817
+}
+],
+"interim_cross_check": [
+{
+"period": "six months ended 2019-06-30",
+"loss": -155055,
+"audited": false
+},
+{
+"period": "six months ended 2020-06-30",
+"loss": -810904
+}
+]
+},
+"calculation_result": {
+"comparable_full_year_loss_period_count": 2
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "revenue_growth",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": null,
+"confidence": 0.92,
+"reasoning": "正式财务资料明确披露自成立以来产品尚未获准商业销售且未产生任何产品销售收入。对连续零产品销售收入期间套用同比增长公式会产生0/0未定义分母；Protocol v1.1未冻结revenue_growth在零基数情形下的处理规则，因此不得合成0%或-100%增长率，需needs_review。",
+"calculation_required": true,
+"calculation_method": "revenue_growth = (current_comparable_revenue - prior_comparable_revenue) / prior_comparable_revenue",
+"calculation_inputs": {
+"revenue_basis": "product-sales revenue",
+"prior_period": "year ended 2018-12-31",
+"prior_period_revenue": 0,
+"current_period": "year ended 2019-12-31",
+"current_period_revenue": 0,
+"currency": "RMB",
+"unit": "thousand"
+},
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "customer_concentration",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": null,
+"confidence": 0.97,
+"reasoning": "正式财务资料明确披露公司自成立以来没有产品销售收入，因此以客户收入除以总产品销售收入的客户集中度分母为零，无法形成有效百分比。POLICY_AMBIGUITY OPEN-01适用：zero-revenue / undefined-denominator concentration，不得自行定义为0%或其他数值。",
+"calculation_required": true,
+"calculation_method": "largest_customer_share = largest_customer_revenue / total_revenue; top_five_share = top_five_customer_revenue / total_revenue",
+"calculation_inputs": {
+"period": "six months ended 2020-06-30",
+"revenue_basis": "product-sales revenue",
+"total_revenue": 0,
+"largest_customer_revenue": null,
+"top_five_customer_revenue": null,
+"currency": "RMB",
+"unit": "thousand"
+},
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "Business正式披露显示，2018年、2019年及截至2020年6月30日止六个月，最大供应商采购占比分别为11.0%、19.1%、20.8%，五大供应商合计分别为43.5%、48.4%、42.4%。各期间均低于medium阈值（最大30%或五大60%），故不适用。",
+"calculation_required": true,
+"calculation_method": "For each disclosed period, compare largest-supplier and top-five purchase shares with frozen thresholds; also calculate the maximum disclosed share across periods.",
+"calculation_inputs": {
+"periods": [
+{
+"period": "year ended 2018-12-31",
+"largest_supplier_pct": 11.0,
+"top_five_suppliers_pct": 43.5
+},
+{
+"period": "year ended 2019-12-31",
+"largest_supplier_pct": 19.1,
+"top_five_suppliers_pct": 48.4
+},
+{
+"period": "six months ended 2020-06-30",
+"largest_supplier_pct": 20.8,
+"top_five_suppliers_pct": 42.4
+}
+],
+"unit": "percent"
+},
+"calculation_result": {
+"max_largest_supplier_pct": 20.8,
+"max_top_five_suppliers_pct": 48.4,
+"medium_threshold_breached": false,
+"high_threshold_breached": false
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "redemption_rights",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": "medium",
+"confidence": 0.99,
+"reasoning": "IPO前投资者的赎回权及回购请求权虽已于2020年9月通过弃权承诺书终止，但若上市申请撤回、被联交所拒绝或未能在指定期限前完成IPO，相关权利会在未上市情形下自动恢复。根据Protocol v1.1，实际可恢复的特殊权利必须needs_review，候选严重度维持临时medium/50。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.98,
+"reasoning": "Business的法律诉讼和合规披露显示，截至最后可行日期，公司并非任何可能造成重大不利影响的实际或威胁法律/行政诉讼当事方，董事亦不知悉潜在相关诉讼；中国法律顾问确认往绩记录期间及直至最后可行日期在所有重大方面遵守适用中国法律法规，且董事确认不存在重大或系统性不合规事件。因此未发现冻结定义所要求的重大待决事项或未解决监管/牌照影响。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01167",
+"stock_code": "1167.HK",
+"company_name": "加科思－Ｂ",
+"document_id": "ipo_2020_01167",
+"risk_code": "precommercial_product",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": null,
+"confidence": 0.99,
+"reasoning": "Business确认核心产品JAB-3068仍处于临床开发阶段（已进入I/IIa阶段），正式财务资料同时确认产品尚未获准商业销售且公司未产生任何产品销售收入，因此precommercial_product候选事实成立。POLICY_AMBIGUITY OPEN-02适用：该风险的严重度政策尚未冻结，不能自行指定level，故needs_review。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "cash_runway",
+"page": 425,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "綜合現金流量表\n截至12月31日止年度 截至6月30日止六個月\n附註 2018年 2019年 2019年 2020年\n人民幣千元 人民幣千元 人民幣千元 人民幣千元\n（未經審計）\n經營活動的現金流量\n經營所用現金 27 (80,080) (115,620) (47,492) (73,412)\n已收利息 187 2,595 1,361 1,409\n經營活動所用現金淨額 (79,893) (113,025) (46,131) (72,003)",
+"evidence_reason": "会计师报告现金流量表提供现金跑道计算所需的最新六个月经营活动所用现金净额，期间、币种、单位和负号均可追溯。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "cash_runway",
+"page": 453,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "(b) 調節至綜合現金流量表：\n於12月31日 於6月30日\n2018年 2019年 2020年\n人民幣千元 人民幣千元 人民幣千元\n現金及銀行結餘 420,833 314,338 405,481\n減：三個月以上的定期存款 – – (69,481)\n現金及現金等價物 420,833 314,338 336,000",
+"evidence_reason": "该正式调节表证明2020年6月30日现金流量表现金及现金等价物为人民币336,000千元，并明确从现金及银行结余中扣除三个月以上定期存款。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "continuous_loss",
+"page": 416,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "綜合虧損表\n截至12月31日止年度 截至6月30日止六個月\n附註 2018年 2019年 2019年 2020年\n人民幣千元 人民幣千元 人民幣千元 人民幣千元\n（未經審計）\n除所得稅前虧損 (155,935) (425,817) (155,055) (810,904)\n所得稅開支 11 – – – –\n年內╱期內虧損 (155,935) (425,817) (155,055) (810,904)",
+"evidence_reason": "会计师报告直接给出2018、2019两个完整年度及2019、2020两个上半年期间的亏损事实，可用于识别可比亏损期间。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "revenue_growth",
+"page": 294,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "financial_information",
+"exact_text": "目前，我們的產品尚未獲准進行商業銷售，我們尚未從產品銷售產生任何收入。自公司成立以來，我們概未盈利並持續產生經營虧損。",
+"evidence_reason": "正式财务资料证明产品销售收入自成立以来为零，使基于产品销售收入的可比增长计算出现零分母。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "customer_concentration",
+"page": 294,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "financial_information",
+"exact_text": "目前，我們的產品尚未獲准進行商業銷售，我們尚未從產品銷售產生任何收入。自公司成立以來，我們概未盈利並持續產生經營虧損。",
+"evidence_reason": "正式财务资料证明产品销售收入为零，因此客户收入集中度的总收入分母为零，触发OPEN-01。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "supplier_concentration",
+"page": 287,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截至2018年及2019年12月31日止年度以及截至2020年6月30日止六個月，我們向五大供應商採購的總額分別佔總採購的43.5%、48.4%及42.4%，而我們向最大供應商作出的採購分別佔總採購的11.0%、19.1%及20.8%。",
+"evidence_reason": "Business正式披露提供三个期间五大及最大供应商采购占比，可逐期计算并与冻结集中度阈值比较。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "redemption_rights",
+"page": 204,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "pre_ipo_investment",
+"exact_text": "每位首次公開發售前投資者已於2020年9月簽立棄權承諾書，自棄權承諾書日期起終止上述贖回權和回購請求權（如適用）。贖回權或回購請求權（如適用）僅在未上市的情況下方可行使，且僅在發生（其中包括）下列情況時（以較早者為準）自動恢復：(i)本公司撤回上市申請；(ii)聯交所拒絕上市申請；或(iii)本公司未能在指定的最後期限前完成首次公開發售。",
+"evidence_reason": "Pre-IPO Investment正式条款明确说明赎回/回购权虽已终止但可在IPO失败等条件下自动恢复，直接满足可恢复特殊权利的review条件。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "redemption_rights",
+"page": 456,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "accountants_report",
+"exact_text": "(c) 可贖回優先股的贖回權\nB輪可贖回優先股、C輪優先股和C+輪優先股統稱為「可贖回優先股」。在發生以下事件時，可贖回優先股的持有人有權要求貴公司贖回優先股：",
+"evidence_reason": "会计师报告对可赎回优先股及其赎回权作独立财务披露，交叉验证该权利并非通用风险因素样板文字。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "material_litigation_compliance",
+"page": 291,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "legal_disclosure",
+"exact_text": "董事確認，截至最後可行日期，我們並非任何可能對我們的業務、財務狀況或經營業績造成重大不利影響的實際或威脅提起的法律或行政訴訟中的當事方，董事亦不知悉我們將被列為當事方的任何潛在或威脅提起的法律、仲裁或行政訴訟。董事進一步確認，概無董事或高級管理人員個人牽涉任何該等法律、仲裁或行政訴訟。\n中國法律顧問確認，於往績記錄期間及直至最後可行日期，我們在所有重大方面均已遵守適用中國法律法規。董事確認，我們未涉及任何重大或系統性不合規事件。",
+"evidence_reason": "正式法律诉讼和合规披露同时覆盖重大诉讼状态及重大合规状态，未显示重大待决事项或未解决监管影响。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "precommercial_product",
+"page": 225,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "我們的核心產品JAB-3068是第二個已獲得美國FDA IND批准進入臨床開發的SHP2抑制劑。我們於2018年在美國和中國開展JAB-3068在實體瘤中的I期劑量遞增研究，並於2019年10月在中國開展在NSCLC、HNSCC和ESCC的IIa期劑量擴展研究。",
+"evidence_reason": "Business正式披露确认核心产品JAB-3068仍处临床开发阶段，是precommercial_product候选的产品阶段证据。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01167",
+"risk_code": "precommercial_product",
+"page": 294,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "financial_information",
+"exact_text": "目前，我們的產品尚未獲准進行商業銷售，我們尚未從產品銷售產生任何收入。",
+"evidence_reason": "正式财务资料提供候选风险另一项必要事实：产品未获准商业销售且没有产品销售收入。 ",
+"confidence": 0.99
+}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"evidence_object_schema": {
+"case_id": "non-empty string; must equal bundle case_id",
+"risk_code": "one of the eight active risk codes assessed in risks[]",
+"page": "integer >= 1; physical PDF page number",
+"evidence_role": [
+"primary",
+"supporting",
+"context",
+"cross_check"
+],
+"requirement": [
+"required",
+"alternative",
+"supporting_only"
+],
+"source_authority": [
+"audited_financial_statement",
+"accountants_report",
+"financial_information",
+"business_section",
+"legal_disclosure",
+"corporate_structure",
+"pre_ipo_investment",
+"summary",
+"risk_factors",
+"other"
+],
+"exact_text": "non-empty verbatim text copied from the prospectus",
+"evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+"confidence": "number from 0.0 to 1.0 inclusive"
+}
+}
+}
