@@ -21,9 +21,12 @@ PROGRESS_STATUSES = {
     "finalized",
 }
 ASSIGNMENT_COLUMNS = {
+    "task_index",
+    "taskset_version",
     "case_id",
     "stock_code",
     "company_name",
+    "source_year",
     "dataset_split",
     "primary_annotator",
     "primary_status",
@@ -40,11 +43,15 @@ def _manifest() -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def test_collaboration_manifest_is_14_case_development_only() -> None:
+def test_collaboration_manifest_is_frozen_100_case_taskset() -> None:
     rows = _manifest()
-    assert len(rows) == 14
-    assert len({row["case_id"] for row in rows}) == 14
-    assert {row["dataset_split"] for row in rows} <= {"development", "development_exception"}
+    assert len(rows) == 100
+    assert len({row["case_id"] for row in rows}) == 100
+    assert len({row["stock_code"] for row in rows}) == 100
+    assert {row["taskset_version"] for row in rows} == {"expert_golden_100_v1"}
+    assert {row["dataset_split"] for row in rows} == {
+        "development", "development_exception", "validation"
+    }
     assert all("2025" not in row["case_id"] for row in rows)
 
 
@@ -89,14 +96,14 @@ def test_assignment_starts_unassigned() -> None:
         reader = csv.DictReader(handle)
         assert set(reader.fieldnames or ()) == ASSIGNMENT_COLUMNS
         rows = list(reader)
-    assert len(rows) == 14
+    assert len(rows) == 100
     for row in rows:
         assert not row["primary_annotator"]
-        assert not row["primary_status"]
+        assert row["primary_status"] == "not_started"
         assert not row["second_pass_annotator"]
-        assert not row["second_pass_status"]
-        assert not row["adjudication_status"]
-        assert not row["final_status"]
+        assert row["second_pass_status"] == "not_started"
+        assert row["adjudication_status"] == "not_started"
+        assert row["final_status"] == "not_started"
         assert not row["notes"]
 
 
@@ -111,3 +118,11 @@ def test_assignment_uses_only_documented_progress_statuses() -> None:
 
 def test_collaboration_branch_has_no_expert_result_tree() -> None:
     assert not (ROOT / "expert_results").exists()
+
+
+def test_official_2410_packet_uses_catalog_identity_and_legacy_packet_is_preserved() -> None:
+    taskset = ROOT / "case_packets" / "ipo_2024_02410" / "blank_annotation.json"
+    payload = json.loads(taskset.read_text(encoding="utf-8"))
+    assert payload["stock_code"] == "2410.HK"
+    assert payload["case_id"] == payload["document_id"] == "ipo_2024_02410"
+    assert (ROOT / "case_packets" / "real_case_001").is_dir()

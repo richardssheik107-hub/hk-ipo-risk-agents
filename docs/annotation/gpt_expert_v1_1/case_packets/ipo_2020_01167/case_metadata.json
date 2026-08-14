@@ -1,10 +1,13 @@
 {
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
   "case_id": "ipo_2020_01167",
   "stock_code": "1167.HK",
   "company_name": "加科思－Ｂ",
   "document_id": "ipo_2020_01167",
+  "source_year": 2020,
   "dataset_split": "development",
   "page_count": 520,
   "pdf_sha256": "2263d1fbe46705b3132c4c2a2e2a4dc2dd8d2d19d52d596489ca26cfdc01acdf",
-  "annotation_version": "gpt_expert_v1.1"
+  "source_validation_status": "validated_from_catalog_metadata"
 }

@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_02405",
+  "stock_code": "2405.HK",
+  "company_name": "力盟科技",
+  "document_id": "ipo_2023_02405",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 552,
+  "pdf_sha256": "35594538f6d24d5924c6cf2fa52e1cc5e1d6976d0a895fd6a2f55d832f32e9a8",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

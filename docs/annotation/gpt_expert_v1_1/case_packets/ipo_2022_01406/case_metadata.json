@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_01406",
+  "stock_code": "1406.HK",
+  "company_name": "清晰醫療",
+  "document_id": "ipo_2022_01406",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 482,
+  "pdf_sha256": "622e4ea97bd041404406e1da3472fde245f7c775d058a56043790e152fbdd500",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

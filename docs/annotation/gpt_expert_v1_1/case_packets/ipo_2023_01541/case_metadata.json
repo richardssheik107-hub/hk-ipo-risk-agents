@@ -1,10 +1,13 @@
 {
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
   "case_id": "ipo_2023_01541",
   "stock_code": "1541.HK",
   "company_name": "宜明昂科－Ｂ",
   "document_id": "ipo_2023_01541",
+  "source_year": 2023,
   "dataset_split": "development",
   "page_count": 570,
   "pdf_sha256": "70ea01d9d57cf3367438a5794851a3a97beee55c1d142d07f4ba6a0f5466c785",
-  "annotation_version": "gpt_expert_v1.1"
+  "source_validation_status": "validated_from_catalog_metadata"
 }

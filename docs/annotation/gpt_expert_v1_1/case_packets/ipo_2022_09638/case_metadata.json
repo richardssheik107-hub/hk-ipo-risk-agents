@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09638",
+  "stock_code": "9638.HK",
+  "company_name": "法拉帝",
+  "document_id": "ipo_2022_09638",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 708,
+  "pdf_sha256": "6030a6fea23dc00889a9c1cff82d93c66897c2c54a5b644811dd93814f488d08",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

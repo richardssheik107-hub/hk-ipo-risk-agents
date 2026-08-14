@@ -3,7 +3,7 @@
 ## 状态
 
 - 研究版本：`v0.3.5-evidence-intelligence`
-- 当前阶段：Phase 0.6B — Protocol Hardening + Collaboration Setup
+- 当前阶段：Phase 0.6B.1 — Expert Golden 100 Taskset Finalization
 - v0.3：Released / Frozen
 - v0.4：Not Started
 
@@ -39,7 +39,7 @@ severity 和状态一致性。GPT 输出本身不等于 Golden。
 | 阶段 | 目标 | 状态 |
 |---|---|---|
 | Phase 0.6A | 三案例盲包、evaluation-only schema、validator、importer | COMPLETED |
-| Phase 0.6B | Protocol v1.1 加固、14-case 安全协作材料 | CURRENT |
+| Phase 0.6B | Protocol v1.1 加固、Expert Golden 100 安全协作材料 | CURRENT |
 | Phase 0.6C | 2410 Financial、2517 Legal、1167 Business 三案例 Pilot | NOT STARTED |
 | Phase 0.6D | Risk/Evidence/relationship/calculation/confidence/policy provenance Golden v2 | NOT STARTED |
 
@@ -53,6 +53,12 @@ severity 和状态一致性。GPT 输出本身不等于 Golden。
 - 每个新 ChatGPT 对话只处理一个 Case；
 - 2025 blind 不访问、不使用；
 - 原始 PDF 和 GPT answer 不提交 Git。
+
+正式 `expert_golden_100_v1` 固定覆盖 2020—2024 每年 20 家，共 100 家、800 个
+风险检查任务；2025 选择数为 0。Document Expert Labels 与 listing-day、5/20/60D
+returns 等 Market Outcome Labels 严格隔离。行情结果不得提供给 Primary Annotator，
+也不得用于反向确定文档事实，以避免 outcome leakage、label contamination 与
+confirmation bias。
 
 ## 完成条件
 

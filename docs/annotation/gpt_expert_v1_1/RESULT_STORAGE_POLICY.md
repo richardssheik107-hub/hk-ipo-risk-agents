@@ -16,8 +16,11 @@ expert_results/<case_id>/
 └─ final/expert_annotation_final.json
 ```
 
-The initial results branch contains only an empty scaffold. PDFs, credentials,
-local paths, Human Golden, and 2025 blind material are forbidden.
+The results branch mirrors all 100 official `expert_golden_100_v1` Case IDs and
+starts each new Case with an empty scaffold. The historical `real_case_001`
+directory remains only for 2410 pilot provenance; the formal task uses
+`ipo_2024_02410`. PDFs, credentials, local paths, Human Golden, and 2025 blind
+material are forbidden.
 
 ## Immutability and provenance
 

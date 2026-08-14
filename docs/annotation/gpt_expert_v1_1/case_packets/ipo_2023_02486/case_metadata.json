@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_02486",
+  "stock_code": "2486.HK",
+  "company_name": "普樂師集團控股",
+  "document_id": "ipo_2023_02486",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 611,
+  "pdf_sha256": "99f584129b87c08f280b10d8c7dce69ba254d2e92c06d820b7dd7035568db209",
+  "source_validation_status": "validated_from_catalog_metadata"
+}
