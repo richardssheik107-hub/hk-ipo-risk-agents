@@ -14,7 +14,8 @@ For each assigned Case:
 7. run `scripts/validate_expert_annotation.py` locally with the manifest page count;
 8. run `scripts/import_expert_annotation.py --stage pass1`; the importer preserves
    the raw GPT JSON and writes a separate `validation_result.json` under the ignored
-   local results workspace;
+   local results workspace. Its default inventory is the portable tracked
+   `source_manifest.csv`, so no local PDF path is required;
 9. never edit or replace the preserved pass output when validation fails;
 10. update `team_case_assignment.csv` with progress only, never answers;
 11. publish answers only to `annotation/gpt-expert-results` after the applicable
