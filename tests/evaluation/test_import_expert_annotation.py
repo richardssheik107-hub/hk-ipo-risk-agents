@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import csv
 import json
 from pathlib import Path
 
@@ -111,3 +112,37 @@ def test_import_refuses_to_overwrite_an_existing_pass(tmp_path: Path) -> None:
         assert "refusing to overwrite" in str(exc)
     else:
         raise AssertionError("an existing pass must never be overwritten")
+
+
+def test_portable_csv_inventory_supports_collaboration_case_ids(tmp_path: Path) -> None:
+    importer = _load_importer()
+    annotation = tmp_path / "gpt-output.json"
+    payload = _payload()
+    payload["document_id"] = "case_alpha"
+    for risk in payload["risks"]:
+        risk["document_id"] = "case_alpha"
+    annotation.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    inventory = tmp_path / "source_manifest.csv"
+    with inventory.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=(
+            "case_id", "stock_code", "company_name", "dataset_split",
+            "page_count", "pdf_sha256", "packet_path",
+        ))
+        writer.writeheader()
+        writer.writerow({
+            "case_id": "case_alpha",
+            "stock_code": "1234.HK",
+            "company_name": "示例公司",
+            "dataset_split": "development",
+            "page_count": "10",
+            "pdf_sha256": "0" * 64,
+            "packet_path": "docs/annotation/example",
+        })
+
+    _, _, valid = importer.import_annotation(
+        annotation,
+        inventory_path=inventory,
+        output_dir=tmp_path / "expert_results",
+        stage="pass1",
+    )
+    assert valid is True

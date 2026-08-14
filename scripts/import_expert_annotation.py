@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 from dataclasses import asdict
 import json
 from pathlib import Path
@@ -17,6 +18,18 @@ STAGE_FILENAMES = {
 }
 
 
+def _load_inventory(path: Path) -> list[dict[str, object]]:
+    """Load either the portable tracked CSV or the legacy local JSON inventory."""
+    if path.suffix.lower() == ".csv":
+        with path.open(encoding="utf-8-sig", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        for row in rows:
+            row.setdefault("document_id", row["case_id"])
+        return rows
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return list(payload["cases"])
+
+
 def import_annotation(
     annotation: Path,
     *,
@@ -27,8 +40,8 @@ def import_annotation(
     """Preserve raw JSON and write a separate validation result without overwrites."""
     raw_text = annotation.read_text(encoding="utf-8")
     payload = json.loads(raw_text)
-    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
-    source = next((item for item in inventory["cases"] if item["case_id"] == payload.get("case_id")), None)
+    inventory = _load_inventory(inventory_path)
+    source = next((item for item in inventory if item["case_id"] == payload.get("case_id")), None)
     if source is None:
         raise ValueError("source case is absent from the blind source inventory")
     identity_fields = ("case_id", "stock_code", "company_name", "document_id")
@@ -66,7 +79,11 @@ def import_annotation(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("annotation", type=Path)
-    parser.add_argument("--inventory", type=Path, default=Path("reports/gpt_expert_annotation_pilot/source_inventory.json"))
+    parser.add_argument(
+        "--inventory",
+        type=Path,
+        default=Path("docs/annotation/gpt_expert_v1_1/source_manifest.csv"),
+    )
     parser.add_argument("--output-dir", type=Path, default=Path("reports/gpt_expert_annotation_pilot/expert_results"))
     parser.add_argument("--stage", choices=tuple(STAGE_FILENAMES), default="pass1")
     args = parser.parse_args()
