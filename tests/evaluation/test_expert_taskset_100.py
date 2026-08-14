@@ -5,7 +5,10 @@ from __future__ import annotations
 import csv
 from collections import Counter
 import importlib.util
+import json
 from pathlib import Path
+
+from ipo_risk.evaluation.expert_annotation import ExpertAnnotationBundle
 
 
 ROOT = Path("docs/annotation/gpt_expert_v1_1")
@@ -75,3 +78,36 @@ def test_generator_resolves_all_frozen_stocks_from_catalog_metadata(tmp_path: Pa
         "validation": 19,
         "development_exception": 1,
     }
+
+
+def test_blank_packet_declares_complete_evidence_contract() -> None:
+    blank = json.loads(
+        (ROOT / "case_packets" / "ipo_2020_00368" / "blank_annotation.json").read_text(encoding="utf-8")
+    )
+    metadata = blank["metadata"]
+    schema = metadata["evidence_object_schema"]
+    assert metadata["output_contract"] == "ExpertAnnotationBundle"
+    assert "0.0 to 1.0" in metadata["confidence_constraint"]
+    assert set(schema) == {
+        "case_id", "risk_code", "page", "evidence_role", "requirement",
+        "source_authority", "exact_text", "evidence_reason", "confidence",
+    }
+
+
+def test_completed_0368_blank_shape_validates_as_expert_annotation_bundle() -> None:
+    payload = json.loads(
+        (ROOT / "case_packets" / "ipo_2020_00368" / "blank_annotation.json").read_text(encoding="utf-8")
+    )
+    for risk in payload["risks"]:
+        risk.update({
+            "applicable": False,
+            "expected_status": "rejected",
+            "expected_level": "not_applicable",
+            "confidence": 0.5,
+            "reasoning": "Synthetic contract-completeness fixture; not an issuer judgment.",
+            "calculation_required": False,
+            "calculation_method": None,
+            "calculation_inputs": None,
+            "calculation_result": None,
+        })
+    assert ExpertAnnotationBundle.model_validate(payload).case_id == "ipo_2020_00368"

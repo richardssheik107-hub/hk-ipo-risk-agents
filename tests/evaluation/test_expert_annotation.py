@@ -93,6 +93,16 @@ def test_confidence_validation(confidence: float) -> None:
         ExpertAnnotationBundle.model_validate(payload)
 
 
+@pytest.mark.parametrize("confidence", [-0.1, 1.1])
+def test_evidence_confidence_validation(confidence: float) -> None:
+    payload = _make_applicable(_payload(), "cash_runway")
+    evidence = _evidence("cash_runway", 10)
+    evidence["confidence"] = confidence
+    payload["evidence"] = [evidence]
+    with pytest.raises(ValidationError):
+        ExpertAnnotationBundle.model_validate(payload)
+
+
 def test_invalid_risk_code_rejected() -> None:
     payload = _payload()
     payload["risks"][0]["risk_code"] = "invented_risk"  # type: ignore[index]

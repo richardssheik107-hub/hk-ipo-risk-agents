@@ -8,6 +8,19 @@
   "evidence": [],
   "metadata": {
     "blind_annotation": true,
-    "human_golden_visible_to_annotator": false
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": ["primary", "supporting", "context", "cross_check"],
+      "requirement": ["required", "alternative", "supporting_only"],
+      "source_authority": ["audited_financial_statement", "accountants_report", "financial_information", "business_section", "legal_disclosure", "corporate_structure", "pre_ipo_investment", "summary", "risk_factors", "other"],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
   }
 }

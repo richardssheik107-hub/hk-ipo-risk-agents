@@ -22,6 +22,17 @@ FORBIDDEN_KEYS = {
 }
 WINDOWS_HOME_MARKER = "C:" + "\\" + "Users" + "\\"
 UNIX_HOME_MARKER = "/" + "Users" + "/"
+EVIDENCE_SCHEMA_FIELDS = {
+    "case_id", "risk_code", "page", "evidence_role", "requirement",
+    "source_authority", "exact_text", "evidence_reason", "confidence",
+}
+EVIDENCE_ROLES = ["primary", "supporting", "context", "cross_check"]
+EVIDENCE_REQUIREMENTS = ["required", "alternative", "supporting_only"]
+SOURCE_AUTHORITIES = [
+    "audited_financial_statement", "accountants_report", "financial_information",
+    "business_section", "legal_disclosure", "corporate_structure",
+    "pre_ipo_investment", "summary", "risk_factors", "other",
+]
 FORBIDDEN_PACKET_MARKERS = (
     '"gold_page"',
     '"gold_exact_text"',
@@ -89,6 +100,20 @@ def validate_taskset(root: Path = ROOT) -> dict[str, object]:
                 errors.append(f"{case_id}/{risk.get('risk_code')}: answer field is not blank")
         if blank.get("evidence") != []:
             errors.append(f"{case_id}: evidence must be empty")
+        contract_metadata = blank.get("metadata", {})
+        evidence_schema = contract_metadata.get("evidence_object_schema", {})
+        if contract_metadata.get("output_contract") != "ExpertAnnotationBundle":
+            errors.append(f"{case_id}: output contract is not ExpertAnnotationBundle")
+        if "0.0 to 1.0" not in contract_metadata.get("confidence_constraint", ""):
+            errors.append(f"{case_id}: confidence range is not explicit")
+        if set(evidence_schema) != EVIDENCE_SCHEMA_FIELDS:
+            errors.append(f"{case_id}: Evidence Object schema fields mismatch")
+        if evidence_schema.get("evidence_role") != EVIDENCE_ROLES:
+            errors.append(f"{case_id}: evidence_role enum mismatch")
+        if evidence_schema.get("requirement") != EVIDENCE_REQUIREMENTS:
+            errors.append(f"{case_id}: requirement enum mismatch")
+        if evidence_schema.get("source_authority") != SOURCE_AUTHORITIES:
+            errors.append(f"{case_id}: source_authority enum mismatch")
         serialized = json.dumps({"metadata": metadata, "blank": blank}, ensure_ascii=False)
         if any(f'"{key}"' in serialized for key in FORBIDDEN_KEYS):
             errors.append(f"{case_id}: forbidden answer/provenance key detected")

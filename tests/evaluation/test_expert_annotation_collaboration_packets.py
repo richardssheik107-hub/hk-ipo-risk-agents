@@ -70,9 +70,14 @@ def test_every_packet_has_all_risks_and_blank_answers() -> None:
             assert risk["reasoning"] is None
             assert risk["calculation_required"] is None
         assert payload["evidence"] == []
-        assert payload["metadata"] == {
-            "blind_annotation": True,
-            "human_golden_visible_to_annotator": False,
+        metadata = payload["metadata"]
+        assert metadata["blind_annotation"] is True
+        assert metadata["human_golden_visible_to_annotator"] is False
+        assert metadata["output_contract"] == "ExpertAnnotationBundle"
+        assert "0.0 to 1.0" in metadata["confidence_constraint"]
+        assert set(metadata["evidence_object_schema"]) == {
+            "case_id", "risk_code", "page", "evidence_role", "requirement",
+            "source_authority", "exact_text", "evidence_reason", "confidence",
         }
 
 
