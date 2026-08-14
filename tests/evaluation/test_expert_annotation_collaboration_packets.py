@@ -10,6 +10,29 @@ from ipo_risk.domain.risk_codes import V03_ENABLED_RISK_CODES
 
 
 ROOT = Path("docs/annotation/gpt_expert_v1_1")
+PROGRESS_STATUSES = {
+    "not_started",
+    "in_progress",
+    "completed",
+    "validation_failed",
+    "needs_review",
+    "audit_completed",
+    "adjudication_required",
+    "finalized",
+}
+ASSIGNMENT_COLUMNS = {
+    "case_id",
+    "stock_code",
+    "company_name",
+    "dataset_split",
+    "primary_annotator",
+    "primary_status",
+    "second_pass_annotator",
+    "second_pass_status",
+    "adjudication_status",
+    "final_status",
+    "notes",
+}
 
 
 def _manifest() -> list[dict[str, str]]:
@@ -63,7 +86,9 @@ def test_packets_contain_no_paths_or_answer_artifacts() -> None:
 
 def test_assignment_starts_unassigned() -> None:
     with (ROOT / "team_case_assignment.csv").open(encoding="utf-8-sig", newline="") as handle:
-        rows = list(csv.DictReader(handle))
+        reader = csv.DictReader(handle)
+        assert set(reader.fieldnames or ()) == ASSIGNMENT_COLUMNS
+        rows = list(reader)
     assert len(rows) == 14
     for row in rows:
         assert not row["primary_annotator"]
@@ -73,6 +98,15 @@ def test_assignment_starts_unassigned() -> None:
         assert not row["adjudication_status"]
         assert not row["final_status"]
         assert not row["notes"]
+
+
+def test_assignment_uses_only_documented_progress_statuses() -> None:
+    with (ROOT / "team_case_assignment.csv").open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    status_fields = ("primary_status", "second_pass_status", "adjudication_status", "final_status")
+    for row in rows:
+        for field in status_fields:
+            assert not row[field] or row[field] in PROGRESS_STATUSES
 
 
 def test_collaboration_branch_has_no_expert_result_tree() -> None:
