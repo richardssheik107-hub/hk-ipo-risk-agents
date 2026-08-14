@@ -46,6 +46,11 @@ class RetrievalFailure(StrEnum):
     NO_QUERY_EXECUTED = "NO_QUERY_EXECUTED"
     EMPTY_RESULT = "EMPTY_RESULT"
     PARSER_REGRESSION = "PARSER_REGRESSION"
+    WRONG_SOURCE_AUTHORITY = "WRONG_SOURCE_AUTHORITY"
+    DUPLICATE_PAGE = "DUPLICATE_PAGE"
+    NEIGHBOUR_PAGE_MISSING = "NEIGHBOUR_PAGE_MISSING"
+    QUERY_TOO_BROAD = "QUERY_TOO_BROAD"
+    QUERY_TOO_NARROW = "QUERY_TOO_NARROW"
 
 
 @dataclass(frozen=True)
@@ -328,6 +333,8 @@ def _composed_pages(
         for _, _, page in sorted(candidates):
             if page not in pages:
                 pages.append(page)
+                if len(pages) == limit:
+                    return pages
         return pages
 
     pages = []
@@ -346,15 +353,6 @@ def _page_rank(
     risk_code: str,
     page: int,
 ) -> int | None:
-    if plan.composition is RetrievalComposition.PARALLEL_PER_QUERY_UNION:
-        ranks = [
-            result.rank
-            for execution in executions
-            if execution.risk_code == risk_code and execution.requested_limit == 20
-            for result in execution.results
-            if result.page == page
-        ]
-        return min(ranks) if ranks else None
     pages = _composed_pages(plan, executions, risk_code, 20)
     return pages.index(page) + 1 if page in pages else None
 
@@ -383,6 +381,9 @@ def _failure(
     query_count: int,
     result_count: int,
     family_covers_text: bool,
+    gold_page: int,
+    retrieved_pages: list[int],
+    duplicate_result_count: int,
 ) -> tuple[RetrievalFailure, list[RetrievalFailure]]:
     if parser_failed:
         return RetrievalFailure.PARSER_REGRESSION, []
@@ -391,10 +392,21 @@ def _failure(
     if first_rank is not None and first_rank <= 5:
         return RetrievalFailure.NONE, []
     if first_rank is not None:
-        return RetrievalFailure.RANKING_MISS, [RetrievalFailure.TOPK_CUTOFF]
+        flags = [RetrievalFailure.TOPK_CUTOFF]
+        if result_count >= 20:
+            flags.append(RetrievalFailure.QUERY_TOO_BROAD)
+        if duplicate_result_count:
+            flags.append(RetrievalFailure.DUPLICATE_PAGE)
+        return RetrievalFailure.RANKING_MISS, flags
     flags: list[RetrievalFailure] = []
     if result_count == 0:
-        flags.append(RetrievalFailure.EMPTY_RESULT)
+        flags.extend((RetrievalFailure.EMPTY_RESULT, RetrievalFailure.QUERY_TOO_NARROW))
+    elif result_count >= 20:
+        flags.append(RetrievalFailure.QUERY_TOO_BROAD)
+    if any(abs(page - gold_page) <= 2 for page in retrieved_pages):
+        flags.append(RetrievalFailure.NEIGHBOUR_PAGE_MISSING)
+    if duplicate_result_count:
+        flags.append(RetrievalFailure.DUPLICATE_PAGE)
     if not family_covers_text:
         flags.append(RetrievalFailure.QUERY_FAMILY_GAP)
     return RetrievalFailure.RETRIEVAL_MISS, flags
@@ -445,12 +457,27 @@ def build_raw_retrieval_audit(
             for item in executions
             if item.risk_code == gold.risk_code and item.requested_limit == 20
         )
+        risk_executions = [
+            item
+            for item in executions
+            if item.risk_code == gold.risk_code and item.requested_limit == 20
+        ]
+        raw_result_pages = [
+            result.page
+            for execution in risk_executions
+            for result in execution.results
+            if result.page is not None
+        ]
+        retrieved_pages = _composed_pages(plan, executions, gold.risk_code, 20)
         failure, flags = _failure(
             first_rank=first_rank,
             parser_failed=parser_failed[index],
             query_count=len(plan.queries),
             result_count=result_count,
             family_covers_text=_family_covers_text(plan, gold.exact_text),
+            gold_page=gold.page,
+            retrieved_pages=retrieved_pages,
+            duplicate_result_count=len(raw_result_pages) - len(set(raw_result_pages)),
         )
         hits = {limit: gold.page in _composed_pages(plan, executions, gold.risk_code, limit) for limit in TOP_K_VALUES}
         records.append(GoldRetrievalRecord(

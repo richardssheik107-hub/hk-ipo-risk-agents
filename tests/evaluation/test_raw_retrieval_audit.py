@@ -98,6 +98,18 @@ def test_top_twenty_absence_is_retrieval_miss() -> None:
     record = _audit(list(range(1, 21)), [_gold(25)]).records[0]
     assert record.first_hit_rank is None
     assert record.primary_failure_code is RetrievalFailure.RETRIEVAL_MISS
+    assert RetrievalFailure.QUERY_TOO_BROAD in record.secondary_flags
+
+
+def test_empty_result_is_classified_as_query_too_narrow() -> None:
+    record = _audit([], [_gold(25)]).records[0]
+    assert RetrievalFailure.EMPTY_RESULT in record.secondary_flags
+    assert RetrievalFailure.QUERY_TOO_NARROW in record.secondary_flags
+
+
+def test_adjacent_unreturned_gold_page_is_classified() -> None:
+    record = _audit([9], [_gold(10)]).records[0]
+    assert RetrievalFailure.NEIGHBOUR_PAGE_MISSING in record.secondary_flags
 
 
 def test_any_valid_does_not_imply_required_completion() -> None:
@@ -119,6 +131,34 @@ def test_duplicate_physical_gold_page_is_unique_once() -> None:
     assert audit.metrics.total_gold_evidence == 2
     assert audit.metrics.unique_gold_pages == 1
     assert audit.metrics.unique_gold_page_recall_at[20] == 1.0
+
+
+def test_parallel_query_union_uses_one_global_top_k_cutoff() -> None:
+    plan = raw.ProductionQueryPlan(
+        family="synthetic",
+        queries=("q1", "q2"),
+        composition=raw.RetrievalComposition.PARALLEL_PER_QUERY_UNION,
+    )
+    executions = [
+        raw.QueryAuditRecord(
+            case_id="synthetic",
+            risk_code="cash_runway",
+            query_family="synthetic",
+            query=query,
+            retriever_name="fake",
+            requested_limit=1,
+            returned_count=1,
+            results=[raw.RankedRetrievalResult(
+                rank=1,
+                page=page,
+                chunk_id=f"page-{page}",
+                relevance_score=1.0,
+            )],
+        )
+        for query, page in (("q1", 10), ("q2", 20))
+    ]
+
+    assert raw._composed_pages(plan, executions, "cash_runway", 1) == [10]
 
 
 def test_audit_does_not_import_or_call_agents_or_llm() -> None:

@@ -65,7 +65,7 @@ class ExpertRiskAnnotation(BaseModel):
     risk_code: str
     applicable: bool
     expected_status: ExpertExpectedStatus
-    expected_level: ExpertExpectedLevel
+    expected_level: ExpertExpectedLevel | None
     confidence: float = Field(ge=0.0, le=1.0)
     reasoning: str = Field(min_length=1)
     calculation_required: bool = False
@@ -79,16 +79,18 @@ class ExpertRiskAnnotation(BaseModel):
     def validate_semantics(self) -> "ExpertRiskAnnotation":
         if self.risk_code not in V03_ENABLED_RISK_CODES:
             raise ValueError(f"unsupported active risk_code: {self.risk_code}")
-        if self.applicable:
-            if self.expected_status == ExpertExpectedStatus.REJECTED:
-                raise ValueError("applicable risk cannot have rejected status")
-            if self.expected_level == ExpertExpectedLevel.NOT_APPLICABLE:
-                raise ValueError("applicable risk cannot have not_applicable level")
-        else:
+        if not self.applicable:
             if self.expected_status != ExpertExpectedStatus.REJECTED:
                 raise ValueError("non-applicable risk must have rejected status")
             if self.expected_level != ExpertExpectedLevel.NOT_APPLICABLE:
                 raise ValueError("non-applicable risk must have not_applicable level")
+        elif self.expected_status == ExpertExpectedStatus.REJECTED:
+            raise ValueError("applicable risk cannot have rejected status")
+        elif self.expected_status == ExpertExpectedStatus.VERIFIED:
+            if self.expected_level in (None, ExpertExpectedLevel.NOT_APPLICABLE):
+                raise ValueError("verified applicable risk must have a concrete risk level")
+        elif self.expected_level == ExpertExpectedLevel.NOT_APPLICABLE:
+            raise ValueError("needs_review applicable risk cannot have not_applicable level")
         if self.calculation_required and not self.calculation_method:
             raise ValueError("calculation_method is required when calculation_required=true")
         return self
