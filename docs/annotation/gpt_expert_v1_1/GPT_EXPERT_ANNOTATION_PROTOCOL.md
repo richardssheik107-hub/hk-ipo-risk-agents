@@ -60,11 +60,24 @@ and cash equivalents, use the latter. Do not add those deposits back.
 If formal financial statement definitions conflict, retain all evidence and report
 `ACCOUNTING_DEFINITION_CONFLICT`; do not choose an unfrozen alternative.
 
-## 6. Resolved policy — negative risk consistency
+## 6. Resolved policy — annotation state consistency
 
-When `applicable=false`, `expected_status` must be `rejected` and
-`expected_level` must be `not_applicable`. `applicable=false + verified` and an
-undefined/`none` level are invalid.
+Use the following state matrix exactly:
+
+| `applicable` | `expected_status` | Allowed `expected_level` |
+|---|---|---|
+| `false` | `rejected` | `not_applicable` only |
+| `true` | `verified` | `low`, `medium`, `high`, or `critical` |
+| `true` | `needs_review` | `null` or a concrete provisional level |
+
+All other combinations are invalid. In particular, an applicable risk cannot be
+`rejected`, and `not_applicable` is never a level for an applicable risk.
+
+For `applicable=true + expected_status=needs_review`, `expected_level=null` means
+that the risk fact or candidate exists but the frozen severity/policy is not yet
+sufficient to select a level. It is not an omitted field and is not equivalent to
+`not_applicable`. The validator must preserve this unresolved state and must not
+fill a level automatically.
 
 ## 7. Resolved policy — financial calculations
 
@@ -89,6 +102,10 @@ Report rather than resolve:
 - `OPEN-01`: zero-revenue / undefined-denominator concentration;
 - `OPEN-02`: `precommercial_product` severity;
 - `OPEN-03`: future separation of Expert Fact Layer and policy-derived labels.
+
+For `OPEN-01` and `OPEN-02`, an applicable annotation may therefore use
+`expected_status=needs_review` and `expected_level=null`. This represents the open
+policy faithfully; it does not resolve either item.
 
 ## 10. Legal and Business distinctions
 
