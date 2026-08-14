@@ -1,4 +1,11 @@
-# GPT Expert Blind Annotation Protocol v1.1
+# GPT Expert Blind Annotation Protocol v1.1.1
+
+`PROMPT_CONTRACT_VERSION = gpt_expert_prompt_contract_v1.1.1`
+
+`ANNOTATION_SCHEMA_VERSION = gpt_expert_v1.1`
+
+This is a prompt-contract clarification. The JSON `annotation_version` remains
+`gpt_expert_v1.1` for direct `ExpertAnnotationBundle` compatibility.
 
 ## 1. Role and blind boundary
 
@@ -60,9 +67,20 @@ and cash equivalents, use the latter. Do not add those deposits back.
 If formal financial statement definitions conflict, retain all evidence and report
 `ACCOUNTING_DEFINITION_CONFLICT`; do not choose an unfrozen alternative.
 
-## 6. Resolved policy — annotation state consistency
+If net cash from operating activities for the selected comparable period is
+greater than or equal to zero, there is no operating cash burn for that period:
 
-Use the following state matrix exactly:
+```text
+monthly_operating_cash_burn = null
+cash_runway_months = null
+cash_runway applicable = false
+```
+
+Do not take the absolute value of a positive operating cash inflow and treat it as
+cash burn. Preserve the positive signed cash-flow value in `calculation_inputs`
+and explain the non-trigger result in `calculation_result`.
+
+## 6. Resolved policy — annotation state consistency
 
 | `applicable` | `expected_status` | Allowed `expected_level` |
 |---|---|---|
@@ -70,14 +88,9 @@ Use the following state matrix exactly:
 | `true` | `verified` | `low`, `medium`, `high`, or `critical` |
 | `true` | `needs_review` | `null` or a concrete provisional level |
 
-All other combinations are invalid. In particular, an applicable risk cannot be
-`rejected`, and `not_applicable` is never a level for an applicable risk.
-
-For `applicable=true + expected_status=needs_review`, `expected_level=null` means
-that the risk fact or candidate exists but the frozen severity/policy is not yet
-sufficient to select a level. It is not an omitted field and is not equivalent to
-`not_applicable`. The validator must preserve this unresolved state and must not
-fill a level automatically.
+All other combinations are invalid. `null` is allowed only for an applicable
+`needs_review` risk whose severity or policy is unresolved. It is not equivalent
+to `not_applicable`, and the annotator must never auto-fill it.
 
 ## 7. Resolved policy — financial calculations
 
@@ -87,6 +100,21 @@ does not waive the concentration calculation requirement. `continuous_loss` must
 record comparable-period facts so the deterministic validator can count them.
 
 Preserve period, currency, unit, sign and exact source text. Do not infer numbers.
+
+`calculation_inputs` and `calculation_result` must each be a JSON object or JSON
+`null`. Never encode either field as prose, Markdown, comma-separated text, or an
+equation embedded in one string.
+
+Concentration may be established with either:
+
+1. an exact ratio calculated from authoritative numerator and denominator facts;
+2. a formal bound proof that is sufficient to include or exclude a frozen
+   threshold.
+
+For a bound proof, preserve the disclosed strict operator. For example, if every
+customer is formally disclosed as contributing `<10%`, record `bound_operator` as
+`<`, `largest_customer_bound` as `<10%`, and the five-customer aggregate bound as
+`<50%`. Do not silently normalize `<10%` to `10%`.
 
 ## 8. Resolved policy — dash/blank/N/A
 
@@ -103,9 +131,9 @@ Report rather than resolve:
 - `OPEN-02`: `precommercial_product` severity;
 - `OPEN-03`: future separation of Expert Fact Layer and policy-derived labels.
 
-For `OPEN-01` and `OPEN-02`, an applicable annotation may therefore use
-`expected_status=needs_review` and `expected_level=null`. This represents the open
-policy faithfully; it does not resolve either item.
+For `OPEN-01` and `OPEN-02`, an applicable annotation may use
+`expected_status=needs_review` and `expected_level=null`; this reports the open
+policy without resolving it.
 
 ## 10. Legal and Business distinctions
 
