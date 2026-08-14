@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_06900",
+  "stock_code": "6900.HK",
+  "company_name": "上坤地產",
+  "document_id": "ipo_2020_06900",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 883,
+  "pdf_sha256": "dd1a3d2d44eed483b018cfb6c32853993eb4435b6dc6b27e09ca31e310893dda",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

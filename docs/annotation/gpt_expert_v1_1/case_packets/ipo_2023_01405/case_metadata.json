@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_01405",
+  "stock_code": "1405.HK",
+  "company_name": "達勢股份",
+  "document_id": "ipo_2023_01405",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 608,
+  "pdf_sha256": "562669a9ef2e15b4ce9860717d92ac624e3af225065a635da040501d0781d0cf",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_06618",
+  "stock_code": "6618.HK",
+  "company_name": "京東健康",
+  "document_id": "ipo_2020_06618",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 558,
+  "pdf_sha256": "37762cd54042ca0e15c35e1c6dc13532ac13365d9ac7fb1f145608c0e23d8e5c",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

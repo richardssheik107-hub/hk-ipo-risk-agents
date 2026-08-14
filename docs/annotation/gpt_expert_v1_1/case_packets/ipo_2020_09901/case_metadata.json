@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_09901",
+  "stock_code": "9901.HK",
+  "company_name": "新東方－Ｓ",
+  "document_id": "ipo_2020_09901",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 465,
+  "pdf_sha256": "f4f6a1b6833f58abf57a19a2152c8130048758947786eb79bd12176e241e6c3d",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

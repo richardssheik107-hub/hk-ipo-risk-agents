@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02450",
+  "stock_code": "2450.HK",
+  "company_name": "淮北綠金股份",
+  "document_id": "ipo_2022_02450",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 871,
+  "pdf_sha256": "ea5002bf4b6f57a58aa228de338d2c1a5de39bdb240c797d3e0241e88dc116f7",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

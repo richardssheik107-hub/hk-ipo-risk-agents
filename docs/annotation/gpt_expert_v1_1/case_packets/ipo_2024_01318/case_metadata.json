@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_01318",
+  "stock_code": "1318.HK",
+  "company_name": "毛戈平",
+  "document_id": "ipo_2024_01318",
+  "source_year": 2024,
+  "dataset_split": "validation",
+  "page_count": 617,
+  "pdf_sha256": "751fbe516187b926f4292e7c2251812a173b053f53c56d5657e4789c6e5f79a3",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_00314",
+  "stock_code": "0314.HK",
+  "company_name": "思派健康",
+  "document_id": "ipo_2022_00314",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 551,
+  "pdf_sha256": "f774411f7d88a9f0fa10209ed7cd2fa6adba693d27475006b0e83792704f4501",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

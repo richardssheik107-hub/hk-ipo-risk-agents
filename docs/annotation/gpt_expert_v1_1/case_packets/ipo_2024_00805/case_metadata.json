@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_00805",
+  "stock_code": "0805.HK",
+  "company_name": "新吉奧房車",
+  "document_id": "ipo_2024_00805",
+  "source_year": 2024,
+  "dataset_split": "validation",
+  "page_count": 554,
+  "pdf_sha256": "ae0005026341b2e451e596b67e54696b47350b51fc3f1573656abf7c2fc2b354",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

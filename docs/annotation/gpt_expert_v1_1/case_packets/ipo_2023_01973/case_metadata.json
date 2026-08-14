@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_01973",
+  "stock_code": "1973.HK",
+  "company_name": "天圖投資",
+  "document_id": "ipo_2023_01973",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 820,
+  "pdf_sha256": "263a66a300190e361748a697e0c682e18870c8ff5d3dffc22ae283747d026c74",
+  "source_validation_status": "validated_from_catalog_metadata"
+}
