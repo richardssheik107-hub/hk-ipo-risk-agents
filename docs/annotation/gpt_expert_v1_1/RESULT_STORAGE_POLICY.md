@@ -10,6 +10,7 @@ progress only. Annotation answers belong on the dedicated
 expert_results/<case_id>/
 ├─ pass1/expert_annotation_v1.json
 ├─ pass1/validation_result.json
+├─ pass1/validation_result_v2.json  # optional immutable schema revalidation
 ├─ pass2/expert_annotation_v2.json
 ├─ pass2/validation_result.json
 ├─ audit/audit.json
@@ -23,6 +24,12 @@ local paths, Human Golden, and 2025 blind material are forbidden.
 
 - Never overwrite a pass, audit, or final artifact.
 - Preserve GPT output verbatim; validation writes a separate result file.
+- Preserve an existing `validation_result.json` as the historical result produced
+  by its validator contract. If the unchanged annotation is revalidated after a
+  validator/schema correction, append `validation_result_v2.json`, then `_v3`,
+  and so on. The new result must name the source annotation, prior validation
+  artifact, validator contract, and source annotation blob. Never renumber or
+  overwrite an earlier validation result.
 - A validation failure changes progress to `validation_failed` or `needs_review`;
   it does not justify editing the original JSON.
 - A revised output is a new pass, not a replacement for pass1.
