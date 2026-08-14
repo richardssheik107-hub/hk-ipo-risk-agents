@@ -1,0 +1,461 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_01024",
+  "stock_code": "1024.HK",
+  "company_name": "快手－Ｗ",
+  "document_id": "ipo_2021_01024",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "按会计师报告的合并现金流量表，2020年9月30日止九个月经营活动所用现金净额为人民币768,417千元，期末现金及现金等价物为人民币7,703,012千元。九个月平均月度经营现金消耗约为人民币85,379.67千元，对应现金跑道约90.22个月，明显不低于12个月的最低触发阈值，因此拒绝该风险。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_months",
+      "calculation_inputs": {
+        "period": "nine months ended 30 September 2020",
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 7703012,
+        "net_cash_from_operating_activities": -768417,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": 85379.6667,
+        "cash_runway_months": 90.2207,
+        "assessment": "runway_not_below_12_months"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的合并损益表显示，2017年、2018年及2019年三个可比完整财政年度均录得公司股权持有人应占年度亏损，分别为人民币20,044,950千元、12,429,285千元及19,651,534千元。满足至少3个可比亏损期间的冻结条件，因此为high。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "comparable_period_type": "full_year",
+        "periods": [
+          {
+            "period": "year ended 31 December 2017",
+            "loss": -20044950
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "loss": -12429285
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "loss": -19651534
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_period_count": 3,
+        "assessment": "at_least_three_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示，截至2020年9月30日止九个月收入为人民币40,677,441千元，而截至2019年9月30日止九个月可比收入为人民币27,267,968千元；同比增长约49.18%，并非负增长，故不触发<0%或<=-20%的阈值。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_growth",
+      "calculation_inputs": {
+        "current_period": "nine months ended 30 September 2020",
+        "prior_comparable_period": "nine months ended 30 September 2019",
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "current_revenue": 40677441,
+        "prior_revenue": 27267968
+      },
+      "calculation_result": {
+        "growth_pct": 49.1766,
+        "assessment": "positive_growth_no_trigger"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示，营业纪录期间来自前五大客户的收入占总收入比例少于10%；会计师报告亦披露概无单一客户贡献总收入10%以上。严格上界可推出最大客户<10%、前五大客户<10%，远低于最大客户30%或前五大60%的medium阈值。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "years ended 31 December 2017, 2018 and 2019 and nine months ended 30 September 2020",
+        "currency": "CNY",
+        "unit": "% of total revenue",
+        "top_five_customer_upper_bound_pct": 10,
+        "top_five_bound_operator": "<",
+        "single_customer_upper_bound_pct": 10,
+        "single_customer_bound_operator": "<",
+        "maximum_customers_considered": 5
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<10%",
+        "top_five_customer_bound": "<10%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Business正式披露显示，2017年、2018年及2019年各年度以及截至2020年9月30日止九个月，前五大供应商占采购额少于15%。由该严格上界可推出最大供应商<15%、前五大供应商<15%，均远低于冻结的medium/high集中度阈值。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "years ended 31 December 2017, 2018 and 2019 and nine months ended 30 September 2020",
+        "currency": "CNY",
+        "unit": "% of procurement",
+        "top_five_supplier_upper_bound_pct": 15,
+        "top_five_bound_operator": "<",
+        "maximum_suppliers_considered": 5
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<15%",
+        "top_five_supplier_bound": "<15%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "首次公开发售前投资者的撤资权在首次递交上市申请前被暂停，但若不进行上市则仍可行使，上市后才终止；这属于可恢复的实际特殊权利。会计师报告同时记录优先股的赎回条款及2020年10月将赎回开始日期统一修订为2022年4月30日。按Protocol，实际有效/可恢复特殊权利需要needs_review，候选严重度维持provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.95,
+      "reasoning": "招股书披露实际且尚未完全消除的许可合规事项：若干网站/应用未登记至相应视听许可，且公司无法申请新的视听许可或将其加入现有许可；另有若干网络游戏截至最后可行日期仍在申请事先批准。中国法律顾问及董事认为暂停服务可能性较低、相关事项不会造成重大不利影响，且未面临重大执法行动，同时公司亦披露没有重大法律诉讼。由于存在未完全解决的监管/许可状态而其重大性及最终监管效果由法律意见和管理层判断缓释，按Protocol应needs_review，候选严重度为provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01024",
+      "stock_code": "1024.HK",
+      "company_name": "快手－Ｗ",
+      "document_id": "ipo_2021_01024",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示公司在整个营业纪录期间已从直播、线上营销服务及其他服务持续取得大额收入，2020年前九个月总收入为人民币40,677,441千元。核心平台及主要服务已商业化，不符合“核心产品未商业化且无产品销售收入”的候选条件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "cash_runway",
+      "page": 591,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得╱（所用）現金淨額. . 2,055,418 1,819,254 8,020,090 6,111,970 (768,417)",
+      "evidence_reason": "合并现金流量表给出截至2020年9月30日止九个月经营活动所用现金净额人民币768,417千元，用于计算月度经营现金消耗。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "cash_runway",
+      "page": 592,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期末現金及現金等價物 . . . . . . 23(a) 2,688,512 5,370,332 3,996,236 3,098,231 7,703,012",
+      "evidence_reason": "合并现金流量表给出2020年9月30日期末现金及现金等价物人民币7,703,012千元，是Protocol规定的标准cash input。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "continuous_loss",
+      "page": 580,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "貴公司股權持有人應佔年╱期內虧損 . . . . . . . . . . . . . . . . . . . . . (20,044,950) (12,429,285) (19,651,534) (1,617,445) (97,371,462)",
+      "evidence_reason": "合并损益表同时列示2017、2018、2019三个可比完整年度均为亏损，足以满足至少三个可比亏损期间的high条件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "revenue_growth",
+      "page": 580,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6 8,339,578 20,300,645 39,120,348 27,267,968 40,677,441",
+      "evidence_reason": "合并损益表提供截至2019年及2020年9月30日止九个月的可比收入人民币27,267,968千元及40,677,441千元，用于计算最新可比收入增长率。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "customer_concentration",
+      "page": 309,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止各年度與截至2020年9月30日止九個月，來自前五大客戶（主要為廣告代理）的收入佔總收入比例少於10%。",
+      "evidence_reason": "Business正式披露直接给出前五大客户收入占比严格上界<10%，足以排除top-five 60%/80%阈值，并同时推出最大客户<10%。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "customer_concentration",
+      "page": 634,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "截至2017年、2018年及2019年12月31日止年度以及截至2019年及2020年9月30日止九個月，由於概無來自單一客戶的收入佔貴集團總收入的10%以上，故並無集中風險。",
+      "evidence_reason": "会计师报告以更高财务权威交叉验证单一客户不存在>=10%的收入贡献，与Business的低集中度结论一致。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "supplier_concentration",
+      "page": 309,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止各年度與截至2020年9月30日止九個月，我們的前五大供應商佔採購額少於15%。",
+      "evidence_reason": "Business正式披露直接给出前五大供应商采购占比严格上界<15%，可排除top-five 60%/80%阈值并推出最大供应商<15%。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "redemption_rights",
+      "page": 247,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "為進行全球發售，根據股東協議授予首次公開發售前投資者的撤資權已於緊接向聯交所首次遞交上市申請表格前暫停，且僅可於不進行上市的情況下行使，否則該撤資權將於上市後終止。",
+      "evidence_reason": "首次公开发售前投资条款明确说明撤资权只是暂停，并在上市不进行时可恢复行使；这直接满足Protocol对restorable special rights的review条件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "redemption_rights",
+      "page": 682,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "2020年10月，所有優先股股東均同意將贖回開始日期修訂為2022年4月30日。",
+      "evidence_reason": "会计师报告的优先股附注确认赎回条款仍作为实际合同安排存在，并记录统一修订后的赎回开始日期，支持特殊权利并非纯粹模板性披露。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "material_litigation_compliance",
+      "page": 317,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "然而，彼等或各自的附屬公司經營的若干網站及╱或應用並未登記到彼等持有相應的視聽許可，導致未有嚴格遵守相關法律法規。由於該等網站及╱或應用在《視聽規定》的生效日期後推出，我們無法申請新的視聽許可或將該等網站及╱或應用加入現有視聽許可。",
+      "evidence_reason": "Business的不合规披露确认存在实际视听许可缺口，而且当前不能通过申请新许可或加入现有许可完全补正，构成未完全解决的许可状态。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "material_litigation_compliance",
+      "page": 318,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "董事認為，上述情況並無且不會對業務、財務狀況或經營業績有重大不利影響。董事確認，我們並無因有關許可狀態面臨任何重大監管通知、罰款、處罰或執法行動。",
+      "evidence_reason": "该披露提供对视听许可事项重大性及执法风险的正式缓释判断；与未完全补正的许可状态共同导致按Protocol采用needs_review而非直接确认重大风险。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "material_litigation_compliance",
+      "page": 318,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於最後可行日期，北京快手及北京慕遠仍在就所經營的若干款網絡遊戲申請取得國家新聞出版署事先批准的過程中。",
+      "evidence_reason": "截至最后可行日期仍在申请游戏事先批准，构成另一项未完全解决的监管审批事实。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "material_litigation_compliance",
+      "page": 314,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "營業紀錄期間及直至最後可行日期，我們並無捲入任何我們認為會對業務、財務狀況或經營業績有重大不利影響的法律程序、仲裁或行政訴訟，且就我們所知，亦無任何前述法律程序、仲裁或行政訴訟的風險。",
+      "evidence_reason": "法律诉讼章节交叉验证不存在公司认为会造成重大不利影响的待决诉讼，因此本风险候选主要来自监管/许可事项而非重大诉讼。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "risk_code": "precommercial_product",
+      "page": 633,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "直播 . . . . . . . . . . . . . . . . . . . 7,948,997 18,615,130 31,442,341 22,922,116 25,309,312\n線上營銷服務 . . . . . . . . . . 390,581 1,665,095 7,418,502 4,267,512 13,343,194\n其他服務 . . . . . . . . . . . . . . — 20,420 259,505 78,340 2,024,935",
+      "evidence_reason": "会计师报告的收入明细显示核心平台已长期通过直播、线上营销及其他服务产生实质收入，直接否定核心产品尚未商业化的前提。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
