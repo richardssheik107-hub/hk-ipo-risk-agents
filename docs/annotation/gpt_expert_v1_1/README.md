@@ -2,8 +2,8 @@
 
 这是 Git tracked 的盲标协作目录，只包含协议、空白模板、Case 身份和分工状态。
 
-当前状态：Phase 0.6B.1 Expert Golden 100 taskset finalized。尚未开始 Phase 0.6C
-实际标注。
+当前状态：Phase 0.6C Primary Blind Annotation 进行中。正式任务集已完成并保存
+0368.HK、1167.HK、1408.HK 三份 Primary Pass；其余 97 份尚未开始。
 
 ## 安全边界
 

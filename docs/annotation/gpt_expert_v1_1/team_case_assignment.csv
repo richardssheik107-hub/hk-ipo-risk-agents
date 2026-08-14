@@ -1,7 +1,7 @@
 task_index,taskset_version,case_id,stock_code,company_name,source_year,dataset_split,primary_annotator,primary_status,second_pass_annotator,second_pass_status,adjudication_status,final_status,notes
-1,expert_golden_100_v1,ipo_2020_00368,0368.HK,德合集團,2020,development,,not_started,,not_started,not_started,not_started,
-2,expert_golden_100_v1,ipo_2020_01167,1167.HK,加科思－Ｂ,2020,development,,not_started,,not_started,not_started,not_started,
-3,expert_golden_100_v1,ipo_2020_01408,1408.HK,濠江機電,2020,development,,not_started,,not_started,not_started,not_started,
+1,expert_golden_100_v1,ipo_2020_00368,0368.HK,德合集團,2020,development,,completed,,not_started,not_started,not_started,
+2,expert_golden_100_v1,ipo_2020_01167,1167.HK,加科思－Ｂ,2020,development,,completed,,not_started,not_started,not_started,
+3,expert_golden_100_v1,ipo_2020_01408,1408.HK,濠江機電,2020,development,,completed,,not_started,not_started,not_started,
 4,expert_golden_100_v1,ipo_2020_01942,1942.HK,MOG HOLDINGS,2020,development,,not_started,,not_started,not_started,not_started,
 5,expert_golden_100_v1,ipo_2020_01961,1961.HK,九尊數字互娛,2020,development,,not_started,,not_started,not_started,not_started,
 6,expert_golden_100_v1,ipo_2020_02057,2057.HK,中通快遞－ＳＷ,2020,development,,not_started,,not_started,not_started,not_started,

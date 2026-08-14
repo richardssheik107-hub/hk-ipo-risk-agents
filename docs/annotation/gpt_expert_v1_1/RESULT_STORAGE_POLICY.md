@@ -45,9 +45,13 @@ inventing filenames ad hoc.
 
 ## Branch and access boundary
 
-`docs/gpt-expert-golden-v1-1-sync` is the collaboration branch.
-`annotation/gpt-expert-results` is the answer branch. Do not merge the result branch
-into the collaboration branch while blind annotation is active.
+`annotation/gpt-expert-results` is the unified active annotation branch. It contains
+the frozen protocols, blank Case packets, progress records, and preserved answer
+artifacts. The former `docs/gpt-expert-golden-v1-1-sync` branch has been retired.
+
+Because the unified branch contains both blank materials and answer artifacts,
+annotators who have not completed their own Primary Pass must not browse
+`expert_results/` until the applicable team blind-boundary rule permits it.
 
 Git branches are organization boundaries, not authorization boundaries. Anyone
 with repository read permission can inspect both branches. Strict blindness
