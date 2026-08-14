@@ -78,4 +78,3 @@ def test_production_module_has_no_case_specific_identifiers() -> None:
     source = Path("src/ipo_risk/retrieval/domain_aware_v21.py").read_text(encoding="utf-8").lower()
     for forbidden in ("00368", "01167", "01408", "01961", "01942", "02057", "02135", "02263", "02599", "00013"):
         assert forbidden not in source
-
