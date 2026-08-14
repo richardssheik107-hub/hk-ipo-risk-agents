@@ -1,0 +1,509 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "cash_runway",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.98,
+"reasoning": "以現金流量表口徑，2020年2月29日期末現金及現金等價物為40,900千澳門元；截至2020年2月29日止兩個月經營活動所得現金淨額為正7,127千澳門元，並非經營現金消耗，因此不存在可取絕對值的月度 operating cash burn 分母，凍結的<12/<6/<3個月門檻不被觸發。 ",
+"calculation_required": true,
+"calculation_method": "cash-flow-statement cash and cash equivalents / absolute monthly operating cash burn; a burn denominator exists only when net operating cash flow is negative",
+"calculation_inputs": {
+"period": "two months ended 2020-02-29",
+"currency": "MOP",
+"unit": "thousand",
+"cash_and_cash_equivalents": 40900,
+"net_cash_from_operating_activities": 7127,
+"period_months": 2,
+"monthly_operating_cash_burn": null
+},
+"calculation_result": {
+"cash_runway_months": null,
+"assessment": "no operating cash burn; finite cash-runway months are not defined"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "continuous_loss",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "會計師報告顯示2017、2018、2019三個年度以及2019、2020年可比兩個月期間均為正溢利，沒有任何可比虧損期間，故既不滿足2期 medium，也不滿足至少3期 high。",
+"calculation_required": false,
+"calculation_method": "count comparable periods with negative profit/total comprehensive income; no arithmetic threshold beyond period count",
+"calculation_inputs": {
+"currency": "MOP",
+"unit": "thousand",
+"period_facts": [
+{
+"period": "year ended 2017-12-31",
+"profit_total_comprehensive_income": 29850,
+"comparability": "annual"
+},
+{
+"period": "year ended 2018-12-31",
+"profit_total_comprehensive_income": 27430,
+"comparability": "annual"
+},
+{
+"period": "year ended 2019-12-31",
+"profit_total_comprehensive_income": 40538,
+"comparability": "annual"
+},
+{
+"period": "two months ended 2019-02-28",
+"profit_total_comprehensive_income": 8429,
+"comparability": "two-month comparative",
+"audit_status": "unaudited comparative"
+},
+{
+"period": "two months ended 2020-02-29",
+"profit_total_comprehensive_income": 8099,
+"comparability": "two-month comparative"
+}
+]
+},
+"calculation_result": {
+"comparable_loss_periods": 0
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "revenue_growth",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "可比收益均增長：2018/2017約+35.77%，2019/2018約+8.90%，2020年前兩個月相對2019年前兩個月約+7.89%；沒有<0%的可比增長，因此不觸發 medium 或 high。",
+"calculation_required": true,
+"calculation_method": "(current comparable-period revenue - prior comparable-period revenue) / prior comparable-period revenue * 100",
+"calculation_inputs": {
+"currency": "MOP",
+"unit": "thousand",
+"revenues": {
+"2017_year": 160752,
+"2018_year": 218254,
+"2019_year": 237680,
+"2019_two_months": 44967,
+"2020_two_months": 48513
+}
+},
+"calculation_result": {
+"2018_vs_2017_pct": 35.7706280482,
+"2019_vs_2018_pct": 8.9006387054,
+"2020_two_months_vs_2019_two_months_pct": 7.8857829075
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "customer_concentration",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "截至2020年2月29日止兩個月，最大客戶D收益41,680千澳門元、五大客戶合計47,199千澳門元，而同期總收益48,513千澳門元；獨立計算分別為85.92%和97.29%，兩者均超過 high 門檻（最大客戶>=50%或五大客戶>=80%）。招股書披露的85.9%和97.3%亦與計算一致。 ",
+"calculation_required": true,
+"calculation_method": "largest-customer revenue / total revenue * 100; top-five-customer revenue / total revenue * 100",
+"calculation_inputs": {
+"period": "two months ended 2020-02-29",
+"currency": "MOP",
+"unit": "thousand",
+"largest_customer_revenue": 41680,
+"top_five_customer_revenue": 47199,
+"total_revenue": 48513
+},
+"calculation_result": {
+"largest_customer_pct": 85.915115536,
+"top_five_customer_pct": 97.2914476532
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.98,
+"reasoning": "截至2020年2月29日止兩個月，最大供應商L採購額3,662千澳門元、五大供應商合計5,883千澳門元；財務資料將同期7,173千澳門元材料成本界定為主要由工程材料採購成本構成。以7,173作可驗證採購分母獨立計算，最大供應商約51.05%、五大供應商約82.02%，均達到 high 門檻；與招股書直接披露的51.0%和82.0%一致。 ",
+"calculation_required": true,
+"calculation_method": "largest-supplier purchases / total material procurement cost * 100; top-five-supplier purchases / total material procurement cost * 100",
+"calculation_inputs": {
+"period": "two months ended 2020-02-29",
+"currency": "MOP",
+"unit": "thousand",
+"largest_supplier_purchases": 3662,
+"top_five_supplier_purchases": 5883,
+"total_material_procurement_cost": 7173
+},
+"calculation_result": {
+"largest_supplier_pct": 51.0525582044,
+"top_five_supplier_pct": 82.0158929318
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "redemption_rights",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "首次公開發售前投資條款明確說明未授予任何特別權利，並特別說明包括無撤資權；後續條款再次確認概無特別權利。沒有實際有效或可恢復的贖回/撤資類特別權利，因此不觸發 needs_review。 ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.97,
+"reasoning": "截至最後實際可行日期，無未決或受威脅且可能造成重大不利影響的訴訟、索償或仲裁；董事及澳門法律顧問確認已取得經營所需全部重大牌照/許可並在所有重大方面合規。部分非居民僱員許可處於正常續期申請流程，但現有許可仍有效，且披露明確表示過往續期無重大困難、預計未來無重大障礙，未形成已披露的重大未決監管事項或未解決許可影響。  ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_01408",
+"stock_code": "1408.HK",
+"company_name": "濠江機電",
+"document_id": "ipo_2020_01408",
+"risk_code": "precommercial_product",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.98,
+"reasoning": "正式業務披露將本集團界定為自2011年起經營的澳門機電工程服務承建商，提供低壓、暖通空調、弱電以及保養維修服務；會計師報告進一步說明收益來自機電工程及保養維修服務。該發行人不存在待商業化的核心產品候選，因此 precommercial_product 的事實前提不成立，OPEN-02 嚴重度政策無需在本案裁定。 ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "cash_runway",
+"page": 394,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "經營活動所得現金淨額 15,245 18,343 16,459 28,609 7,127",
+"evidence_reason": "綜合現金流量表的最後一欄顯示截至2020年2月29日止兩個月經營活動為正現金流入7,127千澳門元，證明不存在經營現金消耗分母。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "cash_runway",
+"page": 395,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "年╱期末現金及現金等價物\n以銀行結餘及現金呈列 8,593 18,731 34,038 47,183 40,900",
+"evidence_reason": "按已凍結的現金定義，現金流量表期末現金及現金等價物為標準現金輸入；截至2020年2月29日為40,900千澳門元。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "continuous_loss",
+"page": 390,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "附註 2017年 2018年 2019年 止兩個月 止兩個月\n千澳門元 千澳門元 千澳門元 千澳門元 千澳門元\n（未經審核）\n收益 6 160,752 218,254 237,680 44,967 48,513\n服務成本 (117,447) (168,176) (184,583) (33,721) (36,612)\n毛利 43,305 50,078 53,097 11,246 11,901\n其他收入 7 – 14 11 – 3\n預期信貸虧損模式下\n之減值虧損，扣除撥回 30b – (135) (183) 55 (45)\n行政開支 (4,083) (7,899) (6,863) (1,785) (1,653)\n融資成本 8 (95) (87) (68) (10) (11)\n上市開支 (4,649) (9,576) – – (944)\n除稅前溢利 34,478 32,395 45,994 9,506 9,251\n所得稅開支 11 (4,628) (4,965) (5,456) (1,077) (1,152)\n年內╱期內溢利及\n全面收入總額 9 29,850 27,430 40,538 8,429 8,099",
+"evidence_reason": "同一權威會計師報告表格提供三個年度及兩個可比兩個月期間的損益事實；所有期別均為正溢利，可供確定性計數。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "revenue_growth",
+"page": 390,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "截至12月31日止年度\n截至\n2019年\n2月28日\n截至\n2020年\n2月29日\n附註 2017年 2018年 2019年 止兩個月 止兩個月\n千澳門元 千澳門元 千澳門元 千澳門元 千澳門元\n（未經審核）\n收益 6 160,752 218,254 237,680 44,967 48,513",
+"evidence_reason": "提供2017至2019年度及2019/2020年同期兩個月的收益、期間、貨幣單位，足以計算全部可比增長率。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "customer_concentration",
+"page": 390,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "收益 6 160,752 218,254 237,680 44,967 48,513",
+"evidence_reason": "會計師報告給出截至2020年2月29日止兩個月總收益48,513千澳門元，作為集中度計算分母。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "customer_concentration",
+"page": 174,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "1 客戶D(附註) 一家亞洲綜合娛樂度假村設施\n發展商、擁有人及營運商，\n其股份於納斯達克股票市場\n上市，於最後實際可行日期\n的市值超過91億美元。根據\n其最終控股公司截至2019年\n12月31日止年度的年報，客\n戶D經營(i)位於澳門氹仔的\n一家娛樂場酒店；(ii)位於澳\n門路氹城的一處綜合城市娛\n樂場度假村；及(iii)澳門最大\n非娛樂場式運營的電子博彩\n機。客戶D亦為澳門路氹城處\n電影主題式綜合娛樂、零售\n及博彩度假村的主要擁有人\n及營運商\n低壓系統工程、暖通空調\n系統工程及弱電系統工\n程\n3年 30或45天 電匯 41,680 85.9",
+"evidence_reason": "正式Business五大客戶表給出最新期間最大客戶D的原始收益41,680千澳門元，作為獨立計算分子。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "customer_concentration",
+"page": 175,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "總計 47,199 97.3",
+"evidence_reason": "正式Business五大客戶表給出最新期間五大客戶收益合計47,199千澳門元，作為獨立計算分子。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "customer_concentration",
+"page": 175,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "business_section",
+"exact_text": "於往績記錄期間，\n(a) 五大客戶所產生的收益合共分別約佔總收益的93.7%、93.5%、87.6%及\n97.3%；及\n(b) 最大客戶所產生的收益分別約佔總收益的57.9%、40.4%、 30.5%及85.9%。",
+"evidence_reason": "直接披露的集中度百分比僅作交叉核對；主結論仍由原始金額獨立計算。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"page": 269,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "financial_information",
+"exact_text": "材料成本（附註1） 20,184 17.2 44,144 26.2 50,778 27.5 7,128 21.1 7,173 19.6",
+"evidence_reason": "Financial Information給出截至2020年2月29日止兩個月材料成本7,173千澳門元，作為可驗證採購分母。",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"page": 269,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "financial_information",
+"exact_text": "(1) 材料成本主要指空調系統、照明系統、電力電纜及工程所使用其他材料的採購成本，分別\n佔往績記錄期間總服務成本的約17.2%、26.2%、27.5%及19.6%。有關我們的工程及服務所\n用材料的進一步詳情，請參閱本招股章程「業務－採購和原材料」。",
+"evidence_reason": "該附註明確說明材料成本主要指相關工程材料採購成本，支持以7,173千澳門元進行供應商集中度的獨立計算。",
+"confidence": 0.97
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"page": 193,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "1 供應商L 香港註冊成立公司，主要從事提\n供照明控制和樓宇自動化系統\n的解決方案\n房間控制單元 2年 30 天或交付\n時\n電匯 3,662 51.0",
+"evidence_reason": "正式Business五大供應商表給出最新期間最大供應商L採購額3,662千澳門元，作為獨立計算分子。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"page": 193,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "總計 5,883 82.0",
+"evidence_reason": "正式Business五大供應商表給出最新期間五大供應商採購額合計5,883千澳門元，作為獨立計算分子。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "supplier_concentration",
+"page": 193,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "business_section",
+"exact_text": "於往績記錄期間，\n(a) 向五大供應商的採購額合共分別約佔採購總額的39.4%、46.7%、48.5%及\n82.0%；及\n(b) 向最大供應商的採購額分別約佔採購總額的10.0%、18.8%、25.7%及\n51.0%。",
+"evidence_reason": "直接披露的供應商百分比只作交叉核對，未替代原始金額計算。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "redemption_rights",
+"page": 111,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "pre_ipo_investment",
+"exact_text": "並無根據\n相關首次公開發售前協議授予首次公開發售前\n投資者特別權利（包括無撤資權）及首次公開\n發售前投資者（作為少數股東，無權委任董事\n會成員）所承擔的風險；",
+"evidence_reason": "首次公開發售前投資條款直接否定特別權利，並明確指出無撤資權，排除實際撤回/贖回類權利。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "redemption_rights",
+"page": 117,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "pre_ipo_investment",
+"exact_text": "授予首次公開發售前\n投資者的特別權利：\n概無根據首次公開發售前協議向首次公開發售前投\n資者授予任何特別權利",
+"evidence_reason": "同一Pre-IPO Investment正式披露再次確認不存在任何特別權利，與主要證據一致。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "material_litigation_compliance",
+"page": 222,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "legal_disclosure",
+"exact_text": "訴訟及合規事宜\n於最後實際可行日期，概無對我們或我們的任何董事提起任何未決或構成威脅且\n可能對我們的業務、財務狀況或經營業績造成重大不利影響的訴訟、索償或仲裁程序。\n董事確認，於往績記錄期間及直至最後實際可行日期，(i)我們已取得在澳門經營\n業務的一切重大牌照、許可證、批文、資格及證書；及(ii)我們已在所有重大方面遵守\n澳門（即本集團經營業務所在的主要司法權區）的所有適用法例及法規。\n根據我們的澳門法律顧問的意見，我們於往績記錄期間及直至最後實際可行日期\n已在所有重大方面遵守澳門的所有相關法例及法規。",
+"evidence_reason": "具體法律/合規披露同時否定重大未決訴訟並確認重大牌照與重大合規狀態，是該風險的最高相關權威證據。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "material_litigation_compliance",
+"page": 219,
+"evidence_role": "supporting",
+"requirement": "supporting_only",
+"source_authority": "legal_disclosure",
+"exact_text": "董事確認，且我們的澳門法律顧問同意，於最後實際可行日期，我們已從澳門相\n關部門取得營運所需的所有重要牌照、許可證及批文。於往績記錄期間及直至最後實\n際可行日期，我們並無於取得或續新我們的業務營運所需許可證及牌照方面遇到任何\n重大困難。董事確認，且我們的澳門法律顧問同意，在將來我們的重要許可證及牌照\n到期時，我們預計不會在續新該等許可證及牌照方面遇到任何重大障礙。",
+"evidence_reason": "補充說明現有重要牌照齊備且續期沒有重大困難或預期障礙，降低正常續期申請被誤判為未解決監管影響的風險。",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "material_litigation_compliance",
+"page": 496,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "legal_disclosure",
+"exact_text": "於最後實際可行日期，我們並不知悉我們或任何董事涉及的任何尚未了結或面臨\n威脅的重大訴訟或仲裁程序，而可能對我們的財務狀況或經營業績造成重大不利影響。",
+"evidence_reason": "附錄四法定及一般資料對重大訴訟作獨立交叉核對，與Business法律披露一致。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "precommercial_product",
+"page": 127,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "我們為澳門的一家機電工程服務工程承建商。根據行業報告，按於2019年在澳\n門機電工程服務業的收益計，我們於2019年在澳門機電工程服務工程承建商中排名第\n五，所佔市場份額約為1.9%。我們是在土地工務運輸局註冊的綜合機電工程服務工程\n承建商，擁有資深工程團隊、熟練工及╱或分包商，在澳門根據客戶的合約需求提供\n全面的機電工程服務工程組合，通常涉及(i)低壓系統工程；(ii)暖通空調系統工程；及\n(iii)弱電系統工程的供應及╱或安裝、相關測試及調試，以及機電工程服務工程的管\n理、質量監控及交付。我們亦向客戶提供保養及維修服務。於往績記錄期間及直至最\n後實際可行日期，我們透過投標或報價程序獲取機電項目，而我們的全部收益均來自\n澳門。",
+"evidence_reason": "正式Business把發行人界定為已運營的機電工程服務承建商並描述其商業服務活動，而不是有待商業化的核心產品開發公司。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "precommercial_product",
+"page": 412,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "accountants_report",
+"exact_text": "貴集團的收益指來自機電工程以及保養及維修服務收益的已收及應收款項。",
+"evidence_reason": "會計師報告確認已實現的收益來自機電工程與保養維修服務，交叉核對其商業化服務業務性質。",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_01408",
+"risk_code": "precommercial_product",
+"page": 221,
+"evidence_role": "context",
+"requirement": "supporting_only",
+"source_authority": "business_section",
+"exact_text": "研究及開發\n於往績記錄期間及於最後實際可行日期，我們並無從事任何研究及開發活動。",
+"evidence_reason": "業務章節沒有產品研發管線活動，支持不存在待商業化核心產品候選的判斷。",
+"confidence": 0.97
+}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"evidence_object_schema": {
+"case_id": "non-empty string; must equal bundle case_id",
+"risk_code": "one of the eight active risk codes assessed in risks[]",
+"page": "integer >= 1; physical PDF page number",
+"evidence_role": [
+"primary",
+"supporting",
+"context",
+"cross_check"
+],
+"requirement": [
+"required",
+"alternative",
+"supporting_only"
+],
+"source_authority": [
+"audited_financial_statement",
+"accountants_report",
+"financial_information",
+"business_section",
+"legal_disclosure",
+"corporate_structure",
+"pre_ipo_investment",
+"summary",
+"risk_factors",
+"other"
+],
+"exact_text": "non-empty verbatim text copied from the prospectus",
+"evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+"confidence": "number from 0.0 to 1.0 inclusive"
+}
+}
+}
