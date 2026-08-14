@@ -174,7 +174,11 @@ def test_calculation_fields_reject_string_encoding(field: str) -> None:
 
 @pytest.mark.parametrize(
     ("case_id", "page_count"),
-    [("ipo_2020_00368", 420), ("ipo_2020_01167", 520)],
+    [
+        ("ipo_2020_00368", 420),
+        ("ipo_2020_01167", 520),
+        ("ipo_2020_01408", 503),
+    ],
 )
 def test_preserved_real_pass1_bundles_validate(case_id: str, page_count: int) -> None:
     path = Path("expert_results") / case_id / "pass1" / "expert_annotation_v1.json"
