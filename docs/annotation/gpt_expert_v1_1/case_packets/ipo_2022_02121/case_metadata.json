@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02121",
+  "stock_code": "2121.HK",
+  "company_name": "創新奇智",
+  "document_id": "ipo_2022_02121",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 546,
+  "pdf_sha256": "e335e0af377fb176407797dc5fdb72fcc88d27166b728c7ed516d2157520e057",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

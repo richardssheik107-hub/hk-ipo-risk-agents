@@ -17,6 +17,26 @@ without tuning. The historical Owner Waiver is superseded. v0.4 market
 prediction, calibrated decline probabilities and 1/5/20/60-day labels have
 not started.
 
+## v0.3.5 Evidence Intelligence research program
+
+The released v0.3 runtime remains frozen. Phase 0.5 completed the real Responses
+API baseline, the 2410.HK real-LLM gate, and the 14-case Human Golden A/B. The
+observed pattern was higher precision without higher risk recall, with low
+Evidence Recall@3. Retrieval coverage is the primary bottleneck; LLM extraction/
+runtime is secondary, and downstream Legal verification remains an additional
+bottleneck.
+
+Before tuning retrieval, Phase 0.6 reconstructs an independent Expert Golden that
+separates risk instances, evidence records, evidence roles and multi-page
+relationships. Phase 0.7 designs domain-specific Evidence Intelligence, Phase 0.8
+runs a controlled A/B, and only Phase 0.9 selects/tunes retrieval algorithms. v0.4
+market prediction remains Not Started and is gated by this research program.
+
+The collaboration method is LLM-assisted, not GPT-as-Gold: blind GPT evidence
+investigation -> deterministic validation -> independent GPT audit -> conflict
+detection -> selective human adjudication -> Expert Golden v2. Open policy items
+must not be resolved by Codex or an annotator.
+
 ## 1. 项目名称
 
 中文名称：
@@ -238,24 +258,21 @@ HK IPO Risk Agents
 
 ## 10. 当前迭代方向
 
-v0.3.0当前处于Gate A，按以下顺序推进：
+v0.3 已发布并冻结，Gate A、三 Agent 共享集成、`enhanced_v2`、产品 UI 与正式
+评测已经完成。当前进入 v0.3.5 Evidence Intelligence 研究计划：Phase 0.6 重建
+Expert Golden，Phase 0.7 设计 domain-specific evidence search，Phase 0.8 进行
+受控架构 A/B，Phase 0.9 才进行 Retriever/ranking 算法优化。
 
-1. 完成Financial与Business真实Golden独立二审；
-2. Legal A—H人工复核、Case C仲裁、canonical并表及contract/severity/Retriever/runtime prompt治理已完成；
-3. 达到`V03_GATE_A_CLOSEOUT.md`全部mandatory门槛后建立三专业Verifier体系；
-4. 统一集成Financial/Legal/Business、Catalog Provider、Workflow和Service；
-5. 建立`enhanced_v2`并运行真实黄金案例批量评测；
-6. 保持Mock模式、`mvp_v1`和2410.HK现金跑道回归稳定。
-
-真实市场数据、Market Agent、上市后标签、Logistic、LightGBM和SHAP延后至v0.4及后续版本。
+真实市场数据、Market Agent、上市后标签、Logistic、LightGBM和SHAP仍延后至
+v0.4；v0.4 必须通过 v0.3.5 Gate 后开始。
 
 ## 11. 当前实施状态
 
-稳定版本为`v0.2.0-real-document-slice`，已经实现真实PDF解析、Evidence检索、现金与经营
-现金流提取、现金跑道Calculation、财务风险核验、规则评分、Service级E2E和Streamlit展示。
+当前稳定版本为`v0.3.0-multi-agent-risk-analysis`；`v0.2.0-real-document-slice`
+仍作为稳定回退版本。v0.3 已完成共享 Registry、Container、`enhanced_v2`、Service、
+Specialized Verifier、Supervisor、Streamlit、Report 与正式 Golden 评测。
 
-当前进入v0.3.0真实多Agent文档风险分析。详细范围、任务顺序和退出门槛以
-`docs/PROJECT_MASTER_CHECKLIST.md`为准。
-
-以`main@b60570ef0854b198c6e4827336cb4a3b529fe462`为技术收口起点，V3-3 Retriever、V3-4 LLMProvider以及Financial、Legal、Business三个真实核心均已进入共享Registry、Container、`enhanced_v2`与Service。Specialized Verifier、Supervisor、Streamlit及Report也已完成。Financial 23条和Business 3条真实Golden记录的独立人工二审按owner waiver延期，不能声明正式跨域Golden精度；Legal formal Golden保持已认证。具体治理语义见`docs/V03_GATE_A_CLOSEOUT.md`与owner waiver记录。
+历史 `main@b60570ef...` 和 owner waiver 仅是技术收口过程的审计基线，不是当前
+状态。当前 Golden 治理以 `single_named_human_review_v1` 和
+`docs/V03_GATE_A_CLOSEOUT.md` 为准；v0.3.5 研究状态以主清单和 research 文档为准。
 

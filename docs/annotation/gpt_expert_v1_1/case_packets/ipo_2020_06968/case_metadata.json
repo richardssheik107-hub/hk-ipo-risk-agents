@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_06968",
+  "stock_code": "6968.HK",
+  "company_name": "港龍中國地產",
+  "document_id": "ipo_2020_06968",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 635,
+  "pdf_sha256": "070505746a931b3e2e7423864f5fa93f5a8774905838939fa1a3a326d5458b94",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

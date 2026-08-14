@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_00368",
+  "stock_code": "0368.HK",
+  "company_name": "德合集團",
+  "document_id": "ipo_2020_00368",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 420,
+  "pdf_sha256": "642a84775c107ebbc4a7534f88b2aba6399410937933d678b223feb342977a82",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

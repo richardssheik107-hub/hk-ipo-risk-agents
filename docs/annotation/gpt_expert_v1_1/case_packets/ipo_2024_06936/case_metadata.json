@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_06936",
+  "stock_code": "6936.HK",
+  "company_name": "順豐控股",
+  "document_id": "ipo_2024_06936",
+  "source_year": 2024,
+  "dataset_split": "validation",
+  "page_count": 744,
+  "pdf_sha256": "eefb0733e229a879bd84e3016b6d20babd854926c6b486453dcaf62c0ee41514",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

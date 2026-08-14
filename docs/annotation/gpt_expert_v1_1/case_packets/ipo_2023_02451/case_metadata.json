@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_02451",
+  "stock_code": "2451.HK",
+  "company_name": "綠源集團控股",
+  "document_id": "ipo_2023_02451",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 685,
+  "pdf_sha256": "a43b4b860aacf19d9f447bd71a583b77abbe245b0d901b3580430288f8044327",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

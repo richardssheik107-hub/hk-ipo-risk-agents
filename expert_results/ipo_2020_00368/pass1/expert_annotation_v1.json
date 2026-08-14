@@ -1,0 +1,505 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "cash_runway",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "critical",
+"confidence": 0.99,
+"reasoning": "For the year ended 31 December 2019, the consolidated cash flow statement reports net cash used in operating activities of HK$58,342 thousand and year-end cash and cash equivalents presented in the cash flow statement of HK$9,529 thousand. Using the protocol cash definition and monthly operating cash burn of HK$58,342 thousand / 12, runway is approximately 1.96 months, below the 3-month critical threshold. Note 21 reconciles the HK$9,529 thousand cash-flow-statement balance to statement-of-financial-position cash and bank overdraft, so pledged time deposits are not added back.",
+"calculation_required": true,
+"calculation_method": "Cash runway = cash-flow-statement cash and cash equivalents / (absolute annual net cash used in operating activities / 12).",
+"calculation_inputs": {
+"period": "year ended 31 December 2019",
+"currency": "HKD",
+"unit": "HK$000",
+"cash_and_cash_equivalents_cfs": 9529,
+"net_cash_used_in_operating_activities": -58342,
+"months_in_period": 12
+},
+"calculation_result": {
+"monthly_operating_cash_burn_hk_000": 4861.833333333333,
+"cash_runway_months": 1.959960234479449
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "continuous_loss",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "The accountants' report shows comparable annual profits attributable to owners of HK$30,633 thousand, HK$40,169 thousand and HK$33,675 thousand for 2017, 2018 and 2019 respectively. There are zero loss periods, so the continuous-loss condition is not met.",
+"calculation_required": false,
+"calculation_method": "Record and count comparable annual profit/loss periods; no arithmetic risk calculation is required.",
+"calculation_inputs": {
+"periods": [
+"year ended 31 December 2017",
+"year ended 31 December 2018",
+"year ended 31 December 2019"
+],
+"currency": "HKD",
+"unit": "HK$000",
+"profit_and_total_comprehensive_income_attributable_to_owners": [
+30633,
+40169,
+33675
+]
+},
+"calculation_result": {
+"comparable_periods": 3,
+"loss_periods": 0
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "revenue_growth",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "Audited revenue increased from HK$552,652 thousand in 2017 to HK$768,145 thousand in 2018 and HK$879,401 thousand in 2019. Comparable growth is approximately +38.99% and +14.48%, so neither the negative-growth medium threshold nor the <=-20% high threshold is met.",
+"calculation_required": true,
+"calculation_method": "Comparable annual revenue growth = (current-year revenue - prior-year revenue) / prior-year revenue.",
+"calculation_inputs": {
+"periods": [
+"year ended 31 December 2017",
+"year ended 31 December 2018",
+"year ended 31 December 2019"
+],
+"currency": "HKD",
+"unit": "HK$000",
+"revenue": [
+552652,
+768145,
+879401
+]
+},
+"calculation_result": {
+"growth_2018_vs_2017": 0.3899253056172781,
+"growth_2019_vs_2018": 0.1448372377610998
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "customer_concentration",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "For the year ended 31 December 2019, the largest customer generated HK$402,087 thousand and the top five customers generated HK$852,733 thousand against audited total revenue of HK$879,401 thousand. Recalculated concentration is approximately 45.72% for the largest customer and 96.97% for the top five; the top-five share exceeds the 80% high threshold.",
+"calculation_required": true,
+"calculation_method": "Largest-customer concentration = largest-customer revenue / total revenue; top-five concentration = top-five customer revenue / total revenue.",
+"calculation_inputs": {
+"period": "year ended 31 December 2019",
+"currency": "HKD",
+"unit": "HK$000",
+"total_revenue": 879401,
+"largest_customer_revenue": 402087,
+"top_five_customer_revenue": 852733
+},
+"calculation_result": {
+"largest_customer_share": 0.45722827242634473,
+"top_five_customer_share": 0.969674812741855
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "The five largest supplier shares sum to 38.0% in 2017, 37.9% in 2018 and 24.9% in 2019; the largest supplier shares are 17.4%, 19.0% and 11.5% respectively. All are below the frozen medium thresholds of 30% for the largest supplier and 60% for the top five.",
+"calculation_required": true,
+"calculation_method": "For each comparable year, take the maximum disclosed individual supplier share and sum the five disclosed individual supplier shares to recompute top-five concentration.",
+"calculation_inputs": {
+"periods": [
+"year ended 31 December 2017",
+"year ended 31 December 2018",
+"year ended 31 December 2019"
+],
+"currency": "HKD",
+"amount_unit": "HK$000",
+"share_unit": "fraction of total purchases",
+"supplier_purchase_amounts": [
+[
+60924,
+55955,
+9164,
+3987,
+3409
+],
+[
+95739,
+81159,
+7974,
+3436,
+3091
+],
+[
+79574,
+63729,
+12845,
+8415,
+7006
+]
+],
+"supplier_shares": [
+[
+0.174,
+0.159,
+0.026,
+0.011,
+0.01
+],
+[
+0.19,
+0.161,
+0.016,
+0.007,
+0.005
+],
+[
+0.115,
+0.092,
+0.019,
+0.012,
+0.011
+]
+]
+},
+"calculation_result": {
+"largest_supplier_share": [
+0.174,
+0.19,
+0.115
+],
+"top_five_supplier_share": [
+0.38,
+0.379,
+0.249
+]
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "redemption_rights",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.94,
+"reasoning": "The complete corporate history and reorganization disclosure shows Fate Investment was wholly owned by Mr Wu, the issuer became wholly owned by Fate Investment, and the pre-offering group structure remained a 100% ownership chain. No actual pre-IPO investor redemption, repurchase, put, restoration or other special right was identified. Generic corporate-law redemption or share-buyback provisions are not treated as actual investor rights.",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "material_litigation_compliance",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": "medium",
+"confidence": 0.99,
+"reasoning": "A landlord-tenant dispute resulted in an adverse judgment of about HK$0.3 million plus litigation costs; after legal advice the group estimated it might bear about HK$0.9 million, but the exact cost would only be known after the appeal. At the latest practicable date the appeal remained pending and no final judgment had been made. Because resolution and final materiality remained uncertain, the protocol requires needs_review with provisional medium severity. Separately, the company states there were no material or systemic non-compliance matters.",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_00368",
+"stock_code": "0368.HK",
+"company_name": "德合集團",
+"document_id": "ipo_2020_00368",
+"risk_code": "precommercial_product",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "The group is an established Hong Kong contractor with more than 15 years of operating history and generated substantial revenue from fit-out and repair and maintenance services in each of 2017-2019. It had completed 20 fit-out projects and had 39 projects on hand at the latest practicable date; it also states it did not engage in any material R&D activities. The core business is therefore already commercialized and revenue-generating.",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "cash_runway",
+"page": 314,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "經 營 所 得╱（所 用）現 金 淨 額 74,086 31,362 (58,342)\n已 付 所 得 稅 (12,747) (5,172) —\n經 營 活 動 所 得╱（所 用）\n現 金 淨 額 61,339 26,190 (58,342)",
+"evidence_reason": "The audited consolidated cash flow statement provides the 2019 annual operating cash burn input of HK$58,342 thousand.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "cash_runway",
+"page": 316,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "現 金 及 現 金 等 價 物（減 少）╱\n增 加 淨 額 (9,558) (6,641) 16,527\n年 初 現 金 及 現 金 等 價 物 9,201 (357) (6,998)\n年 末 現 金 及 現 金 等 價 物 21 (357) (6,998) 9,529",
+"evidence_reason": "The audited consolidated cash flow statement provides the standard protocol cash input: 2019 year-end cash and cash equivalents of HK$9,529 thousand.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "cash_runway",
+"page": 350,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "accountants_report",
+"exact_text": "上 述 現 金 及 現 金 等 價 物 結 餘 6,177 2,961 10,847\n銀 行 透 支（附 註24） (6,534) (9,959) (1,318)\n綜 合 現 金 流 量 表 呈 列 的 結 餘 (357) (6,998) 9,529",
+"evidence_reason": "Note 21 reconciles statement-of-financial-position cash to the cash-flow-statement balance and supports using HK$9,529 thousand without adding pledged time deposits.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "continuous_loss",
+"page": 309,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "除 所 得 稅 前 溢 利 36,515 47,843 41,816\n所 得 稅 開 支 11 (5,882) (7,674) (8,141)\n貴 公 司 擁 有 人 應 佔 年 內 溢 利 及\n全 面 收 益 總 額 30,633 40,169 33,675",
+"evidence_reason": "The audited comparable annual periods all show positive profit and total comprehensive income, so there are no loss periods.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "revenue_growth",
+"page": 309,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "綜 合 全 面 收 益 表\n截 至 十 二 月 三 十 一 日 止 年 度\n二 零 一 七 年 二 零 一 八 年 二 零 一 九 年\n附 註 千 港 元 千 港 元 千 港 元\n收 益 5 552,652 768,145 879,401",
+"evidence_reason": "The audited revenue values for all three comparable annual periods provide the inputs for year-on-year revenue growth.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "customer_concentration",
+"page": 136,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截 至 二 零 一 九 年 十 二 月 三 十 一 日 止 年 度\n排 名 客 戶 客 戶 類 型\n本 集 團\n所 提 供 服 務\n業 務 關 係\n開 始 的 年 份\n一 般 付 款 期 及\n支 付 方 式 已 確 認 收 益 佔 總 收 益%\n千 港 元\n1 新鴻基集團（附註2） 地 產 發 展 商 裝 修 服 務 以 及\n維 修 及 保 養\n服 務\n二 零 零 四 年 於 我 們 作 出 付 款\n申 請 後 約30日；\n支 票\n402,087 45.7\n2 新世界集團（附註1） 地 產 發 展 商\n及 承 建 商\n裝 修 服 務 二 零 一 二 年 於 我 們 作 出 付 款\n申 請 後 約30日\n（作 為 地 產 發 展\n商）；於 我 們 作\n出 付 款 申 請 後\n約90日\n（作 為 承 建 商）；\n銀 行 轉 賬\n245,146 27.9\n3 客 戶C（附 註3） 承 建 商 裝 修 服 務 二 零 一 六 年 於 我 們 作 出 付 款\n申 請 後 約90日；\n銀 行 轉 賬\n91,090 10.4\n4 客 戶F\n（附 註6） 承 建 商 裝 修 服 務 二 零 一 五 年 於 我 們 作 出 付 款\n申 請 後 約90日；\n支 票\n78,131 8.9\n5 客 戶G（附 註7） 其 他 裝 修 服 務 二 零 一 九 年 於 我 們 作 出 付 款\n申 請 後 約90日；\n銀 行 轉 賬\n36,279 4.1\n總 計： 852,733 97.0",
+"evidence_reason": "The formal Business customer table provides the 2019 largest-customer and top-five customer revenue inputs.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "customer_concentration",
+"page": 309,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "收 益 5 552,652 768,145 879,401",
+"evidence_reason": "The accountants' report supplies the authoritative 2019 total revenue denominator of HK$879,401 thousand for the concentration calculation.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "supplier_concentration",
+"page": 140,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截 至 二 零 一 七 年 十 二 月 三 十 一 日 止 年 度\n1 穎 安（附 註1） 木 材、石 材、\n金 屬 及 門、家 具\n及 配 件\n二 零 一 六 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行 轉 賬\n或 支 票\n60,924 17.4\n2 創 新 工 程 木 材、金 屬 及\n門、家 具 及\n配 件\n二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行 轉 賬\n或 支 票\n55,955 15.9\n3 供 應 商C（附 註2） 瓷 磚 二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行 轉 賬\n或 支 票\n9,164 2.6\n4 供 應 商D（附 註3） 塑 膠 層 壓 板 二 零 零 七 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行 轉 賬\n或 支 票\n3,987 1.1\n5 供 應 商E（附 註5） 金 屬 二 零 一 一 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行 轉 賬\n或 支 票\n3,409 1.0\n總 計： 133,439 38.0",
+"evidence_reason": "The 2017 formal supplier table provides all five individual supplier shares needed to recompute the largest and top-five concentration.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "supplier_concentration",
+"page": 141,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截 至 二 零 一 八 年 十 二 月 三 十 一 日 止 年 度\n1 穎 安（附 註1） 木 材、石 材、\n金 屬 及 門、\n家 具 及 配 件\n二 零 一 六 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n95,739 19.0\n2 創 新 工 程 木 材、金 屬 及\n門、家 具\n及 配 件\n二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n81,159 16.1\n3 供 應 商C（附 註2） 瓷 磚 二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n7,974 1.6\n4 供 應 商D（附 註3） 塑 膠 層 壓 板 二 零 零 七 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n3,436 0.7\n5 供 應 商F\n（附 註5） 衛 浴 潔 具 二 零 一 八 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n3,091 0.5\n總 計： 191,399 37.9",
+"evidence_reason": "The 2018 formal supplier table provides all five individual supplier shares needed to recompute the largest and top-five concentration.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "supplier_concentration",
+"page": 142,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截 至 二 零 一 九 年 十 二 月 三 十 一 日 止 年 度\n1 穎 安（附 註1） 木 材、石 材、金 屬\n及 門、家 具 及\n配 件\n二 零 一 六 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n79,574 11.5\n2 創 新 工 程 木 材、金 屬 及 門、\n家 具 及 配 件\n二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n63,729 9.2\n3 供 應 商G（附 註6） 瓷 磚 及 石 材 二 零 零 八 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n12,845 1.9\n4 供 應 商H（附 註7） 隔 音 材 料 二 零 一 八 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n8,415 1.2\n5 供 應 商C（附 註2） 瓷 磚 二 零 一 零 年 於 供 應 商 開 具 發 票 後\n約30日；銀 行\n轉 賬 或 支 票\n7,006 1.1\n總 計： 171,569 24.9",
+"evidence_reason": "The 2019 formal supplier table provides all five individual supplier shares needed to recompute the largest and top-five concentration.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "redemption_rights",
+"page": 93,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "corporate_structure",
+"exact_text": "Fate Investment於 二 零 一 九 年 七 月 十 日 根 據 英 屬 維 爾 京 群 島 法 律 註 冊 成 立 為 有 限 公 司，並 獲 授 權 發 行 最 多50,000股 無 面 值 的 股 份。於 二 零 一 九 年 七 月 十 日，一 股 Fate Investment繳 足 股 款 股 份（相 當 於Fate Investment的 全 部 已 發 行 股 份）配 發 及 發 行 予 吳 先 生。因 此，Fate Investment於 其 註 冊 成 立 後 由 吳 先 生 全 資 擁 有。",
+"evidence_reason": "The formal reorganization disclosure identifies Fate Investment as wholly owned by Mr Wu rather than by an external pre-IPO investor.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "redemption_rights",
+"page": 94,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "corporate_structure",
+"exact_text": "於 本 公 司 註 冊 成 立 後，一 股 股 份 以 繳 足 股 款 的 方 式 按 面 值 配 發 及 發 行 予 初 始 認 購 人（為 獨 立 第 三 方）。同 日，該 股 份 轉 讓 予Fate Investment，並 以 繳 足 股 款 的 方 式 按 面 值 配 發 及 發 行 額 外99股 股 份 予Fate Investment。 因 此， 本 公 司 成 為Fate Investment的 直 接 全 資 附 屬 公 司。",
+"evidence_reason": "The issuer became wholly owned by Fate Investment immediately on incorporation; the disclosed corporate history does not identify an external pre-IPO investor holding special redemption rights.",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "redemption_rights",
+"page": 95,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "corporate_structure",
+"exact_text": "下 圖 載 列 本 集 團 於 緊 隨 重 組 後 但 於 股 份 發 售 及 資 本 化 發 行 前 的 企 業 架 構 及 股 權 架 構：\n100%\n100%\n100%\n100%\n吳先生\nFate Investment\n本公司\nTeam World\n創基工程",
+"evidence_reason": "The pre-offering structure diagram cross-checks the 100% ownership chain and absence of a disclosed external pre-IPO equity investor.",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "material_litigation_compliance",
+"page": 165,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "legal_disclosure",
+"exact_text": "於 二 零 二 零 年 一 月 六 日，法 院 裁 定 創 基 工 程 敗 訴，判 處 賠 償 約0.3百 萬 港 元 的 款 項 連 同 訴 訟 訟 費，包 括 原 告 人 的 法 律 費 用，據 董 事 尋 求 法 律 意 見 後 所 深 知，我 們 或 需 承 擔 約0.9百 萬 港 元，且 董 事 所 得 建 議 為 有 關 的 預 計 成 本 屬 估 算，確 實 成 本 須 待 上 訴 完 成 後 得 悉。如 確 實 成 本 涉 及 大 額 費 用，或 對 我 們 的 財 務 狀 況 造 成 不 利 影 響。\n於 二 零 二 零 年 二 月，我 們 向 原 告 人 送 達 上 訴 通 知 書。於 最 後 可 行 日 期，上 訴 仍 在 進 行 中，法 庭 尚 未 作 出 終 審 裁 定。",
+"evidence_reason": "The specific legal disclosure establishes an adverse judgment, uncertain final cost, and a pending appeal with no final decision, directly triggering review of materiality and resolution.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "material_litigation_compliance",
+"page": 166,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "legal_disclosure",
+"exact_text": "合 規\n董 事 確 認，於 往 績 期 間 及 直 至 最 後 可 行 日 期，本 集 團 並 無 任 何 重 大 或 系 統 性 不 合 規 事 宜，且 本 集 團 已 於 各 重 大 方 面 遵 守 香 港 所 有 適 用 法 律 法 規。",
+"evidence_reason": "This cross-check distinguishes the pending litigation issue from a separate material or systemic regulatory non-compliance problem.",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "precommercial_product",
+"page": 97,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "我 們 是 香 港 一 家 具 規 模 的 承 建 商，擁 有 逾15年 營 運 歷 史，提 供 裝 修 服 務 以 及 維 修\n及 保 養 服 務。裝 修 服 務 主 要 涵 蓋 於 新 樓 宇 及 物 業 項 目 進 行 的 天 花、地 板、牆 壁、照 明、\n玻 璃、金 屬、木 工、石 工 及 泥 水 工 程。我 們 亦 採 購 及 安 裝 按 客 戶 規 格 定 制 的 門、家 具 及\n配 件，以 作 為 裝 修 服 務 的 一 部 分。維 修 及 保 養 服 務 主 要 涵 蓋 對 現 有 物 業 進 行 內 部 裝 潢\n部 件 升 級、修 復 及 改 善 及 維 修、替 換 或 安 裝。下 表 列 載 我 們 於 往 績 期 間 按 業 務 分 部 劃\n分 的 收 益 明 細：\n截 至 十 二 月 三 十 一 日 止 年 度\n二 零 一 七 年 二 零 一 八 年 二 零 一 九 年\n千 港 元 % 千 港 元 % 千 港 元 %\n裝 修 服 務 546,296 98.8 759,587 98.9 874,477 99.4\n維 修 及 保 養 服 務 6,356 1.2 8,558 1.1 4,924 0.6\n總 計 552,652 100.0 768,145 100.0 879,401 100.0",
+"evidence_reason": "The formal Business disclosure proves the core services are commercialized, have more than 15 years of operating history, and generate substantial service revenue.",
+"confidence": 1.0
+},
+{
+"case_id": "ipo_2020_00368",
+"risk_code": "precommercial_product",
+"page": 166,
+"evidence_role": "supporting",
+"requirement": "supporting_only",
+"source_authority": "business_section",
+"exact_text": "研 發\n於 往 績 期 間 及 直 至 最 後 可 行 日 期，我 們 並 無 參 與 任 何 重 大 研 發 活 動。",
+"evidence_reason": "The R&D disclosure supports that the group is not a pre-commercial product-development issuer.",
+"confidence": 0.99
+}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"evidence_object_schema": {
+"case_id": "non-empty string; must equal bundle case_id",
+"risk_code": "one of the eight active risk codes assessed in risks[]",
+"page": "integer >= 1; physical PDF page number",
+"evidence_role": [
+"primary",
+"supporting",
+"context",
+"cross_check"
+],
+"requirement": [
+"required",
+"alternative",
+"supporting_only"
+],
+"source_authority": [
+"audited_financial_statement",
+"accountants_report",
+"financial_information",
+"business_section",
+"legal_disclosure",
+"corporate_structure",
+"pre_ipo_investment",
+"summary",
+"risk_factors",
+"other"
+],
+"exact_text": "non-empty verbatim text copied from the prospectus",
+"evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+"confidence": "number from 0.0 to 1.0 inclusive"
+}
+}
+}

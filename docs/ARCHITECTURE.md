@@ -17,6 +17,10 @@ Offline mode uses `UnavailableLLMProvider` and degrades safely. AI-enhanced mode
 reuses the existing OpenAI-compatible Provider and environment-only credentials.
 Neither mode lets an LLM calculate financial values or override Verifier rules.
 
+> Research status: v0.3 is Released/Frozen. v0.3.5 Evidence Intelligence is a
+> future internal architecture program; the design below does not change the
+> current public Schema, component Protocols, `mvp_v1`, or `enhanced_v2`.
+
 ## 1. 架构形式
 
 本项目采用模块化单体架构。
@@ -584,21 +588,38 @@ SupervisionResult。统一节点包装器将组件异常记录为 AgentLog 与 A
 
 Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Calculation及风险去重规则。
 
-### v0.3实现状态（截至`main@f9449fc`）
+### v0.3 released implementation
 
-- Retriever查询族已泛化并合并；
-- Mock、OpenAI-compatible与Unavailable LLMProvider已注册，Settings与Container支持运行时配置、安全重试和缺配置降级；
-- `V03FinancialAgent`与`V03FinancialVerifier`核心模块已合并并可独立调用，但尚未加入共享Container、Workflow或Service；
-- standalone Legal Agent、Legal domain Verifiers与standalone `V03BusinessAgent`已合并，但尚未加入共享Container、Workflow或Service；
-- `CatalogIPODataProvider`与批量评测基础设施已合并，但Catalog目前只由批量运行器运行时注册，尚未进入全局ComponentRegistry；
-- 共享Legal与Business仍使用disabled/Mock实现；这不等于standalone模块尚未实现；
-- 稳定工作流仍为`mvp_v1`，`enhanced_v2`尚未实现。
+- Retriever 八类查询族、Mock/OpenAI-compatible/Unavailable LLMProvider 已注册；
+- Financial、Legal、Business Agent 与 domain Verifier 已进入共享 Container、
+  Workflow 和 Service；
+- Catalog Provider、Specialized Verifier Router、V03 Supervisor 与 ReportGenerator
+  已注册和装配；
+- `enhanced_v2` 是发布的三 Agent 工作流，`mvp_v1`、Mock 与 unavailable 回退保留；
+- Market Agent 与真实市场数据 Provider 仍未实现，属于 v0.4。
 
-因此“模块已实现”不等同于“共享工作流已集成”。后续由技术负责人统一完成受保护的Container、Workflow和Service装配，避免专业成员并行修改共享边界。
+v0.3.5 研究不会回写或重构这些冻结公共边界。
 
 ## v0.3 契约冻结边界
 
 v0.3 继续使用统一 `RiskAgent.analyze(...) -> list[RiskItem]`，不为三类专业 Agent 建立不兼容的公共返回类型。结构化候选模型保留在各 Agent 内部；`DiagnosticSource.last_diagnostics` 是不改变风险返回类型的旁路诊断接口。
 
 风险所有权为 Financial 5 类、Legal 2 类、Business 1 类。Market 节点在 `enhanced_v2` 中保留，但 v0.3 数据不可用时必须记录 skipped/unavailable，禁止生成 Mock 市场风险。阈值由 `configs/v03_risk_rules.yaml` 版本化管理，完整边界见 `V03_DEVELOPMENT_CONTRACT.md`。
+
+## v0.3.5 Evidence Intelligence（future internal design）
+
+当前统一前置 fixed Top-K 会把三域不同的章节、语言、表格和完整性需求压缩为一个
+共享 Evidence 集合，形成 recall ceiling。目标设计改为“共享文档索引，而非共享单一
+检索结果”：PDF 只 parse 一次，Financial、Legal、Business 分别通过 domain-specific
+Search Strategy 取证，并允许每个风险最多三轮 discovery / missing-fact /
+contradiction retrieval。
+
+未来内部 `EvidenceSearchRequest` 可描述 agent、risk_code、round、required_fact、
+query、preferred section/source authority、top_k 和 reason；结果携带 evidence、
+coverage、missing facts 与 conflicts。它们不是本轮公共 Schema。
+
+Evidence Completeness 以 required facts 是否齐全为准，而不是简单的
+`has_evidence=true`。Supervisor 将来可以请求 targeted retry，但不得创造 Evidence、
+绕过 Verifier 或修改事实。完整设计和 A/B 纪律见
+[research/EVIDENCE_INTELLIGENCE_ARCHITECTURE_PLAN.md](research/EVIDENCE_INTELLIGENCE_ARCHITECTURE_PLAN.md)。
 

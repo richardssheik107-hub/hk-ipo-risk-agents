@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_01413",
+  "stock_code": "1413.HK",
+  "company_name": "廣聯工程控股",
+  "document_id": "ipo_2021_01413",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 490,
+  "pdf_sha256": "c44cfcb11038be254e385c8f8770359a783bb13dd4e09b5b8316996a6d52ee53",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

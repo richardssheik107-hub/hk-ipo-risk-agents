@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_02599",
+  "stock_code": "2599.HK",
+  "company_name": "祥生控股集團",
+  "document_id": "ipo_2020_02599",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 906,
+  "pdf_sha256": "2a15fa8876dbbbbaa5363a8d15e1c1888a09006f39251e4e3980904af8d2ecde",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

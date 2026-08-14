@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_09600",
+  "stock_code": "9600.HK",
+  "company_name": "新紐科技",
+  "document_id": "ipo_2020_09600",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 480,
+  "pdf_sha256": "910a88642233aabbdb2f008d84deb7b1ca124bdb0e224d63db948076d8ce9809",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

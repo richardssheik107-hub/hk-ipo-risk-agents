@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_09930",
+  "stock_code": "9930.HK",
+  "company_name": "宏信建發",
+  "document_id": "ipo_2023_09930",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 657,
+  "pdf_sha256": "2fbc582c1b4c60aaa7fe8ca3ef040916c987f72f38a9d1d20a441188d571b640",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

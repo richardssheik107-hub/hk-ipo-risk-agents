@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09886",
+  "stock_code": "9886.HK",
+  "company_name": "叮噹健康",
+  "document_id": "ipo_2022_09886",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 619,
+  "pdf_sha256": "b63e16c1dda2cd8a0e567b597b34fa5a07ab7c1ca33a7b26befe9f364f2e993a",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

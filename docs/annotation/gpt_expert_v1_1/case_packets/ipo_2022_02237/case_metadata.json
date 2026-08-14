@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02237",
+  "stock_code": "2237.HK",
+  "company_name": "中國石墨",
+  "document_id": "ipo_2022_02237",
+  "source_year": 2022,
+  "dataset_split": "development",
+  "page_count": 662,
+  "pdf_sha256": "347f579d031a1aafe298ed756b336b39b5359c8f075af1301d2522386a4314a9",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

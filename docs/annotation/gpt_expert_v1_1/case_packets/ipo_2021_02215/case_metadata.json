@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02215",
+  "stock_code": "2215.HK",
+  "company_name": "德信服務集團",
+  "document_id": "ipo_2021_02215",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 562,
+  "pdf_sha256": "994398f93e51959b8b94c3b9767970651c2099f60c9c1cc831ee2708939a48a1",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

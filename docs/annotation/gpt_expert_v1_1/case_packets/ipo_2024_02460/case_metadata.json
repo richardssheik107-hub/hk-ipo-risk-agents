@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_02460",
+  "stock_code": "2460.HK",
+  "company_name": "華潤飲料",
+  "document_id": "ipo_2024_02460",
+  "source_year": 2024,
+  "dataset_split": "validation",
+  "page_count": 579,
+  "pdf_sha256": "036c61af76dc6e9e4aad070e8643e9c735c020f514cd3a3682ad2e6a43346485",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

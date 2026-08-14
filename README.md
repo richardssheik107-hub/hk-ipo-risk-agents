@@ -16,6 +16,33 @@ v0.3 Human Golden governance = COMPLETE (single named human review policy)
 v0.4 Market prediction work = NOT STARTED
 ```
 
+## 当前研究阶段：v0.3.5 Evidence Intelligence
+
+v0.3 产品已发布并冻结；当前研究工作不修改该 Release。Phase 0.5 的真实
+Responses API baseline、2410.HK real-LLM gate 和 14-case Human Golden A/B
+已完成。结果显示 Precision 改善，但 Risk Recall 未改善，Evidence Recall@3
+仍低；主要瓶颈是检索覆盖，其次是 LLM 抽取/运行稳定性，Legal downstream
+Verifier 也是额外瓶颈。
+
+由于现有 Human Golden 还存在 evidence-role、主证据权威性、risk-instance /
+evidence-row 与评测语义不一致，直接 Retriever 调优暂停。当前阶段为：
+
+```text
+Phase 0.6A  GPT Expert Blind Annotation Preparation  = COMPLETED
+Phase 0.6B  Protocol Hardening + Collaboration Setup = CURRENT
+Phase 0.6C  Three-case Expert Pilot                  = NOT STARTED
+Phase 0.6D  Expert Golden v2                         = NOT STARTED
+Phase 0.7   Evidence Intelligence Architecture       = NOT STARTED
+Phase 0.8   Architecture A/B Evaluation              = NOT STARTED
+Phase 0.9   Retriever / Ranking Optimization         = NOT STARTED
+v0.4        Market Prediction                        = NOT STARTED
+```
+
+方法与安全协作入口见
+[GPT Expert Golden Plan](docs/research/GPT_EXPERT_GOLDEN_PLAN.md) 和
+[Protocol v1.1](docs/annotation/gpt_expert_v1_1/README.md)。第一轮 2410 GPT
+结果仅为 `PILOT_DIAGNOSTIC_ONLY`，未进入共享盲包或 Golden。
+
 v0.3 已完成真实 PDF、多专业 Agent、专用核验、跨域 Supervisor、`enhanced_v2`、
 Service、Streamlit、Markdown/JSON 报告和故障降级。Financial 23 条与 Business 3 条
 具名人工一审已按`single_named_human_review_v1`晋级；Legal 8 条原双审/仲裁记录保持。
