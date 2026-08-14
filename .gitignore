@@ -1,4 +1,5 @@
 .env
+.DS_Store
 .venv/
 .conda/
 __pycache__/
@@ -24,3 +25,6 @@ models/*
 *.bin
 *.ckpt
 *.docx
+
+# Local, single-prospectus validation harness (not part of the product surface).
+scripts/run_jingfa_full_demo.py

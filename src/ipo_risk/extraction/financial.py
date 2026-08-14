@@ -1454,3 +1454,400 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
     @staticmethod
     def _dedupe_ints(values: Sequence[int]) -> list[int]:
         return list(dict.fromkeys(values))
+
+
+class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
+    """Structured-first v0.3 extractor.
+
+    When the parser attached a reconstructed grid (``chunk.metadata["tables"]``,
+    produced by :mod:`ipo_risk.parsers.table_reconstruction`), period-series
+    facts are read from the already column-aligned cells — which structurally
+    eliminates ``metric_label_not_found`` (label found on its own table row) and
+    ``value_period_count_mismatch`` (cells and periods share the same column
+    count).  When no structured table is present, or no table row matches the
+    metric label, it transparently falls back to the inherited deterministic
+    text-row path, so behaviour is identical to the regex extractor on documents
+    without reconstructed tables.
+
+    Concentration facts keep the inherited narrative-percentage path: the target
+    prospectuses disclose concentration as prose (e.g. "最大客戶佔 30%"), which the
+    year-anchored table reconstruction deliberately does not treat as a numeric
+    grid.
+    """
+
+    # Issues that only mean "this evidence page is not the statement", not a
+    # data defect — safe to drop from the series verdict when another page did
+    # yield clean observations.
+    _LOCATION_ONLY_ISSUES = frozenset(
+        {"metric_label_not_found", "unsupported_layout", "evidence_candidates_empty"}
+    )
+
+    # Extra legacy-metric label patterns used ONLY on the structured-table path.
+    # They cover wording the frozen base patterns miss — e.g. this issuer writes
+    # the operating cash-flow row as "…現金淨額" (net cash) rather than "…淨現金".
+    # Kept in the subclass so the base cash-runway path (frozen 2410.HK) is
+    # untouched.
+    _EXTENDED_METRIC_LABELS = {
+        "operating_cash_flow": (
+            *_LABELS["operating_cash_flow"],
+            re.compile(r"經營活動(?:所得|所用|產生|使用|經營).*?現金淨額"),
+            re.compile(r"经营活动(?:所得|所用|产生|使用|经营).*?现金净额"),
+        ),
+    }
+
+    def _metric_labels(self, metric_name: str) -> tuple:
+        return self._EXTENDED_METRIC_LABELS.get(metric_name, _LABELS.get(metric_name, ()))
+
+    def _extract_candidate(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> FinancialMetricValue:
+        """Legacy cash-runway metric extraction, structured-table first.
+
+        Fires only for a chunk that carries reconstructed tables whose identity
+        matches the evidence and that contains a row for this metric; otherwise
+        it defers to the inherited flattened-text path (so the base cash-runway
+        behaviour is unchanged wherever no structured table is present).
+        """
+        chunk = chunks_by_id.get(evidence.chunk_id or "")
+        if chunk is None or not self._structured_tables(chunk):
+            return super()._extract_candidate(metric_name, evidence, chunks_by_id)
+        if any(
+            getattr(evidence, field) != getattr(chunk, field)
+            for field in ("chunk_id", "document_id", "page")
+        ):
+            return super()._extract_candidate(metric_name, evidence, chunks_by_id)
+        row = self._find_metric_table_row(metric_name, chunk)
+        if row is None:
+            return super()._extract_candidate(metric_name, evidence, chunks_by_id)
+        raw_label, raw_values, header_lines = row
+        return self._metric_value_from_table(
+            metric_name, evidence, chunk, chunks_by_id, raw_label, raw_values, header_lines
+        )
+
+    def _find_metric_table_row(
+        self, metric_name: str, chunk: DocumentChunk
+    ) -> tuple[str, list[str], list[str]] | None:
+        for table in self._structured_tables(chunk) or []:
+            if not isinstance(table, dict):
+                continue
+            header_lines = [
+                str(line).strip()
+                for line in (table.get("header_lines") or [])
+                if str(line).strip()
+            ]
+            for row in table.get("rows") or []:
+                label = str(row.get("label", ""))
+                for pattern in self._metric_labels(metric_name):
+                    match = pattern.search(label)
+                    if not match:
+                        continue
+                    cells = [str(cell).strip() for cell in (row.get("cells") or [])]
+                    if any(cells):
+                        return match.group(0), cells, header_lines
+        return None
+
+    def _metric_value_from_table(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        chunk: DocumentChunk,
+        chunks_by_id: Mapping[str, DocumentChunk],
+        raw_label: str,
+        raw_values: list[str],
+        header_lines: list[str],
+    ) -> FinancialMetricValue:
+        """Mirror the base metric assembly, sourcing values/periods from a table."""
+        issues: list[str] = []
+        context_chunks = self._context_chunks(chunk, chunks_by_id)
+        field_sources: dict[str, str] = {"label": chunk.chunk_id, "value": chunk.chunk_id}
+
+        # Resolve currency/unit from the table's own caption first: a statement
+        # page often mixes narrative "百萬元" (million) with the table's "千元"
+        # (thousand), which makes a whole-page scan ambiguous. The reconstructed
+        # header carries the caption sitting directly above the grid.
+        currency_unit = None
+        header_currency, header_unit = self._detect_currency_unit("\n".join(header_lines))
+        if header_currency is not None and header_unit is not None:
+            currency, unit = header_currency, header_unit
+            field_sources["currency"] = chunk.chunk_id
+            field_sources["unit"] = chunk.chunk_id
+        else:
+            currency_unit = self._find_currency_unit(chunk, context_chunks)
+            currency = currency_unit.currency
+            unit = currency_unit.unit
+            issues.extend(currency_unit.issues)
+            if currency_unit.currency_source:
+                field_sources["currency"] = currency_unit.currency_source.chunk_id
+            if currency_unit.unit_source:
+                field_sources["unit"] = currency_unit.unit_source.chunk_id
+        if currency is None:
+            issues.append("currency_missing_or_ambiguous")
+        if unit is None:
+            issues.append("unit_missing_or_ambiguous")
+
+        periods, period_source, period_issues = self._find_periods(
+            header_lines, chunk, context_chunks
+        )
+        issues.extend(period_issues)
+        if period_source:
+            field_sources["period"] = period_source.chunk_id
+        numeric_values = [(raw, self._normalize_amount(raw)) for raw in raw_values]
+        valid_values = [(raw, value) for raw, value in numeric_values if value is not None]
+        if not raw_values:
+            issues.append("target_row_has_no_values")
+        if len(periods) != len(raw_values):
+            issues.append("period_value_column_count_mismatch")
+        if not periods:
+            issues.append("period_header_missing_or_ambiguous")
+
+        selected_raw = ""
+        selected_value: Decimal | None = None
+        selected_period: _Period | None = None
+        if periods and len(periods) == len(raw_values):
+            complete = [
+                (period, raw, value)
+                for period, (raw, value) in zip(periods, numeric_values, strict=True)
+                if value is not None
+            ]
+            if complete:
+                selected_period, selected_raw, selected_value = max(
+                    complete, key=lambda item: item[0].end
+                )
+        elif len(valid_values) == 1 and len(periods) == 1:
+            selected_period = periods[0]
+            selected_raw, selected_value = valid_values[0]
+
+        if selected_value is None:
+            issues.append("latest_complete_value_not_determinable")
+        if metric_name == "operating_cash_flow" and (
+            selected_period is None or selected_period.months not in {3, 6, 9, 12}
+        ):
+            issues.append("operating_cash_flow_period_months_missing")
+
+        context_used = {chunk.chunk_id: chunk}
+        sources = [period_source]
+        if currency_unit is not None:
+            sources.extend(
+                [
+                    currency_unit.currency_source,
+                    currency_unit.unit_source,
+                    *currency_unit.reviewed_context,
+                ]
+            )
+        for source in sources:
+            if source is not None:
+                context_used[source.chunk_id] = source
+        status = ExtractionStatus.EXTRACTED if not issues else ExtractionStatus.NEEDS_REVIEW
+        return FinancialMetricValue(
+            metric_name=metric_name,
+            raw_label=raw_label,
+            raw_value=selected_raw,
+            normalized_value=selected_value,
+            currency=currency,
+            unit=unit,
+            period_end=selected_period.end if selected_period else None,
+            period_months=(
+                selected_period.months
+                if selected_period and metric_name == "operating_cash_flow"
+                else None
+            ),
+            evidence_id=evidence.evidence_id,
+            document_id=chunk.document_id,
+            chunk_id=chunk.chunk_id,
+            page=chunk.page,
+            status=status,
+            issues=list(dict.fromkeys(issues)),
+            context_chunk_ids=list(context_used),
+            context_pages=sorted({item.page for item in context_used.values()}),
+            extraction_method="structured_table_cash_v03",
+            metadata={
+                "field_sources": field_sources,
+                "row_values": raw_values,
+                "period_candidates": [
+                    {"period_end": item.end.isoformat(), "period_months": item.months}
+                    for item in periods
+                ],
+                "query_intent": evidence.metadata.get("query_intent"),
+            },
+        )
+
+    def _extract_period_series(
+        self,
+        metric_name: str,
+        evidence_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> FinancialPeriodSeriesResult:
+        result = super()._extract_period_series(
+            metric_name, evidence_candidates, chunks_by_id
+        )
+        if result.status != ExtractionStatus.NEEDS_REVIEW or not result.observations:
+            return result
+        residual = [i for i in result.issues if i not in self._LOCATION_ONLY_ISSUES]
+        observation_issues = [issue for obs in result.observations for issue in obs.issues]
+        if (
+            not residual
+            and not observation_issues
+            and all(obs.status == ExtractionStatus.EXTRACTED for obs in result.observations)
+        ):
+            # Every real fact is clean; the only issues were non-statement pages.
+            return result.model_copy(
+                update={"status": ExtractionStatus.EXTRACTED, "issues": []}
+            )
+        return result
+
+    def _period_facts_from_evidence(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[list[FinancialPeriodFact], list[str]]:
+        identity_issues = self._evidence_identity_issues(evidence, chunks_by_id)
+        if identity_issues:
+            return [], identity_issues
+        target = chunks_by_id[evidence.chunk_id or ""]
+        tables = self._structured_tables(target)
+        if tables:
+            structured = self._period_facts_from_tables(
+                metric_name, evidence, target, tables, chunks_by_id
+            )
+            if structured is not None:
+                return structured
+        return super()._period_facts_from_evidence(metric_name, evidence, chunks_by_id)
+
+    @staticmethod
+    def _structured_tables(target: DocumentChunk) -> list[dict] | None:
+        tables = target.metadata.get("tables") if target.metadata else None
+        if isinstance(tables, list) and tables:
+            return tables
+        return None
+
+    def _period_facts_from_tables(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        target: DocumentChunk,
+        tables: Sequence[dict],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[list[FinancialPeriodFact], list[str]] | None:
+        """Build facts from the first table row whose label matches the metric."""
+        for table in tables:
+            header_lines = [
+                str(line).strip()
+                for line in (table.get("header_lines") or [])
+                if str(line).strip()
+            ]
+            for row in table.get("rows") or []:
+                label = str(row.get("label", ""))
+                index, raw_label = self._find_v03_label([label], metric_name)
+                if index is None:
+                    continue
+                raw_values = [str(cell).strip() for cell in (row.get("cells") or [])]
+                if not any(raw_values):
+                    continue
+                return self._assemble_period_facts(
+                    metric_name, evidence, target, chunks_by_id,
+                    raw_label, raw_values, header_lines,
+                )
+        return None
+
+    def _assemble_period_facts(
+        self,
+        metric_name: str,
+        evidence: Evidence,
+        target: DocumentChunk,
+        chunks_by_id: Mapping[str, DocumentChunk],
+        raw_label: str,
+        raw_values: Sequence[str],
+        header_lines: Sequence[str],
+    ) -> tuple[list[FinancialPeriodFact], list[str]]:
+        """Mirror the parent's fact construction, sourcing periods from the
+        reconstructed table header instead of the flattened page lines."""
+        context = self._context_chunks(target, chunks_by_id)
+        periods, period_source, period_issues = self._best_v03_periods(
+            header_lines, target, context
+        )
+        issues = list(period_issues)
+        if self._review_only_context(evidence, target):
+            issues.append("summary_or_risk_context_requires_review")
+        if not periods:
+            issues.append("missing_period")
+        if periods and len(periods) != len(raw_values):
+            issues.append("value_period_count_mismatch")
+
+        resolution = self._find_currency_unit(target, context)
+        issues.extend(resolution.issues)
+        if resolution.currency is None:
+            issues.append("missing_currency")
+        if resolution.unit is None:
+            issues.append("missing_unit")
+
+        context_used = self._dedupe_chunks(
+            [
+                item
+                for item in [
+                    period_source if period_source != target else None,
+                    resolution.currency_source if resolution.currency_source != target else None,
+                    resolution.unit_source if resolution.unit_source != target else None,
+                    *resolution.reviewed_context,
+                ]
+                if item is not None
+            ]
+        )
+        facts: list[FinancialPeriodFact] = []
+        for value_index, raw_value in enumerate(raw_values):
+            period = periods[value_index] if value_index < len(periods) else None
+            value, value_issues, normalization = self._normalize_period_value(
+                metric_name, raw_label, raw_value, evidence, target
+            )
+            fact_issues = list(issues) + value_issues
+            if period is not None and period.months is None:
+                fact_issues.append("missing_period_months")
+            fact_status = (
+                ExtractionStatus.EXTRACTED
+                if value is not None
+                and period is not None
+                and period.months is not None
+                and resolution.currency is not None
+                and resolution.unit is not None
+                and not fact_issues
+                else ExtractionStatus.NEEDS_REVIEW
+            )
+            facts.append(
+                FinancialPeriodFact(
+                    metric_name=metric_name,
+                    period_end=period.end if period else None,
+                    period_months=period.months if period else None,
+                    normalized_value=value,
+                    currency=resolution.currency,
+                    unit=resolution.unit,
+                    evidence_ids=[evidence.evidence_id],
+                    document_id=target.document_id,
+                    chunk_id=target.chunk_id,
+                    page=target.page,
+                    raw_label=raw_label,
+                    raw_value=raw_value,
+                    status=fact_status,
+                    issues=self._dedupe_strings(fact_issues),
+                    context_chunk_ids=[item.chunk_id for item in context_used],
+                    context_pages=self._dedupe_ints([item.page for item in context_used]),
+                    metadata={
+                        "value_index": value_index,
+                        "normalization": normalization,
+                        "extraction_method": "structured_table_v03",
+                        "source_context": evidence.metadata.get("source_context"),
+                        "period_source_chunk_id": period_source.chunk_id if period_source else None,
+                        "currency_source_chunk_id": (
+                            resolution.currency_source.chunk_id
+                            if resolution.currency_source
+                            else None
+                        ),
+                        "unit_source_chunk_id": (
+                            resolution.unit_source.chunk_id if resolution.unit_source else None
+                        ),
+                    },
+                )
+            )
+        return facts, self._dedupe_strings(issues)
