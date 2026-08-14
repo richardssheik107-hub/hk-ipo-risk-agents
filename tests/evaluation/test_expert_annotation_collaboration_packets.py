@@ -71,4 +71,9 @@ def test_assignment_starts_unassigned() -> None:
         assert not row["second_pass_annotator"]
         assert not row["second_pass_status"]
         assert not row["adjudication_status"]
+        assert not row["final_status"]
         assert not row["notes"]
+
+
+def test_collaboration_branch_has_no_expert_result_tree() -> None:
+    assert not (ROOT / "expert_results").exists()

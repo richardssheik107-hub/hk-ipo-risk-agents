@@ -12,10 +12,15 @@ For each assigned Case:
 5. do not copy answers across Cases;
 6. save JSON only;
 7. run `scripts/validate_expert_annotation.py` locally with the manifest page count;
-8. after validation passes, run `scripts/import_expert_annotation.py` to store the
-   result under ignored `reports/gpt_expert_annotation_pilot/expert_results/`.
+8. run `scripts/import_expert_annotation.py --stage pass1`; the importer preserves
+   the raw GPT JSON and writes a separate `validation_result.json` under the ignored
+   local results workspace;
+9. never edit or replace the preserved pass output when validation fails;
+10. update `team_case_assignment.csv` with progress only, never answers;
+11. publish answers only to `annotation/gpt-expert-results` after the applicable
+    team blind-boundary rule permits it.
 
-Do not commit annotation answers or PDFs.
+Do not commit annotation answers or PDFs to the collaboration/docs branch.
 
 ## Independent second pass
 
@@ -27,13 +32,20 @@ find errors, not rubber-stamp the first pass. Future audit output states are:
 - `POLICY_AMBIGUITY`
 - `HUMAN_ADJUDICATION_REQUIRED`
 
-The detailed audit schema is not implemented in Phase 0.6B.
+The detailed audit schema is not implemented in Phase 0.6B. Preserve later
+artifacts as `pass2/expert_annotation_v2.json`, `audit/audit.json`, and
+`final/expert_annotation_final.json`; never overwrite a previous stage.
 
 ## Assignment discipline
 
 Claim work only in `team_case_assignment.csv`. Initial annotator/status fields are
 blank. Never put credentials, local PDF paths or annotation answers in assignment
-notes.
+notes. Status values are restricted to `not_started`, `in_progress`, `completed`,
+`validation_failed`, `needs_review`, `audit_completed`,
+`adjudication_required`, and `finalized`.
+
+The assignment CSV is a progress index, not an answer store. Result publication and
+access boundaries are defined in [RESULT_STORAGE_POLICY.md](RESULT_STORAGE_POLICY.md).
 
 ## Pilot sequence
 

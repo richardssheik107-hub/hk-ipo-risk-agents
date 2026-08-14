@@ -1,6 +1,6 @@
 # GPT Expert v1.1 Blind Annotation Workspace
 
-这是 Git tracked 的安全协作目录，只包含协议、空白模板、Case 身份和分工状态。
+这是 Git tracked 的盲标协作目录，只包含协议、空白模板、Case 身份和分工状态。
 
 当前状态：Phase 0.6B collaboration setup。尚未开始 Phase 0.6C 实际标注。
 
@@ -20,7 +20,13 @@ Golden label/page。
 3. 在 [team_case_assignment.csv](team_case_assignment.csv) 中领取 Case；
 4. 从本地赛事数据按 [source_manifest.csv](source_manifest.csv) 的 SHA 定位 PDF；
 5. 使用对应 `case_packets/<case_id>/blank_annotation.json`；
-6. 在本地运行 validator，验证通过后再通过 importer 保存到被忽略的 reports 目录。
+6. 通过 importer 将原始 JSON 和独立验证记录保存到本地被忽略的 results 目录；
+7. 只在 `annotation/gpt-expert-results` 结果分支保存答案，不把答案提交到本分支。
+
+结果目录、不可覆盖规则和分支边界详见
+[RESULT_STORAGE_POLICY.md](RESULT_STORAGE_POLICY.md)。Git 分支不是访问控制；同一仓库成员
+仍可能主动查看结果分支。严格盲法要求未完成 Primary Pass 的成员不访问结果分支，或将
+结果迁移到具有独立权限控制的私有存储。
 
 第一轮 2410 结果状态为 `PILOT_DIAGNOSTIC_ONLY`，未放入本目录。
 
