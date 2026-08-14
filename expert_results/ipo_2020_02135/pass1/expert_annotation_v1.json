@@ -1,0 +1,269 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "cash_runway",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "截至2020年6月30日止六個月，經營活動所用現金流量淨額為人民幣9,238千元，而期末現金及現金等價物為人民幣27,499千元。以六個月經營現金流出計算，每月經營現金消耗約人民幣1,539.67千元，現金跑道約17.86個月，高於12個月的最低風險觸發界線，因此不適用。 ",
+"calculation_required": true,
+"calculation_method": "cash_runway_months",
+"calculation_inputs": {
+"period": "six months ended 30 June 2020",
+"currency": "RMB",
+"unit": "RMB'000",
+"cash_and_cash_equivalents": 27499,
+"net_cash_from_operating_activities": -9238,
+"period_months": 6
+},
+"calculation_result": {
+"monthly_operating_cash_burn": 1539.6666666666667,
+"cash_runway_months": 17.8603593851483,
+"assessment": "runway_at_least_12_months"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "continuous_loss",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "會計師報告顯示2017年、2018年及2019年全年均錄得溢利，2019年上半年亦錄得人民幣2,208千元溢利；只有2020年上半年錄得人民幣11,777千元虧損。因此不存在兩個或以上可比虧損期間，未達continuous_loss門檻。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"periods": [
+{"period": "year ended 31 December 2017", "profit_or_loss": 17405},
+{"period": "year ended 31 December 2018", "profit_or_loss": 18418},
+{"period": "year ended 31 December 2019", "profit_or_loss": 10277},
+{"period": "six months ended 30 June 2019", "profit_or_loss": 2208},
+{"period": "six months ended 30 June 2020", "profit_or_loss": -11777}
+]
+},
+"calculation_result": {
+"comparable_loss_periods": 1,
+"assessment": "fewer_than_two_comparable_loss_periods"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "revenue_growth",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "截至2020年6月30日止六個月收益為人民幣58,730千元，而2019年同期為人民幣92,081千元；可比期間同比增長率約為-36.22%，低於或等於-20%的high門檻。",
+"calculation_required": true,
+"calculation_method": "year_over_year_comparable_period_growth",
+"calculation_inputs": {
+"current_period": "six months ended 30 June 2020",
+"prior_comparable_period": "six months ended 30 June 2019",
+"currency": "RMB",
+"unit": "RMB'000",
+"current_revenue": 58730,
+"prior_comparable_revenue": 92081
+},
+"calculation_result": {
+"revenue_growth_pct": -36.21919831452743,
+"assessment": "high_threshold_met"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "customer_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "正式Business披露顯示，2017年至2019年以及2020年上半年，五大客戶合計收益佔比分別僅約1.1%、2.7%、2.7%及2.4%。五大客戶合計佔比的最高值僅2.7%，因此單一最大客戶亦不可能達到30%的medium門檻，五大客戶亦遠低於60%的medium門檻。",
+"calculation_required": true,
+"calculation_method": "threshold_exclusion_bound",
+"calculation_inputs": {
+"periods": [
+{"period": "year ended 31 December 2017", "top_five_customer_pct": 1.1},
+{"period": "year ended 31 December 2018", "top_five_customer_pct": 2.7},
+{"period": "year ended 31 December 2019", "top_five_customer_pct": 2.7},
+{"period": "six months ended 30 June 2020", "top_five_customer_pct": 2.4}
+],
+"largest_customer_upper_bound_pct": 2.7,
+"top_five_customer_max_pct": 2.7,
+"bound_operator": "<="
+},
+"calculation_result": {
+"largest_customer_bound": "<=2.7%",
+"top_five_customer_max": "2.7%",
+"medium_threshold_excluded": true,
+"high_threshold_excluded": true
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "Business正式披露顯示，五大供應商於2017年至2019年及2020年上半年分別佔採購總額58.8%、54.8%、51.8%及57.8%，最大供應商分別佔25.2%、16.4%、15.6%及18.4%。全期最高值仍低於最大供應商30%或五大供應商60%的medium門檻。",
+"calculation_required": true,
+"calculation_method": "disclosed_concentration_threshold_comparison",
+"calculation_inputs": {
+"periods": [
+{"period": "year ended 31 December 2017", "largest_supplier_pct": 25.2, "top_five_supplier_pct": 58.8},
+{"period": "year ended 31 December 2018", "largest_supplier_pct": 16.4, "top_five_supplier_pct": 54.8},
+{"period": "year ended 31 December 2019", "largest_supplier_pct": 15.6, "top_five_supplier_pct": 51.8},
+{"period": "six months ended 30 June 2020", "largest_supplier_pct": 18.4, "top_five_supplier_pct": 57.8}
+],
+"medium_thresholds": {"largest_supplier_pct": 30, "top_five_supplier_pct": 60},
+"high_thresholds": {"largest_supplier_pct": 50, "top_five_supplier_pct": 80}
+},
+"calculation_result": {
+"maximum_largest_supplier_pct": 25.2,
+"maximum_top_five_supplier_pct": 58.8,
+"medium_threshold_excluded": true,
+"high_threshold_excluded": true
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "redemption_rights",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.98,
+"reasoning": "招股書明確披露若干首次公開發售前投資者曾享有贖回權，但上海東嫿、上海湃帛及Huamei Medical已於2019年4月22日根據補充股東協議同意放棄該等贖回權；其他披露的特別權利亦將於遞交上市文件前三天自動終止。未發現已披露的恢復機制，因此不存在實際有效或可恢復的贖回權。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.94,
+"reasoning": "往績記錄期內確有醫療廣告、醫療文件、治療資格以及社會保險和住房公積金供款等不合規事項，但公司已採取補救措施並作出相關撥備；正式法律披露稱董事及獨家保薦人認為該等不合規事件不會對營運及財務狀況造成重大不利影響。最後實際可行日期亦不存在任何進行中的重大訴訟、仲裁或行政訴訟，且未披露重大未決監管或牌照影響，因此未達本風險定義。 ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_02135",
+"stock_code": "2135.HK",
+"company_name": "瑞麗醫美",
+"document_id": "ipo_2020_02135",
+"risk_code": "precommercial_product",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "本集團並非依賴尚未商業化核心產品的開發階段企業，而是自2008年起營運醫療美容機構的商業服務提供商。Business披露明確指出收益主要來自已提供的醫療美容服務，2017年至2020年上半年均有大量實際服務收益，因此不符合核心產品未商業化且無產品銷售收入的候選條件。 ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{"case_id":"ipo_2020_02135","risk_code":"cash_runway","page":464,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"經營活動所得╱（所用）現金\n流量淨額 34,548 32,057 16,981 7,318 (9,238)","evidence_reason":"會計師報告的綜合現金流量表提供截至2020年6月30日止六個月的負經營現金流量，為計算月度經營現金消耗的必要輸入。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"cash_runway","page":459,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"現金及現金等價物 24 9,418 20,355 49,410 27,499","evidence_reason":"會計師報告的綜合財務狀況表提供2020年6月30日現金及現金等價物人民幣27,499千元，為cash runway分子。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"continuous_loss","page":458,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n年╱期內溢利╱（虧損） 17,405 18,418 10,277 2,208 (11,777)","evidence_reason":"同一會計師報告表格列出各年度及可比六個月期間的損益，顯示只有2020年上半年為虧損。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"revenue_growth","page":458,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n附註II 人民幣千元 人民幣千元 人民幣千元 人民幣千元 人民幣千元\n（未經審核）\n收益 5 112,932 158,935 191,156 92,081 58,730","evidence_reason":"會計師報告直接提供2019年及2020年同期六個月收益人民幣92,081千元及58,730千元，可用於同比可比期間增長計算。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"customer_concentration","page":244,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"截至2019年12月31日止三個年度及截至2020年6月30日止六個月，來自我們的五大客戶\n的收益共同分別佔同期我們總收益的約1.1%、2.7%、2.7%及2.4%。","evidence_reason":"正式Business披露給出四個期間的五大客戶合計收益佔比；該合計比例本身亦構成單一最大客戶佔比的上界，足以排除集中度門檻。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"supplier_concentration","page":259,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"截至2019年12月31日止三個年度及截至2020年6月30日止六個月，我們五大供應商的採\n購額分別佔我們同期內採購總額的約58.8%、54.8%、51.8%及57.8%，我們最大供應商的採\n購額分別佔我們同期內採購總額的約25.2%、16.4%、15.6%及18.4%。","evidence_reason":"正式Business披露同時提供最大供應商及五大供應商各期間集中度，可直接與凍結門檻比較。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"redemption_rights","page":160,"evidence_role":"primary","requirement":"required","source_authority":"pre_ipo_investment","exact_text":"首次公開發售前投資者的特別權利\n若干首次公開發售前投資者已獲授多項特別權利，其中包括優先購買權、優先認購權及\n知情權。該等特別權利將在遞交上市文件前3天自動終止。\n尤其是，就根據日期為2019年4月18日的股東協議授出的贖回權而言，倘本公司未能在\n2020年12月31日之前實現上市，上海東嫿、上海湃帛及Huamei Medical有權要求本公司購回\n根據相關股份認購協議認購的股份。於2019年4月22日，根據相關補充股東協議，上海東嫿、\n上海湃帛及Huamei Medical同意放棄該等贖回權。","evidence_reason":"首次公開發售前投資正式披露明確說明贖回權曾存在但其後已被投資者放棄，並說明其他特別權利的終止安排。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"material_litigation_compliance","page":286,"evidence_role":"supporting","requirement":"supporting_only","source_authority":"legal_disclosure","exact_text":"於往績記錄期間及直至最後實\n際可行日期，我們並無為我們\n的僱員繳納足夠的社會保險金\n及住房公積金供款。截至2019\n年12月31日止三個年度及截至\n2020年6月30日止六個月，未\n足額繳付的社會保險金供款及\n住房公積金供款分別約為人民\n幣1.0百萬元、人民幣2.1百萬\n元、人民幣1.2百萬元及人民幣\n0.5百萬元。","evidence_reason":"該正式法律合規披露記錄了實際歷史不合規事項，防止因僅依賴無重大訴訟結論而遺漏已披露的合規事實。","confidence":0.98},
+{"case_id":"ipo_2020_02135","risk_code":"material_litigation_compliance","page":289,"evidence_role":"primary","requirement":"required","source_authority":"legal_disclosure","exact_text":"經計及(i)本集團已採取糾正措施且上述不合規事件已在切實可行的範圍內作出更\n正；(ii)本集團已採取上述其他措施防止不合規事件再次發生；及(iii)不合規事件並非有意為\n之，董事並無作出任何欺詐行為且本集團亦無質疑彼等的操守，董事認為且獨家保薦人同\n意，上述不合規事件不會對我們的營運及財務狀況造成任何重大不利影響；以及有關事件並\n無對董事的資歷及上市的合適性造成重大影響。董事信納，就我們現時的營運環境而言，內\n部控制體系屬充分及有效。\n法律訴訟\n截至最後實際可行日期，我們並無涉及任何進行中的重大訴訟、仲裁或行政訴訟，亦不\n知悉政府機關或第三方擬提起可能對我們業務造成重大不利影響的任何申索或法律程序。董\n事並無牽涉任何實質或構成威脅的重大申索或訴訟。","evidence_reason":"正式法律披露直接評估歷史不合規事項的重大性及補救狀態，並確認最後實際可行日期不存在進行中的重大訴訟、仲裁、行政訴訟或重大威脅性申索。","confidence":0.98},
+{"case_id":"ipo_2020_02135","risk_code":"precommercial_product","page":210,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"我們的商業模式\n我們的收益主要來自提供醫療美容服務，主要包括(i)美容外科服務；(ii)微創美容服務；\n及(iii)皮膚美容服務（主要包括各種能量診療）。我們亦自2017年12月起開始提供醫療美容管\n理諮詢服務。","evidence_reason":"正式Business披露明確界定公司為已有實際收費服務及收益的商業醫療美容服務企業，而非核心產品尚未商業化的開發階段企業。","confidence":0.99},
+{"case_id":"ipo_2020_02135","risk_code":"precommercial_product","page":210,"evidence_role":"supporting","requirement":"supporting_only","source_authority":"business_section","exact_text":"醫療美容服務 112,932 100.0 146,256 92.0 183,609 96.1 88,699 96.3 57,476 97.9\n— 美容外科服務 56,685 50.2 57,530 36.2 54,996 28.8 28,547 31.0 14,384 24.5\n— 微創美容服務 28,854 25.5 40,310 25.4 55,942 29.3 26,176 28.4 20,196 34.4\n— 皮膚美容服務 24,011 21.3 41,768 26.3 58,092 30.4 25,798 28.0 18,417 31.4","evidence_reason":"服務收益表進一步證明核心業務在全部往績記錄期間已持續產生實際商業收入。","confidence":0.99}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"calculation_object_contract": {
+"calculation_inputs": "JSON object or null; never a string",
+"calculation_result": "JSON object or null; never a string",
+"forbidden_encodings": ["prose_string","markdown","comma_separated_text","equation_in_one_string"],
+"positive_operating_cash_flow_example": {
+"calculation_inputs": {"period":"six months ended 30 September 2019","currency":"MYR","unit":"RM'000","cash_and_cash_equivalents":39079,"net_cash_from_operating_activities":21817,"period_months":6},
+"calculation_result": {"monthly_operating_cash_burn":null,"cash_runway_months":null,"assessment":"no_operating_cash_burn"}
+},
+"concentration_bound_example": {
+"calculation_method":"threshold_exclusion_bound",
+"calculation_inputs":{"single_customer_upper_bound_pct":10,"maximum_customers_considered":5,"bound_operator":"<"},
+"calculation_result":{"largest_customer_bound":"<10%","top_five_customer_bound":"<50%","medium_threshold_excluded":true}
+}
+},
+"evidence_object_schema": {
+"case_id":"non-empty string; must equal bundle case_id",
+"risk_code":"one of the eight active risk codes assessed in risks[]",
+"page":"integer >= 1; physical PDF page number",
+"evidence_role":["primary","supporting","context","cross_check"],
+"requirement":["required","alternative","supporting_only"],
+"source_authority":["audited_financial_statement","accountants_report","financial_information","business_section","legal_disclosure","corporate_structure","pre_ipo_investment","summary","risk_factors","other"],
+"exact_text":"non-empty verbatim text copied from the prospectus",
+"evidence_reason":"non-empty explanation of how the text supports the risk assessment",
+"confidence":"number from 0.0 to 1.0 inclusive"
+}
+}
+}
