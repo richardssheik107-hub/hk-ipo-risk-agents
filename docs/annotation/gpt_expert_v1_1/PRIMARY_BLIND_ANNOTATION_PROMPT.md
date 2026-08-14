@@ -1,6 +1,8 @@
 # GPT Expert Primary Blind Annotation Prompt
 
-`VERSION = gpt_expert_v1.1`
+`VERSION = gpt_expert_prompt_contract_v1.1.1`
+
+`ANNOTATION_VERSION = gpt_expert_v1.1`
 
 `TASK_TYPE = primary_blind_annotation`
 
@@ -22,6 +24,12 @@
 - Summary 和 Risk Factors 原则上只作为 supporting、context 或 cross_check，除非不存在更正式来源。
 - 一个风险可以有多条 Evidence，并明确区分 evidence_role 与 requirement。
 - Financial 风险必须记录 period、currency、unit 和 calculation inputs。
+- `calculation_inputs` 和 `calculation_result` 只能是 JSON object 或 JSON
+  `null`，禁止输出为字符串、Markdown、逗号分隔文本或单一公式字符串。
+- 经营现金流为正或零时，不得取绝对值伪造 cash burn；应将
+  `monthly_operating_cash_burn` 和 `cash_runway_months` 设为 `null`。
+- 集中度可采用精确比例或正式披露支持的 bound proof；`<10%` 等严格符号
+  必须原样保留，不能归一化成 `10%`。
 - 不得自行创造 threshold、accounting definition、severity policy 或 risk definition。
 - 如 Protocol 中某项政策尚未冻结，必须显式报告 `POLICY_AMBIGUITY`，不得自行拍板。
 - 所有正式结论必须可追溯到原始 PDF 的物理页码。
@@ -69,5 +77,7 @@ Evidence Object 中不得加入 `evidence_id`、`document_id`、`chunk_id`、`se
 7. 是否存在事实冲突或 policy ambiguity；
 8. Evidence 物理页码是否准确可追溯；
 9. 最终 JSON 是否可以直接通过 `ExpertAnnotationBundle`。
+10. 所有 `calculation_inputs` / `calculation_result` 是否均为 object 或 null，
+    且正经营现金流与集中度 bound proof 是否按 Protocol v1.1.1 表达。
 
 最终只输出一个完整、合法的 JSON 对象，不要使用 Markdown 代码围栏，不要输出表格、比较、说明或 JSON 之外的任何文字。

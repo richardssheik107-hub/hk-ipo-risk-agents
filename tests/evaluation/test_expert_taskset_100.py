@@ -87,11 +87,30 @@ def test_blank_packet_declares_complete_evidence_contract() -> None:
     metadata = blank["metadata"]
     schema = metadata["evidence_object_schema"]
     assert metadata["output_contract"] == "ExpertAnnotationBundle"
+    assert metadata["prompt_contract_version"] == "gpt_expert_prompt_contract_v1.1.1"
     assert "0.0 to 1.0" in metadata["confidence_constraint"]
     assert set(schema) == {
         "case_id", "risk_code", "page", "evidence_role", "requirement",
         "source_authority", "exact_text", "evidence_reason", "confidence",
     }
+
+
+def test_all_blank_packets_declare_calculation_object_contract() -> None:
+    packets = sorted((ROOT / "case_packets").glob("ipo_*/blank_annotation.json"))
+    assert len(packets) == 100
+    for path in packets:
+        metadata = json.loads(path.read_text(encoding="utf-8"))["metadata"]
+        contract = metadata["calculation_object_contract"]
+        assert contract["calculation_inputs"] == "JSON object or null; never a string"
+        assert contract["calculation_result"] == "JSON object or null; never a string"
+        positive = contract["positive_operating_cash_flow_example"]
+        assert positive["calculation_inputs"]["net_cash_from_operating_activities"] > 0
+        assert positive["calculation_result"]["monthly_operating_cash_burn"] is None
+        assert positive["calculation_result"]["cash_runway_months"] is None
+        bound = contract["concentration_bound_example"]
+        assert bound["calculation_inputs"]["bound_operator"] == "<"
+        assert bound["calculation_result"]["largest_customer_bound"] == "<10%"
+        assert bound["calculation_result"]["top_five_customer_bound"] == "<50%"
 
 
 def test_completed_0368_blank_shape_validates_as_expert_annotation_bundle() -> None:

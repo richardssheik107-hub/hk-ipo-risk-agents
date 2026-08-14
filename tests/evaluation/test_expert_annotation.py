@@ -132,6 +132,14 @@ def test_non_applicable_requires_rejected_and_not_applicable_level() -> None:
         ExpertAnnotationBundle.model_validate(payload)
 
 
+@pytest.mark.parametrize("field", ["calculation_inputs", "calculation_result"])
+def test_calculation_fields_reject_string_encoding(field: str) -> None:
+    payload = _payload()
+    payload["risks"][0][field] = "period=2020; amount=100"  # type: ignore[index]
+    with pytest.raises(ValidationError):
+        ExpertAnnotationBundle.model_validate(payload)
+
+
 def test_financial_calculation_conflict_reported_without_mutation() -> None:
     payload = _make_applicable(_payload(), "cash_runway")
     payload["evidence"] = [_evidence("cash_runway", 10), _evidence("cash_runway", 11)]

@@ -1,6 +1,8 @@
 # GPT Expert Independent Audit Prompt
 
-`VERSION = gpt_expert_v1.1`
+`VERSION = gpt_expert_prompt_contract_v1.1.1`
+
+`ANNOTATION_VERSION = gpt_expert_v1.1`
 
 `TASK_TYPE = independent_second_pass_audit`
 
@@ -38,6 +40,12 @@
 检查 period、currency、unit、calculation inputs、cash definition、comparable
 periods、dash/blank semantic 和 threshold application。
 
+同时检查：
+
+- `calculation_inputs` / `calculation_result` 是否错误编码为字符串；
+- 正或零经营现金流是否被错误取绝对值当作 cash burn；
+- concentration bound proof 是否有正式披露支持并保留 `<` / `>` 等严格符号。
+
 ## E. Legal
 
 检查 actual right/event、holder/obligor、termination、restoration、current
@@ -52,6 +60,9 @@ status、licensing/collaboration revenue attribution 和 unsupported severity in
 
 检查 applicable/expected_status、expected_level、calculation_required 和 Evidence
 relationship 的一致性。
+
+`calculation_inputs` 和 `calculation_result` 必须分别为 JSON object 或 JSON
+`null`；字符串形式必须判为 `REVISION_REQUIRED`。
 
 ## H. Policy
 
