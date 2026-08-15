@@ -1,0 +1,21 @@
+{
+  "artifact_version": "expert_annotation_deterministic_corrections_v1",
+  "phase2_version": "expert_annotation_phase2_audit_v1",
+  "case_id": "ipo_2022_02145",
+  "source_pass1": "expert_results/ipo_2022_02145/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "e865c380beedd2645ebdb03aabbd78f3e3e5f73abfe443df279e8f1c45067835",
+  "review_outcome": "deterministic_audit_correction",
+  "promoted_to_final": false,
+  "correction_count": 1,
+  "corrections": [
+    {
+      "risk_code": "cash_runway",
+      "finding_code": "CASH_RUNWAY_LABEL_CONFLICT",
+      "original": {"applicable": true, "expected_status": "verified", "expected_level": "high"},
+      "replacement": {"applicable": true, "expected_status": "verified", "expected_level": "medium"},
+      "audit_message": "Recomputed cash runway is 9.25172 months; stored label does not match frozen thresholds.",
+      "deterministic_details": {"cash": 114965.0, "cash_runway_months": 9.251723490436975, "monthly_cash_burn": 12426.333333333334}
+    }
+  ],
+  "safety": {"pass1_overwritten": false, "evidence_text_modified": false, "reasoning_text_modified": false}
+}
