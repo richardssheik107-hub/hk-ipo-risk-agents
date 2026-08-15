@@ -11,6 +11,7 @@ class Settings:
     workflow_version: str = "mvp_v1"; use_mock: bool = True; enable_verifier: bool = True
     runtime_mode: str = "mock"
     parser: str = "mock"; retriever: str = "mock"; financial_agent: str = "mock"
+    financial_extractor: str = "regex"
     legal_agent: str = "mock"; business_agent: str = "mock"; market_agent: str = "mock"
     verifier: str = "rule"; supervisor: str = "rule"; predictor: str = "rule_based"
     llm_provider: str = "mock"; market_data_provider: str = "mock"; ipo_data_provider: str = "mock"

@@ -96,8 +96,13 @@ class V03FinancialAgent:
         self.retriever = retriever or KeywordDocumentRetriever()
         self.extractor = extractor or V03FinancialFactExtractor()
         self.policy = policy or load_v03_financial_policy()
+        # Share this agent's extractor with the cash sub-agent so the structured
+        # table path (when configured) also covers the cash-flow statement. With
+        # the default regex extractor this is behaviourally identical to the base
+        # FinancialEvidenceExtractor (no overrides), and the frozen 2410.HK slice
+        # uses the standalone cash_runway agent, not this one.
         self.cash_runway_agent = cash_runway_agent or CashRunwayFinancialAgent(
-            retriever=self.retriever
+            retriever=self.retriever, extractor=self.extractor
         )
         self.risk_builder = risk_builder or V03FinancialRiskBuilder(self.policy)
         self.last_diagnostics: list[ComponentDiagnostic] = []

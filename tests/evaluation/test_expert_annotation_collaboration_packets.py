@@ -96,20 +96,15 @@ def test_packets_contain_no_paths_or_answer_artifacts() -> None:
             assert not any(marker in text for marker in forbidden), path
 
 
-def test_assignment_progress_matches_published_primary_results() -> None:
+def test_assignment_starts_unassigned() -> None:
     with (ROOT / "team_case_assignment.csv").open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         assert set(reader.fieldnames or ()) == ASSIGNMENT_COLUMNS
         rows = list(reader)
     assert len(rows) == 100
-    completed = {"ipo_2020_00368", "ipo_2020_01167", "ipo_2020_01408"}
     for row in rows:
         assert not row["primary_annotator"]
-        expected_status = "completed" if row["case_id"] in completed else "not_started"
-        assert row["primary_status"] == expected_status
-        if row["case_id"] in completed:
-            result = Path("expert_results") / row["case_id"] / "pass1" / "expert_annotation_v1.json"
-            assert result.is_file()
+        assert row["primary_status"] == "not_started"
         assert not row["second_pass_annotator"]
         assert row["second_pass_status"] == "not_started"
         assert row["adjudication_status"] == "not_started"

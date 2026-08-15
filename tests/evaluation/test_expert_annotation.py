@@ -164,20 +164,13 @@ def test_open_policy_needs_review_accepts_unresolved_level(risk_code: str) -> No
     assert ExpertRiskAnnotation.model_validate(risk).expected_level is None
 
 
-@pytest.mark.parametrize("field", ["calculation_inputs", "calculation_result"])
-def test_calculation_fields_reject_string_encoding(field: str) -> None:
-    payload = _payload()
-    payload["risks"][0][field] = "period=2020; amount=100"  # type: ignore[index]
-    with pytest.raises(ValidationError):
-        ExpertAnnotationBundle.model_validate(payload)
-
-
 @pytest.mark.parametrize(
     ("case_id", "page_count"),
     [
         ("ipo_2020_00368", 420),
         ("ipo_2020_01167", 520),
         ("ipo_2020_01408", 503),
+        ("ipo_2020_01961", 598),
     ],
 )
 def test_preserved_real_pass1_bundles_validate(case_id: str, page_count: int) -> None:

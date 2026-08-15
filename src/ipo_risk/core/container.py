@@ -30,8 +30,15 @@ from ipo_risk.domain.legal_verifiers import (
     LegalRightsVerifier,
     LitigationComplianceVerifier,
 )
+from ipo_risk.extraction.financial import (
+    TableAwareV03FinancialFactExtractor,
+    V03FinancialFactExtractor,
+)
 from ipo_risk.parsers.mock import AlternateMockDocumentParser, MockDocumentParser
-from ipo_risk.parsers.pymupdf_parser import PyMuPDFDocumentParser
+from ipo_risk.parsers.pymupdf_parser import (
+    PyMuPDFDocumentParser,
+    PyMuPDFTableDocumentParser,
+)
 from ipo_risk.predictors.fault import FaultPredictor
 from ipo_risk.predictors.rule_based import RuleBasedPredictor
 from ipo_risk.providers.catalog import CatalogIPODataProvider
@@ -75,7 +82,8 @@ class ComponentRegistry:
 def default_registry() -> ComponentRegistry:
     registry = ComponentRegistry()
     registrations = {
-        "parser": {"mock": MockDocumentParser, "mock_alt": AlternateMockDocumentParser, "pymupdf": PyMuPDFDocumentParser},
+        "parser": {"mock": MockDocumentParser, "mock_alt": AlternateMockDocumentParser, "pymupdf": PyMuPDFDocumentParser, "pymupdf_table": PyMuPDFTableDocumentParser},
+        "financial_extractor": {"regex": V03FinancialFactExtractor, "table": TableAwareV03FinancialFactExtractor},
         "retriever": {"mock": MockDocumentRetriever, "keyword": KeywordDocumentRetriever},
         "financial_agent": {"mock": MockFinancialAgent, "cash_runway": CashRunwayFinancialAgent, "v03": V03FinancialAgent},
         "legal_agent": {"mock": MockLegalAgent, "disabled": DisabledLegalAgent, "v03": LegalAgent},
@@ -145,6 +153,10 @@ class DependencyContainer:
             kwargs = {"retriever": retriever}
             if kind in {"legal_agent", "business_agent"}:
                 kwargs["llm_provider"] = llm_provider
+            if kind == "financial_agent":
+                kwargs["extractor"] = self.registry.create(
+                    "financial_extractor", self.settings.financial_extractor
+                )
             return self.registry.create(kind, name, **kwargs)
         return self.registry.create(kind, name)
 

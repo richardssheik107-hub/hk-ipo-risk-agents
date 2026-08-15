@@ -8,7 +8,6 @@ from pathlib import Path
 
 TASKSET_VERSION = "expert_golden_100_v1"
 PROTOCOL_VERSION = "gpt_expert_v1.1"
-PROMPT_CONTRACT_VERSION = "gpt_expert_prompt_contract_v1.1.1"
 ROOT = Path("docs/annotation/gpt_expert_v1_1")
 ACTIVE_RISK_ORDER = (
     "cash_runway",
@@ -78,44 +77,7 @@ def _blank(row: dict[str, object]) -> dict[str, object]:
             "blind_annotation": True,
             "human_golden_visible_to_annotator": False,
             "output_contract": "ExpertAnnotationBundle",
-            "prompt_contract_version": PROMPT_CONTRACT_VERSION,
             "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
-            "calculation_object_contract": {
-                "calculation_inputs": "JSON object or null; never a string",
-                "calculation_result": "JSON object or null; never a string",
-                "forbidden_encodings": [
-                    "prose_string", "markdown", "comma_separated_text",
-                    "equation_in_one_string",
-                ],
-                "positive_operating_cash_flow_example": {
-                    "calculation_inputs": {
-                        "period": "six months ended 30 September 2019",
-                        "currency": "MYR",
-                        "unit": "RM'000",
-                        "cash_and_cash_equivalents": 39079,
-                        "net_cash_from_operating_activities": 21817,
-                        "period_months": 6,
-                    },
-                    "calculation_result": {
-                        "monthly_operating_cash_burn": None,
-                        "cash_runway_months": None,
-                        "assessment": "no_operating_cash_burn",
-                    },
-                },
-                "concentration_bound_example": {
-                    "calculation_method": "threshold_exclusion_bound",
-                    "calculation_inputs": {
-                        "single_customer_upper_bound_pct": 10,
-                        "maximum_customers_considered": 5,
-                        "bound_operator": "<",
-                    },
-                    "calculation_result": {
-                        "largest_customer_bound": "<10%",
-                        "top_five_customer_bound": "<50%",
-                        "medium_threshold_excluded": True,
-                    },
-                },
-            },
             "evidence_object_schema": {
                 "case_id": "non-empty string; must equal bundle case_id",
                 "risk_code": "one of the eight active risk codes assessed in risks[]",

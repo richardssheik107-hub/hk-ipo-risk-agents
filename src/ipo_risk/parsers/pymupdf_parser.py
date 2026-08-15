@@ -101,3 +101,34 @@ class PyMuPDFDocumentParser:
         return DocumentParseError(
             AnalysisError(stage="document_parser", component=self.name, code=code, message=message, context=context)
         )
+
+
+class PyMuPDFTableDocumentParser(PyMuPDFDocumentParser):
+    """PyMuPDF parser that additionally reconstructs borderless financial tables.
+
+    The emitted ``.text`` and every chunk-identity field (``chunk_id``, ``page``,
+    ``section``, ``block_type``) are **byte-identical** to :class:`PyMuPDFDocumentParser`,
+    so retrieval, chunk-identity checks, and every frozen text-only expectation are
+    unaffected.  Structured tables are attached under ``metadata["tables"]`` only
+    when a page actually yields a fiscal-year-anchored numeric grid, keeping the
+    metadata (and repository payload) small.
+    """
+
+    name = "pymupdf_table"
+
+    def _parse_page(self, document: fitz.Document, document_id: str, page_index: int) -> DocumentChunk | None:
+        chunk = super()._parse_page(document, document_id, page_index)
+        if chunk is None:
+            return None
+        try:
+            from ipo_risk.parsers.table_reconstruction import reconstruct_page_tables
+
+            page = document.load_page(page_index)
+            tables = reconstruct_page_tables(page.get_text("words"))
+        except Exception:
+            # Table reconstruction is strictly additive; never fail a page over it.
+            tables = []
+        if not tables:
+            return chunk
+        metadata = {**chunk.metadata, "tables": tables, "has_structured_tables": True}
+        return chunk.model_copy(update={"metadata": metadata})
