@@ -1,0 +1,306 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "fc0c8151-a2e6-547e-8bdb-85b260fc59d4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "materiality"
+        ],
+        "reason": "Risk-factor boilerplate describing potential litigation, arbitration, and license revocation risks in general terms; no actual proceedings cited."
+      },
+      {
+        "candidate_id": "64d1ac70-af8c-5347-ad57-c20e105c432a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "licence_permit",
+          "regulatory_issue",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Dedicated litigation and compliance section with explicit negative statements: no pending/threatened material litigation or arbitration, all material licenses obtained, full legal compliance confirmed by directors and Macau legal advisor."
+      },
+      {
+        "candidate_id": "3d4c7354-c5b4-559c-aa31-033404116663",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Statutory declaration in appendix: no pending or threatened material litigation or arbitration as of latest practicable date. Direct negative statement on litigation status."
+      },
+      {
+        "candidate_id": "ba629d33-00c1-569a-a2d5-a03b58a21232",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Financial data section: no material contingent liabilities and not currently involved in any litigation with material adverse impact. Direct negative statement on current litigation status."
+      },
+      {
+        "candidate_id": "6c32980a-9c42-5443-913a-6b90db5f0a2b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "licence_permit",
+          "current_status"
+        ],
+        "reason": "Detailed listing of specific licenses, permits and certificates with issuing authority, holder, effective and expiry dates. Confirms all material licenses obtained, no renewal difficulties expected."
+      },
+      {
+        "candidate_id": "fa128248-b715-58e5-a982-a117c6c9db24",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Risk-factor boilerplate about subcontractor, labor dispute, and workplace safety risks; tangential to material litigation/compliance. No actual proceedings."
+      },
+      {
+        "candidate_id": "e09e9a3e-f3ce-572e-8777-c75911e8f3ca",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Risk-factor boilerplate about reputation impact from claims and litigation; no actual proceedings or compliance issues discussed."
+      },
+      {
+        "candidate_id": "f8c14a1f-d325-5ef1-821d-2240faae2f29",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Risk factors about labor costs, material supply, and subcontractor availability; no litigation or compliance content. Matched terms incidental."
+      },
+      {
+        "candidate_id": "3df2d247-c228-5fb6-9c4f-2c1ba1557385",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "Risk-factor boilerplate covering insurance gaps, weather risks, and non-compliance with Macau E&M licensing regulations; mentions license registration requirement but no actual issue."
+      },
+      {
+        "candidate_id": "68a848b9-f996-55e8-b489-3e2262527229",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Insurance compliance confirmed by legal advisor and IP overview; tangential to material litigation. No litigation or material compliance issue discussed."
+      },
+      {
+        "candidate_id": "f0371804-3ea1-5c7b-8f12-ec9b9d8eece5",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue",
+          "remediation"
+        ],
+        "reason": "Describes compliance framework post-listing: compliance advisor, external legal counsel, compliance officer, license/permit monitoring, and internal controls. Supports compliance posture assessment."
+      },
+      {
+        "candidate_id": "25e87a60-4767-52e2-aa08-4e2aa733875e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "States excluded businesses had no serious law violations and no material claims, litigation or proceedings during track record period. Relevant but limited to controlling shareholders' other businesses."
+      },
+      {
+        "candidate_id": "893eee9a-5dd4-5a12-9dfe-98ac7f34e828",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Director biography mentioning prior work at forensic accounting firm; incidental mention of litigation support services. Not about issuer's own litigation/compliance."
+      },
+      {
+        "candidate_id": "d7f8b7b0-56e6-58f0-8b59-a8dad3f4a8a5",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Financial data on trade receivables credit risk; mentions initiating legal proceedings only as a potential collection measure. Not material litigation evidence."
+      },
+      {
+        "candidate_id": "bc5301bf-e567-5606-a6e7-8b58f3d5e0b2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Underwriting agreement termination conditions listing hypothetical litigation/investigation scenarios; standard boilerplate, no actual proceedings."
+      },
+      {
+        "candidate_id": "0f250261-fb07-5872-b1c5-a42793fe2293",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Discusses Listing Rules management presence waiver and authorized representative for receiving legal proceedings documents in HK. Regulatory but not material litigation."
+      },
+      {
+        "candidate_id": "9695a8d0-9be3-5e6c-ac1b-01640b4b419c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "licence_permit"
+        ],
+        "reason": "Discusses impact of delayed payments on foreign labor permit renewal ability; tangential labor permit reference, not material litigation/compliance."
+      },
+      {
+        "candidate_id": "b80af5fa-2f85-51ff-9462-7849f0aedc4c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "Discusses use of main contractor's foreign labor quota with legal advisor opinion on non-violation. Regulatory compliance context but not material litigation."
+      },
+      {
+        "candidate_id": "80da14c8-7230-5153-84c9-9c41a5cd719b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Share option plan conditions in statutory appendix; no litigation or compliance content. Matched terms incidental to underwriting conditions."
+      },
+      {
+        "candidate_id": "74a1c886-f1cf-59d7-87ac-bbcbf50a858f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Cayman Islands company law summary covering share capital and dividends; no litigation or compliance relevance. Matched only on tax term."
+      }
+    ]
+  }
+}

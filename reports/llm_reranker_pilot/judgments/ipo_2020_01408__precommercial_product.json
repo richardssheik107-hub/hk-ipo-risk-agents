@@ -1,0 +1,297 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "49c80a17-94a0-5392-88b2-bcf73299fbab",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director biography mentioning a former employer's manufacturing and sales of rare earth materials. Irrelevant to the issuer's pre-commercial product status."
+      },
+      {
+        "candidate_id": "3945c1a4-3432-523a-b7c8-541630439f2d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director biography describing electrical engineering background. No connection to the issuer's product commercialization status."
+      },
+      {
+        "candidate_id": "2bb21363-ccca-5fab-b3f2-174a3d6273d1",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director biography about auditing and valuation experience. Completely irrelevant to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "02c0c2d5-e473-57bb-ab3c-1f23730fcd40",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table showing revenue from engineering services. Indirectly shows the issuer is commercialized with active revenue, but focused on customer backgrounds."
+      },
+      {
+        "candidate_id": "99b7a28f-492a-5d11-ac06-512897f741d7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table with revenue figures. Shows active revenue generation, indirectly indicating commercialization, but details are about customers not issuer's products."
+      },
+      {
+        "candidate_id": "0a9ea53a-4cc3-58e1-b683-abe5a8d6b615",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table with revenue data. Shows ongoing revenue from engineering services, indirectly relevant to commercialization status."
+      },
+      {
+        "candidate_id": "50156ba3-46af-58f9-a79d-d1011d09f9f2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for FY2018 showing revenue. Demonstrates active revenue generation but focuses on customer details rather than issuer's product status."
+      },
+      {
+        "candidate_id": "836d2522-4a87-5063-aab7-f71ec5a6cd26",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for FY2019 with revenue figures. Shows revenue generation but content is primarily about customer backgrounds."
+      },
+      {
+        "candidate_id": "907b1fa4-3fc9-5895-a75a-6e0fa6c02e28",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Customer table plus revenue concentration summary across all periods. Shows substantial revenue (93.7% from top 5), indicating active commercialization."
+      },
+      {
+        "candidate_id": "90f45fb8-bf5c-5d7a-a9b0-54683f4148e0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for 2 months ended Feb 2020. Shows revenue but focuses on customer backgrounds rather than issuer's commercialization status."
+      },
+      {
+        "candidate_id": "9c04f4d8-5f81-55e8-ab50-ccc58ed1184f",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for FY2019 showing top 5 customers with revenue. Demonstrates revenue generation indirectly relevant to commercialization assessment."
+      },
+      {
+        "candidate_id": "4575b0c9-a84c-523f-8304-b2eb2b629909",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Accountant's report listing subsidiaries with ME engineering services as main business. Tangentially relevant to identifying core product."
+      },
+      {
+        "candidate_id": "b3b46df0-3cbe-5332-a1a3-bcdd3206f487",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "development_stage"
+        ],
+        "reason": "Company history describing core business as ME engineering services since 2011, with milestones showing established operations. Directly addresses core product and commercialization."
+      },
+      {
+        "candidate_id": "96b812da-5f78-59b3-b657-6dbbe85d828e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for FY2017 with revenue figures. Shows revenue generation from engineering services but focused on customer details."
+      },
+      {
+        "candidate_id": "8e9b65d5-2635-5429-b543-37aaa75d9b30",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer table for 2 months Feb 2020. Shows revenue but primarily about customer backgrounds, not issuer's product status."
+      },
+      {
+        "candidate_id": "01dad659-8708-5654-be03-53a05b3b4ea6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Customer concentration section with specific revenue figures and business strategy. Shows significant ongoing revenue, directly relevant to commercialization assessment."
+      },
+      {
+        "candidate_id": "01a94685-e24b-5e78-ab9a-3c85d8e58d95",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Share capital and reserves schedule showing profits and losses. Standard financial disclosure with no direct relevance to pre-commercial product status."
+      },
+      {
+        "candidate_id": "9644d84c-e927-5af0-b779-3b7eeda4717c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Financial instruments and risk management disclosure. Standard accounting boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "62ec3b3c-04c8-5e37-9a4c-70404592502c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Supplier table showing procurement of materials. Shows active operations but not directly relevant to pre-commercial product risk assessment."
+      },
+      {
+        "candidate_id": "41430daf-e784-5810-b226-3efcd0d90374",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Supplier table for FY2018. Shows procurement activities indicating active operations but not relevant to pre-commercial product status."
+      }
+    ]
+  }
+}

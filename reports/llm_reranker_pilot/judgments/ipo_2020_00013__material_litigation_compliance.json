@@ -1,0 +1,283 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "b6679714-dd57-5199-af7b-303ef30972c0",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Audited financials note disclosing actual ongoing litigation with Luye Pharma over Seroquel distribution termination, with specific dates, amounts, and status as of Dec 31 2020."
+      },
+      {
+        "candidate_id": "a8e68dca-ae7b-5542-adab-d1ffb7fb2aaf",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Q1 2021 financials restating same Luye/Seroquel litigation with updated status as of Mar 31 2021. Same actual proceeding, named dispute, amounts, and current status."
+      },
+      {
+        "candidate_id": "0533524d-5950-5c32-a129-ebb5f999fff8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "current_status"
+        ],
+        "reason": "Negative disclosure: no pending/threatened material legal or arbitration proceedings and no material non-compliance as of latest practicable date. Standard but meaningful assertion."
+      },
+      {
+        "candidate_id": "550954d5-8e13-5c65-87d3-07a49eb21b46",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factor section on hypothetical data privacy and product liability litigation risks. No actual proceedings, purely speculative boilerplate."
+      },
+      {
+        "candidate_id": "3def11b8-fe4d-59f1-b780-b0c0cd2bf4f6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Business section on R&D team and drug pipeline. Term match for 許可 is drug marketing authorization context only. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "95133b41-e7d3-5032-ad32-37a8d34b6870",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Auditor report page with customer concentration and segment financials. No litigation or compliance content; matched by proximity to page 558."
+      },
+      {
+        "candidate_id": "3a0782e5-974f-57e5-a060-8827cf3f1fac",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Auditor report page with director compensation tables. No litigation or compliance content whatsoever."
+      },
+      {
+        "candidate_id": "e3c3f76f-d52c-57da-b5f2-ca5310a5221d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Auditor report page with segment financial data tables. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "8c5c1032-f7b0-54a5-94b5-8db7aa563038",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Auditor report page with detailed director compensation tables. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "fb34f8ec-a2c6-58c1-a8bf-210186abf945",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Q1 2021 unaudited financials with segment data and customer concentration. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "6c126f6e-4def-517e-9097-ad9951a98629",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Business section on partnerships with AstraZeneca and Lilly and Chinese regulatory reform. Term match 許可 is drug marketing authorization. No litigation content."
+      },
+      {
+        "candidate_id": "b7289245-3bff-593c-9983-e6cbef9d7783",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.88,
+        "completeness_facets": [],
+        "reason": "Accounting policies section on leases, other income, and income tax methodology. No actual litigation or compliance issues; generic tax accounting policy."
+      },
+      {
+        "candidate_id": "444f04c9-3a1d-5118-8224-28a9d586ff11",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factor section on COVID-19 and data privacy compliance. Hypothetical enforcement risks only, no actual proceedings."
+      },
+      {
+        "candidate_id": "3f3caaa1-ae20-569c-8d18-2c7668bcb3f0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Risk factors on HGR and GDPR compliance with specific regulations and CJEU ruling cited, but hypothetical risks only, no actual proceedings against company."
+      },
+      {
+        "candidate_id": "2c4ad32a-cd26-5cf6-8f62-ca4b70f0f09d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factor section on healthcare law and EHS compliance. Purely hypothetical penalties and sanctions, no actual proceedings."
+      },
+      {
+        "candidate_id": "67838bc7-a6ef-5ef7-ad05-e70d76092cd1",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Summary section on company background and drug commercialization. Term match 許可 is drug marketing authorization. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "6685edf6-504b-59fd-80f9-609fa690fba9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Q1 2021 financials subsequent events and US GAAP vs IFRS reconciliation. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "c21e06c7-971e-5579-881b-ef551c829194",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Risk factors on UK tax residency and SAFE registration for employee share plans. Mentions actual registration done but risks are hypothetical. No proceedings."
+      },
+      {
+        "candidate_id": "cb7f3de2-593d-521d-9dea-c11a1ab79c31",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Industry overview of Chinese pharmaceutical market. Term match 許可 refers to licensed pharmaceuticals. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "14ce3068-a53b-5c09-b745-85758bd030ad",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Summary section on company background and drug pipeline. Term match 許可 is drug marketing authorization. No litigation or compliance content."
+      }
+    ]
+  }
+}

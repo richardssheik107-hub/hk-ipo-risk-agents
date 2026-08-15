@@ -1,0 +1,159 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "32880d50-d027-5e10-b408-7ea9daa74f78",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Audited accountant's report showing company-level accumulated losses growing from HK$8,920K to HK$19,142K across four reporting periods (2017–2019). Direct primary evidence of continuous losses."
+      },
+      {
+        "candidate_id": "cb7b7c3b-f5bd-5862-b62d-aa353e7141e6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Investment advisory segment recorded losses across three years (HK$267K, HK$43K, HK$4K), leading to contract termination. Segment-level evidence, not company-wide continuous loss."
+      },
+      {
+        "candidate_id": "cd0ea3df-e28a-582a-9fa9-4bf4a81ffb3d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Discusses revenue trends and mentions net loss in investment advisory segment leading to contract termination, but focuses on revenue changes rather than loss specifics. Indirect and partial."
+      },
+      {
+        "candidate_id": "1c7cb524-8b2f-588b-a4bc-10fe4ec11191",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Shows small proprietary trading investment losses (HK$114K, HK$91K) in 2018-2019. Minor amounts from a closed trading account, not evidence of core operational continuous losses."
+      },
+      {
+        "candidate_id": "2af365b0-2e4a-523c-a1c4-ff6144af2427",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Risk factor boilerplate about hypothetical losses from margin financing, trading errors, and underwriting. Only HK$4,342 actual trading error loss. Not evidence of continuous losses."
+      },
+      {
+        "candidate_id": "1d5cbccb-866d-5fb8-9c29-a8d150518d93",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Key financial ratios showing consistent group profitability (ROE 11.6%-22%, net margin 38%-58%). Negative evidence against continuous loss at consolidated level."
+      },
+      {
+        "candidate_id": "20e62857-8f19-5e90-8c4e-22a86c02fb08",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Consolidated statement of changes in equity showing profits in all periods (HK$13.6M, HK$33M, HK$37.8M, HK$11.5M). Strong negative evidence against group-level continuous loss."
+      },
+      {
+        "candidate_id": "be232316-5080-5600-9033-405e6566f442",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Consolidated income statement showing pre-tax profits and net profits across all reporting periods. Negative evidence against group-level continuous loss, but does not contradict company-level losses."
+      },
+      {
+        "candidate_id": "ccfba0d0-00f9-54dd-bd18-633f875b8f93",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Summary financial data showing positive revenue and net profit across all periods. Less detailed than full statements but confirms group profitability as negative evidence."
+      }
+    ]
+  }
+}

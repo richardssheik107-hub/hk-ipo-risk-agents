@@ -1,0 +1,143 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "319e62dc-d0e8-5ca2-85ce-6a3e9018145e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Full P&L table with 5 periods showing positive profits (11.5M–22.8M MYR). Multi-period, audited context, directly addresses continuous loss risk as negative evidence."
+      },
+      {
+        "candidate_id": "f4c0bcca-52b3-59b7-a606-84d2be97c4dc",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A narrative for FY2017–FY2018 showing profit growth from 11.5M to 15.6M MYR. Specific numbers and margin analysis, directly relevant to loss assessment."
+      },
+      {
+        "candidate_id": "21854f56-5ea4-57da-881f-cf6a4b5f30ce",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A for FY2018–FY2019 plus 6M comparison showing profits rising to 22.8M MYR. Specific cost and tax detail, directly relevant to loss assessment."
+      },
+      {
+        "candidate_id": "9404ab56-5cb2-598c-9253-4af2c3f1b31d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "profit_loss",
+          "audited_financial_context"
+        ],
+        "reason": "Statement of changes in equity showing profit of 10.4M MYR flowing to retained earnings. Supporting evidence; not a direct P&L statement."
+      },
+      {
+        "candidate_id": "34a46dcc-69b1-5a64-bd4b-7c7ea0c4798a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "Segment note showing profit of 11.5M MYR for FY2017 and partial FY2018 data. Supporting context from segment breakdown, not direct P&L."
+      },
+      {
+        "candidate_id": "3b0bf4df-4812-512c-8581-9a228185a3e2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A for 6M2018 vs 6M2019 showing profit decline from 10.1M to 7.8M MYR (still positive). Includes sensitivity analysis. Directly relevant."
+      },
+      {
+        "candidate_id": "89ed42c1-a6b6-5f5f-8aab-b2b72f2c3c87",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Summary page P&L table with all 5 periods showing positive profits plus owner/non-controlling attribution and growth narrative. Comprehensive."
+      },
+      {
+        "candidate_id": "2bf6708b-4975-59cc-a8c4-cb3b34b50106",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Full audited P&L from accountant's report with complete line items across 5 periods. Most authoritative source; all periods show positive profit."
+      }
+    ]
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "2a448618-95df-5d1a-8074-a049ab6680b4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Shows parent company period loss HK$9,016K (Jul-Dec 2019) due to listing expenses; only one partial period, non-recurring, entity-level only"
+      },
+      {
+        "candidate_id": "e582b741-ff8e-5672-a7a4-62828be9f1fb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Group reserves statement showing profits 30.6M/40.2M/33.7M HKD across 2017-2019 from auditor's report, directly relevant to continuous loss assessment"
+      },
+      {
+        "candidate_id": "6e09098f-daa6-500f-a2c4-9d7d4cbeffa6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Financial ratios showing positive margins across 3 years; indirect evidence, no direct P&L figures"
+      },
+      {
+        "candidate_id": "e6394eb9-272b-51e4-90c5-cc16ffc45ec3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Consolidated income statement from auditor's report showing profits in all 3 years with full P&L breakdown; most comprehensive direct evidence"
+      },
+      {
+        "candidate_id": "bef56f1f-c880-5cf6-93e0-18c1f9b00137",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.68,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Forward-looking statement that 2020 profit may decrease vs 2019; relevant indicator but speculative, not historical loss evidence"
+      },
+      {
+        "candidate_id": "c2b5b750-7ee9-5b72-80e5-c173fbc34fd8",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Financial ratios and post-period business update; indirect relevance, no direct profit/loss figures"
+      },
+      {
+        "candidate_id": "8493e264-ab29-5030-9ea7-752d656a9f14",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Explains 16.2% profit decrease from 40.2M to 33.7M due to HK$9M listing expenses; relevant to profit trend analysis"
+      },
+      {
+        "candidate_id": "64262608-4411-5088-ab31-e8d8a2f484eb",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Detailed MD&A of profit decrease from 40.2M to 33.7M with year-over-year revenue comparisons and margin analysis"
+      },
+      {
+        "candidate_id": "d2a9dee1-7992-54b1-86ae-22a06a40031f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Statement of changes in equity from auditor's report showing profits in all 3 years (30.6M/40.2M/33.7M)"
+      },
+      {
+        "candidate_id": "3ac4fc44-1553-5fa0-b7e7-1c1228d437d2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Comprehensive 3-year P&L summary excerpted from auditor's report with adjusted profit reconciliation; strong evidence"
+      },
+      {
+        "candidate_id": "112526cf-d58d-590f-a94f-d8c316fa2b8c",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.62,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Overview section summarizing 3-year revenue and profit figures with business context; less detailed than full statements"
+      },
+      {
+        "candidate_id": "2335c070-bfb0-5aff-adba-20dda1ab250b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Consolidated income statement excerpted from auditor's report showing profits in all 3 years; near-duplicate of page 309 evidence"
+      }
+    ]
+  }
+}

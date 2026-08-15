@@ -1,0 +1,291 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "72741945-5dbc-59a1-9f38-0696110a93e8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Actual ongoing litigation: lease dispute, court ruled against issuer ~HK$0.3M, appeal filed and pending as of last practicable date. Specific parties, dates, amounts, current status."
+      },
+      {
+        "candidate_id": "a1b47bd1-cc58-52b6-9de5-434fdb0b1762",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "current_status",
+          "materiality"
+        ],
+        "reason": "Formal statutory declaration in appendix: no material litigation or arbitration except as disclosed. Negative statement directly addressing material litigation compliance as of last practicable date."
+      },
+      {
+        "candidate_id": "71b707ff-f003-54aa-985e-b06abbce4269",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Broad risk-factor language about potential disputes, legal costs, and insurance gaps. No actual proceeding or specific dispute identified."
+      },
+      {
+        "candidate_id": "86b864ec-5cc8-5742-96be-f3237fd88d56",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Dedicated 'Legal Proceedings and Claims' section with detailed table of actual claims including named plaintiff, nature, and status of lease dispute. Primary disclosure of litigation."
+      },
+      {
+        "candidate_id": "b2291256-ecc1-5121-91d3-93b393343e4e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Employee relations, MPF contributions, and labor law compliance. Only tangentially matches via provident fund term; not about litigation or material compliance issues."
+      },
+      {
+        "candidate_id": "d552a252-1752-571b-8ee8-073b639a617b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Financial ratios summary and recent business developments. No litigation or compliance content despite matched query terms."
+      },
+      {
+        "candidate_id": "4ed4d22b-65fe-5bd8-9abf-9116297b1e8f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Profit decline analysis and COVID-19 impact. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "55966538-f558-576b-9d3a-38deb7a9ccac",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Financial summary tables: balance sheet, cash flow. No litigation or compliance content whatsoever."
+      },
+      {
+        "candidate_id": "ebf53d5d-a85b-5e3f-a16b-2564cefb9c4a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "COVID-19 impact discussion and business recovery plans. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "ae605a49-6c45-510e-a673-5efa7c5ee8a8",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Indemnity deed provisions covering tax liabilities and legal fees from restructuring. Contextual to compliance but not about actual or threatened litigation."
+      },
+      {
+        "candidate_id": "e55e1372-0d8d-5217-9bee-9ad62e3dd99e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "licence_permit",
+          "current_status"
+        ],
+        "reason": "Licenses and qualifications section: confirms all necessary licenses obtained, lists specific permits with issuing authority, registration numbers, and expiry dates. Directly addresses licence/permit compliance."
+      },
+      {
+        "candidate_id": "1029b36f-9445-55b1-98a0-9093e608ca99",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "current_status"
+        ],
+        "reason": "Contingent liabilities section references lease disputes with landlord and cross-references the litigation disclosure section. Supporting evidence of actual proceedings in financial context."
+      },
+      {
+        "candidate_id": "bf958d89-9d9e-5f98-893a-7248d3b7178b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "remediation"
+        ],
+        "reason": "Internal controls and risk management systems, compliance consultant appointment. Contextual to compliance framework but not about specific litigation or regulatory issues."
+      },
+      {
+        "candidate_id": "8e1d5465-a819-5e08-9546-240db54e311b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "current_status"
+        ],
+        "reason": "Negative statement: directors confirm related companies have no material violations, claims, litigation or legal proceedings. Supporting evidence of no litigation for affiliated entities."
+      },
+      {
+        "candidate_id": "3929f608-d215-5927-80be-6e3824e2f50e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Tax service agreement with connected person (related party transaction). Not about litigation or material compliance issues."
+      },
+      {
+        "candidate_id": "96390cb7-d705-5db4-a2e8-5fd378722164",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Standard statutory declarations: no material adverse change, no promoters, expert qualifications. Boilerplate regulatory disclosure with no specific litigation content."
+      },
+      {
+        "candidate_id": "c48e07f3-2087-578f-88a1-475806569eb3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Connected transaction disclosure for tax service agreement. Not about litigation or compliance issues."
+      },
+      {
+        "candidate_id": "498b7d46-8244-5c79-9c21-f69ab38c6183",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Broad risk-factor language about potential disputes, claims, defect liability, and legal proceedings common in the industry. No actual proceeding identified."
+      },
+      {
+        "candidate_id": "f1b44baf-2a38-5af0-983a-73f6b5651211",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Company secretary biography mentioning tax qualifications. No litigation or compliance content."
+      },
+      {
+        "candidate_id": "1696101d-76bd-53bb-a9b4-76f25c10d312",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk-factor boilerplate about insurance coverage gaps potentially leading to legal proceedings. No actual proceeding or specific compliance issue."
+      }
+    ]
+  }
+}

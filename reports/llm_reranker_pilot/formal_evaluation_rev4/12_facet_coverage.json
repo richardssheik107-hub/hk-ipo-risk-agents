@@ -1,0 +1,662 @@
+{
+  "diagnostic_only": true,
+  "completed_tasks": 65,
+  "coverage_at": {
+    "3": 0.841978021978022,
+    "5": 0.8516483516483516,
+    "10": 0.865934065934066
+  },
+  "by_risk": {
+    "cash_runway": {
+      "completed_tasks": 9,
+      "coverage_at": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    "continuous_loss": {
+      "completed_tasks": 9,
+      "coverage_at": {
+        "3": 0.9444444444444444,
+        "5": 0.9444444444444444,
+        "10": 1.0
+      }
+    },
+    "customer_concentration": {
+      "completed_tasks": 8,
+      "coverage_at": {
+        "3": 0.875,
+        "5": 0.9,
+        "10": 0.9
+      }
+    },
+    "material_litigation_compliance": {
+      "completed_tasks": 7,
+      "coverage_at": {
+        "3": 0.7959183673469388,
+        "5": 0.8367346938775511,
+        "10": 0.8979591836734694
+      }
+    },
+    "precommercial_product": {
+      "completed_tasks": 9,
+      "coverage_at": {
+        "3": 0.6349206349206349,
+        "5": 0.6507936507936507,
+        "10": 0.6507936507936507
+      }
+    },
+    "redemption_rights": {
+      "completed_tasks": 7,
+      "coverage_at": {
+        "3": 0.4489795918367347,
+        "5": 0.4489795918367347,
+        "10": 0.4489795918367347
+      }
+    },
+    "revenue_growth": {
+      "completed_tasks": 9,
+      "coverage_at": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    "supplier_concentration": {
+      "completed_tasks": 7,
+      "coverage_at": {
+        "3": 0.9714285714285714,
+        "5": 0.9714285714285714,
+        "10": 0.9714285714285714
+      }
+    }
+  },
+  "tasks": [
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.7142857142857143,
+        "10": 0.8571428571428571
+      }
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 0.4,
+        "5": 0.6,
+        "10": 0.6
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.8571428571428571,
+        "5": 0.8571428571428571,
+        "10": 0.8571428571428571
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.8571428571428571,
+        "5": 0.8571428571428571,
+        "10": 0.8571428571428571
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.8571428571428571
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.7142857142857143
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.7142857142857143
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 0.8,
+        "5": 0.8,
+        "10": 0.8
+      }
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.2857142857142857,
+        "5": 0.2857142857142857,
+        "10": 0.2857142857142857
+      }
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.7142857142857143
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 0.8,
+        "5": 0.8,
+        "10": 0.8
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 0.8,
+        "5": 0.8,
+        "10": 0.8
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.8571428571428571
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.42857142857142855,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.0,
+        "5": 0.0,
+        "10": 0.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 0.75,
+        "5": 0.75,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "precommercial_product",
+      "coverage": {
+        "3": 0.7142857142857143,
+        "5": 0.7142857142857143,
+        "10": 0.7142857142857143
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.5714285714285714,
+        "10": 0.5714285714285714
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "supplier_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "cash_runway",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "continuous_loss",
+      "coverage": {
+        "3": 0.75,
+        "5": 0.75,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "customer_concentration",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "material_litigation_compliance",
+      "coverage": {
+        "3": 0.5714285714285714,
+        "5": 0.7142857142857143,
+        "10": 0.7142857142857143
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "redemption_rights",
+      "coverage": {
+        "3": 0.14285714285714285,
+        "5": 0.14285714285714285,
+        "10": 0.14285714285714285
+      }
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "revenue_growth",
+      "coverage": {
+        "3": 1.0,
+        "5": 1.0,
+        "10": 1.0
+      }
+    }
+  ]
+}

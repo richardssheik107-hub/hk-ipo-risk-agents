@@ -1,0 +1,330 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "5061d96d-5726-5080-829a-5a020d28f5fb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue 160K→218K→238K MOP'000 across 2017-2019 with segment breakdown; core primary evidence for revenue growth assessment."
+      },
+      {
+        "candidate_id": "c7ae24a9-481d-53f2-b2b5-b97a9df53a44",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Full consolidated income statement from financial data section with revenue across all periods; authoritative for revenue trend analysis."
+      },
+      {
+        "candidate_id": "b257e62a-72ae-56ac-9292-f77c02ff43a0",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "COVID-19 impact on revenue confirmed no significant adverse effect for H1 2020; contextual to revenue sustainability, not growth figures."
+      },
+      {
+        "candidate_id": "48e0cf5c-de2a-5c58-857c-09cbb9d84c26",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Gross margin decline 32.2%→25.8%→20.3% (2017-2019) for main contractor projects; revenue quality context, not growth directly."
+      },
+      {
+        "candidate_id": "85df49af-c619-5908-babb-73371fbb7e41",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Contract asset/liability changes between 2017-2018; revenue recognition timing; tangential to revenue growth assessment."
+      },
+      {
+        "candidate_id": "466bac90-aea5-5d3a-8cda-2d8e3ff30405",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "income_statement_authority"
+        ],
+        "reason": "Standard consolidation and revenue recognition accounting policies; boilerplate with no specific revenue figures."
+      },
+      {
+        "candidate_id": "38f253aa-10c9-5b92-b4be-7a9321cdd656",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Accounting policies for leases, borrowing costs, employee benefits and taxation; irrelevant to revenue growth."
+      },
+      {
+        "candidate_id": "e684432a-a6c6-5052-a355-260477c30f50",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Statement of changes in equity with profit figures across periods; no revenue data, only indirect relation to growth."
+      },
+      {
+        "candidate_id": "dafb8b60-b20d-5924-8af9-099502259842",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Related party transaction details with minimal revenue amounts (183K MOP in 2017 only); not material to revenue growth."
+      },
+      {
+        "candidate_id": "32375ffc-a543-5805-97df-a51e04fcb185",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Authoritative income statement from accountant's report with revenue across all periods; primary evidence for growth assessment."
+      },
+      {
+        "candidate_id": "6bb59766-515d-5b18-8dfe-7afc2a766f6f",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Income tax reconciliation details; not directly relevant to revenue growth assessment."
+      },
+      {
+        "candidate_id": "fc223a01-f842-5626-8031-28c0576892d6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods"
+        ],
+        "reason": "Market-level revenue growth ~5.8% CAGR (2014-2019), expected 6.3% (2019-2024); contextual for company growth, not company-specific."
+      },
+      {
+        "candidate_id": "37896aab-a0af-5bcd-a1b2-5173998f654e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue by major customer across periods; supports understanding revenue concentration and growth drivers."
+      },
+      {
+        "candidate_id": "083b0b7e-f113-596f-9ca4-07274e238570",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Customer D revenue growing 7.8M→72.6M MOP (4.8%→30.5% of total); key driver of revenue growth and concentration."
+      },
+      {
+        "candidate_id": "d80d8f5e-0994-5d3f-9ad1-c536f31f32ed",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [],
+        "reason": "COVID-19 supply chain risk with worst-case zero revenue scenario; no actual revenue data, purely hypothetical."
+      },
+      {
+        "candidate_id": "1bd71e55-b30c-5005-88c0-e60efcd8ae01",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "income_statement_authority"
+        ],
+        "reason": "Standard auditor's opinion and review report language; boilerplate with no revenue-specific data."
+      },
+      {
+        "candidate_id": "2f9ddbfe-7d31-53f5-b6e8-0d1b35ffdb41",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cash flow statement with operating cash flows; indirectly related to revenue through working capital movements."
+      },
+      {
+        "candidate_id": "22f3f72b-f611-5e1b-bbf8-174774906f7a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Group restructuring history and IFRS adoption notes; boilerplate with no revenue growth data."
+      },
+      {
+        "candidate_id": "d36ff157-268b-5b92-a458-5e9d141f65b1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Revenue note from accountant's report with breakdown by type (E&M vs maintenance) across all periods; supports revenue analysis."
+      },
+      {
+        "candidate_id": "057a0eb7-f19d-5de1-9b67-58e42d08eb7c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Share capital and reserves movements; completely irrelevant to revenue growth assessment."
+      }
+    ]
+  }
+}

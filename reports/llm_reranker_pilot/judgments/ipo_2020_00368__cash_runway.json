@@ -1,0 +1,327 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "e4b91ebc-dee6-5b38-8d4f-ccd215a402d7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report cash flow statement with ending cash (incl. negative balances in 2017/2018), net cash change, operating activities, HKD thousands, FY2017-2019. Primary source, highly specific."
+      },
+      {
+        "candidate_id": "bdcd3d95-cd0c-58b3-b379-f6628517e8ec",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report showing detailed operating cash flow build-up with net operating cash flow for FY2017-2019 in HKD thousands. No ending cash but strong OCF data."
+      },
+      {
+        "candidate_id": "790abc98-df13-5ced-ac3e-51168ba8d7c3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Prospectus summary with full cash flow table (OCF, investing, financing, ending cash) for FY2017-2019 plus explanatory notes on negative cash balances and OCF drivers."
+      },
+      {
+        "candidate_id": "bee3d969-03cd-5500-9e2c-f29f60aebe08",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative explanation of operating cash flow for FY2017 and FY2018 with specific OCF figures and working capital drivers. No ending cash data."
+      },
+      {
+        "candidate_id": "751eca7c-414c-5888-9d16-6e72ed167b47",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial data section with consolidated cash flow summary table showing OCF, investing, financing, and ending cash for FY2017-2019, plus notes on negative cash balances."
+      },
+      {
+        "candidate_id": "3defbb89-472d-5890-9378-b3522fd6210e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report accounting policy defining cash and cash equivalents. Standard policy boilerplate, no actual cash balance data."
+      },
+      {
+        "candidate_id": "e40077bd-afc7-52b2-8920-a318fde9a7fa",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report note 21 showing actual cash balances (6,177/2,961/10,847) reconciled to cash flow statement via bank overdrafts for FY2017-2019. Explains negative cash figures."
+      },
+      {
+        "candidate_id": "c34381e5-e35e-59f1-8642-bfb08a0027fe",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accountant's report net debt reconciliation showing cash and cash equivalents, pledged deposits, bank overdrafts, and borrowings movements for FY2017-2019. Indirectly supports cash runway."
+      },
+      {
+        "candidate_id": "3648cf1c-e848-5cb2-a39c-49ff817be887",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Financial ratios table (debt-to-equity, current ratio, etc.) with no direct cash balance data. Mentions cash only in ratio definitions. Indirect context only."
+      },
+      {
+        "candidate_id": "dbf49560-4f70-5232-9dee-7eb4d7c30032",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Balance sheet showing cash and cash equivalents (6,177/2,961/10,847/4,219) for FY2017-2019 plus April 30, 2020 unaudited. Includes most recent cash position."
+      },
+      {
+        "candidate_id": "ef910c6b-9802-5640-9fcc-5aec6a7feef7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Financial ratios table from summary section plus recent developments discussion. Cash mentioned only in ratio definitions. No direct cash balance data."
+      },
+      {
+        "candidate_id": "a936c528-f3e7-5579-875f-4d3e329e5ee7",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "ending_cash",
+          "currency_unit"
+        ],
+        "reason": "Discusses trade payables aging and mentions April 30, 2020 cash of 4.2M HKD and unused bank facilities of 61.3M HKD. Directors' view on meeting payment obligations."
+      },
+      {
+        "candidate_id": "b1f4e2ca-f0e0-5fe5-b5d1-44eab843a08d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accountant's report consolidated balance sheet showing cash and cash equivalents line item (6,177/2,961/10,847) for FY2017-2019. Balance sheet authority."
+      },
+      {
+        "candidate_id": "42067870-431f-5094-8372-4cb3db0c83f9",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Accountant's report accounting policy on financial asset classification. Standard policy boilerplate listing cash as a financial asset. No actual data."
+      },
+      {
+        "candidate_id": "f76f4157-38b2-5b07-b7db-54daed67b58a",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Accountant's report credit risk management note mentioning cash and cash equivalents subject to ECL model. Standard disclosure boilerplate."
+      },
+      {
+        "candidate_id": "35042864-5f46-5c4f-8032-c746d563efc0",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "operating_cash_flow"
+        ],
+        "reason": "Directors' working capital assessment stating sufficient funds for 12 months. Mentions cash, OCF, unused bank facilities, and IPO proceeds. Directly addresses cash runway."
+      },
+      {
+        "candidate_id": "e1f1e707-9767-5237-b278-5a249ba64121",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accountant's report capital risk management note showing net debt calculations with cash deductions for FY2017-2019. Provides debt context for cash runway."
+      },
+      {
+        "candidate_id": "3dd08c14-1c00-594e-8a26-7e05ff401973",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [],
+        "reason": "Accountant's report note on fair value estimation and accounting estimates. Lists cash among financial instruments. Standard policy boilerplate."
+      },
+      {
+        "candidate_id": "c9469e9c-a662-55bc-84f9-707d55260617",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accountant's report financial instruments by category showing cash, equivalents and pledged deposits combined (9,207/6,028/13,947) for FY2017-2019. Less precise as combines pledged deposits."
+      },
+      {
+        "candidate_id": "d09fa0ca-871d-525d-9fac-f92723028622",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "currency_unit"
+        ],
+        "reason": "COVID-19 contingency discussion with April 30, 2020 cash of 4.2M HKD, unused facilities 61.3M HKD, IPO proceeds 8.4M HKD, and explicit cash burn rate concept for 12-month runway assessment."
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "e5575ca4-1fcb-5532-9701-656d813a5dcd",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Describes sorting center operations and line-haul network; only passing mention of serving major customers with warehousing. No customer concentration ratios or data."
+      },
+      {
+        "candidate_id": "dc6c86bb-cfb3-554e-85c4-4ae5294f7582",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "States top five customers <6% of total revenue for FY2017-2019 and H1 2020. Directly provides concentration ratio, revenue denominator, reporting period, and customer identity context."
+      },
+      {
+        "candidate_id": "3cb93606-96b4-5426-84df-79d42aaf59b1",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Describes logistics services and network infrastructure. No customer concentration data or ratios; query term match is a false positive."
+      },
+      {
+        "candidate_id": "ee4faf2f-b84b-5109-a09b-85a37c54f4ed",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Describes fleet management, trucking operations, and pickup/delivery network. No customer concentration information; query term match is a false positive."
+      },
+      {
+        "candidate_id": "08d2971f-09e3-513e-a147-3b0cf51096a8",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Describes customer structure (direct customers are network partners, plus enterprise accounts and e-commerce merchants) but provides no concentration ratios or quantitative data."
+      },
+      {
+        "candidate_id": "445bd95f-4711-5f36-90f4-e3b234475aa9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Describes IT system (Zhongtian), tracking, settlement, and customer service features. No customer concentration data; query term match is a false positive."
+      }
+    ]
+  }
+}

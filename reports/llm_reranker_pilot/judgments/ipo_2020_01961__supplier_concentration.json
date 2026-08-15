@@ -1,0 +1,315 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "28c30422-903c-5d8a-941e-dcccd008672d",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Business section with top-5 and largest supplier ratios across 4 periods, supplier types, independence statement. Most comprehensive supplier concentration evidence."
+      },
+      {
+        "candidate_id": "1b413283-3985-5d78-ad9e-ea750603790f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Summary with top-5 absolute amounts and percentages, supplier types, avg 3-yr relationships. Missing largest supplier ratio but otherwise comprehensive."
+      },
+      {
+        "candidate_id": "ae88b698-f36f-5cbe-ab2c-523264e06208",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "top_five_supplier_ratio",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Risk factor with top-5 supplier ratios, all identified as distribution channel providers, 1-2yr contracts. Explicitly frames concentration as risk."
+      },
+      {
+        "candidate_id": "344c046b-b830-53aa-a61d-2dec0608f07e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Discusses main supplier platform service suspension causing revenue decline. Supplier dependency context but no concentration ratios."
+      },
+      {
+        "candidate_id": "a111f3a9-9f6d-5070-b234-4d06217f0ded",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Details main supplier platform suspension and subscriber impact. Supplier dependency context but lacks concentration ratios."
+      },
+      {
+        "candidate_id": "44bc51de-9b7e-5c45-a9dd-4a712a0fb106",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Business strategy discussion mentioning distribution channel providers. No supplier concentration ratios. Minimal direct relevance."
+      },
+      {
+        "candidate_id": "8b4f4d2e-e0cf-578e-87b9-0d609f8f2d82",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed FY2016 top-5 supplier table with names, amounts, percentages, backgrounds, credit terms. Truncated but highly specific concentration data."
+      },
+      {
+        "candidate_id": "0b644b00-a082-52cd-b726-142d5491a606",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Financial data showing distribution channel fees >90% of cost of sales across 5 periods. Cost concentration by supplier type, not individual ratios."
+      },
+      {
+        "candidate_id": "f8484983-420e-5fa6-9c36-eda781e6063e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Summary with game revenue tables and Zhongyi Internet relationship. No supplier concentration ratios."
+      },
+      {
+        "candidate_id": "55fc3b37-c589-5fc2-8a7c-1e8b5490ac8b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Boilerplate risk factor listing mentioning reliance on distribution channel providers without specific concentration data."
+      },
+      {
+        "candidate_id": "b614b339-3cd0-5c5c-a2d9-1677c8afe13d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Explains Zhongyi Internet excluded from top-5 suppliers due to net revenue basis. Important methodology context for concentration assessment."
+      },
+      {
+        "candidate_id": "82fea809-d3f0-5fa0-9786-aae5bdd4ab2a",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [],
+        "reason": "Business strategy discussion about game portfolio and distribution channels. No supplier concentration ratios."
+      },
+      {
+        "candidate_id": "d0a2b8d4-c5a1-5afc-8ce8-a81238eda2ac",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "FY2017 top-5 supplier table with names, amounts, percentages, backgrounds, credit terms. Highly specific supplier concentration data."
+      },
+      {
+        "candidate_id": "8bb0c411-8b2d-5219-a194-e76a0df2a292",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "Risk factors intro about revenue from mobile games and game count decline. No supplier concentration data."
+      },
+      {
+        "candidate_id": "d56495e2-9bc9-5681-bfe9-98f177cceaff",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [],
+        "reason": "Risk factor about game developer/licensor relationships, not supplier concentration. No concentration ratios."
+      },
+      {
+        "candidate_id": "02b687b6-d711-5b12-8b92-113b94b30ca4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "Financial data about digital media content revenue breakdown. No supplier concentration data."
+      },
+      {
+        "candidate_id": "2abebb47-742a-5faf-a3d0-1e13c4253ae0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "purchase_denominator",
+          "supplier_identity_context"
+        ],
+        "reason": "Cost of sales by business line showing distribution costs dominate but no individual supplier concentration ratios."
+      },
+      {
+        "candidate_id": "a550054b-1c23-51d5-b176-945bc104bba0",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Summary: revenue through Zhongyi Internet 99.4%-71.4% of total revenue. Channel concentration context relevant to supplier assessment."
+      },
+      {
+        "candidate_id": "bfd68339-8053-5555-bd0c-5d8a6598cf47",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "Summary about shareholders, pre-IPO investors, financial overview. No supplier concentration data."
+      },
+      {
+        "candidate_id": "038888a8-f370-54bd-af55-e10c41901003",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "Business section about game withdrawal reasons and strategy. No supplier concentration data."
+      }
+    ]
+  }
+}

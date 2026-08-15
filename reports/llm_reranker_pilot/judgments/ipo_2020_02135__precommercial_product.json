@@ -1,0 +1,288 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "3e3bd2ce-d790-501f-8ad5-be7ebe832a48",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Glossary defining third-party product brands (BOTOX, hyaluronic acid) used in medical aesthetics. Not about issuer's own product commercialization status."
+      },
+      {
+        "candidate_id": "00d9dddc-6d43-55cc-b370-efbd6957fa71",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Describes cornerstone investor 昊海生物科技's business in biological products. Not about the issuer's own product commercialization."
+      },
+      {
+        "candidate_id": "93a76425-0360-51fd-8544-c132076ca504",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Glossary/definitions page for VIE entities and application forms. No relevance to product commercialization status."
+      },
+      {
+        "candidate_id": "b7662e6a-6e54-5ecd-b5e9-0b4718de8dee",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Technical glossary defining laser, liposuction, RF terms. Boilerplate definitions with no commercialization relevance."
+      },
+      {
+        "candidate_id": "bef29863-c006-5aa8-83e8-ac58c91dcc16",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Accountant's report showing subsidiaries provide medical aesthetic services and consulting. Indicates issuer is an operating services business, not a pre-commercial product developer."
+      },
+      {
+        "candidate_id": "603e8c3e-03c7-5273-8568-35a3b83c727c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor independence and subscription conditions. No relevance to product commercialization status."
+      },
+      {
+        "candidate_id": "dbdb297a-bf0f-5be3-a72a-34485cbe696b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Another cornerstone investor (途屹) in travel/tourism business and investment conditions. Irrelevant to issuer's product status."
+      },
+      {
+        "candidate_id": "efc89a78-feb7-56b7-8695-b5ec2d2ccd23",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Subsidiary list shows medical aesthetic services, consulting, and medical equipment trading entities. One entity (瑞麗器械) had no business activities during track record period."
+      },
+      {
+        "candidate_id": "94035a54-1d0a-5f1c-ae72-9b38ab8155b1",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Balance sheet data from accountant's report. No relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "64893294-6061-5c33-94ce-bb1d01b636b9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Regulatory overview of labor dispatch and enterprise income tax. No relevance to product commercialization."
+      },
+      {
+        "candidate_id": "9cad706c-3131-5981-a267-4ba0e0ef3b06",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Listing rule waiver about management stationed in Hong Kong. Mentions main business in China but no product commercialization info."
+      },
+      {
+        "candidate_id": "dd4d66b6-315e-52a8-9cc1-b95da265cd6b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "VIE/contractual arrangement legal opinions. Mentions main business activities in regulatory context but no product commercialization details."
+      },
+      {
+        "candidate_id": "2eaa9504-abd0-565e-9901-2db59cf334d9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Basis of preparation for financial statements and restructuring details. No relevance to pre-commercial products."
+      },
+      {
+        "candidate_id": "794035ad-196e-515a-bd6d-3bcfaec93421",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Shows issuer as operating for-profit medical institution group with 4 institutions, all recovered initial investments. Pricing policy and expansion timeline indicate active commercialization."
+      },
+      {
+        "candidate_id": "cb891f28-51e9-51ac-9dda-21c9950adf0d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "States issuer mainly provides medical aesthetic services in China. Contextual about core business being services, not product development."
+      },
+      {
+        "candidate_id": "7bee7176-27ba-5829-89ed-f968e40b1dca",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Labor law and social insurance regulations. No relevance to product commercialization status."
+      },
+      {
+        "candidate_id": "ab2e7c61-4b05-5298-a26e-e43305226956",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Tax regulations on withholding tax and VAT. No relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "ac8257c1-7047-5fa7-b69f-ba783cd1904f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Summary showing year-over-year revenue growth from minimally invasive and skin aesthetic services, gross margins, service mix. Directly demonstrates active commercialization and revenue generation."
+      },
+      {
+        "candidate_id": "3bef0690-2ce7-555e-a501-d3d7389dba7d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Renovation and expansion plans for existing medical aesthetic institutions. Shows ongoing operations but not directly about product commercialization."
+      },
+      {
+        "candidate_id": "816eeca7-5fc3-5e0c-98b9-f8c40fe54eb6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Forward-looking statements disclaimer. Boilerplate with no relevance to product commercialization."
+      }
+    ]
+  }
+}

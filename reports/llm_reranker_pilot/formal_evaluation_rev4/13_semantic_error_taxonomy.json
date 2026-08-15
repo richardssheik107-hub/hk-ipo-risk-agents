@@ -1,0 +1,530 @@
+{
+  "top5_required_miss_count": 57,
+  "counts": {
+    "AUTHORITY_CONFUSION": 0,
+    "CANDIDATE_COVERAGE_MISS": 47,
+    "CURRENT_STATUS_CONFUSION": 0,
+    "FALLBACK_NO_LLM": 4,
+    "FINANCIAL_MULTIPAGE_FRAGMENTATION": 1,
+    "GENERIC_BOILERPLATE_CONFUSION": 0,
+    "LLM_HEAD_DEMOTION": 3,
+    "LLM_INSUFFICIENT_PROMOTION": 0,
+    "MULTIPAGE_COMPLETION_FAILURE": 2,
+    "OTHER": 0
+  },
+  "rows": [
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "customer_concentration",
+      "gold_page": 136,
+      "stage1_rank": 9,
+      "llm_rank": 9,
+      "task_status": "failed",
+      "category": "FALLBACK_NO_LLM"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "customer_concentration",
+      "gold_page": 309,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "supplier_concentration",
+      "gold_page": 142,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "redemption_rights",
+      "gold_page": 93,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "redemption_rights",
+      "gold_page": 94,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "risk_code": "precommercial_product",
+      "gold_page": 97,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "cash_runway",
+      "gold_page": 453,
+      "stage1_rank": 3,
+      "llm_rank": 8,
+      "task_status": "completed",
+      "category": "LLM_HEAD_DEMOTION"
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 291,
+      "stage1_rank": 10,
+      "llm_rank": 10,
+      "task_status": "failed",
+      "category": "FALLBACK_NO_LLM"
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "risk_code": "precommercial_product",
+      "gold_page": 225,
+      "stage1_rank": 20,
+      "llm_rank": 9,
+      "task_status": "completed",
+      "category": "MULTIPAGE_COMPLETION_FAILURE"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "cash_runway",
+      "gold_page": 394,
+      "stage1_rank": 2,
+      "llm_rank": 9,
+      "task_status": "completed",
+      "category": "LLM_HEAD_DEMOTION"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "continuous_loss",
+      "gold_page": 390,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "customer_concentration",
+      "gold_page": 390,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "supplier_concentration",
+      "gold_page": 269,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "supplier_concentration",
+      "gold_page": 269,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "precommercial_product",
+      "gold_page": 127,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "continuous_loss",
+      "gold_page": 466,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "revenue_growth",
+      "gold_page": 466,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "supplier_concentration",
+      "gold_page": 237,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "supplier_concentration",
+      "gold_page": 466,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "redemption_rights",
+      "gold_page": 150,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 270,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "precommercial_product",
+      "gold_page": 167,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "customer_concentration",
+      "gold_page": 149,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "redemption_rights",
+      "gold_page": 191,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "risk_code": "precommercial_product",
+      "gold_page": 335,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "cash_runway",
+      "gold_page": 307,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "continuous_loss",
+      "gold_page": 301,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "revenue_growth",
+      "gold_page": 300,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "redemption_rights",
+      "gold_page": 228,
+      "stage1_rank": 10,
+      "llm_rank": 10,
+      "task_status": "failed",
+      "category": "FALLBACK_NO_LLM"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 172,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 173,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "precommercial_product",
+      "gold_page": 324,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "cash_runway",
+      "gold_page": 459,
+      "stage1_rank": 11,
+      "llm_rank": 6,
+      "task_status": "completed",
+      "category": "FINANCIAL_MULTIPAGE_FRAGMENTATION"
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "revenue_growth",
+      "gold_page": 458,
+      "stage1_rank": 17,
+      "llm_rank": 17,
+      "task_status": "failed",
+      "category": "FALLBACK_NO_LLM"
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "risk_code": "precommercial_product",
+      "gold_page": 210,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "cash_runway",
+      "gold_page": 400,
+      "stage1_rank": 2,
+      "llm_rank": 7,
+      "task_status": "completed",
+      "category": "LLM_HEAD_DEMOTION"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "revenue_growth",
+      "gold_page": 397,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "customer_concentration",
+      "gold_page": 397,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "redemption_rights",
+      "gold_page": 107,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "redemption_rights",
+      "gold_page": 466,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 212,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "precommercial_product",
+      "gold_page": 111,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "precommercial_product",
+      "gold_page": 112,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "continuous_loss",
+      "gold_page": 602,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "material_litigation_compliance",
+      "gold_page": 355,
+      "stage1_rank": 19,
+      "llm_rank": 6,
+      "task_status": "completed",
+      "category": "MULTIPAGE_COMPLETION_FAILURE"
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "risk_code": "precommercial_product",
+      "gold_page": 223,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "continuous_loss",
+      "gold_page": 507,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "continuous_loss",
+      "gold_page": 507,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "revenue_growth",
+      "gold_page": 507,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "revenue_growth",
+      "gold_page": 507,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "customer_concentration",
+      "gold_page": 507,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "redemption_rights",
+      "gold_page": 133,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "redemption_rights",
+      "gold_page": 133,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "redemption_rights",
+      "gold_page": 432,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "redemption_rights",
+      "gold_page": 433,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "completed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "precommercial_product",
+      "gold_page": 542,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "risk_code": "precommercial_product",
+      "gold_page": 542,
+      "stage1_rank": null,
+      "llm_rank": null,
+      "task_status": "failed",
+      "category": "CANDIDATE_COVERAGE_MISS"
+    }
+  ]
+}

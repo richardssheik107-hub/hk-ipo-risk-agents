@@ -16,6 +16,9 @@ data/competition/*
 !data/competition/README.md
 reports/*
 !reports/.gitkeep
+!reports/llm_reranker_pilot/
+!reports/llm_reranker_pilot/**
+reports/llm_reranker_pilot/*.log
 models/*
 !models/.gitkeep
 *.pkl

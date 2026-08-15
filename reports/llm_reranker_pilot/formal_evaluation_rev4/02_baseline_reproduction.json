@@ -1,0 +1,239 @@
+{
+  "baseline_reproduced": true,
+  "display_tolerance": 5e-05,
+  "drift_rows": [
+    {
+      "variant": "v1",
+      "metric": "required_recall_at_1",
+      "historical": 0.1466,
+      "reproduced": 0.14655172413793102,
+      "absolute_difference": 4.827586206898604e-05
+    },
+    {
+      "variant": "v1",
+      "metric": "required_recall_at_3",
+      "historical": 0.3448,
+      "reproduced": 0.3448275862068966,
+      "absolute_difference": 2.7586206896579313e-05
+    },
+    {
+      "variant": "v1",
+      "metric": "required_recall_at_5",
+      "historical": 0.4138,
+      "reproduced": 0.41379310344827586,
+      "absolute_difference": 6.896551724144828e-06
+    },
+    {
+      "variant": "v1",
+      "metric": "required_recall_at_10",
+      "historical": 0.5,
+      "reproduced": 0.5,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "required_recall_at_20",
+      "historical": 0.569,
+      "reproduced": 0.5689655172413793,
+      "absolute_difference": 3.448275862061312e-05
+    },
+    {
+      "variant": "v1",
+      "metric": "required_completion_at_1",
+      "historical": 0.1,
+      "reproduced": 0.1,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "required_completion_at_3",
+      "historical": 0.275,
+      "reproduced": 0.275,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "required_completion_at_5",
+      "historical": 0.3625,
+      "reproduced": 0.3625,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "required_completion_at_10",
+      "historical": 0.475,
+      "reproduced": 0.475,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "required_completion_at_20",
+      "historical": 0.55,
+      "reproduced": 0.55,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v1",
+      "metric": "mrr",
+      "historical": 0.2669,
+      "reproduced": 0.2669233690138195,
+      "absolute_difference": 2.336901381949641e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_recall_at_1",
+      "historical": 0.1466,
+      "reproduced": 0.14655172413793102,
+      "absolute_difference": 4.827586206898604e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_recall_at_3",
+      "historical": 0.3103,
+      "reproduced": 0.3103448275862069,
+      "absolute_difference": 4.482758620688587e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_recall_at_5",
+      "historical": 0.3793,
+      "reproduced": 0.3793103448275862,
+      "absolute_difference": 1.0344827586161731e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_recall_at_10",
+      "historical": 0.5086,
+      "reproduced": 0.5086206896551724,
+      "absolute_difference": 2.0689655172323462e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_recall_at_20",
+      "historical": 0.5948,
+      "reproduced": 0.5948275862068966,
+      "absolute_difference": 2.7586206896579313e-05
+    },
+    {
+      "variant": "v2",
+      "metric": "required_completion_at_1",
+      "historical": 0.1,
+      "reproduced": 0.1,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v2",
+      "metric": "required_completion_at_3",
+      "historical": 0.25,
+      "reproduced": 0.25,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v2",
+      "metric": "required_completion_at_5",
+      "historical": 0.325,
+      "reproduced": 0.325,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v2",
+      "metric": "required_completion_at_10",
+      "historical": 0.4625,
+      "reproduced": 0.4625,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v2",
+      "metric": "required_completion_at_20",
+      "historical": 0.55,
+      "reproduced": 0.55,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v2",
+      "metric": "mrr",
+      "historical": 0.2616,
+      "reproduced": 0.2616045219430108,
+      "absolute_difference": 4.521943010815654e-06
+    },
+    {
+      "variant": "v21",
+      "metric": "required_recall_at_1",
+      "historical": 0.1207,
+      "reproduced": 0.1206896551724138,
+      "absolute_difference": 1.0344827586203365e-05
+    },
+    {
+      "variant": "v21",
+      "metric": "required_recall_at_3",
+      "historical": 0.319,
+      "reproduced": 0.31896551724137934,
+      "absolute_difference": 3.448275862066863e-05
+    },
+    {
+      "variant": "v21",
+      "metric": "required_recall_at_5",
+      "historical": 0.4569,
+      "reproduced": 0.45689655172413796,
+      "absolute_difference": 3.448275862016903e-06
+    },
+    {
+      "variant": "v21",
+      "metric": "required_recall_at_10",
+      "historical": 0.5086,
+      "reproduced": 0.5086206896551724,
+      "absolute_difference": 2.0689655172323462e-05
+    },
+    {
+      "variant": "v21",
+      "metric": "required_recall_at_20",
+      "historical": 0.5862,
+      "reproduced": 0.5862068965517241,
+      "absolute_difference": 6.896551724033806e-06
+    },
+    {
+      "variant": "v21",
+      "metric": "required_completion_at_1",
+      "historical": 0.125,
+      "reproduced": 0.125,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v21",
+      "metric": "required_completion_at_3",
+      "historical": 0.275,
+      "reproduced": 0.275,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v21",
+      "metric": "required_completion_at_5",
+      "historical": 0.45,
+      "reproduced": 0.45,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v21",
+      "metric": "required_completion_at_10",
+      "historical": 0.5,
+      "reproduced": 0.5,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v21",
+      "metric": "required_completion_at_20",
+      "historical": 0.55,
+      "reproduced": 0.55,
+      "absolute_difference": 0.0
+    },
+    {
+      "variant": "v21",
+      "metric": "mrr",
+      "historical": 0.2495,
+      "reproduced": 0.249450090517468,
+      "absolute_difference": 4.9909482532001226e-05
+    }
+  ],
+  "source_ref": "origin/eval/retriever-v21-ten-case-ranking@a99cdf8",
+  "source_manifest_sha256": "2bf98a5711b174b7415a5ad97da013fb025d57676fd8c6b525b0fd6a9441eb9c"
+}

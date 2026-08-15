@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from types import MappingProxyType
 
+from ipo_risk.retrieval.llm_reranker_prompts import PROMPT_VERSION, RISK_FACETS, instruction
+
 
 SHAREHOLDER_RIGHTS_INSTRUCTION = """\
 Extract only shareholder-right facts explicitly supported by the supplied Evidence.
@@ -38,6 +40,9 @@ _LEGAL_PROMPTS = MappingProxyType(
 _LEGAL_TASKS = frozenset(task for task, _ in _LEGAL_PROMPTS)
 _LEGAL_VERSIONS = frozenset(version for _, version in _LEGAL_PROMPTS)
 
+_RERANK_PROMPTS = MappingProxyType({(f"rerank_{risk}", PROMPT_VERSION): instruction(risk) for risk in RISK_FACETS})
+_RERANK_TASKS = frozenset(task for task, _ in _RERANK_PROMPTS)
+
 
 class PromptResolutionError(ValueError):
     """Raised when a known Legal prompt identity is incomplete or mismatched."""
@@ -46,9 +51,11 @@ class PromptResolutionError(ValueError):
 def resolve_domain_instruction(task_name: str, prompt_version: str) -> str | None:
     """Resolve an exact Legal prompt pair while preserving generic callers."""
 
-    instruction = _LEGAL_PROMPTS.get((task_name, prompt_version))
+    instruction = _LEGAL_PROMPTS.get((task_name, prompt_version)) or _RERANK_PROMPTS.get((task_name, prompt_version))
     if instruction is not None:
         return instruction
     if task_name in _LEGAL_TASKS or prompt_version in _LEGAL_VERSIONS:
         raise PromptResolutionError("Unknown or mismatched Legal prompt identity")
+    if task_name in _RERANK_TASKS or (prompt_version == PROMPT_VERSION and task_name not in _RERANK_TASKS):
+        raise PromptResolutionError("Unknown or mismatched reranker prompt identity")
     return None
