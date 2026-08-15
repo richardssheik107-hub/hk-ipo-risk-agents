@@ -24,7 +24,7 @@
 | v0.2.0代码     | 已全部进入main                           |
 | v0.2.0 Release | 已发布：Tag `v0.2.0-real-document-slice` |
 | v0.3.0 Release | 已发布：Tag `v0.3.0-multi-agent-risk-analysis` |
-| 下一规划版本   | v0.4市场预测（V04-1已合并，V04-2等待Review） |
+| 下一规划版本   | v0.4市场预测（V04-1/V04-2已合并，V04-3等待Review） |
 | 远期版本       | v0.4市场预测、v0.5正式评测、RC与v1.0提交 |
 
 适用对象：5人参赛团队 / 技术负责人 / 数据治理 / 财务 / 法务 / 业务与产品
@@ -83,8 +83,9 @@
 ## 1.1 当前能力边界
 
 - Financial、Legal与Business三个真实Agent已合并并进入共享Container与`enhanced_v2`；旧流程仍保留disabled/Mock回退。
-- V04-1 Market Foundation 已合并；V04-2已实现版本化文档风险快照、100项稳定特征和
-  development/validation数据集契约并等待Review；Market Agent和生产行情适配器尚未接入。
+- V04-1 Market Foundation与V04-2文档风险快照/100项特征契约已合并；V04-3已实现
+  20项上市前market manifest与120项高层join并等待Review；Market Agent和生产行情
+  适配器尚未接入。
 - LLMProvider基础设施与Legal domain prompt real-provider runtime routing均已合并，GATE-A-10为PASS；真实外部endpoint smoke仍未执行。
 - `V03FinancialAgent`、`V03FinancialVerifier`及其他专业组件既可独立调用，也已进入共享Container/Workflow/Service。
 - `CatalogIPODataProvider`已进入全局ComponentRegistry；默认v0.3单文档配置仍使用请求字段，避免缺失catalog阻断分析。
@@ -110,7 +111,7 @@
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
 | v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | RELEASED / FROZEN / HUMAN GOLDEN COMPLETE |
-| v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、文档特征契约、Market Agent、模型 | V04-1 MERGED / V04-2 IMPLEMENTED PENDING REVIEW |
+| v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、文档特征契约、Market Agent、模型 | V04-1/V04-2 MERGED / V04-3 IMPLEMENTED PENDING REVIEW |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
 | RC | 别人能否稳定复现 | 冻结、独立环境、异常测试、离线演示 | 待规划 |
@@ -587,10 +588,12 @@ v0.3批量评测完成后增加：
 V04-1 Market Foundation 已合并：包含市场数据Schema、IPO市场元数据、
 MarketDataProvider历史数据契约、1/5/20/60交易session标签、2020—2025时间分割、
 cohort/listing-year一致性、普通股-only证券资格、2025 blind代码级保护与完整性校验。
-V04-2已实现最终IPOAnalysisResult到版本化snapshot、100项稳定数值manifest及受blind
-保护的数据集join。这不代表完整v0.4完成；生产行情、Market Agent及模型仍按后续阶段
+V04-2已合并最终IPOAnalysisResult到版本化snapshot、100项稳定数值manifest及受blind
+保护的数据集join。V04-3已实现严格point-in-time的20项market manifest和120项高层join，
+等待Review；生产真实行情覆盖仍有限。这不代表完整v0.4完成；Market Agent及模型仍按后续阶段
 推进。专项政策见`docs/research/V04_MARKET_FOUNDATION.md`和
-`docs/research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`。
+`docs/research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`、
+`docs/research/V04_PRELISTING_MARKET_FEATURES.md`。
 
 | **编号** | **任务** | **主要输出** |
 |:---|:---|:---|
@@ -621,8 +624,9 @@ V04-2已实现最终IPOAnalysisResult到版本化snapshot、100项稳定数值ma
 
 # 15. 当前状态与下一步
 
-当前统一阶段：**v0.3 Released / Frozen**。V04-1 Market Foundation 已合并，V04-2
-Document-to-Market Feature Contract已实现并等待Review；生产市场预测模型仍未开始。
+当前统一阶段：**v0.3 Released / Frozen**。V04-1 Market Foundation与V04-2
+Document-to-Market Feature Contract已合并；V04-3上市前市场特征引擎已实现并等待
+Review，生产真实行情覆盖仍有限；生产市场预测模型仍未开始。
 
 ## v0.3.5 Evidence Intelligence 当前主任务
 
@@ -644,7 +648,7 @@ Expert Golden v2 和 Evidence Intelligence 架构。
 | Phase 0.7 Architecture | NOT STARTED | Shared Index、domain search、bounded iteration、completeness |
 | Phase 0.8 A/B | NOT STARTED | 同 PDF/LLM/policy/verifier/Expert Golden |
 | Phase 0.9 Retrieval optimization | NOT STARTED | 算法选择与排序优化 |
-| v0.4 Market Prediction | V04-1 MERGED / V04-2 IMPLEMENTED PENDING REVIEW | 文档快照/100项特征/数据集契约已实现；模型仍为后续Gate |
+| v0.4 Market Prediction | V04-1/V04-2 MERGED / V04-3 IMPLEMENTED PENDING REVIEW | 100项文档特征+20项上市前市场特征契约已实现；生产数据adapter和模型仍为后续Gate |
 
 ### Expert Golden 治理
 

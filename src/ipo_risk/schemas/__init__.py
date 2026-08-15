@@ -30,6 +30,33 @@ from ipo_risk.schemas.market import (
     MarketValidationResult,
     MarketValidationSeverity,
 )
+from ipo_risk.schemas.market_features import (
+    MARKET_FEATURE_POLICY_VERSION,
+    MARKET_FEATURE_SCHEMA_VERSION,
+    MARKET_RAW_FEATURE_ORDER,
+    MarketActivityObservation,
+    MarketFeatureAvailability,
+    MarketFeatureDefinition,
+    MarketFeatureDType,
+    MarketFeatureManifest,
+    MarketFeatureMissingReason,
+    MarketFeatureProvenance,
+    MarketFeatureValue,
+    MarketFeatureVector,
+    MarketReferenceBar,
+    PreListingMarketFeatureContext,
+    PreListingMarketFeaturePolicy,
+    PreListingMarketFeatureSnapshot,
+    PriorIPOReference,
+)
+from ipo_risk.schemas.market_modeling import (
+    V04_MARKET_AUGMENTED_DATASET_VERSION,
+    V04CombinedFeatureVector,
+    V04MarketAugmentedBlindFeatureDataset,
+    V04MarketAugmentedBlindFeatureRecord,
+    V04MarketAugmentedModelingDataset,
+    V04MarketAugmentedModelingRecord,
+)
 from ipo_risk.schemas.modeling import (
     DOCUMENT_FEATURE_SCHEMA_VERSION,
     V04_MODELING_DATASET_VERSION,

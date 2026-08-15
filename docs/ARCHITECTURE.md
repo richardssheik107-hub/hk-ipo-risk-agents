@@ -601,6 +601,9 @@ Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Cal
 - V04-2新增独立`ipo_risk.modeling`边界：只消费最终`IPOAnalysisResult`，生成版本化
   DocumentRiskSnapshot、稳定数值manifest及受年度隔离保护的modeling dataset；不反向
   依赖Retriever、Agent或LLM。
+- V04-3新增独立`MarketReferenceDataProvider`与纯`PreListingMarketFeatureEngine`：所有
+  市场X严格使用listing date之前的reference session，生成20项market manifest；更高层
+  dataset按显式顺序连接100项document X和20项market X。生产真实行情覆盖仍有限。
 
 v0.3.5 研究不会回写或重构这些冻结公共边界。
 

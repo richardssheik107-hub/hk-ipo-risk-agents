@@ -9,6 +9,10 @@ from ipo_risk.modeling.features import (
     DOCUMENT_FEATURE_MANIFEST_V1,
     vectorize_document_snapshot,
 )
+from ipo_risk.modeling.market_dataset import (
+    V04MarketAugmentedBlindFeatureExporter,
+    V04MarketAugmentedDatasetBuilder,
+)
 from ipo_risk.modeling.snapshot import DocumentRiskSnapshotBuilder
 
 __all__ = [
@@ -17,5 +21,7 @@ __all__ = [
     "DocumentRiskSnapshotBuilder",
     "V04BlindFeatureExporter",
     "V04ModelingDatasetBuilder",
+    "V04MarketAugmentedBlindFeatureExporter",
+    "V04MarketAugmentedDatasetBuilder",
     "vectorize_document_snapshot",
 ]
