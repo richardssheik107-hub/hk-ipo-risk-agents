@@ -11,11 +11,26 @@
     {
       "risk_code": "customer_concentration",
       "finding_code": "CONCENTRATION_LABEL_CONFLICT",
-      "original": {"applicable": true, "expected_status": "verified", "expected_level": "medium"},
-      "replacement": {"applicable": false, "expected_status": "rejected", "expected_level": "not_applicable"},
+      "original": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "replacement": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
       "audit_message": "Recomputed customer concentration is largest=10.8%, top-five=40.3%; stored label conflicts with 30/60 medium and 50/80 high thresholds.",
-      "deterministic_details": {"largest_pct": 10.8, "top_five_pct": 40.3}
+      "deterministic_details": {
+        "largest_pct": 10.8,
+        "top_five_pct": 40.3
+      }
     }
   ],
-  "safety": {"pass1_overwritten": false, "evidence_text_modified": false, "reasoning_text_modified": false}
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false
+  }
 }
