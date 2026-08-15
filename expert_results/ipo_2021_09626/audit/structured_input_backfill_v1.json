@@ -1,0 +1,86 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_09626",
+  "source_pass1": "expert_results/ipo_2021_09626/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "9376d31310dca1c3f167afa2fbf73f49c7dae7904c0f48dd1ca343df948aa280",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_pass1_finding_code": "LOSS_PERIODS_MISSING",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 360,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "high",
+      "canonical_calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "loss": -565021.0
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "loss": -1303570.0
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "loss": -3054017.0
+          }
+        ]
+      },
+      "normalized_facts": {
+        "FY": {
+          "loss_count": 3,
+          "level": "high",
+          "periods": [
+            {
+              "period": "year ended 31 December 2018",
+              "loss": -565021.0,
+              "signature": "FY"
+            },
+            {
+              "period": "year ended 31 December 2019",
+              "loss": -1303570.0,
+              "signature": "FY"
+            },
+            {
+              "period": "year ended 31 December 2020",
+              "loss": -3054017.0,
+              "signature": "FY"
+            }
+          ]
+        }
+      },
+      "source_fields": [
+        "comparable_periods",
+        "net_loss",
+        "comparable_periods",
+        "net_loss",
+        "comparable_periods",
+        "net_loss"
+      ],
+      "message": "All comparable duration groups imply the same continuous-loss level."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

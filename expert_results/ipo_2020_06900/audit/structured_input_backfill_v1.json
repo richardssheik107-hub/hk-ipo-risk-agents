@@ -1,0 +1,57 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_06900",
+  "source_pass1": "expert_results/ipo_2020_06900/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "98d938c81d4aef0b1fe89858088677ea6b15b4e781aa2408aecd4504da86fcba",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "revenue_growth",
+      "source_pass1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 571,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "previous_revenue": 1151843.0,
+        "current_revenue": 1148500.0
+      },
+      "normalized_facts": [
+        {
+          "prior_period": "four months ended 30 April 2019",
+          "current_period": "four months ended 30 April 2020",
+          "previous_revenue": 1151843.0,
+          "current_revenue": 1148500.0,
+          "growth_pct": -0.290230526208867,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "prior_period_revenue",
+        "current_period_revenue"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

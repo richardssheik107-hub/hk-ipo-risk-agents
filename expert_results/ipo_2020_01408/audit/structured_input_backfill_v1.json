@@ -1,0 +1,140 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_01408",
+  "source_pass1": "expert_results/ipo_2020_01408/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "57b2617f6e9e8419e82dfcbe5872abfdd73f336dda67e933a4c127247439426e",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 2,
+  "entries": [
+    {
+      "risk_code": "customer_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 390,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        },
+        {
+          "page": 174,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 175,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 175,
+          "evidence_role": "cross_check",
+          "requirement": "supporting_only",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "high",
+      "canonical_calculation_inputs": {
+        "largest_customer_pct": 85.91511553604188,
+        "top_five_customer_pct": 97.29144765320635
+      },
+      "normalized_facts": [
+        {
+          "period": "two months ended 2020-02-29",
+          "largest_pct": 85.91511553604188,
+          "top_five_pct": 97.29144765320635,
+          "level": "high"
+        }
+      ],
+      "source_fields": [
+        "total_revenue",
+        "largest_customer_revenue",
+        "total_revenue",
+        "top_five_customer_revenue"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 269,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        },
+        {
+          "page": 269,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        },
+        {
+          "page": 193,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 193,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 193,
+          "evidence_role": "cross_check",
+          "requirement": "supporting_only",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "high",
+      "canonical_calculation_inputs": {
+        "largest_supplier_pct": 51.05255820437753,
+        "top_five_supplier_pct": 82.01589293182768
+      },
+      "normalized_facts": [
+        {
+          "period": "two months ended 2020-02-29",
+          "largest_pct": 51.05255820437753,
+          "top_five_pct": 82.01589293182768,
+          "level": "high"
+        }
+      ],
+      "source_fields": [
+        "total_supplier_purchases",
+        "largest_supplier_purchases",
+        "total_supplier_purchases",
+        "top_five_supplier_purchases"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule.",
+      "compatibility_layer": "legacy_structured_alias_v2"
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}
