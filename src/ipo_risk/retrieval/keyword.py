@@ -253,6 +253,7 @@ class KeywordDocumentRetriever:
         statement_neighborhood = page_context is not None and page_context.statement_distance is not None
         audited_context = list(page_context.audited_context) if page_context else []
         table_context = self._looks_like_financial_table(chunk.text)
+        structured_table_row = self._structured_table_row_match(chunk, normalized_query, aliases)
         query_family = QUERY_FAMILY_BY_NAME.get(intent)
         domain_context = (
             self._matching_context(source.text, query_family.positive_context)
@@ -296,6 +297,10 @@ class KeywordDocumentRetriever:
                 "financial_table": (
                     0.10 if query_family.financial_table_weight and table_context else 0.0
                 ),
+                # Strong, precise signal: this page's reconstructed table has a row
+                # whose label matches the query (e.g. the 收益 income-statement row).
+                # Inert without structured tables (default/frozen parser).
+                "structured_table_row": 0.30 if structured_table_row else 0.0,
                 "discouraged_section": -0.12 if discouraged_section_context else 0.0,
                 "domain_negative_context": -0.14 if domain_negative_context else 0.0,
             }
@@ -315,6 +320,7 @@ class KeywordDocumentRetriever:
                 "ending_cash_context": 0.24 if ending_cash_context and intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
                 "cash_flow_companions": min(0.18, len(cash_flow_companions) * 0.06) if intent in {"cash_flow_ending_cash", "cash_and_cash_equivalents"} else 0.0,
                 "table_context": 0.08 if table_context else 0.0,
+                "structured_table_row": 0.30 if structured_table_row else 0.0,
                 "summary_context": -0.28 if summary_context else 0.0,
                 "note_context": -0.16 if note_context and not statement_neighborhood else 0.0,
                 "negative_context": -0.45 if negative_context else 0.0,
@@ -423,6 +429,43 @@ class KeywordDocumentRetriever:
         year_or_date_columns = len(re.findall(r"(?:19|20)\d{2}|\d{1,2}月\d{1,2}日", text))
         units = any(term in normalize_for_match(text) for term in ("人民币千元", "人民幣千元", "港币千元", "港幣千元", "rmb'000", "hk$'000", "usd'000"))
         return digits >= 30 and (year_or_date_columns >= 2 or units)
+
+    @staticmethod
+    def _structured_table_row_match(
+        chunk: DocumentChunk, normalized_query: str, aliases: tuple[str, ...]
+    ) -> bool:
+        """True when a reconstructed table row label starts with the query/alias.
+
+        Gated on ``metadata["tables"]``, which only the ``pymupdf_table`` parser
+        produces: with the default ``pymupdf`` parser (frozen 2410.HK slice, the
+        offline default) no chunk carries tables, so this signal is always False
+        and ranking is unchanged.  The prefix rule mirrors the extractor's
+        ``_find_v03_label`` (``^收益``/``^revenue`` …), so the pages this lifts are
+        exactly the ones the structured extractor can consume.
+        """
+        tables = chunk.metadata.get("tables") if chunk.metadata else None
+        if not isinstance(tables, list) or not tables:
+            return False
+        terms = {normalized_query, *(normalize_for_match(alias) for alias in aliases)}
+        compact_terms = {
+            "".join(char for char in term if not char.isspace())
+            for term in terms
+        }
+        compact_terms = {term for term in compact_terms if len(term) >= 2}
+        if not compact_terms:
+            return False
+        for table in tables:
+            if not isinstance(table, dict):
+                continue
+            for row in table.get("rows") or []:
+                label = "".join(
+                    char
+                    for char in normalize_for_match(str(row.get("label", "")))
+                    if not char.isspace()
+                )
+                if label and any(label.startswith(term) for term in compact_terms):
+                    return True
+        return False
 
     def _matches(
         self,

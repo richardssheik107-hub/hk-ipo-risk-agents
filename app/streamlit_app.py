@@ -25,7 +25,9 @@ SCENARIOS = {
     "Mock architecture demo": ("configs/mock.yaml", False),
     "v0.2 real cash-runway slice": ("configs/real_pdf.yaml", True),
     "v0.3 enhanced offline": ("configs/v03_offline.yaml", True),
+    "v0.3 enhanced offline + tables": ("configs/v03_offline_table.yaml", True),
     "v0.3 enhanced AI": ("configs/v03_ai.yaml", True),
+    "v0.3 enhanced AI + tables": ("configs/v03_ai_table.yaml", True),
     "Predictor failure degradation": ("configs/mock.yaml", False),
 }
 RISK_TITLES = {
@@ -113,7 +115,11 @@ if submitted:
                     use_mock=False,
                     workflow_version=settings.workflow_version,
                 )
-                result = IPOAnalysisService(settings=settings).analyze(request)
+                with st.spinner(
+                    "Running analysis… parsing the PDF and running the agents. "
+                    "AI scenarios also call the LLM over the network, so this can take a while."
+                ):
+                    result = IPOAnalysisService(settings=settings).analyze(request)
         else:
             request = build_analysis_request(
                 company_name=company,
@@ -123,7 +129,8 @@ if submitted:
                 use_mock=True,
                 workflow_version=settings.workflow_version,
             )
-            result = IPOAnalysisService(settings=settings).analyze(request)
+            with st.spinner("Running analysis…"):
+                result = IPOAnalysisService(settings=settings).analyze(request)
     except ValueError as exc:
         st.error(str(exc))
     else:

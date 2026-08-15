@@ -2,6 +2,7 @@
 
 from ipo_risk.extraction.financial import (
     FinancialEvidenceExtractor,
+    TableAwareV03FinancialFactExtractor,
     V03FinancialFactExtractor,
 )
 from ipo_risk.extraction.legal_matter_classifier import (
@@ -37,6 +38,7 @@ __all__ = [
     "LitigationComplianceExtractor",
     "ShareholderRightsExtractor",
     "ShareholderRightsFact",
+    "TableAwareV03FinancialFactExtractor",
     "V03FinancialExtractionResult",
     "V03FinancialFactExtractor",
     "classify_legal_matter_evidence",
