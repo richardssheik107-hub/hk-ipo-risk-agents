@@ -1,6 +1,6 @@
 # V04-1 Market Foundation
 
-Status: **IMPLEMENTED PENDING REVIEW**
+Status: **MERGED**
 
 ## 1. Scope
 
