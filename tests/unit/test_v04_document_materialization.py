@@ -27,6 +27,9 @@ def _context(year: int = 2023, *, commit: str = "a" * 40):
         cohort_year=year,
         listing_date=date(year, 1, 3),
         dataset_split=expected_market_split(year),
+        official_ipo_universe_member=True,
+        modeling_eligibility="eligible",
+        eligibility_reason="official_ipo_universe_member",
         document_pipeline_version="v03_enhanced_v2",
         document_pipeline_commit=commit,
     )

@@ -77,7 +77,9 @@ class PreListingMarketFeaturePolicy(BaseModel):
     turnover_sessions: int = 20
     recent_ipo_calendar_days: int = 60
     recent_ipo_max_count: int = 20
-    recent_ipo_security_type: MarketSecurityType = MarketSecurityType.ORDINARY_EQUITY
+    recent_ipo_eligibility_policy_version: str = (
+        MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
+    )
 
     @model_validator(mode="after")
     def validate_frozen_policy(self) -> "PreListingMarketFeaturePolicy":
@@ -100,8 +102,11 @@ class PreListingMarketFeaturePolicy(BaseModel):
             raise ValueError("turnover window must remain 20 sessions")
         if self.recent_ipo_calendar_days != 60 or self.recent_ipo_max_count != 20:
             raise ValueError("recent IPO policy must remain 60 calendar days / max 20")
-        if self.recent_ipo_security_type is not MarketSecurityType.ORDINARY_EQUITY:
-            raise ValueError("recent IPO universe must remain ordinary-equity only")
+        if (
+            self.recent_ipo_eligibility_policy_version
+            != MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
+        ):
+            raise ValueError("recent IPO universe must use the current eligibility policy")
         return self
 
 
@@ -148,6 +153,7 @@ class PriorIPOReference(BaseModel):
     cohort_year: int
     listing_date: date
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool = False
     security_type: MarketSecurityType
     modeling_eligibility: MarketSecurityEligibility
     eligibility_reason: MarketSecurityEligibilityReason
@@ -161,6 +167,7 @@ class PriorIPOReference(BaseModel):
         if self.dataset_split is not expected_market_split(self.cohort_year):
             raise ValueError("prior IPO split conflicts with cohort year")
         MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=self.official_ipo_universe_member,
             security_type=self.security_type,
             eligibility=self.modeling_eligibility,
             reason=self.eligibility_reason,

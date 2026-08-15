@@ -68,6 +68,10 @@ class MarketSecurityEligibility(StrEnum):
 
 
 class MarketSecurityEligibilityReason(StrEnum):
+    OFFICIAL_IPO_UNIVERSE_MEMBER = "official_ipo_universe_member"
+    NOT_OFFICIAL_IPO_UNIVERSE_MEMBER = "not_official_ipo_universe_member"
+    # Retained as descriptive legacy values for old artifact readability. V2
+    # eligibility decisions do not derive inclusion from security type.
     ORDINARY_EQUITY_SUPPORTED = "ordinary_equity_supported"
     REIT_OUTSIDE_MODELING_UNIVERSE = "reit_outside_modeling_universe"
     SPAC_OUTSIDE_MODELING_UNIVERSE = "spac_outside_modeling_universe"
@@ -75,7 +79,7 @@ class MarketSecurityEligibilityReason(StrEnum):
     UNKNOWN_SECURITY_TYPE = "unknown_security_type"
 
 
-MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION = "v04_market_security_eligibility_v1"
+MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION = "v04_market_security_eligibility_v2"
 
 
 class MarketValidationSeverity(StrEnum):
@@ -96,33 +100,19 @@ def expected_market_split(cohort_year: int) -> MarketDatasetSplit:
 
 
 def expected_security_eligibility(
-    security_type: MarketSecurityType,
+    official_ipo_universe_member: bool,
 ) -> tuple[MarketSecurityEligibility, MarketSecurityEligibilityReason]:
-    """Return the frozen v1 modeling-universe decision for a known type."""
+    """Return the owner-defined V2 decision from authoritative membership."""
 
-    mapping = {
-        MarketSecurityType.ORDINARY_EQUITY: (
+    if official_ipo_universe_member:
+        return (
             MarketSecurityEligibility.ELIGIBLE,
-            MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
-        ),
-        MarketSecurityType.REIT: (
-            MarketSecurityEligibility.INELIGIBLE,
-            MarketSecurityEligibilityReason.REIT_OUTSIDE_MODELING_UNIVERSE,
-        ),
-        MarketSecurityType.SPAC: (
-            MarketSecurityEligibility.INELIGIBLE,
-            MarketSecurityEligibilityReason.SPAC_OUTSIDE_MODELING_UNIVERSE,
-        ),
-        MarketSecurityType.WARRANT: (
-            MarketSecurityEligibility.INELIGIBLE,
-            MarketSecurityEligibilityReason.WARRANT_OUTSIDE_MODELING_UNIVERSE,
-        ),
-        MarketSecurityType.UNKNOWN: (
-            MarketSecurityEligibility.INELIGIBLE,
-            MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE,
-        ),
-    }
-    return mapping[security_type]
+            MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER,
+        )
+    return (
+        MarketSecurityEligibility.INELIGIBLE,
+        MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER,
+    )
 
 
 class MarketSecurityEligibilityDecision(BaseModel):
@@ -130,6 +120,7 @@ class MarketSecurityEligibilityDecision(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    official_ipo_universe_member: bool = False
     security_type: MarketSecurityType
     eligibility: MarketSecurityEligibility
     reason: MarketSecurityEligibilityReason
@@ -140,7 +131,7 @@ class MarketSecurityEligibilityDecision(BaseModel):
         if self.policy_version != MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION:
             raise ValueError("unsupported market security eligibility policy version")
         expected_eligibility, expected_reason = expected_security_eligibility(
-            self.security_type
+            self.official_ipo_universe_member
         )
         if self.eligibility is not expected_eligibility or self.reason is not expected_reason:
             raise ValueError("security eligibility decision conflicts with frozen policy")
@@ -202,10 +193,11 @@ class IPOMarketMetadata(BaseModel):
     listing_price: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
     currency: str | None = None
     exchange: MarketExchange
+    official_ipo_universe_member: bool = False
     security_type: MarketSecurityType = MarketSecurityType.UNKNOWN
     modeling_eligibility: MarketSecurityEligibility = MarketSecurityEligibility.INELIGIBLE
     eligibility_reason: MarketSecurityEligibilityReason = (
-        MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE
+        MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
     )
     eligibility_policy_version: str = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
     source: str = Field(min_length=1)
@@ -234,6 +226,7 @@ class IPOMarketMetadata(BaseModel):
         if self.listing_date is not None and self.listing_date.year != self.cohort_year:
             raise ValueError("listing date year must equal cohort year")
         decision = MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=self.official_ipo_universe_member,
             security_type=self.security_type,
             eligibility=self.modeling_eligibility,
             reason=self.eligibility_reason,

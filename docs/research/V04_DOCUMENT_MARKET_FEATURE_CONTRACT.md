@@ -112,9 +112,11 @@ different provenance and snapshot hashes, supporting controlled Retriever A/B.
 after exact checks of case ID, stock code, cohort/listing year, listing date, and
 dataset split. Records preserve document pipeline, workflow/schema, feature
 manifest, market label policy, chronological split policy, and dataset versions.
-The builder also requires V04-1 modeling eligibility; security type is never a
-document-risk feature, but an ineligible or unknown security cannot enter the
-modeling universe.
+The builder also requires V04-1 modeling eligibility under
+`v04_market_security_eligibility_v2`. Eligibility comes from explicit
+authoritative official-IPO membership, not security type. An official case with
+unknown type may enter; an arbitrary case cannot enter merely by declaring an
+ordinary-equity type.
 
 Rows are deterministically ordered by case ID and label horizon. The dataset
 version is `v04_modeling_dataset_v1`.
@@ -135,8 +137,9 @@ force, or allow-blind parameter.
 
 `V04BlindFeatureExporter` accepts 2025 document snapshots and emits
 `V04BlindFeatureDataset`. Its record schema deliberately has no outcome-label or
-target field, and it enforces the same security eligibility gate. Thus `X_blind`
-can be generated while `y_blind` stays outside
+target field, and it enforces explicit governed-case membership. A 2025 ticker
+is not automatically a member of the frozen 2020-2024 universe; an explicitly
+governed blind case can still produce `X_blind` while `y_blind` stays outside
 training, feature selection, model selection, and threshold tuning.
 
 ## 10. Retriever upgrade behavior

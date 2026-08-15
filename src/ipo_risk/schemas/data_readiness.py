@@ -12,6 +12,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 V04_SOURCE_MANIFEST_VERSION = "v04_source_manifest_v1"
+MODEL_READY_DATA_GATE_BLOCKED = "blocked"
+MODEL_READY_DATA_GATE_PASS = "pass"
+V04_REQUIRED_REFERENCE_SOURCE_IDS = (
+    "hsi",
+    "industry_index",
+    "industry_mapping",
+    "market_turnover",
+)
 
 
 class SourceAvailability(StrEnum):
@@ -62,7 +70,7 @@ class V04SourceManifestEntry(BaseModel):
 
 
 class V04SourceManifest(BaseModel):
-    """Deterministic inventory of every source required by V04 materialization."""
+    """Deterministic inventory of governed V04 required and optional sources."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -90,6 +98,69 @@ class V04SourceManifest(BaseModel):
 
     def content_hash(self) -> str:
         return hashlib.sha256(self.canonical_json().encode("utf-8")).hexdigest()
+
+    def model_readiness(self) -> "V04ModelReadinessAssessment":
+        """Evaluate current materialization blockers; security type is optional."""
+
+        by_id = {entry.logical_id: entry for entry in self.entries}
+        blockers: list[str] = []
+        for logical_id in V04_REQUIRED_REFERENCE_SOURCE_IDS:
+            entry = by_id.get(logical_id)
+            if entry is None or entry.availability is not SourceAvailability.AVAILABLE:
+                blocker = (
+                    entry.provenance.get("blocker")
+                    if entry is not None
+                    else None
+                )
+                blockers.append(str(blocker or f"{logical_id.upper()}_SOURCE_REQUIRED"))
+
+        document = by_id.get("document_result_pipeline")
+        if (
+            document is None
+            or document.availability is not SourceAvailability.AVAILABLE
+            or int(document.coverage.get("authoritative_snapshots_existing", 0))
+            < int(document.coverage.get("target_cases", 0))
+        ):
+            blockers.append("DOCUMENT_X_NOT_FULLY_MATERIALIZED")
+
+        eod = by_id.get("ipo_eod")
+        if (
+            eod is None
+            or eod.availability is not SourceAvailability.AVAILABLE
+            or int(eod.coverage.get("five_day_labels_materialized", 0)) == 0
+        ):
+            blockers.append("FIVE_DAY_TARGET_NOT_MATERIALIZED")
+
+        if (
+            eod is None
+            or eod.availability is not SourceAvailability.AVAILABLE
+            or eod.provenance.get("target_policy_status") != "frozen"
+        ):
+            blockers.append("TARGET_POLICY_OWNER_DECISION_PENDING_DATA")
+        unique = tuple(sorted(set(blockers)))
+        return V04ModelReadinessAssessment(
+            status=(
+                MODEL_READY_DATA_GATE_BLOCKED
+                if unique
+                else MODEL_READY_DATA_GATE_PASS
+            ),
+            blockers=unique,
+        )
+
+
+class V04ModelReadinessAssessment(BaseModel):
+    """Explicit overall gate, excluding optional descriptive sources."""
+
+    model_config = ConfigDict(frozen=True)
+
+    status: str = Field(pattern=r"^(pass|blocked)$")
+    blockers: tuple[str, ...]
+
+    @model_validator(mode="after")
+    def validate_status(self) -> "V04ModelReadinessAssessment":
+        if (self.status == MODEL_READY_DATA_GATE_PASS) != (not self.blockers):
+            raise ValueError("model readiness status conflicts with blockers")
+        return self
 
 
 class SecurityIdentifierAudit(BaseModel):

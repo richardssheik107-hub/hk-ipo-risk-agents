@@ -55,6 +55,7 @@ class V04MarketAugmentedModelingRecord(BaseModel):
     cohort_year: int
     listing_date: date
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool
     security_type: MarketSecurityType
     eligibility_policy_version: str
     label_horizon: MarketLabelHorizon
@@ -142,6 +143,7 @@ class V04MarketAugmentedBlindFeatureRecord(BaseModel):
     cohort_year: int
     listing_date: date
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool
     security_type: MarketSecurityType
     eligibility_policy_version: str
     source_analysis_id: str

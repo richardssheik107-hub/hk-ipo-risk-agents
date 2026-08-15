@@ -93,6 +93,7 @@ class DocumentRiskSnapshotBuilder:
             cohort_year=context.cohort_year,
             listing_date=context.listing_date,
             dataset_split=context.dataset_split,
+            official_ipo_universe_member=context.official_ipo_universe_member,
             security_type=context.security_type,
             modeling_eligibility=context.modeling_eligibility,
             eligibility_reason=context.eligibility_reason,

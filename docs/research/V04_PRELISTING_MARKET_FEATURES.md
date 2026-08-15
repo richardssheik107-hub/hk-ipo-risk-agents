@@ -68,11 +68,12 @@ is not an accepted proxy. A missing governed turnover source remains
 
 ## 6. Recent IPO universe and outcomes
 
-The V1 universe contains at most the 20 most recent eligible ordinary-equity IPOs
+The V1 universe contains at most the 20 most recent eligible authoritative IPO cases
 whose listing date is within the 60 calendar days before the target listing and
 no later than `observation_date`. The target case and target stock code are both
-excluded. REIT, SPAC, warrant, unknown and other ineligible securities are
-excluded using the merged V04-1 policy.
+excluded. Security type is descriptive only; official cases with unknown, REIT,
+SPAC or warrant annotations are not excluded on type. Non-members remain
+fail-closed under the V04-1 V2 eligibility policy.
 
 `recent_ipo_break_rate` is
 `count(raw_return_1d < 0) / completed known 1D sample count`.

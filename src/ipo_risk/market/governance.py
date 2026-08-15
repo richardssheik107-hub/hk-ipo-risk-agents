@@ -36,15 +36,21 @@ class MarketDatasetSplitPolicy:
 
 
 class MarketSecurityEligibilityPolicy:
-    """Frozen ordinary-equity-only modeling universe for V04."""
+    """Owner-defined official-IPO-case modeling universe for V04."""
 
     version = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
 
     def assess(
-        self, security_type: MarketSecurityType
+        self,
+        security_type: MarketSecurityType = MarketSecurityType.UNKNOWN,
+        *,
+        official_ipo_universe_member: bool = False,
     ) -> MarketSecurityEligibilityDecision:
-        eligibility, reason = expected_security_eligibility(security_type)
+        eligibility, reason = expected_security_eligibility(
+            official_ipo_universe_member
+        )
         return MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=official_ipo_universe_member,
             security_type=security_type,
             eligibility=eligibility,
             reason=reason,
@@ -55,6 +61,7 @@ class MarketSecurityEligibilityPolicy:
         self, metadata: IPOMarketMetadata
     ) -> MarketSecurityEligibilityDecision:
         decision = MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=metadata.official_ipo_universe_member,
             security_type=metadata.security_type,
             eligibility=metadata.modeling_eligibility,
             reason=metadata.eligibility_reason,

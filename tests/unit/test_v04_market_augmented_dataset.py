@@ -70,9 +70,12 @@ def document_snapshot(year: int, code: str = "0001.HK"):
             cohort_year=year,
             listing_date=listing,
             dataset_split=split,
-            security_type=MarketSecurityType.ORDINARY_EQUITY,
+            official_ipo_universe_member=True,
+            security_type=MarketSecurityType.UNKNOWN,
             modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
-            eligibility_reason=MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
+            eligibility_reason=(
+                MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER
+            ),
             document_pipeline_version="v03_enhanced_v2",
             document_pipeline_commit="c" * 40,
         ),

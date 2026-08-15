@@ -97,7 +97,9 @@ def test_metadata_keeps_unavailable_listing_price_and_currency_missing() -> None
     assert metadata.currency is None
     assert metadata.security_type is MarketSecurityType.UNKNOWN
     assert metadata.modeling_eligibility is MarketSecurityEligibility.INELIGIBLE
-    assert metadata.eligibility_reason is MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE
+    assert metadata.eligibility_reason is (
+        MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
+    )
 
 
 @pytest.mark.parametrize(
@@ -146,12 +148,33 @@ def test_metadata_rejects_security_decision_that_conflicts_with_policy() -> None
             cohort_year=2024,
             listing_date=date(2024, 1, 2),
             exchange=MarketExchange.HKEX,
+            official_ipo_universe_member=False,
             security_type=MarketSecurityType.UNKNOWN,
             modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
-            eligibility_reason=MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
+            eligibility_reason=(
+                MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER
+            ),
             source="catalog",
             provenance=provenance(),
         )
+
+
+def test_unknown_type_official_case_is_eligible_and_type_remains_unknown() -> None:
+    metadata = IPOMarketMetadata(
+        case_id="ipo_2024_00001",
+        stock_code="0001.HK",
+        cohort_year=2024,
+        listing_date=date(2024, 1, 2),
+        exchange=MarketExchange.HKEX,
+        official_ipo_universe_member=True,
+        security_type=MarketSecurityType.UNKNOWN,
+        modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
+        eligibility_reason=MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER,
+        source="catalog",
+        provenance=provenance(),
+    )
+    assert metadata.security_type is MarketSecurityType.UNKNOWN
+    assert metadata.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
 
 
 def test_metadata_rejects_invalid_currency_and_missing_provenance() -> None:

@@ -41,8 +41,9 @@ Every record has a named source and versioned provenance.
 
 `IPOMarketMetadata` records case/document identity, stock code, governance
 cohort year, listing date, official listing price when available, currency,
-exchange, security type, modeling eligibility, eligibility reason/policy, source,
-and provenance. Missing listing price or date remains missing; the foundation
+exchange, authoritative-universe membership, descriptive security type,
+modeling eligibility, eligibility reason/policy, source, and provenance. Missing
+listing price or date remains missing; the foundation
 never guesses it. The current committed catalog contains listing facts and EOD
 coverage metadata, but no committed OHLCV history.
 
@@ -57,27 +58,27 @@ and must not silently inherit the document-source split.
 
 ### 5.2 Security universe and eligibility
 
-Policy `v04_market_security_eligibility_v1` freezes the initial modeling universe:
+Owner policy `v04_market_security_eligibility_v2` defines eligibility by
+authoritative IPO-case membership:
 
 ```text
-ordinary_equity -> eligible
-REIT            -> ineligible / outside v1 modeling universe
-SPAC            -> ineligible / outside v1 modeling universe
-warrant         -> ineligible / outside v1 modeling universe
-unknown         -> ineligible / unknown security type
+authoritative official IPO case -> eligible
+non-member / arbitrary case     -> ineligible
+security type                   -> descriptive only
 ```
 
-Every `IPOMarketMetadata` row carries `security_type`, `modeling_eligibility`,
-`eligibility_reason`, and `eligibility_policy_version`. The decision must match
-the frozen policy, and `MarketSecurityEligibilityPolicy.require_eligible` is the
-modeling-universe gate. Unknown never defaults to ordinary equity.
+For the current research cohort, membership is frozen by the official catalog:
+all 438 official 2020-2024 IPO cases are eligible by construction. An unknown
+security type is therefore eligible when the case is an authoritative member;
+it is not converted to ordinary equity. A known REIT, SPAC or warrant annotation
+also remains descriptive and does not exclude an official case.
 
-The official bridge exposes listing board and listing method, not a normalized
-authoritative security-type column. The existing catalog has explicit governance
-for known REIT/SPAC-warrant special lines, but absence from that small registry
-is not used here to guess ordinary-equity status. Until a production adapter
-supplies authoritative normalized security type, metadata defaults to `unknown`
-and is ineligible for modeling.
+Every `IPOMarketMetadata` row carries `official_ipo_universe_member`,
+`security_type`, `modeling_eligibility`, `eligibility_reason`, and
+`eligibility_policy_version`. Membership defaults to false, so a mock, arbitrary
+ticker or ungoverned 2025 case cannot become eligible merely from its code or
+declared security type. Security Master and Security Description may enrich
+type metadata later, but they are not eligibility gates.
 
 ## 6. Canonical return formula
 
@@ -169,9 +170,10 @@ No current timestamp, random value, LLM, or network call affects label output.
 
 ## 19. Current limitations
 
-- No production OHLCV adapter or downloaded raw market dump is committed.
-- No production adapter currently normalizes authoritative security type; unknown
-  securities fail closed at the modeling-eligibility gate.
+- The governed local competition OHLCV adapter covers 432 of the 438 eligible
+  official 2020-2024 cases; six remain eligible with unavailable outcomes.
+- Authoritative normalized security type remains unavailable and optional for
+  descriptive/subgroup analysis.
 - No reliable benchmark series is integrated.
 - Missing official listing price produces unavailable labels.
 - Observed-session counting cannot distinguish an exchange holiday from another

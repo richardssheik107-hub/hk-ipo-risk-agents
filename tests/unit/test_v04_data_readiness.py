@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from ipo_risk.market.exceptions import DuplicateMarketBarError
+from ipo_risk.market.exceptions import DuplicateMarketBarError, UnsupportedStockError
 from ipo_risk.providers.competition_market import CompetitionCSVMarketDataProvider
 from ipo_risk.schemas.data_readiness import (
     SourceAvailability,
@@ -51,6 +51,13 @@ def _provider_fixture(tmp_path: Path, *, duplicate: bool = False):
                 "official_match_status": "matched",
             },
             {
+                "case_id": "ipo_2024_00999",
+                "stock_code_wind": "0999.HK",
+                "official_listed_date": "2024-01-02",
+                "official_ipo_price": "2.50",
+                "official_match_status": "matched",
+            },
+            {
                 "case_id": "ipo_2025_00700",
                 "stock_code_wind": "0700.HK",
                 "official_listed_date": "2025-01-02",
@@ -64,6 +71,7 @@ def _provider_fixture(tmp_path: Path, *, duplicate: bool = False):
         ["case_id", "sha256"],
         [
             {"case_id": "ipo_2023_00368", "sha256": "a" * 64},
+            {"case_id": "ipo_2024_00999", "sha256": "c" * 64},
             {"case_id": "ipo_2025_00700", "sha256": "b" * 64},
         ],
     )
@@ -228,6 +236,67 @@ def test_committed_v04_source_manifest_validates() -> None:
     serialized = manifest.canonical_json()
     assert "C:\\" not in serialized
     assert "D:\\" not in serialized
+    security_master = next(
+        entry for entry in manifest.entries if entry.logical_id == "security_master"
+    )
+    assert security_master.availability is SourceAvailability.NOT_REQUIRED
+    assessment = manifest.model_readiness()
+    assert assessment.status == "blocked"
+    assert "SECURITY_MASTER_SOURCE_REQUIRED" not in assessment.blockers
+    assert "SECURITY_MASTER_SOURCE_REQUIRED" not in serialized
+    assert set(assessment.blockers) >= {
+        "HSI_SOURCE_REQUIRED",
+        "INDUSTRY_INDEX_MAPPING_REQUIRED",
+        "INDUSTRY_INDEX_SOURCE_REQUIRED",
+        "MARKET_TURNOVER_SOURCE_REQUIRED",
+        "DOCUMENT_X_NOT_FULLY_MATERIALIZED",
+        "FIVE_DAY_TARGET_NOT_MATERIALIZED",
+        "TARGET_POLICY_OWNER_DECISION_PENDING_DATA",
+    }
+
+
+def test_optional_security_master_does_not_block_an_otherwise_ready_manifest() -> None:
+    payload = json.loads(Path("data/catalog/v04_source_manifest.json").read_text("utf-8"))
+    payload["entries"] = [
+        entry for entry in payload["entries"] if entry["logical_id"] != "security_master"
+    ]
+    for entry in payload["entries"]:
+        if entry["logical_id"] in {
+            "hsi",
+            "industry_index",
+            "industry_mapping",
+            "market_turnover",
+        }:
+            entry.update(
+                availability="available",
+                dataset_version="test_ready_v1",
+                sha256="0" * 64,
+                relative_path=f"test/{entry['logical_id']}.csv",
+            )
+        elif entry["logical_id"] == "document_result_pipeline":
+            entry["coverage"]["authoritative_snapshots_existing"] = 438
+        elif entry["logical_id"] == "ipo_eod":
+            entry["coverage"]["five_day_labels_materialized"] = 432
+            entry["provenance"]["target_policy_status"] = "frozen"
+
+    assessment = V04SourceManifest.model_validate(payload).model_readiness()
+    assert assessment.status == "pass"
+    assert assessment.blockers == ()
+
+
+def test_committed_authoritative_universe_is_438_of_438_eligible(
+    tmp_path: Path,
+) -> None:
+    provider = CompetitionCSVMarketDataProvider(tmp_path, catalog_dir="data/catalog")
+    universe = provider.iter_listing_metadata()
+    assert len(universe) == 438
+    assert sum(item.official_ipo_universe_member for item in universe) == 438
+    assert sum(
+        item.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
+        for item in universe
+    ) == 438
+    assert all(item.cohort_year in range(2020, 2025) for item in universe)
+    assert all(item.security_type is MarketSecurityType.UNKNOWN for item in universe)
 
 
 def test_competition_eod_adapter_is_deterministic_and_blind_safe(tmp_path: Path) -> None:
@@ -237,15 +306,25 @@ def test_competition_eod_adapter_is_deterministic_and_blind_safe(tmp_path: Path)
     report = provider.readiness_report()
 
     assert metadata.security_type is MarketSecurityType.UNKNOWN
-    assert metadata.modeling_eligibility is MarketSecurityEligibility.INELIGIBLE
+    assert metadata.official_ipo_universe_member is True
+    assert metadata.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
     assert [bar.trading_date.isoformat() for bar in bars] == ["2023-01-03", "2023-01-04"]
     assert all(bar.provenance.metadata["source_sha256"] == report.source_sha256 for bar in bars)
     assert all("\\" not in json.dumps(bar.provenance.model_dump()) for bar in bars)
-    assert report.ipo_total == 1
+    assert report.ipo_total == 2
+    assert report.eligible_ipo_total == 2
     assert report.ohlcv_matched == 1
+    assert report.ohlcv_missing == 1
+    assert report.eligible_but_outcome_unavailable == 1
+    assert report.missing_case_ids == ("ipo_2024_00999",)
+    missing_metadata = provider.get_listing_metadata("0999.HK")
+    assert missing_metadata.official_ipo_universe_member is True
+    assert missing_metadata.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
     assert report.invalid_price_rows == 1
     assert report.horizon_coverage == {"1D": 1, "5D": 0, "20D": 0, "60D": 0}
     assert "0700.HK" not in provider._bar_offsets
+    with pytest.raises(UnsupportedStockError):
+        provider.get_listing_metadata("0700.HK")
 
 
 def test_competition_eod_adapter_fails_closed_on_duplicates_every_time(

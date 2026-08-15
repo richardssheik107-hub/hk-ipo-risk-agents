@@ -34,8 +34,8 @@
 - 不把规则分描述为概率，不提供市场收益预测；
 - 2025 blind 数据未参与开发调优；
 - v0.4 的 Market Foundation 与V04-2文档风险快照/特征/数据集契约已合并；V04-3
-  上市前市场特征引擎已实现并等待Review。普通股-only证券资格及2025 blind outcome
-  均fail closed；生产真实行情adapter和模型尚未开始。
+  上市前市场特征引擎已合并。证券资格按权威官方IPO case universe成员身份fail closed，
+  不按证券类型排除；2025 blind outcome仍受保护，参考市场adapter和模型尚未开始。
 
 详细状态以 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为准，
 Golden/waiver 语义见 [V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。

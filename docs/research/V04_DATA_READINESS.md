@@ -24,11 +24,12 @@ source for IPO identity, listing date, issue price, board, listing method and
 industry name. The committed bridge selects the 438 official 2020-2024 cases
 from that wider workbook and retains its checksum.
 
-The workbook does not close the normalized security-type gate. In particular,
+The workbook does not establish normalized security-type classification. In particular,
 `ShareType=H` appears on both conventional IPO rows and explicit SPAC rows, and
 no authoritative codebook supplied with the data defines `ShareType2` as the
 V04 security types. Neither field is therefore guessed into
-`ordinary_equity`, `reit`, `spac` or `warrant`.
+`ordinary_equity`, `reit`, `spac` or `warrant`. Classification is optional and
+descriptive; it does not determine eligibility.
 
 ## 3. Security-master identifier audit
 
@@ -44,9 +45,16 @@ Result: 0/438 by every join route. The file contains 803 records, but its
 non-null listing dates are 2009 or earlier; it is the already quarantined
 `SECURITY_MASTER_TRUNCATED` source, not the 2020-2024 target universe.
 
-`SECURITY_MASTER_SOURCE_REQUIRED`. Until a compatible source is provided,
-every target IPO remains `security_type=unknown` and explicitly ineligible under
-`v04_market_security_eligibility_v1`. The eligibility policy is not weakened.
+Owner decision: V04 eligibility is defined by membership in the authoritative
+2020-2024 official IPO case universe. All 438 official cases are eligible by
+construction under `v04_market_security_eligibility_v2`. Independent Security
+Master or Security Description classification is not required. The 438 rows
+retain `security_type=unknown` where classification is unavailable; unknown type
+does not mean ineligible and is never converted to ordinary equity.
+
+Security Master is now an optional descriptive/subgroup-analysis source. The
+identifier audit remains useful, but its availability and match coverage cannot
+change eligible counts, target materialization eligibility or the overall gate.
 
 ## 4. Governed IPO OHLCV adapter
 
@@ -59,6 +67,7 @@ without serializing an absolute local path.
 The real adapter audit reports:
 
 - target IPOs: 438;
+- eligible by authoritative-universe policy: 438;
 - matched: 432;
 - missing: 6;
 - duplicate stock/date rows: 0;
@@ -68,7 +77,8 @@ The real adapter audit reports:
 
 The six missing cases are `ipo_2020_01248`, `ipo_2020_06688`,
 `ipo_2020_06813`, `ipo_2021_01491`, `ipo_2022_06678` and
-`ipo_2022_07841`. Invalid rows are excluded and counted; values are never
+`ipo_2022_07841`. These six cases are eligible but outcome unavailable; they are
+not security-ineligible. Invalid rows are excluded and counted; values are never
 repaired or imputed. Duplicate stock/date keys fail closed. This phase does not
 materialize labels.
 
@@ -139,8 +149,9 @@ content hash.
 | Source | Required for | Status | Coverage | Blocker |
 |---|---|---:|---:|---|
 | Official IPO metadata | identity | AVAILABLE | 438/438 | none |
-| Security type | eligibility | BLOCKED | 0/438 | `SECURITY_MASTER_SOURCE_REQUIRED` |
-| IPO OHLCV | labels | AVAILABLE | 432/438 | six missing cases; eligibility still gated |
+| Official IPO universe | eligibility | AVAILABLE | 438/438 eligible | none |
+| Security type | descriptive metadata | NOT_REQUIRED | 0/438 classified | optional; not a gate |
+| IPO OHLCV | labels | AVAILABLE | 432/438 | six eligible cases have unavailable outcomes |
 | HSI closes | market X | MISSING | 0/438 | `HSI_SOURCE_REQUIRED` |
 | Industry mapping | market X | MISSING | 0/438 mapped | `INDUSTRY_INDEX_MAPPING_REQUIRED` |
 | Industry-index closes | market X | MISSING | 0/438 | `INDUSTRY_INDEX_SOURCE_REQUIRED` |
@@ -151,25 +162,25 @@ content hash.
 
 ## 8. Exact owner inputs still required
 
-1. Compatible security master: stable stock/security identifier, normalized
-   security type, exchange, effective/listing dates, stable source record ID,
-   source name and version. It cannot be replaced by stock-code rules or an
-   undocumented `ShareType` interpretation.
-2. HSI history: trading date, close, stable index identifier, source and
+1. HSI history: trading date, close, stable index identifier, source and
    version, covering the pre-listing windows required for 2020-2024 IPOs. A
    single stock or current index value is not a substitute.
-3. Industry benchmark mapping: authoritative IPO industry identifier/name to
+2. Industry benchmark mapping: authoritative IPO industry identifier/name to
    governed benchmark index ID, with effective dates, source and version. An
    industry name alone is not a substitute.
-4. Industry-index history: index ID, trading date, close, source and version
+3. Industry-index history: index ID, trading date, close, source and version
    for every governed mapping and required pre-listing window. HSI alone is not
    a substitute for industry-relative features.
-5. HKEX total-market turnover: trading date, total-market turnover value, unit,
+4. HKEX total-market turnover: trading date, total-market turnover value, unit,
    market scope, source and version for the required pre-listing windows.
    Per-security amount or volume is not a substitute.
-6. Owner scheduling approval for the 438-case offline real-PDF batch after the
+5. Owner scheduling approval for the 438-case offline real-PDF batch after the
    smoke runtime is reviewed. No paid API is required by the frozen offline
    configuration.
+
+A newer Security Master may optionally supply identifiers, security type,
+effective dates and provenance for descriptive/subgroup analysis, but it is not
+a remaining model-readiness input.
 
 ## 9. Target and scope governance
 
@@ -179,6 +190,6 @@ percent balance report may use eligible 2020-2023 development labels only.
 Neither 2024 validation nor 2025 blind data may select the policy.
 
 No Retriever, Parser, professional Agent, Verifier, Supervisor, Expert Golden,
-V04-1 eligibility/label policy, V04-2 feature semantics or V04-3 formulas are
-changed by this phase. Logistic, LightGBM, feature selection and training remain
-out of scope.
+V04-1 label policy, V04-2 document feature semantics or V04-3 formulas are
+changed. The V04-1 eligibility policy alone is updated by owner decision.
+Logistic, LightGBM, feature selection and training remain out of scope.

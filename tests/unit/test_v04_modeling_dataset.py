@@ -65,9 +65,10 @@ def snapshot(year: int, code: str = "0001.HK"):
         cohort_year=year,
         listing_date=date(year, 1, 2),
         dataset_split=split,
-        security_type=MarketSecurityType.ORDINARY_EQUITY,
+        official_ipo_universe_member=True,
+        security_type=MarketSecurityType.UNKNOWN,
         modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
-        eligibility_reason=MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
+        eligibility_reason=MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER,
         document_pipeline_version="v03_enhanced_v2",
         document_pipeline_commit="c" * 40,
     )
@@ -129,23 +130,36 @@ def test_2025_outcome_cannot_form_or_enter_modeling_dataset() -> None:
         builder.build_development([pair])
 
 
-def test_unknown_security_cannot_enter_modeling_or_blind_feature_export() -> None:
-    ordinary = snapshot(2023)
-    unknown = ordinary.model_copy(
+def test_unknown_security_type_remains_eligible_for_official_case() -> None:
+    official_unknown = snapshot(2023)
+    record = V04ModelingDatasetBuilder().join(official_unknown, label(2023))
+    assert record.security_type is MarketSecurityType.UNKNOWN
+    assert record.official_ipo_universe_member is True
+
+
+def test_nonofficial_case_cannot_enter_modeling_or_blind_feature_export() -> None:
+    official = snapshot(2023)
+    outside = official.model_copy(
         update={
-            "security_type": MarketSecurityType.UNKNOWN,
+            "official_ipo_universe_member": False,
+            "security_type": MarketSecurityType.ORDINARY_EQUITY,
             "modeling_eligibility": MarketSecurityEligibility.INELIGIBLE,
-            "eligibility_reason": MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE,
+            "eligibility_reason": (
+                MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
+            ),
         }
     )
     with pytest.raises(IneligibleMarketSecurityError):
-        V04ModelingDatasetBuilder().join(unknown, label(2023))
+        V04ModelingDatasetBuilder().join(outside, label(2023))
 
     blind = snapshot(2025).model_copy(
         update={
-            "security_type": MarketSecurityType.UNKNOWN,
+            "official_ipo_universe_member": False,
+            "security_type": MarketSecurityType.ORDINARY_EQUITY,
             "modeling_eligibility": MarketSecurityEligibility.INELIGIBLE,
-            "eligibility_reason": MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE,
+            "eligibility_reason": (
+                MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
+            ),
         }
     )
     with pytest.raises(IneligibleMarketSecurityError):
