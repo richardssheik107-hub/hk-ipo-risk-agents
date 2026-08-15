@@ -23,6 +23,8 @@ from ipo_risk.schemas.market import (
     MarketDailyBar,
     MarketDataProvenance,
     MarketExchange,
+    MarketSecurityEligibility,
+    MarketSecurityEligibilityReason,
 )
 
 
@@ -60,8 +62,10 @@ class CompetitionEODReadinessReport(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     ipo_total: int = Field(ge=0)
+    eligible_ipo_total: int = Field(ge=0)
     ohlcv_matched: int = Field(ge=0)
     ohlcv_missing: int = Field(ge=0)
+    eligible_but_outcome_unavailable: int = Field(ge=0)
     duplicate_rows: int = Field(ge=0)
     invalid_price_rows: int = Field(ge=0)
     first_valid_trade_date: date | None = None
@@ -160,6 +164,11 @@ class CompetitionCSVMarketDataProvider:
                 listing_price=listing_price,
                 currency="HKD",
                 exchange=MarketExchange.HKEX,
+                official_ipo_universe_member=True,
+                modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
+                eligibility_reason=(
+                    MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER
+                ),
                 source="competition_official_master_bridge",
                 provenance=MarketDataProvenance(
                     source="competition_official_master_bridge",
@@ -172,6 +181,11 @@ class CompetitionCSVMarketDataProvider:
                 ),
             )
         return metadata
+
+    def iter_listing_metadata(self) -> tuple[IPOMarketMetadata, ...]:
+        """Return the frozen official universe in deterministic case order."""
+
+        return tuple(sorted(self._metadata.values(), key=lambda item: item.case_id))
 
     @staticmethod
     def _decode_csv_line(line: bytes) -> list[str]:
@@ -344,10 +358,20 @@ class CompetitionCSVMarketDataProvider:
                 missing.append(metadata.case_id)
             for label, sessions in (("1D", 1), ("5D", 5), ("20D", 20), ("60D", 60)):
                 horizon_coverage[label] += int(len(eligible_dates) >= sessions)
+        missing_case_ids = frozenset(missing)
         return CompetitionEODReadinessReport(
             ipo_total=len(self._metadata),
+            eligible_ipo_total=sum(
+                item.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
+                for item in self._metadata.values()
+            ),
             ohlcv_matched=len(self._metadata) - len(missing),
             ohlcv_missing=len(missing),
+            eligible_but_outcome_unavailable=sum(
+                item.case_id in missing_case_ids
+                and item.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
+                for item in self._metadata.values()
+            ),
             duplicate_rows=self._duplicate_rows,
             invalid_price_rows=self._invalid_price_rows,
             first_valid_trade_date=self._first_valid_trade_date,

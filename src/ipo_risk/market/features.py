@@ -14,7 +14,6 @@ from ipo_risk.schemas.market import (
     MarketLabelHorizon,
     MarketOutcomeLabel,
     MarketSecurityEligibility,
-    MarketSecurityType,
 )
 from ipo_risk.schemas.market_features import (
     MARKET_RAW_FEATURE_ORDER,
@@ -335,7 +334,7 @@ class PreListingMarketFeatureEngine:
             and item.listing_date <= observation_date
             and item.case_id != context.case_id
             and item.stock_code != context.stock_code
-            and item.security_type is MarketSecurityType.ORDINARY_EQUITY
+            and item.official_ipo_universe_member
             and item.modeling_eligibility is MarketSecurityEligibility.ELIGIBLE
         ]
         keys = [(item.case_id, item.stock_code) for item in eligible]
@@ -392,7 +391,7 @@ class PreListingMarketFeatureEngine:
             source="prior_ipo_outcome_labels",
             dataset_version=self.policy.version,
             source_record_ids=tuple(item.case_id for item in eligible),
-            derivation="eligible ordinary-equity prior IPO universe before target listing",
+            derivation="eligible authoritative official-IPO universe before target listing",
         )
         result = {
             "recent_ipo_1d_sample_count": MarketFeatureValue(

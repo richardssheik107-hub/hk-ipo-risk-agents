@@ -267,8 +267,9 @@ v0.3 已发布并冻结，Gate A、三 Agent 共享集成、`enhanced_v2`、产�
 Expert Golden，Phase 0.7 设计 domain-specific evidence search，Phase 0.8 进行
 受控架构 A/B，Phase 0.9 才进行 Retriever/ranking 算法优化。
 
-V04-1 已实现市场数据契约、上市后标签、cohort/listing-year 一致性、版本化普通股
-modeling eligibility、年度隔离与完整性校验；生产行情及证券类型 metadata 适配器、
+V04-1 已实现市场数据契约、上市后标签、cohort/listing-year 一致性、按权威官方IPO
+case universe成员身份决定的版本化modeling eligibility、年度隔离与完整性校验；证券类型
+metadata仅用于描述与分组分析；生产参考市场数据适配器、
 Market Agent、Logistic、LightGBM和SHAP仍属于后续v0.4阶段。
 
 V04-2 已实现最终 `IPOAnalysisResult` 到版本化 `V03DocumentRiskSnapshot`、固定100项

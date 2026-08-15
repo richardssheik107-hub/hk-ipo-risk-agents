@@ -190,8 +190,8 @@ python scripts/check_real_v02_e2e.py
 
 - v0.3 是招股书证据驱动的文档风险系统，不包含市场收益预测；
 - V04-1 已实现独立的 MarketDataProvider 历史数据契约、1/5/20/60 交易 session 标签、
-  cohort/listing-year 一致性、版本化普通股 modeling eligibility、年度分割、2025 blind
-  保护和完整性校验，但尚无生产行情及证券类型 metadata 适配器；
+  cohort/listing-year 一致性、按权威官方IPO case universe成员身份决定的版本化
+  modeling eligibility、年度分割、2025 blind保护和完整性校验；证券类型仅为描述性元数据；
 - V04-2 已实现从最终 `IPOAnalysisResult` 到版本化文档风险快照、100项稳定数值特征及
   development/validation modeling dataset 的确定性契约；2025仅允许feature-only导出；
 - V04-3 已实现严格上市前cutoff的市场特征引擎、20项版本化market manifest及120项高层

@@ -70,6 +70,9 @@ class V04MarketAugmentedDatasetBuilder:
             cohort_year=document_row.cohort_year,
             listing_date=document_row.listing_date,
             dataset_split=document_row.dataset_split,
+            official_ipo_universe_member=(
+                document_row.official_ipo_universe_member
+            ),
             security_type=document_row.security_type,
             eligibility_policy_version=document_row.eligibility_policy_version,
             label_horizon=document_row.label_horizon,
@@ -145,6 +148,9 @@ class V04MarketAugmentedBlindFeatureExporter:
                     cohort_year=document_row.cohort_year,
                     listing_date=document_row.listing_date,
                     dataset_split=document_row.dataset_split,
+                    official_ipo_universe_member=(
+                        document_row.official_ipo_universe_member
+                    ),
                     security_type=document_row.security_type,
                     eligibility_policy_version=document_row.eligibility_policy_version,
                     source_analysis_id=document_row.source_analysis_id,

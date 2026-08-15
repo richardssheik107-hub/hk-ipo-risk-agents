@@ -63,6 +63,7 @@ class V04ModelingDatasetBuilder:
             cohort_year=snapshot.cohort_year,
             listing_date=snapshot.listing_date,
             dataset_split=snapshot.dataset_split,
+            official_ipo_universe_member=snapshot.official_ipo_universe_member,
             security_type=snapshot.security_type,
             eligibility_policy_version=snapshot.eligibility_policy_version,
             label_horizon=label.horizon,
@@ -81,7 +82,10 @@ class V04ModelingDatasetBuilder:
 
     @staticmethod
     def _require_eligible(snapshot: V03DocumentRiskSnapshot) -> None:
-        if snapshot.modeling_eligibility is not MarketSecurityEligibility.ELIGIBLE:
+        if (
+            not snapshot.official_ipo_universe_member
+            or snapshot.modeling_eligibility is not MarketSecurityEligibility.ELIGIBLE
+        ):
             raise IneligibleMarketSecurityError(
                 f"{snapshot.stock_code} is outside the V04 modeling universe: "
                 f"{snapshot.eligibility_reason.value}"
@@ -144,6 +148,7 @@ class V04BlindFeatureExporter:
                     cohort_year=snapshot.cohort_year,
                     listing_date=snapshot.listing_date,
                     dataset_split=snapshot.dataset_split,
+                    official_ipo_universe_member=snapshot.official_ipo_universe_member,
                     security_type=snapshot.security_type,
                     eligibility_policy_version=snapshot.eligibility_policy_version,
                     source_analysis_id=snapshot.source_analysis_id,

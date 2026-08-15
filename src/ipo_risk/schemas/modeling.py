@@ -161,10 +161,11 @@ class DocumentRiskSnapshotBuildContext(BaseModel):
     cohort_year: int
     listing_date: date | None = None
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool = False
     security_type: MarketSecurityType = MarketSecurityType.UNKNOWN
     modeling_eligibility: MarketSecurityEligibility = MarketSecurityEligibility.INELIGIBLE
     eligibility_reason: MarketSecurityEligibilityReason = (
-        MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE
+        MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
     )
     eligibility_policy_version: str = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
     document_pipeline_version: str = Field(min_length=1)
@@ -181,6 +182,7 @@ class DocumentRiskSnapshotBuildContext(BaseModel):
         if self.feature_schema_version != DOCUMENT_FEATURE_SCHEMA_VERSION:
             raise ValueError("unsupported document feature schema version")
         MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=self.official_ipo_universe_member,
             security_type=self.security_type,
             eligibility=self.modeling_eligibility,
             reason=self.eligibility_reason,
@@ -200,6 +202,7 @@ class V03DocumentRiskSnapshot(BaseModel):
     cohort_year: int
     listing_date: date | None = None
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool
     security_type: MarketSecurityType
     modeling_eligibility: MarketSecurityEligibility
     eligibility_reason: MarketSecurityEligibilityReason
@@ -230,6 +233,7 @@ class V03DocumentRiskSnapshot(BaseModel):
         if self.feature_schema_version != DOCUMENT_FEATURE_SCHEMA_VERSION:
             raise ValueError("unsupported document feature schema version")
         MarketSecurityEligibilityDecision(
+            official_ipo_universe_member=self.official_ipo_universe_member,
             security_type=self.security_type,
             eligibility=self.modeling_eligibility,
             reason=self.eligibility_reason,
@@ -260,6 +264,7 @@ class V04ModelingRecord(BaseModel):
     cohort_year: int
     listing_date: date | None = None
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool
     security_type: MarketSecurityType
     eligibility_policy_version: str
     label_horizon: MarketLabelHorizon
@@ -349,6 +354,7 @@ class V04BlindFeatureRecord(BaseModel):
     cohort_year: int
     listing_date: date | None = None
     dataset_split: MarketDatasetSplit
+    official_ipo_universe_member: bool
     security_type: MarketSecurityType
     eligibility_policy_version: str
     source_analysis_id: str

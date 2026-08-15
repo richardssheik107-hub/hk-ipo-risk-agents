@@ -106,12 +106,13 @@ def prior(
     listing: date,
     *,
     security_type: MarketSecurityType = MarketSecurityType.ORDINARY_EQUITY,
+    official_member: bool = True,
 ) -> PriorIPOReference:
-    eligible = security_type is MarketSecurityType.ORDINARY_EQUITY
+    eligible = official_member
     reason = (
-        MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED
+        MarketSecurityEligibilityReason.OFFICIAL_IPO_UNIVERSE_MEMBER
         if eligible
-        else MarketSecurityEligibilityReason.REIT_OUTSIDE_MODELING_UNIVERSE
+        else MarketSecurityEligibilityReason.NOT_OFFICIAL_IPO_UNIVERSE_MEMBER
     )
     return PriorIPOReference(
         case_id=case_id,
@@ -119,6 +120,7 @@ def prior(
         cohort_year=listing.year,
         listing_date=listing,
         dataset_split=MarketDatasetSplit.DEVELOPMENT,
+        official_ipo_universe_member=official_member,
         security_type=security_type,
         modeling_eligibility=(
             MarketSecurityEligibility.ELIGIBLE
@@ -287,6 +289,7 @@ def test_recent_ipo_universe_and_known_outcome_cutoff() -> None:
     target = context()
     ordinary = prior("prior-good", "0002.HK", date(2023, 2, 1))
     reit = prior("prior-reit", "0003.HK", date(2023, 2, 2), security_type=MarketSecurityType.REIT)
+    outside = prior("outside", "0005.HK", date(2023, 2, 4), official_member=False)
     self_row = prior(target.case_id, target.stock_code, date(2023, 2, 3))
     after_target = prior("after", "0004.HK", date(2023, 3, 2))
     known_1d = outcome(ordinary, MarketLabelHorizon.ONE_DAY, "-0.10", date(2023, 2, 2))
@@ -294,7 +297,7 @@ def test_recent_ipo_universe_and_known_outcome_cutoff() -> None:
     future_1d = outcome(ordinary, MarketLabelHorizon.ONE_DAY, "0.99", date(2023, 3, 2))
     # Future label is excluded before duplicate detection and cannot replace known history.
     snapshot = complete_snapshot(
-        prior_ipos=[ordinary, reit, self_row, after_target],
+        prior_ipos=[ordinary, reit, outside, self_row, after_target],
         prior_outcomes=[known_1d, known_5d, future_1d],
     )
     observed = values(snapshot)
@@ -302,7 +305,10 @@ def test_recent_ipo_universe_and_known_outcome_cutoff() -> None:
     assert observed["recent_ipo_return_5d"].value == Decimal("0.20")
     assert observed["recent_ipo_1d_sample_count"].value == 1
     assert observed["recent_ipo_5d_sample_count"].value == 1
-    assert observed["recent_ipo_1d_sample_count"].provenance.source_record_ids == (ordinary.case_id,)
+    assert set(observed["recent_ipo_1d_sample_count"].provenance.source_record_ids) == {
+        ordinary.case_id,
+        reit.case_id,
+    }
 
 
 def test_zero_recent_ipo_samples_are_none_not_zero_rate() -> None:
@@ -354,7 +360,7 @@ def test_in_memory_reference_provider_enforces_exclusive_cutoff() -> None:
 
 
 def test_v04_1_and_v04_2_frozen_contracts_remain_unchanged() -> None:
-    assert MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION == "v04_market_security_eligibility_v1"
+    assert MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION == "v04_market_security_eligibility_v2"
     assert DOCUMENT_FEATURE_MANIFEST_V1.version == "v04_document_features_v1"
     assert len(DOCUMENT_FEATURE_MANIFEST_V1.features) == 100
     assert DOCUMENT_FEATURE_MANIFEST_V1.content_hash() == "241d34ab0311c6d24b1685e01385a4bd69c404a759dbe37e9f2825ce7b404be4"

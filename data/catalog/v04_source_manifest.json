@@ -76,6 +76,9 @@
         "invalid_ohlcv_rows": 8590,
         "matched": 432,
         "missing": 6,
+        "eligible_cases": 438,
+        "eligible_but_outcome_unavailable": 6,
+        "five_day_labels_materialized": 0,
         "target_cases": 438,
         "valid_1d": 432,
         "valid_20d": 432,
@@ -86,7 +89,8 @@
       "provenance": {
         "data_root": "configured competition data root",
         "invalid_row_policy": "exclude_and_report",
-        "outcome_cohorts_indexed": "2020-2024"
+        "outcome_cohorts_indexed": "2020-2024",
+        "target_policy_status": "pending_owner_decision_after_development_labels"
       }
     },
     {
@@ -103,6 +107,7 @@
           "2023": 68,
           "2024": 70
         },
+        "eligible_by_universe_policy": 438,
         "matched": 438,
         "target_cases": 438
       },
@@ -110,6 +115,8 @@
       "provenance": {
         "bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
         "catalog_bridge": "data/catalog/ipo_official_master_bridge.csv",
+        "eligibility_policy_version": "v04_market_security_eligibility_v2",
+        "eligibility_rule": "membership in authoritative 2020-2024 official IPO case universe",
         "security_type_warning": "ShareType H also occurs on explicit SPAC rows and is not normalized eligibility metadata."
       }
     },
@@ -144,9 +151,10 @@
         "source_rows": 803,
         "target_cases": 438
       },
-      "availability": "blocked",
+      "availability": "not_required",
       "provenance": {
-        "blocker": "SECURITY_MASTER_SOURCE_REQUIRED",
+        "required_for_eligibility": false,
+        "role": "optional descriptive security-type metadata",
         "listing_date_scope": "legacy rows listed no later than 2009",
         "quarantine_reason": "SECURITY_MASTER_TRUNCATED"
       }

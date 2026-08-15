@@ -13,6 +13,7 @@ from ipo_risk.schemas.data_readiness import (
     V04_SOURCE_MANIFEST_VERSION,
     SecurityIdentifierAudit,
     SourceAvailability,
+    V04ModelReadinessAssessment,
     V04SourceManifest,
     V04SourceManifestEntry,
 )
