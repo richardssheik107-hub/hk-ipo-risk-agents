@@ -1,0 +1,332 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_06610",
+  "stock_code": "6610.HK",
+  "company_name": "飛天雲動",
+  "document_id": "ipo_2022_06610",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended March 31, 2022, the audited cash flow statement reports net cash used in operating activities of RMB12,605 thousand and cash and cash equivalents at period end of RMB198,315 thousand. Monthly operating cash burn is approximately RMB4,202 thousand and cash runway is approximately 47.20 months, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 198315,
+        "net_cash_used_in_operating_activities": -12605,
+        "period_months": 3,
+        "monthly_cash_burn": 4201.66666666667
+      },
+      "calculation_result": {
+        "months": 47.1991273304244,
+        "cash_runway_months": 47.1991273304244,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit and total comprehensive income for the year/period of RMB41,879 thousand, RMB60,252 thousand, RMB71,719 thousand, RMB9,186 thousand and RMB38,205 thousand for 2019, 2020, 2021, 3M2021 and 3M2022 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [],
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 41879},
+          {"period": "year ended December 31, 2020", "profit": 60252},
+          {"period": "year ended December 31, 2021", "profit": 71719},
+          {"period": "three months ended March 31, 2022", "profit": 38205}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB138,749 thousand in 3M2021 to RMB228,869 thousand in 3M2022, an increase of approximately 64.95%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "three months ended March 31, 2021",
+        "current_period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 138749,
+        "current_revenue": 228869
+      },
+      "calculation_result": {
+        "growth_pct": 64.9518194725728,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest customer accounted for approximately 7.5% and the five largest customers accounted for approximately 30.7% of revenue. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_customer_pct": 7.5,
+        "top_five_customer_pct": 30.7,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest supplier accounted for approximately 14.8% and the five largest suppliers accounted for approximately 54.2% of cost of revenue. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_supplier_pct": 14.8,
+        "top_five_supplier_pct": 54.2,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "The Pre-IPO Investors were granted special rights including redemption rights in relation to Ophyer Technology. The rights were terminated before or immediately before the listing application but will only revive if the application is withdrawn, expired or cancelled. Because the termination is conditional and the redemption rights remain restorable, the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "rights_status": "terminated_conditionally",
+        "restoration_condition": "listing_application_withdrawn_expired_or_cancelled"
+      },
+      "calculation_result": {
+        "assessment": "restorable_redemption_rights_present",
+        "needs_review_reason": "termination_with_revival_condition"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that the Group had not been involved in any actual or pending litigation, arbitration or administrative proceedings believed to have a material adverse impact during the Track Record Period and up to the Latest Practicable Date, and that it complied with applicable PRC laws and regulations in all material respects. No material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06610",
+      "stock_code": "6610.HK",
+      "company_name": "飛天雲動",
+      "document_id": "ipo_2022_06610",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established AR/VR content and services provider with substantial revenue from AR/VR marketing services, AR/VR content, AR/VR SaaS and other businesses throughout the Track Record Period. Its core products and services are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "cash_runway",
+      "page": 578,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash from/(used in) operating activities ........... 25,627 24,948 24,485 (11,085) (12,605)",
+      "evidence_reason": "The audited cash flow statement provides the 3M2022 operating cash burn input of RMB12,605 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "cash_runway",
+      "page": 579,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at the end of the year/period, represented by bank balances and cash ............ 11,705 104,017 214,279 64,213 198,315",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB198,315 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "continuous_loss",
+      "page": 574,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit and total comprehensive income for the year/period ........... 41,879 60,252 71,719 9,186 38,205",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "revenue_growth",
+      "page": 574,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue .................. 6 250,942 338,598 595,290 138,749 228,869",
+      "evidence_reason": "The audited statement provides the 3M2021 and 3M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "customer_concentration",
+      "page": 323,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "In each of 2019, 2020 and 2021 and the three months ended March 31, 2022, revenue from our top five customers accounted for approximately 46.1%, 38.5%, 39.2% and 30.7% of our total revenue for the respective year/period. In each of 2019, 2020 and 2021 and the three months ended March 31, 2022, revenue from our largest customer accounted for approximately 12.0%, 14.2%, 10.2% and 7.5% of our total revenue for the respective year/period.",
+      "evidence_reason": "The formal Business customer disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "supplier_concentration",
+      "page": 343,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "In each of 2019, 2020 and 2021 and the three months ended March 31, 2022, the expense paid to our top five suppliers accounted for approximately 49.9%, 41.1%, 45.1% and 54.2% of our cost of revenue for the respective year/period. In each of 2019, 2020 and 2021 and the three months ended March 31, 2022, the expense paid to our largest supplier accounted for approximately 16.1%, 9.7%, 13.5% and 14.8% of our cost of revenue for the respective year/period.",
+      "evidence_reason": "The formal Business supplier disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "redemption_rights",
+      "page": 203,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "In anticipation of the Global Offering, these special rights granted to our Pre-IPO Investors were terminated before or immediately before our Company's application for the Listing and will only revive if such application is withdrawn, expired or cancelled.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption rights are terminated only conditionally and may revive on listing-application failure, requiring needs_review.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "material_litigation_compliance",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had not been involved in any actual or pending litigation, arbitration or administrative proceedings (including any bankruptcy or take-over proceedings) that we believe will have a material adverse impact on our business, operating results, financial position or reputation.",
+      "evidence_reason": "The formal legal disclosure excludes material pending or threatened proceedings and material non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "risk_code": "precommercial_product",
+      "page": 574,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue .................. 6 250,942 338,598 595,290 138,749 228,869",
+      "evidence_reason": "The audited statement proves substantial commercial service revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 772,
+    "source_document_sha256_expected": "726e923278ee3b3040fc5c65f5fe3b791bbb9857ed66f85bd23eb33e0b776967"
+  }
+}

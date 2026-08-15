@@ -1,0 +1,330 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09985",
+  "stock_code": "9985.HK",
+  "company_name": "衛龍",
+  "document_id": "ipo_2022_09985",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the six months ended June 30, 2022, the audited cash flow statement reports net cash generated from operating activities of RMB447,159 thousand and cash and cash equivalents at period end of RMB180,855 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 180855,
+        "net_cash_from_operating_activities": 447159,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The accountants' report shows profits of RMB658,099 thousand, RMB818,764 thousand, RMB826,729 thousand and RMB357,586 thousand for 2019, 2020, 2021 and H1 2021 respectively, and a loss of RMB260,830 thousand for H1 2022 driven by non-cash share-based payments related to Pre-IPO Investments. Only one comparable loss period exists, which does not meet the frozen two-period medium or three-period high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "six months ended June 30, 2022", "loss": -260830}
+        ],
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 658099},
+          {"period": "year ended December 31, 2020", "profit": 818764},
+          {"period": "year ended December 31, 2021", "profit": 826729},
+          {"period": "six months ended June 30, 2021", "profit": 357586}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 1
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "Revenue decreased from RMB2,302,842 thousand in H1 2021 to RMB2,260,529 thousand in H1 2022, a decrease of approximately 1.84%. The decline is below zero but above the -20% high threshold, so the frozen medium revenue-growth threshold is triggered.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "six months ended June 30, 2021",
+        "current_period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 2302842,
+        "current_revenue": 2260529
+      },
+      "calculation_result": {
+        "growth_pct": -1.8374252336895,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the five largest customers accounted for approximately 6.2% of revenue. Because the top-five aggregate is below the frozen medium threshold of 60%, the largest customer must also be below 6.2% and therefore below the 30% medium threshold. The risk is rejected.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "top_five_customer_pct": 6.2,
+        "largest_customer_upper_bound_pct": 6.2,
+        "bound_operator": "<=",
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<=6.2%",
+        "top_five_customer_pct": 6.2,
+        "medium_threshold_excluded": true,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the five largest suppliers accounted for approximately 29.6% of total purchases in relation to production. Because the top-five aggregate is below the frozen medium threshold of 60%, the largest supplier must also be below 29.6% and therefore below the 30% medium threshold. The risk is rejected.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "top_five_supplier_pct": 29.6,
+        "largest_supplier_upper_bound_pct": 29.6,
+        "bound_operator": "<=",
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<=29.6%",
+        "top_five_supplier_pct": 29.6,
+        "medium_threshold_excluded": true,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The Pre-IPO Investors were granted special rights including right of first refusal, right of co-sale, preemptive right, and information and inspection rights. No redemption right is disclosed, and the special rights will terminate upon completion of the initial public offering with no redemption mechanism.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that the Group was not a party to any material legal, arbitral or administrative proceedings with a material adverse effect during the Track Record Period and up to the Latest Practicable Date. Historical social insurance and housing provident fund shortfalls were fully provisioned and disclosed, with no material pending enforcement identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09985",
+      "stock_code": "9985.HK",
+      "company_name": "衛龍",
+      "document_id": "ipo_2022_09985",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established spicy snack food manufacturer and distributor with substantial revenue from seasoned flour products, vegetable products and bean-based products throughout the Track Record Period. Its core products are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "cash_runway",
+      "page": 369,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from operating activities ......... 750,005 706,401 889,126 450,865 447,159",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest six-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "cash_runway",
+      "page": 371,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at end of the year/period ............. 24 88,994 161,740 494,275 1,316,707 180,855",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB180,855 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "continuous_loss",
+      "page": 360,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit/(loss) for the year/period .... 658,099 818,764 826,729 357,586 (260,830)",
+      "evidence_reason": "The audited statement proves one loss period against four profitable comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "revenue_growth",
+      "page": 360,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue from contracts with customers .................... 5 3,384,766 4,120,357 4,800,200 2,302,842 2,260,529",
+      "evidence_reason": "The audited statement provides the H1 2021 and H1 2022 revenue inputs for the negative growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "customer_concentration",
+      "page": 179,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The revenue from our five largest customers combined accounted for 8.4%, 4.9%, 5.5% and 6.2%, respectively, of our total revenue for the periods indicated.",
+      "evidence_reason": "The formal Business customer disclosure proves the top-five ratio is below the frozen medium threshold, bounding the largest customer below 30%.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "supplier_concentration",
+      "page": 196,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Purchases from our five largest suppliers in each of 2019, 2020, 2021 and the six months ended June 30, 2022, accounted for 24.2%, 23.9%, 25.3% and 29.6%, of our total purchases in relation to production in relevant periods, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves the top-five ratio is below the frozen medium threshold, bounding the largest supplier below 30%.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "redemption_rights",
+      "page": 140,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The Pre-IPO Investors had been granted certain special rights, including, among others, right of first refusal, right of co-sale, preemptive right, information and inspection rights. All of such special rights will be automatically terminated immediately upon the completion of an initial public offering of the Company.",
+      "evidence_reason": "The formal Pre-IPO disclosure shows no redemption right was granted, and the listed special rights terminate upon completion of the IPO.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "material_litigation_compliance",
+      "page": 213,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had not been and were not a party to any material legal, arbitral or administrative proceedings, which could, individually or in the aggregate, have a material adverse effect on our business, financial condition and results of operations.",
+      "evidence_reason": "The formal legal disclosure excludes material pending or threatened proceedings and material non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "risk_code": "precommercial_product",
+      "page": 360,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue from contracts with customers .................... 5 3,384,766 4,120,357 4,800,200 2,302,842 2,260,529",
+      "evidence_reason": "The audited statement proves substantial commercial revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 523,
+    "source_document_sha256_expected": "358b23fe1620fa20fa4c915d3d7fcb3235410525158041df161eb6f2f6077aee"
+  }
+}

@@ -1,0 +1,335 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_01406",
+  "stock_code": "1406.HK",
+  "company_name": "清晰醫療",
+  "document_id": "ipo_2022_01406",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the four months ended July 31, 2021, the audited cash flow statement reports net cash generated from operating activities of HK$13,553 thousand and cash and cash equivalents of HK$64,164 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "four months ended July 31, 2021",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "cash_and_cash_equivalents_at_end": 64164,
+        "net_cash_from_operating_activities": 13553,
+        "period_months": 4
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit and total comprehensive income attributable to owners of the Company of HK$30,039 thousand, HK$26,387 thousand, HK$35,769 thousand, HK$8,547 thousand and HK$5,149 thousand for the three years ended March 31, 2021 and the four-month periods ended July 31, 2020 and 2021 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "profit_periods": [
+          {"period": "year ended March 31, 2019", "profit": 30039},
+          {"period": "year ended March 31, 2020", "profit": 26387},
+          {"period": "year ended March 31, 2021", "profit": 35769},
+          {"period": "four months ended July 31, 2021", "profit": 5149}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from HK$65,448 thousand in the four months ended July 31, 2020 to HK$78,398 thousand in the same period of 2021, an increase of approximately 19.79%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "four months ended July 31, 2020",
+        "current_period": "four months ended July 31, 2021",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "previous_revenue": 65448,
+        "current_revenue": 78398
+      },
+      "calculation_result": {
+        "growth_pct": 19.786700892311455,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The patient base is highly diversified and the revenue derived from the top five patients accounted for less than 1.3% of total revenue during the Track Record Period. The frozen concentration thresholds are not approached.",
+      "calculation_required": true,
+      "calculation_method": "formal_bound_threshold_exclusion",
+      "calculation_inputs": {
+        "period": "three years ended March 31, 2021 and four months ended July 31, 2021",
+        "top_five_patient_revenue_bound_pct": 1.3,
+        "bound_operator": "<",
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "top_five_customer_bound": "<1.3%",
+        "medium_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For the four months ended July 31, 2021, purchases from the largest supplier accounted for approximately 40.8% and purchases from the top five suppliers accounted for approximately 73.6% of total purchases. The largest-supplier share exceeds the 30% medium threshold, the top-five share exceeds the 60% medium threshold, and both remain below the high thresholds.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "four months ended July 31, 2021",
+        "largest_supplier_pct": 40.8,
+        "top_five_supplier_pct": 73.6,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": true,
+        "largest_supplier_high_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "top_five_supplier_high_triggered": false,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The special rights granted to Clear Lead and WuXi AppTec under the Shareholders Agreement consist of nomination, anti-dilution, information, participation, transfer restriction and co-sale rights; no redemption, repurchase or put right was disclosed. The Shareholders Agreement and all special rights terminate upon consummation of the Listing, and the formal disclosure identifies no restoration condition.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.93,
+      "reasoning": "The formal Legal Proceedings and Complaints section discloses one prior legal proceeding against Dr. Lau and Saintford that was settled in December 2019 on a without-admission-of-liability basis and fully covered by professional indemnity insurance. It also states that, save as disclosed, the Group was not engaged in litigation or claims of material importance and no material litigation was pending or threatened. Complaints were settled and none remained outstanding.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01406",
+      "stock_code": "1406.HK",
+      "company_name": "清晰醫療",
+      "document_id": "ipo_2022_01406",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established Hong Kong private ophthalmic healthcare institution with substantial revenue from refractive treatments and other ophthalmic services throughout the Track Record Period. Its services are already commercialized and revenue-generating; it is not a precommercial product-development issuer.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "cash_runway",
+      "page": 378,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from operating activities 60,254 41,078 71,351 18,187 13,553",
+      "evidence_reason": "The audited consolidated cash flow statement proves positive net cash from operating activities in the latest four-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "cash_runway",
+      "page": 373,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents 15 34,630 65,649 64,862 64,164",
+      "evidence_reason": "The audited statement of financial position provides the period-end cash input of HK$64,164 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "continuous_loss",
+      "page": 372,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit and total comprehensive income for the years/periods attributable to owners of the Company 30,039 26,387 35,769 8,547 5,149",
+      "evidence_reason": "The audited consolidated statement of comprehensive income shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "revenue_growth",
+      "page": 372,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 206,601 218,376 222,381 65,448 78,398",
+      "evidence_reason": "The audited statement provides the latest comparable revenue inputs used for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "customer_concentration",
+      "page": 18,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, the revenue derived from our top five patients accounted for less than 1.3% of our total revenue.",
+      "evidence_reason": "The formal Business patient disclosure proves a strict formal bound far below the frozen concentration thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "supplier_concentration",
+      "page": 205,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the three years ended 31 March 2021 and the four months ended 31 July 2021, the purchases from our top five suppliers in each year/period during the Track Record Period accounted for approximately 72.5%, 76.1%, 70.2% and 73.6% in aggregate of our total purchases, respectively, while the purchases from our largest supplier in each year/period during the Track Record Period accounted for approximately 46.9%, 53.1%, 44.5% and 40.8% of our total purchases, respectively.",
+      "evidence_reason": "The formal Business major-suppliers disclosure supplies the exact latest-period ratios used for the medium concentration conclusion.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "redemption_rights",
+      "page": 135,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The Shareholders Agreement is the only relevant agreement regulating the corporate governance and rights and obligations of the Shareholders in our Company. The table below summarises the special rights granted to Clear Lead and WuXi AppTec under the Shareholders Agreement, and such Shareholders Agreement will be terminated upon consummation of the Listing.",
+      "evidence_reason": "The formal Pre-IPO disclosure shows the special rights do not include redemption or put rights and that the agreement terminates upon Listing without a disclosed restoration condition.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "material_litigation_compliance",
+      "page": 212,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "Prior to the Track Record Period, there was a legal proceeding brought by a patient against Dr. Lau and Saintford in November 2016. The legal proceeding was in relation to complications alleged to be suffered by the patient following an ICL surgery performed by Dr. Lau in November 2013. On 19 December 2019, a consent order was given by the High Court of Hong Kong and it was ordered that all further proceedings shall be stayed upon satisfaction of the terms of settlement agreed between the patient and Dr. Lau and Saintford. It was agreed between the patient and Dr. Lau and Saintford that a settlement sum of HK$3.8 million shall be paid to the patient in full and final settlement of all claims from the patient, on a without admission of liability basis.",
+      "evidence_reason": "The formal legal proceedings disclosure proves the prior proceeding was fully settled and stayed rather than pending.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "material_litigation_compliance",
+      "page": 213,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, save as disclosed above, (i) our Group was not engaged in any litigation or claims of material importance, and to the best knowledge of our Directors, no litigation or claims was pending or threatened against our Group; (ii) none of our Medical Practitioners had been subject to any disciplinary action brought by the Medical Council;",
+      "evidence_reason": "The formal compliance section excludes material pending or threatened litigation and disciplinary action through the Latest Practicable Date.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "risk_code": "precommercial_product",
+      "page": 168,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The table below sets forth the breakdown of our revenue by refractive treatments for the Track Record Period: ... Refractive treatments (a) SMILE surgeries 97,822 63.2 112,424 67.4 100,104 61.9 29,786 61.4 26,964 54.6 ... Total 154,754 100.0 166,801 100.0 161,668 100.0 48,475 100.0 49,676 100.0",
+      "evidence_reason": "The formal Business revenue table proves the core ophthalmic services are commercialized and revenue-generating throughout the Track Record Period.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 482,
+    "source_document_sha256_expected": "622e4ea97bd041404406e1da3472fde245f7c775d058a56043790e152fbdd500"
+  }
+}

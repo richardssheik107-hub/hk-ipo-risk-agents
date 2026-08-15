@@ -1,0 +1,333 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_06922",
+  "stock_code": "6922.HK",
+  "company_name": "康灃生物－Ｂ",
+  "document_id": "ipo_2022_06922",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "For the eight months ended August 31, 2022, the audited cash flow statement reports net cash flows used in operating activities of RMB59,969 thousand and cash and cash equivalents at period end of RMB87,696 thousand. Monthly operating cash burn is approximately RMB7,496 thousand and cash runway is approximately 11.70 months, below the 12-month medium threshold and at or above the 6-month high threshold.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "eight months ended August 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 87696,
+        "net_cash_used_in_operating_activities": -59969,
+        "period_months": 8,
+        "monthly_cash_burn": 7496.125
+      },
+      "calculation_result": {
+        "months": 11.6988444029415,
+        "cash_runway_months": 11.6988444029415,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows losses for the year/period of RMB159,333 thousand, RMB126,497 thousand, RMB92,436 thousand and RMB61,422 thousand for 2020, 2021, 8M2021 and 8M2022 respectively. Four comparable loss periods meet the frozen high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2020", "loss": -159333},
+          {"period": "year ended December 31, 2021", "loss": -126497},
+          {"period": "eight months ended August 31, 2021", "loss": -92436},
+          {"period": "eight months ended August 31, 2022", "loss": -61422}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 4,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB12,061 thousand in 8M2021 to RMB16,431 thousand in 8M2022, an increase of approximately 36.23%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "eight months ended August 31, 2021",
+        "current_period": "eight months ended August 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 12061,
+        "current_revenue": 16431
+      },
+      "calculation_result": {
+        "growth_pct": 36.2324848685847,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 8M2022, the largest customer accounted for approximately 10.8% and the five largest customers accounted for approximately 40.3% of revenue. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "eight months ended August 31, 2022",
+        "largest_customer_pct": 10.8,
+        "top_five_customer_pct": 40.3,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 8M2022, the largest supplier accounted for approximately 2.3% and the five largest suppliers accounted for approximately 9.6% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "eight months ended August 31, 2022",
+        "largest_supplier_pct": 2.3,
+        "top_five_supplier_pct": 9.6,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The Pre-IPO Investors were granted customary special rights including divestment right, right of first refusal and tag-along rights, veto right, director/supervisor appointment right and anti-dilution right. No redemption right is disclosed, and all special rights were automatically terminated by December 27, 2021.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The formal Legal Proceedings and Regulatory Compliance section states that the Directors confirmed the Group was not involved in any legal, arbitral or administrative proceedings that, individually or in aggregate, would have a material adverse effect, and that the PRC Legal Adviser confirmed material compliance. No material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06922",
+      "stock_code": "6922.HK",
+      "company_name": "康灃生物－Ｂ",
+      "document_id": "ipo_2022_06922",
+      "risk_code": "precommercial_product",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.92,
+      "reasoning": "The Group has launched six commercialized minimally-invasive surgical consumables and generated product-sales revenue, but had not commercialized any cryotherapy systems as of the Latest Practicable Date. The Bladder Cryoablation System was approved for commercialization in June 2022 with commercialization planned for December 2022, and the Endoscopic Clip for Anastomosis was commercialized in October 2022. Because core cryotherapy products remain at or immediately before commercialization and revenue attribution to core products is not yet established, the risk is left as needs_review under OPEN-02.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "commercialized_cryotherapy_systems": 0,
+        "commercialized_non_cryotherapy_consumables": 6,
+        "core_product_status": "approved_or_pending_commercialization"
+      },
+      "calculation_result": {
+        "assessment": "core_cryotherapy_products_not_yet_commercialized",
+        "policy_ambiguity": "OPEN-02"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "cash_runway",
+      "page": 488,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows used in operating activities (34,199) (62,491) (33,880) (59,969)",
+      "evidence_reason": "The audited cash flow statement provides the 8M2022 operating cash burn input of RMB59,969 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "cash_runway",
+      "page": 489,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 7,486 157,867 68,443 87,696",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB87,696 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "continuous_loss",
+      "page": 480,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "LOSS FOR THE YEAR/PERIOD (159,333) (126,497) (92,436) (61,422)",
+      "evidence_reason": "The audited statement of profit or loss proves losses in all four comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "revenue_growth",
+      "page": 480,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 9,054 22,426 12,061 16,431",
+      "evidence_reason": "The audited statement provides the 8M2021 and 8M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "customer_concentration",
+      "page": 317,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The aggregate sales to our five largest customers for 2020, 2021 and the eight months ended August 31, 2022 were RMB3.3 million, RMB8.2 million and RMB6.6 million, respectively, representing 37.0%, 36.5% and 40.3% of our revenue for the respective period. Sales to our largest customer for 2020, 2021 and the eight months ended August 31, 2022 were RMB0.8 million, RMB1.9 million and RMB1.8 million, respectively, representing 8.8%, 8.4% and 10.8% of our revenue for the respective period.",
+      "evidence_reason": "The formal Business customer disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "supplier_concentration",
+      "page": 319,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Purchases from our five largest suppliers for 2020, 2021 and the eight months ended August 31, 2022 amounted to RMB9.2 million, RMB13.4 million and RMB3.7 million, respectively, representing 31.6%, 24.3% and 9.6% of our total purchases for the respective period. Purchases from our largest supplier for 2020, 2021 and the eight months ended August 31, 2022 amounted to RMB4.3 million, RMB5.8 million and RMB0.9 million, respectively, representing 14.8%, 10.6% and 2.3% of our total purchases for the respective period.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "redemption_rights",
+      "page": 231,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The Pre-IPO Investors were granted customary special rights, including but not limited to divestment right, right of first refusal and tag-along rights, veto right, director/supervisor appointment right and anti-dilution right. Pursuant to an agreement entered into between, among others, our Company and the Pre-IPO Investors dated September 28, 2021, the divestment right, veto right and anti-dilution right were automatically terminated, and all other special rights were automatically terminated on December 27, 2021.",
+      "evidence_reason": "The formal Pre-IPO disclosure shows no redemption right was granted and all special rights were terminated before the listing.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "material_litigation_compliance",
+      "page": 336,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "Our Directors confirmed that, during the Track Record Period and as of the Latest Practicable Date, we were not involved in any legal, arbitral or administrative proceedings that, individually or in aggregate, would have a material and adverse effect on our business, financial condition or results of operations, and we are not aware of any potential or threatened legal, arbitral or administrative proceedings to which we will be named as a party.",
+      "evidence_reason": "The formal legal disclosure excludes material pending or threatened proceedings and material non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "risk_code": "precommercial_product",
+      "page": 21,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "summary",
+      "exact_text": "As of the Latest Practicable Date, we had not commercialized any cryotherapy systems. We have incurred net losses during the Track Record Period, which amounted to RMB159.3 million, RMB126.5 million and RMB61.4 million for 2020, 2021 and the eight months ended August 31, 2022, respectively.",
+      "evidence_reason": "The formal disclosure proves the core cryotherapy products are not yet commercialized, while the Group has limited revenue from other consumables, requiring needs_review under OPEN-02.",
+      "confidence": 0.98
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 644,
+    "source_document_sha256_expected": "870bae207ad9c308d9d8f32b46ebf78f3aa5f6bd6368206001d12cf897491272"
+  }
+}

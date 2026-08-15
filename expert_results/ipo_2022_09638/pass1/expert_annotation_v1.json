@@ -1,0 +1,329 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09638",
+  "stock_code": "9638.HK",
+  "company_name": "法拉帝",
+  "document_id": "ipo_2022_09638",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the nine months ended September 30, 2021, the audited cash flow statement reports cash flows from operating activities of EUR245,963 thousand and cash and cash equivalents at period end of EUR187,462 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "currency": "EUR",
+        "unit": "EUR'000",
+        "cash_and_cash_equivalents_at_end": 187462,
+        "net_cash_from_operating_activities": 245963,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of EUR30,720 thousand, EUR26,599 thousand, EUR21,982 thousand, EUR5,688 thousand and EUR32,089 thousand for 2018, 2019, 2020, 9M2020 and 9M2021 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "EUR",
+        "unit": "EUR'000",
+        "loss_periods": [],
+        "profit_periods": [
+          {"period": "year ended December 31, 2018", "profit": 30720},
+          {"period": "year ended December 31, 2019", "profit": 26599},
+          {"period": "year ended December 31, 2020", "profit": 21982},
+          {"period": "nine months ended September 30, 2021", "profit": 32089}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from EUR425,638 thousand in 9M2020 to EUR693,277 thousand in 9M2021, an increase of approximately 62.88%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "nine months ended September 30, 2020",
+        "current_period": "nine months ended September 30, 2021",
+        "currency": "EUR",
+        "unit": "EUR'000",
+        "previous_revenue": 425638,
+        "current_revenue": 693277
+      },
+      "calculation_result": {
+        "growth_pct": 62.8794891433566,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2021, the largest invoicing customer accounted for approximately 6.0% and the five largest invoicing customers accounted for approximately 22.0% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_customer_pct": 6.0,
+        "top_five_customer_pct": 22.0,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2021, the largest supplier accounted for approximately 3.4% and the five largest suppliers accounted for approximately 12.4% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_supplier_pct": 3.4,
+        "top_five_supplier_pct": 12.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The 2019 Pre-IPO Investment was a subscription of newly-issued Shares at a fixed price, with no convertible instrument issued. The listing disclosure states that Adtech does not have the power to appoint directors and does not have other special rights in the Company. No redemption right is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.88,
+      "reasoning": "The formal legal section discloses that Sea Lion is a party to an ongoing lawsuit in Luxembourg connected with the bankruptcy of Wally Yachts, with a recourse before the Luxembourg Supreme Court filed in July 2021. The maximum potential consequence is annulment of the purchase of the main assets of Wally Yachts, including the Wally trademark. Although counsel considers the claims unlikely to prevail, the matter remains unresolved, so the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "matter": "Wally_trademark_litigation",
+        "current_stage": "recourse_before_luxembourg_supreme_court"
+      },
+      "calculation_result": {
+        "assessment": "pending_litigation_with_potential_asset_annulment",
+        "needs_review_reason": "final_outcome_not_resolved"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09638",
+      "stock_code": "9638.HK",
+      "company_name": "法拉帝",
+      "document_id": "ipo_2022_09638",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established global luxury yacht manufacturer and distributor with substantial revenue from composite yachts, made-to-measure yachts, super yachts and other businesses throughout the Track Record Period. Its core products are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "cash_runway",
+      "page": 427,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash flows from operating activities ............. 30,275 54,376 57,341 44,315 245,963",
+      "evidence_reason": "The audited cash flow statement proves positive cash flows from operating activities in the latest nine-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "cash_runway",
+      "page": 428,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD ......... 38,503 39,164 32,830 45,695 187,462",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of EUR187,462 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "continuous_loss",
+      "page": 420,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "PROFIT FOR THE YEAR/PERIOD ......... 30,720 26,599 21,982 5,688 32,089",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "revenue_growth",
+      "page": 420,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue ............... 6 631,269 678,165 638,194 425,638 693,277",
+      "evidence_reason": "The audited statement provides the 9M2020 and 9M2021 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "customer_concentration",
+      "page": 220,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2018, 2019 and 2020 and the nine months ended September 30, 2021, sales to our five largest invoicing customers collectively accounted for 13.4%, 16.6%, 16.2% and 22.0% of our total revenue during the same periods, respectively, and sales to our largest invoicing customer accounted for 3.6%, 5.6%, 3.6% and 6.0% of our total revenue during the same periods, respectively.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "supplier_concentration",
+      "page": 221,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2018, 2019 and 2020 and the nine months ended September 30, 2021, purchases from our five largest suppliers collectively accounted for 13.6%, 14.9%, 11.8% and 12.4% of our total purchases during the same periods, respectively, and purchases from our largest supplier accounted for 5.1%, 6.3%, 3.5% and 3.4% of our total purchases during the same periods, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "redemption_rights",
+      "page": 88,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "Adtech does not have the power to appoint directors of our Company and do not have other special rights in our Company.",
+      "evidence_reason": "The formal Pre-IPO and listing disclosure proves the Pre-IPO investor holds ordinary shares without special or redemption rights.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "material_litigation_compliance",
+      "page": 238,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "Solidus introduced a recourse before the Luxembourg Supreme Court on July 12, 2021. This proceeding is currently ongoing and the maximum potential legal consequence to us for the proceeding is the annulment of the purchase of the main assets of Wally Yachts, including the Wally trademark.",
+      "evidence_reason": "The formal legal disclosure proves an ongoing lawsuit with a potential effect on a material acquired asset, requiring needs_review.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "risk_code": "precommercial_product",
+      "page": 420,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue ............... 6 631,269 678,165 638,194 425,638 693,277",
+      "evidence_reason": "The audited statement proves substantial commercial revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 708,
+    "source_document_sha256_expected": "6030a6fea23dc00889a9c1cff82d93c66897c2c54a5b644811dd93814f488d08"
+  }
+}

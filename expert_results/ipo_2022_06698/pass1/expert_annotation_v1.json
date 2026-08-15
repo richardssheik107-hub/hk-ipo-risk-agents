@@ -1,0 +1,356 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_06698",
+  "stock_code": "6698.HK",
+  "company_name": "星空華文",
+  "document_id": "ipo_2022_06698",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the six months ended June 30, 2022, the audited cash flow statement reports net cash flows from operating activities of RMB80,066 thousand and cash and cash equivalents at period end of RMB437,863 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 437863,
+        "net_cash_from_operating_activities": 80066,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year of RMB380,244 thousand in 2019, then losses of RMB37,946 thousand, RMB351,746 thousand, RMB25,425 thousand and RMB13,374 thousand for 2020, 2021, H1 2021 and H1 2022 respectively. Four comparable loss periods meet the frozen high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2020", "loss": -37946},
+          {"period": "year ended December 31, 2021", "loss": -351746},
+          {"period": "six months ended June 30, 2021", "loss": -25425},
+          {"period": "six months ended June 30, 2022", "loss": -13374}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 4,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB154,576 thousand in H1 2021 to RMB182,600 thousand in H1 2022, an increase of approximately 18.13%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "six months ended June 30, 2021",
+        "current_period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 154576,
+        "current_revenue": 182600
+      },
+      "calculation_result": {
+        "growth_pct": 18.1295932098127,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest customer accounted for approximately 41.9% and the five largest customers accounted for approximately 78.0% of revenue. The largest-customer ratio reaches the frozen medium threshold of 30% and the top-five ratio reaches the frozen medium threshold of 60% without reaching the high threshold of 80%, so the risk is medium.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_customer_pct": 41.9,
+        "top_five_customer_pct": 78.0,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": true,
+        "top_five_customer_medium_triggered": true,
+        "high_threshold_triggered": false,
+        "assessment": "medium_thresholds_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest supplier accounted for approximately 13.7% and the five largest suppliers accounted for approximately 32.4% of total purchases. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_supplier_pct": 13.7,
+        "top_five_supplier_pct": 32.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The Pre-IPO Investors were granted certain special rights in relation to the Company, including customary rights of first refusal, pre-emptive rights and information rights. All special rights under the Pre-IPO Investments were terminated immediately prior to the first submission of the listing application. No redemption right or restoration mechanism is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "The formal litigation disclosure states that, as of the Latest Practicable Date, the Group was the defendant in two material pending litigations with an aggregate claim amount of approximately RMB140.9 million. One case had received a first-instance judgment in November 2022 with an appeal window still open, and the other remained in first instance without judgment. Because the outcomes are not final, the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "matters": "two_material_pending_litigations",
+        "aggregate_claim_amount_rmb_million": 140.9
+      },
+      "calculation_result": {
+        "assessment": "material_pending_litigation_present",
+        "needs_review_reason": "final_outcomes_not_resolved"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_06698",
+      "stock_code": "6698.HK",
+      "company_name": "星空華文",
+      "document_id": "ipo_2022_06698",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established pan-entertainment company with substantial revenue from variety program IP production, operation and licensing, film and drama production and distribution, music IP licensing and other IP-related business throughout the Track Record Period. Its core products and services are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "cash_runway",
+      "page": 579,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows from operating activities 516,327 398,210 409,163 230,966 80,066",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest six-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "cash_runway",
+      "page": 580,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 25 651,681 903,376 547,182 493,380 437,863",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB437,863 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "continuous_loss",
+      "page": 569,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "PROFIT/(LOSS) FOR THE YEAR/PERIOD 380,244 (37,946) (351,746) (25,425) (13,374)",
+      "evidence_reason": "The audited statement of profit or loss proves losses in four comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "revenue_growth",
+      "page": 569,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 1,806,593 1,559,945 1,126,746 154,576 182,600",
+      "evidence_reason": "The audited statement provides the H1 2021 and H1 2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "customer_concentration",
+      "page": 274,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2019, 2020 and 2021, and the six months ended June 30, 2022, our revenues attributable to our five largest customers in each year/period during the Track Record Period were RMB1,366.1 million, RMB1,087.9 million, RMB867.1 million and RMB142.4 million, respectively, which accounted for approximately 75.6%, 69.7%, 77.0% and 78.0% of our total revenue for the same periods, respectively.",
+      "evidence_reason": "The formal Business customer disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "customer_concentration",
+      "page": 281,
+      "evidence_role": "cross_check",
+      "requirement": "alternative",
+      "source_authority": "business_section",
+      "exact_text": "1 Customer A Variety program IP production, operation, and licensing; other IP-related business 76,536 41.9% 2012",
+      "evidence_reason": "The formal customer table proves the largest customer accounted for approximately 41.9% of H1 2022 revenue.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "supplier_concentration",
+      "page": 285,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2019, 2020 and 2021 and the six months ended June 30, 2022, our purchases attributable to our five largest suppliers in each year/period during the Track Record Period were RMB172.3 million, RMB176.3 million, RMB174.8 million and RMB40.0 million, respectively, which accounted for approximately 16.3%, 18.4%, 22.1% and 32.4% of our total purchase for the same periods, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "supplier_concentration",
+      "page": 289,
+      "evidence_role": "cross_check",
+      "requirement": "alternative",
+      "source_authority": "business_section",
+      "exact_text": "1 Supplier A/Customer D Program technical equipment rental service 16,872 13.7% 2013",
+      "evidence_reason": "The formal supplier table proves the largest supplier accounted for approximately 13.7% of H1 2022 purchases.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "redemption_rights",
+      "page": 187,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The Pre-IPO Investors were granted certain special rights in relation to the Company, including, among others, customary rights of first refusal, pre-emptive rights and information rights. All special rights under the Pre-IPO Investments were terminated immediately prior to the first submission of the listing application form to the Stock Exchange for the purpose of the Global Offering.",
+      "evidence_reason": "The formal Pre-IPO disclosure shows no redemption right was granted and all special rights were terminated before the listing application.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "material_litigation_compliance",
+      "page": 26,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "As of the Latest Practicable Date, we were the defendant in two material pending litigations with an aggregate claim amount of approximately RMB140.9 million.",
+      "evidence_reason": "The formal legal disclosure proves two material pending litigations, requiring needs_review until final outcomes are resolved.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "risk_code": "precommercial_product",
+      "page": 569,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 1,806,593 1,559,945 1,126,746 154,576 182,600",
+      "evidence_reason": "The audited statement proves substantial commercial revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 729,
+    "source_document_sha256_expected": "1c90b9375beccdcffaf6c3ad8d20057b0ba0497c0be09fae4e9d7446e9b9fb92"
+  }
+}

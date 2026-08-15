@@ -1,0 +1,332 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02602",
+  "stock_code": "2602.HK",
+  "company_name": "萬物雲",
+  "document_id": "ipo_2022_02602",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended March 31, 2022, the audited cash flow statement reports net cash flows used in operating activities of RMB1,917,448 thousand and cash and cash equivalents at period end of RMB3,854,385 thousand. Monthly operating cash burn is approximately RMB639,149 thousand and cash runway is approximately 6.03 months, below the 12-month medium threshold and at or above the 6-month high threshold.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 3854385,
+        "net_cash_used_in_operating_activities": -1917448,
+        "period_months": 3,
+        "monthly_cash_burn": 639149.333333333
+      },
+      "calculation_result": {
+        "months": 6.03049209157171,
+        "cash_runway_months": 6.03049209157171,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of RMB1,040,279 thousand, RMB1,518,855 thousand, RMB1,714,291 thousand, RMB287,433 thousand and RMB318,752 thousand for 2019, 2020, 2021, 3M2021 and 3M2022 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [],
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 1040279},
+          {"period": "year ended December 31, 2020", "profit": 1518855},
+          {"period": "year ended December 31, 2021", "profit": 1714291},
+          {"period": "three months ended March 31, 2022", "profit": 318752}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB4,747,555 thousand in 3M2021 to RMB6,847,522 thousand in 3M2022, an increase of approximately 44.23%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "three months ended March 31, 2021",
+        "current_period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 4747555,
+        "current_revenue": 6847522
+      },
+      "calculation_result": {
+        "growth_pct": 44.2325997276493,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest customer accounted for approximately 13.1% and the five largest customers accounted for approximately 19.4% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_customer_pct": 13.1,
+        "top_five_customer_pct": 19.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest supplier accounted for approximately 31.8% and the five largest suppliers accounted for approximately 36.7% of total purchases. The largest-supplier ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_supplier_pct": 31.8,
+        "top_five_supplier_pct": 36.7,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": true,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "medium_largest_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The Pre-IPO Investors had been granted special rights including redemption rights. The formal disclosure states that, pursuant to the articles of association, a shareholders' resolution and each investor's confirmation, no such special rights will survive after the Listing and the redemption rights were terminated prior to submission of the listing application. No restoration mechanism is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.88,
+      "reasoning": "The formal legal section discloses the Bon Case, a litigation filed in December 2021 against the Group seeking invalidation of a transfer of a claimed 40% equity interest in Bon Property, which remained at a preliminary stage with trial not commenced as of the Latest Practicable Date. Although the Directors and litigation counsel assert the claim is groundless and will not have a material adverse impact, the pending court proceeding and its potential effect on acquired equity interests are not finally resolved, so the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "matter": "Bon_Case_pending",
+        "latest_status": "preliminary_stage_trial_not_commenced"
+      },
+      "calculation_result": {
+        "assessment": "pending_litigation_with_unresolved_outcome",
+        "needs_review_reason": "materiality_and_resolution_not_final"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02602",
+      "stock_code": "2602.HK",
+      "company_name": "萬物雲",
+      "document_id": "ipo_2022_02602",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established property and facility management and AIoT solution service provider with substantial revenue from contracts with customers throughout the Track Record Period. Its core services are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "cash_runway",
+      "page": 606,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows from/(used in) operating activities ............... 2,090,993 2,557,207 2,833,611 (908,796) (1,917,448)",
+      "evidence_reason": "The audited cash flow statement provides the 3M2022 operating cash burn input of RMB1,917,448 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "cash_runway",
+      "page": 607,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD ....... 5,184,792 5,397,646 6,430,557 4,509,746 3,854,385",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB3,854,385 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "continuous_loss",
+      "page": 598,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "PROFIT FOR THE YEAR/PERIOD ............. 1,040,279 1,518,855 1,714,291 287,433 318,752",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "revenue_growth",
+      "page": 598,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "REVENUE ............. 5 13,927,289 18,145,464 23,704,539 4,747,555 6,847,522",
+      "evidence_reason": "The audited statement provides the 3M2021 and 3M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "customer_concentration",
+      "page": 323,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, revenue from sales to our five largest customers amounted to RMB2,161.7 million, RMB3,748.4 million, RMB4,718.0 million and RMB1,330.2 million, respectively, which accounted for approximately 15.5%, 20.7%, 19.9% and 19.4%, respectively, of our total revenue. During the Track Record Period, revenue from sales to our single largest customer, China Vanke Group amounted to RMB1,770.0 million, RMB2,798.7 million, RMB3,820.5 million and RMB899.9 million, respectively, which accounted for approximately 12.7%, 15.4%, 16.1% and 13.1%, respectively, of our total revenue.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "supplier_concentration",
+      "page": 328,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, purchases from our five largest suppliers amounted to RMB259.8 million, RMB3,364.7 million, RMB4,177.7 million and RMB1,255.0 million, respectively, which accounted for approximately 5.6%, 44.6%, 38.0% and 36.7%, respectively, of our total purchases. During the Track Record Period, purchases from our single largest supplier amounted to RMB97.9 million, RMB2,993.2 million, RMB3,699.9 million and RMB1,087.3 million, respectively, which accounted for approximately 2.1%, 39.7%, 33.7% and 31.8%, respectively, of our total purchases.",
+      "evidence_reason": "The formal Business supplier disclosure proves the largest-supplier ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "redemption_rights",
+      "page": 215,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "Pursuant to (i) our Articles of Association; (ii) shareholders' resolution dated March 2, 2022 approving, among others, the Company to proceed with the application for Listing; and (iii) confirmation letter issued by each of the Pre-IPO Investors, no such special rights granted to the Pre-IPO Investors will survive after the Listing, and redemption rights granted under the Pre-IPO Investments had been terminated prior to the submission of application for Listing to the Stock Exchange.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption rights were terminated before the listing application and do not survive after Listing.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "material_litigation_compliance",
+      "page": 356,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "A plaintiff filed a litigation (the Bon Case) with Shenzhen Intermediate People's Court in December 2021 against us, two of our subsidiaries, namely, Shenzhen Yuying and Bon Property, as well as three other parties, all of which were named as the defendants, claiming his equity interests in Bon Property were damaged during our acquisition of Bon Property. ... As of the Latest Practicable Date, the case was still at the preliminary stage and trial proceedings had not yet commenced.",
+      "evidence_reason": "The formal legal disclosure proves a pending lawsuit against the Group whose trial had not commenced as of the Latest Practicable Date, requiring needs_review.",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "risk_code": "precommercial_product",
+      "page": 598,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "REVENUE ............. 5 13,927,289 18,145,464 23,704,539 4,747,555 6,847,522",
+      "evidence_reason": "The audited statement proves substantial commercial service revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 829,
+    "source_document_sha256_expected": "398087b758fce1142427d2014de1d94e00310c1cd0ea03fc30fc96042f85755f"
+  }
+}
