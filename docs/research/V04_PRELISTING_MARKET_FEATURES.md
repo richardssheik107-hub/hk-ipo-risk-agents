@@ -1,6 +1,6 @@
 # V04-3 Pre-listing Market Features
 
-Status: **IMPLEMENTED PENDING REVIEW**
+Status: **MERGED**
 
 ## 1. Scope
 
@@ -134,13 +134,12 @@ the merged V04-2 dataset and therefore cannot reach the augmented builder. The
 
 ## 11. Real-data availability
 
-`REAL_MARKET_FEATURE_DATA_NOT_READY`: the committed catalog provides official
-IPO identity, listing date, offer price, listing board/method and industry name,
-plus EOD coverage metadata. It does not contain governed HSI closes, industry
-index closes, total-market turnover or committed OHLCV history. Therefore V04-3
-provides contracts, a pure engine and a deterministic in-memory reference
-provider, but no production adapter or real development materialization. No
-external market API or ungoverned download was introduced.
+At the V04-3 merge, `REAL_MARKET_FEATURE_DATA_NOT_READY` remained true. The
+subsequent V04-4A readiness layer adds a governed local IPO OHLCV adapter, but no
+governed HSI closes, industry mapping/index closes or total-market turnover has
+been supplied. See `V04_DATA_READINESS.md`. V04-3 itself remains the contracts,
+pure engine and deterministic in-memory reference provider; no external market
+API or ungoverned download was introduced.
 
 ## 12. Current limitations and out of scope
 

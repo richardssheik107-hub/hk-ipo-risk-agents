@@ -13,12 +13,22 @@ from ipo_risk.modeling.market_dataset import (
     V04MarketAugmentedBlindFeatureExporter,
     V04MarketAugmentedDatasetBuilder,
 )
+from ipo_risk.modeling.materialization import (
+    DocumentMaterializationInput,
+    DocumentMaterializationOutcome,
+    DocumentMaterializationReport,
+    V04DocumentSnapshotMaterializer,
+)
 from ipo_risk.modeling.snapshot import DocumentRiskSnapshotBuilder
 
 __all__ = [
     "CANONICAL_V03_RISK_ORDER",
     "DOCUMENT_FEATURE_MANIFEST_V1",
     "DocumentRiskSnapshotBuilder",
+    "DocumentMaterializationInput",
+    "DocumentMaterializationOutcome",
+    "DocumentMaterializationReport",
+    "V04DocumentSnapshotMaterializer",
     "V04BlindFeatureExporter",
     "V04ModelingDatasetBuilder",
     "V04MarketAugmentedBlindFeatureExporter",

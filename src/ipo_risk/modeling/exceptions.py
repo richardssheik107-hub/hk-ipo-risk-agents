@@ -15,3 +15,11 @@ class DuplicateAuthoritativeRiskError(DocumentSnapshotValidationError):
 
 class ModelingDatasetJoinError(DocumentMarketContractError):
     """Document and market identities or versions cannot be joined safely."""
+
+
+class DocumentMaterializationError(DocumentMarketContractError):
+    """A source result cannot be materialized under the governed V04 contract."""
+
+
+class DocumentMaterializationConflictError(DocumentMaterializationError):
+    """A case artifact exists with different semantic content or provenance."""
