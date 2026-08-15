@@ -1,0 +1,307 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "13b009ae-e3ae-50d8-8e2e-867e0219c9d8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "commercialization",
+          "core_product"
+        ],
+        "reason": "Milestone timeline from 2002-2019 shows long-established commercial express delivery business, NYSE IPO in 2016, Alibaba investment. Supports that company is fully commercial, not pre-commercial."
+      },
+      {
+        "candidate_id": "5ba95c6f-fa99-598e-b480-65c83d3fdc26",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Lists major subsidiaries engaged in express delivery and logistics. Shows operational business structure but doesn't directly address commercialization status or revenue."
+      },
+      {
+        "candidate_id": "9cb8cbd7-6506-53e7-93a4-7479ee1b10df",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Only lists the company's main banks. No information about products, commercialization, or revenue. Completely irrelevant to pre-commercial assessment."
+      },
+      {
+        "candidate_id": "0523b27b-643f-5def-bb07-d8a6c4b32efa",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Corporate structure diagram showing subsidiaries in express delivery and logistics. Provides organizational context but does not address product commercialization or sales."
+      },
+      {
+        "candidate_id": "65c2d1ad-6cc0-5fcc-bace-d871dadd2710",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses SEC litigation against Chinese accounting firms and auditor delisting risk. Entirely unrelated to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "46817c91-2e12-57ae-9435-618c3264ecb9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales"
+        ],
+        "reason": "Summary describes established express delivery network with 90 sorting centers, 9,050 vehicles, 30,000+ pickup/delivery outlets. Shows fully commercialized operations with real infrastructure."
+      },
+      {
+        "candidate_id": "73ef8e86-6ca4-5814-8686-a2c386376830",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Post-offering equity structure and VIE contractual arrangements. Corporate governance context, not directly about product commercialization."
+      },
+      {
+        "candidate_id": "de7ac354-50a9-59ae-869b-059c964dc3e4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales"
+        ],
+        "reason": "Business overview explicitly states 'leading express delivery company in China,' 19.1% market share in 2019, extensive network infrastructure. Strong evidence of fully commercial business."
+      },
+      {
+        "candidate_id": "20703cb7-3503-5861-8cba-eec436ad4fc1",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "product_sales",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Detailed financial metrics: parcel volume 62B to 121B (2017-2019), net profit RMB 3.2B to 5.7B. Directly demonstrates commercial product sales and revenue generation."
+      },
+      {
+        "candidate_id": "60143cc9-40c9-57ce-a79f-774325345443",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "product_sales",
+          "commercialization"
+        ],
+        "reason": "Competitive advantages with specific parcel volume (6.969B in H1 2020, 20.6% market share) and network scale. Shows established commercial operations."
+      },
+      {
+        "candidate_id": "f83e16a8-471d-5e4c-a619-bf3f08cfb2ae",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses PCAOB inspection of Chinese auditors and potential delisting legislation. Unrelated to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "5c6d8dc2-ef1b-504c-ad74-aed9a8bf66f4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses Hong Kong listing rules, exemptions, and share price volatility. Unrelated to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "a13c73eb-15ed-5507-8dc5-7f63083132d7",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "commercialization",
+          "core_product"
+        ],
+        "reason": "Operational capabilities with specific cost metrics (sorting cost RMB 0.39 to 0.34 per parcel) and technology details. Shows mature commercial operations."
+      },
+      {
+        "candidate_id": "a6ac130b-df88-560a-bfaa-89b1d6dd22d0",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Revenue recognition policies for express delivery services, describing principal vs agent roles. Confirms company generates revenue from commercial express delivery."
+      },
+      {
+        "candidate_id": "a387e32b-383a-5123-989c-1cc9389421e7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Summary explicitly states 'leading express delivery company in China,' 19.1% market share, founded 2002. Strong evidence of established commercial business."
+      },
+      {
+        "candidate_id": "dc85cfb0-efc8-5ecc-8593-5518296ee03c",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Growth metrics: parcel volume 62B to 121B, net profit RMB 3.2B to 5.7B, adjusted net profit RMB 3.2B to 5.3B. Directly shows revenue generation."
+      },
+      {
+        "candidate_id": "6db3c7f6-3e79-5d6e-b061-dcc992df2cfe",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "VIE consolidation accounting and tax policies. Financial reporting context, not about product commercialization status."
+      },
+      {
+        "candidate_id": "7a7f8e57-6b99-5cc0-bdc2-14ad38b50644",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Describes services offered: express delivery for parcels under 50kg with 24-72 hour delivery. Confirms core commercial product and operations."
+      },
+      {
+        "candidate_id": "4e441b03-c0f8-5bfc-97a3-8111ea354eb4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Financial overview states 'leading express delivery company,' with parcel volume growth (62B to 121B), net profit (RMB 3.2B to 5.7B), and network infrastructure. Comprehensive evidence of commercialization."
+      },
+      {
+        "candidate_id": "de7a81e8-96a8-525c-915b-70738458d170",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "General industry overview about market consolidation and technology trends. No company-specific product or commercialization information. Broad industry boilerplate."
+      }
+    ]
+  }
+}

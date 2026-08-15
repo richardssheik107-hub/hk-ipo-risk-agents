@@ -1,0 +1,215 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c0968ad8-d7be-545b-9784-f536ae4148a0",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "reporting_period"
+        ],
+        "reason": "Provides exact top-5 supplier ratios (43.5%, 48.4%, 42.4%) and largest supplier ratios (11.0%, 19.1%, 20.8%) across three reporting periods with total purchases as denominator."
+      },
+      {
+        "candidate_id": "ad28d878-4859-557e-a779-5af6ffd6c409",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.97,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Same concentration ratios as page 17 plus richer context: top-5 suppliers are independent third parties, no related-party interests, alternative sourcing strategy, no long-term supply agreements."
+      },
+      {
+        "candidate_id": "f7cd8ccd-e2d3-5387-8ad6-85e82559fd5e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Standard compliance disclaimer that directors/shareholders have no interest in top-5 suppliers. No concentration ratios or quantitative data."
+      },
+      {
+        "candidate_id": "854dfffd-d789-5483-874e-4d45bb34c4f4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Summary of company strategy and R&D platform. Mentions CRO usage but contains no supplier concentration data."
+      },
+      {
+        "candidate_id": "b8bbe192-1462-563b-b9ad-08b72bbbce4a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Consolidated loss statement table. No supplier concentration data whatsoever."
+      },
+      {
+        "candidate_id": "f7eafe57-e46d-530f-ab37-9aa8c859339a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Detailed description of AbbVie collaboration for SHP2 inhibitor. No supplier concentration data."
+      },
+      {
+        "candidate_id": "c08b301f-ae1c-56d2-a4a5-5f7118644dc0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Consolidated balance sheet summary and preferred share fair value discussion. No supplier concentration data."
+      },
+      {
+        "candidate_id": "f42463be-ee47-5f1f-91d8-85de381aaec3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Patent and intellectual property discussion including AbbVie license. No supplier concentration data."
+      },
+      {
+        "candidate_id": "fffcaab8-33e6-52a2-afff-f228263d0dca",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Employee headcount and leased property details. No supplier concentration data."
+      },
+      {
+        "candidate_id": "8022391f-9391-5f62-baa6-2ebe50ec391a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Legal and general info about directors, shareholders, and service contracts. No supplier concentration data."
+      },
+      {
+        "candidate_id": "2460110a-20c0-5f93-bab3-7393568e5c61",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Standard legal boilerplate on litigation, listing application, and no material adverse change. No supplier data."
+      },
+      {
+        "candidate_id": "24a5c076-d786-57aa-b46f-feb12f050190",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Patent application table by jurisdiction and AbbVie license notes. No supplier concentration data."
+      },
+      {
+        "candidate_id": "5baf514f-d76b-5a3e-90ff-1d6644d86939",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Property lease details and environmental/health/safety matters. No supplier concentration data."
+      },
+      {
+        "candidate_id": "f2410cef-105a-5112-8239-55129ddcdb02",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Directors and major shareholders shareholding structure details. No supplier concentration data."
+      },
+      {
+        "candidate_id": "29e6f12f-1b40-5f67-841d-e8d9948c3658",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Expert qualifications, consent letters, and sponsor fees. No supplier concentration data."
+      }
+    ]
+  }
+}

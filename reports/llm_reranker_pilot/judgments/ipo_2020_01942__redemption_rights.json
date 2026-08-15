@@ -1,0 +1,113 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "03acce07-a4ba-5d49-8036-6a1f9b917162",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles of association boilerplate on altering share class special rights. No mention of redemption. '特別權利' used generically for class rights modification."
+      },
+      {
+        "candidate_id": "72037a5b-0434-5048-85ec-3ed6f7846604",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "special_right",
+          "redemption_put_repurchase"
+        ],
+        "reason": "Directly states shares may be issued on terms where company or holder may elect to redeem. Most relevant to redemption rights, but still general articles language with no actual investor or specific terms."
+      },
+      {
+        "candidate_id": "857ac219-e794-593f-8679-cf5431c34c9e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Liquidation provisions referencing '特別權利' only for surplus asset distribution. No connection to redemption rights."
+      },
+      {
+        "candidate_id": "8f33e7b5-b9d3-5135-9fdf-5be5f283fcc3",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Capital changes and special rights alteration procedure. Mentions capital redemption reserve only in context of capital reduction, not actual redemption rights."
+      },
+      {
+        "candidate_id": "f5c716ff-0a66-518d-a0e7-74f29ac2534f",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Share class rights and capital changes. '特別權利' used as general caveat. Capital redemption reserve mentioned but only for capital reduction, not redemption rights."
+      },
+      {
+        "candidate_id": "04f0905d-e80f-55bf-80a1-21f9ef41b6cc",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.87,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Board powers to issue shares. '特別權利' appears only as a general caveat not affecting existing rights. No redemption content."
+      },
+      {
+        "candidate_id": "04499f9a-fbdc-50a0-9493-83e300a5312d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Voting rights provisions. '特別權利' mentioned only in context of voting restrictions. Completely irrelevant to redemption rights."
+      }
+    ]
+  }
+}

@@ -1,0 +1,289 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "1244892c-339e-552f-b2ed-0be30ace002b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Lists issuer's clients' business backgrounds incl manufacturing/sales; not about issuer's own products. Irrelevant to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "f9249cd0-496b-5c82-8e4d-19fe1bb8820d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Client background descriptions; manufacturing/sales terms refer to clients, not issuer. No relevance to issuer's commercialization status."
+      },
+      {
+        "candidate_id": "7f60c7f8-5a7b-56e6-b40f-b931a56d737a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.93,
+        "completeness_facets": [],
+        "reason": "Client revenue rankings with client backgrounds; manufacturing/sales terms describe clients, not issuer. Irrelevant."
+      },
+      {
+        "candidate_id": "4002c064-fb2f-5678-a5a6-7d4fedeb165a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.93,
+        "completeness_facets": [],
+        "reason": "Client background descriptions reference manufacturing/sales but these are about clients, not the issuer. Irrelevant to commercialization."
+      },
+      {
+        "candidate_id": "32e2be2f-f971-587d-968d-cc0a03877b6d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Client business descriptions in footnotes; manufacturing/sales terms refer to clients not issuer. Irrelevant."
+      },
+      {
+        "candidate_id": "f4b3d1df-85a8-599e-98c3-3c38d74c0265",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Client transaction listing with no issuer product info. Standard prospectus client disclosure. Irrelevant to commercialization."
+      },
+      {
+        "candidate_id": "7f7fd06c-8b42-5df3-ada4-aa67a9dba92d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Client list with footnote business descriptions; terms refer to clients' businesses, not issuer's. Irrelevant."
+      },
+      {
+        "candidate_id": "84e95dde-c43c-51de-beef-efaca94e8d5f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Accountant's report states issuer's main business is securities brokerage and financial services. Directly establishes no pre-commercial products."
+      },
+      {
+        "candidate_id": "d64c039b-75c6-5450-809a-b18c6c905215",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Client business descriptions in footnotes; manufacturing/sales refer to clients. Irrelevant to issuer's own products."
+      },
+      {
+        "candidate_id": "12a08eb0-77e0-5a17-b8ea-3dd756c42227",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Details 70 placement/underwriting projects with commission revenue. Shows issuer has commercialized services generating revenue."
+      },
+      {
+        "candidate_id": "9048bb78-b756-5f32-baf2-77a79864050b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Lists subsidiaries and their main businesses: securities brokerage and investment holding. Confirms issuer is a services firm, not product company."
+      },
+      {
+        "candidate_id": "e4d5a1ae-1253-5cd0-8428-338d032c05c4",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Shows revenue from securities trading clients. Indirectly supports that issuer has commercialized services but not product-focused."
+      },
+      {
+        "candidate_id": "27b51044-2e4e-5f67-9c3f-d1f971396269",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Cash flow statement with financial details. No direct product or commercialization information. Minimal relevance."
+      },
+      {
+        "candidate_id": "357234d5-f832-5435-a241-25ba82389cc0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [],
+        "reason": "Describes group restructuring and accounting policy changes. No product or commercialization information. Irrelevant."
+      },
+      {
+        "candidate_id": "65008cec-93c3-52e8-a8af-787773be1365",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Shows revenue from client base and related parties. Supports that issuer has commercialized services but tangential to product assessment."
+      },
+      {
+        "candidate_id": "beb962b0-1ad4-5b8b-83a1-0e0b07ac16a9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Summary describes issuer's services (brokerage, underwriting, advisory) with revenue figures. Establishes commercialized services business."
+      },
+      {
+        "candidate_id": "fd400085-579c-5f85-8f22-9147f87121ad",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Describes growth of placement/underwriting business since 2016 with revenue figures. Shows commercialized operations."
+      },
+      {
+        "candidate_id": "75679a24-bd6d-53b2-b3d2-6a7335f60563",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "core_product",
+          "development_stage"
+        ],
+        "reason": "Business milestones from 2001 show established securities brokerage. Supports issuer as operating services firm, not pre-commercial."
+      },
+      {
+        "candidate_id": "e4b24e81-0d59-5ae5-914a-c6e8e9038ecf",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Regulatory overview of licensing requirements. 'Main business' appears as a core function label, not about issuer's products. Irrelevant."
+      },
+      {
+        "candidate_id": "261b4295-bced-5938-b5e7-65def24c8b15",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Financial asset/liability offsetting details from accountant's report. No product or commercialization information. Irrelevant."
+      }
+    ]
+  }
+}

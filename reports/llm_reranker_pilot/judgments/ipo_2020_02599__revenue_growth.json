@@ -1,0 +1,339 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "0bfaee12-bf2c-5f78-8751-0f35df924dd8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Audited consolidated income statement by Ernst & Young with revenue across 5 periods (RMB '000), showing growth from 6.3B to 35.5B."
+      },
+      {
+        "candidate_id": "4b04e26e-161e-5ba5-adca-f414842bd425",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Minor JV financial data with tiny revenue (RMB 17.6M declining to zero); not representative of group revenue growth."
+      },
+      {
+        "candidate_id": "72b9b158-bfe1-5820-804e-f03adf22bb41",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Lease expense and rental income details; rental income is a minor revenue component, not group-level revenue growth."
+      },
+      {
+        "candidate_id": "362f0aac-4068-5825-a8d7-37767519fd48",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue breakdown by business segment across all 5 periods showing total revenue growth and segment composition."
+      },
+      {
+        "candidate_id": "573228e0-bab3-55e9-9e1f-da04321a0f35",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cost of sales breakdown by segment; no revenue figures, only cost data tangentially related to revenue growth."
+      },
+      {
+        "candidate_id": "997b4414-adf9-581d-a00d-494e824d3318",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Gross profit and margin by segment with narrative explaining revenue growth drivers across all periods."
+      },
+      {
+        "candidate_id": "9831ec72-0201-5dcb-affe-86ba2db8280d",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Other income and gains breakdown (subsidies, disposal gains); not main revenue, mostly non-recurring items."
+      },
+      {
+        "candidate_id": "d3de2d66-6c99-5192-8762-2ac43dab1465",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Trade receivables analysis mentions revenue increase correlation; indirect evidence of revenue growth."
+      },
+      {
+        "candidate_id": "35ec09e4-be0d-5788-a696-34d732fbec94",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Tax provisions and liquidity discussion; mentions revenue sources but no revenue figures or growth analysis."
+      },
+      {
+        "candidate_id": "8187c2a7-0981-5ad7-bef2-601e4f58efdc",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Individual subsidiary financial data for one period only; not representative of group revenue growth trends."
+      },
+      {
+        "candidate_id": "7a123878-e446-5a27-a8ee-365d7cdae919",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies for pensions, borrowing costs, dividends, foreign currency; no revenue data whatsoever."
+      },
+      {
+        "candidate_id": "6feee9e5-156e-5dd0-8cb1-4349d5d08012",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Table of secured bank loans with terms and collateral; no revenue or growth information."
+      },
+      {
+        "candidate_id": "58440808-693b-518d-994d-f634bc2875b8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Consolidated income statement summary with revenue across all 5 periods in RMB; direct evidence of revenue growth."
+      },
+      {
+        "candidate_id": "2a8da19f-d6b3-55af-8482-c84403b66378",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period"
+        ],
+        "reason": "Narrative explaining revenue growth drivers: project count increase (35 to 75), geographic expansion, ASP trends."
+      },
+      {
+        "candidate_id": "80c49361-c1ca-5fdc-804a-bf8544b20dec",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies for impairment and investment property; no revenue data."
+      },
+      {
+        "candidate_id": "98a4bc1c-6236-5675-90b2-0a99d943732b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies for completed properties, borrowing costs, income tax; no revenue data."
+      },
+      {
+        "candidate_id": "5d3c51b8-eacd-5ca9-9288-be56095ed682",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Segment revenue figures for property leasing and hotel services across all periods; minor but specific revenue components."
+      },
+      {
+        "candidate_id": "0980d993-0667-560a-9df1-d5b093249358",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Hotel/property management margin trends and financial income with COVID-19 impact; supports revenue growth context."
+      },
+      {
+        "candidate_id": "56646b68-1537-5313-a067-dd259b204d76",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Subsidy income and non-recurring items detail; not main revenue and not indicative of revenue growth."
+      },
+      {
+        "candidate_id": "475fa94c-9eb3-575f-a413-fee51911309d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "YoY comparison of gross profit, margins, and income items for 4-month periods; supports revenue growth analysis."
+      }
+    ]
+  }
+}

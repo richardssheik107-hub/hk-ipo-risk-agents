@@ -1,0 +1,340 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "5244c162-7f0e-567c-b1f3-fc4940a6b101",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Full consolidated income statement with revenue across 5 periods in HKD'000, sourced from accountant's report. Primary authority for revenue growth."
+      },
+      {
+        "candidate_id": "d01a3257-8a59-5da5-82d9-d5f15eaa83f3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary P&L with revenue across 5 periods in HKD'000, references accountant's report. Supporting but less detailed than full statement."
+      },
+      {
+        "candidate_id": "eca20abb-24d6-5837-aaf0-d5677f1a4789",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative explaining revenue growth with exact % (59.1%, 15.1%, 59.7%) and HKD amounts across all periods. Directly addresses revenue growth."
+      },
+      {
+        "candidate_id": "bad59b12-ff68-5511-bc2a-0ae996f093cc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Recent 8-month operational update with commission growth % for securities trading and underwriting. No absolute revenue figures; indirect to revenue growth."
+      },
+      {
+        "candidate_id": "9903fe0a-17bb-56b4-b39a-12c40053063f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue growth narrative with growth rates and HKD amounts across all periods, from financial data section. Same content as summary but in MD&A context."
+      },
+      {
+        "candidate_id": "c332def3-4cd9-51df-a2a5-139b35cbe5a3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Top 10 underwriting clients for FY2019 with revenue contributions. Granular client detail, not about overall revenue growth."
+      },
+      {
+        "candidate_id": "005fef33-6bf0-53d1-8ced-9c64f491ef12",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "HKFRS 9/15 revenue recognition policy discussion. Contextual for methodology, not about revenue growth itself."
+      },
+      {
+        "candidate_id": "c75f19aa-acbc-5366-9336-d39060e0239a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue breakdown by business activity across 5 periods in HKD'000 with percentages. Shows composition of revenue growth by segment."
+      },
+      {
+        "candidate_id": "639021b4-2815-55fb-93aa-db1d5f607e7c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Top placement & underwriting clients with revenue contributions. Client concentration detail, not revenue growth."
+      },
+      {
+        "candidate_id": "6f9637cb-799d-5e06-a881-48c5148112e2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed margin financing interest income with HKD amounts and % of total revenue across periods. Supports revenue growth for one segment."
+      },
+      {
+        "candidate_id": "219df7b9-eebf-53f5-b2c7-9926c1f57a05",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Placement & underwriting and advisory fee revenue with amounts and % across periods. Supports revenue growth by segment."
+      },
+      {
+        "candidate_id": "7eb93b97-02fb-529d-b170-c190664e84dc",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Segment revenue, profit, and margins across 5 periods in HKD'000. Shows revenue by business segment, supporting growth analysis."
+      },
+      {
+        "candidate_id": "97d94c26-4538-5dff-b76a-889410d20275",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Narrative on brokerage segment profit and margin across periods. Indirect revenue growth evidence via segment performance."
+      },
+      {
+        "candidate_id": "a199f686-9ad6-5784-8cd9-513f34b83a94",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Narrative on placement & underwriting segment performance with HKD amounts. Explains a key revenue growth driver."
+      },
+      {
+        "candidate_id": "36970b28-63eb-50d0-b385-450a2e6e8924",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Top 5 underwriting clients for FY2017 and FY2018 with revenue contributions. Client concentration, not revenue growth."
+      },
+      {
+        "candidate_id": "0d2777df-efff-5d44-935f-8368f5a473c0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Commission expenses detail across periods. Cost structure analysis, not revenue growth evidence."
+      },
+      {
+        "candidate_id": "8b5ab5fc-e41b-5845-99f7-8b5f1dd414cb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed period-over-period revenue comparison FY2017 vs FY2018 with growth rates, HKD amounts, and drivers. Directly addresses revenue growth."
+      },
+      {
+        "candidate_id": "2c269f00-8944-56c9-ad8b-4272d64d047f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Continued segment performance comparison FY2017 vs FY2018 with margin financing details. Indirectly supports revenue growth context."
+      },
+      {
+        "candidate_id": "e5660d4a-c0e8-58e1-bf0d-39b3d53cf34e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Placement & underwriting segment comparison FY2017 vs FY2018 with revenue and margin details. Supports revenue growth analysis."
+      },
+      {
+        "candidate_id": "8db68cf3-bde8-505e-a09f-5219f7380ff3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.15,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Other income, employee costs, financing costs comparison FY2017 vs FY2018. Not about revenue growth."
+      }
+    ]
+  }
+}

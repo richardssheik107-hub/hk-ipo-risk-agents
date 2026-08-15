@@ -1,0 +1,115 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "df1ddc70-907c-5bbe-9059-4f15e8cf4802",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "General articles of association boilerplate about amending class share special rights and reducing capital redemption reserves. No actual investor or specific redemption right mentioned."
+      },
+      {
+        "candidate_id": "0ccb2565-fbe3-5d65-bd99-c00349937a0b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.84,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Standard articles of association summary about company purposes and amendment of class share special rights. No specific redemption rights or investors identified."
+      },
+      {
+        "candidate_id": "87afd0c2-da3b-5c2c-9713-3b226b579877",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "actual_investor",
+          "redemption_put_repurchase",
+          "current_status"
+        ],
+        "reason": "Directly identifies pre-IPO investors (AE Majoris Tech, AEM PIPO) with early redemption rights (提早贖回權) on HK$19M convertible bonds, expected to convert on listing date. Specific, actionable redemption right evidence."
+      },
+      {
+        "candidate_id": "56cf9b51-f9f6-57f7-a71e-ecbfd714e209",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.83,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles of association boilerplate on class meeting quorum, share privileges, and capital modification procedures. Mentions special rights generically, no actual redemption rights."
+      },
+      {
+        "candidate_id": "d76fb660-9568-54d8-a65e-22bc9a091385",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Liquidation procedure boilerplate mentioning special rights only in context of asset distribution upon winding up. No connection to investor redemption rights."
+      },
+      {
+        "candidate_id": "02cef29f-50a4-59de-b583-ef5146e5ad88",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right"
+        ],
+        "reason": "Names actual pre-IPO investors and states no special rights were granted except as disclosed. Provides key convertible bond terms (maturity, principal). Strong supporting negative statement and investor identification."
+      },
+      {
+        "candidate_id": "828fdee5-18b6-5d31-b424-65527ea856c2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "redemption_put_repurchase"
+        ],
+        "reason": "Articles of association boilerplate mentioning shares may be issued on redeemable terms at company or holder option. General constitutional provision, not an actual granted redemption right."
+      }
+    ]
+  }
+}

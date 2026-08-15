@@ -1,0 +1,145 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "5a7a5c8c-61c8-5b74-b0c5-1af324ba3545",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "top_five_supplier_ratio",
+          "largest_supplier_ratio",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Provides specific quantitative supplier concentration data: top five suppliers <30% annually in track record period, <35% for H1 2020, no single supplier >=30%. Also discloses director/shareholder relationships with top five suppliers."
+      },
+      {
+        "candidate_id": "612a66ea-bef4-5dd3-b017-820670780853",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Explains HK listing rule disclosure requirements for supplier percentages and the company's exemption request. Notes some top five suppliers are listed companies. Provides context but no actual concentration ratios."
+      },
+      {
+        "candidate_id": "61bc397e-3778-534b-899b-0dbfa7223620",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Content covers IT systems, digital products, IP, and competition. No supplier concentration information whatsoever. Matched terms are false positives."
+      },
+      {
+        "candidate_id": "634f0b6e-aee6-54d9-b663-d32e81a5671c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Covers financial reporting, internal controls, data security, and compliance. No supplier concentration data. Irrelevant to the risk."
+      },
+      {
+        "candidate_id": "01680b95-e5fb-5a97-ab45-ca8e6a653453",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Discusses executive compensation disclosure requirements and offering price disclosure. No supplier concentration information."
+      },
+      {
+        "candidate_id": "6b366508-6aed-5313-b9e3-23c58a9e2d00",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Covers existing shareholder subscription rules and listing rule exemptions for shareholders. No supplier concentration data."
+      },
+      {
+        "candidate_id": "a61096d1-1d5b-54d7-a3dd-bc23f4e575ef",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Describes the company's Zhongtian IT system, logistics tracking, and data center operations. No supplier concentration information."
+      },
+      {
+        "candidate_id": "ef43b31e-af37-56fd-a44c-fbfdd2e5d795",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Covers audit committee composition, branding, marketing awards, and CSR initiatives. No supplier concentration data."
+      },
+      {
+        "candidate_id": "58bb082a-a2ca-5497-9e8a-4657bf3ffadc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Discusses liquidity disclosure timing exemptions and director compensation disclosure requirements. No supplier concentration information."
+      },
+      {
+        "candidate_id": "f412f7b2-7757-5e6d-bece-bd4bb90b8e6e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Covers Alibaba's anti-dilution rights and existing shareholder subscription. No supplier concentration data."
+      }
+    ]
+  }
+}

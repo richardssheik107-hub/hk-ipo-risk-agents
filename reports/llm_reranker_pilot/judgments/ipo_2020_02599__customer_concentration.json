@@ -1,0 +1,296 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "ace47a1e-3318-5d96-9532-678da0b8cf1f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.98,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Provides exact top-five and single-largest customer revenue amounts and percentages across 4 reporting periods, plus identity of largest customer (related party). Most complete and specific evidence for customer concentration."
+      },
+      {
+        "candidate_id": "c1501058-7b7e-52d6-a015-18e41c12ce75",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Accountant's report states no single customer or commonly-controlled group exceeded 10% of revenue. Negative statement with specific threshold but lacks actual ratios or customer identity."
+      },
+      {
+        "candidate_id": "bc26ac6c-1bad-5bb1-a5d4-6cf614207739",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "reporting_period"
+        ],
+        "reason": "Summary page provides top-five customer revenue percentages (1.7%, 0.5%, 0.2%, 0.6%) across 4 periods but omits absolute amounts and largest customer ratio. Subset of candidate ace47a1e."
+      },
+      {
+        "candidate_id": "8418657e-8b2f-58e2-8bac-00a1f68c1633",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Directors' declaration that no directors or major shareholders have interests in top five customers. Standard legal boilerplate, tangentially related to concentration but no quantitative data."
+      },
+      {
+        "candidate_id": "a4d10a86-9502-514d-8c46-01ee25b1dacf",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses supplier concentration and related-party service providers. No customer concentration data whatsoever."
+      },
+      {
+        "candidate_id": "8c45ed70-6bc5-5a54-b3f7-e041893b6b3a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Lists industry awards and recognitions. Completely unrelated to customer concentration."
+      },
+      {
+        "candidate_id": "d7fd537e-4e96-52ac-9675-b8213c95f635",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Provides total revenue figures by business segment across reporting periods. Useful as revenue denominator context but contains no customer-specific concentration data."
+      },
+      {
+        "candidate_id": "3659bd83-81a0-5c45-a5e8-ab8c4ba4bdaa",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Discusses estimation uncertainties for property provisions, taxes, and fair values. No customer concentration information."
+      },
+      {
+        "candidate_id": "a6ea5db0-3e43-5271-b55d-ba32b268b85b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Details revenue recognition timing and performance obligations. No customer concentration data."
+      },
+      {
+        "candidate_id": "ab5819d2-33da-52d1-aaf4-49c255587afe",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Revenue breakdown by business segment with percentages. Provides revenue denominator context but no customer concentration data."
+      },
+      {
+        "candidate_id": "01e25ba6-8970-51db-a765-bf747ce0d25d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.92,
+        "completeness_facets": [],
+        "reason": "Discusses supplier concentration (top five suppliers and largest supplier). About suppliers not customers."
+      },
+      {
+        "candidate_id": "f2add8ef-81fe-5566-b4e3-060523b5c405",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Discusses continuing connected transactions for construction and property management services. No customer concentration data."
+      },
+      {
+        "candidate_id": "12f036b1-1f81-5b1d-994c-d6ee333ffa83",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Discusses revenue growth, contract sales totals, and business strategy. Provides revenue context but no customer concentration data."
+      },
+      {
+        "candidate_id": "be2ce6c0-454f-5eb6-aba5-5a5fa1306172",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cost of sales breakdown by segment and property type. No customer concentration information."
+      },
+      {
+        "candidate_id": "0029c59b-505b-593c-bb2d-217a88d8197e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.97,
+        "completeness_facets": [],
+        "reason": "Lists subsidiary company shareholders and agency fees. No customer concentration data."
+      },
+      {
+        "candidate_id": "048212d1-31db-5a00-be14-4b66f8aea686",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.97,
+        "completeness_facets": [],
+        "reason": "Describes stock option plan terms. Mentions customers as eligible participants but no concentration data."
+      },
+      {
+        "candidate_id": "4ac31b4f-4688-5f85-9568-c389ea3bbc42",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.68,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Revenue breakdown by business segment with total revenue figures. Provides revenue denominator context but no customer-specific data."
+      },
+      {
+        "candidate_id": "f079d08b-d3ba-5aeb-bb2a-8cf1c4925c86",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.97,
+        "completeness_facets": [],
+        "reason": "Business strategy discussion about financing, talent, and operations. No customer concentration data."
+      },
+      {
+        "candidate_id": "4ecd4d64-aea8-57f9-a041-60ba4152fca6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.97,
+        "completeness_facets": [],
+        "reason": "Describes residential property product lines and target buyer segments. No customer concentration data."
+      },
+      {
+        "candidate_id": "52189045-0310-5193-9238-e18bf96185bd",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Consolidated income statement with total revenue figures. Provides revenue denominator context but no customer concentration data."
+      }
+    ]
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "402694e9-a4f5-5707-8e19-1faa7ac87234",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.96,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Provides largest supplier ratios (17.4%,19.0%,11.5%), top-five ratios (38.0%,37.9%,24.9%), purchase amounts, supplier identity (創新工程, 郭先生), and 3-year reporting period. Most complete evidence for supplier concentration."
+      },
+      {
+        "candidate_id": "bd0c6b98-f9ce-5078-8d6a-a3a02f2b8e2b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "reporting_period"
+        ],
+        "reason": "Summary section with same key supplier concentration ratios and amounts for 3 years, but less supplier identity context than page 139. Mixed with customer and subcontractor data."
+      },
+      {
+        "candidate_id": "bfc315cb-676f-5208-9e64-d4cc00bcbae9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed 2017 top-5 supplier table with names, amounts, percentages, material categories, and payment terms. High specificity but only one year of data."
+      },
+      {
+        "candidate_id": "a3169548-7e39-502d-afa1-bbf019681546",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "COVID-19 contingency plan mentions top 5 suppliers and 72+ approved suppliers but no concentration ratios. Indirect context for supplier dependency risk."
+      },
+      {
+        "candidate_id": "94b00ac7-a332-5896-a039-d2f58df35318",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Definitions section merely identifies 創新工程 as one of top 5 suppliers and subcontractors. No concentration data."
+      },
+      {
+        "candidate_id": "32f25b9d-cc16-56c1-8012-b6d6228ceb0d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [],
+        "reason": "Primarily about customer concentration and procurement overview. No supplier concentration ratios or supplier-specific data."
+      },
+      {
+        "candidate_id": "315336e1-51f5-5736-be2f-7c67c0ae7e79",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [],
+        "reason": "Project contract value table and customer overview. No supplier concentration data whatsoever."
+      },
+      {
+        "candidate_id": "f9d7b9db-f240-542f-9483-1ad1698c1617",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [],
+        "reason": "Customer diversification business strategy. No supplier concentration data."
+      },
+      {
+        "candidate_id": "4388b40c-8da9-5a44-87f2-3f009cfc6023",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [],
+        "reason": "Customer concentration details about 新世界集團 and 新鴻基集團. No supplier concentration data."
+      },
+      {
+        "candidate_id": "a7ef6920-72e8-57e4-aea7-42b4de78cb87",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed 2018 top-5 supplier table with names, amounts, percentages, material categories, payment terms. High specificity but only one year of data."
+      },
+      {
+        "candidate_id": "995c0081-1df9-56d2-96da-d493d59b97c7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Mentions 168+ approved suppliers, top-5 supplier cooperation duration (1-13 years), but no concentration ratios. Limited supporting context."
+      },
+      {
+        "candidate_id": "b6664294-7841-5cb0-8678-a7e1de6c79cd",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "COVID-19 contingency plan mentioning top 5 suppliers and 72+ approved suppliers. No concentration ratios. Indirect supplier dependency context."
+      },
+      {
+        "candidate_id": "31800230-8bfd-50de-9c90-9955d7249726",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [],
+        "reason": "Legal boilerplate stating no directors or 5%+ shareholders have interests in top 5 suppliers. No concentration ratios."
+      },
+      {
+        "candidate_id": "72bd7b84-f61e-5aa9-ad53-70390e5ee8f4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.15,
+        "completeness_facets": [],
+        "reason": "Company overview and revenue breakdown by segment. No supplier concentration data."
+      },
+      {
+        "candidate_id": "6c97f146-d442-5519-9183-a11d88b13a53",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.15,
+        "completeness_facets": [],
+        "reason": "Financial summary with income statement. No supplier concentration data."
+      },
+      {
+        "candidate_id": "9c353518-f2ac-5264-a666-4e968e74b2fa",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.15,
+        "completeness_facets": [],
+        "reason": "COVID-19 impact discussion on business and projects. No supplier concentration data."
+      },
+      {
+        "candidate_id": "e11a5b1c-d4a6-59a8-857e-ca961bfa1c47",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [],
+        "reason": "COVID-19 contingency plan mentioning top 5 subcontractors, not supplier concentration ratios."
+      },
+      {
+        "candidate_id": "49965289-7eba-532e-acee-b908472eecda",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.1,
+        "completeness_facets": [],
+        "reason": "Definitions section with no supplier concentration data. Pure boilerplate glossary."
+      },
+      {
+        "candidate_id": "424497c5-17c8-5131-b4c6-894a140ca8dc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.1,
+        "completeness_facets": [],
+        "reason": "Continued definitions section. No supplier concentration data. Pure boilerplate glossary."
+      },
+      {
+        "candidate_id": "25aed3ef-6b90-51e1-a683-96b4993b483e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Mentions stable relationships with suppliers generally but no concentration ratios or specific supplier data."
+      }
+    ]
+  }
+}

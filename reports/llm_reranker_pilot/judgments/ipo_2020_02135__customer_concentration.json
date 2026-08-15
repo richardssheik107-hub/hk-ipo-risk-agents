@@ -1,0 +1,284 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "e39aa5a9-3858-55ba-9d63-8874295182b0",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate compliance statement about directors having no interest in top five customers; no concentration ratios provided."
+      },
+      {
+        "candidate_id": "78e529f4-2b93-5bd7-9e3d-f606bf1dbf33",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Provides top five customer revenue ratios (1.1%,2.7%,2.7%,2.4%) for FY2017-2019 and H1 2020 with customer identity context."
+      },
+      {
+        "candidate_id": "fcf50da3-89d1-50b9-ba38-4695c285aebc",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Discusses credit risk and trade receivables from major customers but no concentration ratios; tangential to concentration risk."
+      },
+      {
+        "candidate_id": "8e3e0711-8a08-5357-b987-0c1daf35e498",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed top five customer revenue ratios with customer type breakdown (individual vs institutional) for FY2017-2019 and H1 2020."
+      },
+      {
+        "candidate_id": "2f43bf7e-01fc-5bb7-a518-a38e9289e68f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Customer complaint statistics and quality improvement; no customer concentration data."
+      },
+      {
+        "candidate_id": "fa98d388-4aa2-51ab-a5b7-cccb7be9e872",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Directors' interests in assets and securities; no customer concentration data."
+      },
+      {
+        "candidate_id": "e3297888-f04f-557a-a266-d3fd20e5afc2",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Stock option plan details; no customer concentration data."
+      },
+      {
+        "candidate_id": "bd427f89-131e-5e15-a5e2-2192e091d3d3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Glossary of technical terms; no customer concentration data."
+      },
+      {
+        "candidate_id": "e897b65c-2452-5b80-b91c-562a4e7950f7",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Competition, COVID-19 impact, medical liability insurance; no customer concentration data."
+      },
+      {
+        "candidate_id": "f38e36a5-6e9e-5ed3-9571-f9aeffe1b00e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Provides supplier concentration ratios and customer counts; mentions no top five suppliers were customers but no customer concentration ratios."
+      },
+      {
+        "candidate_id": "91fde0cf-8113-561e-ae92-1e873a2fe1dd",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "reporting_period"
+        ],
+        "reason": "Accountant's report confirms no single customer exceeded 10% of revenue across all reporting periods; relevant negative evidence."
+      },
+      {
+        "candidate_id": "2be131cc-214a-518b-b4c0-acf4e7f03f9c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor profiles; no customer concentration data."
+      },
+      {
+        "candidate_id": "e71149ca-cb5b-5852-8c8a-06b9ea5b4309",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Property relocation risks and attracting new customers; no concentration data."
+      },
+      {
+        "candidate_id": "f02dbeef-5edf-5f59-bd79-c69bd66d79c7",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Deferred tax assets and financial investments; no customer concentration data."
+      },
+      {
+        "candidate_id": "a5d13b6f-4e6c-580f-8237-a46bea088239",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Glossary/definitions section; no customer concentration data."
+      },
+      {
+        "candidate_id": "551a0ca7-f816-5eb1-bddf-14941bcae46d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Technical terms glossary; no customer concentration data."
+      },
+      {
+        "candidate_id": "6ed76e03-d007-51a3-b53e-875181513644",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "revenue_denominator"
+        ],
+        "reason": "Revenue breakdown by payment method with total revenue figures; no customer concentration data."
+      },
+      {
+        "candidate_id": "67b8e5a0-0011-50a7-be0f-ea0f43917594",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Customer feedback management system details; no concentration data."
+      },
+      {
+        "candidate_id": "1f790660-5b54-53be-82e9-86852c3a66b8",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Management consulting contracts and contract liabilities; no concentration data."
+      },
+      {
+        "candidate_id": "bbc6dc92-23c6-5ed7-bb46-70e29bb8dad8",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Customer complaint cases and refunds table; no concentration data."
+      }
+    ]
+  }
+}

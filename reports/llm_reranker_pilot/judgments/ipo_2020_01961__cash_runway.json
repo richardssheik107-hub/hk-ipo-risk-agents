@@ -1,0 +1,334 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c20a4f62-0c73-54fc-a2ab-5576497e83af",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Actual cash flow statement from accountant's report showing ending cash for all periods incl. 9M2019 (RMB27,610k). Primary authority, high specificity, directly supports cash runway assessment."
+      },
+      {
+        "candidate_id": "4cc989b9-38c0-5ef0-a0a2-ae1d9e6d8120",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Operating cash flow section of accountant's report showing net operating cash flow incl. critical negative (96,780) for 9M2019. Primary evidence for cash burn rate assessment."
+      },
+      {
+        "candidate_id": "733e5f3b-7f74-5481-af94-ee137829e980",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Subsidiary disposal cash flow analysis (RMB51,835k inflow). Contextual to overall cash position but not directly relevant to ongoing cash runway assessment."
+      },
+      {
+        "candidate_id": "c80105f5-f026-55d2-a4e1-76cb04f81687",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative MD&A discussing negative 9M2019 operating cash outflow and mitigation measures. High relevance—explicitly addresses cash flow concerns and remedies."
+      },
+      {
+        "candidate_id": "44a1ff7e-567e-5b69-a6fe-45a7918253c6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial instruments table showing cash (RMB14,645k) for Dec 2016 only. Single outdated period, limited relevance to current cash runway."
+      },
+      {
+        "candidate_id": "b2ba4e34-4cc3-5740-b4c3-f08b73a82b28",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Comprehensive cash flow summary from prospectus showing both ending cash (27,610 for 9M2019) and operating cash flow (-96,780). Most complete single-source evidence for cash runway."
+      },
+      {
+        "candidate_id": "b0a8d11b-085f-56a6-89af-2ca7ca2d41b2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Parent company (not consolidated) balance sheet showing cash of RMB1,389k at Sep 2019. Parent-only view, not representative of group cash runway."
+      },
+      {
+        "candidate_id": "1dbaa442-1cf6-59b1-8532-aea61ed4061e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Full cash flow statement summary from financial data section showing ending cash and operating cash flow for all periods incl. 9M2019. Equivalent in value to candidate b2ba4e34."
+      },
+      {
+        "candidate_id": "bcd8df91-6051-5b6d-869e-720bcf6242c4",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Accounting policy defining cash and cash equivalents. Standard boilerplate with no period-specific data; no direct cash runway value."
+      },
+      {
+        "candidate_id": "29b2d70c-556e-5bf2-b4be-0a072678bec4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Business overview mentioning operating cash flows (38.3M, 74.8M, 32.7M, -96.8M) across periods. Supporting evidence but less detailed than financial statements."
+      },
+      {
+        "candidate_id": "cf16a860-e0e4-5bc0-8172-a5338474e6bb",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial instruments table showing cash for Dec 2017 (105,707) and Dec 2018. No most-recent period; limited direct cash runway value."
+      },
+      {
+        "candidate_id": "294416c4-a794-5646-8f52-7a6e73296f2b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Financial liabilities fair value discussion; cash mentioned only in passing for fair value assessment. No direct cash runway data."
+      },
+      {
+        "candidate_id": "a0ee06bd-ef2f-5206-8944-9eed54d8056f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Selected current assets/liabilities showing cash across 5 periods incl. Sep 2019 (27,610) and Dec 2019 (50,897). Useful for tracking cash trajectory."
+      },
+      {
+        "candidate_id": "2ed1487e-4f76-518f-8bc3-62843a29029c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Credit risk exposure table showing cash as financial asset (89,270 for Dec 2018, 27,610 for Sep 2019). Cash data present but in credit risk context."
+      },
+      {
+        "candidate_id": "4c110b58-caa5-5a6b-b9c8-73102d40675f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Consolidated balance sheet from accountant's report showing cash (14,645; 105,707; 89,270; 27,610) for 4 periods incl. Sep 2019. Authoritative ending cash source."
+      },
+      {
+        "candidate_id": "b704c6a9-38a5-5aae-94ce-acc2c5e0e87d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Acquisition cash flow analysis showing RMB47k cash acquired in subsidiary purchase. Immaterial to overall cash runway."
+      },
+      {
+        "candidate_id": "d65c9eb4-d03d-5be4-987c-b1578785d65d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Subsidiary disposal cash flow analysis (RMB552k consideration). Immaterial and tangential to cash runway assessment."
+      },
+      {
+        "candidate_id": "40a2dad8-e0fd-5cda-adaa-df156ba21547",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Credit risk exposure table showing cash (89,270 for Dec 2018, 27,610 for Sep 2019). Duplicates cash data already available from primary sources."
+      },
+      {
+        "candidate_id": "ffc5e4a6-ec70-5be8-a7d6-9c7c0e6d12b2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Financial risk management policy section. Generic boilerplate listing cash as main financial instrument; no period-specific data."
+      },
+      {
+        "candidate_id": "339ed453-e419-525c-b927-73d7843552ba",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Credit risk management section showing cash (27,610 for Sep 2019) in exposure table. Redundant with primary cash flow statement data."
+      }
+    ]
+  }
+}

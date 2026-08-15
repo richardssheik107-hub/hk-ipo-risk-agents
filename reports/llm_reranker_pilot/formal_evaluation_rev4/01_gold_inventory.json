@@ -1,0 +1,54 @@
+{
+  "benchmark_label": "POST-FREEZE RETROSPECTIVE BENCHMARK",
+  "case_count": 10,
+  "risk_task_count": 80,
+  "evidence_count": 143,
+  "required_evidence_count": 116,
+  "primary_evidence_count": 92,
+  "unique_gold_page_count": 114,
+  "canonical_cases": [
+    "ipo_2020_00368",
+    "ipo_2020_01167",
+    "ipo_2020_01408",
+    "ipo_2020_01961",
+    "ipo_2020_01942",
+    "ipo_2020_02057",
+    "ipo_2020_02135",
+    "ipo_2020_02263",
+    "ipo_2020_02599",
+    "ipo_2021_00013"
+  ],
+  "runtime_case_aliases": {
+    "ipo_2020_00368": "ipo_2020_00368",
+    "ipo_2020_01167": "ipo_2020_01167",
+    "ipo_2020_01408": "ipo_2020_01408",
+    "ipo_2020_01961": "ipo_2020_01961",
+    "ipo_2020_01942": "ipo_2020_01942",
+    "ipo_2020_02057": "ipo_2020_02057",
+    "ipo_2020_02135": "ipo_2020_02135",
+    "ipo_2020_02263": "ipo_2020_02263",
+    "ipo_2020_02599": "ipo_2020_02599",
+    "ipo_2020_00013": "ipo_2021_00013"
+  },
+  "requested_case_id_difference": {
+    "runtime": "ipo_2020_00013",
+    "canonical_gold": "ipo_2021_00013",
+    "sample_changed": false
+  },
+  "gold_ref": "4ba86a4ebbb3033b6c9966d07f5351afa18dc206",
+  "gold_source_hashes": {
+    "expert_results/ipo_2020_00368/pass1/expert_annotation_v1.json": "92e9d6be1fd3a40da0f61e41bdd0522e0e3f27a8d9414086fc1327fb3abd2520",
+    "expert_results/ipo_2020_01167/pass1/expert_annotation_v1.json": "a120ebe548d57f4313b9e97cd36bb8fc73f376def40e1a8642bd2ee36c187ca3",
+    "expert_results/ipo_2020_01408/pass1/expert_annotation_v1.json": "57b2617f6e9e8419e82dfcbe5872abfdd73f336dda67e933a4c127247439426e",
+    "expert_results/ipo_2020_01961/pass1/expert_annotation_v1.json": "106a8b3cdd74930aaf997c237f8f5f73a9a60571861668a018bece2af8e04178",
+    "expert_results/ipo_2020_01942/pass1/expert_annotation_v1.json": "1dab978381c287c26d3045040e2a9b900972e628bb0d8ac610fb97682a851778",
+    "expert_results/ipo_2020_02057/pass1/expert_annotation_v1.json": "c4b8c993ef63829a899bd89c01cad4a1c9af48332ba9aa6e868842bae3c56936",
+    "expert_results/ipo_2020_02135/pass1/expert_annotation_v1.json": "59ac2ea072ac2b860118c523d56c2784c7c5d69e37231e550861491059fcb3a5",
+    "expert_results/ipo_2020_02263/pass1/expert_annotation_v1.json": "e4cb8eed8777b9149ee697a454cfd7cb24b0eff258db8217a2e28359fa8f915b",
+    "expert_results/ipo_2020_02599/pass1/expert_annotation_v1.json": "d5eaece55db64921367b5836e34565a2dcd68cb3827460e95b02f612b23780ad",
+    "expert_results/ipo_2021_00013/pass1/expert_annotation_v1.json": "c59ecef39b11cd42620584d0c0bec2dd73219a70683566fd5af1e0b26377c973"
+  },
+  "gold_set_drift": false,
+  "previously_exposed_at_project_level": true,
+  "reranker_contract_frozen_before_gold": true
+}

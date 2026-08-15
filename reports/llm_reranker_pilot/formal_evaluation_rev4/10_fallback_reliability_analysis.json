@@ -1,0 +1,84 @@
+{
+  "overall": {
+    "task_count": 80,
+    "completed": 65,
+    "fallback": 15,
+    "fallback_rate": 0.1875
+  },
+  "by_domain": {
+    "business": {
+      "task_count": 10,
+      "completed": 9,
+      "fallback": 1,
+      "fallback_rate": 0.1
+    },
+    "financial": {
+      "task_count": 50,
+      "completed": 42,
+      "fallback": 8,
+      "fallback_rate": 0.16
+    },
+    "legal": {
+      "task_count": 20,
+      "completed": 14,
+      "fallback": 6,
+      "fallback_rate": 0.3
+    }
+  },
+  "by_risk": {
+    "cash_runway": {
+      "task_count": 10,
+      "completed": 9,
+      "fallback": 1,
+      "fallback_rate": 0.1
+    },
+    "continuous_loss": {
+      "task_count": 10,
+      "completed": 9,
+      "fallback": 1,
+      "fallback_rate": 0.1
+    },
+    "customer_concentration": {
+      "task_count": 10,
+      "completed": 8,
+      "fallback": 2,
+      "fallback_rate": 0.2
+    },
+    "material_litigation_compliance": {
+      "task_count": 10,
+      "completed": 7,
+      "fallback": 3,
+      "fallback_rate": 0.3
+    },
+    "precommercial_product": {
+      "task_count": 10,
+      "completed": 9,
+      "fallback": 1,
+      "fallback_rate": 0.1
+    },
+    "redemption_rights": {
+      "task_count": 10,
+      "completed": 7,
+      "fallback": 3,
+      "fallback_rate": 0.3
+    },
+    "revenue_growth": {
+      "task_count": 10,
+      "completed": 9,
+      "fallback": 1,
+      "fallback_rate": 0.1
+    },
+    "supplier_concentration": {
+      "task_count": 10,
+      "completed": 7,
+      "fallback": 3,
+      "fallback_rate": 0.3
+    }
+  },
+  "diagnostic_replays": 3,
+  "diagnostic_replays_included_in_metrics": 0,
+  "diagnostic_interpretation": "diagnostic non-reproduction",
+  "real_llm_calls_during_evaluation": 0,
+  "gold_leakage": false,
+  "blind_2025_accessed": false
+}

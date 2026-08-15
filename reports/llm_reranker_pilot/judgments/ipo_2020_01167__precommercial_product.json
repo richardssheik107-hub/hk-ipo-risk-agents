@@ -1,0 +1,333 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "8bf13aef-dd20-5ecb-9722-0a0345d665fe",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "no_product_sales",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Explicit statement: products not approved for commercial sale, no revenue from product sales. Includes financial losses and commercialization plans with AbbVie."
+      },
+      {
+        "candidate_id": "e70d13d0-c89a-51f0-8d5b-d48dadc22e66",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "clinical_stage"
+        ],
+        "reason": "Pipeline table showing all clinical-stage and IND-pending candidates with phases. JAB-3068 identified as core product. Directly establishes pre-commercial development status."
+      },
+      {
+        "candidate_id": "bb8f0af5-e949-51a9-82b4-537130d02b6a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Discusses expected R&D cost increases and plans to expand commercialization team. Indirectly implies pre-commercial status through future-oriented cost expectations."
+      },
+      {
+        "candidate_id": "d8343f42-1024-584f-bcfb-0a9a28a17816",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "clinical_stage",
+          "commercialization"
+        ],
+        "reason": "Detailed pipeline narrative plus table showing clinical stages, JAB-21000 IND plans, combination therapy strategy. Clearly establishes pre-commercial development status."
+      },
+      {
+        "candidate_id": "f495c17f-e4fd-5b83-92d0-4a5ab9fc480f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Detailed manufacturing facility construction plans (completion 2023), GMP compliance, CMO reliance for biologics. Shows pre-commercial manufacturing preparations."
+      },
+      {
+        "candidate_id": "797cd84e-d42e-5049-81fe-2b4277e842cc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "commercialization"
+        ],
+        "reason": "Strategy overview including building manufacturing and commercialization capabilities, R&D platform description. Indirectly supports pre-commercial status."
+      },
+      {
+        "candidate_id": "e3a48f39-9f10-5869-b737-99cdfacc632e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Financial loss table showing R&D and administrative expenses with no revenue line. Operating and net losses across all periods. Supports no-revenue pre-commercial status."
+      },
+      {
+        "candidate_id": "f8f33c7a-2e88-52fb-ac6b-13d2ae6e0c66",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "Subsidiary list showing all entities engaged in new drug R&D or investment holding. Indirectly confirms R&D-only nature but no direct commercialization evidence."
+      },
+      {
+        "candidate_id": "842e1519-2ebf-5ca1-a418-d0c808556115",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "clinical_stage",
+          "commercialization"
+        ],
+        "reason": "Discusses China option exercise for SHP2 commercialization rights, JAB-21000 IND plans, pipeline candidates. Supports pre-commercial development stage."
+      },
+      {
+        "candidate_id": "f6c73b25-6501-5dcf-b428-cb0d253ea2d4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "core_product",
+          "clinical_stage",
+          "commercialization"
+        ],
+        "reason": "Competitive landscape: no approved SHP2/BET/KRAS inhibitors globally. All candidates in clinical stage. Supports pre-commercial status for entire pipeline."
+      },
+      {
+        "candidate_id": "99891e31-a17d-5bf7-8b3d-ba7653a96b46",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "clinical_stage"
+        ],
+        "reason": "Pipeline table from business section showing clinical stages and commercial rights for all candidates including core product JAB-3068. Directly establishes development status."
+      },
+      {
+        "candidate_id": "f84d26ce-c1e2-528c-bea5-f087f77d04f0",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Detailed commercialization strategy: plans to build marketing and sales teams, AbbVie partnership for global markets, pre-launch preparation. Shows pre-commercial stage."
+      },
+      {
+        "candidate_id": "1345334e-e7e9-5bdc-adf5-6414847f98b1",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "no_product_sales",
+          "revenue_generation",
+          "clinical_stage"
+        ],
+        "reason": "Explicit: products not approved for commercial sale, no revenue from product sales. Describes as clinical-stage pharma company with operating losses. Strongest evidence."
+      },
+      {
+        "candidate_id": "bf018d88-53ac-5f41-9544-a7041b6ed19b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "no_product_sales",
+          "revenue_generation",
+          "development_stage"
+        ],
+        "reason": "Risk factor: development-stage pharma company, significant net losses since inception. Revenue depends on regulatory approval and commercialization. Specific loss figures."
+      },
+      {
+        "candidate_id": "369b9a6f-c2a1-513e-8359-4fc664d784ef",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Strategy to build GMP manufacturing and commercialization capabilities in China. Facilities under construction through 2023. Plans to recruit sales team pre-launch."
+      },
+      {
+        "candidate_id": "553a3942-67d5-5604-8375-afd753b91ac9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "development_stage",
+          "clinical_stage"
+        ],
+        "reason": "Risk factors about R&D challenges for undruggable targets. Mentions specific candidates and R&D costs. Indirectly supports pre-commercial development stage."
+      },
+      {
+        "candidate_id": "c8131b1a-f1fd-5453-adb5-7f4969b7cf15",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "no_product_sales",
+          "revenue_generation",
+          "development_stage",
+          "commercialization"
+        ],
+        "reason": "Explicit: no commercial sales, no product revenue. Development-stage biopharma since 2015. Limited experience in commercial-scale production, sales and marketing."
+      },
+      {
+        "candidate_id": "e72261bb-1c4d-5f80-a838-d8da3b5338b6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Standard competitive risk factor boilerplate about cancer treatment competition. Mentions core product and regulatory approval requirements but no specific pre-commercial evidence."
+      },
+      {
+        "candidate_id": "72fcba33-b431-5e87-abcb-77d3b0ff3c90",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "development_stage",
+          "clinical_stage"
+        ],
+        "reason": "Company milestones showing IND approvals, clinical trial initiations, AbbVie collaboration. Subsidiaries all R&D-focused. Supports pre-commercial development stage."
+      },
+      {
+        "candidate_id": "50f0388f-5476-5d7a-b2f7-a2491b94e812",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "clinical_stage"
+        ],
+        "reason": "Detailed description of core product JAB-3068 as second SHP2 inhibitor with FDA IND approval. Clinical trial phases described. Supports pre-commercial development stage."
+      }
+    ]
+  }
+}

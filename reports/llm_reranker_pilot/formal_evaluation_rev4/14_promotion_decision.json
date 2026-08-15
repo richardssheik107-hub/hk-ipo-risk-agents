@@ -1,0 +1,47 @@
+{
+  "baseline_reproduced": true,
+  "gold_set_drift": false,
+  "gold_leakage": false,
+  "blind_2025_accessed": false,
+  "real_llm_calls_during_evaluation": 0,
+  "stage1_required_recall_at20": 0.5948275862068966,
+  "llm_required_recall_at3": 0.4051724137931034,
+  "llm_required_recall_at5": 0.5086206896551724,
+  "llm_completion_at5": 0.45,
+  "llm_mrr": 0.33040241958852506,
+  "llm_delta_vs_stage1": {
+    "required_at_1": 0.06896551724137931,
+    "required_at_3": 0.06034482758620685,
+    "required_at_5": 0.08620689655172409,
+    "required_at_10": 0.07758620689655171,
+    "required_at_20": 0.0,
+    "completion_at_3": 0.11249999999999999,
+    "completion_at_5": 0.07500000000000001,
+    "completion_at_10": 0.08750000000000002,
+    "mrr": 0.061378301706715266
+  },
+  "official_fallback_rate": 0.1875,
+  "semantic_ranking_result": "POSITIVE",
+  "structured_output_reliability": "POOR",
+  "llm_reranker_pilot_promising": false,
+  "promotion_criteria": {
+    "required_at_3_beats_best_deterministic": true,
+    "required_at_5_beats_best_deterministic": true,
+    "completion_at_5_at_least_best_deterministic": true,
+    "mrr_at_least_v1": true,
+    "no_domain_required_at_5_regression": false,
+    "stage1_at_20_preserved": true,
+    "no_gold_leakage": true,
+    "contract_frozen_before_gold": true,
+    "blind_2025_untouched": true
+  },
+  "domain_regressions": [
+    {
+      "domain": "business",
+      "best_deterministic_required_at_5": 0.15384615384615385,
+      "llm_required_at_5": 0.07692307692307693
+    }
+  ],
+  "next_recommended_phase": "PHASE_0_6D_RERANKER_V1_1",
+  "production_ready": false
+}
