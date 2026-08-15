@@ -13,6 +13,7 @@ on:
       - "tests/unit/test_annotation_phase2b.py"
       - "tests/unit/test_annotation_phase2b_legacy_v2.py"
       - "expert_results/ipo_*/audit/structured_input_backfill_v1.json"
+      - "reports/annotation_audit/phase2b/**"
       - ".github/workflows/expert-annotation-phase2b.yml"
 
 jobs:
@@ -31,6 +32,14 @@ jobs:
         run: python scripts/run_expert_annotation_phase2b.py
       - name: Verify pass1 artifacts were not modified
         run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json'
+      - name: Verify committed Case backfills are reproducible
+        run: git diff --exit-code -- 'expert_results/ipo_*/audit/structured_input_backfill_v1.json'
+      - name: Verify committed Phase-2b reports are reproducible
+        run: |
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_summary.json
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_backfill_results.csv
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_unresolved.csv
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_reaudit_conflicts.csv
       - name: Byte-compile Phase-2b modules
         run: python -m py_compile src/ipo_risk/quality/annotation_backfill_normalizers.py src/ipo_risk/quality/annotation_backfill_normalizers_v2.py src/ipo_risk/quality/annotation_phase2b.py scripts/run_expert_annotation_phase2b.py
       - name: Upload Phase-2b results
