@@ -1,0 +1,39 @@
+name: materialize-expert-annotation-phase2b
+
+on:
+  push:
+    branches:
+      - agent/expert-annotation-phase2b
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/expert-annotation-phase2b
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .[dev]
+      - run: python scripts/run_expert_annotation_phase2b.py
+      - name: Commit only governed Phase-2b artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'expert_results/ipo_*/audit/structured_input_backfill_v1.json'
+          git add reports/annotation_audit/phase2b/phase2b_summary.json
+          git add reports/annotation_audit/phase2b/phase2b_backfill_results.csv
+          git add reports/annotation_audit/phase2b/phase2b_unresolved.csv
+          git add reports/annotation_audit/phase2b/phase2b_reaudit_conflicts.csv
+          git diff --cached --name-only
+          if git diff --cached --quiet; then
+            echo "No Phase-2b artifacts to materialize."
+            exit 0
+          fi
+          git commit -m "phase2b: materialize P0 backfill artifacts [skip ci]"
+          git push origin HEAD:agent/expert-annotation-phase2b
