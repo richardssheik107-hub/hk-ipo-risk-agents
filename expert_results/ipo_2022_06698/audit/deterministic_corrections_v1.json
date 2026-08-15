@@ -11,11 +11,26 @@
     {
       "risk_code": "supplier_concentration",
       "finding_code": "CONCENTRATION_LABEL_CONFLICT",
-      "original": {"applicable": true, "expected_status": "verified", "expected_level": "medium"},
-      "replacement": {"applicable": false, "expected_status": "rejected", "expected_level": "not_applicable"},
+      "original": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "replacement": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
       "audit_message": "Recomputed supplier concentration is largest=13.7%, top-five=32.4%; stored label conflicts with 30/60 medium and 50/80 high thresholds.",
-      "deterministic_details": {"largest_pct": 13.7, "top_five_pct": 32.4}
+      "deterministic_details": {
+        "largest_pct": 13.7,
+        "top_five_pct": 32.4
+      }
     }
   ],
-  "safety": {"pass1_overwritten": false, "evidence_text_modified": false, "reasoning_text_modified": false}
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false
+  }
 }
