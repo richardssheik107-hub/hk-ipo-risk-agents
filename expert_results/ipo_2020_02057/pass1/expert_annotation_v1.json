@@ -1,0 +1,406 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_02057",
+  "stock_code": "2057.HK",
+  "company_name": "中通快遞－ＳＷ",
+  "document_id": "ipo_2020_02057",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "截至2020年6月30日止六個月，合併現金流量表列示經營活動產生的現金流量淨額為正人民幣1,430,061千元；依Protocol v1.1.1，正或零經營現金流不得視為cash burn，因此不存在可計算的月度經營現金消耗或cash runway觸發。同期現金及現金等價物為人民幣5,261,920千元。  ",
+      "calculation_required": true,
+      "calculation_method": "cash_runway",
+      "calculation_inputs": {
+        "period": "six months ended 30 June 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 5261920,
+        "net_cash_from_operating_activities": 1430061,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告列示2017年、2018年、2019年以及截至2019年和2020年6月30日止六个月的净利润均为正，未出现任何可比亏损期间，因此不满足连续亏损触发条件。 ",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparable_periods": [
+          {"period": "year ended 31 December 2017", "net_profit": 3158900},
+          {"period": "year ended 31 December 2018", "net_profit": 4387912},
+          {"period": "year ended 31 December 2019", "net_profit": 5671267},
+          {"period": "six months ended 30 June 2019", "net_profit": 2046741},
+          {"period": "six months ended 30 June 2020", "net_profit": 1824544}
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_periods": 0,
+        "assessment": "no_continuous_loss"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "合并综合收益表显示收入持续为正增长：2018年较2017年增长约34.80%，2019年较2018年增长约25.59%，截至2020年6月30日止六个月较2019年同期增长约3.21%；不存在低于0%的可比收入增长。 ",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {"period": "year ended 31 December 2017", "revenue": 13060073},
+          {"period": "year ended 31 December 2018", "revenue": 17604451},
+          {"period": "year ended 31 December 2019", "revenue": 22109946},
+          {"period": "six months ended 30 June 2019", "revenue": 9997671},
+          {"period": "six months ended 30 June 2020", "revenue": 10318310}
+        ]
+      },
+      "calculation_result": {
+        "growth_2018_vs_2017_pct": 34.7959617071,
+        "growth_2019_vs_2018_pct": 25.592931015,
+        "growth_2020H1_vs_2019H1_pct": 3.2071369422,
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示2017年、2018年、2019年及截至2020年6月30日止六个月的前五大客户合计占总收入均低于6%。该严格上界同时意味着最大单一客户低于6%，显著低于30%/50%单一客户及60%/80%前五大客户阈值。 ",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "years ended 31 December 2017, 2018 and 2019 and six months ended 30 June 2020",
+        "top_five_customer_upper_bound_pct": 6,
+        "maximum_customers_considered": 5,
+        "bound_operator": "<"
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<6%",
+        "top_five_customer_bound": "<6%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示往绩记录期间各年度前五大供应商采购占比均低于30%，截至2020年6月30日止六个月低于35%，且该六个月五家最大供应商均无单一供应商达到30%。因此最大供应商与前五大供应商均排除冻结的medium/high集中度阈值。 ",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "six months ended 30 June 2020",
+        "single_supplier_upper_bound_pct": 30,
+        "top_five_supplier_upper_bound_pct": 35,
+        "maximum_suppliers_considered": 5,
+        "bound_operator": "<"
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<30%",
+        "top_five_supplier_bound": "<35%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.94,
+      "reasoning": "SPECIAL_RIGHTS_EFFECTIVE：2018年6月12日投资者权益协议向Ali ZT及Cainiao Smart授予优先购买、优先认购、董事任命/参与、同意、信息及咨询等特别权利，招股书明确这些权利于最近实际可行日期仍维持有效，并在后文明确称为“特别权利”。Protocol将实际有效或可恢复的special rights列为redemption_rights复核候选；招股书未显示这些权利已在本次香港上市前终止，因此按冻结政策标记needs_review，severity暂列medium。  ",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.95,
+      "reasoning": "MATERIALITY_RESOLUTION_AMBIGUITY：公司及若干董事、高级职员和2016年IPO承销商自2017年起涉及推定证券集体诉讼；截至招股书披露，部分案件仍处于搁置或待裁决状态，公司拟积极抗辩。Business披露提示待决案件可能对业务、财务状况、经营业绩、现金流及声誉造成重大不利影响，而会计师报告又称当前未决法律或行政程序不会对业务或财务状况造成重大影响。对待决事项的最终解决及重大性存在不确定性，按Protocol应needs_review，severity暂列medium。   ",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_02057",
+      "stock_code": "2057.HK",
+      "company_name": "中通快遞－ＳＷ",
+      "document_id": "ipo_2020_02057",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示核心快递及货运代理服务已持续向客户商业销售并确认大额收入；截至2020年6月30日止六个月快递服务收入为人民币8,947,074千元，总收入为人民币10,318,310千元，并明确标准快递和货运代理服务具有可观察的独立销售价格。因此不存在核心产品/服务尚未商业化且无产品销售收入的情形。 ",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "cash_runway",
+      "page": 297,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併資產負債表\n（金額單位以千元計，股份及每股數據除外）\n於12月31日 於6月30日\n2017年 2018年 2019年 2020年\n附註 人民幣 人民幣 人民幣 人民幣 美元\n（附註2）\n資產\n流動資產：\n現金及現金等價物 5,425,024 4,622,554 5,270,204 5,261,920 744,776",
+      "evidence_reason": "会计师报告提供同期期末现金及现金等价物，作为cash runway标准现金输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "cash_runway",
+      "page": 307,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n人民幣 人民幣 人民幣 人民幣 人民幣 美元\n（未經審計） （附註2）\n經營活動產生的現金流量淨額 3,630,684 4,404,051 6,304,186 2,626,074 1,430,061 202,415",
+      "evidence_reason": "会计师报告直接证明截至2020年6月30日止六个月经营活动现金流净额为正，按冻结政策不存在operating cash burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "continuous_loss",
+      "page": 301,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n附註 人民幣 人民幣 人民幣 人民幣 人民幣 美元\n（未經審計）\n扣除所得稅及權益法核算的\n投資損失前的利潤 3,820,943 5,336,431 6,757,118 2,539,415 2,268,727 321,117\n所得稅費用 14 (646,361) (929,133) (1,078,295) (480,661) (428,074) (60,590)\n權益法核算的投資損失 (15,682) (19,386) (7,556) (12,013) (16,109) (2,280)\n淨利潤 3,158,900 4,387,912 5,671,267 2,046,741 1,824,544 258,247",
+      "evidence_reason": "会计师报告列示所有所示可比年度/期间均为正净利润，排除连续亏损。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "revenue_growth",
+      "page": 300,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n附註 人民幣 人民幣 人民幣 人民幣 人民幣 美元\n（未經審計）\n收入（包括截至2017年、2018年、\n2019年12月31日止年度、截至\n2019年及2020年6月30日止六個\n月的關聯方收入分別為零、零、\n人民幣36,366元、人民幣16,055元\n及人民幣34,352元） 13,060,073 17,604,451 22,109,946 9,997,671 10,318,310 1,460,462",
+      "evidence_reason": "会计师报告提供可比年度及半年度收入，支持收入增长率计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "customer_concentration",
+      "page": 163,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "若干企業客戶，包括垂直電商和傳統商戶，將他們的產品配送到消費者手中。截至\n2017年、2018年和2019年12月31日止各年度及截至2020年6月30日止六個月，我們的\n前五大客戶佔我們總收入的比例均低於6%。",
+      "evidence_reason": "Business正式披露前五大客户合计占收入严格低于6%，足以用bound proof排除冻结集中度阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "supplier_concentration",
+      "page": 166,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們的五大供應商在往績記錄期間每年的採購量佔我們採購量的比例均低於30%，而\n截至2020年6月30日止六個月的採購量佔比低於35%。截至2020年6月30日止六個月，\n五家最大的供應商均未單獨佔到截至2020年6月30日止六個月的半年度採購量的30%以\n上。",
+      "evidence_reason": "Business正式披露前五大供应商及单一供应商严格上界，足以排除30%/60%及50%/80%冻结阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "redemption_rights",
+      "page": 228,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "投資者權益協議\n我們就阿里巴巴及菜鳥網絡的投資與Alibaba ZT Investment Limited（「Ali ZT」）（阿里\n巴巴為特定目的間接全資擁有的子公司）、Cainiao Smart Logistics Investment Limited\n（「Cainiao Smart」）（阿里巴巴擁有大部分權益的間接子公司）及其中的若干現有股東，\n即賴梅松先生、賴建法先生及王吉雷先生（包括任何彼等允許轉讓的任何受讓人）（「現\n有股東」），訂立日期為2018年6月12日的投資者權益協議（「投資者權益協議」）。投資\n者權益協議載有（其中包括）Alibaba ZT及菜鳥網絡的以下權利（於最近實際可行日期仍\n維持有效）（如適用）：\n(a) 優先購買權。賴梅松先生（「創始人」）於任何時候建議將構成控制權變更（定義見\n投資者權益協議）的本公司證券轉讓時，創始人應先向Ali ZT及Cainiao Smart作\n出有關證券的要約（「優先購買權」）。Ali ZT及Cainiao Smart可選擇以創始人要約\n的價格及條款行使其優先購買權以購買證券，或行使其隨售權利以出售其證券。\n(b) 優先認購權。倘本公司建議發行其任何證券，Ali ZT、Cainiao Smart及現有股東\n應有權購買(y)一部分證券，其份額等於(i)該股東擁有的所有證券股份數目除以\n(ii)所有已發行流通證券的股份總數所得的商數，或與本公司討論後，股東之間\n相互商定的其他百分比，加上(z)任何其關聯公司並未購買的證券。",
+      "evidence_reason": "正式投资者权益协议披露实际投资者特殊权利且明确在最近实际可行日期仍有效，触发Protocol对有效special rights的复核要求。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "redemption_rights",
+      "page": 230,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "本公司的陳述及呈列的理由；(b)相關特別權利對於美國證券交易所上市的公司並不罕\n見；及(c)保薦人對投資者權益協議項下授出的相關權利、批准訂立投資者權益協議的\n董事會會議記錄及相關美國公開文件的審閱。\n本公司確認，阿里巴巴獲授的特別權利與任何美國適用法律獲法規（包括任何紐交所規\n則）並無衝突。",
+      "evidence_reason": "后续正式披露明确将投资者权益协议项下权利称为“特别权利”，支持special-rights分类。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "page": 172,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "法律訴訟\n我們可能會不時面臨我們日常業務過程所引起的各種法律或行政索賠以及訴訟。訴訟\n或任何其他法律或行政程序，無論結果如何，都可能會導致大量成本和我們的資源（包\n括我們管理層的時間和注意力）被耗用。\n自2017年5月起，本公司及若干董事及高級職員，以及本公司2016年10月首次公開發\n售的承銷商（「承銷商被告」）已被列為下列推定證券集體訴訟的被告。",
+      "evidence_reason": "Business法律诉讼章节确认实际存在推定证券集体诉讼，构成待决法律事项的基础事实。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "page": 173,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "2019年7月17日，法院批准了被告的聯合動議。2019年9月10日，原告動議要求法院許\n可提出第二份修訂申訴，而本公司及承銷商被告則反對。該動議仍在等待裁決。\n這些案件正處於初步階段。經考量法律顧問提供的意見，我們認為這些案件缺乏理\n據，原因在於（其中包括其他原因），在批准被告的撤銷共同動議時，法院認為，根據\n法律，原告未能指控任何違反美國證券法律的行為。因此，我們擬對該訴訟案進行積\n極抗辯。對於與待決案件有關的風險和不確定性，請參閱「風險因素－與我們的股份、\n美國存託股及上市有關的風險－我們已在推定股東集體訴訟案中被列為被告，這可能\n會對我們的業務、財務狀況、經營業績、現金流量及聲譽造成重大不利影響。」",
+      "evidence_reason": "该页证明至少一项动议仍待裁决、案件仍处初步阶段，并明确引用可能产生重大不利影响的风险，支持未解决性与潜在重大性。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "material_litigation_compliance",
+      "page": 355,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "或有事項\n貴集團於日常業務過程中定期面對法律或行政訴訟程序。貴集團認為，貴集團現\n時作為一方的任何當前未決的法律或行政訴訟程序不會對其業務或財務狀況造成\n重大影響。\n貴集團並無按適用的中國法律法規為僱員福利計劃作出足夠供款，惟貴集團已於\n歷史財務資料就估計未支付金額入賬為應計款項。然而，貴集團並無就未繳足利\n息及相關中國政府機關可能施加的罰款於歷史財務資料作出任何應計款項，乃由\n於貴集團相信相關中國政府機關施加任何重大利息或罰款的可能性不高。\n自2017年5月起，貴集團、貴集團若干董事及高級職員及貴集團於2016年10月首\n次公開發售的承銷商在三件推定證券集體訴訟中被列為被告。貴集團管理層認為\n相關申索並無法律依據並有意作出積極抗辯。",
+      "evidence_reason": "会计师报告对当前未决程序的重大性作出“不造成重大影响”的管理层判断，与Business风险披露中的潜在重大不利影响形成需要复核的重大性判断差异。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "precommercial_product",
+      "page": 324,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入分拆\n截至12月31日止年度 截至6月30日止六個月\n2017年 2018年 2019年 2019年 2020年\n人民幣 % 人民幣 % 人民幣 % 人民幣 % 人民幣 美元 %\n（千元） （未經審計）\n快遞服務 12,173,690 93.2 15,400,080 87.5 19,606,214 88.7 8,823,274 88.3 8,947,074 1,266,376 86.7\n貨運代理服務 269,557 2.1 1,278,741 7.3 1,235,961 5.6 639,402 6.4 762,571 107,935 7.4\n物料銷售 591,716 4.5 812,866 4.6 1,089,977 4.9 501,407 5.0 498,214 70,518 4.8\n其他 25,110 0.2 112,764 0.6 177,794 0.8 33,588 0.3 110,451 15,633 1.1\n總收入 13,060,073 100.0 17,604,451 100.0 22,109,946 100.0 9,997,671 100.0 10,318,310 1,460,462 100.0\n履約義務\n履約義務為合約中轉讓商品或服務至客戶的一項承諾，且為根據美國公認會計準\n則確認收入的基準。客戶一般與貴集團就服務訂立合約。貴集團絕大部分服務合\n約僅包括一項履約義務，即快遞或貨運代理服務。然而，倘一份合約包含多於一\n項履約義務，則貴集團將總交易價格分配給每項履行義務，其金額基於每項履行\n義務所承諾的商品或服務的估計單獨售價。於該等情況下，由於貴集團經常以可\n觀察獨立銷售價格銷售標準快遞服務及貨運代理服務，因此可觀察的獨立銷售價\n格用於釐定快遞服務及貨運代理服務的獨立銷售價格。",
+      "evidence_reason": "会计师报告直接证明核心快递/货运代理服务已商业销售并产生大额收入，排除precommercial_product条件。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": ["prose_string", "markdown", "comma_separated_text", "equation_in_one_string"],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": ["primary", "supporting", "context", "cross_check"],
+      "requirement": ["required", "alternative", "supporting_only"],
+      "source_authority": ["audited_financial_statement", "accountants_report", "financial_information", "business_section", "legal_disclosure", "corporate_structure", "pre_ipo_investment", "summary", "risk_factors", "other"],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
