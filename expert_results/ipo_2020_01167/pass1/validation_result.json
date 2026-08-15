@@ -1,0 +1,26 @@
+{
+  "case_id": "ipo_2020_01167",
+  "stage": "pass1",
+  "source_annotation": "expert_annotation_v1.json",
+  "valid": false,
+  "issues": [
+    {
+      "code": "SCHEMA_INVALID",
+      "path": "risks.2.expected_level",
+      "message": "Input should be 'low', 'medium', 'high', 'critical' or 'not_applicable'",
+      "severity": "error"
+    },
+    {
+      "code": "SCHEMA_INVALID",
+      "path": "risks.3.expected_level",
+      "message": "Input should be 'low', 'medium', 'high', 'critical' or 'not_applicable'",
+      "severity": "error"
+    },
+    {
+      "code": "SCHEMA_INVALID",
+      "path": "risks.7.expected_level",
+      "message": "Input should be 'low', 'medium', 'high', 'critical' or 'not_applicable'",
+      "severity": "error"
+    }
+  ]
+}

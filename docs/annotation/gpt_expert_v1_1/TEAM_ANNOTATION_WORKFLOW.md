@@ -5,7 +5,7 @@
 For each assigned Case:
 
 1. open a completely new web ChatGPT conversation;
-2. upload only the original prospectus PDF, Protocol v1.1, common instructions,
+2. upload only the original prospectus PDF, Prompt Contract v1.1.1, common instructions,
    and that Case's blank JSON;
 3. paste the frozen `PRIMARY_BLIND_ANNOTATION_PROMPT.md`;
 4. do not upload Human Golden, human review, old GPT answers, audit results,
@@ -59,7 +59,9 @@ CSV intentionally contains no person names.
 
 ## Pilot sequence
 
-Phase 0.6C remains not started. The first historical 2410 attempt remains
+Phase 0.6C is in progress. The first three formal Primary Passes (0368.HK,
+1167.HK, and 1408.HK) are preserved on `annotation/gpt-expert-results`; the
+remaining 97 formal Cases have not started. The first historical 2410 attempt remains
 `PILOT_DIAGNOSTIC_ONLY` and is not reused as the new blind answer. Formal 2410
-annotation must use the catalog Case `ipo_2024_02410`, a new conversation, Protocol
-v1.1, and preferably an annotator who has not seen the pilot result.
+annotation must use the catalog Case `ipo_2024_02410`, a new conversation, Prompt
+Contract v1.1.1, and preferably an annotator who has not seen the pilot result.

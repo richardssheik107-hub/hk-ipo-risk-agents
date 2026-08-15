@@ -1,0 +1,522 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_01413",
+  "stock_code": "1413.HK",
+  "company_name": "廣聯工程控股",
+  "document_id": "ipo_2021_01413",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The latest comparable formal cash-flow period is the five months ended 31 August 2020. The accountants' report shows net cash used in operating activities of HK$375 thousand and cash and cash equivalents at period end of HK$8.321 million. Monthly operating cash burn is therefore HK$75 thousand (375/5) and cash runway is approximately 110.95 months (8,321/75), well above the frozen medium trigger of less than 12 months. The risk is therefore rejected.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "five months ended 31 August 2020",
+        "currency": "HKD",
+        "unit": "千港元",
+        "cash_and_cash_equivalents": 8321,
+        "net_cash_from_operating_activities": -375,
+        "period_months": 5
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": 75.0,
+        "cash_runway_months": 110.9467,
+        "assessment": "runway_not_below_12_month_threshold"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report records profits, not losses, for all three audited annual periods and for both five-month comparative periods. There are zero comparable loss periods, so neither the two-period medium trigger nor the three-period high trigger is met.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "HKD",
+        "unit": "千港元",
+        "periods": [
+          {
+            "period": "year ended 31 March 2018",
+            "profit_or_loss": 14041
+          },
+          {
+            "period": "year ended 31 March 2019",
+            "profit_or_loss": 25156
+          },
+          {
+            "period": "year ended 31 March 2020",
+            "profit_or_loss": 38408
+          },
+          {
+            "period": "five months ended 31 August 2019",
+            "profit_or_loss": 6519
+          },
+          {
+            "period": "five months ended 31 August 2020",
+            "profit_or_loss": 14340
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_period_count": 5,
+        "loss_period_count": 0,
+        "assessment": "no_continuous_loss_trigger"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Comparable revenue growth is positive throughout the formal accountants' report: approximately +60.33% from FY2017/18 to FY2018/19, +48.33% from FY2018/19 to FY2019/20, and +195.30% for the five months ended 31 August 2020 versus the same five-month period in 2019. No comparable period has negative growth, so neither the medium (<0%) nor high (<=-20%) trigger is met.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_growth_rate",
+      "calculation_inputs": {
+        "currency": "HKD",
+        "unit": "千港元",
+        "annual_revenue": {
+          "year_ended_31_march_2018": 170225,
+          "year_ended_31_march_2019": 272916,
+          "year_ended_31_march_2020": 404825
+        },
+        "five_month_revenue": {
+          "five_months_ended_31_august_2019": 74918,
+          "five_months_ended_31_august_2020": 221235
+        }
+      },
+      "calculation_result": {
+        "fy2018_to_fy2019_growth_pct": 60.3266,
+        "fy2019_to_fy2020_growth_pct": 48.3332,
+        "five_month_2019_to_2020_growth_pct": 195.3029,
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "For the latest comparable period, the five months ended 31 August 2020, the formal Business table reports largest-customer revenue of HK$83.768 million, top-five customer revenue of HK$210.794 million and total revenue of HK$221.235 million. Ratios calculated from those authoritative table amounts are approximately 37.86% and 95.28%, respectively; the prospectus separately discloses 37.9% and 95.2%, with the minor top-five difference attributable to the table amounts being presented in HK$ thousands. The frozen high threshold is met because top-five concentration is at least 80%.",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_from_authoritative_numerator_denominator",
+      "calculation_inputs": {
+        "period": "five months ended 31 August 2020",
+        "currency": "HKD",
+        "unit": "千港元",
+        "largest_customer_revenue": 83768,
+        "top_five_customer_revenue": 210794,
+        "total_revenue": 221235,
+        "disclosed_largest_customer_pct": 37.9,
+        "disclosed_top_five_customer_pct": 95.2
+      },
+      "calculation_result": {
+        "largest_customer_pct": 37.8638,
+        "top_five_customer_pct": 95.2806,
+        "disclosed_largest_customer_pct_cross_check": 37.9,
+        "disclosed_top_five_customer_pct_cross_check": 95.2,
+        "largest_customer_medium_threshold_met": true,
+        "largest_customer_high_threshold_met": false,
+        "top_five_medium_threshold_met": true,
+        "top_five_high_threshold_met": true,
+        "assessment": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "For the latest comparable period, the five months ended 31 August 2020, the formal Business table reports largest-supplier purchases of HK$47.140 million, top-five supplier purchases of HK$95.647 million and total purchases excluding subcontracting fees of HK$119.271 million. Ratios calculated from those authoritative table amounts are approximately 39.52% and 80.19%, consistent with the prospectus-disclosed 39.5% and 80.2%. The frozen high threshold is met because top-five supplier concentration is at least 80%.",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_from_authoritative_numerator_denominator",
+      "calculation_inputs": {
+        "period": "five months ended 31 August 2020",
+        "currency": "HKD",
+        "unit": "千港元",
+        "purchase_scope": "purchases excluding subcontracting fees",
+        "largest_supplier_purchases": 47140,
+        "top_five_supplier_purchases": 95647,
+        "total_purchases": 119271,
+        "disclosed_largest_supplier_pct": 39.5,
+        "disclosed_top_five_supplier_pct": 80.2
+      },
+      "calculation_result": {
+        "largest_supplier_pct": 39.5234,
+        "top_five_supplier_pct": 80.193,
+        "disclosed_largest_supplier_pct_cross_check": 39.5,
+        "disclosed_top_five_supplier_pct_cross_check": 80.2,
+        "largest_supplier_medium_threshold_met": true,
+        "largest_supplier_high_threshold_met": false,
+        "top_five_medium_threshold_met": true,
+        "top_five_high_threshold_met": true,
+        "assessment": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "NO_ACTUAL_SPECIAL_RIGHTS: A full-prospectus review identified no pre-IPO investor agreement, shareholder agreement, redemption right, restoration clause, veto right or other effective/restorable special investor right. The disclosed reorganisation and corporate structure involve the founders and group entities, and the prospectus states that there were no outstanding options, warrants or convertible bonds other than disclosed items. Generic Articles/Cayman-law provisions permitting redeemable shares are boilerplate corporate powers and are not treated as actual investor rights under the Protocol.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.94,
+      "reasoning": "MATERIALITY_UNRESOLVED: Six workplace accidents remained capable of giving rise to employee-compensation and/or personal-injury litigation, and the legal adviser stated that the potential impact could not then be assessed because proceedings had not commenced. The directors state that insurance should cover the claims, that the accidents caused no material business disruption, and that they had no adverse effect on licences/registrations/permits; the prospectus also states there was no material or systemic non-compliance. Because the possible claims are unresolved and their impact/materiality cannot be assessed, the frozen policy requires needs_review with provisional medium severity rather than a forced verified/rejected conclusion.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01413",
+      "stock_code": "1413.HK",
+      "company_name": "廣聯工程控股",
+      "document_id": "ipo_2021_01413",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The issuer is an established Hong Kong foundation-works contractor that commenced business in 1995 and earned substantial revenue from commercial foundation services throughout the track-record period. Its core offering is already commercialized service activity, not a non-commercialized core product without product-sales revenue. The prospectus also states that the group did not conduct R&D during the track-record period.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "cash_runway",
+      "page": 379,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得╱（所用）\n現金流量淨額 24,087 19,733 27,242 16,644 (375)",
+      "evidence_reason": "The latest five-month column reports signed net cash used in operating activities of HK$375 thousand, which is required to calculate monthly operating cash burn.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "cash_runway",
+      "page": 380,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期末現金及現金等價物 (2,220) 3,696 15,052 12,705 8,321",
+      "evidence_reason": "The latest five-month column provides the period-end cash and cash equivalents of HK$8.321 million used as the cash numerator for runway.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "cash_runway",
+      "page": 381,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "合併現金流量表所述的\n現金及現金等價物 (2,220) 3,696 15,052 12,705 8,321",
+      "evidence_reason": "This cash-balance reconciliation cross-checks that the latest cash-flow-statement cash and cash equivalents are HK$8.321 million.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "continuous_loss",
+      "page": 375,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期內溢利及全面收益總額 14,041 25,156 38,408 6,519 14,340",
+      "evidence_reason": "The accountants' report shows positive profit in each of the three annual periods and both five-month comparative periods, supporting a zero comparable-loss-period count.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "revenue_growth",
+      "page": 375,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收益 6 170,225 272,916 404,825 74,918 221,235",
+      "evidence_reason": "These audited/reviewed revenue values are the authoritative inputs for annual and five-month comparable growth calculations.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "customer_concentration",
+      "page": 159,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1    客戶B        一間主要於香港從事承接地基 自2017年起     28天；支票    83,768     37.9\n                 工程的香港上市公司的附屬\n                 公司\n\n\n2    客戶A        一間承包商公司，專門於香港 自1996年起     15天；支票    78,770     35.6\n                 從事管理地基工程\n\n\n3    力盛工程有限公司   一間主要於香港從事地基及地 自2018年起     45天；支票    19,086      8.6\n                 盤平整工程的香港上市公司\n                 的附屬公司\n\n\n4    實力工程有限公司   一間於香港上市並主要在全球 自2019年起     17天；支票    16,228      7.3\n                 範圍內建造建築工程的中國\n                 公司的附屬公司\n\n\n5    客戶J        一間承包商公司，專門於香港 自2020年起     60天；支票    12,942      5.8\n                 從事建築工程\n\n\n                                五大客戶合計             210,794     95.2\n                                所有其他客戶              10,441      4.8\n\n\n                                總收益                221,235   100.0",
+      "evidence_reason": "The latest-period formal customer table provides the largest-customer amount/share, top-five amount/share and total revenue used for the concentration assessment.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "customer_concentration",
+      "page": 155,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於2017/18財年、2018/19財年、2019/20財年及截至2020年8月31日止五個月，我們最大客\n戶應佔本集團總收益的百分比分別約為66.2%、68.6%、54.8%及37.9%，而我們的前五大客戶合\n共應佔本集團總收益的百分比分別約為100.0%、99.2%、96.2%及95.2%。",
+      "evidence_reason": "This formal Business summary independently cross-checks the disclosed latest largest-customer percentage of 37.9% and top-five percentage of 95.2%.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "supplier_concentration",
+      "page": 187,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1   客戶B    一間主要從事於香   主要提供材料      自2017年起 –（附註）      47,140    39.5\n           港承接地基工程\n           的香港上市公司\n           的附屬公司\n2   供應商B   一間於香港提供廢   主要提供廢物處     自2017年起 60天；支票     19,151    16.1\n           物處理服務的公    理服務\n           司\n3   客戶A    一間專門於香港從   主要提供材料及     自1996年起 –（附註）      13,351    11.2\n           事地基工程管理    協助廢物處理\n           的承包商公司     安排\n4   實力工程   一間於香港上市並   主要提供材料及     自2019年起 –（附註）       8,974     7.5\n    有限公司   主要在全球範圍    協助廢物處理\n           內從事樓宇建築    安排\n           工程的中國公司\n           的附屬公司\n5   力盛工程   一間主要於香港從   主要提供材料      自2018年起 –（附註）       7,031     5.9\n    有限公司   事地基及地盤平\n           整工程的香港上\n           市公司的附屬\n           公司\n\n\n                                  五大供應商合計            95,647    80.2\n                                  所有其他供應商            23,624    19.8\n\n\n                                  採購總額（不包括分包費用）     119,271   100.0",
+      "evidence_reason": "The latest-period formal supplier table provides the largest-supplier amount/share, top-five amount/share and total purchases excluding subcontracting fees used for the concentration assessment.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "supplier_concentration",
+      "page": 184,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於2017/18財年、2018/19財年、2019/20財年及截至2020年8月31日止五個月，我們向最大\n供應商作出的採購總額（不包括分包費用）佔比分別約為39.4%、49.1%、22.6%及39.5%，而向五\n大供應商作出的採購總額（不包括分包費用）佔比合共分別約為84.8%、87.0%、82.8%及80.2%。",
+      "evidence_reason": "This Business summary independently cross-checks the latest disclosed largest-supplier percentage of 39.5% and top-five percentage of 80.2%.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "material_litigation_compliance",
+      "page": 218,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及截至最後實際可行日期，有7宗導致僱員及╱或分包商的僱員受傷的工作\n場所意外事故，其中一宗意外事故產生的申索已和解及餘下六宗意外事故可引致就僱員補償申索\n及╱或人身傷害申索針對本集團提起的潛在訴訟。有關進一步詳情，請參閱本節上文「職業健康\n與工作安全」一段。\n由於法院訴訟尚未展開，法律顧問認為，現時未能評估該等潛在申索的可能影響。董事認\n為，在訴訟中將由本集團承擔的該等潛在申索金額將由本集團及╱或相關主承包商投購的相關保\n單保障。董事確認，引致該等潛在申索的意外事故乃於一般及日常業務過程中發生，並無對本集\n團的業務產生重大干擾。誠如法律顧問所告知，鑒於本集團或分包商相關僱員所遭受的傷害性\n質，該等意外事故並無對本集團取得及更新營運所需的任何牌照、登記或許可造成不利影響。",
+      "evidence_reason": "This disclosure establishes six unresolved potential claims and expressly states that legal counsel could not assess their potential impact, while also recording the mitigating insurance and no-licence-effect facts. That unresolved materiality drives needs_review.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "material_litigation_compliance",
+      "page": 219,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "單保障；(iii)未能確定該等申索將涉及的總額（如有）；及(iv)下述控股股東給予的彌償保證，本集\n團並無在財務報表中計提撥備。",
+      "evidence_reason": "The continuation of the disclosure confirms that the total amount of the potential claims was not determinable and no provision was recorded, supporting the unresolved-materiality assessment.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "material_litigation_compliance",
+      "page": 219,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董事確認，於往績記錄期間及直至最後實際可行日期，本集團並無任何屬重大或系統性質\n的違規情況。",
+      "evidence_reason": "This cross-check limits the compliance side of the risk: the prospectus states there was no material or systemic non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "material_litigation_compliance",
+      "page": 216,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及直至最後實際可行日期，除本節「訴訟及潛在申索」一段所披露者外，我\n們的董事並不知悉針對本集團任何成員公司的尚未了結或面臨威脅的重大訴訟或申索。",
+      "evidence_reason": "This confines the litigation assessment to the specifically disclosed workplace-accident claims and indicates no other known pending or threatened material litigation.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "precommercial_product",
+      "page": 112,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們為香港的地基工程承包商。我們於1995年開展業務，其後通過我們的主要營運附屬公\n司廣聯工程以分包商身份承接地基工程。根據弗若斯特沙利文報告，我們於2019年位居香港第四\n大地基工程分包商（按收益計），佔地基行業約1.7%的市場份額（附註）。於往績記錄期間，我們所承\n接的地基工程主要包括挖掘及側向承托及其他相關工程，包括樁帽工程、地下排水工程及地盤平\n整工程。",
+      "evidence_reason": "The formal Business section shows a long-established, revenue-generating foundation-services business, which is inconsistent with a non-commercialized core-product candidate.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "redemption_rights",
+      "page": 109,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "corporate_structure",
+      "exact_text": "據董事確認，除本招股章程所披露\n者外，於最後實際可行日期，本集團各成員公司概無尚未行使的購股權、認股權證及╱或\n可換股債券。",
+      "evidence_reason": "This supports the absence of outstanding option, warrant or convertible-bond instruments in the disclosed pre-listing group structure; it is supporting evidence rather than a standalone proof of absence of every possible special right.",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "redemption_rights",
+      "page": 434,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "other",
+      "exact_text": "倘本公司就贖買而購回可贖回股份時，非經市場或非以競價方式作出的購買須\n      以最高價格為限；而倘以競價方式購買，則競價須全體股東均可參與競價。",
+      "evidence_reason": "This is generic Articles-of-Association language about the company power to purchase redeemable shares. Under the Protocol it is boilerplate context and is not treated as evidence of an actual effective/restorable investor redemption right.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "risk_code": "precommercial_product",
+      "page": 215,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "研發\n\n\n     於往績記錄期間及直至最後實際可行日期，我們並無從事任何研發活動。",
+      "evidence_reason": "This supports the business characterization as an established operating contractor rather than a development-stage product company; it is supporting context, not the primary commercialization evidence.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

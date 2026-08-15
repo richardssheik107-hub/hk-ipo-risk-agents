@@ -10,6 +10,7 @@ progress only. Annotation answers belong on the dedicated
 expert_results/<case_id>/
 ├─ pass1/expert_annotation_v1.json
 ├─ pass1/validation_result.json
+├─ pass1/validation_result_v2.json  # optional immutable schema revalidation
 ├─ pass2/expert_annotation_v2.json
 ├─ pass2/validation_result.json
 ├─ audit/audit.json
@@ -26,6 +27,12 @@ material are forbidden.
 
 - Never overwrite a pass, audit, or final artifact.
 - Preserve GPT output verbatim; validation writes a separate result file.
+- Preserve an existing `validation_result.json` as the historical result produced
+  by its validator contract. If the unchanged annotation is revalidated after a
+  validator/schema correction, append `validation_result_v2.json`, then `_v3`,
+  and so on. The new result must name the source annotation, prior validation
+  artifact, validator contract, and source annotation blob. Never renumber or
+  overwrite an earlier validation result.
 - A validation failure changes progress to `validation_failed` or `needs_review`;
   it does not justify editing the original JSON.
 - A revised output is a new pass, not a replacement for pass1.
@@ -38,9 +45,13 @@ inventing filenames ad hoc.
 
 ## Branch and access boundary
 
-`docs/gpt-expert-golden-v1-1-sync` is the collaboration branch.
-`annotation/gpt-expert-results` is the answer branch. Do not merge the result branch
-into the collaboration branch while blind annotation is active.
+`annotation/gpt-expert-results` is the unified active annotation branch. It contains
+the frozen protocols, blank Case packets, progress records, and preserved answer
+artifacts. The former `docs/gpt-expert-golden-v1-1-sync` branch has been retired.
+
+Because the unified branch contains both blank materials and answer artifacts,
+annotators who have not completed their own Primary Pass must not browse
+`expert_results/` until the applicable team blind-boundary rule permits it.
 
 Git branches are organization boundaries, not authorization boundaries. Anyone
 with repository read permission can inspect both branches. Strict blindness

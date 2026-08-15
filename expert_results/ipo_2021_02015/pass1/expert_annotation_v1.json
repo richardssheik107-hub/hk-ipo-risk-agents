@@ -1,0 +1,502 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02015",
+  "stock_code": "2015.HK",
+  "company_name": "理想汽車－Ｗ",
+  "document_id": "ipo_2021_02015",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "以截至2021年3月31日止三个月作为最近报告期。会计师报告披露期末现金及现金等价物为人民币6,070,720千元，同期经营活动所得现金净额为正人民币926,343千元。按照Protocol v1.1.1，经营现金流大于或等于零时不存在operating cash burn，不计算月度现金消耗及cash runway，因此该风险不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway",
+      "calculation_inputs": {
+        "period": "three months ended 31 March 2021",
+        "cash_position_date": "31 March 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 6070720,
+        "net_cash_from_operating_activities": 926343,
+        "period_months": 3
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的合并综合亏损表显示，2018年、2019年及2020年三个可比完整财政年度均录得净亏损，分别为人民币1,532,318千元、2,438,536千元及151,657千元。三个可比亏损期间满足冻结定义中“至少3个可比亏损期间”为high的条件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparable_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "net_loss": -1532318
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "net_loss": -2438536
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "net_loss": -151657
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_period_count": 3,
+        "assessment": "at_least_3_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告披露的可比收入均为正增长：2020年收入总额人民币9,456,609千元，相比2019年人民币284,367千元增长约3225.49%；截至2021年3月31日止三个月收入总额人民币3,575,201千元，相比截至2020年3月31日止三个月人民币851,675千元增长约319.78%。2018年收入在正式报表中以破折号列示，未将其无依据归一化为零，也未据此计算合成增长率。没有可比增长低于0%的证据。",
+      "calculation_required": true,
+      "calculation_method": "period_over_period_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparisons": [
+          {
+            "current_period": "year ended 31 December 2020",
+            "current_revenue": 9456609,
+            "prior_period": "year ended 31 December 2019",
+            "prior_revenue": 284367
+          },
+          {
+            "current_period": "three months ended 31 March 2021",
+            "current_revenue": 3575201,
+            "prior_period": "three months ended 31 March 2020",
+            "prior_revenue": 851675
+          }
+        ],
+        "excluded_period": {
+          "period": "year ended 31 December 2018",
+          "reported_value": "dash",
+          "normalized_to_zero": false
+        }
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          {
+            "comparison": "2020_vs_2019",
+            "growth_pct": 3225.49451940626
+          },
+          {
+            "comparison": "Q1_2021_vs_Q1_2020",
+            "growth_pct": 319.7846596412951
+          }
+        ],
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示，2019年及2020年前五大客户各仅占收入总额1%。由于最大客户必然不超过前五大客户合计1%，最大客户远低于30%/50%阈值，前五大客户亦远低于60%/80%阈值，因此冻结的medium及high集中度条件均被排除。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "top_five_customer_pct": 1.0,
+        "largest_customer_upper_bound_pct": 1.0,
+        "bound_operator": "<="
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<=1%",
+        "top_five_customer_pct": 1.0,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.93,
+      "reasoning": "Business正式披露仅给出前五大供应商采购占比：2018年30%、2019年16%、2020年32%，未披露最大单一供应商占比。以最近完整年度2020年计，前五大32%足以排除top-five的60%/80%阈值，也使最大供应商不可能达到50%的high阈值；但最大供应商仅可被界定为不超过32%，仍无法排除其处于30%至32%并触发medium阈值的可能。招股书未找到可计算最大供应商精确比例的正式numerator/denominator，因此证据不足以验证或拒绝medium风险，按Protocol使用needs_review而不猜测level。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "top_five_supplier_pct": 32.0,
+        "largest_supplier_upper_bound_pct": 32.0,
+        "bound_operator": "<="
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<=32%",
+        "top_five_supplier_pct": 32.0,
+        "high_threshold_excluded": true,
+        "medium_threshold_excluded": false,
+        "assessment": "insufficient_to_resolve_largest_supplier_30pct_threshold"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.94,
+      "reasoning": "历史优先股的赎回权已随2020年纳斯达克首次公开发售完成而全部自动转换并消灭，但Pre-IPO Investment正式披露显示，经修订的美团投资者权利协议自本次上市日期起生效，且其中控制权变更交易的优先认购权在上市后仍可行使；仅董事任免权及若干同意权明确于紧随上市后终止。按照Protocol对“actual effective/restorable special rights”的冻结定义，存在上市后实际持续的特别权利，故必须needs_review；候选严重度按冻结政策保留为provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "Business正式法律披露称，业绩记录期及截至最后实际可行日期公司未涉及任何重大法律或行政程序/诉讼，亦无会单独或合计对业务、财务状况及经营业绩产生重大不利影响的重大不合规事件；中国法律顾问同时确认主要附属公司及主要并表联属实体已取得业务运营所需的所有重大资质、许可证、批准及证书。会计师报告所述重庆智造收购前合同诉讼已于2019年处置该实体时转出。现有VIE及许可相关披露包含未来条件性监管风险，但没有证据显示截至最后实际可行日期存在当前未解决的重大诉讼、不合规或许可缺口，因此不触发冻结定义。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02015",
+      "stock_code": "2015.HK",
+      "company_name": "理想汽車－Ｗ",
+      "document_id": "ipo_2021_02015",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露明确将理想ONE描述为已商业化的增程式电动车车型，2019年11月开始量产，截至2021年7月31日已交付逾72,000辆；会计师报告同时披露2019年、2020年及截至2021年3月31日止三个月均已有明确的车辆销售收入。因此核心产品并非未商业化，且存在product-sales revenue，冻结候选条件不成立，OPEN-02严重度政策不需要触发。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "cash_runway",
+      "page": 472,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併資產負債表\n（除股數和每股數據外，所有金額以千計）\n截至12月31日\n截至3月31日\n附註\n2018年\n2019年\n2020年\n2020年\n2021年\n人民幣\n人民幣\n人民幣\n美元\n人民幣\n美元\n附註2(e)\n附註2(e)\n資產\n流動資產：\n現金及現金等價物\n2(f)\n70,192\n1,296,215\n8,938,341\n1,364,258\n6,070,720\n926,573",
+      "evidence_reason": "会计师报告提供现金跑道标准现金输入；截至2021年3月31日现金及现金等价物为人民币6,070,720千元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "cash_runway",
+      "page": 481,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併現金流量表\n（除股數和每股數據外，所有金額以千計）\n截至12月31日止年度\n截至3月31日止三個月\n2018年\n2019年\n2020年\n2020年\n2020年\n2021年\n人民幣\n人民幣\n人民幣\n美元\n人民幣\n人民幣\n美元\n附註2(e)\n（未經審計）\n附註2(e)\n經營活動（所用）╱所得現金淨額\n(1,346,805)\n(1,793,710)\n3,139,804\n479,229\n(63,007)\n926,343\n141,388",
+      "evidence_reason": "截至2021年3月31日止三个月经营活动现金净额为正人民币926,343千元；按Protocol正经营现金流不构成operating cash burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "continuous_loss",
+      "page": 477,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併綜合虧損表\n（除股數和每股數據外，所有金額以千計）\n截至12月31日止年度\n截至3月31日止三個月\n附註\n2018年\n2019年\n2020年\n2020年\n2020年\n2021年\n人民幣\n人民幣\n人民幣\n美元\n人民幣\n人民幣\n美元\n附註2(e)\n（未經審計）\n附註2(e)\n淨虧損\n(1,532,318)\n(2,438,536)\n(151,657)\n(23,148)\n(77,113)\n(359,967)\n(54,943)",
+      "evidence_reason": "三个完整可比财政年度2018、2019及2020均为净亏损，足以按冻结规则计数为至少三个可比亏损期间。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "revenue_growth",
+      "page": 477,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入：\n 車輛銷售\n–\n280,967\n9,282,703\n1,416,817\n841,058\n3,463,673\n528,660\n 其他銷售和服務\n–\n3,400\n173,906\n26,543\n10,617\n111,528\n17,022\n收入總額\n18\n–\n284,367\n9,456,609\n1,443,360\n851,675\n3,575,201\n545,682",
+      "evidence_reason": "同一正式报表提供2019、2020年度及2020、2021年第一季度可比收入输入；2020对2019及2021年第一季度对2020年第一季度均为显著正增长，且2018年破折号未被当作零。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "customer_concentration",
+      "page": 292,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "客戶和供應商\n於業績記錄期，我們的客戶主要包括個人車輛購買者。我們擁有廣泛的客戶基礎，且我們認為我們不存在客戶集中的風險。截至2019年及2020年12月31日止年度各年，我們的前五大客戶分別佔我們收入總額的1%。",
+      "evidence_reason": "正式Business披露前五大客户仅占收入1%；由合计比例可得最大客户不超过1%，足以排除所有冻结集中度阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "supplier_concentration",
+      "page": 292,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度各年，我們的前五大供應商佔我們採購量的比例分別為30%、16%及32%。",
+      "evidence_reason": "正式Business仅披露前五大供应商合计采购占比；2020年32%可排除top-five阈值及high级最大供应商阈值，但不能排除最大供应商达到30%的medium阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "supplier_concentration",
+      "page": 286,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "供應鏈\n我們與190多家供應商合作，採購1,900多個零部件來打造理想ONE。我們預計隨著產量提升，我們將受益於規模經濟。我們與供應商在關鍵零部件方面建立了密切的合作關係，例如寧德時代的電池組、匯川技術的電機控制器、聖戈班的風擋和納鐵福的多模混合動力變速器。我們將該等公司視為我們的主要供應商。",
+      "evidence_reason": "说明供应商基础及主要供应商名称，但未给出单一供应商采购比例，因此不能替代缺失的最大供应商定量证据。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "redemption_rights",
+      "page": 250,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "投資者權利協議\n於2020年7月9日，我們與Inspired Elite Investments Limited（一家美團旗下的全資附屬公司，當時為我們D輪優先股的股東）訂立投資者權利協議，於納斯達克首次公開發售完成後生效，之後進行修訂及重列，並自上市日期起生效（「投資權利協議」）。",
+      "evidence_reason": "证明经修订投资者权利协议自本次香港上市日期起实际生效，而非仅为历史或未来假设安排。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "redemption_rights",
+      "page": 251,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "投資者權利協議（經修訂）規定Inspired Elite Investments Limited及美團任何其他附屬公司（於有關時間為股東（各為「美團股東」））的若干特別權利：\n(a) 任命、解聘及更換一名董事的權利。該權利將於緊隨上市後終止；\n(b) 同意以下事項的權利：(i)設立或發行附有每股一票以上投票權的股份或所附權利相對於Inspired Elite Investments Limited及美團任何其他附屬公司所持股份更優先的優先股，或修改任何B類普通股所附投票權的行動；及(ii)通過增加發行預留股份或延長到期日，或採納任何新股權激勵計劃，修改任何現有股權激勵計劃。該權利將於緊隨上市後終止；及\n(c) 發生任何以下交易控制權變更的優先認購權：",
+      "evidence_reason": "披露多项特别权利，并明确(a)、(b)上市后终止而(c)控制权变更优先认购权未被列为上市后终止。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "redemption_rights",
+      "page": 251,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "於上市後，美團行使優先認購權及在優先認購權獲行使後履行本公司的義務將受《上市規則》、《收購守則》以及其他當時生效的適用法律法規所規限。",
+      "evidence_reason": "该句直接确认控制权变更优先认购权可在上市后行使，证明存在上市后实际持续的特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "redemption_rights",
+      "page": 529,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "首次公開發售時的轉換\n2020年8月，隨著首次公開發售的完成，所有優先股均根據上述轉換價格自動轉換為1,045,789,275股A類普通股及115,812,080股B類普通股。",
+      "evidence_reason": "交叉核实历史可转换可赎回优先股的赎回权已因2020年美国IPO后的全部自动转换而不再作为当前优先股赎回权存在；当前needs_review来自另行持续的上市后特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "material_litigation_compliance",
+      "page": 298,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "法律程序及合規\n法律程序\n我們可能會不時面臨在日常業務過程中產生的各種法律或行政索償及訴訟。於業績記錄期及直至最後實際可行日期，我們目前並未牽涉任何重大法律或行政程序，且我們並未涉入任何重大法律程序或訴訟。\n合規\n於業績記錄期及直至最後實際可行日期，我們概未參與且未涉及任何導致罰款、執法行動或其他處罰，可能單獨或合計對我們的業務、財務狀況和經營業績產生重大不利影響的重大不合規事件。",
+      "evidence_reason": "正式法律/合规披露直接否定截至最后实际可行日期存在重大诉讼、行政程序或重大不合规事件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "material_litigation_compliance",
+      "page": 302,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "資質及許可證\n據中國法律顧問告知，截至最後實際可行日期，我們已從相關政府部門獲得就我們主要附屬公司及主要併表聯屬實體的業務運營屬重大的所有必要資質、許可證、批准及證書。",
+      "evidence_reason": "中国法律顾问确认主要经营实体已取得所有重大必要资质和许可证，用于排除当前重大许可缺口。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "material_litigation_compliance",
+      "page": 548,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "2019年12月26日，貴集團處置了重慶智造100%股權（附註5），重慶智造相關的法律訴訟隨之轉出。\n除上述法律訴訟外，截至2018年、2019年及2020年12月31日，貴集團沒有任何重大訴訟，也沒有記錄任何與此相關的重大負債。",
+      "evidence_reason": "会计师报告交叉核实历史收购前诉讼已随处置转出，且各年末无其他重大诉讼或相关重大负债。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "precommercial_product",
+      "page": 260,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們是中國新能源汽車製造商，我們設計、研發、製造和銷售豪華智能電動汽車。通過我們的產品及技術，我們為家庭提供安全及便捷的產品及服務。在中國，我們是成功實現增程式電動汽車商業化的先鋒。我們的首款及目前唯一一款商業化的增程式電動汽車車型－理想ONE是一款六座中大型豪華電動SUV（運動型多用途汽車），配備了增程系統及先進的智能汽車解決方案。我們於2019年11月開始量產理想ONE，並於2021年5月25日推出2021款理想ONE。截至2021年7月31日，我們已交付逾72,000輛理想ONE。",
+      "evidence_reason": "Business正式披露直接证明核心产品理想ONE已经商业化、量产并大规模交付。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "risk_code": "precommercial_product",
+      "page": 477,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入：\n 車輛銷售\n–\n280,967\n9,282,703\n1,416,817\n841,058\n3,463,673\n528,660",
+      "evidence_reason": "会计师报告明确记录车辆销售收入，证明公司已有product-sales revenue，不符合“无产品销售收入”的候选条件。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

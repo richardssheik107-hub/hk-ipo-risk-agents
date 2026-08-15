@@ -1,0 +1,634 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_06063",
+  "stock_code": "6063.HK",
+  "company_name": "智中國際",
+  "document_id": "ipo_2020_06063",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "以最新可比期（截至2019年9月30日止六个月）评估。会计师报告显示该期经营活动所得现金净额为7,661千港元，属于正经营现金流；期末现金及现金等价物为14,594千港元。依Protocol v1.1.1，非负经营现金流不构成cash burn，因此monthly_operating_cash_burn及cash_runway_months均为null，cash_runway不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway",
+      "calculation_inputs": {
+        "period": "six months ended 30 September 2019",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "cash_and_cash_equivalents": 14594,
+        "net_cash_from_operating_activities": 7661,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "截至2017、2018及2019年3月31日止三个可比年度，年内溢利及全面收益总额分别为16,403、32,555及36,490千港元，均为正数；最新六个月亦为正数18,091千港元。不存在两个或三个可比亏损期。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "comparable_periods": [
+          {
+            "period": "year ended 31 March 2017",
+            "profit_and_total_comprehensive_income": 16403
+          },
+          {
+            "period": "year ended 31 March 2018",
+            "profit_and_total_comprehensive_income": 32555
+          },
+          {
+            "period": "year ended 31 March 2019",
+            "profit_and_total_comprehensive_income": 36490
+          }
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0,
+        "assessment": "no_continuous_loss"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "采用最新可比六个月期间。2019年9月30日止六个月收入126,217千港元，对比2018年同期83,990千港元，同比增长约50.2762%，为正增长，不触发<0%或<=-20%的阈值。",
+      "calculation_required": true,
+      "calculation_method": "period_over_period_growth",
+      "calculation_inputs": {
+        "current_period": "six months ended 30 September 2019",
+        "prior_comparable_period": "six months ended 30 September 2018",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "current_revenue": 126217,
+        "prior_revenue": 83990
+      },
+      "calculation_result": {
+        "growth_pct": 50.2762,
+        "medium_threshold_triggered": false,
+        "high_threshold_triggered": false,
+        "assessment": "positive_revenue_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "截至2019年9月30日止六个月，五大客户收入分别为46,452、26,298、25,417、17,818及2,716千港元，合计118,701千港元；同期经审计/会计师报告收入为126,217千港元。计算得最大客户占比36.8033%，五大客户占比94.0452%。五大客户>=80%，触发high阈值。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "six months ended 30 September 2019",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "largest_customer_revenue": 46452,
+        "top_five_customer_revenues": [
+          46452,
+          26298,
+          25417,
+          17818,
+          2716
+        ],
+        "top_five_customer_revenue_sum": 118701,
+        "total_revenue": 126217
+      },
+      "calculation_result": {
+        "largest_customer_pct": 36.8033,
+        "top_five_customer_pct": 94.0452,
+        "largest_customer_medium_threshold_triggered": true,
+        "largest_customer_high_threshold_triggered": false,
+        "top_five_medium_threshold_triggered": true,
+        "top_five_high_threshold_triggered": true,
+        "assessment": "high_customer_concentration"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "截至2019年9月30日止六个月，五大供应商采购额为17,835、4,631、3,398、2,958及2,484千港元，合计31,306千港元。财务资料将同期建材成本列为42,365千港元，并明确建材成本是向供应商购买项目安装/使用材料而支付及应付的费用。计算得最大供应商占比42.0984%，五大供应商占比73.8959%；达到medium阈值（最大>=30%或前五>=60%），但未达到high阈值（最大>=50%或前五>=80%）。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "six months ended 30 September 2019",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "largest_supplier_purchases": 17835,
+        "top_five_supplier_purchases": [
+          17835,
+          4631,
+          3398,
+          2958,
+          2484
+        ],
+        "top_five_supplier_purchase_sum": 31306,
+        "total_supplier_purchases": 42365
+      },
+      "calculation_result": {
+        "largest_supplier_pct": 42.0984,
+        "top_five_supplier_pct": 73.8959,
+        "largest_supplier_medium_threshold_triggered": true,
+        "largest_supplier_high_threshold_triggered": false,
+        "top_five_medium_threshold_triggered": true,
+        "top_five_high_threshold_triggered": false,
+        "assessment": "medium_supplier_concentration"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "历史、发展及重组披露显示上市前股权由朱先生经其全资拥有的Platinum Lotus控制，相关已发行股份为普通股；重组后的现有股东亦为Platinum Lotus。未发现外部Pre-IPO投资者、股东协议项下实际生效或可恢复的赎回/回购等特殊权利。章程中关于可赎回股份的一般授权属于公司法/章程层面的通用条款，不视为实际特殊权利。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.9,
+      "reasoning": "截至最后可行日期，弘建营造（香港）的现有牌照/注册仍有效，但其尚未满足注册专门行业承造商制度下的技术人员资格及学徒/半熟练/熟练工人资格，并须在截至2022年3月31日的宽限期内满足全部注册要求，否则注册资格将被取消。公司已提出培训和招聘补救计划；另有安全改善通知及待审传票，但合规顾问/董事认为相关罚款及注册影响不重大。由于未来注册资格的解决结果在招股书时点仍具有条件性，属于未完全解决的regulatory/licence effect，按Protocol以needs_review及暂定medium处理。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "本集团并非处于核心产品未商业化阶段。其唯一营运附属公司自2007年起在香港提供外墙工程及建筑金属饰面工程设计、供应及安装服务，已完成多个商业、住宅及公共设施项目；往绩期及最新六个月持续确认营业收入。因此不符合“核心产品未商业化且无产品销售收入”的候选条件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "cash_runway",
+      "page": 366,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經 營 活 動 所 得（所 用）現 金 淨 額 32,704 45,484 (32,547) (20,270) 7,661",
+      "evidence_reason": "会计师报告综合现金流量表直接给出截至2019年9月30日止六个月经营活动所得现金净额为正7,661千港元；这是判定无经营现金消耗的必要证据。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "cash_runway",
+      "page": 367,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期 末 現 金 及 現 金 等 價 物，\n代 表 銀 行 結 餘 及 現 金 3,779 26,402 13,457 4,557 14,594",
+      "evidence_reason": "会计师报告综合现金流量表直接给出最新期末现金及现金等价物14,594千港元，符合Protocol要求的标准cash输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "continuous_loss",
+      "page": 362,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期 內 溢 利 及 全 面 收 益 總 額 16,403 32,555 36,490 14,337 18,091",
+      "evidence_reason": "会计师报告列示三个可比年度及两个六个月期间均为正的溢利及全面收益；三个完整年度足以排除连续亏损阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "revenue_growth",
+      "page": 362,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收 益 6 105,822 166,751 202,786 83,990 126,217",
+      "evidence_reason": "会计师报告列示完整年度和六个月比较期收入；其中2018年9月30日止六个月83,990与2019年同期126,217为最新可比增长计算输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 155,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1 客 戶A 掃 管 笏 路（項 目29–30） 46,452 36.8",
+      "evidence_reason": "最新六个月正式客户表给出最大客户A的精确收入46,452千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 155,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "2 客 戶 集 團G 凹 頭（項 目35）\n香 港 理 工 大 學（項 目42）\n26,298 20.8",
+      "evidence_reason": "最新六个月正式客户表给出第二大客户集团G的精确收入26,298千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 155,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "3 客 戶M Museum+ (1)（項 目32–33） 25,417 20.1",
+      "evidence_reason": "最新六个月正式客户表给出第三大客户M的精确收入25,417千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 156,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "4 客 戶 集 團E 梳 士 巴 利 道（項 目19）\n英 皇 道（項 目31）\n戲 曲 中 心（項 目43）\n17,818 14.1",
+      "evidence_reason": "最新六个月正式客户表续页给出第四大客户集团E的精确收入17,818千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 156,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "5 客 戶D 宋 皇 臺 站 及 土 瓜 灣 站\n（項 目26–27）\n2,716 2.2",
+      "evidence_reason": "最新六个月正式客户表续页给出第五大客户D的精确收入2,716千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 362,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收 益 6 105,822 166,751 202,786 83,990 126,217",
+      "evidence_reason": "会计师报告提供截至2019年9月30日止六个月总收入126,217千港元，作为客户集中度分母。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "page": 157,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "截 至 二 零 一 九 年 九 月 三 十 日 止 六 個 月，來 自 五 大\n客 戶 的 收 益 金 額 為118.7百 萬 港 元，佔 我 們 期 內 收 益 的94.0%",
+      "evidence_reason": "Business客户集中段直接披露五大客户占比94.0%，与基于精确分子及总收入的计算结果一致，作为交叉核对。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 170,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1 金 盈 17,835 42.1 2.9 供 應 鋁 及 不 銹 鋼 產 品",
+      "evidence_reason": "最新六个月正式供应商表给出最大供应商金盈采购额17,835千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 170,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "2 興 發 鋁 業（香 港）有 限 公 司 4,631 11.0 4.9 供 應 鋁 和 預 製 服 務",
+      "evidence_reason": "最新六个月正式供应商表给出第二大供应商采购额4,631千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 170,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "3 景 圖 玻 璃 技 術 有 限 公 司 3,398 8.0 5.5 供 應 玻 璃 板 和 預 製 服 務",
+      "evidence_reason": "最新六个月正式供应商表给出第三大供应商采购额3,398千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 170,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "4 供 應 商B 2,958 7.0 4.3 供 應 不 銹 鋼 產 品",
+      "evidence_reason": "最新六个月正式供应商表给出第四大供应商B采购额2,958千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 170,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "5 亞 洲 太 平 洋 建 築 物 料\n（香 港）有 限 公 司\n2,484 5.9 9.2 供 應 密 封 膠",
+      "evidence_reason": "最新六个月正式供应商表给出第五大供应商采购额2,484千港元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 254,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "建 材 成 本. . . . . . . . . . . . . 35,210 47.0 52,840 45.6 59,960 42.5 27.596 45.3 42,365 47.0",
+      "evidence_reason": "Financial Information成本分析给出截至2019年9月30日止六个月建材成本42,365千港元。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 255,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "建 材 成 本 指 我 們 就 購 買 項 目 安 裝╱使 用 材 料 而 向 供 應 商 支 付 及 應 付 的 費 用。",
+      "evidence_reason": "该正式定义明确42,365千港元建材成本是向供应商购买项目材料而支付及应付的费用，从而支持其作为供应商采购总额分母。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "page": 165,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於 截 至 二 零 一 九 年 九 月 三 十 日 止 六 個 月，向 五 大 供 應 商 所 作\n採 購 為31.3百 萬 港 元，佔 期 內 採 購74.0%",
+      "evidence_reason": "Business主要供应商段直接披露最新六个月五大供应商占采购74.0%，与精确金额计算相符，作为交叉核对。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "redemption_rights",
+      "page": 107,
+      "evidence_role": "primary",
+      "requirement": "alternative",
+      "source_authority": "corporate_structure",
+      "exact_text": "Platinum Lotus獲 授 權 發 行 最 多50,000股 每 股 面 值1.0美 元 的 普 通 股。於 二 零 一 八\n年 五 月 十 七 日，一 股 繳 足Platinum Lotus股 份 配 發 及 發 行 予 朱 先 生。",
+      "evidence_reason": "正式重组披露显示上市前控股工具为普通股且由创办人朱先生持有，未呈现外部Pre-IPO投资者的实际特殊赎回权。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "redemption_rights",
+      "page": 109,
+      "evidence_role": "supporting",
+      "requirement": "alternative",
+      "source_authority": "corporate_structure",
+      "exact_text": "待 本 公 司 的 股 份 溢 價 賬 因 股 份 發 售 所 得 款 項 錄 得 進 賬 額 後，本 公 司 會 於 上 市 時 或\n之 前 將 股 份 溢 價 賬 的14,999,998港 元 資 本 化 及 用 於 悉 數 按 面 值 繳 足1,499,999,800股 股 份\n以 配 發 及 發 行 予 現 有 股 東(Platinum Lotus)。",
+      "evidence_reason": "重组后至上市前的现有股东仍为Platinum Lotus，支持不存在外部Pre-IPO投资者特殊赎回安排的判断。",
+      "confidence": 0.94
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "page": 200,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "然 而，於 最 後 可 行 日 期，弘 建 營 造（香 港）尚 未 達 成 下 列 註 冊 專 門 行 業 承 造 商 制 度\n項 下 的 資 格 要 求：\n— 技 術 人 員 資 格：儘 管 弘 建 營 造（香 港）有13名 僱 員 在 幕 牆 行 業 擁 有 五 年 相 關 經 驗 及\n資格（即適任技術人員(T1)資格），彼等尚未完成建造工友（指定行業）安全訓練課程；\n及\n— 學 徒╱半 熟 練╱熟 練 工 人 資 格：弘 建 營 造（香 港）僅 有 一 名 根 據 建 造 業 工 人 註 冊 條 例\n註 冊 之 熟 練 工 人。",
+      "evidence_reason": "正式牌照/注册披露显示最后可行日期仍有两类资格要求未满足。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "page": 200,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "弘 建 營 造（香 港）須 於 三 年 寬 限 期 內（將 於\n二 零 二 二 年 三 月 三 十 一 日 屆 滿）達 成 所 有 註 冊 要 求，否 則 其 註 冊 資 格 將 被 取 消。",
+      "evidence_reason": "同页正式披露明确未在宽限期内满足全部注册要求的后果为注册资格取消，证明存在条件性的未解决regulatory/licence effect。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "page": 202,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董 事 確 認，於 往 績 期 間 及 截 至 最 後 可 行 日 期，我 們 已 取 得 香 港 業 務 營 運 的 一 切 所\n需 牌 照、許 可 證、同 意 及 批 准，而 上 述 各 項 均 為 有 效。",
+      "evidence_reason": "该披露确认现有牌照/批准在最后可行日期仍有效，说明风险来自未来资格补足的条件性，而非当前牌照已失效。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "page": 210,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "由 於 導 致 發 出 改 善 通 知 書 的 相 關 事 件 並 無 涉 及 任 何 傷 害 或 身 亡，合 規 顧 問 認 為 改\n善 通 知 書 將 不 會 導 致 可 能 影 響 弘 建 營 造（香 港）維 持 註 冊 專 門 行 業 承 造 商 名 冊 及 註 冊 分\n包 商 名 冊 項 下 的 註 冊 地 位 的 規 管 行 動。\n除 上 文 所 披 露 者 外，於 最 後 可 行 日 期，概 無 本 集 團 成 員 公 司 牽 涉 任 何 重 大 訴 訟 或\n仲 裁，而 據 董 事 所 知，本 集 團 任 何 成 員 公 司 亦 無 面 臨 待 決 或 受 威 脅 的 重 大 訴 訟、申 索\n或 仲 裁。",
+      "evidence_reason": "该正式法律披露将安全改善通知和其他诉讼的重大性排除，帮助把needs_review焦点限定在尚待满足的注册资格，而非已披露诉讼本身。",
+      "confidence": 0.94
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "precommercial_product",
+      "page": 103,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我 們 是 於 香 港 從 事 提 供 外 牆 工 程 及 建 築 金 屬 飾 面 工 程 項 目 設 計、供 應 及 安 裝 服 務\n的 分 包 商。我 們 的 歷 史 起 源 自 二 零 零 七 年，當 時，朱 先 生 成 立 本 集 團 的 唯 一 經 營 附 屬\n公 司 弘 建 營 造（香 港），藉 以 在 香 港 提 供 外 牆 工 程 及 建 築 金 屬 飾 面 工 程 服 務。",
+      "evidence_reason": "Business正式披露显示集团自2007年起即开展并提供商业工程服务，不是核心产品尚未商业化的企业。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "precommercial_product",
+      "page": 103,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "憑 藉 逾 十 年 經 驗，我 們 於 香 港 已 完 成 多 個 商 業 物 業、\n住 宅 物 業 以 及 公 共 設 施 的 外 牆 工 程 及 建 築 金 屬 飾 面 工 程 項 目。",
+      "evidence_reason": "已完成多个商业项目进一步证明业务已商业化并产生实际交付。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "risk_code": "precommercial_product",
+      "page": 362,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "收 益 6 105,822 166,751 202,786 83,990 126,217",
+      "evidence_reason": "会计师报告显示多个期间持续确认营业收入，交叉验证其并非无商业收入的precommercial状态。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

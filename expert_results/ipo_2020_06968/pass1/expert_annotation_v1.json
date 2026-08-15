@@ -1,0 +1,273 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "cash_runway",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "critical",
+"confidence": 0.99,
+"reasoning": "截至2019年12月31日止年度，會計師報告列示經營活動所用現金淨額為人民幣6,756,031千元，年末現金及現金等價物為人民幣1,052,217千元。按12個月計算，月度經營現金消耗約為人民幣563,002.58千元，現金跑道約1.87個月，低於3個月的critical閾值。",
+"calculation_required": true,
+"calculation_method": "cash_divided_by_monthly_operating_cash_burn",
+"calculation_inputs": {
+"period": "year ended 31 December 2019",
+"currency": "RMB",
+"unit": "RMB'000",
+"cash_and_cash_equivalents": 1052217,
+"net_cash_from_operating_activities": -6756031,
+"period_months": 12
+},
+"calculation_result": {
+"monthly_operating_cash_burn": 563002.5833333334,
+"cash_runway_months": 1.86893813838332,
+"assessment": "critical_lt_3_months"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "continuous_loss",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "2017年、2018年及2019年三個可比年度均錄得正的年內溢利及全面收益總額，分別為人民幣32,831千元、331,958千元及470,064千元，沒有可比虧損期間，因此不符合連續虧損風險定義。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"comparable_periods": [
+{"period": "year ended 31 December 2017", "profit_or_loss": 32831},
+{"period": "year ended 31 December 2018", "profit_or_loss": 331958},
+{"period": "year ended 31 December 2019", "profit_or_loss": 470064}
+]
+},
+"calculation_result": {
+"comparable_loss_periods": 0,
+"assessment": "no_comparable_loss_periods"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "revenue_growth",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "會計師報告列示2017年至2019年來自客戶合約的收益分別為人民幣433,931千元、1,659,593千元及1,978,034千元。2018年同比增長約282.46%，2019年同比增長約19.19%，均不低於0%，未觸發收入下降的medium或high閾值。",
+"calculation_required": true,
+"calculation_method": "year_over_year_revenue_growth",
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"revenue_by_period": [
+{"period": "year ended 31 December 2017", "revenue": 433931},
+{"period": "year ended 31 December 2018", "revenue": 1659593},
+{"period": "year ended 31 December 2019", "revenue": 1978034}
+]
+},
+"calculation_result": {
+"growth_2018_vs_2017_pct": 282.4555055988164,
+"growth_2019_vs_2018_pct": 19.187897273608655,
+"minimum_comparable_growth_pct": 19.187897273608655,
+"assessment": "no_negative_revenue_growth"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "customer_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "正式業務披露顯示，2017年至2019年五大客戶收益佔比分別為5.4%、4.0%及2.5%，最大客戶收益佔比分別為1.5%、2.5%及1.3%。所有期間均遠低於最大客戶30%或五大客戶60%的medium閾值。",
+"calculation_required": true,
+"calculation_method": "disclosed_concentration_percentage_threshold_test",
+"calculation_inputs": {
+"periods": [
+{"period": "year ended 31 December 2017", "largest_customer_pct": 1.5, "top_five_customers_pct": 5.4},
+{"period": "year ended 31 December 2018", "largest_customer_pct": 2.5, "top_five_customers_pct": 4.0},
+{"period": "year ended 31 December 2019", "largest_customer_pct": 1.3, "top_five_customers_pct": 2.5}
+],
+"medium_thresholds": {"largest_customer_pct": 30, "top_five_customers_pct": 60},
+"high_thresholds": {"largest_customer_pct": 50, "top_five_customers_pct": 80}
+},
+"calculation_result": {
+"maximum_largest_customer_pct": 2.5,
+"maximum_top_five_customers_pct": 5.4,
+"medium_threshold_excluded": true,
+"high_threshold_excluded": true,
+"assessment": "below_concentration_thresholds"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "正式業務披露顯示，2017年至2019年五大供應商採購佔比分別為58.8%、30.1%及22.1%，最大供應商採購佔比分別為25.2%、10.6%及6.6%（均不包括土地採購額）。所有期間均低於最大供應商30%或五大供應商60%的medium閾值。",
+"calculation_required": true,
+"calculation_method": "disclosed_concentration_percentage_threshold_test",
+"calculation_inputs": {
+"basis": "purchases excluding land acquisitions",
+"periods": [
+{"period": "year ended 31 December 2017", "largest_supplier_pct": 25.2, "top_five_suppliers_pct": 58.8},
+{"period": "year ended 31 December 2018", "largest_supplier_pct": 10.6, "top_five_suppliers_pct": 30.1},
+{"period": "year ended 31 December 2019", "largest_supplier_pct": 6.6, "top_five_suppliers_pct": 22.1}
+],
+"medium_thresholds": {"largest_supplier_pct": 30, "top_five_suppliers_pct": 60},
+"high_thresholds": {"largest_supplier_pct": 50, "top_five_suppliers_pct": 80}
+},
+"calculation_result": {
+"maximum_largest_supplier_pct": 25.2,
+"maximum_top_five_suppliers_pct": 58.8,
+"medium_threshold_excluded": true,
+"high_threshold_excluded": true,
+"assessment": "below_concentration_thresholds"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "redemption_rights",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.91,
+"reasoning": "上市前已發行股本由華興、華聯及華隆持有，招股書的股本披露明確指出股份為普通股並與現時全部已發行股份享有同等地位。基石投資者的發售股份亦與其他悉數繳足股份同等地位，且基石投資者協議不賦予其相較其他公眾股東的任何優先權。未發現實際生效或可恢復的上市前投資者贖回、回購或其他特殊股東權利；招股書中一般公司法贖回條款或項目融資安排不屬於本風險定義下的實際特殊股東權利。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.88,
+"reasoning": "正式業務披露顯示相關房地產開發資質於最後實際可行日期有效，除已披露的過往不合規事件外，本集團在所有重大方面遵守適用中國法律法規，董事並評估該等過往事件不會造成重大不利影響。193項未登記租賃安排仍需業主配合辦理登記，但截至最後實際可行日期未收到更正命令或罰款，董事認為不會造成重大經營或財務影響。附錄亦明確披露不存在會對經營業績或財務狀況產生重大不利影響的重大待決訴訟、仲裁或申索。因此未識別出重大待決事項或具有重大未解決影響的監管／牌照事項。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06968",
+"stock_code": "6968.HK",
+"company_name": "港龍中國地產",
+"document_id": "ipo_2020_06968",
+"risk_code": "precommercial_product",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "會計師報告確認本集團的唯一經營分部為物業開發部，且往績記錄期間確認的客戶合約收益為中國物業銷售額；2017年至2019年亦持續錄得物業銷售相關收益。因此核心業務已商業化並產生產品／物業銷售收入，不符合precommercial_product候選條件，OPEN-02嚴重性政策不適用。",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{"case_id":"ipo_2020_06968","risk_code":"cash_runway","page":406,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"經營活動所得╱（所用）現金淨額 . . . . . . 75,884 (626,327) (6,756,031)","evidence_reason":"2019年經營活動現金淨額為負人民幣6,756,031千元，提供月度經營現金消耗的權威輸入。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"cash_runway","page":406,"evidence_role":"supporting","requirement":"required","source_authority":"accountants_report","exact_text":"年末現金及現金等價物 . . . . . . . . . . . . 19 166,204 622,753 1,052,217","evidence_reason":"2019年末現金及現金等價物為人民幣1,052,217千元，為cash runway標準現金輸入。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"continuous_loss","page":401,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"年內溢利及全面收益總額 . . . . . . . . . . . . 32,831 331,958 470,064","evidence_reason":"三個可比年度均為正溢利，直接排除連續虧損條件。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"revenue_growth","page":401,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"來自客戶合約的收益 . . . . . . . . . . . . . . . . 5 433,931 1,659,593 1,978,034","evidence_reason":"提供2017年至2019年可比年度收益，用於同比增長計算。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"customer_concentration","page":252,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"我們的客戶為物業的個人及公司買家。截至2019年12月31日止三個年度，自五大客戶的收益分別佔收益總額的5.4%、4.0%及2.5%。自最大客戶的收益分別佔收益總額的1.5%、2.5%及1.3%。我們於往績記錄期間的所有五大客戶均為獨立第三方。","evidence_reason":"正式業務披露給出五大客戶及最大客戶的三年集中度比例，可直接進行凍結閾值檢驗。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"supplier_concentration","page":252,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"截至2019年12月31日止三個年度，自五大供應商（均為獨立第三方）的採購額分別佔採購總額（不包括土地採購額）的58.8%、30.1%及22.1%，且自單一最大供應商的採購額分別佔採購總額（不包括土地採購額）的25.2%、10.6%及6.6%。","evidence_reason":"正式業務披露給出五大供應商及最大供應商的三年集中度比例，並明確計算口徑不包括土地採購額。","confidence":0.99},
+{"case_id":"ipo_2020_06968","risk_code":"redemption_rights","page":302,"evidence_role":"primary","requirement":"required","source_authority":"corporate_structure","exact_text":"華 興 . . . . . . . . . . . . . . . . . . . . . . . 實益擁有人 420 42%\n華 聯 . . . . . . . . . . . . . . . . . . . . . . . 實益擁有人 330 33%\n華 隆 . . . . . . . . . . . . . . . . . . . . . . . 實益擁有人 250 25%","evidence_reason":"上市前主要股東表顯示已發行股本由三個控股股東持股工具持有，未呈現外部上市前投資者持有特殊類別股份。","confidence":0.94},
+{"case_id":"ipo_2020_06968","risk_code":"redemption_rights","page":303,"evidence_role":"supporting","requirement":"required","source_authority":"corporate_structure","exact_text":"股份為我們股本中的普通股，與現時全部已發行股份享有同等地位，具體而言，其將全面享有於本招股章程日期後的記錄日期就股份所宣派、作出或派付的一切股息或其他分派。","evidence_reason":"股本章節明確現有股份為普通股且同等地位，支持不存在特殊股份權利的判斷。","confidence":0.96},
+{"case_id":"ipo_2020_06968","risk_code":"redemption_rights","page":307,"evidence_role":"cross_check","requirement":"supporting_only","source_authority":"legal_disclosure","exact_text":"本公司與基石投資者之間概無附屬安排，或因或就基石配售而給予基石投資者任何直接或間接的利益（惟保證按最終發售價分配相關發售股份除外），因此基石投資者與其他公眾股東相比於彼等各自的基石投資者協議中沒有任何優先權。","evidence_reason":"基石投資者協議的正式披露進一步交叉核對，確認此類投資者沒有相對公眾股東的優先權。","confidence":0.96},
+{"case_id":"ipo_2020_06968","risk_code":"material_litigation_compliance","page":269,"evidence_role":"primary","requirement":"required","source_authority":"business_section","exact_text":"據中國法律顧問告知，我們的董事確認，除下文所披露者外，本集團於往績記錄期間在所有重大方面均已遵守所有適用中國法律法規。下文載列我們於往績記錄期間若干過往不合規事件的詳情。\n基於(i)過往不合規事件的性質及事因；(ii)中國相關政府主管部門發出的確認函及與其進行的會談；(iii)下文所載我們中國法律顧問對相關不合規事件的意見；及(iv)已實行的糾正措施及經強化的內部控制措施，董事認為，下文所述過往不合規事件均不會對我們的業務、財務狀況及經營業績造成任何重大不利影響。","evidence_reason":"正式Business合規披露對過往不合規的性質、政府確認、法律意見及補救作出整體重大性結論。","confidence":0.94},
+{"case_id":"ipo_2020_06968","risk_code":"material_litigation_compliance","page":252,"evidence_role":"supporting","requirement":"required","source_authority":"business_section","exact_text":"截至最後實際可行日期，我們並無接到任何更正命令或曾就未登記租賃協議遭受任何罰款。董事認為，該等未登記租賃協議不會對我們的經營或財務造成重大影響。因此，毋需於財務報表作出計提撥備。","evidence_reason":"處理仍在辦理登記的租賃事項：截至最後實際可行日期無更正命令或罰款，且正式披露評估其影響不重大。","confidence":0.91},
+{"case_id":"ipo_2020_06968","risk_code":"material_litigation_compliance","page":624,"evidence_role":"cross_check","requirement":"required","source_authority":"legal_disclosure","exact_text":"除本招股章程所披露者外，本集團成員公司概無涉及任何重大訴訟、仲裁或申索，據董事所知，亦無任何待決或本公司提出或針對本公司且會對本公司經營業績或財務狀況產生重大不利影響的重大訴訟、仲裁或申索。","evidence_reason":"附錄法律披露明確排除會造成重大不利影響的重大待決訴訟、仲裁或申索。","confidence":0.97},
+{"case_id":"ipo_2020_06968","risk_code":"precommercial_product","page":428,"evidence_role":"primary","requirement":"required","source_authority":"accountants_report","exact_text":"執行董事根據除所得稅前溢利計量評估經營分部的表現，並視之為唯一的經營分部，即物業開發部。因此，未列報分部披露資料。","evidence_reason":"會計師報告確認核心經營分部為物業開發，界定核心業務。","confidence":0.98},
+{"case_id":"ipo_2020_06968","risk_code":"precommercial_product","page":428,"evidence_role":"supporting","requirement":"required","source_authority":"accountants_report","exact_text":"於往績記錄期間確認的來自客戶合約的收益為位於中國的物業銷售額（均已於某一時點予以確認）。","evidence_reason":"會計師報告確認核心業務已產生物業銷售收入，直接排除未商業化且無產品銷售收入的候選條件。","confidence":0.99}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"calculation_object_contract": {
+"calculation_inputs": "JSON object or null; never a string",
+"calculation_result": "JSON object or null; never a string",
+"forbidden_encodings": ["prose_string","markdown","comma_separated_text","equation_in_one_string"],
+"positive_operating_cash_flow_example": {
+"calculation_inputs": {"period":"six months ended 30 September 2019","currency":"MYR","unit":"RM'000","cash_and_cash_equivalents":39079,"net_cash_from_operating_activities":21817,"period_months":6},
+"calculation_result": {"monthly_operating_cash_burn":null,"cash_runway_months":null,"assessment":"no_operating_cash_burn"}
+},
+"concentration_bound_example": {
+"calculation_method":"threshold_exclusion_bound",
+"calculation_inputs":{"single_customer_upper_bound_pct":10,"maximum_customers_considered":5,"bound_operator":"<"},
+"calculation_result":{"largest_customer_bound":"<10%","top_five_customer_bound":"<50%","medium_threshold_excluded":true}
+}
+},
+"evidence_object_schema": {
+"case_id":"non-empty string; must equal bundle case_id",
+"risk_code":"one of the eight active risk codes assessed in risks[]",
+"page":"integer >= 1; physical PDF page number",
+"evidence_role":["primary","supporting","context","cross_check"],
+"requirement":["required","alternative","supporting_only"],
+"source_authority":["audited_financial_statement","accountants_report","financial_information","business_section","legal_disclosure","corporate_structure","pre_ipo_investment","summary","risk_factors","other"],
+"exact_text":"non-empty verbatim text copied from the prospectus",
+"evidence_reason":"non-empty explanation of how the text supports the risk assessment",
+"confidence":"number from 0.0 to 1.0 inclusive"
+}
+}
+}

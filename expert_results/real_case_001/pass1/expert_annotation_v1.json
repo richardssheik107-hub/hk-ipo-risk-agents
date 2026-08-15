@@ -1,0 +1,422 @@
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "cash_runway",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.95,
+"reasoning": "以截至2024年3月31日与现金余额同日的最近期经营现金流期间计算。会计师报告列示集团现金及现金等价物为人民币137,208千元；截至2024年3月31日止三个月经营活动所用净现金流量为人民币83,918千元。按三个月月均化，月度经营现金消耗为83,918/3=27,972.67千元，现金跑道为137,208/27,972.67=4.905个月，落在3个月以上且低于6个月的high区间。会计师报告同时披露137,208千元中含60,000千元三个月以上定期存款，现金流量表口径将其剔除；本标注按财务状况表及附注20明确列示的“现金及现金等价物”口径执行冻结规则，且不将按公允价值计入损益的金融资产计入现金。",
+"calculation_required": true,
+"calculation_method": "cash_runway_months = period_end_cash_and_cash_equivalents / (abs(net_cash_used_in_operating_activities) / months_in_operating_cash_flow_period)",
+"calculation_inputs": {
+"cash_period": "2024-03-31",
+"operating_cash_flow_period": "three months ended 2024-03-31",
+"currency": "RMB",
+"unit": "RMB'000",
+"cash_and_cash_equivalents": 137208,
+"net_cash_used_in_operating_activities": -83918,
+"months_in_period": 3
+},
+"calculation_result": {
+"monthly_operating_cash_burn": 27972.67,
+"cash_runway_months": 4.9051,
+"threshold": "3 <= runway < 6 months",
+"level": "high"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "continuous_loss",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "medium",
+"confidence": 0.99,
+"reasoning": "会计师报告显示截至2022年及2023年12月31日止两个可直接比较的完整年度均录得亏损，分别为人民币311,802千元及383,171千元。冻结规则规定两个可比较亏损期间为medium。报告另列截至2023年及2024年3月31日止三个月均为亏损，但不把三个月期间与完整年度混合计数以人为形成三个以上“可比较期间”。",
+"calculation_required": true,
+"calculation_method": "count comparable full-year periods with loss_for_year < 0",
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"periods": [
+{
+"period": "year ended 2022-12-31",
+"loss_for_year": -311802
+},
+{
+"period": "year ended 2023-12-31",
+"loss_for_year": -383171
+}
+]
+},
+"calculation_result": {
+"comparable_loss_period_count": 2,
+"threshold": "2 comparable loss periods",
+"level": "medium"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "customer_concentration",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "正式Business披露明确称往绩记录期间仅有一名客户丽珠医药；2022年度客户表显示丽珠医药收入贡献人民币44,242千元，占总收入100.0%。最大客户100%显著高于冻结规则的50% high阈值。2023年度及截至2024年3月31日止三个月无收入，不改变2022年已实际发生的高度客户集中事实。",
+"calculation_required": false,
+"calculation_method": "direct disclosed customer revenue share compared with frozen threshold",
+"calculation_inputs": {
+"period": "year ended 2022-12-31",
+"currency": "RMB",
+"unit": "RMB'000",
+"largest_customer": "丽珠医药",
+"largest_customer_revenue": 44242,
+"largest_customer_share_percent": 100.0
+},
+"calculation_result": {
+"threshold_test": "100.0% >= 50.0%",
+"level": "high"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "verified",
+"expected_level": "none",
+"confidence": 0.94,
+"reasoning": "正式Business/Legal披露显示，公司已取得在中国业务运营至关重要的必要执照、批文和许可证，续期未遇重大困难；中国法律顾问同时确认往绩记录期间及直至最后实际可行日期不存在重大索赔、纠纷、诉讼、仲裁或其他法律程序，也不存在个别或整体对业务造成重大不利影响的不合规事件。第二遍审查同时覆盖了已披露的具体合规事项：社会保险及住房公积金存在少量欠缴情形，但金额被明确评估为不重大、未受行政处罚且法律顾问认为罚款可能性较低；四份租约未登记的最高潜在罚款约人民币40,000元并被明确评估为不重大；上海雅葆土地开工延误及出售审批仍有不确定性，但公司明确预计不会造成重大不利影响；另有郑州乐力与前董事的诉讼，公司不是诉讼当事方且法律顾问认为不会对公司产生法律影响。因此未达到“重大未决事项或具有重大未解决监管/牌照影响”的适用门槛。",
+"calculation_required": false,
+"calculation_method": "not_applicable_nonfinancial_legal_assessment",
+"calculation_inputs": {},
+"calculation_result": {
+"result": "no material pending litigation/compliance or material unresolved licence impact identified"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "precommercial_product",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "核心产品TY-9591仍处于关键II期及注册性III期临床试验阶段，尚待提交NDA并取得上市批准。正式财务资料明确披露公司目前没有获准进行商业销售的产品，也未从产品销售中产生任何收入；会计师报告进一步显示2022年的人民币44,242千元收入属于与丽珠医药相关的“合作收入”，来自知识产权许可、临床前支持、里程碑及特许权安排，而2023年及截至2024年3月31日止三个月该项收入均为零。因此核心产品未商业化且不存在产品销售收入，满足冻结适用条件；考虑业务对核心产品未来获批和商业化的直接依赖，标注为high。",
+"calculation_required": false,
+"calculation_method": "not_applicable_business_stage_and_revenue_attribution_assessment",
+"calculation_inputs": {},
+"calculation_result": {
+"result": "core product pre-commercial and product-sales revenue absent"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "redemption_rights",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "medium",
+"confidence": 0.99,
+"reasoning": "首次公开发售前投资者实际获授包括赎回权在内的特殊权利。2024年1月17日终止协议令赎回权自首次递交上市申请表格前一日起失效，其他特殊权利于上市后失效；但若公司撤回公开发售申请、监管机构不批准/拒绝或终止上市审核，或自递交申请起14个月内未完成公开发售，所有特殊权利会自动恢复，犹如从未终止。冻结规则明确要求审查“实际有效或可恢复”的赎回/特殊权利，因此该风险适用；按协议给定的候选严重度采用medium。",
+"calculation_required": false,
+"calculation_method": "not_applicable_legal_rights_assessment",
+"calculation_inputs": {},
+"calculation_result": {
+"result": "restorable special/redemption rights identified"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "revenue_growth",
+"applicable": true,
+"expected_status": "verified",
+"expected_level": "high",
+"confidence": 0.99,
+"reasoning": "采用会计师报告中两个可比较完整年度。2022年度收入为人民币44,242千元，2023年度收入为零；同比增长率=(0-44,242)/44,242=-100.0%，低于或等于-20%的high阈值。三个月比较期间因2023年和2024年均为零收入而不存在有意义的百分比增长率，不用于替代完整年度的明确下降结论。",
+"calculation_required": true,
+"calculation_method": "revenue_growth = (current_period_revenue - prior_comparable_period_revenue) / prior_comparable_period_revenue",
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"prior_period": "year ended 2022-12-31",
+"prior_period_revenue": 44242,
+"current_period": "year ended 2023-12-31",
+"current_period_revenue": 0
+},
+"calculation_result": {
+"revenue_growth_decimal": -1.0,
+"revenue_growth_percent": -100.0,
+"threshold": "<= -20%",
+"level": "high"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1",
+"case_id": "ipo_2024_02410",
+"stock_code": "2410.HK",
+"company_name": "同源康醫藥－Ｂ",
+"document_id": "ipo_2024_02410",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "verified",
+"expected_level": "none",
+"confidence": 0.99,
+"reasoning": "正式Business披露直接给出各期供应商集中度。2022年、2023年及截至2024年3月31日止三个月，五大供应商采购占比分别为51.8%、38.8%、37.3%，最大供应商占比分别为20.8%、10.0%、9.6%。所有期间最大供应商均低于30%的medium阈值，五大供应商均低于60%的medium阈值，因此冻结规则下不适用。",
+"calculation_required": false,
+"calculation_method": "direct disclosed supplier shares compared with frozen thresholds",
+"calculation_inputs": {
+"periods": [
+{
+"period": "year ended 2022-12-31",
+"largest_supplier_share_percent": 20.8,
+"top_five_supplier_share_percent": 51.8
+},
+{
+"period": "year ended 2023-12-31",
+"largest_supplier_share_percent": 10.0,
+"top_five_supplier_share_percent": 38.8
+},
+{
+"period": "three months ended 2024-03-31",
+"largest_supplier_share_percent": 9.6,
+"top_five_supplier_share_percent": 37.3
+}
+]
+},
+"calculation_result": {
+"threshold_test": "all largest supplier shares < 30% and all top-five shares < 60%",
+"level": "none"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{
+"risk_code": "cash_runway",
+"physical_pdf_page": 600,
+"source_section": "附錄一 會計師報告 – I-47 – 附註20 現金及現金等價物",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "20. 現金及現金等價物\n貴集團\n於12月31日 於3月31日\n2022年 2023年 2024年\n人民幣千元 人民幣千元 人民幣千元\n現金及銀行結餘 ............................. 90,762 186,830 77,208\n三個月以上定期存款* ........................ – – 60,000\n現金及現金等價物 ........................... 90,762 186,830 137,208"
+},
+{
+"risk_code": "cash_runway",
+"physical_pdf_page": 562,
+"source_section": "附錄一 會計師報告 – I-9 – 綜合現金流量表",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "經營活動所用淨現金流量............... (220,053) (200,944) (56,986) (83,918)"
+},
+{
+"risk_code": "cash_runway",
+"physical_pdf_page": 563,
+"source_section": "附錄一 會計師報告 – I-10 – 綜合現金流量表續頁",
+"evidence_role": "cross_check",
+"page_relationship": "supporting_only",
+"exact_quote": "年末╱期末現金及現金等價物 .......... 20 90,762 186,830 111,745 77,208\n財務狀況表所述現金及現金等價物 ....... 90,762 186,830 111,745 137,208\n原到期日超過三個月的定期存款 ......... – – – (60,000)\n現金流量表所述現金及現金等價物 ....... 90,762 186,830 111,745 77,208"
+},
+{
+"risk_code": "continuous_loss",
+"physical_pdf_page": 558,
+"source_section": "附錄一 會計師報告 – I-5 – 綜合損益及其他全面收入表",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "除稅前虧損...................... 8 (311,802) (383,171) (83,214) (107,778)\n所得稅開支...................... 12 – – – –\n年內╱期內虧損.................. (311,802) (383,171) (83,214) (107,778)"
+},
+{
+"risk_code": "customer_concentration",
+"physical_pdf_page": 393,
+"source_section": "業務 – 382 – 客戶",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "總計 .............. 44,242 100.0"
+},
+{
+"risk_code": "customer_concentration",
+"physical_pdf_page": 392,
+"source_section": "業務 – 381 – 客戶",
+"evidence_role": "supporting",
+"page_relationship": "supporting_only",
+"exact_quote": "客戶\n於往績記錄期間，我們僅有一名客戶，即麗珠醫藥。有關我們與麗珠醫藥的合作詳情，請參閱「業務 － 合作安排 － 與麗珠醫藥就開發TY-2136b訂立的對外授權安排」。我們於截至2023年12月31日止年度及截至2024年3月31日止三個月並無產生任何收入。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 407,
+"source_section": "業務 – 396 – 執照、許可證和批文",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "執照、許可證和批文\n我們的中國法律顧問表示，於往績記錄期間及截至最後實際可行日期，我們已從相關部門獲得了對我們在中國的業務運營至關重要的所有必要執照、批文和許可證。於往績記錄期間及直至最後實際可行日期，我們在重續該等執照、許可證、批文和證書方面並無遇到任何重大困難，且我們目前預計在該等執照、許可證、批文和證書到期時進行重續（倘適用）方面亦不會存在任何重大困難。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 408,
+"source_section": "業務 – 397 – 法律訴訟及監管合規",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "法律訴訟及監管合規\n據我們的中國法律顧問所告知，於往績記錄期間及直至最後實際可行日期，我們並無涉及任何重大索賠、糾紛、訴訟、仲裁或其他法律程序。同期，我們並無涉及任何個別或整體對我們的整體業務造成重大不利影響的不合規事件。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 407,
+"source_section": "業務 – 396 – 未登記租賃協議",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "截至最後實際可行日期，我們總建築面積為10,120.9平方米的四份租賃協議尚未在中國相關機構登記，主要原因是難以與出租人合作以登記該等租約。登記該等租約需要我們出租人的合作。據我們的中國法律顧問告知，未登記已簽立的租賃協議將不會影響其合法性、有效性或可強制執行性。然而，倘相關中國政府機關要求我們整改而我們未能在規定期限內整改，則我們可能就每份未登記租賃協議被處以不少於人民幣1,000元但不超過人民幣10,000元的罰款。我們估計，我們就該等未登記租賃協議可能面臨的最高罰款約為人民幣40,000元，而我們認為該金額並不重大。為確保持續遵守有關登記已簽立租賃協議的中國法律及法規，我們將繼續與出租人聯絡並嘗試登記所有未登記租約。展望未來，我們將要求所有出租人在與彼等訂立租賃協議前提供必要文件，並與我們合作完成租賃協議的登記。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 402,
+"source_section": "業務 – 391 – 社會保險及住房公積金",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "社會保險及住房公積金\n根據相關中國法律法規，用人單位有義務為其僱員繳納社會保險及住房公積金。於往績記錄期間，我們並無為若干僱員足額繳納社會保險及住房公積金。根據相關中國法律法規，倘任何相關社會保險主管部門認為我們為僱員繳納的社會保險不符合中國相關法律法規的要求，其可能會責令我們限期繳納欠繳數額，並按日加收欠繳總額0.05%的滯納金。倘我們未有按照相關社會保險主管部門的要求在規定期限內繳納欠款，我們或會被處以欠繳總額一倍以上三倍以下的罰款。此外，倘任何相關住房公積金主管部門認為我們繳納的住房公積金不符合中國相關法律法規的要求，其可能會責令我們限期繳納欠繳數額。倘我們未有在規定期限內繳納欠款，我們或會被相關中國法院頒令強制執行。於2022年、2023年及截至2024年3月31日止三個月，我們的社會保險及住房公積金供款的總欠繳金額分別約為人民幣2.1百萬元、人民幣2.0百萬元及人民幣0.8百萬元。我們認為，於往績記錄期間的社會保險及住房公積金供款總欠繳金額不會對我們的業務產生重大不利影響。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 403,
+"source_section": "業務 – 392 – 第三方人力資源機構供款安排",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "於往績記錄期間，我們委聘第三方人力資源機構為若干僱員繳納社會保險及住房公積金。通過第三方機構作出該等供款雖然在中國並不罕見，但可能被視為未嚴格遵守相關中國法律法規。\n此外，考慮到我們已獲得浙江省人民政府出具的報告及湖州市住房公積金管理中心長興縣分中心出具的確認函，確認我們於往績記錄期間並無因社會保險及住房公積金供款而被處以任何行政處罰，我們的中國法律顧問認為，只要我們根據政府主管部門的要求於規定的期限內繳納欠繳供款及滯納金（如有），政府主管部門因我們與第三方人力資源機構的安排而對我們作出罰款的可能性較低。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 404,
+"source_section": "業務 – 393 – 上海雅葆土地使用權",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "截至最後實際可行日期，當地主管部門並無要求沒收50%的開工保證金。未來是否及何時會發生有關沒收的決定由當地主管部門酌情決定。\n根據《閒置土地處置辦法》，上海雅葆於開工截止日期後一年內未開工的，該地塊被視為閒置土地，有關閒置土地的資料，包括但不限於土地使用權持有人（即上海雅葆）的名稱，將在政府網站上公佈，直至土地使用權被當地政府收回。此外，若上海雅葆在開工截止日期後一年內未能開工，國土資源主管部門經當地人民政府批准後，可按對價的20%向上海雅葆收取閒置土地費，合計人民幣5,840,000元。倘當地主管部門於開工截止日期一週年後仍未終止合同，且倘上海雅葆未能於開工截止日期後兩年內開工，則國土資源主管部門有權收回土地使用權，且不退還任何部分對價（「潛在法律後果」）。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 405,
+"source_section": "業務 – 394 – 上海雅葆土地使用權後果",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "誠如中國法律顧問所告知，除上述者外，上海雅葆無需承擔刑事或其他法律後果。截至最後實際可行日期，上海雅葆尚未開始在該地塊上施工。在最壞的情況下，倘上海雅葆並未於開工截止日期後兩年內開工，則其可能會受到潛在合同後果及潛在法律後果的影響，而我們預期於可預見未來不會對我們的流動資金及營運資金充足性造成任何重大不利影響。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 405,
+"source_section": "業務 – 394 – 上海雅葆出售審批",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "截至最後實際可行日期，我們尚未就出售上海雅葆獲得相關部門的批准。然而，我們預計在獲得上述批准方面不會遇到任何重大障礙。儘管我們與有關當局保持良好及頻繁的溝通，但由於有關審批是由有關當局酌情決定，因此並無明確的審批時間表。如果我們未能獲得有關當局的批准，從而未能出售上海雅葆，我們仍有足夠的營運資金，可在本招股章程日期起至少未來12個月內支付至少125%的成本，包括一般、行政及運營成本（包括任何生產成本）、研發成本以及業務開發及營銷開支。因此，我們預計上述未能獲得批准的情況不會對我們的業務、經營業績和財務狀況造成任何重大不利影響。"
+},
+{
+"risk_code": "material_litigation_compliance",
+"physical_pdf_page": 270,
+"source_section": "歷史、發展及公司架構 – 259 – 鄭州樂力與高劍昕先生之糾紛",
+"evidence_role": "context",
+"page_relationship": "supporting_only",
+"exact_quote": "考慮到(i)本公司並非該等法律訴訟的一方，且不論該等法律訴訟的結果如何，其將不會使高先生或鄭州樂力成為本公司的登記股東；(ii)該等法律訴訟由鄭州樂力（即泰基鴻諾醫藥的少數股東及本公司的獨立及間接股東）層面進行，對泰基鴻諾醫藥或本公司並無任何控制或影響，我們的中國法律顧問認為，本公司不會因高先生與鄭州樂力之間的持續糾紛而須支付任何金錢賠償，也不會對本公司產生任何法律影響。基於上文所述，董事認為，且獨家保薦人經考慮上述及其他相關文件後亦同意，本公司不會因高先生與鄭州樂力之間的持續糾紛而須支付任何金錢賠償，也不會對本公司產生任何法律影響。"
+},
+{
+"risk_code": "precommercial_product",
+"physical_pdf_page": 275,
+"source_section": "業務 – 264 – 核心產品TY-9591",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "根據該等令人鼓舞的臨床數據，我們正在進行TY-9591單藥治療的關鍵II期臨床試驗，將其用於EGFR突變NSCLC腦轉移的一線治療。該舉措旨在獲得對我們營銷推廣的有條件批准，朝著推出首個針對該特定適應症的藥物邁出一大步。\n此外，我們的Ib期研究臨床數據顯示，TY-9591在78例可評估患者中表現出了良好的療效和安全性，EGFR突變（L858R╱19外顯子缺失）NSCLC患者的中位PFS為21.5個月，其中19外顯子缺失患者為25.7個月及L858R突變患者為19.3個月。研究人員確認ORR為85.9%，其中19外顯子缺失患者為85.7%及L858R突變患者為86.1%。此外，我們未觀察到DLT，而不良事件的發生率和嚴重程度均可接受。我們正在進行TY-9591單藥治療的註冊性III期臨床試驗，將其用於EGFR L858R突變的局部晚期或轉移性NSCLC的一線治療。"
+},
+{
+"risk_code": "precommercial_product",
+"physical_pdf_page": 580,
+"source_section": "附錄一 會計師報告 – I-27 – 附註5 收入",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "5. 收入\n收入分析如下：\n客戶合同收入\n(a) 分拆收入資料\n截至12月31日止年度 截至3月31日止三個月\n2022年 2023年 2023年 2024年\n人民幣千元 人民幣千元 人民幣千元 人民幣千元\n（未經審計）\n服務類型\n合作收入..................... 44,242 – – –\n收入確認時間\n在某個時間點轉移 ............. 44,242 – – –\n(b) 履約責任\n授出知識產權許可\n於2020年8月，　貴集團與麗珠醫藥集團股份有限公司（「麗珠醫藥」）訂立獨佔許可協議（「麗珠醫藥協議」），以於大中華區研究、開發、改進、製造、使用、銷售、訂約及商業化ROS1/NTRK/ALK多靶點小分子廣譜酪氨酸激酶抑制劑（「TY-2136b」）。根據麗珠醫藥協議，　貴集團有權就許可及臨床前支持收取預付款、里程碑付款及特許權使用費。\n截至2022年12月31日止年度，　貴集團確認與授出TY-2136b許可相關的合作收入人民幣44,242,000元。"
+},
+{
+"risk_code": "precommercial_product",
+"physical_pdf_page": 462,
+"source_section": "財務資料 – 451 – 概覽",
+"evidence_role": "cross_check",
+"page_relationship": "alternative",
+"exact_quote": "我們是一家臨床階段的生物製藥公司，致力於發現、收購、開發差異化靶向治療並對其進行商業化，以滿足癌症治療中亟待滿足的醫療需求。憑藉我們在藥物化學領域的實力、對癌症（特別是肺癌）的深入了解以及高效的臨床開發策略，我們正在中國開展核心產品TY-9591治療NSCLC的兩項關鍵臨床試驗。自2017年成立以來，我們已建立由11款候選藥物組成的管線，包括核心產品TY-9591、關鍵產品TY-302、內部開發的關鍵產品TY-2136b、四款其他創新臨床產品及處於臨床前階段或早期臨床開發階段的四款產品。作為一家具有全球願景的中國公司，我們的使命是解決患者藥物可及性問題，讓普通患者能吃到並吃得起最好的藥。\n我們目前並無獲准進行商業銷售的產品，亦未從產品銷售中產生任何收入。於往績記錄期間，我們並無盈利且產生經營虧損。於2022年及2023年以及截至2023年及2024年3月31日止三個月，我們於年內╱期內的總全面虧損分別為人民幣311.8百萬元、人民幣383.2百萬元、人民幣83.2百萬元及人民幣107.8百萬元。"
+},
+{
+"risk_code": "redemption_rights",
+"physical_pdf_page": 250,
+"source_section": "歷史、發展及公司架構 – 239 – 首次公開發售前投資者的權利",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "(3) 首次公開發售前投資者的權利\n首次公開發售前投資者獲授予慣常的特殊權利，包括但不限於優先購買權、隨售權、優先認購權、反攤薄權及贖回權。根據股東（包括首次公開發售前投資者）與本公司就該等特殊權利訂立的日期為2024年1月17日的終止協議，贖回權自首次遞交上市的首次上市申請表格日期的前一日起失效，而所有其他特殊權利於上市後失效，惟(i)"
+},
+{
+"risk_code": "redemption_rights",
+"physical_pdf_page": 251,
+"source_section": "歷史、發展及公司架構 – 240 – 首次公開發售前投資者的權利（續）",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "本公司撤回其公開發售申請、(ii)聯交所、證監會或任何主管證券監管機構決定不批准或拒絕本公司的上市申請或以其他方式終止上市申請審核程序或(iii)本公司未能自向聯交所遞交申請日期起計14個月內完成公開發售，則所有該等特殊權利應自動恢復，猶如該等權利從未終止。"
+},
+{
+"risk_code": "revenue_growth",
+"physical_pdf_page": 558,
+"source_section": "附錄一 會計師報告 – I-5 – 綜合損益及其他全面收入表",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "收入 ........................... 5 44,242 – – –"
+},
+{
+"risk_code": "supplier_concentration",
+"physical_pdf_page": 386,
+"source_section": "業務 – 375 – 供應商",
+"evidence_role": "primary",
+"page_relationship": "required",
+"exact_quote": "於2022年、2023年及截至2024年3月31日止三個月，我們於往績記錄期間各年度╱期間向五大供應商的採購總額分別佔我們各年度╱期間總採購額的51.8%、38.8%及37.3%，而於往績記錄期間各年度╱期間向我們最大供應商的採購額僅分別佔各年度╱期間我們總採購額的20.8%、10.0%及9.6%。下表載列我們於往績記錄期間各年度╱期間的五大供應商詳情。"
+}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false
+}
+}

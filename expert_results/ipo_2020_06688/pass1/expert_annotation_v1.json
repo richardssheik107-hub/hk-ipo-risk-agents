@@ -1,0 +1,547 @@
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risks": [
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "cash_runway",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "以最新可比期间截至2020年6月30日止六个月为准，经营活动产生的现金流量净额为正数人民币27,012,620千元；按Protocol v1.1.1，非负经营现金流不构成operating cash burn，因此monthly_operating_cash_burn及cash_runway_months均应为null，cash_runway风险不触发。期末现金及现金等价物为人民币71,413,054千元。  ",
+"calculation_required": true,
+"calculation_method": "cash_runway_from_operating_cash_flow",
+"calculation_inputs": {
+"period": "six months ended 30 June 2020",
+"currency": "RMB",
+"unit": "RMB'000",
+"cash_and_cash_equivalents": 71413054,
+"net_cash_from_operating_activities": 27012620,
+"period_months": 6
+},
+"calculation_result": {
+"monthly_operating_cash_burn": null,
+"cash_runway_months": null,
+"assessment": "no_operating_cash_burn"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "continuous_loss",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "经审计合并损益表显示，2017年、2018年及2019年三个完整年度均为盈利，年内利润分别为人民币8,204,743千元、2,156,119千元及18,071,921千元；截至2019年及2020年6月30日止六个月亦均为盈利，因此不存在两个或三个可比亏损期间。 ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"comparable_period_facts": [
+{
+"period": "year ended 31 December 2017",
+"profit_or_loss": 8204743
+},
+{
+"period": "year ended 31 December 2018",
+"profit_or_loss": 2156119
+},
+{
+"period": "year ended 31 December 2019",
+"profit_or_loss": 18071921
+},
+{
+"period": "six months ended 30 June 2019",
+"profit_or_loss": 1892254
+},
+{
+"period": "six months ended 30 June 2020",
+"profit_or_loss": 21923376
+}
+]
+},
+"calculation_result": {
+"comparable_loss_periods": 0,
+"all_disclosed_comparable_periods_profitable": true,
+"assessment": "continuous_loss_threshold_not_met"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "revenue_growth",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "经审计收入在所有可比观察中均增长：2018年较2017年增长约31.08%，2019年较2018年增长约40.71%，截至2020年6月30日止六个月较2019年同期增长约38.04%；最低可比增长仍为正，不触发<0%的medium或<=-20%的high阈值。 ",
+"calculation_required": true,
+"calculation_method": "period_over_period_revenue_growth",
+"calculation_inputs": {
+"currency": "RMB",
+"unit": "RMB'000",
+"revenues": [
+{
+"period": "year ended 31 December 2017",
+"revenue": 65395920
+},
+{
+"period": "year ended 31 December 2018",
+"revenue": 85722344
+},
+{
+"period": "year ended 31 December 2019",
+"revenue": 120618372
+},
+{
+"period": "six months ended 30 June 2019",
+"revenue": 52540056
+},
+{
+"period": "six months ended 30 June 2020",
+"revenue": 72528345
+}
+]
+},
+"calculation_result": {
+"comparisons": [
+{
+"base_period": "year ended 31 December 2017",
+"current_period": "year ended 31 December 2018",
+"growth_pct": 31.0821
+},
+{
+"base_period": "year ended 31 December 2018",
+"current_period": "year ended 31 December 2019",
+"growth_pct": 40.7082
+},
+{
+"base_period": "six months ended 30 June 2019",
+"current_period": "six months ended 30 June 2020",
+"growth_pct": 38.0439
+}
+],
+"minimum_comparable_growth_pct": 31.0821,
+"medium_threshold_triggered": false,
+"high_threshold_triggered": false,
+"assessment": "no_negative_revenue_growth"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "customer_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "Business正式披露显示，2017年、2018年、2019年及截至2020年6月30日止六个月，前五大客户收入占比分别为14.4%、20.0%、23.7%及22.6%；最大客户阿里巴巴占比分别为8.9%、9.2%、8.1%及6.2%。所有期间均远低于largest>=30%或top five>=60%的medium阈值。 ",
+"calculation_required": true,
+"calculation_method": "direct_disclosed_percentage_threshold_test",
+"calculation_inputs": {
+"currency": null,
+"unit": "%",
+"periods": [
+{
+"period": "year ended 31 December 2017",
+"largest_customer_pct": 8.9,
+"top_five_customers_pct": 14.4
+},
+{
+"period": "year ended 31 December 2018",
+"largest_customer_pct": 9.2,
+"top_five_customers_pct": 20.0
+},
+{
+"period": "year ended 31 December 2019",
+"largest_customer_pct": 8.1,
+"top_five_customers_pct": 23.7
+},
+{
+"period": "six months ended 30 June 2020",
+"largest_customer_pct": 6.2,
+"top_five_customers_pct": 22.6
+}
+],
+"medium_thresholds_pct": {
+"largest_customer": 30,
+"top_five_customers": 60
+},
+"high_thresholds_pct": {
+"largest_customer": 50,
+"top_five_customers": 80
+}
+},
+"calculation_result": {
+"maximum_largest_customer_pct": 9.2,
+"maximum_top_five_customers_pct": 23.7,
+"medium_threshold_triggered": false,
+"high_threshold_triggered": false,
+"assessment": "concentration_threshold_not_met"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "supplier_concentration",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "Business正式披露显示，2017年、2018年、2019年及截至2020年6月30日止六个月，前五大供应商采购占比分别为39.1%、22.9%、32.0%及35.3%，最大供应商占比分别为15.1%、5.5%、9.7%及8.2%。所有期间均低于largest>=30%或top five>=60%的medium阈值。 ",
+"calculation_required": true,
+"calculation_method": "direct_disclosed_percentage_threshold_test",
+"calculation_inputs": {
+"currency": null,
+"unit": "%",
+"periods": [
+{
+"period": "year ended 31 December 2017",
+"largest_supplier_pct": 15.1,
+"top_five_suppliers_pct": 39.1
+},
+{
+"period": "year ended 31 December 2018",
+"largest_supplier_pct": 5.5,
+"top_five_suppliers_pct": 22.9
+},
+{
+"period": "year ended 31 December 2019",
+"largest_supplier_pct": 9.7,
+"top_five_suppliers_pct": 32.0
+},
+{
+"period": "six months ended 30 June 2020",
+"largest_supplier_pct": 8.2,
+"top_five_suppliers_pct": 35.3
+}
+],
+"medium_thresholds_pct": {
+"largest_supplier": 30,
+"top_five_suppliers": 60
+},
+"high_thresholds_pct": {
+"largest_supplier": 50,
+"top_five_suppliers": 80
+}
+},
+"calculation_result": {
+"maximum_largest_supplier_pct": 15.1,
+"maximum_top_five_suppliers_pct": 39.1,
+"medium_threshold_triggered": false,
+"high_threshold_triggered": false,
+"assessment": "concentration_threshold_not_met"
+},
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "redemption_rights",
+"applicable": true,
+"expected_status": "needs_review",
+"expected_level": "medium",
+"confidence": 0.93,
+"reasoning": "截至招股章程日期，首次公开发行前投资者依据股东协议仍享有若干特殊权利，协议明确这些权利仅在H股或A股上市（以较早者为准）时终止；同时Ant International C类股份存在于H股首次公开发售完成时执行的一比一赎回及认购安排。由于特殊权利在上市前仍实际有效，按冻结政策应进入needs_review；终止条件本身披露清晰，因此候选严重度维持protocol规定的provisional medium。  ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "material_litigation_compliance",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.97,
+"reasoning": "正式法律诉讼及合规披露称，往绩记录期及截至最后实际可行日期不存在以被告身份牵涉的重大诉讼、索赔或仲裁，也无已知待决重大事项；公司在业务所有重大方面遵守相关法律法规。虽有22项小额行政处罚（合计约人民币1,060万元）及约人民币2.07万元所得被没收，但招股书明确认定其无重大不利影响且并非系统性问题。另披露所有必要重大牌照、许可及批准均有效，续期申请未遭拒绝。因此不存在冻结定义所要求的重大待决事项或未解决监管/牌照影响。  ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+},
+{
+"annotation_version": "gpt_expert_v1.1",
+"case_id": "ipo_2020_06688",
+"stock_code": "6688.HK",
+"company_name": "螞蟻集團",
+"document_id": "ipo_2020_06688",
+"risk_code": "precommercial_product",
+"applicable": false,
+"expected_status": "rejected",
+"expected_level": "not_applicable",
+"confidence": 0.99,
+"reasoning": "核心平台及服务已明确商业化。Business披露截至2020年6月30日止12个月中国内地总支付交易规模达人民币118万亿元，数字支付服务按交易金额比例向商家收取交易服务费，支付寶APP服务超过10亿用户和8,000万商家；微贷、理财及保险科技平台亦按促成业务规模向金融机构合作伙伴收取技术服务费。因此“核心产品未商业化且无产品销售/业务收入”的候选条件不成立。  ",
+"calculation_required": false,
+"calculation_method": null,
+"calculation_inputs": null,
+"calculation_result": null,
+"review_outcome": "expert_first_pass",
+"annotator_type": "external_gpt_expert"
+}
+],
+"evidence": [
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "cash_runway",
+"page": 449,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "經營活動產生╱（所用）現金流量淨額 16,141,169 (19,049,574) 17,259,942 1,272,641 27,012,620",
+"evidence_reason": "会计师报告合并现金流量表直接给出截至2020年6月30日止六个月经营活动现金流量净额为正人民币27,012,620千元，证明最新期间不存在经营现金消耗。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "cash_runway",
+"page": 451,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "年╱期末現金及現金等價物 20,377,585 46,000,405 39,767,024 39,490,356 71,413,054",
+"evidence_reason": "会计师报告合并现金流量表直接给出截至2020年6月30日期末现金及现金等价物人民币71,413,054千元，作为cash_runway标准现金输入。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "continuous_loss",
+"page": 439,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "年╱期內利潤 8,204,743 2,156,119 18,071,921 1,892,254 21,923,376",
+"evidence_reason": "经审计合并损益表的利润行覆盖2017、2018、2019完整年度以及2019和2020年上半年，全部为正，可直接排除连续亏损阈值。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "revenue_growth",
+"page": 439,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "accountants_report",
+"exact_text": "收入 5 65,395,920 85,722,344 120,618,372 52,540,056 72,528,345",
+"evidence_reason": "经审计合并损益表提供2017、2018、2019年度及2019/2020上半年可比收入，是计算收入增长率的权威输入。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "customer_concentration",
+"page": 224,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "於2017年、2018年、2019年及截至2020年6月30日止的六個月期間，我們來自前五大客戶的收入分別佔我們總收入的14.4%、20.0%、23.7%及22.6%。阿里巴巴是我們於整個往績記錄期間的最大客戶。於2017年、2018年、2019年及截至2020年6月30日止的六個月期間，我們從阿里巴巴產生的收入分別為人民幣5,816百萬元、人民幣7,849百萬元、人民幣9,773百萬元及人民幣4,470百萬元，分別佔我們於有關期間的收入約8.9%、9.2%、8.1%及6.2%。",
+"evidence_reason": "Business正式披露同时给出前五大客户及最大客户在各期间的收入占比，可直接执行冻结集中度阈值检验。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "supplier_concentration",
+"page": 225,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "於2017年、2018年、2019年及截至2020年6月30日止的六個月期間，我們向前五大供應商支付的採購額分別佔相關期間採購額的39.1%、22.9%、32.0%及35.3%。於2017年、2018年、2019年及截至2020年6月30日止的六個月期間，我們最大的供應商分別佔相關期間採購總額的15.1%、5.5%、9.7%及8.2%。",
+"evidence_reason": "Business正式披露同时给出前五大供应商及最大供应商在各期间的采购占比，可直接执行冻结集中度阈值检验。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "redemption_rights",
+"page": 151,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "pre_ipo_investment",
+"exact_text": "根據本公司與相關方於2020年6月12日簽署的經修訂並重述的《股東協議》（「《股東協議》」）及Ant International與相關方於2018年6月7日所訂立的《Ant International股東協議》（「《Ant International股東協議》」），首次公開發行前投資者可享有與本公司相關的若干特殊權利（其中包括慣常的優先購買權、優先認購權和信息權）。根據《股東協議》及《Ant International股東協議》各自的條款，該兩份協議的特殊權利將於H股上市或A股上市（以較早發生者為準）時終止，因而預計於2020年11月5日終止。",
+"evidence_reason": "首次公开发行前投资正式披露证明投资者在上市前仍享有实际特殊权利，并明确其上市时终止条件；按protocol，实际有效特殊权利需进入review。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "redemption_rights",
+"page": 152,
+"evidence_role": "supporting",
+"requirement": "supporting_only",
+"source_authority": "pre_ipo_investment",
+"exact_text": "根據與境外首次公開發行前投資者及阿里巴巴訂立的安排，Ant International會贖回Ant International C類股份，而Ant International C類股份持有人則會認購並獲發行相同數目的H股，繼而按一比一的比例將Ant International C類股份換成H股。",
+"evidence_reason": "该页进一步证明存在与首次公开发行前投资者相关的实际赎回及H股认购机制，支持redemption_rights审查。 ",
+"confidence": 0.97
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "material_litigation_compliance",
+"page": 236,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "legal_disclosure",
+"exact_text": "於往績記錄期及截至最後實際可行日期，我們並無以被告身份牽涉於任何重大訴訟。此外，於往績記錄期及截至最後實際可行日期，我們及董事均無參與任何重大訴訟、索賠或仲裁，且就董事所深知，概無任何關於本集團的待決或針對我們或董事的重大訴訟、索賠或仲裁。",
+"evidence_reason": "正式“法律诉讼及合规”披露直接否定重大被诉、重大待决诉讼、索赔或仲裁，排除material pending matter。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "material_litigation_compliance",
+"page": 236,
+"evidence_role": "supporting",
+"requirement": "required",
+"source_authority": "legal_disclosure",
+"exact_text": "往績記錄期間及截至最後實際可行日期，我們已就業務的所有重大方面遵守相關法律法規。在往績記錄期間，我們及在「歷史及發展－集團架構、重要子公司及重要聯營公司」一節中列出的重要子公司在境內收到共計22項來自包括中國人民銀行、國家外匯管理局、中國銀保監會在內的監管機構的分支機構、以及相關稅務機構的小額行政處罰，金額合計約人民幣1,060萬元。此外，由於輕微違反相關規定，公司約人民幣2.07萬元所得收入被沒收。這些處罰與罰款對我們的業務、經營結果沒有重大不利影響，也並非由於任何系統性問題導致。",
+"evidence_reason": "同一正式披露确认重大方面合规，并将既有处罚明确界定为小额、非重大不利且非系统性问题，排除冻结定义中的重大未解决合规影响。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "material_litigation_compliance",
+"page": 235,
+"evidence_role": "cross_check",
+"requirement": "supporting_only",
+"source_authority": "legal_disclosure",
+"exact_text": "截至最後實際可行日期，我們已就經營所在司法管轄區的業務運營取得一切必要重大牌照、許可及批准，而有關牌照、許可及批准仍然有效及生效。",
+"evidence_reason": "牌照及许可正式披露交叉验证不存在未解决的重大牌照缺失或失效。 ",
+"confidence": 0.98
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "precommercial_product",
+"page": 173,
+"evidence_role": "primary",
+"requirement": "required",
+"source_authority": "business_section",
+"exact_text": "截至2020年6月30日止12個月期間，通過我們平台完成的中國內地總支付交易規模達到人民幣118萬億元。我們的數字支付服務收入主要是按照交易金額的一定百分比向商家收取的交易服務費。",
+"evidence_reason": "Business正式披露显示核心数字支付平台已有大规模实际交易并产生交易服务费收入，直接证明核心服务已商业化。 ",
+"confidence": 0.99
+},
+{
+"case_id": "ipo_2020_06688",
+"risk_code": "precommercial_product",
+"page": 175,
+"evidence_role": "supporting",
+"requirement": "supporting_only",
+"source_authority": "business_section",
+"exact_text": "金融機構合作夥伴主要基於我們平台促成的信貸規模，向公司支付技術服務費。",
+"evidence_reason": "微贷科技平台的正式业务披露进一步证明核心数字金融科技服务已经形成收费和收入模式。 ",
+"confidence": 0.98
+}
+],
+"metadata": {
+"blind_annotation": true,
+"human_golden_visible_to_annotator": false,
+"output_contract": "ExpertAnnotationBundle",
+"prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+"confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+"calculation_object_contract": {
+"calculation_inputs": "JSON object or null; never a string",
+"calculation_result": "JSON object or null; never a string",
+"forbidden_encodings": [
+"prose_string",
+"markdown",
+"comma_separated_text",
+"equation_in_one_string"
+],
+"positive_operating_cash_flow_example": {
+"calculation_inputs": {
+"period": "six months ended 30 September 2019",
+"currency": "MYR",
+"unit": "RM'000",
+"cash_and_cash_equivalents": 39079,
+"net_cash_from_operating_activities": 21817,
+"period_months": 6
+},
+"calculation_result": {
+"monthly_operating_cash_burn": null,
+"cash_runway_months": null,
+"assessment": "no_operating_cash_burn"
+}
+},
+"concentration_bound_example": {
+"calculation_method": "threshold_exclusion_bound",
+"calculation_inputs": {
+"single_customer_upper_bound_pct": 10,
+"maximum_customers_considered": 5,
+"bound_operator": "<"
+},
+"calculation_result": {
+"largest_customer_bound": "<10%",
+"top_five_customer_bound": "<50%",
+"medium_threshold_excluded": true
+}
+}
+},
+"evidence_object_schema": {
+"case_id": "non-empty string; must equal bundle case_id",
+"risk_code": "one of the eight active risk codes assessed in risks[]",
+"page": "integer >= 1; physical PDF page number",
+"evidence_role": [
+"primary",
+"supporting",
+"context",
+"cross_check"
+],
+"requirement": [
+"required",
+"alternative",
+"supporting_only"
+],
+"source_authority": [
+"audited_financial_statement",
+"accountants_report",
+"financial_information",
+"business_section",
+"legal_disclosure",
+"corporate_structure",
+"pre_ipo_investment",
+"summary",
+"risk_factors",
+"other"
+],
+"exact_text": "non-empty verbatim text copied from the prospectus",
+"evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+"confidence": "number from 0.0 to 1.0 inclusive"
+}
+}
+}

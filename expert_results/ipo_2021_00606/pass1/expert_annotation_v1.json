@@ -1,0 +1,503 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_00606",
+  "stock_code": "0606.HK",
+  "company_name": "中駿商管",
+  "document_id": "ipo_2021_00606",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示2020年度经营活动所得现金流量净额为正数人民币301,977千元。按Protocol v1.1.1，经营现金流为正或零时不存在operating cash burn，不得取绝对值构造现金消耗；因此monthly_operating_cash_burn及cash_runway_months均为null，cash_runway风险不适用。年末现金及现金等价物为人民币503,944千元。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_positive_operating_cash_flow_check",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 503944,
+        "net_cash_from_operating_activities": 301977,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的三个可比完整年度均为盈利：2018年、2019年及2020年年内利润分别为人民币34,820千元、77,298千元及162,510千元。三个可比期间的亏损期数为0，不满足连续亏损的2期或3期阈值。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "profit_or_loss": 34820
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_or_loss": 77298
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "profit_or_loss": 162510
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_periods": 3,
+        "loss_periods": 0,
+        "assessment": "no_continuous_loss"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示收益由2018年的人民币396,507千元增至2019年的574,517千元，并进一步增至2020年的805,284千元。可比增长率约为44.8945%及40.1671%，均为正，不触发<0%的medium或<=-20%的high阈值。",
+      "calculation_required": true,
+      "calculation_method": "year_over_year_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "revenues": [
+          {
+            "period": "year ended 31 December 2018",
+            "revenue": 396507
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "revenue": 574517
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "revenue": 805284
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_2019_vs_2018_pct": 44.894542,
+        "growth_2020_vs_2019_pct": 40.167132,
+        "negative_growth_periods": 0,
+        "assessment": "no_negative_revenue_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "2020年最大客户中駿集團交易金额为人民币314,446千元，五大客户合计人民币355,223千元；同年会计师报告总收益为人民币805,284千元。精确计算得最大客户约39.0478%，五大客户约44.1115%。最大客户比例达到medium的>=30%阈值但低于high的>=50%阈值；五大客户比例低于medium的>=60%阈值，因此整体为medium。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 805284,
+        "largest_customer_revenue": 314446,
+        "top_five_customer_revenue": 355223,
+        "medium_largest_customer_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_customer_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_customer_pct": 39.047839,
+        "top_five_customer_pct": 44.111518,
+        "trigger": "largest_customer_ge_30_pct",
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "正式Business披露显示2020年五大供应商采购额合计人民币40.9百万元，占同期采购总额9.2%。最大供应商必为五大供应商之一，因此其占总采购额比例不可能高于五大供应商合计9.2%；据此最大供应商比例上界<=9.2%，五大供应商为9.2%，均显著低于medium阈值（最大>=30%、五大>=60%），亦低于high阈值。另表格交叉核对显示2020年最大供应商交易金额人民币16,191千元、表列比例3.6%，五大合计人民币40,919千元、9.2%。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "RMB",
+        "unit": "RMB million",
+        "top_five_supplier_purchase_amount": 40.9,
+        "top_five_supplier_pct_of_total_procurement": 9.2,
+        "largest_supplier_is_within_top_five": true,
+        "medium_largest_supplier_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_supplier_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<=9.2%",
+        "top_five_supplier_pct": 9.2,
+        "bound_operator": "<=",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true,
+        "assessment": "below_medium_threshold"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.93,
+      "reasoning": "未发现实际有效或可恢复的发行人赎回权、投资者回售权或其他需要按redemption_rights处理的特殊权利。员工股份激励条款明确相关股份与其他股份享有同等权益；离职时仅要求相关最终实益拥有人按原认购价向董事会指定的另一名人士转让股份，属于股东层面的转让义务而非发行人赎回。股本披露亦确认公司仅有一类普通股且每股享有同等权益；基石投资者无较其他公众股东的优先权。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.86,
+      "reasoning": "存在已披露的实际合规缺口及尚具条件性的监管后果：往绩记录期内若干员工未登记及/或未足额缴纳社会保险及住房公积金，2020年计提潜在负债人民币7.7百万元；中国法律顾问说明主管部门可要求补缴并可能产生滞纳金、罚款或强制执行。另一方面，截至最后实际可行日期公司未收到相关追缴/处罚通知、未受相关行政处罚，董事认为不会造成重大不利影响，且正式法律程序披露称不存在会产生重大不利影响的待决或潜在诉讼/仲裁/行政程序。因此“是否构成material且是否已充分解决”存在事实层面的materiality/resolution ambiguity，按Protocol应needs_review，并采用provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_00606",
+      "stock_code": "0606.HK",
+      "company_name": "中駿商管",
+      "document_id": "ipo_2021_00606",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "公司核心业务并非尚未商业化的产品，而是已长期商业运营的综合物业管理服务。Business披露其拥有逾18年物业管理服务经验，往绩记录期收益主要来自商业物业管理及运营服务和住宅物业管理服务，2018至2020年均已产生大额收入并持续增长。因此不满足“core product not commercialized and no product-sales revenue”的候选条件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "cash_runway",
+      "page": 423,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金流量淨額\n54,309\n45,907\n301,977",
+      "evidence_reason": "会计师报告直接给出三个年度经营活动现金流量净额；2020年为正人民币301,977千元，依据Protocol证明不存在operating cash burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "cash_runway",
+      "page": 424,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年末現金及銀行結餘\n21\n82,603\n74,578\n503,944\n現金及現金等價物結餘分析\n 現金及銀行結餘\n21\n82,603\n74,578\n503,944",
+      "evidence_reason": "会计师报告直接给出2020年末现金及现金等价物人民币503,944千元，作为Protocol规定的标准cash input。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "continuous_loss",
+      "page": 419,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年內利潤\n34,820\n77,298\n162,510",
+      "evidence_reason": "三个完整可比年度均为正利润，直接排除2期或3期连续亏损阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "revenue_growth",
+      "page": 419,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併損益及其他全面收入表\n截至2018年、2019年及2020年12月31日止年度\n截至12月31日止年度\n2018年\n2019年\n2020年\n附註\n人民幣千元\n人民幣千元\n人民幣千元\n收益\n5(a)\n396,507\n574,517\n805,284",
+      "evidence_reason": "会计师报告提供2018至2020年可比收益及人民币千元单位，是同比增长计算的最高权威输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "customer_concentration",
+      "page": 222,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "下表載列2020年我們五大客戶的詳情：\n排名\n客戶\n主要\n業務╱背景\n所提供\n主要服務\n業務關係的\n概約年期\n交易金額\n佔總收益\n百分比\n人民幣千元\n%\n1.\n中駿集團\n物業開發\n物業管理及商業 \n運營服務\n18年\n314,446\n39.0\n2.\n客戶F\n物業開發\n商業運營服務\n1年\n20,984\n2.6\n3.\n客戶G\n物業開發\n商業運營服務\n1年\n10,094\n1.3\n4.\n客戶B\n物業開發\n物業管理及增值服務\n2年\n5,452\n0.7\n5.\n客戶A\n零售\n物業管理服務\n7年\n4,247\n0.5\n總計\n355,223 \n44.1",
+      "evidence_reason": "正式Business五大客户表提供2020年最大客户及五大客户交易金额，是集中度分子输入，并同时披露39.0%和44.1%作为交叉核对。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "customer_concentration",
+      "page": 419,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "截至12月31日止年度\n2018年\n2019年\n2020年\n附註\n人民幣千元\n人民幣千元\n人民幣千元\n收益\n5(a)\n396,507\n574,517\n805,284",
+      "evidence_reason": "会计师报告提供2020年总收益人民币805,284千元，作为最大客户及五大客户集中度精确比例的分母。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "supplier_concentration",
+      "page": 223,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018\n年、2019年及2020年，來自五大供應商的採購額分別為人民幣21.5百萬元、人民幣\n40.2百萬元及人民幣40.9百萬元，分別佔我們同期採購總額的8.3%、11.1%及9.2%。於\n2019年及2020年，來自單一最大供應商中駿集團的採購額分別為人民幣15.2百萬元及\n人民幣16.2百萬元，分別佔我們總銷售成本約4.2%及3.6%。",
+      "evidence_reason": "正式Business披露2020年五大供应商合计占同期采购总额9.2%；最大供应商属于五大供应商，故其总采购额占比上界不超过9.2%，足以形成threshold-exclusion bound。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "supplier_concentration",
+      "page": 225,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "下表載列2020年我們五大供應商及分包商的詳情（包括獲確認為我們的銷售成本\n的彼等各自的交易金額）：\n排名\n客戶\n主要\n業務╱背景\n所提供主要\n產品╱服務\n業務關係的\n概約年期\n交易金額\n佔總銷售\n成本百分比\n人民幣千元\n%\n1.\n中駿集團\n物業開發\n人力\n18年\n16,191\n3.6\n2.\n供應商F\n水電供應\n水電供應\n4年\n7,924\n1.8\n3.\n供應商D\n提供清潔服務\n清潔服務\n6年\n6,177\n1.4\n4.\n供應商H\n提供清潔服務\n清潔服務\n4年\n5,705\n1.3\n5.\n供應商A\n水電供應\n水電供應\n6年\n4,922\n1.1\n總計\n40,919\n9.2",
+      "evidence_reason": "2020年五大供应商明细表交叉核对最大供应商及五大供应商金额，并显示表列比例3.6%及9.2%。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "redemption_rights",
+      "page": 140,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "根據僱員股份激勵計劃的條款，揚帆、溢星、志潤、雅陽及金藝的最終實益擁有\n人（「最終實益擁有人」）須自配發及發行股份日期起五年期間（「禁售期」）內一直受僱於\n本集團，而相關股份於此期間不可轉讓。該等股份與其他股東持有的本公司其他股份\n享有同等權益，並具有相同表決權及股息權。在禁售期內宣派及派付的任何股息須按\n有關僱員股份激勵計劃的條款存入董事會指定的銀行賬戶，並在禁售期屆滿後支付予\n最終實益擁有人。如任何最終實益擁有人在禁售期內因任何原因辭職、退休或終止與\n本集團的僱傭關係，則有關最終實益擁有人持有的相關股份須按原認購價轉讓予董事\n會指定的另一名人士（作為未來承授人的受託人）。",
+      "evidence_reason": "该条款直接区分股东层面的强制转让义务与发行人赎回：股份享有同等权益，离职触发的是向董事会指定的另一名人士转让，而非公司赎回。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "redemption_rights",
+      "page": 279,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "本公司僅擁有一類股份（即普通股），每股股份與其他股份享有同等權益。",
+      "evidence_reason": "股本正式披露确认只有一类普通股且每股同权，支持不存在按股份类别赋予的特殊赎回/优先权。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "redemption_rights",
+      "page": 281,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "根據基石投資協議，概無基石投資\n者較其他公眾股東擁有任何優先權。",
+      "evidence_reason": "基石投资协议披露明确排除基石投资者相对公众股东的优先权，作为特殊权利排查的交叉核对。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "material_litigation_compliance",
+      "page": 235,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期內，我們並無為若干僱員登記及╱或全額繳納社會保險及住房公\n積金，這主要涉及下列事項：(i)部分僱員自願拒絕繳納社會保險供款及住房公積金供\n款；(ii)部分新入職僱員尚未開始繳納社會保險供款及住房公積金供款；及(iii)農村戶\n籍僱員已繳納農村社會保險。因此，我們分別於2018年、2019年及2020年就有關潛在\n負債在合併損益及其他全面收入表中計提撥備人民幣6.8百萬元、人民幣0.4百萬元及\n人民幣7.7百萬元。",
+      "evidence_reason": "正式合规披露确认存在实际社会保险/住房公积金欠缴问题，并为潜在负债计提拨备，是合规候选事项的主要事实基础。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "material_litigation_compliance",
+      "page": 236,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "根據我們中國法律顧問的意見，有關中國部門可要求我們在規定期限內繳納欠繳\n的社會保險供款，且我們可能須就延遲的每一天承擔相當於欠繳金額0.05%的滯納金；\n倘我們未能作出有關付款，我們可能會被處以欠繳金額一至三倍的罰款。我們的中國\n法律顧問亦告知我們，根據有關中國法律法規，我們可能會被責令在規定期限內繳納\n欠繳的住房公積金，倘我們未能作出有關付款，有關人士可向中國人民法院申請強制\n執行。此外，倘我們未能在規定期限內完成住房公積金登記，我們將就每個未遵守該\n規定的實體被處以人民幣10,000元至人民幣50,000元的行政處罰。\n於往績記錄期及直至最後實際可行日期，(i)我們並無收到相關政府部門的任何通\n知，要求我們就社會保險或住房公積金支付欠繳金額或繳納罰款；(ii)在社會保險或住\n房公積金方面，我們並無受到任何行政處罰，亦不知悉有任何僱員投訴或牽涉與僱員\n的任何重大勞動爭議；(iii)我們的大部分中國附屬公司已取得當地政府主管部門的書面\n確認書，當中確認於往績記錄期內並無就社會保險或住房公積金而對我們施加任何處\n罰。",
+      "evidence_reason": "法律顾问同时披露潜在补缴情形、滞纳金/罚款/强制执行后果，以及截至最后实际可行日期尚无追缴通知或处罚；这组相反方向事实形成materiality/resolution需要复核的核心。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "material_litigation_compliance",
+      "page": 240,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "證書、牌照及許可證\n於往績記錄期及直至最後實際可行日期，我們已取得對我們營運屬重要的所有必\n要證書、許可證及牌照，且所有有關證書、許可證及牌照均在各自的有效期內。我們\n須不時重續有關證書、許可證及牌照。我們預計有關重續不會有任何重大困難。\n法律程序與合規\n法律程序\n我們在日常業務過程中可能會不時牽涉法律程序或爭議（如與客戶、分包商、供\n應商及其他各方產生的合約爭議）。截至最後實際可行日期，並無會對我們的業務、財\n務狀況或經營業績產生重大不利影響的針對我們或任何董事提出的任何待決或潛在的\n訴訟或仲裁程序或行政程序。\n合規\n董事認為，除「業務－僱員－社會保險及住房公積金供款」所披露欠繳社會保險\n及住房公積金供款、「業務－物業」所披露未備案若干租賃協議以及「業務－住宅物業\n管理服務－招標程序」所披露未參與投標程序訂立若干前期住宅物業管理合約外，我\n們於往績記錄期及直至最後實際可行日期已在所有重大方面遵守所有相關法律及法規。\n據我們的中國法律顧問告知及本集團確認，於往績記錄期及直至最後實際可行日\n期，我們並無遭受任何涉及違反任何與我們業務有關的中國法律或法規的重大罰款或\n法律訴訟。",
+      "evidence_reason": "交叉核对显示重要牌照齐备、无会产生重大不利影响的待决/潜在程序、无重大罚款或法律诉讼，同时明确列出三类历史合规例外；这支持needs_review而不是直接认定material已验证。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "precommercial_product",
+      "page": 150,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們是一家綜合物業管理服務提供商，在中國管理商業與住宅物業。截至最後實\n際可行日期，我們在中國18個省、直轄市及自治區的55個城市擁有龐大的已簽約物業\n管理組合。截至2020年12月31日，我們擁有104個在管商業及住宅項目，在管總建築\n面積約為16.2百萬平方米及總簽約建築面積約為36.6百萬平方米。",
+      "evidence_reason": "正式Business描述公司已在大范围商业运营物业管理服务并管理104个项目，直接排除核心业务仍处于未商业化产品阶段。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "risk_code": "precommercial_product",
+      "page": 151,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於往績記錄期內，我們的收益主要來自兩個業務分部：\n• \n商業物業管理及運營服務：包括(i)基本商業物業管理服務，如清潔、安\n保、維修保養、租戶援助以及營銷及推廣服務；(ii)開業前管理服務，包括\n市場研究及定位、前期諮詢及規劃、建築設計諮詢、租戶獲取及開業準備\n服務；及(iii)其他增值服務，如租戶管理、租金收款、停車場管理、廣告位\n及其他公共區域管理服務以及物業租賃服務。2018年、2019年及2020年，\n商業物業管理及運營服務佔我們總收益的38.4%、42.0%及46.3%。截至\n2020年12月31日，我們6.1%的在管建築面積及12.0%的簽約建築面積為商\n業物業。\n• \n住宅物業管理服務：包括(i)基本住宅物業管理服務，主要包括清潔、安\n保、園藝及維修保養服務；(ii)非業主增值服務，主要包括於預售活動期間\n向物業開發商提供預售管理服務，例如為預售樣板房及售樓處提供清潔、\n安保及保養服務，以及交付前驗收服務；及(iii)社區增值服務，主要包括\n家政及清潔服務以及停車場管理、會所運營及公共區域增值服務。2018\n年、2019年及2020年，住宅物業管理服務佔我們總收益的61.6%、58.0%及\n53.7%。截至2020年12月31日，我們93.9%的在管建築面積及88.0%的簽約\n建築面積為住宅物業。",
+      "evidence_reason": "往绩记录期收入全部由已商业化的两类物业管理服务分部构成，进一步支持precommercial_product不适用。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
