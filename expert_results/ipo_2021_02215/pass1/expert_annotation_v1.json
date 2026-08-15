@@ -1,0 +1,611 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02215",
+  "stock_code": "2215.HK",
+  "company_name": "德信服務集團",
+  "document_id": "ipo_2021_02215",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示，截至2020年12月31日现金及现金等价物为人民币229,212千元；2020年度经营活动所得现金净额为正人民币258,345千元。按Protocol v1.1.1，经营活动现金流大于或等于零时不存在operating cash burn，monthly_operating_cash_burn与cash_runway_months均应为null，因此cash_runway不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_flow_statement_runway_test",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 229212,
+        "net_cash_from_operating_activities": 258345,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "经审核综合全面收益表显示，2018年、2019年及2020年年内利润分别为人民币22,462千元、50,550千元及105,807千元，三个可比年度均为盈利，亏损期间数量为0，不满足连续亏损阈值。",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_fact_recording",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "profit_or_loss": 22462
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_or_loss": 50550
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "profit_or_loss": 105807
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_period_count": 3,
+        "loss_period_count": 0,
+        "assessment": "no_continuous_loss"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "经审核收入由2018年的人民币397,833千元增至2019年的512,850千元，再增至2020年的692,319千元。可比同比增长分别约为+28.91%及+34.99%，均不低于0%，不触发medium或high收入下降阈值。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_growth_rate",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "revenue": 397833
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "revenue": 512850
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "revenue": 692319
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_2019_vs_2018_pct": 28.9109,
+        "growth_2020_vs_2019_pct": 34.9944,
+        "minimum_comparable_growth_pct": 28.9109,
+        "high_threshold_met": false,
+        "medium_threshold_met": false,
+        "assessment": "no_negative_revenue_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "Business正式披露将德信集团（及其合营企业及联营公司）识别为最大客户：2018年、2019年及2020年分别占总收入16.5%、25.6%及28.9%；同期五大客户分别占24.6%、32.9%及34.3%。所有期间均低于largest 30%及top five 60%的medium阈值。会计师报告另披露最终控股股东控制实体及其合营/联营公司的更广泛关联方合计收入占比为17%、26%及31%；该口径并未被披露为单一“最大客户”，故不替代Business中的最大客户口径。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "largest_customer_pct": 16.5,
+            "top_five_customers_pct": 24.6,
+            "largest_customer_revenue": 65.6,
+            "top_five_customer_revenue": 97.7
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_customer_pct": 25.6,
+            "top_five_customers_pct": 32.9,
+            "largest_customer_revenue": 131.2,
+            "top_five_customer_revenue": 168.6
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_customer_pct": 28.9,
+            "top_five_customers_pct": 34.3,
+            "largest_customer_revenue": 199.9,
+            "top_five_customer_revenue": 237.7
+          }
+        ],
+        "medium_thresholds_pct": {
+          "largest_customer": 30.0,
+          "top_five_customers": 60.0
+        },
+        "high_thresholds_pct": {
+          "largest_customer": 50.0,
+          "top_five_customers": 80.0
+        },
+        "currency": "RMB",
+        "unit": "RMB million",
+        "ratio_unit": "percent"
+      },
+      "calculation_result": {
+        "maximum_largest_customer_pct": 28.9,
+        "maximum_top_five_customers_pct": 34.3,
+        "high_threshold_met": false,
+        "medium_threshold_met": false,
+        "assessment": "below_concentration_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "Business正式披露显示，最大供应商占总采购额的比例在2018年为36.6%、2019年为32.8%、2020年为27.3%；五大供应商同期分别为48.7%、56.2%及43.0%。2018年及2019年的最大供应商比例达到largest >=30%的medium阈值，但任何期间均未达到largest >=50%或top five >=80%的high阈值，因此标注为medium。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "largest_supplier_pct": 36.6,
+            "top_five_suppliers_pct": 48.7,
+            "largest_supplier_purchases": 69.9,
+            "top_five_supplier_purchases": 93.1
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_supplier_pct": 32.8,
+            "top_five_suppliers_pct": 56.2,
+            "largest_supplier_purchases": 82.7,
+            "top_five_supplier_purchases": 141.6
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_supplier_pct": 27.3,
+            "top_five_suppliers_pct": 43.0,
+            "largest_supplier_purchases": 88.2,
+            "top_five_supplier_purchases": 138.6
+          }
+        ],
+        "medium_thresholds_pct": {
+          "largest_supplier": 30.0,
+          "top_five_suppliers": 60.0
+        },
+        "high_thresholds_pct": {
+          "largest_supplier": 50.0,
+          "top_five_suppliers": 80.0
+        },
+        "currency": "RMB",
+        "unit": "RMB million",
+        "ratio_unit": "percent"
+      },
+      "calculation_result": {
+        "period_assessments": [
+          {
+            "period": "year ended 31 December 2018",
+            "level": "medium"
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "level": "medium"
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "level": "not_applicable"
+          }
+        ],
+        "maximum_largest_supplier_pct": 36.6,
+        "maximum_top_five_suppliers_pct": 56.2,
+        "high_threshold_met": false,
+        "medium_threshold_met": true,
+        "assessment": "medium_concentration"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "首次公开发售前投资正式披露显示，香港美仑及创智均未获授任何特别权利，且各自投资协议均未授予在全球发售未进行时退出或撤资的权利。招股章程中的一般公司法/组织章程股份赎回或购回条款及购股权计划安排并非针对首次公开发售前投资者的实际或可恢复特别权利，因此不构成该风险。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "正式法律及Business披露显示，截至最后实际可行日期不存在可能对财务状况或经营业绩造成重大不利影响的诉讼、仲裁、行政程序、申索或争议，亦无未决或受威胁的重大诉讼或索偿；公司已取得经营所有实质必需且在有效期内的证书、牌照及许可证。已披露的社会保险/住房公积金差额、88项租赁协议未备案及历史关联方计息垫款均有明确的低重大处罚风险、无重大影响或已偿还/无调查处罚结论，未形成重大未决事项或重大的未解决监管/牌照影响。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02215",
+      "stock_code": "2215.HK",
+      "company_name": "德信服務集團",
+      "document_id": "ipo_2021_02215",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "公司核心业务为已运营逾16年的物业管理及相关增值服务，已有持续商业收入。即使将智能社区解决方案视为产品化业务，其软硬件已向物业开发商销售并提供维护，相关收入由2018年的人民币12.3百万元增至2019年的22.1百万元及2020年的49.2百万元。因此不存在“核心产品未商业化且无产品销售收入”的候选条件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "cash_runway",
+      "page": 434,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合資產負債表\n於12月31日\n附註\n2018年\n2019年\n2020年\n人民幣千元\n人民幣千元\n人民幣千元\n資產\n非流動資產\n物業、廠房及設備\n14\n14,132\n14,120\n13,327\n無形資產\n15\n1,385\n1,151\n2,015\n投資物業\n17\n–\n22,435\n–\n按公允價值計量且其變動計入\n 損益的金融資產\n16\n35,205\n4,500\n–\n其他應收款項以及預付款項\n21\n13,329\n7,524\n–\n遞延所得稅資產\n28\n8,741\n10,555\n7,442\n於聯營公司的投資\n18\n–\n–\n1,470\n72,792\n60,285\n24,254\n流動資產\n存貨\n19\n5,960\n21,117\n7,647\n貿易及其他應收款項以及預付款項\n21\n148,691\n221,817\n180,048\n按公允價值計量且其變動計入\n 損益的金融資產\n16\n7,890\n36,631\n3,540\n受限制現金\n22\n227\n152\n242\n現金及現金等價物\n22\n80,372\n104,758\n229,212",
+      "evidence_reason": "经审核综合资产负债表提供2018-2020年现金及现金等价物余额；2020年末标准cash input为人民币229,212千元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "cash_runway",
+      "page": 438,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合現金流量表\n截至12月31日止年度\n附註\n2018年\n2019年\n2020年\n人民幣千元\n人民幣千元\n人民幣千元\n經營活動的現金流量\n經營所得現金\n30\n20,352\n58,508\n273,051\n已付所得稅\n(3,405)\n(9,535)\n(14,706) \n經營活動所得現金淨額\n16,947\n48,973\n258,345",
+      "evidence_reason": "经审核综合现金流量表提供2020年经营活动所得现金净额人民币258,345千元，为正值，依据Protocol排除operating cash burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "continuous_loss",
+      "page": 433,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合全面收益表\n截至12月31日止年度\n附註\n2018年\n2019年\n2020年\n人民幣千元\n人民幣千元\n人民幣千元\n收入\n6\n397,833\n512,850\n692,319\n銷售成本\n10\n(302,714)\n(367,924)\n(456,562)\n毛利\n95,119\n144,926\n235,757\n其他收入\n7\n2,319\n3,470\n6,432\n其他收益淨額\n8\n2,258\n1,826\n1,917\n銷售及營銷開支\n10\n(2,894)\n(6,490)\n(7,914)\n行政開支\n10\n(55,728)\n(67,768)\n(97,746)\n金融資產減值虧損淨額\n3.1\n(7,425)\n(6,016)\n(2,656)\n經營利潤\n33,649\n69,948\n135,790\n融資收入\n369\n1,341\n2,779\n融資成本\n(2,298)\n(3,399)\n(2,248)\n融資（成本）╱收入淨額\n9\n(1,929)\n(2,058)\n531\n所得稅前利潤\n31,720\n67,890\n136,321\n所得稅開支\n12\n(9,258)\n(17,340)\n(30,514)\n年內利潤\n22,462\n50,550\n105,807",
+      "evidence_reason": "经审核综合全面收益表同时给出三个可比年度及年内利润，三个年度均为正利润，可直接计数亏损期间为0。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "revenue_growth",
+      "page": 433,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合全面收益表\n截至12月31日止年度\n附註\n2018年\n2019年\n2020年\n人民幣千元\n人民幣千元\n人民幣千元\n收入\n6\n397,833\n512,850\n692,319",
+      "evidence_reason": "经审核综合全面收益表给出2018-2020年收入人民币397,833千元、512,850千元及692,319千元，用于同比增长计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "customer_concentration",
+      "page": 220,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年以及2020年，五大客戶所產生的收入分別為人民幣97.7百萬\n元、人民幣168.6百萬元及人民幣237.7百萬元，分別佔我們同年度總收入的24.6%、\n32.9%及34.3%。於往績記錄期間，我們的最大客戶為德信集團（及其合營企業及聯營\n公司），我們向其提供物業管理服務及增值服務。於2018年、2019年以及2020年，我\n們向德信集團（及其合營企業及聯營公司）提供服務產生的收入分別為人民幣65.6百萬\n元、人民幣131.2百萬元及人民幣199.9百萬元，分別佔我們同年度總收入的16.5%、\n25.6%及28.9%。於往績記錄期間，我們已與五大客戶建立持續的業務關係，平均超過\n六年。於往績記錄期間，除德信集團（及其合營企業及聯營公司）外，我們的客戶均為\n獨立第三方。除德信集團（及其合營企業及聯營公司）外，我們的五大客戶於往績記錄\n期間均非我們的五大供應商。有關更多資料，請參閱本招股章程「關連交易」、「與控股\n股東的關係」及「風險因素－與我們業務及行業有關的風險－我們就德信集團及其合\n營企業及聯營公司所開發物業提供的服務產生大部分收入，而我們對其並無控制權」。",
+      "evidence_reason": "Business客户集中度正式披露直接识别最大客户，并给出2018-2020年最大客户及五大客户占总收入比例；全部低于冻结medium阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "customer_concentration",
+      "page": 460,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度，來自最終控股股東控制的實體以及最終控股股東\n的合營企業及聯營公司的收入貢獻分別佔　貴集團收入的17%、26%及31%。除由最終控股股東控制的實\n體以及最終控股股東的合營企業及聯營公司外，　貴集團擁有大量客戶，於往績記錄期間內，並無任何客\n戶對　貴集團收入貢獻超過10%或以上。",
+      "evidence_reason": "会计师报告交叉核对披露更广口径的最终控股股东控制实体及其合营/联营公司合计占比；该披露是关联方集合而非Business中识别的单一最大客户，解释2020年31%与28.9%口径差异。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "supplier_concentration",
+      "page": 223,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年以及2020年，自五大供應商產生的採購額分別為人民幣93.1\n百萬元、人民幣141.6百萬元及人民幣138.6百萬元，分別佔我們同年度採購總額的\n48.7%、56.2%及43.0%。於2018年、2019年以及2020年，自最大供應商產生的採購額\n分別為人民幣69.9百萬元、人民幣82.7百萬元及人民幣88.2百萬元，分別佔我們總採購\n額的36.6%、32.8%及27.3%。董事確認，本集團並不依賴我們的最大供應商，因為我\n們可以容易地獲得質量及價格相當的替代供應商。誠如中指院所告知，長江三角洲地\n區有足夠多的公司提供秩序維護服務，因此本集團找尋質量及價格相當的替代供應商\n不存在困難。於往績記錄期間，除德信集團（及其合營企業及聯營公司）外，我們的五大\n供應商均為獨立第三方。",
+      "evidence_reason": "Business供应商正式披露给出2018-2020年五大供应商与最大供应商采购占比；2018及2019年最大供应商比例超过30%的medium阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "supplier_concentration",
+      "page": 224,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "2020年：\n排名\n供應商\n購買的主要\n服務╱產品\n業務關係\n開始\n交易金額\n佔採購總額\n百分比\n人民幣千元\n%\n1.. . . . . . . . . .\n供應商A\n秩序維護服務\n2015年\n88,191\n27.3\n2.. . . . . . . . . .\n供應商B\n清潔服務\n2016年\n25,766\n8.0\n3.. . . . . . . . . .\n德信集團（及其合營\n 企業及聯營公司）\n停車位\n2019年\n11,013\n3.4\n4.. . . . . . . . . .\n供應商G\n清潔服務\n2018年\n7,028\n2.2\n5.. . . . . . . . . .\n供應商E\n秩序維護服務╱\n 清潔服務\n2018年\n6,622\n2.1\n我們的五大供應商一般向我們授出約30天信貸期。我們並無與五大供應商訂立任\n何長期協議。我們通常與供應商訂立為期一年的協議並每年重續。供應商付款通常每\n月通過銀行轉賬結算。",
+      "evidence_reason": "2020年五大供应商明细交叉支持最新年度最大供应商27.3%及前五合计43.0%的披露。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "redemption_rights",
+      "page": 153,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "特別權利：\n香港美侖並無(i)於香港美侖首次公開發售前投\n資項下獲得任何特別權利；或(ii)獲得本公司\n於截至2020年12月31日止年度已宣派股息的\n權利(3)。",
+      "evidence_reason": "香港美仑首次公开发售前投资条款明确未获任何特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "redemption_rights",
+      "page": 154,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "於釐定有關代\n價時所計及的其他因素包括但不限於：(i)香港美侖所承擔的投資風險（乃由於香港美侖\n首次公開發售前投資協議的條款項下並無向香港美侖授出在全球發售未進行的情況下\n退出或撤資的權利所致），成功上市的不確定因素及香港美侖投資未上市公司時所承擔\n的其他投資風險（包括（其中包括）於全球發售及上市完成前，我們股份缺乏流動性及\n公開交易市場，以及於自香港美侖首次公開發售前投資完成至全球發售完成的期間並\n無宣派進一步股息的任何計劃以及完成全球發售的時間的不確定性）；",
+      "evidence_reason": "香港美仑投资协议明确未授予全球发售未进行时退出或撤资的权利，排除赎回/退出型特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "redemption_rights",
+      "page": 157,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "特別權利：\n創智並無(i)於創智首次公開發售前投資項下\n獲得任何特別權利；或(ii)獲得本公司於截至\n2020年12月31日止年度已宣派股息的權利(3)。",
+      "evidence_reason": "创智首次公开发售前投资条款明确未获任何特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "redemption_rights",
+      "page": 158,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "於釐定有關代價時\n所計及的其他因素包括但不限於：(i)創智所承擔的投資風險（乃由於創智首次公開發售\n前投資協議的條款項下並無向創智授出在全球發售未進行的情況下退出或撤資的權利\n所致），成功上市的不確定因素及創智投資未上市公司時所承擔的其他投資風險（包括\n（其中包括）於全球發售及上市完成前我們股份缺乏流動性及公開交易市場，以及於自\n創智首次公開發售前投資完成至全球發售完成的期間並無宣派進一步股息的任何計劃\n以及完成全球發售的時間的不確定性）；",
+      "evidence_reason": "创智投资协议明确未授予全球发售未进行时退出或撤资的权利，排除赎回/退出型特别权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 245,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "法律程序與合規\n正在進行中的法律程序\n我們在日常業務過程中已牽涉法律程序或爭議（包括主要就物業管理協議產生的\n爭議向客戶提出的申索）。截至最後實際可行日期，我們並無牽涉任何可能會對我們的\n財務狀況或經營業績產生重大不利影響的訴訟、仲裁或行政程序、申索或爭議。\n合規\n董事認為，我們於往績記錄期間及直至最後實際可行日期已在所有重大方面遵守\n所有相關法律及法規。\n根據適用的中國法律法規，僱主及員工須對一些社會保險基金（包括養老基金、\n醫療保險、工傷保險、失業保險及生育保險）及住房公積金進行供款。於往績記錄期\n間，我們並無為若干員工全數繳足社會保險和住房公積金供款。有關詳情，請參閱「－\n僱員－社會保險及住房公積金供款」。\n誠如中國法律顧問所告知，於往績記錄期間及直至最後實際可行日期，我們並無\n遭受涉及違反與我們的業務相關的任何中國法律法規的任何重大罰款或法律訴訟。",
+      "evidence_reason": "Business的法律程序与合规专节明确无重大不利影响的诉讼/仲裁/行政程序，并称在所有重大方面遵守相关法律法规且无重大罚款或法律诉讼。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 244,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "證書、牌照及許可證\n我們須取得及維持與我們經營有關的若干證書、牌照及許可證。有關我們在中國\n進行業務經營所需重要證書、牌照及許可證的更多資料，請參閱「監管概覽」。截至最\n後實際可行日期，我們已取得我們經營所有實質必需的證書、牌照及許可證，且所有\n該等證書、許可證及牌照均處於其各自有效期內。我們須不時重續該等證書、牌照及\n許可證。我們預計進行該等重續不會存在任何重大困難。",
+      "evidence_reason": "正式牌照披露确认已取得经营所有实质必需证照且均在有效期内，排除重大牌照缺口。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 239,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "中國附屬公司及分公司已從地方政\n府部門（據中國法律顧問告知，其為出具有關確認的主管部門）獲得書面及╱或口頭確\n認，確認於往績記錄期間未對我們施加任何社會保險及住房公積金相關的罰款；(iv)我\n們就2018年、2019年以及2020年的社會保險及住房公積金供款差額作出的撥備分別為\n人民幣0.3百萬元、人民幣0.3百萬元及人民幣1.1百萬元；(v)倘相關政府機構要求，我\n們將於規定期限內作出全額供款或彌補差額；及(vi)基於以上所述，我們的中國法律顧\n問認為我們將受到相關機構重大行政處罰的風險較低。\n鑒於以上所述，董事認為於往績記錄期間未能就社會保險及住房公積金全額供款\n不會對我們的業務營運或經營業績造成任何重大不利影響。",
+      "evidence_reason": "社会保险及住房公积金历史差额被正式评估为重大行政处罚风险较低且不会造成重大不利影响。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 243,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後實際可行日期，我們未按照中國法律的規定，向當地房屋管理部門登記\n我們88項承租物業（用作辦公場所及員工宿舍，總建築面積約11,194平方米）的租賃協\n議，主要是因為業主在提供權屬證書及所有權證明文件以及登記租賃協議方面不予配\n合，這並非我們所能控制。根據相關中國法律法規，我們可能會被主管部門責令改正\n這種未登記的行為，且若我們未能在規定期限內改正，我們可能會因此被處以人民幣\n1,000元至人民幣10,000元的罰款。倘我們須從有關承租物業搬離，鑒於我們的業務性\n質，我們認為，尋找及搬遷至備選場所對我們而言並無困難，且搬遷不會導致對我們\n業務的嚴重干擾。雖然我們可能產生額外搬遷成本，但董事認為這將不會對我們的業\n務、財務狀況及經營業績產生任何重大影響。截至最後實際可行日期，我們未收到任\n何監管機構關於我們因未備案上述租賃協議而可能受到的行政處罰或強制執行行動的\n任何通知。",
+      "evidence_reason": "88项租赁协议未备案事项虽可能产生罚款，但董事明确认为不会造成重大影响，且截至最后实际可行日期未收到行政处罚或强制执行通知。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 340,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "financial_information",
+      "exact_text": "截至2020年9月30日，所有上述計息墊款已由我們的關聯方悉數償還。截至最後\n實際可行日期，我們尚未收到任何索賠通知，且未遭受與關聯方的計息貸款有關的任\n何調查或罰款。誠如中國法律顧問所告知，中國法院將支持公司對關於該等貸款利息\n的索賠，惟年利率不超過若干限定。基於上述，中國法律顧問認為，我們因上述墊款\n而遭受處罰的風險很小。董事認為，向關聯方支付的計息墊款不構成對法律法規的重\n大違反，亦無對上市造成重大不利影響。",
+      "evidence_reason": "历史关联方计息垫款已悉数偿还，无索赔、调查或罚款；法律顾问及董事均评估处罚风险很小且不构成重大违法。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "material_litigation_compliance",
+      "page": 555,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "2. \n訴訟\n截至最後實際可行日期，本集團成員公司概無牽涉任何重大訴訟或仲裁且據董事\n所知，本集團任何成員公司並無未決或對其構成威脅的重大訴訟或索償。",
+      "evidence_reason": "附录四再次确认无重大诉讼或仲裁，亦无未决或受威胁的重大诉讼或索偿。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "precommercial_product",
+      "page": 167,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們是浙江省綜合性物業管理服務提供商。總部位於杭州，深耕於長江三角洲地\n區，我們通過逾16年的發展確立了自身在浙江省的重要市場地位並在中國物業管理行\n業聲名遠揚。根據中指院的數據，就截至2020年12月31日的在管建築面積而言，我們\n在中國物業服務百強企業中的市場份額約為0.2%，在總部位於浙江省的中國物業服務\n百強企業中的市場份額約為3.7%。於2020年，我們被中指院評為「華東地區物業服務\n市場地位領先企業」。我們亦已將我們的業務擴張至中國其他區域中我們認為具有高增\n長潛力的城市，主要包括新一線及二線城市。截至2020年12月31日，我們的在管物業\n合共175項，在管總建築面積合共24.9百萬平方米，覆蓋7個省份24座城市。根據中指\n院的數據，我們自2014年起已連續八年以綜合實力評為中國物業服務百強企業之一，\n且我們的排名自2014年的第41位上升至2021年的第25位。\n我們通過三條業務線為住宅和非住宅物業提供多種服務，即物業管理服務、非業\n主增值服務及社區增值服務。自成立以來，我們與德信集團，即德信中國（於聯交所\n主板上市）及其附屬公司緊密而廣泛的合作推動了我們的發展，為我們的持續增長奠定\n基礎。我們還擁有強大的業務開發能力，在受聘於獨立第三方物業開發商以實現有機\n增長及業務擴張方面取得了卓越的成績。截至2020年12月31日，我們有175項在管物\n業，包括由德信集團及其合營企業及聯營公司開發的69項物業，在管總建築面積為8.8\n百萬平方米，佔截至同日我們在管總建築面積的35.1%，以及由獨立第三方物業開發商\n開發的106項物業，在管總建築面積為16.2百萬平方米，佔截至同日我們在管總建築面\n積的64.9％。",
+      "evidence_reason": "Business概览表明公司是已有逾16年运营历史的综合物业管理服务提供商，并拥有大量在管项目，核心业务已商业运营。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "risk_code": "precommercial_product",
+      "page": 172,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "可提升客戶滿意度、提高管理效率的智能社區解決方案\n我們向物業開發商提供智能社區解決方案，並在此過程中銷售智能社區解決方\n案所使用的軟硬件以及提供維護服務。我們的智能社區解決方案提供(i)訪客、車輛通\n行、秩序維護及能源管理方面的社區管理工具；及(ii)數據處理能力，以將業務經營過\n程中所收集的數據轉換為物業管理公司可用於分析及改善其客戶生活體驗的信息。我\n們的智能社區解決方案收入於往績記錄期間增長迅速，由2018年的人民幣12.3百萬元\n增至2019年的人民幣22.1百萬元，並進一步達至2020年的人民幣49.2百萬元。業主及\n社區管理人旨在改善居住環境並提高社區管理效率。此外，有利的政府政策亦會促進\n物業管理行業智能社區解決方案的進步。例如，住建部與若干其他部門於2020年12月\n聯合發佈《關於推動物業服務企業加快發展線上線下生活服務的意見》。因此，我們預\n期智能社區解決方案的收入將繼續增加。",
+      "evidence_reason": "即使考察最产品化的智能社区解决方案，正式Business披露明确已销售软硬件并产生2018-2020年持续收入，排除无产品销售收入条件。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
