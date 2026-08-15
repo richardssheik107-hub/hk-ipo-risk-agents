@@ -1,6 +1,6 @@
 # V04-2 Document-to-Market Feature Contract
 
-Status: **IMPLEMENTED PENDING REVIEW**
+Status: **MERGED**
 
 ## 1. Why this boundary exists
 

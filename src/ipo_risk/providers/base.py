@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from ipo_risk.schemas import Evidence, IPOProfile, LLMCallMetadata, MarketSnapshot
 from ipo_risk.schemas.market import IPOMarketMetadata, MarketDailyBar
+from ipo_risk.schemas.market_features import MarketActivityObservation, MarketReferenceBar
 
 StructuredModel = TypeVar("StructuredModel", bound=BaseModel)
 
@@ -36,5 +37,21 @@ class MarketDataProvider(Protocol):
         start_date: date | None = None,
         end_date: date | None = None,
     ) -> list[MarketDailyBar]: ...
+
+
+class MarketReferenceDataProvider(Protocol):
+    """V04-3 reference series, isolated from per-security market data."""
+
+    def get_benchmark_bars(
+        self, reference_id: str, *, end_date_exclusive: date
+    ) -> list[MarketReferenceBar]: ...
+
+    def get_industry_bars(
+        self, reference_id: str, *, end_date_exclusive: date
+    ) -> list[MarketReferenceBar]: ...
+
+    def get_market_activity(
+        self, *, end_date_exclusive: date
+    ) -> list[MarketActivityObservation]: ...
 class IPODataProvider(Protocol):
     def get_profile(self, company_name: str, stock_code: str = "") -> IPOProfile: ...
