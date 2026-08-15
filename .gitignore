@@ -16,6 +16,8 @@ data/competition/*
 !data/competition/.gitignore
 !data/competition/README.md
 reports/*
+!reports/retrieval_40_baseline/
+!reports/retrieval_40_baseline/**
 !reports/.gitkeep
 !reports/llm_reranker_pilot/
 !reports/llm_reranker_pilot/**
