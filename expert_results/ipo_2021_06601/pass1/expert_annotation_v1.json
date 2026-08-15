@@ -1,0 +1,525 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_06601",
+  "stock_code": "6601.HK",
+  "company_name": "朝雲集團",
+  "document_id": "ipo_2021_06601",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "採用會計師報告綜合現金流量表的現金及現金等價物口徑。最新可比較期間截至2020年9月30日止九個月的經營活動所用現金淨額為人民幣28,816千元（保留原始符號為-28,816），期末現金及現金等價物為人民幣290,665千元。按9個月平均月度經營現金消耗計算，月度現金消耗約人民幣3,201.78千元，現金跑道約90.78個月，明顯高於<12個月的最低觸發門檻，因此拒絕該風險。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_from_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "nine months ended 30 September 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 290665,
+        "net_cash_from_operating_activities": -28816,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": 3201.7778,
+        "cash_runway_months": 90.7824,
+        "critical_threshold_months": 3,
+        "high_threshold_months": 6,
+        "medium_threshold_months": 12,
+        "assessment": "above_frozen_risk_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告的集團綜合損益及其他全面收益表顯示，2017年、2018年、2019年以及截至2019年及2020年9月30日止九個月均錄得正的年／期內溢利及全面收入總額，分別為人民幣170,175千元、177,035千元、184,360千元、174,669千元及214,909千元。可比較期間不存在集團虧損期，故不符合連續虧損候選條件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparable_period_facts": [
+          {
+            "period": "year ended 31 December 2017",
+            "profit_loss": 170175
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "profit_loss": 177035
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_loss": 184360
+          },
+          {
+            "period": "nine months ended 30 September 2019",
+            "profit_loss": 174669
+          },
+          {
+            "period": "nine months ended 30 September 2020",
+            "profit_loss": 214909
+          }
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0,
+        "assessment": "no_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告披露的集團收入在所有可直接比較的整體期間均為正增長：2018年較2017年約+0.2867%，2019年較2018年約+2.4687%，截至2020年9月30日止九個月較2019年同期約+16.9057%。不存在<0%的可比較收入增長，更不存在<=-20%的高風險跌幅，因此拒絕該風險。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "period_pairs": [
+          {
+            "base_period": "year ended 31 December 2017",
+            "base_revenue": 1346214,
+            "current_period": "year ended 31 December 2018",
+            "current_revenue": 1350073
+          },
+          {
+            "base_period": "year ended 31 December 2018",
+            "base_revenue": 1350073,
+            "current_period": "year ended 31 December 2019",
+            "current_revenue": 1383402
+          },
+          {
+            "base_period": "nine months ended 30 September 2019",
+            "base_revenue": 1250046,
+            "current_period": "nine months ended 30 September 2020",
+            "current_revenue": 1461375
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          {
+            "comparison": "2018_vs_2017",
+            "growth_pct": 0.2867
+          },
+          {
+            "comparison": "2019_vs_2018",
+            "growth_pct": 2.4687
+          },
+          {
+            "comparison": "9M2020_vs_9M2019",
+            "growth_pct": 16.9057
+          }
+        ],
+        "minimum_observed_growth_pct": 0.2867,
+        "medium_threshold_met": false,
+        "high_threshold_met": false,
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露顯示，2017年、2018年、2019年及截至2020年9月30日止九個月，五大客戶佔總收入分別為21.0%、25.5%、25.2%及25.3%，最大客戶立白集團分別為17.9%、23.0%、20.7%及20.7%。往績記錄期內最大觀察值分別為五大客戶25.5%及最大客戶23.0%，均低於中等風險門檻（五大>=60%或最大>=30%），因此拒絕該風險。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "%",
+        "periods": [
+          {
+            "period": "year ended 31 December 2017",
+            "top_five_customer_pct": 21.0,
+            "largest_customer_pct": 17.9
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "top_five_customer_pct": 25.5,
+            "largest_customer_pct": 23.0
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "top_five_customer_pct": 25.2,
+            "largest_customer_pct": 20.7
+          },
+          {
+            "period": "nine months ended 30 September 2020",
+            "top_five_customer_pct": 25.3,
+            "largest_customer_pct": 20.7
+          }
+        ],
+        "largest_medium_threshold_pct": 30,
+        "top_five_medium_threshold_pct": 60,
+        "largest_high_threshold_pct": 50,
+        "top_five_high_threshold_pct": 80
+      },
+      "calculation_result": {
+        "maximum_largest_customer_pct": 23.0,
+        "maximum_top_five_customer_pct": 25.5,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true,
+        "assessment": "below_frozen_concentration_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露顯示，2017年、2018年、2019年及截至2020年9月30日止九個月，五大供應商佔總採購額分別為44.5%、39.6%、47.0%及51.0%，最大供應商立白集團分別為20.8%、15.8%、29.1%及25.3%。往績記錄期內最大觀察值分別為五大供應商51.0%及最大供應商29.1%，均低於中等風險門檻（五大>=60%或最大>=30%），因此拒絕該風險。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "%",
+        "periods": [
+          {
+            "period": "year ended 31 December 2017",
+            "top_five_supplier_pct": 44.5,
+            "largest_supplier_pct": 20.8
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "top_five_supplier_pct": 39.6,
+            "largest_supplier_pct": 15.8
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "top_five_supplier_pct": 47.0,
+            "largest_supplier_pct": 29.1
+          },
+          {
+            "period": "nine months ended 30 September 2020",
+            "top_five_supplier_pct": 51.0,
+            "largest_supplier_pct": 25.3
+          }
+        ],
+        "largest_medium_threshold_pct": 30,
+        "top_five_medium_threshold_pct": 60,
+        "largest_high_threshold_pct": 50,
+        "top_five_high_threshold_pct": 80
+      },
+      "calculation_result": {
+        "maximum_largest_supplier_pct": 29.1,
+        "maximum_top_five_supplier_pct": 51.0,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true,
+        "assessment": "below_frozen_concentration_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "首次公開發售前投資章節明確披露，唯一披露的首次公開發售前投資者茅先生就該投資『未獲授與本公司有關的任何特別權利』。未發現實際有效、可恢復或終止狀態不清的贖回或其他特殊股東權利，因此拒絕該風險。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.9,
+      "reasoning": "招股書一方面明確確認截至最後可行日期不存在可能對財務狀況或經營業績造成重大不利影響的待決或受威脅訴訟、仲裁或行政程序，且已在所有重大方面合規並取得重大牌照；另一方面，員工社會保險及住房公積金供款在最後可行日期仍未能全額繳付，存在被責令補繳、滯納金、罰款或強制執行的法律後果，公司僅計劃於2021年7月前完全合規。該事項在『董事認為不會造成重大不利影響』與『截至最後可行日期仍存在未完全整改的監管合規狀態』之間形成對重大性／解決狀態的判斷不確定性。依Protocol，對未解決監管效果或重大性／解決狀態不清的候選風險使用needs_review，並保留暫定medium嚴重度。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06601",
+      "stock_code": "6601.HK",
+      "company_name": "朝雲集團",
+      "document_id": "ipo_2021_06601",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告明確披露集團主要從事殺蟲驅蚊、家居清潔、空氣護理、個人護理、寵物護理及其他產品的生產及貿易，並在往績記錄期間持續確認產品類別銷售收入；例如截至2020年9月30日止九個月總收入為人民幣1,461,375千元。故不存在『核心產品尚未商業化且沒有產品銷售收入』的候選條件。對個別產品類別歷史表格中的破折號未作無依據的數值零推斷。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "cash_runway",
+      "page": 450,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得（所用）現金淨額 575,349 (113,653) 472,621 67,801 (28,816)",
+      "evidence_reason": "會計師報告綜合現金流量表提供截至2020年9月30日止九個月的帶符號經營活動現金流量-28,816（人民幣千元），是月度經營現金消耗計算的必需輸入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "cash_runway",
+      "page": 451,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "以銀行結餘及現金列示的 年╱期末現金及現金等價物 114,916 209,897 511,035 113,422 290,665",
+      "evidence_reason": "會計師報告現金流量表提供同一最新可比較期間的期末現金及現金等價物人民幣290,665千元，是現金跑道分子的必需輸入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "continuous_loss",
+      "page": 444,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期內溢利及 全面收入總額 11 170,175 177,035 184,360 174,669 214,909",
+      "evidence_reason": "會計師報告在同一集團綜合報表中列示全部可比較年度／中期均為正溢利，可供確定可比較虧損期數為零。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "revenue_growth",
+      "page": 444,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 6 1,346,214 1,350,073 1,383,402 1,250,046 1,461,375",
+      "evidence_reason": "會計師報告提供2017至2019年度及2019／2020年九個月可比較收入的原始人民幣千元數值，用於計算全部可直接比較期間的收入增長率。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "customer_concentration",
+      "page": 210,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止年度以及截至2020年9月30日止九個月，對我們五大客戶的銷售分別約佔同期我們總收入的21.0%、25.5%、25.2%及25.3%。對我們最大客戶立白集團的銷售約佔同期我們總收入的17.9%、23.0%、20.7%及20.7%。",
+      "evidence_reason": "Business正式披露直接給出各期間五大客戶及最大客戶佔總收入百分比，可與凍結的30%／60%及50%／80%門檻逐期比較。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "supplier_concentration",
+      "page": 231,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止年度以及截至2020年9月30日止九個月，我們向五大供應商作出的採購分別佔我們總採購額的44.5%、39.6%、47.0%及51.0%，及我們向最大供應商立白集團作出的採購分別佔我們總採購額的20.8%、15.8%、29.1%及25.3%。",
+      "evidence_reason": "Business正式披露直接給出各期間五大供應商及最大供應商佔總採購額百分比，可與凍結的30%／60%及50%／80%門檻逐期比較。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "redemption_rights",
+      "page": 158,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "就首次公開發售前投資而言，茅先生未獲授與本公司有關的任何特別權利。",
+      "evidence_reason": "首次公開發售前投資正式披露明確否定向該投資者授予任何與本公司有關的特別權利，因此沒有實際有效或可恢復的贖回／特殊權利候選。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "material_litigation_compliance",
+      "page": 251,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間，我們未為部分員工足額繳納社會保險及住房公積金供款。該不合規事件主要是由於我們的勞動力龐大且流動性相對較高、人力資源員工（未全面了解相關中國法律法規的相關規定）缺乏經驗，以及許多員工傾向於選擇不對該等基金供款所致。\n中國法律顧問已告知我們，根據相關中國法律法規，倘我們未按規定足額繳納社會保險供款，則我們可能會被責令限期繳納社會保險供款未繳足部分，並可能需自付款應付之日起，按日繳納遞延付款0.05%的滯納金。倘有關付款未於規定期限內作出，則有關主管部門可能會進一步處以逾期付款金額一至三倍的罰款。中國法律顧問已進一步告知我們，根據相關中國法律法規，倘我們未按規定足額繳存住房公積金，則住房公積金管理中心可能會責令我們限期繳存未繳足部分。倘付款未於有關期限內作出，可以向中國法院申請強制執行。",
+      "evidence_reason": "該正式合規披露直接證明往績記錄期存在社保／住房公積金未足額繳納的不合規事項，並列明補繳、滯納金、罰款及法院強制執行等潛在監管後果。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "material_litigation_compliance",
+      "page": 251,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董事認為，考慮到：(i)截至最後可行日期，我們並無收到相關中國部門就社會保險及住房公積金要求我們補足實際差額或對我們處以罰款的任何通知；(ii)於往績記錄期間及直至最後可行日期，我們並無被處以任何重大行政處罰；(iii)我們概無獲悉任何有關社會保險及住房公積金的重大員工投訴或牽涉任何與此有關與員工之間的重大勞工糾紛；(iv)對於2017年、2018年、2019年及截至2020年9月30日止九個月的社會保險及住房公積金供款差額，我們已分別計提撥備人民幣1.07百萬元、人民幣1.21百萬元、人民幣1.73百萬元及人民幣0.56百萬元，該不合規事件將不會對我們的業務及經營業績造成任何重大不利影響。\n我們已經根據中國相關法律及法規開始執行為僱員繳付社會保險及住房公積金的政策。我們積極鼓勵並為僱員作出該等供款。儘管我們已盡力，但由於部分僱員不合作並選擇不繳交該等基金，我們無法於最後可行日期之前為僱員作出全額社會保險及住房公積金供款。我們擬於2021年7月前完全遵守有關社會保險和住房公積金的中國法律法規。",
+      "evidence_reason": "同頁披露一方面記錄董事認為該事項不會造成重大不利影響，另一方面明確承認截至最後可行日期仍未能全額合規並計劃於未來完成整改，形成Protocol所要求報告的重大性／解決狀態不確定性。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "material_litigation_compliance",
+      "page": 264,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，概無任何針對本公司或我們的任何董事提起的可能對我們的財務狀況或經營業績造成重大不利影響的懸而未決或面臨威脅的訴訟、仲裁或行政程序。\n我們的董事經中國法律顧問告知後確認，截至最後可行日期，我們已於所有重大方面遵守相關的中國法律及法規，並已自相關部門取得對我們中國營運而言屬重大的所有必需許可、批准及牌照，惟於本招股章程所載「－員工」、「－物業」及「－許可、批准及牌照」披露者除外。",
+      "evidence_reason": "法律程序及合規總結排除了重大待決訴訟，並確認重大合規與牌照整體情況，但明確保留員工等披露例外；这与第251頁仍未完全整改的員工合規事項交叉驗證。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "precommercial_product",
+      "page": 471,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "貴集團主要在中國從事殺蟲驅蚊、家居清潔、空氣護理、個人護理、寵物護理及其他產品的生產及貿易。",
+      "evidence_reason": "會計師報告直接描述集團的核心業務為多類消費產品的生產及貿易，表明公司並非僅處於未商業化研發階段。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "risk_code": "precommercial_product",
+      "page": 471,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "按產品類別劃分的收入\n殺蟲驅蚊 920,380 936,376 875,948 862,612 948,083\n家居清潔 330,170 330,846 362,200 273,576 354,957\n空氣護理 77,353 63,501 62,096 49,111 46,124\n個人護理 – – 71,495 54,851 92,810\n寵物護理 35 87 1,743 254 9,940\n其他（附註） 18,276 19,263 9,920 9,642 9,461\n總計 1,346,214 1,350,073 1,383,402 1,250,046 1,461,375",
+      "evidence_reason": "同一會計師報告收入分拆表直接列示各產品類別及總產品收入，證明往績記錄期間存在實際產品銷售收入；表內破折號僅原樣保留，未被解釋為數值零。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

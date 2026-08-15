@@ -1,0 +1,513 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_06668",
+  "stock_code": "6668.HK",
+  "company_name": "星盛商業",
+  "document_id": "ipo_2021_06668",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的综合现金流量表显示，截至2020年9月30日止九个月经营活动所得现金净额为正数人民币71,355千元；同一现金流量表显示期末现金及现金等价物为人民币123,943千元。根据Protocol v1.1.1，经营现金流为正或零时不存在operating cash burn，不得取绝对值计算runway，因此cash_runway不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "nine months ended 30 September 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 123943,
+        "net_cash_from_operating_activities": 71355,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示集团于2017、2018、2019年度以及截至2019年及2020年9月30日止九个月的年/期内利润均为正数，分别为人民币47,940、77,795、95,600、78,814及90,141千元。不存在两个或三个可比亏损期间，因此不触发continuous_loss。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {
+            "period": "year ended 31 December 2017",
+            "net_profit_loss": 47940
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "net_profit_loss": 77795
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "net_profit_loss": 95600
+          },
+          {
+            "period": "nine months ended 30 September 2019",
+            "net_profit_loss": 78814
+          },
+          {
+            "period": "nine months ended 30 September 2020",
+            "net_profit_loss": 90141
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_period_count": 0,
+        "assessment": "no_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示持续经营业务收入由2017年的人民币278,067千元增至2018年的328,694千元，再增至2019年的387,314千元；截至2020年9月30日止九个月收入305,862千元，高于2019年同期286,698千元。计算所得所有可比增长率均为正，最低为2020年首九个月同比约+6.68%，未触发<0%的medium或<=-20%的high阈值。",
+      "calculation_required": true,
+      "calculation_method": "comparable_revenue_growth_rate",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "revenue": {
+          "year_ended_31_december_2017": 278067,
+          "year_ended_31_december_2018": 328694,
+          "year_ended_31_december_2019": 387314,
+          "nine_months_ended_30_september_2019": 286698,
+          "nine_months_ended_30_september_2020": 305862
+        }
+      },
+      "calculation_result": {
+        "growth_2018_vs_2017_pct": 18.2067631182,
+        "growth_2019_vs_2018_pct": 17.834216627,
+        "growth_9m2020_vs_9m2019_pct": 6.6843856602,
+        "minimum_comparable_growth_pct": 6.6843856602,
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示，截至2020年9月30日止九个月，最大客户收入约人民币90.8百万元，占持续经营业务收入29.7%；五大客户收入约人民币112.7百万元，占36.8%。以会计师报告同期收入人民币305,862千元复算，最大客户约29.69%、五大客户约36.85%，均低于medium阈值（最大客户>=30%或五大客户>=60%）。招股书另披露大量收入来自星河控股及其联繫人开发或拥有的物业，该口径不是单一客户集中度口径，本标注采用正式“客户”披露。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_from_disclosed_amounts",
+      "calculation_inputs": {
+        "period": "nine months ended 30 September 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 305862,
+        "largest_customer_revenue_approx": 90800,
+        "top_five_customer_revenue_approx": 112700,
+        "disclosed_largest_customer_pct": 29.7,
+        "disclosed_top_five_customer_pct": 36.8
+      },
+      "calculation_result": {
+        "largest_customer_pct_recalculated_approx": 29.6865906847,
+        "top_five_customer_pct_recalculated_approx": 36.8466824908,
+        "largest_customer_medium_threshold_met": false,
+        "top_five_customer_medium_threshold_met": false,
+        "assessment": "below_medium_threshold"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示，截至2020年9月30日止九个月，最大供应商星河控股及其联繫人（具体为星河智善生活集团）的采购额约人民币42.0百万元，占持续经营业务采购总额30.7%；五大供应商约人民币56.2百万元，占41.0%。以会计师报告同期服务成本人民币137,098千元复算，最大供应商约30.64%、五大供应商约40.99%。最大供应商达到冻结的>=30% medium阈值，但未达到>=50% high阈值，五大供应商亦未达到>=60% medium阈值，因此验证为medium。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_from_disclosed_amounts",
+      "calculation_inputs": {
+        "period": "nine months ended 30 September 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_service_cost": 137098,
+        "largest_supplier_purchases_approx": 42000,
+        "top_five_supplier_purchases_approx": 56200,
+        "disclosed_largest_supplier_pct": 30.7,
+        "disclosed_top_five_supplier_pct": 41.0
+      },
+      "calculation_result": {
+        "largest_supplier_pct_recalculated_approx": 30.6350202045,
+        "top_five_supplier_pct_recalculated_approx": 40.9925746546,
+        "largest_supplier_medium_threshold_met": true,
+        "largest_supplier_high_threshold_met": false,
+        "top_five_supplier_medium_threshold_met": false,
+        "top_five_supplier_high_threshold_met": false,
+        "assessment": "medium_by_largest_supplier"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.91,
+      "reasoning": "历史及重组披露显示，重组前两项外部/员工投资平台持有的星河商置集团股份已于2019年9月2日全部转让并悉数结付，之后星河商置集团进一步被星瀚商业收购为直接全资附属公司；基石投资协议披露又明确说明，除保证按最终发售价获配发售股份外，基石投资者相较其他公众股东没有任何优先权利。全文未发现仍然有效或可恢复的赎回、回购或其他特殊投资者权利，因此不构成redemption_rights。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "正式Business/Legal披露显示，所有对中国业务运营属重大的证书、牌照及许可证截至最后可行日期均已取得且有效，并无尚未了结或针对公司或董事而可能对财务状况或经营业绩造成重大不利影响的法律或仲裁程序。历史社会保险及住房公积金不足额供款自2019年12月起已按法规足额缴纳，截至最后可行日期未收到补缴或罚款通知，中国法律顾问认为被要求补缴及/或受行政处罚的可能性不大；除该已披露事项外亦无涉及重大违法的重大罚款或法律诉讼。因此不存在material pending matter或未解决的重大监管/牌照影响。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06668",
+      "stock_code": "6668.HK",
+      "company_name": "星盛商業",
+      "document_id": "ipo_2021_06668",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "公司核心业务是已经商业化运营的商用物业运营服务，而非尚未商业化的核心产品。Business章节列明定位/建筑咨询及租户招揽、运营管理、物业租赁及增值服务；会计师报告显示持续经营业务在2017、2018、2019年度及2020年前九个月均已有大额收入。因此不存在“核心产品未商业化且无产品销售收入”的候选情形，OPEN-02严重程度政策不需要触发。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "cash_runway",
+      "page": 442,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金淨額\n67,960\n103,558\n110,409\n65,634\n71,355",
+      "evidence_reason": "会计师报告的正式综合现金流量表给出各期经营活动所得现金净额；最新期间2020年前九个月为正数71,355千元，直接证明该期间不存在经营现金消耗。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "cash_runway",
+      "page": 443,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期末的現金及現金等價物\n指銀行結餘及現金\n81,749\n86,862\n133,909\n117,169\n123,943",
+      "evidence_reason": "同一正式现金流量表给出Protocol要求使用的现金及现金等价物口径；2020年9月30日期末余额为人民币123,943千元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "continuous_loss",
+      "page": 436,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期內利潤\n11\n47,940\n77,795\n95,600\n78,814\n90,141",
+      "evidence_reason": "会计师报告显示所有列示的年度及九个月期间集团最终年/期内结果均为利润，故不存在连续可比亏损期间。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "revenue_growth",
+      "page": 436,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合損益及其他全面收益表\n截至12月31日止年度\n截至9月30日止九個月\n2017年\n2018年\n2019年\n2019年\n2020年\n附註\n人民幣千元\n人民幣千元\n人民幣千元\n人民幣千元\n人民幣千元\n（未經審核）\n持續經營業務：\n收入\n5\n278,067\n328,694\n387,314\n286,698\n305,862",
+      "evidence_reason": "会计师报告提供2017至2019年度及2019/2020年前九个月可比收入，是计算冻结收入增长阈值的最高权威财务依据。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "customer_concentration",
+      "page": 230,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止年度以及截至2020年9月30日止九個月，我們五大客戶所產生的收入分別約為人民幣85.7百萬元、人民幣96.1百萬元、人民幣127.2百萬元及人民幣112.7百萬元，分別佔持續經營業務的收入總額30.8%、29.3%、32.8%及36.8%。截至2017年、2018年及2019年12月31日止年度以及截至2020年9月30日止九個月，我們最大客戶星河控股及其聯繫人（具體而言為星河房地產開發集團）所產生的收入分別約為人民幣63.3百萬元、人民幣66.6百萬元、人民幣95.2百萬元及人民幣90.8百萬元，分別佔來自持續經營業務的收入總額之22.8%、20.3%、24.6%及29.7%。",
+      "evidence_reason": "Business正式客户披露直接给出五大客户及最大客户的金额和占比；最新期间最大客户29.7%、五大客户36.8%，均低于冻结medium阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "customer_concentration",
+      "page": 436,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "持續經營業務：\n收入\n5\n278,067\n328,694\n387,314\n286,698\n305,862",
+      "evidence_reason": "会计师报告给出2020年前九个月持续经营业务收入人民币305,862千元，作为按Protocol复算客户集中度比例的权威分母。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "supplier_concentration",
+      "page": 230,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019年12月31日止年度以及截至2020年9月30日止九個月，向五大供應商的採購額分別約為人民幣49.6百萬元、人民幣56.6百萬元、人民幣72.6百萬元及人民幣56.2百萬元，分別佔持續經營業務的採購總額之35.6%、35.7%、38.9%及41.0%，而向最大供應商星河控股其聯繫人（具體而言為星河智善生活集團）的採購額則分別約為人民幣39.7百萬元、人民幣45.1百萬元、人民幣57.2百萬元及人民幣42.0百萬元，分別佔持續經營業務的採購總額之28.5%、28.4%、30.7%及30.7%。",
+      "evidence_reason": "Business正式供应商披露直接给出最大供应商和五大供应商金额及占比；最新最大供应商30.7%触发冻结的>=30% medium阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "supplier_concentration",
+      "page": 436,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "服務成本\n(139,341)\n(158,712)\n(186,711)\n(139,594)\n(137,098)",
+      "evidence_reason": "会计师报告给出2020年前九个月服务成本人民币137,098千元；该数值与Business披露的供应商采购占比口径一致，并用于复算集中度。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "redemption_rights",
+      "page": 134,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "於2019年9月2日，作為重組一部分，星河商用置業投資分別與宏達利興及永興宏泰訂立股份轉讓協議，據此，宏達利興及永興宏泰分別同意向星河商用置業投資轉讓3,740,000股及1,060,000股股份，分別相當於星河商置集團股本約10.60%及3.00%，代價分別為人民幣26,217,400元及人民幣7,430,600元，乃經參考星河商置集團截至2019年6月30日的資產淨值而釐定。此外，安林珊資產管理與永興宏泰於同日訂立股份轉讓協議，據此，永興宏泰同意轉讓500,000股股份（相當於星河商置集團股本中約1.42%）予安林珊資產管理，代價為人民幣3,505,000元，乃經參考星河商置集團截至2019年6月30日的資產淨值而釐定。有關代價已於2019年9月2日悉數結付，導致星河商置集團由星河商用置業投資及安林珊資產管理分別擁有約90.08%及約9.92%權益。",
+      "evidence_reason": "重组正式披露证明原外部/员工投资平台持有的全部星河商置集团股份在上市重组前已转让并悉数结付，相关投资者不再持有该运营主体股权。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "redemption_rights",
+      "page": 137,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "於上述收購事項完成後，星河商置集團成為星瀚商業的直接全資附屬公司。\n中國法律顧問已確認，我們已就完成上述我們的境內重組向相關主管監管機關作出或自其取得所有必要批准、授權或備案。",
+      "evidence_reason": "进一步证明境内重组完成后核心运营主体已成为上市集团的直接全资附属公司，前述历史少数股权已全部退出。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "redemption_rights",
+      "page": 382,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "據本公司所深知：(i)除基石投資協議外，本公司與基石投資者並無訂立附帶安排，亦無透過基石配售或就此向基石投資者授予任何直接或間接利益，惟保證按最終發售價分配相關發售股份除外，故此，基石投資者於基石投資協議與其他公眾股東相比並無任何優先權利；",
+      "evidence_reason": "基石投资协议的正式披露明确排除相对公众股东的优先权利（除保证配售外），交叉核对未见IPO投资者特殊赎回/回购权。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "material_litigation_compliance",
+      "page": 246,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "證書、牌照及許可證\n我們須就業務運營取得並持有各類證書、牌照及許可證。誠如中國法律顧問告知，於往績記錄期間及直至最後可行日期，我們已獲得相關監管機構授出就於中國的業務運營而言屬重大的全部證書、牌照及許可證，且此等證書、牌照及許可證截至最後可行日期有效。我們須不時續領該等證書、牌照及許可證。\n法律訴訟及不合規事件\n法律程序\n我們或會不時於日常業務過程中涉及法律、仲裁或行政程序。截至最後可行日期，並無尚未了結或針對我們或任何董事的法律或仲裁程序，而或會對我們的財務狀況或經營業績造成重大不利影響。",
+      "evidence_reason": "正式法律披露同时确认重大牌照许可有效，以及不存在可能造成重大不利影响的未决法律或仲裁程序，直接排除风险定义中的两类主要触发因素。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "material_litigation_compliance",
+      "page": 248,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，我們並無接獲任何通知，要求我們支付有關社會保險及住房公積金供款的不足金額或罰款；",
+      "evidence_reason": "针对已披露的历史社会保险及住房公积金不足额供款，截至最后可行日期公司未收到任何补缴不足额或罚款通知，支持该事项没有形成未决重大监管执行事项。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "material_litigation_compliance",
+      "page": 248,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "基於前文所述，中國法律顧問已告知我們，我們因未能就社會保險及住房公積金供款作出全數供款而須支付任何不足金額及╱或行政處罰的可能性不大。因此，我們並無就社會保險及住房公積金供款作出撥備。",
+      "evidence_reason": "中国法律顾问认为历史不足额供款导致补缴情形或行政处罚的可能性不大，进一步支持该事项并非未解决的重大合规风险。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "material_litigation_compliance",
+      "page": 249,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "除上文披露者外，基於本公司的確認，中國法律顧問認為，於往績記錄期間及直至最後可行日期，我們概無面臨涉及重大違反任何與我們業務有關的中國任何法律或法規的重大罰款或法律訴訟。",
+      "evidence_reason": "中国法律顾问对其他重大违法、重大罚款及法律诉讼作出总体否定性确认，作为交叉核对。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "precommercial_product",
+      "page": 158,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們的業務模式\n我們為一間商用物業運營服務供應商，專注於透過我們的專業管理為業主改善商用物業（主要為購物中心、購物街及商業綜合體）的經營業績。我們的商用物業運營服務包括：\n•\n定位、建築諮詢及租戶招攬服務：主要包括市場定位、業務策劃諮詢、設計及建築諮詢以及租戶招攬服務；\n•\n運營管理服務：主要包括制訂運營策略、舉辦營銷及推廣活動、租戶管理服務、物業管理服務及收租服務；\n•\n物業租賃服務：包括向租戶分租根據整租服務模式管理的商用物業之商用空間；及\n•\n增值服務：主要包括管理客戶可短期租作限定店及舉行促銷活動的購物中心之公共空間以及管理廣告空間（例如購物中心的LED顯示屏以及內牆及外牆）。",
+      "evidence_reason": "正式Business章节界定公司的核心业务为已在提供的商用物业运营服务组合，并非处于研发/临床/待商业化阶段的核心产品。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "risk_code": "precommercial_product",
+      "page": 436,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "持續經營業務：\n收入\n5\n278,067\n328,694\n387,314\n286,698\n305,862",
+      "evidence_reason": "会计师报告显示核心持续经营业务在全部往绩记录期间均已产生显著商业收入，排除“核心产品未商业化且无产品销售收入”的候选条件。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

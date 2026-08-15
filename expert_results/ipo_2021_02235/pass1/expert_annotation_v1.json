@@ -1,0 +1,595 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02235",
+  "stock_code": "2235.HK",
+  "company_name": "微泰醫療－Ｂ",
+  "document_id": "ipo_2021_02235",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "采用现金流量表口径的最新报告期数据：截至2021年4月30日止四个月经营活动所用现金流量净额为人民币8,534千元，期末现金及现金等价物为人民币626,339千元。月均经营现金消耗为2,133.5千元，现金跑道约293.57个月，明显不低于12个月的medium阈值，因此该风险不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "four months ended 30 April 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 626339,
+        "net_cash_from_operating_activities": -8534,
+        "period_months": 4,
+        "cash_source": "consolidated_cash_flow_statement"
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": 2133.5,
+        "cash_runway_months": 293.5735,
+        "medium_threshold_months": 12,
+        "high_threshold_months": 6,
+        "critical_threshold_months": 3,
+        "assessment": "runway_at_or_above_12_months"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "经审计历史财务资料显示2019年及2020年两个完整、可比年度均录得亏损，分别为人民币78,614千元及121,250千元，已满足“2 comparable loss periods = medium”。另有截至2020年及2021年4月30日止四个月的可比期间亦均亏损，但不将四个月期间与完整年度混合计作第三个同类期间，因此不升级为high。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparable_annual_periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "loss": -78614
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "loss": -121250
+          }
+        ],
+        "comparable_interim_periods": [
+          {
+            "period": "four months ended 30 April 2020",
+            "loss": -4098,
+            "audit_status": "unaudited comparative"
+          },
+          {
+            "period": "four months ended 30 April 2021",
+            "loss": -2581
+          }
+        ]
+      },
+      "calculation_result": {
+        "maximum_count_within_a_same-duration_comparable_set": 2,
+        "assessment": "two_comparable_loss_periods",
+        "threshold_level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "收入在两个可比口径均为正增长：2020年较2019年增长约45.15%；截至2021年4月30日止四个月较2020年同期增长约118.87%。不存在<0%的medium触发，更不存在<=-20%的high触发。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_growth_rate",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparisons": [
+          {
+            "from_period": "year ended 31 December 2019",
+            "to_period": "year ended 31 December 2020",
+            "from_revenue": 51863,
+            "to_revenue": 75277
+          },
+          {
+            "from_period": "four months ended 30 April 2020",
+            "to_period": "four months ended 30 April 2021",
+            "from_revenue": 17751,
+            "to_revenue": 38851
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          45.1459,
+          118.8665
+        ],
+        "minimum_comparable_growth_pct": 45.1459,
+        "medium_threshold_pct": 0,
+        "high_threshold_pct": -20,
+        "assessment": "all_comparable_growth_non_negative"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "按业务披露的五大客户销售额及会计师报告收入精确计算，往绩记录期内最大客户占比最高约22.41%，五大客户合计占比最高约33.70%，均低于medium阈值（最大客户30%或五大客户60%），故不构成客户集中度风险。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_from_customer_sales_and_revenue",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "revenue": 51863,
+            "largest_customer_sales": 1621,
+            "top_five_customer_sales": 6819
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "revenue": 75277,
+            "largest_customer_sales": 3106,
+            "top_five_customer_sales": 11216
+          },
+          {
+            "period": "four months ended 30 April 2021",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "revenue": 38851,
+            "largest_customer_sales": 8705,
+            "top_five_customer_sales": 13091
+          }
+        ],
+        "medium_thresholds_pct": {
+          "largest_customer": 30,
+          "top_five_customers": 60
+        },
+        "high_thresholds_pct": {
+          "largest_customer": 50,
+          "top_five_customers": 80
+        }
+      },
+      "calculation_result": {
+        "period_results": [
+          {
+            "period": "year ended 31 December 2019",
+            "largest_customer_pct": 3.1255,
+            "top_five_customer_pct": 13.1481
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_customer_pct": 4.1261,
+            "top_five_customer_pct": 14.8996
+          },
+          {
+            "period": "four months ended 30 April 2021",
+            "largest_customer_pct": 22.4061,
+            "top_five_customer_pct": 33.6954
+          }
+        ],
+        "maximum_largest_customer_pct": 22.4061,
+        "maximum_top_five_customer_pct": 33.6954,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "业务章节正式披露的供应商集中度比例显示，往绩记录期内最大供应商采购占比最高19.4%，五大供应商合计占比最高33.7%，均低于medium阈值（最大供应商30%或五大供应商60%）。按披露比例进行阈值比较后不触发风险。",
+      "calculation_required": true,
+      "calculation_method": "authoritative_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "largest_supplier_purchase": 15901,
+            "largest_supplier_pct": 19.4,
+            "top_five_supplier_purchase": 27648,
+            "top_five_supplier_pct": 33.7
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "largest_supplier_purchase": 5780,
+            "largest_supplier_pct": 5.8,
+            "top_five_supplier_purchase": 19141,
+            "top_five_supplier_pct": 19.3
+          },
+          {
+            "period": "four months ended 30 April 2021",
+            "currency": "RMB",
+            "unit": "RMB'000",
+            "largest_supplier_purchase": 1632,
+            "largest_supplier_pct": 6.6,
+            "top_five_supplier_purchase": 5330,
+            "top_five_supplier_pct": 21.5
+          }
+        ],
+        "medium_thresholds_pct": {
+          "largest_supplier": 30,
+          "top_five_suppliers": 60
+        },
+        "high_thresholds_pct": {
+          "largest_supplier": 50,
+          "top_five_suppliers": 80
+        }
+      },
+      "calculation_result": {
+        "maximum_largest_supplier_pct": 19.4,
+        "maximum_top_five_supplier_pct": 33.7,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.5,
+      "reasoning": "首次公开发售前投资者享有撤资权；该权利自提交上市申请起暂停并拟于上市后终止，但若公司撤回上市申请、申请被联交所拒绝或退回、或申请失效，则撤资权自动恢复。该权利的履行义务人为创始股东鄭博士而非发行人本身。依据冻结规则，实际可恢复的特殊权利属于需复核事项，候选严重度维持provisional medium/50。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.93,
+      "reasoning": "正式业务及法定披露均表明不存在可能造成重大不利影响的未决或受威胁重大诉讼、仲裁或行政程序。公司确有部分社会保险及住房公积金未足额缴纳的不合规事项，但董事及中国法律顾问明确认为其不会对整体业务、财务状况或全球发售造成重大不利影响，且截至最后实际可行日期未收到行政处罚或补缴情形通知，并已就缺口作出人民币2.9百万元拨备。现有证据不足以形成“material pending matter or unresolved regulatory/licence effect”的候选风险。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02235",
+      "stock_code": "2235.HK",
+      "company_name": "微泰醫療－Ｂ",
+      "document_id": "ipo_2021_02235",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "核心产品Equil已于2017年取得欧洲CE标志及中国国家药监局成人使用上市批准，并自2018年起在中国和欧洲商业化；其在2019年、2020年及截至2021年4月30日止四个月均产生明确产品销售收入。因此不满足“核心产品未商业化且无产品销售收入”的候选条件，OPEN-02严重度开放政策不被触发。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "cash_runway",
+      "page": 494,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "經營所用現金\n(18,802)\n(11,951)\n(12,022)\n(14,588)\n已收利息\n848\n2,376\n255\n6,054\n經營活動所用現金流量淨額\n(17,954)\n(9,575)\n(11,767)\n(8,534)",
+      "evidence_reason": "会计师报告中的合并现金流量表给出截至2021年4月30日止四个月经营活动现金净流出8,534千元，是月均经营现金消耗计算的权威输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "cash_runway",
+      "page": 495,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "年初╱期初現金及現金等價物\n53,461\n41,428\n41,428\n539,800\n匯率變動影響淨額\n186\n(2,107)\n330\n(741)\n年末╱期末現金及現金等價物\n41,428\n539,800\n42,148\n626,339\n現金及現金等價物的結餘分析\n合併財務狀況表列示的現金及\n 現金等價物\n21\n41,428\n549,800\n42,148\n626,339\n收購時原始期限為三個月以上的定期存款\n–\n(10,000)\n–\n–\n合併現金流量表列示的現金及\n 現金等價物\n41,428\n539,800\n42,148\n626,339",
+      "evidence_reason": "该页明确给出现金流量表口径的期末现金及现金等价物626,339千元，并展示与原始期限超过三个月定期存款的正式调节，符合现金定义政策。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "continuous_loss",
+      "page": 490,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "稅前虧損\n6\n(78,614)\n(121,250)\n(4,098)\n(2,581)\n所得稅開支\n10\n–\n–\n–\n–\n年內╱期內虧損及全面虧損總額\n(78,614)\n(121,250)\n(4,098)\n(2,581)",
+      "evidence_reason": "同一正式财务报表同时列示两个完整年度及两个四个月比较期的亏损事实，可识别同口径可比损失期间并按冻结阈值判断。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "revenue_growth",
+      "page": 490,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "收入\n5\n51,863\n75,277\n17,751\n38,851",
+      "evidence_reason": "权威历史财务资料给出2019/2020完整年度及2020/2021四个月同期收入，可直接进行两个可比口径的收入增长率计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "customer_concentration",
+      "page": 306,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2019年及2020年12月31日止年度以及截至2021年4月30日止四個月，我們的五大客戶均為分銷商，對五大客戶的總銷售額分別為人民幣6.8百萬元、人民幣11.2百萬元及人民幣13.1百萬元，分別佔我們收入的13.2%、14.9%及33.7%。對同期最大客戶的銷售額分別為人民幣1.6百萬元、人民幣3.1百萬元及人民幣8.7百萬元，分別佔我們收入的3.1%、4.1%及22.4%。",
+      "evidence_reason": "正式业务客户披露概括全部三个期间的最大客户与五大客户销售占比，是集中度结论的直接业务证据。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "customer_concentration",
+      "page": 306,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "客戶A 2018年6月至今 一家從事第二類和第三類醫療器械銷售的私人公司 付款交貨 1,621 3.1%\n客戶B 2018年6月至今 一家從事第二類和第三類醫療器械銷售的私人公司 付款交貨 1,380 2.7%\n客戶C 2014年6月至今 一家從事第二類和第三類醫療器械銷售的私人公司 付款交貨 1,311 2.5%\n客戶D 2018年7月至今 一家從事第一類、第二類及第三類醫療器械銷售的私人公司 60日 1,283 2.5%\n客戶E 2018年9月至今 一家從事醫療器械銷售的外資公司 30日╱付款交貨 1,224 2.4%\n合計 6,819 13.2%",
+      "evidence_reason": "该表提供2019年最大客户及五大客户精确销售额（千元），用于与收入分母进行精确比例重算。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "customer_concentration",
+      "page": 307,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2020年\n12月31日\n止年度的\n五大客戶\n截至最後實際\n可行日期的\n合同期限\n公司背景\n信用期\n銷售額\n佔收入\n百分比\n人民幣千元\n客戶D\n2018年7月至今\n一家從事第一類、第二類及第三類\n 醫療器械銷售的私人公司\n60日\n3,106\n4.1%\n客戶F\n2019年4月至今\n一家從事第一類和第二類醫療器械\n 銷售的私人公司\n付款交貨\n2,638\n3.5%\n客戶G\n2020年5月至今\n一家從事醫療器械銷售的外資公司\n30日\n2,123\n2.8%\n客戶H\n2020年3月至今\n一家從事醫療器械銷售的外資公司\n30日至60日\n1,690\n2.3%\n客戶I\n2017年1月至今\n一家從事第二類和第三類醫療器械\n 銷售的私人公司\n60日\n1,659\n2.2%\n合計\n11,216\n14.9%\n截至2021年\n4月30日\n止四個月的\n五大客戶\n截至最後實際\n可行日期的\n合同期限\n公司背景\n信用期\n銷售額\n佔收入\n百分比\n人民幣千元\n客戶G\n2020年5月至今\n一家從事醫療器械銷售的外資公司\n30日\n8,705\n22.4%\n客戶J\n2021年1月至今\n一家從事醫療器械銷售的私人公司\n付款交貨\n1,905\n4.9%\n客戶F\n2019年4月至今\n一家從事第一類和第二類醫療器械\n 銷售的私人公司\n付款交貨\n880\n2.3%\n客戶I\n2017年1月至今\n一家從事第二類和第三類醫療器械\n 銷售的私人公司\n60日\n823\n2.1%\n客戶K\n2019年3月至今\n一家從事第一類、第二類及第三類\n 醫療器械銷售的私人公司\n付款交貨\n778\n2.0%\n合計\n13,091\n33.7%",
+      "evidence_reason": "该页提供2020年及截至2021年4月30日止四个月最大客户与五大客户精确销售额及披露占比，用于比例重算及交叉核对。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "customer_concentration",
+      "page": 490,
+      "evidence_role": "cross_check",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "收入\n5\n51,863\n75,277\n17,751\n38,851",
+      "evidence_reason": "会计师报告中的收入总额提供2019、2020及2021年四个月的权威分母，用于与业务章节客户销售额进行精确比例计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "supplier_concentration",
+      "page": 309,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2019年及2020年12月31日止年度以及截至2021年4月30日止四個月，對五大供應商的採購合共分別佔我們總採購額（包括增值稅）的33.7%、19.3%及21.5%，而同期向最大供應商作出的採購分別佔我們總採購額（包括增值稅）的19.4%、5.8%及6.6%。",
+      "evidence_reason": "正式业务披露直接列示全部三个期间最大供应商及五大供应商采购占比，可用于冻结阈值比较。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "supplier_concentration",
+      "page": 309,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "供應商A 2018年5月至2019年4月 基礎設施工程服務 按時間表付款 15,901 19.4%\n供應商B 2019年10月至2020年4月 GMP安裝 按時間表付款 5,840 7.1%\n供應商C 2016年7月至今 塑料材料 月付 2,129 2.6%\n供應商D 2019年4月至今 技術研發及軟件 按時間表付款 1,947 2.4%\n供應商E 2018年10月至今 電子材料 付款交貨 1,831 2.2%\n合計 27,648 33.7%",
+      "evidence_reason": "该表交叉核对2019年披露的最大供应商19.4%及五大供应商合计33.7%。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "supplier_concentration",
+      "page": 310,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "截至2020年\n12月31日止年度\n的五大供應商\n截至最後實際\n可行日期的\n合同期限\n採購\n信用期\n採購額\n佔總採購額\n百分比\n人民幣千元\n供應商A\n2018年5月至\n2019年4月\n基礎設施工程服務\n按時間表付款\n5,780\n5.8%\n供應商F\n2020年3月至\n2020年6月\n裝修服務\n按時間表付款\n4,303\n4.3%\n供應商C\n2016年7月至今\n塑料材料\n月付\n3,454\n3.5%\n供應商E\n2018年10月至今\n電子材料\n付款交貨\n3,134\n3.2%\n供應商G\n2019年3月至今\n電路板\n付款交貨\n2,470\n2.5%\n合計\n19,141\n19.3%\n截至2021年\n4月30日\n止四個月的\n五大供應商\n截至最後實際\n可行日期的\n合同期限\n採購\n信用期\n採購額\n佔總採購額\n百分比\n人民幣千元\n供應商C\n2016年7月至今\n塑料材料\n月付\n1,632\n6.6%\n供應商G\n2019年3月至今\n電路板\n付款交貨\n1,345\n5.4%\n供應商H\n2015年9月至今\n電路板\n月付\n794\n3.2%\n供應商I\n2018年11月至今\nIC元件\n月付\n789\n3.2%\n供應商J\n2020年6月至今\n設備\n付款交貨\n770\n3.1%\n合計\n5,330\n21.5%",
+      "evidence_reason": "该页交叉核对2020年和截至2021年4月30日止四个月的最大供应商与五大供应商集中度比例。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "redemption_rights",
+      "page": 220,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "首次公開發售前投資者獲授予慣常的特殊權利，包括但不限於(i)優先購買權及共同銷售權，(ii)反攤薄權，(iii)清算權，(iv)撤資權，及(v)知情權。根據本公司與首次公開發售前投資者訂立的日期為2021年4月16日的補充協議，除下述撤資權外，所有其他特殊權利將在上市後失效並終止。\n撤資權\n各首次公開發售前投資者有權在發生特定撤資事件時，要求本公司的創始股東鄭博士按指定的購買價購買各首次公開發售前投資者當時持有的股份。\n根據（其中包括）本公司、首次公開發售前投資者及本公司的時任股東訂立的各輪首次公開發售前投資的增資及投資協議（經補充和修訂）以及日期為2021年4月16日的補充協議，我們的首次公開發售前投資者已同意暫停相關撤資權，自本公司提交其H股於聯交所上市的申請（「上市申請」）之日起生效，並於上市後終止相關撤資權，惟相關撤資權將於下列任何一項事件發生時（以最早發生者為準）自動恢復：\na. 本公司撤回其上市申請；\nb. 上市申請被聯交所拒絕或退回；或\nc. 上市申請失效。",
+      "evidence_reason": "首次公开发售前投资正式披露明确证明撤资权虽暂停且拟上市后终止，但在上市失败情形下可自动恢复；同时明确义务人为创始股东而非发行人。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "material_litigation_compliance",
+      "page": 327,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "法律訴訟及合規情況\n法律訴訟\n我們可能會在日常業務過程中不時牽涉法律訴訟。於往績記錄期間及直至最後實際可行日期，我們及任何董事均未牽涉可能對我們的業務、財務狀況或經營業績造成重大不利影響的任何訴訟、仲裁或行政訴訟。截至最後實際可行日期，我們尚未發現針對我們或任何董事的任何未決或威脅作出的重大訴訟、仲裁或行政訴訟，其可能單獨或總體上對我們的業務、財務狀況或經營業績造成重大不利影響。\n合規情況\n於往績記錄期間及直至最後實際可行日期，我們並無董事認為個別或總體上會對我們的整體業務造成重大營運或財務影響的任何不合規事件。據中國法律顧問告知，於往績記錄期間及直至最後實際可行日期，我們已在所有重大方面遵守適用法律法規，不會對我們的整體業務造成重大不利影響的不合規事件除外。",
+      "evidence_reason": "正式法律诉讼及合规披露直接否定重大未决诉讼，并由董事及中国法律顾问评估现有不合规不构成重大运营或财务影响。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "material_litigation_compliance",
+      "page": 328,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "業 \n務\n– 319 –\n構與我們簽訂的協議，第三方人力資源機構有義務為我們的相關僱員繳納社會保險費\n和住房公積金。如果人力資源機構未能按照適用中國法律法規的要求為我們的僱員繳\n納社會保險或住房公積金供款，我們可能因未能履行作為僱主繳納社會保險費和住房\n公積金的相關義務而受到當地社會保險部門和當地住房公積金管理中心的處罰。該等\n第三方人力資源機構已書面確認，其已按照適用中國法律法規繳納該等供款。截至最\n後實際可行日期，我們並未收到任何行政處罰或僱員就我們與第三方人力資源機構的\n代理安排提出的勞動仲裁申請。\n根據中國相關法律法規，中國相關部門可能會要求我們在規定的期限內繳納未繳\n社會保險供款，且我們每逾期一天可能須承擔相等於未繳金額0.05%的滯納金。倘我們\n未能支付這些款項，我們可能會被處以未繳供款金額一至三倍的罰款。對未按規定足\n額繳納住房公積金的，中國住房公積金管理中心或會要求限期繳納未繳金額。逾期不\n繳納的，可向中國法院申請強制執行。請參閱「風險因素－與在中國境內開展業務相\n關的風險－由於未能完全遵守社會保險和住房公積金規定，我們可能受到中國相關法\n律法規的處罰」。\n董事認為，有關不合規事件不會對我們的業務或經營業績產生重大不利影響，考\n慮到：(i)我們於往績記錄期間及直至最後實際可行日期並未因有關不合規事件受到任\n何行政訴訟、罰款或處罰；(ii)截至最後實際可行日期，我們並未收到任何來自中國相\n關部門要求我們支付與社會保險和住房公積金有關的缺口金額或任何滯納金的通知；\n(iii)於往績記錄期間及直至最後實際可行日期，我們並不知悉有任何僱員對我們提出投\n訴或在社會保險及住房公積金方面與僱員發生任何勞動糾紛；及(iv)據中國法律顧問告\n知，考慮到相關監管政策和上述事實，有關不合規事件不會對我們的財務狀況或整體\n經營業績以及全球發售產生重大不利影響。截至2021年4月30日，於往績記錄期間，\n我們就社會保險和住房公積金供款缺口金額作出撥備人民幣2.9百萬元。",
+      "evidence_reason": "该页具体说明社会保险和住房公积金不合规的监管状态、无处罚/通知、法律顾问的非重大判断及2.9百万元拨备，用于排除重大未决合规风险。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "material_litigation_compliance",
+      "page": 654,
+      "evidence_role": "cross_check",
+      "requirement": "alternative",
+      "source_authority": "legal_disclosure",
+      "exact_text": "訴訟\n截至最後實際可行日期，本集團成員公司並無參與任何重大訴訟、仲裁、行政程序或申索，且據我們所知，概無尚未了結或對本集團任何成員公司構成威脅的重大訴訟、仲裁、行政程序或申索。",
+      "evidence_reason": "附录六法定及一般资料独立交叉确认截至最后实际可行日期无重大诉讼、仲裁、行政程序或申索。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "precommercial_product",
+      "page": 253,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Equil於2017年6月在歐洲獲得CE標誌，並於2017年9月在中國獲得國家藥監局的成人使用上市批准，2018年，我們開始在中國和歐洲進行Equil的商業化。我們自Equil所產生的收入由2019年的人民幣24.7百萬元增至2020年的人民幣34.7百萬元，並由截至2020年4月30日止四個月的人民幣8.3百萬元增至截至2021年同期的人民幣19.6百萬元。",
+      "evidence_reason": "核心产品业务披露同时证明Equil已商业化且持续产生产品销售收入，直接排除precommercial_product候选条件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "risk_code": "precommercial_product",
+      "page": 490,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "收入\n5\n51,863\n75,277\n17,751\n38,851",
+      "evidence_reason": "会计师报告确认各报告期均存在公司层面销售收入，作为核心产品商业化披露的财务交叉核对。",
+      "confidence": 0.98
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
