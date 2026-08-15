@@ -12,6 +12,7 @@ from ipo_risk.providers.prompt_registry import (
     resolve_domain_instruction,
 )
 from ipo_risk.schemas import Evidence, IPOProfile, LLMCallMetadata, MarketSnapshot
+from ipo_risk.schemas.market import IPOMarketMetadata, MarketDailyBar
 
 class MockLLMProvider:
     name = "mock"
@@ -68,5 +69,17 @@ class MockLLMProvider:
 class MockMarketDataProvider:
     def get_snapshot(self, profile: IPOProfile) -> MarketSnapshot:
         return MarketSnapshot(observation_date=profile.listing_date or date.today(), hsi_return_5d=-.04, recent_ipo_break_rate=.42, market_volatility=.31, sentiment_score=35, source="mock")
+
+    def get_listing_metadata(self, stock_code: str) -> IPOMarketMetadata | None:
+        return None
+
+    def get_daily_bars(
+        self,
+        stock_code: str,
+        *,
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ) -> list[MarketDailyBar]:
+        return []
 class MockIPODataProvider:
     def get_profile(self, company_name: str, stock_code: str = "") -> IPOProfile: return IPOProfile(company_name=company_name, stock_code=stock_code, industry="mock")

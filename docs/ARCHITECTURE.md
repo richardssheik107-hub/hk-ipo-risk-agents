@@ -596,7 +596,8 @@ Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Cal
 - Catalog Provider、Specialized Verifier Router、V03 Supervisor 与 ReportGenerator
   已注册和装配；
 - `enhanced_v2` 是发布的三 Agent 工作流，`mvp_v1`、Mock 与 unavailable 回退保留；
-- Market Agent 与真实市场数据 Provider 仍未实现，属于 v0.4。
+- V04-1 Market Foundation 已实现独立的历史数据Provider契约与标签/治理层；Market Agent
+  与生产市场数据Provider仍未实现，属于后续v0.4阶段。
 
 v0.3.5 研究不会回写或重构这些冻结公共边界。
 

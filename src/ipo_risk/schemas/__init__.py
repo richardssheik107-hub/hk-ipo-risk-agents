@@ -9,6 +9,23 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from ipo_risk.schemas.market import (
+    IPOMarketMetadata,
+    MarketBasePriceSource,
+    MarketDailyBar,
+    MarketDataProvenance,
+    MarketDatasetSplit,
+    MarketExchange,
+    MarketLabelAvailability,
+    MarketLabelHorizon,
+    MarketLabelMissingReason,
+    MarketLabelPolicy,
+    MarketOutcomeLabel,
+    MarketValidationIssue,
+    MarketValidationResult,
+    MarketValidationSeverity,
+)
+
 
 def now() -> datetime:
     return datetime.now(timezone.utc)

@@ -24,7 +24,7 @@
 | v0.2.0代码     | 已全部进入main                           |
 | v0.2.0 Release | 已发布：Tag `v0.2.0-real-document-slice` |
 | v0.3.0 Release | 已发布：Tag `v0.3.0-multi-agent-risk-analysis` |
-| 下一规划版本   | v0.4市场预测（尚未开始）                 |
+| 下一规划版本   | v0.4市场预测（V04-1已实现，等待Review）  |
 | 远期版本       | v0.4市场预测、v0.5正式评测、RC与v1.0提交 |
 
 适用对象：5人参赛团队 / 技术负责人 / 数据治理 / 财务 / 法务 / 业务与产品
@@ -83,12 +83,12 @@
 ## 1.1 当前能力边界
 
 - Financial、Legal与Business三个真实Agent已合并并进入共享Container与`enhanced_v2`；旧流程仍保留disabled/Mock回退。
-- Market Agent和正式MarketDataProvider尚未接入。
+- V04-1 Market Foundation 已实现版本化行情/IPO元数据契约、确定性标签、年度隔离与校验，等待Review；Market Agent和生产行情适配器尚未接入。
 - LLMProvider基础设施与Legal domain prompt real-provider runtime routing均已合并，GATE-A-10为PASS；真实外部endpoint smoke仍未执行。
 - `V03FinancialAgent`、`V03FinancialVerifier`及其他专业组件既可独立调用，也已进入共享Container/Workflow/Service。
 - `CatalogIPODataProvider`已进入全局ComponentRegistry；默认v0.3单文档配置仍使用请求字段，避免缺失catalog阻断分析。
 - 当前规则风险分不是经过校准的上市后下跌概率。
-- 1/5/20/60交易日标签、Logistic和LightGBM模型尚未建立。
+- 1/5/20/60交易session标签基础已实现；Logistic和LightGBM模型尚未建立。
 
 ## 1.2 数据基线
 
@@ -109,7 +109,7 @@
 | v0.1.0 | 系统架构能否完整运行 | 统一Schema、Mock组件、LangGraph、Service、UI、测试 | 已发布 |
 | v0.2.0 | 能否从真实PDF得到一条可信风险 | 真实现金跑道闭环、赛事数据治理、影子测试 | 已正式发布 |
 | v0.3.0 | 能否进行真实多Agent文档风险分析 | 3个真实Agent、8类风险、共享runtime与产品UI | RELEASED / FROZEN / HUMAN GOLDEN COMPLETE |
-| v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | 待规划 |
+| v0.4.0 | 文档风险能否连接上市后真实表现 | 行情、标签、Market Agent、Logistic、LightGBM | V04-1 IMPLEMENTED PENDING REVIEW |
 | v0.5.0 | 系统效果是否经过正式证明 | 20—30家公司、200—300条标注、消融与失败分析 | 待规划 |
 | 提交准备 | 如何形成参赛产品 | 页面、报告、PPT、视频、手册 | 待规划 |
 | RC | 别人能否稳定复现 | 冻结、独立环境、异常测试、离线演示 | 待规划 |
@@ -583,6 +583,12 @@ v0.3批量评测完成后增加：
 
 ## 14.1 v0.4.0-market-risk-prediction
 
+V04-1 Market Foundation 已实现并等待Review：包含市场数据Schema、IPO市场元数据、
+MarketDataProvider历史数据契约、1/5/20/60交易session标签、2020—2025时间分割、
+2025 blind代码级保护与完整性校验。这不代表完整v0.4完成；生产行情适配、Market Agent、
+文档特征契约及模型仍按后续阶段推进。专项政策见
+`docs/research/V04_MARKET_FOUNDATION.md`。
+
 | **编号** | **任务** | **主要输出** |
 |:---|:---|:---|
 | V4-1 | 证券类别、上市日期和发行价语义治理 | 普通股/REIT/SPAC/权证资格与时间边界 |
@@ -614,7 +620,8 @@ v0.3批量评测完成后增加：
 
 # 15. 当前状态与下一步
 
-当前统一阶段：**v0.3 Released / Frozen**。v0.4仍为`NOT STARTED`。
+当前统一阶段：**v0.3 Released / Frozen**。V04-1 Market Foundation 已实现并等待Review；
+生产市场预测模型仍未开始。
 
 ## v0.3.5 Evidence Intelligence 当前主任务
 
@@ -636,7 +643,7 @@ Expert Golden v2 和 Evidence Intelligence 架构。
 | Phase 0.7 Architecture | NOT STARTED | Shared Index、domain search、bounded iteration、completeness |
 | Phase 0.8 A/B | NOT STARTED | 同 PDF/LLM/policy/verifier/Expert Golden |
 | Phase 0.9 Retrieval optimization | NOT STARTED | 算法选择与排序优化 |
-| v0.4 Market Prediction | NOT STARTED | 必须通过 v0.3.5 Gate 后启动 |
+| v0.4 Market Prediction | V04-1 IMPLEMENTED PENDING REVIEW | Market Foundation与Evidence Track解耦；文档特征集成和模型仍为后续Gate |
 
 ### Expert Golden 治理
 
