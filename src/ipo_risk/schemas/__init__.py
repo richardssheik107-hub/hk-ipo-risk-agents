@@ -9,6 +9,71 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from ipo_risk.schemas.market import (
+    IPOMarketMetadata,
+    MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION,
+    MarketBasePriceSource,
+    MarketDailyBar,
+    MarketDataProvenance,
+    MarketDatasetSplit,
+    MarketExchange,
+    MarketLabelAvailability,
+    MarketLabelHorizon,
+    MarketLabelMissingReason,
+    MarketLabelPolicy,
+    MarketOutcomeLabel,
+    MarketSecurityEligibility,
+    MarketSecurityEligibilityDecision,
+    MarketSecurityEligibilityReason,
+    MarketSecurityType,
+    MarketValidationIssue,
+    MarketValidationResult,
+    MarketValidationSeverity,
+)
+from ipo_risk.schemas.market_features import (
+    MARKET_FEATURE_POLICY_VERSION,
+    MARKET_FEATURE_SCHEMA_VERSION,
+    MARKET_RAW_FEATURE_ORDER,
+    MarketActivityObservation,
+    MarketFeatureAvailability,
+    MarketFeatureDefinition,
+    MarketFeatureDType,
+    MarketFeatureManifest,
+    MarketFeatureMissingReason,
+    MarketFeatureProvenance,
+    MarketFeatureValue,
+    MarketFeatureVector,
+    MarketReferenceBar,
+    PreListingMarketFeatureContext,
+    PreListingMarketFeaturePolicy,
+    PreListingMarketFeatureSnapshot,
+    PriorIPOReference,
+)
+from ipo_risk.schemas.market_modeling import (
+    V04_MARKET_AUGMENTED_DATASET_VERSION,
+    V04CombinedFeatureVector,
+    V04MarketAugmentedBlindFeatureDataset,
+    V04MarketAugmentedBlindFeatureRecord,
+    V04MarketAugmentedModelingDataset,
+    V04MarketAugmentedModelingRecord,
+)
+from ipo_risk.schemas.modeling import (
+    DOCUMENT_FEATURE_SCHEMA_VERSION,
+    V04_MODELING_DATASET_VERSION,
+    DocumentFeatureDefinition,
+    DocumentFeatureDType,
+    DocumentFeatureManifest,
+    DocumentFeatureVector,
+    DocumentRiskFeature,
+    DocumentRiskFeatureState,
+    DocumentRiskSnapshotBuildContext,
+    V03DocumentRiskSnapshot,
+    V04BlindFeatureDataset,
+    V04BlindFeatureRecord,
+    V04ModelingDataset,
+    V04ModelingRecord,
+)
+
 
 def now() -> datetime:
     return datetime.now(timezone.utc)

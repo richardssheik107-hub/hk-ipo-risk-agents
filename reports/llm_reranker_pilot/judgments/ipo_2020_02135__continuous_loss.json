@@ -1,0 +1,239 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "a6a30615-a217-5a02-8817-f4ea9a61db74",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "audited_financial_context"
+        ],
+        "reason": "Auditor's report equity statement shows period loss of (12,000) for 2020 H1 but is secondary to the income statement for loss assessment."
+      },
+      {
+        "candidate_id": "443e4067-f378-5419-a183-c5f2034e9978",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Key financial ratios show net margin declining from 15.4%(2017) to (20.1%)(2020H1), directly evidencing the profit-to-loss transition."
+      },
+      {
+        "candidate_id": "fb0eed38-731e-5619-8e6e-94e7313c1734",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "Explicit narrative: net profit fell ~104% to net loss for 10M ended Oct 2020; directors expect worse full-year 2020 vs 2019."
+      },
+      {
+        "candidate_id": "9d5a4bfd-1799-5fc8-87f9-60f2a094e8d4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "Near-duplicate of page 25 COVID narrative with same net loss statement; from business section rather than summary."
+      },
+      {
+        "candidate_id": "727274d1-5d10-5d56-9f67-73fe1458ab01",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Non-IFRS table shows period profit/loss across 5 periods: 17,405 to (11,777), clear decline to loss with adjusted figures."
+      },
+      {
+        "candidate_id": "0803f04f-201a-5a7c-858b-5df10ec54e35",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "About management consulting contract liabilities and revenue recognition; no loss data or profit/loss figures relevant to continuous loss."
+      },
+      {
+        "candidate_id": "6ee7ca49-8441-5e9f-bbf4-529d60f01d3f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Shows profit decline 44% from 2018 to 2019 (18.4M to 10.3M) with margin drop; still profitable but supports declining trend."
+      },
+      {
+        "candidate_id": "cac0a1fa-8356-508c-bfad-2b34d260a5d0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Covers 2017-2018 showing profit increase from 17.4M to 18.4M; early profitable period, limited relevance to loss trend."
+      },
+      {
+        "candidate_id": "a5dff5df-c454-5466-8279-62048b68f553",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Covers 2017-2018 net margin decline from 15.4% to 11.6%; both periods profitable, early trend only."
+      },
+      {
+        "candidate_id": "8c5c31ae-947d-5957-9537-df9a0222b2e5",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "States EBIT loss in 2020H1 making interest coverage N/A; declining ROA/ROE across periods supports loss trend."
+      },
+      {
+        "candidate_id": "fd536d58-1f8d-5ba4-8a5a-2c234ccf3b95",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Complete audited consolidated income statement with all line items across 5 periods; shows profit-to-loss transition (11,777) loss in 2020H1."
+      },
+      {
+        "candidate_id": "814f462c-1dfa-5f08-be80-16bb56e50b15",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "IFRS 16 adoption comparison table includes profit/loss figures across periods including 2020H1 loss; contextual but contains relevant data."
+      },
+      {
+        "candidate_id": "26eb82a1-b7ef-516b-a5bf-f822f95ee37a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Full consolidated income statement from financial data section showing 5-period profit-to-loss transition with all line items."
+      },
+      {
+        "candidate_id": "a9da1824-5cf7-58ab-a51f-f87f1928c7c7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Summary financial data showing period profit/loss across 5 periods: 17,405 to (11,777); concise but directly evidences loss transition."
+      }
+    ]
+  }
+}

@@ -13,9 +13,11 @@ Human Golden governance now uses the permanent
 for formal promotion, while independent second review remains optional and
 must stay traceable when it exists. Financial, Legal and Business formal
 Golden evaluation is complete; actual cross-domain metrics are reported
-without tuning. The historical Owner Waiver is superseded. v0.4 market
-prediction, calibrated decline probabilities and 1/5/20/60-day labels have
-not started.
+without tuning. The historical Owner Waiver is superseded. The independent
+V04-1 Market Foundation and V04-2 document-to-market feature contract are merged;
+V04-3 pre-listing market feature engine is implemented pending review. Production
+market-data coverage remains limited; calibrated decline probabilities and production
+market prediction have not started.
 
 ## v0.3.5 Evidence Intelligence research program
 
@@ -29,8 +31,10 @@ bottleneck.
 Before tuning retrieval, Phase 0.6 reconstructs an independent Expert Golden that
 separates risk instances, evidence records, evidence roles and multi-page
 relationships. Phase 0.7 designs domain-specific Evidence Intelligence, Phase 0.8
-runs a controlled A/B, and only Phase 0.9 selects/tunes retrieval algorithms. v0.4
-market prediction remains Not Started and is gated by this research program.
+runs a controlled A/B, and only Phase 0.9 selects/tunes retrieval algorithms.
+V04-1 remains a decoupled foundation; V04-2 adds a versioned snapshot/dataset
+boundary; V04-3 adds deterministic point-in-time market controls while production
+data adapters and model development remain later gates.
 
 The collaboration method is LLM-assisted, not GPT-as-Gold: blind GPT evidence
 investigation -> deterministic validation -> independent GPT audit -> conflict
@@ -263,8 +267,17 @@ v0.3 已发布并冻结，Gate A、三 Agent 共享集成、`enhanced_v2`、产�
 Expert Golden，Phase 0.7 设计 domain-specific evidence search，Phase 0.8 进行
 受控架构 A/B，Phase 0.9 才进行 Retriever/ranking 算法优化。
 
-真实市场数据、Market Agent、上市后标签、Logistic、LightGBM和SHAP仍延后至
-v0.4；v0.4 必须通过 v0.3.5 Gate 后开始。
+V04-1 已实现市场数据契约、上市后标签、cohort/listing-year 一致性、版本化普通股
+modeling eligibility、年度隔离与完整性校验；生产行情及证券类型 metadata 适配器、
+Market Agent、Logistic、LightGBM和SHAP仍属于后续v0.4阶段。
+
+V04-2 已实现最终 `IPOAnalysisResult` 到版本化 `V03DocumentRiskSnapshot`、固定100项
+数值特征及 development/validation modeling dataset 的契约。2025只允许输出不含
+MarketOutcomeLabel的feature-only blind dataset；本阶段不训练模型。
+
+V04-3 已实现只使用上市日前数据的恒指、行业、近期IPO、市场波动率及真实全市场成交额
+契约，冻结20项market manifest，并新增不改变V04-2语义的120项document+market join。
+仓库尚无受治理的真实HSI、行业指数或全市场turnover序列，production adapter仍不可用。
 
 ## 11. 当前实施状态
 

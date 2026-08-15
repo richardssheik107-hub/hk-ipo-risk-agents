@@ -1,0 +1,330 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "4f9c2b2b-91d4-5ac1-be65-a9b4c51d0e99",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Consolidated income statement with revenue across 5 periods (FY16-9M19) in RMB'000. Direct, authoritative revenue data enabling growth trend analysis."
+      },
+      {
+        "candidate_id": "e5981e7c-9196-501c-a480-4f5f59ad6e56",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Game-level revenue contributions for FY16 and start of FY17. Supports revenue composition analysis but incomplete periods; no total revenue growth trend."
+      },
+      {
+        "candidate_id": "631e2380-12df-539d-8144-127758bd17cb",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Game-level revenue contributions for FY18 and 9M19. Supports revenue composition analysis but no complete cross-period growth comparison."
+      },
+      {
+        "candidate_id": "ba1fb468-e311-5c15-9d7f-1ade806ce93a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Digital media revenue by category across 5 periods with narrative on growth/decline drivers. Specific segment revenue data relevant to revenue trends."
+      },
+      {
+        "candidate_id": "7f8730f8-a56f-5da5-858b-042c82c5dfe9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Discusses digital media revenue decline from RMB41.6M to RMB22.0M (9M18 vs 9M19) with reasons. Direct revenue trend evidence for one segment."
+      },
+      {
+        "candidate_id": "306f50cd-e4ef-5361-92d3-25672b47a99e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director biography page. No revenue data; matched terms are incidental mentions of other companies' business activities. Completely irrelevant."
+      },
+      {
+        "candidate_id": "db7eba41-c453-5bf7-8d08-4e6cc5fcc834",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Breakdown of other income and gains (interest, subsidies, consulting). Non-operating income, not core revenue growth. Context only."
+      },
+      {
+        "candidate_id": "6c75e3af-7b92-5a15-a28f-e32384aa5fd8",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "income_statement_authority"
+        ],
+        "reason": "Accountant's report on revenue recognition policy (principal vs agent). Accounting methodology context, not revenue growth data."
+      },
+      {
+        "candidate_id": "c6116694-8094-5de7-aeb4-56ce553f2925",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director biography page. No revenue data; matched terms incidental to other entities' business descriptions. Completely irrelevant."
+      },
+      {
+        "candidate_id": "c10530ed-5338-5021-9e0d-6c4080e43ff6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Gross profit and margin across periods with revenue context. Supports profitability analysis tied to revenue, but not direct revenue growth data."
+      },
+      {
+        "candidate_id": "58be616c-5a2c-5a85-8f1d-39a3a764f690",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Sensitivity analysis citing revenue figures (RMB139.8M-170.8M) across 4 periods. Revenue data present but embedded in cost sensitivity context."
+      },
+      {
+        "candidate_id": "507e85c1-b074-5e1a-85d4-fa95241aa546",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Explicit revenue growth discussion: total revenue up 41.9% (RMB120.4M to 170.8M), segment-level changes with figures. Strong revenue growth evidence."
+      },
+      {
+        "candidate_id": "b28cba18-50da-51a7-954d-a14e73c1a3f1",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "revenue",
+          "currency_unit"
+        ],
+        "reason": "Game details table with ARPU and launch dates. Operational metrics context, not revenue growth trend data."
+      },
+      {
+        "candidate_id": "56871470-ff3a-521a-a594-684f90dc7412",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Paying user counts and ARPU across 4 periods. Revenue-driving metrics, indirectly supports revenue trend analysis."
+      },
+      {
+        "candidate_id": "7d73da91-c135-5089-a258-21250540aff4",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "income_statement_authority"
+        ],
+        "reason": "Revenue recognition accounting policies for information services and digital media. Policy context, not revenue growth data."
+      },
+      {
+        "candidate_id": "f42b44fc-5ceb-5f1d-ada4-635ac8985b8d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods"
+        ],
+        "reason": "Revenue composition shift between self-developed and licensed games across periods with strategic explanations. Supports revenue dynamics analysis."
+      },
+      {
+        "candidate_id": "103387a9-2b0a-5ae5-883a-90e5e1b920d6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Top-5 games revenue contribution percentages and specific game revenue figures across periods. Supports revenue trend analysis."
+      },
+      {
+        "candidate_id": "2296cef4-39dd-5e2b-83c4-4abe7948008b",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "revenue",
+          "currency_unit"
+        ],
+        "reason": "Gross margin analysis for mobile game segments. Profitability context, not direct revenue growth evidence."
+      },
+      {
+        "candidate_id": "2d1eef85-2166-5a0b-ba6d-47c930bfe3c3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Corporate income tax rates, effective tax rates, and tax expenses. No revenue growth relevance; matched term incidental."
+      },
+      {
+        "candidate_id": "e153cb1c-3cf3-5e64-959a-0b0b4af2ee3c",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Cost of sales, gross profit changes for 9M18 vs 9M19. Profitability analysis context; revenue only indirectly referenced."
+      }
+    ]
+  }
+}

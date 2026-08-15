@@ -1,0 +1,570 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_09982",
+  "stock_code": "9982.HK",
+  "company_name": "中原建業",
+  "document_id": "ipo_2021_09982",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示截至2020年12月31日止年度经营活动所得现金净额为正人民币614,716千元，且年末现金及现金等价物为人民币384,599千元。按Protocol v1.1.1，所选可比期间经营现金流为正或零时不存在operating cash burn，不计算月度现金消耗或cash runway，因此该风险不适用。2018年及2019年经营活动所得现金净额亦为正，结论一致。",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_non_trigger",
+      "calculation_inputs": {
+        "period": "截至2020年12月31日止年度",
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "cash_and_cash_equivalents": 384599,
+        "net_cash_from_operating_activities": 614716,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的三个可比完整年度均录得正的年内溢利：2018年人民币403,877千元、2019年人民币641,097千元、2020年人民币681,470千元。不存在任何可比亏损期间，未达到2个期间的medium或3个期间的high条件。",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_fact_record",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "comparable_periods": [
+          {
+            "period": "截至2018年12月31日止年度",
+            "profit_loss": 403877
+          },
+          {
+            "period": "截至2019年12月31日止年度",
+            "profit_loss": 641097
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "profit_loss": 681470
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_period_count": 3,
+        "loss_period_count": 0,
+        "profit_period_count": 3,
+        "assessment": "no_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告收入由2018年的人民币676,399千元增至2019年的人民币1,028,995千元，并于2020年进一步增至人民币1,152,082千元。逐年同比增长分别约52.13%和11.96%，均不低于0%，因此未触发<0%的medium或<=-20%的high阈值。",
+      "calculation_required": true,
+      "calculation_method": "year_over_year_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "periods": [
+          {
+            "period": "截至2018年12月31日止年度",
+            "revenue": 676399
+          },
+          {
+            "period": "截至2019年12月31日止年度",
+            "revenue": 1028995
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "revenue": 1152082
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          {
+            "from_period": "截至2018年12月31日止年度",
+            "to_period": "截至2019年12月31日止年度",
+            "growth_pct": 52.1284
+          },
+          {
+            "from_period": "截至2019年12月31日止年度",
+            "to_period": "截至2020年12月31日止年度",
+            "growth_pct": 11.9619
+          }
+        ],
+        "minimum_growth_pct": 11.9619,
+        "medium_threshold_breached": false,
+        "high_threshold_breached": false,
+        "assessment": "positive_growth_in_all_comparable_years"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露显示，2018/2019/2020年五大客户收入占比分别为40.9%/33.9%/24.3%，单一最大客户分别为14.7%/13.0%/10.5%。各期最大客户均低于30%，五大客户均低于60%，因此未触发medium；亦显著低于high阈值。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "截至2018年12月31日止年度",
+            "largest_customer_pct": 14.7,
+            "top_five_customers_pct": 40.9
+          },
+          {
+            "period": "截至2019年12月31日止年度",
+            "largest_customer_pct": 13.0,
+            "top_five_customers_pct": 33.9
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "largest_customer_pct": 10.5,
+            "top_five_customers_pct": 24.3
+          }
+        ],
+        "medium_thresholds": {
+          "largest_customer_pct": 30.0,
+          "top_five_customers_pct": 60.0
+        },
+        "high_thresholds": {
+          "largest_customer_pct": 50.0,
+          "top_five_customers_pct": 80.0
+        }
+      },
+      "calculation_result": {
+        "max_largest_customer_pct": 14.7,
+        "max_top_five_customers_pct": 40.9,
+        "medium_threshold_breached": false,
+        "high_threshold_breached": false,
+        "assessment": "below_concentration_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "Business正式披露显示，2018年五大供应商采购占比为67.1%，达到冻结的top-five >=60%的medium阈值，但低于80%的high阈值；同年单一最大供应商为27.3%，低于30%。2019年和2020年的集中度已降至阈值以下，但往绩记录期内2018年存在明确medium命中，因此标注为verified medium。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "截至2018年12月31日止年度",
+            "largest_supplier_pct": 27.3,
+            "top_five_suppliers_pct": 67.1
+          },
+          {
+            "period": "截至2019年12月31日止年度",
+            "largest_supplier_pct": 19.5,
+            "top_five_suppliers_pct": 48.6
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "largest_supplier_pct": 8.6,
+            "top_five_suppliers_pct": 27.3
+          }
+        ],
+        "medium_thresholds": {
+          "largest_supplier_pct": 30.0,
+          "top_five_suppliers_pct": 60.0
+        },
+        "high_thresholds": {
+          "largest_supplier_pct": 50.0,
+          "top_five_suppliers_pct": 80.0
+        }
+      },
+      "calculation_result": {
+        "trigger_period": "截至2018年12月31日止年度",
+        "trigger_metric": "top_five_suppliers_pct",
+        "trigger_value_pct": 67.1,
+        "medium_threshold_breached": true,
+        "high_threshold_breached": false,
+        "maximum_triggered_level": "medium",
+        "assessment": "medium_supplier_concentration_triggered"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "未发现任何上市前投资者享有实际生效或可恢复的赎回、回购或其他特殊权利。章程披露本公司股本包括普通股；基石投资者认购的股份与已发行缴足股份享有相同权利。重大合约清单中的外部投资安排为上市基石投资协议，未披露任何上市前特殊股东权利协议。章程中关于未来可发行可赎回股份的一般授权属于boilerplate能力而非实际权利，不构成该风险。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.94,
+      "reasoning": "正式法律/业务披露显示，公司已取得业务运营所需的全部必要牌照、许可、批准及证书，且并无重大未决或面临的诉讼、仲裁或行政程序。招股书亦披露社会保险及住房公积金少缴、租赁协议未备案等合规事项，但董事明确认为相关金额/影响不重大，截至最后可行日期未收到主管部门通知、索赔、责令改正或罚款，并披露整改计划及较低处罚可能性。因此未发现达到material_litigation_compliance定义的重大待决事项或具有重大未解决监管/牌照影响的事项。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09982",
+      "stock_code": "9982.HK",
+      "company_name": "中原建業",
+      "document_id": "ipo_2021_09982",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "公司的核心业务是已商业化的房地产代建服务，而非尚未商业化的产品。Business正式披露公司向项目拥有人提供房地产代建服务并收取管理服务费，且2018至2020年持续取得大额收入和利润；因此不存在“核心产品未商业化且无产品销售收入”的候选情形，OPEN-02严重度政策不适用。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "cash_runway",
+      "page": 347,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金淨額. . . . . . . . . .\n519,240\n671,724\n614,716",
+      "evidence_reason": "会计师报告现金流量表显示2018、2019及2020年经营活动所得现金净额均为正，其中2020年为人民币614,716千元；按Protocol，正经营现金流不形成operating cash burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "cash_runway",
+      "page": 347,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "於年末的現金及\n現金等價物. . . . . . . . . . . . . . . .\n15(a)\n85,384\n345,381\n384,599",
+      "evidence_reason": "同一会计师报告现金流量表给出年末现金及现金等价物，2020年为人民币384,599千元，为cash runway标准现金口径。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "cash_runway",
+      "page": 355,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "現金及現金等價物包括銀行存款及庫存現金、存放於銀行及其他金融機構的活期存款，以及可隨時換算為已知的現金\n額、價值變動風險不大並會在購入後三個月內到期的短期高流動性投資。",
+      "evidence_reason": "会计师报告给出现金及现金等价物的正式会计定义，支持使用现金流量表口径且不额外加回其他存款。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "continuous_loss",
+      "page": 343,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年內溢利. . . . . . . . . . . . . . . . . .\n403,877\n641,097\n681,470",
+      "evidence_reason": "三个可比完整年度均为正利润，直接排除2期或3期连续/多期亏损阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "revenue_growth",
+      "page": 343,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入. . . . . . . . . . . . . . . . . . . . .\n4\n676,399\n1,028,995\n1,152,082",
+      "evidence_reason": "会计师报告提供2018、2019、2020年权威收入数值，用于逐年同比增长计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "customer_concentration",
+      "page": 159,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年及2020年，向五大客戶提供服務所得收入分別佔我們總收入的\n約40.9%、33.9%及24.3%。同期，自我們單一最大客戶所得收入分別佔我們總收入的約\n14.7%、13.0%及10.5%。",
+      "evidence_reason": "Business正式披露三个年度五大客户和单一最大客户占比，可直接进行冻结阈值比较。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "supplier_concentration",
+      "page": 167,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年及2020年，向五大供應\n商的採購額分別佔我們採購總額的約67.1%、48.6%及27.3%。同期，我們向單一最大供應商的\n採購額分別佔我們採購總額的約27.3%、19.5%及8.6%。",
+      "evidence_reason": "Business正式披露三个年度供应商集中度；2018年五大供应商67.1%明确超过medium的60%阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "supplier_concentration",
+      "page": 168,
+      "evidence_role": "cross_check",
+      "requirement": "alternative",
+      "source_authority": "business_section",
+      "exact_text": "截至2018年12月31日止年度\n1.\n供應商A\n提供軟件\n1,677\n27.3%\n3年\n是\n2.\n建業新生活\n物業管理、差旅及\n業務相關服務\n1,179\n19.2%\n3年\n否\n3.\n供應商B\n租賃服務\n470\n7.6%\n3年\n是\n4.\n供應商C\n諮詢服務\n400\n6.5%\n2年\n是\n5.\n供應商D\n業務服務\n398\n6.5%\n2年\n是\n總計\n4,124\n67.1%",
+      "evidence_reason": "五大供应商明细表逐项交叉核验2018年最大供应商27.3%及五大供应商合计67.1%。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "redemption_rights",
+      "page": 280,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "基石投資者將\n認購的股份在所有方面均與已發行的繳足股份享有相同權利，並將根據上市規則第8.08條及第\n8.24條計入本公司公眾持股量。",
+      "evidence_reason": "唯一披露的外部股权投资安排之一为IPO基石配售，所认购股份与现有缴足股份权利相同，不存在特殊投资者权利。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "redemption_rights",
+      "page": 386,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "本公司的股本包括普通股。",
+      "evidence_reason": "组织章程正式披露实际股本类别为普通股，未见已发行的可赎回/优先类别股份。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "redemption_rights",
+      "page": 416,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "本集團成員公司於本招股章程日期前兩年內訂立以下重大或可能屬重大的合約（並非\n於日常業務過程中訂立的合約）：",
+      "evidence_reason": "重大合约章节作为负面交叉检查：披露的股权相关外部投资协议为上市基石投资协议，未出现上市前特殊权利投资协议。",
+      "confidence": 0.92
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "page": 175,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "據我們的中國法律顧問告知，於往績記錄期間及直至最後可行日期，我們已取得我們業務\n運營所需的所有必要的牌照、許可證、批准及證書。",
+      "evidence_reason": "中国法律顾问确认公司已取得业务所需全部必要牌照、许可、批准及证书，排除已知重大牌照缺口。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "page": 175,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及直至\n最後可行日期，我們並非且未曾是任何重大法律、仲裁或行政程序的當事人，及我們並不知悉任\n何針對我們或任何董事，且董事認為可能對我們的整體業務營運或財務狀況造成重大不利影響\n的重大未決或面臨的法律、仲裁或行政程序。",
+      "evidence_reason": "正式法律诉讼披露明确否认重大已决/未决或面临的法律、仲裁或行政程序。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "page": 176,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及直至最後可行日期，我們並未根據相關中國法律及法規全數支付若干僱\n員的社會保險計劃及住房公積金所需的供款。於2018年、2019年及2020年，我們繳付不足的相\n關供款總金額分別約為人民幣0.2百萬元、人民幣1.1百萬元及人民幣0.7百萬元。",
+      "evidence_reason": "披露已知合规例外的金额和期间，用于检查其是否达到重大性门槛；同页进一步说明董事认为未缴金额不重大、无主管部门通知或员工索赔并计划整改。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "page": 176,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及直至最後可行日期，我們在所有重大方面均遵守中國相關法律及法規。",
+      "evidence_reason": "管理层对整体重大合规状态作出明确确认，与已披露的小额例外及无重大诉讼结论一致。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "material_litigation_compliance",
+      "page": 174,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，我們並無備案登記該等租賃協議。",
+      "evidence_reason": "识别另一项尚未完成的合规事项；同页披露未因此被责令改正或罚款，最大潜在罚款人民币640,000元且董事认为不会造成重大营运或财务影响。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "precommercial_product",
+      "page": 123,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "鑑於我們在整個房地產開發及運營過程的各個階段向項目擁有人提供房地產代建服務，我\n們根據預先協定的條款向項目擁有人收取管理服務費，其通常包括(a)基於物業類型、位置、規\n模及價格水平的基礎管理服務費；及(b)基於銷售表現的溢價管理服務費。",
+      "evidence_reason": "Business正式披露核心服务已对外收费，证明其已经商业化并产生服务收入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "risk_code": "precommercial_product",
+      "page": 123,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於往績記錄期間，我們經歷顯著增長。收入由2018年的人民幣676.4百萬元增加至2019年\n的人民幣1,029.0百萬元及進一步增加至2020年的人民幣1,152.1百萬元。",
+      "evidence_reason": "持续且大额的商业收入进一步排除核心产品/服务尚未商业化且无销售收入的候选情形。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

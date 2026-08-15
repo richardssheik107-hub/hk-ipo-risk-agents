@@ -1,0 +1,270 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "ee8362b3-19bb-56fe-bb44-362aa4ad737f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Exact top-five (51.8-58.8%) and largest supplier (15.6-25.2%) ratios across 4 periods with supplier location context. Core concentration evidence."
+      },
+      {
+        "candidate_id": "53a200a7-73bd-5e4c-9657-14d5cc5f5c87",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed 2020H1 top-five supplier table with individual amounts, percentages, backgrounds. Repeats aggregate ratios for all periods."
+      },
+      {
+        "candidate_id": "23c78711-9981-5784-8f51-621044803120",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed FY2017 top-five supplier table with individual amounts and percentages. Largest supplier at 25.2%. Supports one period."
+      },
+      {
+        "candidate_id": "4875a86f-8cd0-5f01-94af-4971e02bb87b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed FY2019 top-five supplier table with named suppliers and individual percentages. Truncated but valuable identity context."
+      },
+      {
+        "candidate_id": "dae8b0bb-7381-5a6c-9aa1-f93e89858011",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "General description of supplier types and 1-7 year relationships. No quantitative concentration ratios. Contextual only."
+      },
+      {
+        "candidate_id": "e11f1fdd-325c-58fe-bb70-c7610dd464ac",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Primarily about customer concentration. Only mentions suppliers to state no customer-supplier overlap. Minimal value."
+      },
+      {
+        "candidate_id": "9923e41c-5a06-5bc8-8d8f-a4ce05119d8c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "General risk factor list with no supplier concentration content. Matched terms incidental."
+      },
+      {
+        "candidate_id": "f654d5f1-a6d9-504d-9292-0bb8fee61ae0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses COVID impact, medical liability insurance, competitive advantages. No supplier concentration data."
+      },
+      {
+        "candidate_id": "8714f421-6ca7-55ae-b2ef-6f8f486bc2eb",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "VIE structure and contractual arrangements. No supplier concentration information whatsoever."
+      },
+      {
+        "candidate_id": "628a903a-0643-56af-ad65-ec4b3a227e2b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Reveals sole-supplier dependency for BOTOX in Zhejiang. Relevant to concentration risk for specific product. No overall ratios."
+      },
+      {
+        "candidate_id": "3222ffcf-0346-5361-8478-ed2c86b4e5d8",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Standard compliance statement that directors/connected parties have no interests in top five suppliers. No concentration data."
+      },
+      {
+        "candidate_id": "d7e1f17d-f4a7-553e-a409-2438020e2be8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Supplier selection criteria, no long-term agreements, sole BOTOX supplier dependency. Qualitative context for concentration risk."
+      },
+      {
+        "candidate_id": "d1da00d0-49cb-5eb4-9159-14574377b3f7",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Sales and marketing controls. No supplier concentration information."
+      },
+      {
+        "candidate_id": "86678027-bd74-5d0c-ac79-a00d36591da0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Statutory disclosures about directors' interests in assets. No supplier concentration data."
+      },
+      {
+        "candidate_id": "cdaff32b-b1d6-5982-90cc-e0e866568097",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Share option plan acceptance and exercise terms. Completely unrelated to supplier concentration."
+      },
+      {
+        "candidate_id": "73a1e19d-d439-5c41-ad68-0d4e77f04fbd",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Online platform service provider agreements. No supplier concentration information."
+      },
+      {
+        "candidate_id": "0538829d-8c81-50fd-87bf-277a7d969d95",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director remuneration and fee disclosures. No supplier concentration data."
+      },
+      {
+        "candidate_id": "dd21632d-ed66-5af1-a4d9-5bdb145c493c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Share option plan share number limits and adjustments. Completely unrelated to supplier concentration."
+      }
+    ]
+  }
+}

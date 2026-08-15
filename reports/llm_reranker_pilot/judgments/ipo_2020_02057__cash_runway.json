@@ -1,0 +1,206 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c2999a53-ec35-5e14-87e8-5c8f271ecc64",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Consolidated cash flow statement from accountant's report showing ending cash balances, net changes, and reconciliation across multiple periods in RMB and USD. Most authoritative and direct source for cash runway."
+      },
+      {
+        "candidate_id": "e07d813a-9b76-5a99-b290-6561c837fb17",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary balance sheet excerpt with specific cash and cash equivalents figures for 2017-2020 in RMB and USD. Useful but summary-level, not from cash flow statement."
+      },
+      {
+        "candidate_id": "21f86e89-c2e2-5cae-8ea2-0144c43183e5",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Audited consolidated balance sheet from accountant's report showing cash and cash equivalents line item for multiple periods. Authoritative but balance sheet, not cash flow statement."
+      },
+      {
+        "candidate_id": "b7389ff4-f497-5084-a6f9-9d1226d3db3c",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accounting policy section defining cash and cash equivalents, restricted cash, and convenience translation rate. Provides definitional context but no financial figures for cash runway."
+      },
+      {
+        "candidate_id": "0834213e-daf6-5082-9142-e88d75616202",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "VIE-only balance sheet with cash and cash equivalents figures. Subsidiary-level data, not consolidated; limited relevance for overall cash runway assessment."
+      },
+      {
+        "candidate_id": "5a69ea4b-4429-5dad-aca9-5be2ee87a09c",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative liquidity section with aggregate cash figures across multiple periods, mentions operating cash flow as source, and explicit 12-month sufficiency statement. Directly addresses cash runway."
+      },
+      {
+        "candidate_id": "343662e6-82a4-533c-b7ab-7f798ff58008",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Forex risk discussion mentioning aggregate cash figure of RMB 8B as of June 2020. Tangentially relevant to cash runway; primary focus is exchange rate sensitivity."
+      },
+      {
+        "candidate_id": "d8fd0e65-b328-54de-bcec-87e1b018c68e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Working capital section with specific cash and cash equivalents figures across periods, plus net working capital amounts. Useful supporting data for liquidity assessment."
+      },
+      {
+        "candidate_id": "fd6b6394-51b0-57bf-9f09-5e30c330585c",
+        "risk_relevance": "medium",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": true,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Standard 12-month working capital sufficiency statement mentioning operating cash flows and bank financing. No specific cash figures in excerpt; language is boilerplate."
+      },
+      {
+        "candidate_id": "1873c499-e182-5544-a8b4-5df2b119340c",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "VIE financials including cash flow statement with operating cash flow and ending cash. Has all facets but is subsidiary-level, not consolidated; limited relevance."
+      },
+      {
+        "candidate_id": "a8855d1a-d6e7-500e-9485-829c610e71de",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "Accounting estimates and fair value policy section. Mentions cash and cash equivalents only as a short-term financial instrument category. No figures or cash runway relevance."
+      },
+      {
+        "candidate_id": "0696e5be-950b-5bba-9002-304f03c58955",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "Credit risk concentration and lease accounting section. Mentions cash and cash equivalents only in credit risk context. No financial data relevant to cash runway."
+      }
+    ]
+  }
+}

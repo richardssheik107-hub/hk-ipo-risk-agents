@@ -1,0 +1,638 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_06821",
+  "stock_code": "6821.HK",
+  "company_name": "凱萊英",
+  "document_id": "ipo_2021_06821",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告顯示，截至2021年6月30日止六個月的經營活動所得現金流量淨額為正人民幣478,005千元，期末現金流量表所述現金及現金等價物為人民幣622,235千元。依Protocol v1.1.1，經營現金流為正或零時不存在 operating cash burn，不得取絕對值製造 burn，因此 cash runway 不適用。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_from_cash_flow_statement",
+      "calculation_inputs": {
+        "period": "six months ended 30 June 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 622235,
+        "net_cash_from_operating_activities": 478005,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告的可比年度及可比六個月期間均錄得正利潤：2018、2019、2020年度利潤分別為人民幣406,357千元、551,589千元、719,703千元；截至2020年及2021年6月30日止六個月分別為人民幣314,291千元及429,324千元。不存在可比虧損期間，故不符合連續虧損門檻。",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_facts",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "annual_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "profit_or_loss": 406357
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_or_loss": 551589
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "profit_or_loss": 719703
+          }
+        ],
+        "six_month_periods": [
+          {
+            "period": "six months ended 30 June 2020",
+            "profit_or_loss": 314291
+          },
+          {
+            "period": "six months ended 30 June 2021",
+            "profit_or_loss": 429324
+          }
+        ]
+      },
+      "calculation_result": {
+        "annual_comparable_loss_periods": 0,
+        "six_month_comparable_loss_periods": 0,
+        "maximum_comparable_loss_count": 0,
+        "assessment": "no_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告的收入在所有可比期間均增長：2019年較2018年約+34.18%，2020年較2019年約+28.25%，截至2021年6月30日止六個月較2020年同期約+39.69%。沒有任何可比增長率低於0%，因此不觸發 revenue_growth 的 medium 或 high 門檻。",
+      "calculation_required": true,
+      "calculation_method": "period_over_period_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparisons": [
+          {
+            "from_period": "year ended 31 December 2018",
+            "to_period": "year ended 31 December 2019",
+            "from_revenue": 1822787,
+            "to_revenue": 2445849
+          },
+          {
+            "from_period": "year ended 31 December 2019",
+            "to_period": "year ended 31 December 2020",
+            "from_revenue": 2445849,
+            "to_revenue": 3136724
+          },
+          {
+            "from_period": "six months ended 30 June 2020",
+            "to_period": "six months ended 30 June 2021",
+            "from_revenue": 1256774,
+            "to_revenue": 1755569
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          34.181833,
+          28.246838,
+          39.68852
+        ],
+        "minimum_growth_rate_pct": 28.246838,
+        "medium_threshold_triggered": false,
+        "high_threshold_triggered": false,
+        "assessment": "all_comparable_growth_rates_positive"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "正式Business披露顯示，2018年五大客戶合計佔收入64.1%，高於 frozen medium 門檻60%，而最大客戶27.9%低於30%；2019年、2020年及截至2021年6月30日止六個月的五大客戶比例分別為53.3%、58.0%及53.2%。以2018年五大客戶收入及同期總收入重算，五大客戶約64.03%、最大客戶約27.87%，與披露比例一致。往績記錄期間至少一個正式披露期間觸發 medium，但沒有披露期間觸發 high。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio_with_disclosed_series_cross_check",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2018",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 1822787,
+        "largest_customer_revenue": 508027,
+        "top_five_customer_revenues": [
+          508027,
+          238908,
+          183105,
+          175939,
+          61122
+        ],
+        "disclosed_track_record_percentages": {
+          "periods": [
+            "year ended 31 December 2018",
+            "year ended 31 December 2019",
+            "year ended 31 December 2020",
+            "six months ended 30 June 2021"
+          ],
+          "largest_customer_pct": [
+            27.9,
+            22.4,
+            20.4,
+            18.6
+          ],
+          "top_five_customers_pct": [
+            64.1,
+            53.3,
+            58.0,
+            53.2
+          ]
+        }
+      },
+      "calculation_result": {
+        "top_five_customer_total": 1167101,
+        "top_five_customer_pct": 64.028381,
+        "largest_customer_pct": 27.870892,
+        "maximum_disclosed_top_five_customers_pct": 64.1,
+        "maximum_disclosed_largest_customer_pct": 27.9,
+        "medium_threshold_triggered": true,
+        "high_threshold_triggered": false,
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "Business正式披露的五大供應商佔原材料採購總額比例於2018、2019、2020及截至2021年6月30日止六個月分別為25.8%、23.7%、21.2%、28.7%，最大供應商分別為6.6%、5.5%、7.1%、9.9%，全部遠低於 frozen medium 門檻（五大60%或最大30%）。交叉核對發現，2021年六個月五大供應商逐項採購金額與同頁系統中的原材料採購總額作分母時，重算比例約為13.83%/4.77%，與披露的28.7%/9.9%不一致；該事實差異被保留而不擅自修正。無論採用正式披露比例或該重算值，均明確排除 medium/high 門檻，因此不影響非觸發結論。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_test_with_amount_cross_check",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020",
+          "six months ended 30 June 2021"
+        ],
+        "disclosed_largest_supplier_pct": [
+          6.6,
+          5.5,
+          7.1,
+          9.9
+        ],
+        "disclosed_top_five_suppliers_pct": [
+          25.8,
+          23.7,
+          21.2,
+          28.7
+        ],
+        "cross_check_period": "six months ended 30 June 2021",
+        "cross_check_raw_material_procurement_total": 1158232,
+        "cross_check_top_five_supplier_purchase_amounts": [
+          55255,
+          31921,
+          27389,
+          23405,
+          22183
+        ]
+      },
+      "calculation_result": {
+        "maximum_disclosed_largest_supplier_pct": 9.9,
+        "maximum_disclosed_top_five_suppliers_pct": 28.7,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true,
+        "cross_check_calculated_largest_supplier_pct": 4.770633,
+        "cross_check_calculated_top_five_suppliers_pct": 13.827368,
+        "cross_check_reconciles_with_disclosed_percentages": false,
+        "assessment": "below_concentration_thresholds_under_both_disclosed_and_cross_check_values"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.9,
+      "reasoning": "歷史及發展披露的2020年非公開發售為經中國證監會批准向九名承配人發行A股，未見招股書披露任何投資者特別贖回/回購權、終止後恢復條款或類似特殊權利。會計師報告中的「受限制股份的回購責任」明確源自僱員A股股權激勵計劃，條件為業績/績效未達標或僱員離職，屬僱員激勵股份的回購/沒收機制，而非Pre-IPO投資者特殊贖回權。附錄五的可贖回股份購回條款為一般組織章程規則。據此，未建立 frozen redemption_rights 候選。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "Business法律訴訟披露明確表示截至最後可行日期不存在未決或受威脅的重大爭端、訴訟、仲裁或行政訴訟。披露的未登記租賃及社保/住房公積金事項被界定為不重大且非重大或系統性不合規；相關政府確認未有處罰，法律顧問認為追繳或重大處罰風險較低，董事認為未繳總額不重大且控股股東提供全額彌償。內部控制顧問亦確認截至最後可行日期沒有未處理重大內控問題，附錄六再次確認不存在可對全球發售有重大不利影響的未決訴訟或仲裁。因此沒有 material pending matter 或未解決的重大監管/牌照影響。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06821",
+      "stock_code": "6821.HK",
+      "company_name": "凱萊英",
+      "document_id": "ipo_2021_06821",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "本公司是CDMO外包藥物開發及生產解決方案/服務供應商，而非依賴一項尚未商業化的自有核心產品。Business正式披露顯示其在往績記錄期間持續取得商業化階段CDMO解決方案收入（2018、2019、2020及截至2021年6月30日止六個月分別為人民幣1,037,590千元、1,215,784千元、1,651,006千元及785,405千元）；未經審計中期財務資料亦明確說明商業化階段CDMO解決方案收入來源於銷售貨品及提供服務。因此不符合「核心產品未商業化且無產品銷售收入」候選條件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "cash_runway",
+      "page": 477,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金流量淨額 415,899 602,034 572,913 122,743 478,005",
+      "evidence_reason": "會計師報告綜合現金流量表給出截至2021年6月30日止六個月正的經營活動現金流量淨額478,005（人民幣千元），證明該期不存在經營現金消耗。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "cash_runway",
+      "page": 479,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "現金流量表所述現金及現金等價物 604,528 414,384 2,121,559 144,634 622,235",
+      "evidence_reason": "提供Protocol要求的現金流量表口徑期末現金及現金等價物；2021年6月30日為人民幣622,235千元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "continuous_loss",
+      "page": 470,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年內 ╱ 期內利潤 406,357 551,589 719,703 314,291 429,324",
+      "evidence_reason": "會計師報告同一正式報表列示2018、2019、2020年度及2020/2021年六個月均為正利潤，可按可比期間直接排除連續虧損。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "revenue_growth",
+      "page": 470,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 5 1,822,787 2,445,849 3,136,724 1,256,774 1,755,569",
+      "evidence_reason": "會計師報告提供2018-2020年度及2020/2021年六個月可比收入，作為所有收入增長率計算的權威輸入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "revenue_growth",
+      "page": 559,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "financial_information",
+      "exact_text": "收入 4 2,916,321 2,071,799",
+      "evidence_reason": "未經審計中期資料顯示2021年前九個月收入亦高於2020年同期，與無負增長的主結論一致。",
+      "confidence": 0.94
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "customer_concentration",
+      "page": 235,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年及2020年以及截至2021 年6 月30日止六個月，我們五大客戶合共佔我們收入的比重分別為64.1%、53.3%、58.0%及53.2%，而於往績記錄期間各年度或各期間我們最大客戶佔我們同期收入的比重則分別為27.9%、22.4%、20.4%及18.6%。",
+      "evidence_reason": "正式Business披露直接給出全往績記錄期間五大及最大客戶集中度；2018年五大客戶64.1%超過medium門檻60%。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "customer_concentration",
+      "page": 236,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2018年12月31日止年度 1 客戶A 508,027 27.9% 2 客戶B 238,908 13.1% 3 客戶C 183,105 10.0% 4 客戶D 175,939 9.7% 5 客戶E 61,122 3.4%",
+      "evidence_reason": "提供2018年五大客戶逐項收入金額和比例，用於精確重算五大客戶及最大客戶集中度。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "customer_concentration",
+      "page": 235,
+      "evidence_role": "cross_check",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "總計 1,822,787 100.0 2,445,849 100.0 3,136,724 100.0 1,755,569 100.0",
+      "evidence_reason": "提供2018年總收入人民幣1,822,787千元，作為2018年客戶集中度精確重算的分母。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "supplier_concentration",
+      "page": 242,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年及2020年以及截至2021年6月30日止六個月，我們五大供應商合計佔我們原材料採購總額的比重分別為25.8%、23.7%、21.2%及28.7%，而於往績記錄期間各年度或各期間我們最大供應商佔我們於各期間原材料採購總額的比重則分別為6.6%、5.5%、7.1%及9.9%。",
+      "evidence_reason": "正式Business披露的全部期間集中度均顯著低於medium/high門檻，可直接作為集中度門檻計算輸入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "supplier_concentration",
+      "page": 242,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "總計 758,667 100.0 971,540 100.0 1,413,836 100.0 1,158,232 100.0",
+      "evidence_reason": "提供按供應商總部所在地劃分的原材料採購總額，包含2021年六個月人民幣1,158,232千元，用於金額交叉核對。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "supplier_concentration",
+      "page": 246,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "截至2021年6月30日止六個月 1 供應商D 55,255 9.9% 2 供應商H 31,921 5.7% 3 供應商L 27,389 4.9% 4 供應商N 23,405 4.2% 5 供應商I 22,183 4.0%",
+      "evidence_reason": "逐項金額和披露百分比用於交叉核對；以第242頁原材料採購總額作分母時不完全調和，但兩套數值均明確低於風險門檻，因此保留差異而不改變結論。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "redemption_rights",
+      "page": 537,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "應付款項指與發行給僱員的受限制股份相關的回購責任。根據2018 年7 月13 日、2019 年5月6 日、2020 年8 月12 日及2021 年1 月8 日有關激勵計劃的股東決議案，若 貴集團的盈利能力或獲授受限制股份的合資格僱員未能達到績效標準，或合資格僱員從 貴集團離職，則 貴集團應按約定價格回購受限制A股。",
+      "evidence_reason": "此處是招股書中具體的發行人回購義務，但明確屬僱員股權激勵的績效/離職機制，支持將其與投資者特殊贖回權區分。",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "redemption_rights",
+      "page": 645,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "本公司有權購回可贖回股份時，如非經市場或以招標方式購回，則購回價必須限定在某一最高價；如以招標方式購回，則應向全體股東一視同仁提出招標建議。",
+      "evidence_reason": "組織章程細則概要中的一般可贖回股份購回規則屬公司章程框架，而非特定投資者已存在或可恢復的特殊權利。",
+      "confidence": 0.93
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "redemption_rights",
+      "page": 119,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "corporate_structure",
+      "exact_text": "於2020年9月，經中國證監會批准，本公司完成股份的非公開發售（「2020年非公開發售」）。10,178,731股A股按發行價每股A股人民幣227元向下表載列的九名承配人發行，合共籌集資金人民幣2,310,571,937元。",
+      "evidence_reason": "較近期的大額A股非公開發售被正式披露為普通股份配售；本段未載有贖回、回購或恢復類特殊權利條款，作為對特殊權利搜索的交叉核對。",
+      "confidence": 0.88
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "page": 284,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，我們不受任何未決或威脅的重大爭端、訴訟、仲裁或行政訴訟的約束，亦不是其中的一方。",
+      "evidence_reason": "正式Business法律訴訟披露直接排除截至最後可行日期的重大未決或受威脅訴訟、仲裁或行政訴訟。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "page": 284,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及直至最後可行日期，並無任何個別或全體董事認為將對整體業務運營或財務產生重大影響的不合規事件。以下載述我們視為不重大及不構成重大或系統性不合規的若干事件。",
+      "evidence_reason": "正式合規披露界定隨後列示的事項為不重大且非重大或系統性不合規。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "page": 286,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董事認為，相關不合規不會對我們的業務及經營業績造成重大不利影響，原因如下：(i)據我們所知，於往績記錄期間及直至最後可行日期，我們並未遭受任何行政處罰；(ii)於往績記錄期間及直至最後可行日期，就社會保險及住房公積金而言，我們概不知悉任何員工對我們的投訴，亦未涉及任何與員工的勞工糾紛；(iii)截至最後可行日期，我們並未收到中國相關部門的任何通知，要求我們繳納社會保險及住房公積金的欠繳款項或任何逾期費用；(iv)據我們的中國法律顧問告知，考慮到相關監管政策和上述事實，我們面臨歷史欠費集中清繳以及中國相關部門因我們未為僱員全額繳納社會保險及住房公積金而對我們進行重大處罰的可能性很小；及(v)應繳但尚未繳納的社會保險及住房公積金供款總額並不重大。",
+      "evidence_reason": "提供社保/住房公積金不合規的處罰、通知、投訴及金額層面的重大性評估，支持其不構成material compliance matter。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "page": 290,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，內部控制顧問確認，概無有關本集團內部控制的未處理重大問題。",
+      "evidence_reason": "確認先前識別的潛在重大內控缺陷已處理，排除未解決重大內控/合規影響。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "material_litigation_compliance",
+      "page": 730,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至最後可行日期，本公司並無涉及任何可對全球發售有重大不利影響的未決訴訟或仲裁，且就董事所知，概無尚未完結或受威脅或針對本公司的重大訴訟或申索。",
+      "evidence_reason": "附錄六再次獨立確認無重大未決、尚未完結或受威脅的訴訟/申索，與Business法律披露一致。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "precommercial_product",
+      "page": 197,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們是全球領先的外包藥物開發及生產解決方案及服務的供應商。我們全面、一體化及高度定制化的解決方案及服務，使世界各地的製藥及生物技術公司能夠以最省時、最經濟的方式開發及生產藥物，並將對環境的影響降到最低。",
+      "evidence_reason": "正式Business業務模式表明發行人是外包CDMO解決方案/服務供應商，而非依賴尚未商業化的自有核心產品。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "precommercial_product",
+      "page": 201,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "商業化階段CDMO解決方案 1,037,590 56.9 1,215,784 49.7 1,651,006 52.6 715,724 57.0 785,405 44.7",
+      "evidence_reason": "正式Business收入表顯示往績記錄期各期均有重大商業化階段CDMO收入，直接反駁無商業化收入的候選條件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "risk_code": "precommercial_product",
+      "page": 569,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "financial_information",
+      "exact_text": "商業化階段CDMO解決方案的全部收入均來源於按時間點確認的銷售貨品及提供的服務。",
+      "evidence_reason": "中期財務資料明確說明商業化階段CDMO收入包含銷售貨品及提供服務，進一步排除「無產品銷售收入」情形。",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

@@ -1,0 +1,318 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "87da087b-c79c-5239-8c43-14f887553c2c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "reporting_period"
+        ],
+        "reason": "Project-level revenue recognition detail for one contract (P22); mentions possible negative revenue. Not revenue growth trend evidence."
+      },
+      {
+        "candidate_id": "c61e012e-6a41-51f0-b8d7-1ccccf370e8f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "References revenue increase FY2018→FY2019 via advisor fee discussion but provides no actual revenue figures. Indirect revenue growth indicator."
+      },
+      {
+        "candidate_id": "06380db3-7f09-5d64-8857-1e45abce89f2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Attributes pre-tax profit rise FY2017→FY2018 to revenue and gross profit increase but omits actual revenue numbers. Indirect."
+      },
+      {
+        "candidate_id": "9401a772-8baf-568f-8f6f-f07084b0254c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting standards disclosure (HKFRS 9/15/16). No revenue figures or growth data. Pure boilerplate."
+      },
+      {
+        "candidate_id": "6e9bfc9a-4f66-580e-a299-8b56f7da9daf",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed financial income table (interest income) for 2017-2019 in HKD. Not operating revenue; misaligned with revenue growth query."
+      },
+      {
+        "candidate_id": "f83e39d4-2b99-5d96-b14e-58df938d8a23",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies for contract liabilities, cash, deposits, share capital, payables, borrowings. No revenue data."
+      },
+      {
+        "candidate_id": "4aca484f-0ba0-5566-b334-87a908382f65",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Operating cash flow details FY2017-FY2018 with pre-tax profit figures; indirect revenue references through working capital changes."
+      },
+      {
+        "candidate_id": "149f79e1-62a7-56e2-a1cd-0747018bfa1e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Property lease and mortgage footnotes. No revenue or growth information whatsoever."
+      },
+      {
+        "candidate_id": "129dedf3-4fca-518e-9eca-d5497f36c117",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Tax accounting policy (current/deferred tax). Mentions comprehensive income statement but no revenue figures."
+      },
+      {
+        "candidate_id": "65fb3fd4-03ac-5b7f-88fc-de179c598b51",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Property purchase and mortgage details. No revenue or growth data. Completely irrelevant."
+      },
+      {
+        "candidate_id": "192f7c86-7a1d-5aa4-9460-ac96019d7ebc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Related party receivables and repayment plans. No issuer revenue or growth information."
+      },
+      {
+        "candidate_id": "bcfba02e-6825-5f7f-84bc-49d9e1be12ed",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Use of proceeds and financing strategy discussion. No revenue figures or growth data."
+      },
+      {
+        "candidate_id": "1481b499-1e09-5ba1-9cdc-467233f2e9e5",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Summary page with revenue 552,652/768,145/879,401 HKD'000 for 2017-2019. Three-year comparative data from prospectus summary."
+      },
+      {
+        "candidate_id": "33f4b1a9-97cb-58cb-85b4-f61ad47dc4d9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Full comprehensive income statement 2017-2019: revenue 552,652/768,145/879,401 HKD'000 with gross profit, expenses, net profit. Extracted from auditor report."
+      },
+      {
+        "candidate_id": "c5609dcc-78e2-5205-bb7c-a67cb43cceb2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Formal income statement from accountant's report (Appendix 1) with note references. Revenue 552,652/768,145/879,401 HKD'000 for 2017-2019."
+      },
+      {
+        "candidate_id": "31fc41b1-4d50-5891-ae23-3e578c2d4fb4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Note 5: revenue by segment (decoration/repair) and by major customer across 2017-2019 in HKD'000. Rich revenue breakdown for growth analysis."
+      },
+      {
+        "candidate_id": "d297db0c-5dfa-59f8-b89e-1933f2a8cd03",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cash flow statement from accountant's report 2017-2019. Starts with pre-tax profit; no direct revenue line. Indirect context only."
+      },
+      {
+        "candidate_id": "13d347b1-5c3c-56ff-9728-3c35ce8e878a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Financial asset recognition/measurement accounting policy. No revenue figures or growth data."
+      },
+      {
+        "candidate_id": "90d76ff2-6329-5d9b-826c-266f6a4e6d3a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies for contract costs, interest income, EPS. No revenue data. Pure policy boilerplate."
+      },
+      {
+        "candidate_id": "4486f806-a112-5937-9412-00b8783f87f0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Expenses by nature (subcontract, materials, labor) 2017-2019 in HKD'000. Cost-side data; no revenue figures but shows business scale trends."
+      }
+    ]
+  }
+}

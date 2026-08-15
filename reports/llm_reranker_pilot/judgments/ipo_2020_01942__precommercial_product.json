@@ -1,0 +1,317 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "80b5d66a-9676-5658-9898-78ce81307515",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor background info; mentions manufacturing/sales re investor's parent company, not issuer's products."
+      },
+      {
+        "candidate_id": "d5391ca7-2271-5df2-8249-5554db817345",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Describes 220+ brand portfolio and multi-brand strategy; shows commercial products exist but not focused on pre-commercial status."
+      },
+      {
+        "candidate_id": "be9c076c-5f47-50f1-84c3-63f9a3ef25fc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "product_sales",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Detailed revenue by brand type with figures showing commercialized products generating significant sales revenue."
+      },
+      {
+        "candidate_id": "59f8f94c-d1a2-5a49-8f45-18779d2bcff7",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Top 5 suppliers with products supplied; only indirectly relates to issuer's product commercialization status."
+      },
+      {
+        "candidate_id": "14837fc1-1087-5317-9e50-7bd4f2795d04",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Gross margin analysis by brand type with detailed figures; confirms commercial product sales with margins."
+      },
+      {
+        "candidate_id": "1d928f2a-8461-5d2a-98b5-c348e54b432f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor share allocation tables; completely unrelated to product commercialization status."
+      },
+      {
+        "candidate_id": "af8394d1-739c-57d2-8765-768c07fea2ea",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Lock-up restrictions for cornerstone investors; no relevance to pre-commercial product risk."
+      },
+      {
+        "candidate_id": "c8387dda-04d5-577a-9d36-bde017a8e276",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "core_product",
+          "product_sales",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Business and revenue model with total revenue RM133.6M and segment breakdown; directly shows commercial operations."
+      },
+      {
+        "candidate_id": "bfb25b7b-d1ba-5734-9297-f232e24b5154",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Business overview with revenue growth since 1996, brand history; shows established commercial retail operations."
+      },
+      {
+        "candidate_id": "25e07f80-e008-5ee6-8894-022c5e5725f2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "commercialization"
+        ],
+        "reason": "Retail network expansion strategy and management team; indirectly shows commercial operations."
+      },
+      {
+        "candidate_id": "bd3fd41f-d753-5cd3-b3ce-9d826fd4bb08",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "FY2019 supplier list with products supplied; only indirectly relates to issuer's product commercialization."
+      },
+      {
+        "candidate_id": "d795b2e5-9f04-53be-a797-ac8b9c048761",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Discusses product portfolio importance and profitability; indirectly relates to commercialization status."
+      },
+      {
+        "candidate_id": "8699152c-a141-5352-99e9-60d0e6532d2c",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Consolidated P&L showing revenue of RM133.6M; confirms commercial product sales at scale."
+      },
+      {
+        "candidate_id": "92b6590b-97aa-586a-b483-68c92b603e7e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "core_product",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Revenue by product category (lenses, frames, contacts, sunglasses) with figures; directly shows commercial products."
+      },
+      {
+        "candidate_id": "08100744-6d70-52d1-b83f-93c93aa5fbde",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "IT system upgrade plans and retail management system; no relevance to product commercialization status."
+      },
+      {
+        "candidate_id": "1036610c-f6e5-5032-a1d8-189b58e94fb3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "core_product",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Optical product categories with revenue breakdown by type; directly shows commercialized products."
+      },
+      {
+        "candidate_id": "ca5132dc-3ab3-5547-811e-b92d559547d2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Discusses product mix at loss-making stores; only indirectly relates to commercialization status."
+      },
+      {
+        "candidate_id": "74c56ccc-1b9a-5f92-a4bf-7f1ad809a9ce",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "product_sales",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "2nd largest optical retailer in Malaysia, 220+ brands, revenue by segment; shows established commercial operations."
+      },
+      {
+        "candidate_id": "c2d80ebe-5fcc-5a7b-a152-1610c252deb1",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "product_sales"
+        ],
+        "reason": "Same-store sales metrics and transaction data; indirectly shows commercial product sales."
+      },
+      {
+        "candidate_id": "b8475abf-ac12-5de9-996f-40978ee3997d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "product_sales",
+          "core_product"
+        ],
+        "reason": "Product category sales with transaction values; shows commercial product sales by category."
+      }
+    ]
+  }
+}

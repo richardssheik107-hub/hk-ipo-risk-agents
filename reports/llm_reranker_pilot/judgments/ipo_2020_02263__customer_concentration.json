@@ -1,0 +1,332 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "23a77138-b84e-5b53-a058-81eff81fc7f1",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.97,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Comprehensive summary: top-5 customer % (27.6/18.3/32.0/44.2), largest customer % (6.5/6.3/13.1/19.6) of total revenue across all reporting periods. All top-5 are independent third parties. Core concentration evidence."
+      },
+      {
+        "candidate_id": "5d9d5a1b-6617-5651-9126-d00929cb32ad",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed top-5 customer tables FY2017-FY2018 with named customers, revenue in HKD, % of total, service type, relationship years. Truncated at FY2018 customer I but still strong primary detail-level evidence."
+      },
+      {
+        "candidate_id": "93deaf33-bf8f-5011-82a2-2787681368f2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Complete top-5 customer tables for FY2019 and 4M2019 with named customers, revenue, % of total, service type, and identity notes (mainboard/GEM listed, individual). Total top-5 revenue shown."
+      },
+      {
+        "candidate_id": "217af31b-6547-5332-8bba-d37f11ac1bcd",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Securities trading sub-segment top-5 customers FY2019 and 4M2019 with revenue, %, service type, relationship years. Also mentions underwriting segment top-5 totals. Useful sub-segment breakdown."
+      },
+      {
+        "candidate_id": "3a40da3b-8337-50d7-a44d-9fda526c0cc6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Securities trading sub-segment top-5 revenue totals and percentages (23.7/13.5/14.8/15.2%) with FY2017 customer table. Truncated but provides sub-segment concentration context."
+      },
+      {
+        "candidate_id": "4873d371-aaec-5f93-9efa-421bddcbdec7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Summary section with total revenue figures (35.7M-65.3M HKD) and business model. No direct concentration ratios but provides revenue denominator context."
+      },
+      {
+        "candidate_id": "3d76c4d6-f82e-50f8-8a03-d1f97436e5cf",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Summary with financial data table (revenue 35,656-65,275 thousand HKD) and business strategy. No concentration data but provides revenue denominator for ratio calculation."
+      },
+      {
+        "candidate_id": "ab0f30da-42db-5347-95c9-2cd20178fab0",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Named underwriting customers FY2019 (久泰邦達 etc.) with transaction details, fundraising size, underwriting commitment, and revenue contribution. Top customer revenue 8,568K HKD."
+      },
+      {
+        "candidate_id": "6171da78-d276-5819-990a-a1869b040c1b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Customer geographic breakdown (HK/China/Other), active vs inactive counts, corporate vs retail trading volume %. Provides customer identity context but no concentration ratios."
+      },
+      {
+        "candidate_id": "e971be23-c91c-50f5-84d9-38bf6c8f5bd9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Placement & underwriting sub-segment top-5 customers FY2017-FY2018 with named customers, backgrounds, revenue, and % of total. Total sub-segment top-5 revenue shown."
+      },
+      {
+        "candidate_id": "b8fed075-2b36-5286-908e-68af78de2cdc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Placement & underwriting top-5 FY2019 and 4M2019 with named customers, backgrounds, revenue, %. Total top-5 revenue 19,117K and 10,299K HKD. Strong sub-segment detail."
+      },
+      {
+        "candidate_id": "40288903-ea23-5deb-83a8-476f4079b568",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Top-30 customer revenue % (49.8/44.4/35.6/35.5%), independence confirmation for top-5, 70 underwriting projects. Additional concentration metric beyond top-5."
+      },
+      {
+        "candidate_id": "11fcbda0-e998-51f8-ac5c-c852e2185495",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Financial statement segment data with key customers >10% revenue: Customer A1 (8,568K FY2019), C1 (5,000K 4M2019). Confirms no other single customer ≥10% threshold."
+      },
+      {
+        "candidate_id": "ed2977fc-d206-5b04-ac9f-45f3f5151865",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "General business plan assumptions mentioning maintaining major customer relationships. No specific concentration data. Forward-looking boilerplate."
+      },
+      {
+        "candidate_id": "24db8f34-f68a-561f-a3ce-87e4d97e1d8e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "SFC regulatory guidelines on margin customer concentration controls. Not issuer-specific; describes general regulatory framework rather than actual concentration data."
+      },
+      {
+        "candidate_id": "5d56372f-6be9-5137-8fad-fc6b90ed7222",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Underwriting customer list ranks 8-12 for 4M2019 with named customers and revenue. Below top-5 threshold; limited concentration relevance."
+      },
+      {
+        "candidate_id": "e5199e84-513d-540a-92f2-4faa7849b666",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.68,
+        "completeness_facets": [
+          "top_five_customer_ratio",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Underwriting customer list FY2018 with named customers (鼎億, 通達宏泰 etc.), transaction details, revenue contributions. Includes top-5 customers for this sub-segment."
+      },
+      {
+        "candidate_id": "59db55da-d76d-552e-b96c-f0496caec1a9",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Underwriting customer ranks 11-26 for FY2019 with named customers and revenue. Below top-5; limited direct concentration relevance."
+      },
+      {
+        "candidate_id": "d5f454c6-283d-5a02-a70e-556f93fb55a3",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Underwriting customer ranks 12-16 for FY2017 with footnotes on backgrounds. Below top-5; minimal concentration relevance."
+      },
+      {
+        "candidate_id": "eac09e8d-390b-5c59-9ae9-d627314588ad",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Customer background footnotes and partial 4M2019 underwriting customer list with named customers. Supporting detail but limited top-5 concentration relevance."
+      }
+    ]
+  }
+}

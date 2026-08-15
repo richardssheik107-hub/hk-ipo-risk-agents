@@ -92,6 +92,7 @@ class OpenAICompatibleLLMProvider:
         model: str,
         timeout_seconds: int = 60,
         max_retries: int = 2,
+        temperature: float | None = None,
         client: Any | None = None,
     ) -> None:
         if not api_key or not base_url or not model:
@@ -103,6 +104,7 @@ class OpenAICompatibleLLMProvider:
         self.model = model
         self.timeout_seconds = int(timeout_seconds)
         self.max_retries = max(0, int(max_retries))
+        self.temperature = temperature
         self.last_call_metadata: LLMCallMetadata | None = None
         if client is not None:
             self._client = client
@@ -229,6 +231,8 @@ class OpenAICompatibleLLMProvider:
             started = perf_counter()
             try:
                 kwargs: dict[str, Any] = {"model": self.model, "messages": messages}
+                if self.temperature is not None:
+                    kwargs["temperature"] = self.temperature
                 if response_format is not None:
                     kwargs["response_format"] = response_format
                 response = self._client.chat.completions.create(**kwargs)
@@ -325,3 +329,77 @@ class OpenAICompatibleLLMProvider:
             LLMFailureKind.UNAVAILABLE: "LLM provider is unavailable",
             LLMFailureKind.RESPONSE_VALIDATION: "LLM response validation failed",
         }[kind]
+
+
+class OpenAIResponsesLLMProvider:
+    """Responses API adapter preserving the existing structured Provider protocol."""
+
+    name = "openai_responses"
+    tool_name = "submit_structured_result"
+
+    def __init__(self, *, api_key: str, base_url: str, model: str, timeout_seconds: int = 60, max_retries: int = 2, client: Any | None = None) -> None:
+        if not api_key or not base_url or not model:
+            raise LLMProviderError(LLMFailureKind.UNAVAILABLE, "Responses API configuration is incomplete", recoverable=False)
+        self.model = model
+        self.max_retries = max(0, int(max_retries))
+        self.last_call_metadata = None
+        self._client = client or self._build_client(api_key, base_url, timeout_seconds)
+
+    @staticmethod
+    def _build_client(api_key: str, base_url: str, timeout_seconds: int) -> Any:
+        try:
+            from openai import OpenAI
+            return OpenAI(api_key=api_key, base_url=base_url, timeout=timeout_seconds, max_retries=0)
+        except Exception:
+            raise LLMProviderError(LLMFailureKind.UNAVAILABLE, "Responses API client initialization failed", recoverable=False) from None
+
+    def complete(self, prompt: str) -> str:
+        response = self._request(input=prompt, instructions="Respond directly.")
+        text = getattr(response, "output_text", None)
+        if not isinstance(text, str) or not text.strip():
+            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API text output is missing", recoverable=False, attempts=1)
+        return text
+
+    def generate_structured(self, *, task_name: str, prompt_version: str, evidence: list[Evidence], response_model: type[StructuredModel]) -> StructuredModel:
+        try:
+            domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+        except PromptResolutionError:
+            raise LLMProviderError(LLMFailureKind.REQUEST, "LLM prompt identity is not registered", recoverable=False) from None
+        request = {"task_name": task_name, "prompt_version": prompt_version, "evidence": [OpenAICompatibleLLMProvider._serialize_evidence(x) for x in evidence]}
+        instructions = "Judge only supplied Evidence and submit exactly one structured result through the required function."
+        if domain_instruction:
+            instructions += "\n\n" + domain_instruction
+        response = self._request(
+            input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
+            instructions=instructions,
+            tools=[{"type": "function", "name": self.tool_name, "description": "Submit the complete structured judgment.", "parameters": response_model.model_json_schema(), "strict": True}],
+            tool_choice={"type": "function", "name": self.tool_name},
+            parallel_tool_calls=False,
+        )
+        arguments = None
+        for item in getattr(response, "output", None) or []:
+            kind = item.get("type") if isinstance(item, dict) else getattr(item, "type", None)
+            name = item.get("name") if isinstance(item, dict) else getattr(item, "name", None)
+            if kind == "function_call" and name == self.tool_name:
+                arguments = item.get("arguments") if isinstance(item, dict) else getattr(item, "arguments", None)
+                break
+        if not isinstance(arguments, str):
+            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API structured output is missing", recoverable=False, attempts=1)
+        try:
+            return response_model.model_validate(json.loads(arguments))
+        except (json.JSONDecodeError, ValidationError):
+            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API structured output failed validation", recoverable=False, attempts=1) from None
+
+    def _request(self, **kwargs: Any) -> Any:
+        for attempt in range(1, self.max_retries + 2):
+            try:
+                return self._client.responses.create(model=self.model, **kwargs)
+            except Exception as exc:
+                status = getattr(exc, "status_code", None)
+                name = type(exc).__name__.casefold()
+                recoverable = status in {408, 409, 429} or (status is not None and status >= 500) or "timeout" in name or "connection" in name
+                if recoverable and attempt <= self.max_retries:
+                    continue
+                kind = LLMFailureKind.TRANSPORT if recoverable else LLMFailureKind.REQUEST
+                raise LLMProviderError(kind, "Responses API request failed", recoverable=recoverable, attempts=attempt) from None
+        raise AssertionError("unreachable")

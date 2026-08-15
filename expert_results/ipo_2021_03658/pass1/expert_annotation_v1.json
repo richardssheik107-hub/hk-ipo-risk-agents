@@ -1,0 +1,632 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_03658",
+  "stock_code": "3658.HK",
+  "company_name": "新希望服務",
+  "document_id": "ipo_2021_03658",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示截至2020年12月31日止年度经营活动所得现金净额为正数人民币165,198千元，年末现金及现金等价物为人民币112,614千元。按Protocol v1.1.1，经营现金流为正或零时不存在经营现金消耗，不得取绝对值计算burn，因此cash runway不触发。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_from_operating_cash_flow",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "CNY",
+        "unit": "RMB thousand",
+        "cash_and_cash_equivalents": 112614,
+        "net_cash_from_operating_activities": 165198,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告的三个可比完整年度均录得正的年内溢利及全面收入总额：2018年人民币41,058千元、2019年人民币64,041千元、2020年人民币109,770千元；连续亏损期数为0，不满足2期或3期亏损阈值。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB thousand",
+        "comparable_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "profit_or_loss": 41058
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_or_loss": 64041
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "profit_or_loss": 109770
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_period_count": 3,
+        "loss_period_count": 0,
+        "profit_period_count": 3,
+        "assessment": "no_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告显示收入由2018年人民币257,964千元增至2019年人民币380,543千元，再增至2020年人民币588,263千元。两个可比年度同比增长率分别约47.52%及54.59%，均不低于0%，因此不触发收入负增长风险。",
+      "calculation_required": true,
+      "calculation_method": "year_over_year_revenue_growth",
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB thousand",
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "revenue": 257964
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "revenue": 380543
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "revenue": 588263
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_2019_vs_2018_pct": 47.517870710641795,
+        "growth_2020_vs_2019_pct": 54.58515857603477,
+        "minimum_comparable_growth_pct": 47.517870710641795,
+        "assessment": "no_negative_revenue_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "Business正式客户表与会计师报告收入数据可作精确比例计算。最大客户新希望集团占总收入比例：2018年约24.38%、2019年约34.81%、2020年约41.20%；五大客户合计比例分别约24.81%、35.18%、44.63%。2019年和2020年最大客户比例达到>=30%的medium阈值，但各期最大客户均<50%，五大客户均<60%，未达到high阈值，因此评为medium。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB thousand",
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "total_revenue": 257964,
+            "largest_customer_revenue": 62889,
+            "top_five_customer_revenues": [
+              62889,
+              679,
+              161,
+              158,
+              122
+            ]
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "total_revenue": 380543,
+            "largest_customer_revenue": 132465,
+            "top_five_customer_revenues": [
+              132465,
+              682,
+              386,
+              181,
+              177
+            ]
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "total_revenue": 588263,
+            "largest_customer_revenue": 242372,
+            "top_five_customer_revenues": [
+              242372,
+              7671,
+              4679,
+              4360,
+              3446
+            ]
+          }
+        ]
+      },
+      "calculation_result": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "largest_customer_pct": 24.378983113922875,
+            "top_five_customer_pct": 24.813152222790777
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_customer_pct": 34.80946962629716,
+            "top_five_customer_pct": 35.184197318042905
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_customer_pct": 41.201299418797376,
+            "top_five_customer_pct": 44.627658037306446
+          }
+        ],
+        "triggering_metric": "largest_customer_pct",
+        "triggering_periods": [
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "medium_threshold_met": true,
+        "high_threshold_met": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Business正式供应商披露显示，2018年、2019年及2020年五大供应商采购占比分别为8.8%、6.8%及7.4%，最大供应商占比分别约2.2%、1.5%及2.4%。以往绩记录期内披露的最高值作阈值排除，最大供应商远低于30%，五大供应商远低于60%，故不触发medium或high。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "largest_supplier_disclosed_pct": 2.2,
+            "top_five_supplier_disclosed_pct": 8.8
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_supplier_disclosed_pct": 1.5,
+            "top_five_supplier_disclosed_pct": 6.8
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_supplier_disclosed_pct": 2.4,
+            "top_five_supplier_disclosed_pct": 7.4
+          }
+        ],
+        "largest_supplier_disclosed_max_pct": 2.4,
+        "top_five_supplier_disclosed_max_pct": 8.8,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<30%",
+        "top_five_supplier_bound": "<60%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true,
+        "assessment": "concentration_thresholds_excluded_by_formal_disclosure"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "首次公开发售前投资的正式披露明确说明Cui女士及August Mist均无任何特别权利，并进一步说明首次公开发售前投资协议并无授予投资者任何撤资权利。招股书其他关于可赎回股份的组织章程/开曼公司法条文属于一般性公司法权限，并非实际已授予或可恢复的特殊投资者权利，因此不触发redemption_rights。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.84,
+      "reasoning": "截至最后实际可行日期没有会对业务、财务状况或经营业绩产生重大不利影响的待决或潜在诉讼、仲裁或行政程序；主要牌照亦已取得，续签预计无困难。但公司实际存在往绩记录期内部分社会保险费及住房公积金未足额缴纳的合规事项，可能被要求补缴并可能产生滞纳金/罚款，且截至最后实际可行日期整改仍在推进、预计于2021年10月前全面按调整后基数缴纳。法律顾问认为遭受重大行政处罚风险低，董事认为不会产生重大不利影响。由于存在已确认但尚未完全闭环的监管合规事项，而其最终物质性/处置在最后实际可行日期仍未完全解决，按Protocol将其作为unresolved compliance effect，保留needs_review并采用冻结的provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_03658",
+      "stock_code": "3658.HK",
+      "company_name": "新希望服務",
+      "document_id": "ipo_2021_03658",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "公司核心业务是已商业化运营的物業管理服務、非業主增值服務、商業運營服務及民生服務，并在往绩记录期持续产生大额收入。会计师报告确认2018-2020年收入分别为人民币257,964千元、380,543千元及588,263千元，因此不存在“核心产品尚未商业化且无产品销售收入”的候选情形。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "cash_runway",
+      "page": 453,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金淨額 . . . . . . . . . . . . . . .\n58,738\n112,963\n165,198",
+      "evidence_reason": "会计师报告合并现金流量表给出2018-2020年经营活动所得现金净额；2020年为正数165,198千元，按Protocol明确排除经营现金burn。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "cash_runway",
+      "page": 453,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "於12月31日的現金及\n 現金等價物. . . . . . . . . . . . . . . . . . . . . . .\n17(a)\n117,065\n49,347\n112,614",
+      "evidence_reason": "同一合并现金流量表提供标准cash input；2020年末现金及现金等价物为112,614千元。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "continuous_loss",
+      "page": 447,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年內溢利及全面收入總額. . . . . . . . .\n41,058\n64,041\n109,770",
+      "evidence_reason": "三个可比完整年度均为正利润，可直接计数为0个亏损期。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "revenue_growth",
+      "page": 447,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 . . . . . . . . . . . . . . . . . . . . . . . . .\n4\n257,964\n380,543\n588,263",
+      "evidence_reason": "会计师报告提供2018-2020年可比年度收入，是同比收入增长计算的权威输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 241,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1.\n新希望集團\n農業、畜牧業、食\n品加工及其他行業\n的業務集團\n10\n物業管理服務、非\n業主增值服務、商\n業運營服務及民生\n服務\n242,372\n41.2\n關聯方",
+      "evidence_reason": "Business五大客户表提供2020年最大客户精确收入242,372千元及披露占比41.2%，并可与会计师报告总收入计算精确比例。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 241,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "2.\n客戶A\n城市鐵路運營商\n少於1年\n案場管理服務及物\n業管理服務\n7,671\n1.3\n獨立第三方\n3.\n客戶B\n地質勘探公司\n1\n餐飲服務\n4,679\n0.8\n獨立第三方\n4.\n客戶C\n物業開發商\n少於1年\n社區生活服務\n4,360\n0.7\n獨立第三方\n5.\n客戶D\n廣告公司\n少於1年\n營銷活動組織服務\n3,446\n0.6\n獨立第三方",
+      "evidence_reason": "提供2020年其余四大客户精确收入，用于五大客户合计比例计算。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 242,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1.\n新希望集團\n農業、畜牧業、食\n品加工及其他行業\n的業務集團\n10\n物業管理服務、非\n業主增值服務、商\n業運營服務及民生\n服務\n132,465\n34.8\n關聯方",
+      "evidence_reason": "提供2019年最大客户精确收入及披露占比，用于跨往绩期浓度计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 242,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "2.\n客戶E\n航空公司\n8\n公共空間管理服務\n682\n0.2\n獨立第三方\n3.\n客戶F\n廣告公司\n3\n公共空間管理服務\n386\n0.1\n獨立第三方\n4.\n客戶G\n個人\n2\n公共空間管理服務\n181\n0.05\n獨立第三方\n5.\n客戶H\n媒體及零售公司\n2\n公共空間管理服務\n177\n0.05\n獨立第三方",
+      "evidence_reason": "提供2019年其余四大客户精确收入，用于五大客户合计比例计算。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 243,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1.\n新希望集團\n農業、畜牧業、食\n品加工及其他行業\n的業務集團\n10\n物業管理服務、非\n業主增值服務、商\n業運營服務及民生\n服務\n62,889\n24.4\n關聯方",
+      "evidence_reason": "提供2018年最大客户精确收入及披露占比，用于跨往绩期浓度计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 243,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "2.\n客戶E\n航空公司\n8\n公共空間管理服務\n679\n0.3\n獨立第三方\n3.\n客戶I\n咖啡公司\n2\n公共空間管理服務\n161\n0.06\n獨立第三方\n4.\n客戶J\n清潔及消毒用品製\n造商\n3\n物業管理服務及公\n共空間管理服務\n158\n0.06\n獨立第三方\n5.\n客戶K\n健康諮詢公司\n3\n公共空間管理服務\n122\n0.05\n獨立第三方",
+      "evidence_reason": "提供2018年其余四大客户精确收入，用于五大客户合计比例计算。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "customer_concentration",
+      "page": 447,
+      "evidence_role": "cross_check",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 . . . . . . . . . . . . . . . . . . . . . . . . .\n4\n257,964\n380,543\n588,263",
+      "evidence_reason": "会计师报告提供2018-2020年总收入分母，和Business客户表联合用于精确浓度比例计算。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "supplier_concentration",
+      "page": 244,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2018年、2019年及2020年，向五大供應商作出的採購額分別為人民幣13.0百\n萬元、人民幣15.1百萬元及人民幣25.3百萬元，分別佔該等期間採購總額的8.8%、",
+      "evidence_reason": "正式Business披露直接给出三个往绩年度五大供应商采购占比，最高8.8%，足以排除60%/80%阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "supplier_concentration",
+      "page": 244,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "6.8%及7.4%。於2018年、2019年及2020年，向我們的最大供應商作出的採購額分別\n為人民幣3.3百萬元、人民幣3.3百萬元及人民幣8.2百萬元，分別佔我們銷售成本總額\n的約2.2%、1.5%及2.4%。於往績記錄期，除我們於2020年的第二大供應商新希望集團",
+      "evidence_reason": "正式Business披露给出三个往绩年度最大供应商占比，最高约2.4%，足以排除30%/50%阈值。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "redemption_rights",
+      "page": 168,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "特別權利\n：\nCui女士及August Mist均無權享有首次公開發\n售前投資項下的任何特別權利",
+      "evidence_reason": "首次公开发售前投资条款明确排除任何特别权利，直接反驳实际有效特殊赎回/恢复类权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "redemption_rights",
+      "page": 169,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "估。在釐定代價時考慮的其他因素包括但不限於：(i)因首次公開發售前投資協議的條\n款下並無授予首次公開發售前投資者任何撤資權利而在全球發售未能進行的情況下令\n首次公開發售前投資者承擔的投資風險，以及首次公開發售前投資者於投資非上市公",
+      "evidence_reason": "进一步明确即使全球发售未能进行，协议也没有授予投资者撤资权，支持不存在可恢复特殊退出权。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "page": 260,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們在日常業務過程中可能會不時牽涉法律程序或爭議（如與客戶、分包商、供\n應商及其他方出現的合同爭議）。截至最後實際可行日期，概無可能會對我們的業務、\n財務狀況或經營業績產生重大不利影響的針對我們或任何董事提出的任何待決或潛在\n的訴訟或仲裁程序或行政程序。",
+      "evidence_reason": "正式法律程序披露排除重大待决/潜在诉讼、仲裁或行政程序，是对litigation部分的主要反证。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "page": 260,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "根據中國有關法律法規，我們須為中國僱員作出社會保險基金（包括養老基金、\n醫療保險、失業保險、工傷保險及生育保險）及住房公積金供款。於往績記錄期，我們\n的若干中國附屬公司並無依照中國法律法規的規定為部分僱員全額繳交社會保險費及\n住房公積金。",
+      "evidence_reason": "确认存在实际合规偏差，而非仅有前瞻性风险，因此需要继续评估其未解决程度和物质性。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "page": 261,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "若我們於其規定的限期前仍不繳納，則可能被處欠繳數額一倍以上三倍以下的罰款。",
+      "evidence_reason": "披露未足额缴纳社会保险可能产生的法定处罚后果，说明该事项具有实际监管后果。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "page": 262,
+      "evidence_role": "cross_check",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "基於上文所述者，我們的中國法律顧問認為，我們被相關機關處以重大行政處罰\n的風險為低。鑒於上述者，董事認為，我們於往績記錄期內未有全額繳納社會保險費\n及住房公積金不會對我們的業務經營或經營業績產生重大不利影響。",
+      "evidence_reason": "法律顾问和董事认为重大处罚/重大不利影响风险低，降低物质性，但并未否认实际合规事项存在。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "material_litigation_compliance",
+      "page": 262,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "自2021年1月起，我們已在調整僱員社會保險及住房公積金供款基數，務求全面\n遵守相關中國法律法規的規定。基於與相關政府部門的溝通，通常於每年指定時間內\n調整供款基數，時間因不同地區而異。就此而言，我們預期於2021年10月前按經調整\n供款基數，為全體僱員全數繳納社會保險及住房公積金供款。",
+      "evidence_reason": "整改在最后实际可行日期仍处于进行中且预计未来完成，因此存在尚未完全闭环的合规状态，支持needs_review。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "precommercial_product",
+      "page": 175,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "記錄期，我們主要從四個業務分部產生收入：",
+      "evidence_reason": "Business正式披露明确公司已有四个商业化业务分部产生收入，不是依赖尚未商业化核心产品的公司。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "risk_code": "precommercial_product",
+      "page": 447,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "收入 . . . . . . . . . . . . . . . . . . . . . . . . .\n4\n257,964\n380,543\n588,263",
+      "evidence_reason": "经审计历史收入进一步确认核心业务已实现商业收入。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

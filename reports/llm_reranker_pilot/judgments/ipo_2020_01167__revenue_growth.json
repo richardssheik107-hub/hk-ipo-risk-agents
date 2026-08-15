@@ -1,0 +1,337 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "991cc229-c908-5ac7-b7f2-90c9f9831f24",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "IFRS 15 revenue standard adoption discussion; accounting policy boilerplate with no actual revenue figures or growth data."
+      },
+      {
+        "candidate_id": "fe6d98cd-4054-54d6-8ef8-1eee82262825",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Consolidated loss statement with 4 comparative periods in RMB; absence of revenue line directly evidences zero product revenue."
+      },
+      {
+        "candidate_id": "b26fcf01-8dce-57d6-9a33-6c0dc572fbb6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Details other income (government grants, investment income) not product revenue; no revenue growth information."
+      },
+      {
+        "candidate_id": "7ad81ce1-64f9-5a18-9dbd-6b017ef1652b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial income/expense breakdown and preferred share fair value losses; not revenue growth evidence."
+      },
+      {
+        "candidate_id": "ba7760c7-4d28-548f-90ab-60b9eea1f8b5",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Period-over-period loss and other income comparison for H1 periods; no revenue growth data."
+      },
+      {
+        "candidate_id": "0cde5baa-9a11-515e-ad99-2431bd2b7906",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Annual comparison of admin expenses and other income; no revenue growth information."
+      },
+      {
+        "candidate_id": "007f1988-37d7-582c-ac2b-9b50c6057b69",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Discusses future revenue sources from AbbVie collaboration ($45M upfront, milestones); forward-looking, no historical revenue figures."
+      },
+      {
+        "candidate_id": "a2218955-bea5-550a-80f3-447a2e52505d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Admin expense breakdown and other income description; not revenue growth evidence."
+      },
+      {
+        "candidate_id": "54974542-8e5d-59c3-ba01-78f473082fa6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Operating results comparison excluding revenue; no revenue growth data."
+      },
+      {
+        "candidate_id": "87f170f8-dc6a-515e-be3d-af675c4a7ce0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Balance sheet items (non-current assets/liabilities); completely unrelated to revenue growth."
+      },
+      {
+        "candidate_id": "30000b29-99fa-5cfe-9171-96af5d92ada0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Discusses deferred government grant income and asset details; not product revenue growth."
+      },
+      {
+        "candidate_id": "26c1ff99-989d-56ea-9785-14ce96a8d96e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cash flow statement explicitly states candidate drugs generated no sales revenue; 4 comparative periods in RMB."
+      },
+      {
+        "candidate_id": "797e9e3f-3c12-5c00-82bf-f69cad2066c2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Capital expenditure and funding discussion; mentions future revenue use but no revenue growth data."
+      },
+      {
+        "candidate_id": "a2b289c9-b941-52d1-82dd-07bc3a615521",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Income tax accounting policy from accountant's report; completely unrelated to revenue growth."
+      },
+      {
+        "candidate_id": "caf1e5dc-b6b6-5bcb-861d-d70d917c57ed",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Accounting policies for share-based payments and government grants; boilerplate not revenue growth evidence."
+      },
+      {
+        "candidate_id": "6987f0ae-2272-52a9-a637-094a4b5fc56c",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Explicitly states no revenue from product sales with loss figures for 4 periods; references audited financial statements."
+      },
+      {
+        "candidate_id": "8c758701-9080-56a9-b646-f25de46fe4e7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "States no revenue from product sales with operating losses for 3 periods; IFRS preparation basis noted."
+      },
+      {
+        "candidate_id": "d3179aa6-ae60-5615-b704-ac2290574d0a",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Discusses future revenue sources from AbbVie and product sales; forward-looking, no historical revenue data."
+      },
+      {
+        "candidate_id": "b732f7f5-2939-56d3-b59f-66415e678ab2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factor discussing revenue uncertainty with specific loss figures for 3 periods; contextual for revenue growth assessment."
+      },
+      {
+        "candidate_id": "4b27e838-ced2-55da-be32-0cf60f671494",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factor about government grant dependence with grant amounts; not directly about revenue growth."
+      }
+    ]
+  }
+}

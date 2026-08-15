@@ -279,6 +279,27 @@ VerificationResult 将风险分为 verified_risks、pending_risks 和 rejected_r
 SupervisionResult 返回去重后的 verified_risks 及摘要。它们分别是 Verifier 与
 Supervisor 的结构化输入输出边界，同时保持 IPOAnalysisResult 的对外结构兼容。
 
+### V03DocumentRiskSnapshot 与 V04 Modeling Dataset
+
+`V03DocumentRiskSnapshot`只从最终`IPOAnalysisResult`构造，为8类正式风险保留固定位置、
+显式verified/pending/needs_review/rejected/not_emitted/unavailable状态，以及document
+pipeline commit、workflow/schema和feature schema provenance。
+
+`DocumentFeatureManifest`版本`v04_document_features_v1`冻结100项特征的名称、顺序、
+dtype、来源和缺失语义。`V04ModelingRecord`将该向量与一个`MarketOutcomeLabel`按case、
+stock、cohort/listing date和split严格连接；blind outcome不能构成modeling record。
+
+### PreListingMarketFeatureSnapshot 与 Market-Augmented Dataset
+
+`PreListingMarketFeatureSnapshot`记录case/stock/cohort/listing identity、严格早于上市日的
+`observation_date`、benchmark/industry reference、policy/schema版本、来源provenance，
+以及10个raw市场特征各自的value、availability和missing reason。
+
+`MarketFeatureManifest`版本`v04_market_features_v1`为每个raw numeric位置保留value与
+显式`__missing` indicator，共20项，顺序和SHA-256 hash固定。上层
+`V04MarketAugmentedModelingRecord`按`[100 document]+[20 market]`连接非blind标签；
+2025专用feature-only schema不含outcome、target或label horizon字段。
+
 ## 16. 当前契约与降级语义
 
 风险是否需要 Evidence 或 Calculation 由 domain 风险注册表定义，包含

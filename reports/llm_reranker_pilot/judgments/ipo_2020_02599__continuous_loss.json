@@ -1,0 +1,330 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "125a8530-1bfc-5901-9d79-04e32c000d67",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "IFRS reconciliation table showing 2017 loss of RMB(285,949)K and 2018 profit; context is accounting standard impact, not direct loss discussion."
+      },
+      {
+        "candidate_id": "7bbe0ce0-e733-50c4-ad13-37cdc21251c8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Audited equity statement showing 2017 loss of RMB(300,123)K to owners; single-year, no multi-period loss pattern shown."
+      },
+      {
+        "candidate_id": "4fa45a0b-4e5a-5023-9c32-16b3715896e0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "audited_financial_context"
+        ],
+        "reason": "Subsidiary-level NCI profit/loss allocation across periods; not group-level continuous loss evidence."
+      },
+      {
+        "candidate_id": "a077bde8-c9ad-544f-a83d-1eb5da9c79f1",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Subsidiary-level summarized financials for 2017 only; one subsidiary loss, not group-level continuous loss."
+      },
+      {
+        "candidate_id": "b9dc2f19-36d8-5398-887a-0526e28ea16f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A directly discusses 2017 net loss RMB285.9M with causes, JV/associate losses, and 2018 profit recovery. Strong group-level evidence."
+      },
+      {
+        "candidate_id": "67187392-4684-5b29-8045-9a3cf927f8f8",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Subsidiary-level financials for 4M2020 only; minor losses at individual subsidiaries, not group-level evidence."
+      },
+      {
+        "candidate_id": "ebfa533b-0454-58a0-9b12-68191adca53f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Covers all reporting periods: 2017 loss RMB285.9M, 4M2019 loss RMB115.6M, with profits in 2018/2019/4M2020. Detailed loss explanations."
+      },
+      {
+        "candidate_id": "b43a71a2-ea9b-5e02-959b-2a6e7271b028",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Shows 4M2019 net loss RMB115.6M vs 4M2020 profit RMB600.3M; confirms intermittent loss but limited to two short periods."
+      },
+      {
+        "candidate_id": "48466719-4590-5190-a7a5-3b38c8179d60",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history"
+        ],
+        "reason": "Summary section states 2017 net loss RMB285.9M with causes; provides multi-period context on losses and profits."
+      },
+      {
+        "candidate_id": "6b10d499-98bd-5d5b-a873-c9d30bd1d512",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Clear multi-period summary: 2017 loss RMB285.9M, 4M2019 loss RMB115.6M, with profits in 2018/2019/4M2020. Directly relevant."
+      },
+      {
+        "candidate_id": "3d8f0301-66b7-5540-8788-d1190d4e64c3",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Financial ratios note 2017 EBIT/ROE not meaningful due to net loss; indirect confirmation of loss through ratio analysis."
+      },
+      {
+        "candidate_id": "54fdb238-45af-5184-ae98-76ed3c675e2f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Risk factor section lists all period losses and profits with revenue; factual data but framed as past-performance caveat."
+      },
+      {
+        "candidate_id": "2b28d9d8-8912-5fc5-bbb6-b18d52651161",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Explicit risk factor: 2017 net loss RMB285.9M with detailed causes and forward-looking loss risk. Directly addresses continuous loss."
+      },
+      {
+        "candidate_id": "3431d985-6afe-5ef9-9086-019f12cd4f24",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "2019 equity statement showing profit RMB3,208,955K; shows profit period, not loss. Marginal relevance to continuous loss."
+      },
+      {
+        "candidate_id": "089ed390-51b1-5c9c-bd7f-72cce4d764a0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Subsidiary-level 2018 financials; one subsidiary loss, not group-level continuous loss evidence."
+      },
+      {
+        "candidate_id": "9b4c3d6b-b5e8-5060-8fae-9ff77d8887d0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Subsidiary-level 2019 financials; one subsidiary loss, not group-level continuous loss evidence."
+      },
+      {
+        "candidate_id": "3d2881d0-8fc4-50c9-9419-94c1e577ce16",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Discusses 2018-2019 profit growth and JV/associate losses; shows profit expansion, not group-level continuous loss."
+      },
+      {
+        "candidate_id": "6f1e4dd7-0ae2-5775-855e-16b37fece85e",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "audited_financial_context"
+        ],
+        "reason": "JV-level profit/loss detail across periods; not group-level continuous loss evidence, too granular."
+      },
+      {
+        "candidate_id": "1f21545a-a559-5fb4-8921-5e7105004104",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "audited_financial_context"
+        ],
+        "reason": "Associate-level share of profit/loss across periods; not group-level continuous loss evidence, too granular."
+      }
+    ]
+  }
+}

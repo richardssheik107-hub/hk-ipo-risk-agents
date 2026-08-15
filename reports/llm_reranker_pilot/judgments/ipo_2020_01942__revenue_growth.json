@@ -1,0 +1,339 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "3e85f52f-2932-575e-aaf8-d2cc92d01f51",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Audited consolidated income statement with revenue across 3 FYs and 2 interim periods in thousand RM; primary source for revenue growth."
+      },
+      {
+        "candidate_id": "4a8d42e5-944e-57a1-be9d-a0b40bb21686",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period"
+        ],
+        "reason": "Discusses IFRS 16 adoption impact on expense items, not revenue. Indirectly relates to income statement presentation only."
+      },
+      {
+        "candidate_id": "41576279-3b76-52f4-adff-659e10381d86",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "MD&A consolidated income statement with revenue figures and percentages across all 5 periods in thousand RM."
+      },
+      {
+        "candidate_id": "9c5e4c17-70a3-58e2-8173-74ef81cc838e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Income tax reconciliation and EPS; shows pre-tax profit but no revenue figures. Not relevant to revenue growth."
+      },
+      {
+        "candidate_id": "59c3c593-d96b-5ebc-a83f-db6b12fc4dae",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Related party transaction details with small revenue items; not material to overall revenue growth assessment."
+      },
+      {
+        "candidate_id": "48acdc4f-d435-52b8-aba2-ce626613959a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor descriptions; mentions manufacturing/sales in investor background context only, no issuer revenue data."
+      },
+      {
+        "candidate_id": "c2f2506e-f591-5e58-8185-5b5337b13572",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial data for Thai companies not part of the group; revenue in Thai Baht, not the issuer's revenue."
+      },
+      {
+        "candidate_id": "7fa9b2e2-2b2e-5974-b43b-0a278de7ddd3",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Breakdown of other income (rental, interest, fees) not main operating revenue; limited relevance to revenue growth."
+      },
+      {
+        "candidate_id": "a11b325b-9fed-505c-950a-bf30ac851598",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed revenue breakdown by brand category and ASP analysis across all periods; strong evidence for revenue growth drivers."
+      },
+      {
+        "candidate_id": "ba55fd36-7a85-5e01-9147-afa72c2183a2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Direct revenue growth analysis: revenue increased 13.3% from 101.9M to 115.5M RM with growth drivers explained."
+      },
+      {
+        "candidate_id": "48d60977-79d8-5af8-b2ff-407f87b1f4d8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Continues revenue growth analysis with retail network expansion details and franchise revenue changes for FY18 vs FY17."
+      },
+      {
+        "candidate_id": "f2e8f440-5c38-50e2-9a9a-f28095e003d6",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Revenue growth analysis FY19 vs FY18: retail revenue increased 18.0% with store expansion and franchise growth."
+      },
+      {
+        "candidate_id": "ca3b3d26-95fb-5760-8da5-e656443bad8a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Interim period revenue growth comparison: franchise revenue up 25%; retail stores expanded from 70 to 84."
+      },
+      {
+        "candidate_id": "63eb538d-05ea-5003-8202-1005735990b6",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Revenue recognition accounting policy and FX translation; no revenue figures, purely contextual."
+      },
+      {
+        "candidate_id": "a72b5f15-1ab8-5645-be29-be7523eec020",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Gross profit and margin by brand category; indirectly supports revenue growth via margin trends but not direct revenue."
+      },
+      {
+        "candidate_id": "5aaee13e-b202-54ca-a427-4ce8f484191c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Working capital and investment property analysis; no revenue figures or revenue growth information."
+      },
+      {
+        "candidate_id": "111c8666-cfac-53e0-b2e0-f1aec34222a2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Summary consolidated income statement with revenue and percentages for all 5 periods in thousand RM."
+      },
+      {
+        "candidate_id": "149de8f9-8b9b-5aff-bf09-52e70b33c08e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Segment reporting and accounting estimate policies; boilerplate accounting policy text, no revenue data."
+      },
+      {
+        "candidate_id": "c7c1ffc4-5618-56a6-b95d-1c4f9a236cfa",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "General accounting policies on consolidation and acquisition method; boilerplate, no revenue figures."
+      },
+      {
+        "candidate_id": "664c0c36-36fb-515c-87a0-58c3bd7da076",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Macroeconomic context and employee costs as % of revenue; indirect context for revenue growth drivers."
+      }
+    ]
+  }
+}

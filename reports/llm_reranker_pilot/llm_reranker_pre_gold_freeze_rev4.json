@@ -1,0 +1,1193 @@
+{
+  "artifact": "revision_4_pre_gold_freeze_manifest",
+  "created_at_utc": "2026-08-15T04:04:55.380670+00:00",
+  "phase": "0.6C",
+  "freeze_revision": 4,
+  "decision": "CONTINUE_REVISION_4",
+  "pre_gold_freeze_complete": true,
+  "gold_loaded": false,
+  "blind_2025_accessed": false,
+  "official_task_count_expected": 80,
+  "official_task_count_actual": 80,
+  "official_unique_task_keys": 80,
+  "official_completed": 65,
+  "official_failed": 15,
+  "official_failure_rate": 0.1875,
+  "official_failure_kinds": {
+    "response_validation": 13,
+    "validation": 2
+  },
+  "missing_task_keys": [],
+  "unknown_files": [],
+  "duplicate_task_keys": false,
+  "candidate_coverage_errors": [],
+  "fallback_policy_errors": [],
+  "candidate_pool_file": "reports/llm_reranker_pilot/candidate_pools.json",
+  "candidate_pool_sha256": "51037b682dad4d133db14417915fd9eaf749b8109ea8e1641ff1685ebeb17bfe",
+  "candidate_pool_sha256_matches_freeze": true,
+  "official_judgment_aggregate_sha256": "aa1b62e87158ccc8e46cb3fe296bfc624fee9b6b8994a4d71355e730c60b3912",
+  "freeze_manifest_file": "reports/llm_reranker_pilot/llm_reranker_freeze_manifest.json",
+  "freeze_manifest_sha256": "a9d2426ba67f9df7828316eb1197d9e123eac3f2c9a8354701d98e5979b99367",
+  "source_hash_mismatches": [],
+  "source_hashes_verified": true,
+  "source_verification": [
+    {
+      "path": "src\\ipo_risk\\providers\\llm.py",
+      "expected_sha256": "2902b91f695dc8c4666472907af12906eda0c49a77e0289e18b6ceb8bd07a3a9",
+      "actual_sha256": "2902b91f695dc8c4666472907af12906eda0c49a77e0289e18b6ceb8bd07a3a9",
+      "match": true
+    },
+    {
+      "path": "src\\ipo_risk\\providers\\prompt_registry.py",
+      "expected_sha256": "71e600fb6dab250e803a88dd593232362f21d89d3c5a52ab375df32e928f3e4c",
+      "actual_sha256": "71e600fb6dab250e803a88dd593232362f21d89d3c5a52ab375df32e928f3e4c",
+      "match": true
+    },
+    {
+      "path": "src\\ipo_risk\\retrieval\\llm_reranker.py",
+      "expected_sha256": "b950f06a7b6f80054a268e43b5bcf3af3b2bfa98bc872d79b308bab34f8c6102",
+      "actual_sha256": "b950f06a7b6f80054a268e43b5bcf3af3b2bfa98bc872d79b308bab34f8c6102",
+      "match": true
+    },
+    {
+      "path": "src\\ipo_risk\\retrieval\\llm_reranker_prompts.py",
+      "expected_sha256": "f8bdc07a31c2eca7c3b66bb57653a11dad97f205cf2ec31b5313641fec475130",
+      "actual_sha256": "f8bdc07a31c2eca7c3b66bb57653a11dad97f205cf2ec31b5313641fec475130",
+      "match": true
+    },
+    {
+      "path": "src\\ipo_risk\\retrieval\\llm_reranker_schemas.py",
+      "expected_sha256": "6c5157730c76f6c84c28206beb54188d76cf0b618eefd52343aecebbcbbf9ac3",
+      "actual_sha256": "6c5157730c76f6c84c28206beb54188d76cf0b618eefd52343aecebbcbbf9ac3",
+      "match": true
+    }
+  ],
+  "judge_processes_after_completion": 0,
+  "judge_natural_exit_observed": true,
+  "judge_exit_code": "not_captured",
+  "no_second_judge_observed": true,
+  "no_official_failure_overwrite": true,
+  "original_structured_failures": [
+    {
+      "file": "ipo_2020_00368__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "customer_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "validation",
+      "fallback": "stage1_union_order",
+      "sha256": "09e33d2caf81d2dad2c81f13a4eba37c7c13c80bf53787b787443c893084f8ab",
+      "size_bytes": 98,
+      "mtime_utc": "2026-08-15T02:20:16.967408+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "redemption_rights"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T02:21:33.571832+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "material_litigation_compliance"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T02:31:33.465733+00:00"
+    }
+  ],
+  "diagnostic_replay_interpretation": "diagnostic non-reproduction",
+  "diagnostic_replays": [
+    {
+      "file": "ipo_2020_00368__customer_concentration__diagnostic.json",
+      "status": "completed",
+      "sha256": "a4f14272928800470e9be2d4527b1b254cdb02c376d95f67ec066dd82f7f3612",
+      "diagnostic_only": true,
+      "included_in_official_metrics": false
+    },
+    {
+      "file": "ipo_2020_00368__redemption_rights__diagnostic.json",
+      "status": "completed",
+      "sha256": "95fd1e572b0006a90360b803904f900c5cc9c06ec1ecfa9edc0b6932ddfcdde8",
+      "diagnostic_only": true,
+      "included_in_official_metrics": false
+    },
+    {
+      "file": "ipo_2020_01167__material_litigation_compliance__diagnostic.json",
+      "status": "completed",
+      "sha256": "44b97df7f9d2b7d5573396c239ae1313d920fb6f76b88e59e7c38c2021dd610b",
+      "diagnostic_only": true,
+      "included_in_official_metrics": false
+    }
+  ],
+  "diagnostic_replays_excluded_from_official_cache": true,
+  "official_judgments": [
+    {
+      "file": "ipo_2020_00013__cash_runway.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3af5313e55754f9eb34b3cf4f5e7f59f5fdff7bb8b446df7446574d0730ad536",
+      "size_bytes": 13803,
+      "mtime_utc": "2026-08-15T03:55:37.519784+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "f69ae649ff360a1435a1039d7376bb9a8038712d9682d08b703562c49bb5e9d9",
+      "size_bytes": 13404,
+      "mtime_utc": "2026-08-15T03:56:38.319342+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3c2f437fb36947f85f9a70ffbc4d64e1d3ae65bd1570136f34415d8b447428e5",
+      "size_bytes": 11781,
+      "mtime_utc": "2026-08-15T03:58:45.635229+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "49a324f6cdad6b19f816d2186795a1c58bf93f4abcdc3adc62218b4c2a8e5da7",
+      "size_bytes": 12369,
+      "mtime_utc": "2026-08-15T04:01:16.130616+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "precommercial_product"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T04:02:22.874191+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "0ff04539ff27502468b8e7952710a6ba33e5b72b06631f58b499eb32a0a971ed",
+      "size_bytes": 4469,
+      "mtime_utc": "2026-08-15T04:00:09.082619+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "c3d59b48e5e224fa5a502ccc166b2287b9703246bc8e1e477abb9cb2c1b31ef1",
+      "size_bytes": 13246,
+      "mtime_utc": "2026-08-15T03:57:48.459547+00:00"
+    },
+    {
+      "file": "ipo_2020_00013__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_00013",
+        "supplier_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:59:37.390131+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__cash_runway.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "74243cb93c87ac351d290b2ac5def580cf183e4ebf7bf5658484f1eeb757b090",
+      "size_bytes": 13835,
+      "mtime_utc": "2026-08-15T02:15:57.813465+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "9c38d54272da5aa1de6c8a3120f54aa801e0dab46e83adf36f2d69bb55f9e8ff",
+      "size_bytes": 8301,
+      "mtime_utc": "2026-08-15T02:17:46.333346+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "customer_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "validation",
+      "fallback": "stage1_union_order",
+      "sha256": "09e33d2caf81d2dad2c81f13a4eba37c7c13c80bf53787b787443c893084f8ab",
+      "size_bytes": 98,
+      "mtime_utc": "2026-08-15T02:20:16.967408+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "a587e277db91f2c98019f754954449737b958c4cc5e93b1412b6ed9538d5ffab",
+      "size_bytes": 12593,
+      "mtime_utc": "2026-08-15T02:22:42.690918+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "770ab3f785050a8cd4b2c2c2da9ca2c69475d2f1df94e78c033948ba5df1cfef",
+      "size_bytes": 12671,
+      "mtime_utc": "2026-08-15T02:24:17.849339+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "redemption_rights"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T02:21:33.571832+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "a5a029c8e42cdfce5f5a74b2b92bf174291cbc97f1b43f11049acd5147b8d9ba",
+      "size_bytes": 12820,
+      "mtime_utc": "2026-08-15T02:18:46.975300+00:00"
+    },
+    {
+      "file": "ipo_2020_00368__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_00368",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "50f80906df282330f8c2af767bb60a17839ae3ce7f141c7528384e0ad904dfe5",
+      "size_bytes": 12438,
+      "mtime_utc": "2026-08-15T02:21:07.125558+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__cash_runway.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "d2f52ae36c2603c5d0237584eb7c69fcc14f8ef4c9a5fa6630e525cde2a7716e",
+      "size_bytes": 14526,
+      "mtime_utc": "2026-08-15T02:25:18.598839+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "f6b338d22af671d58a43963d34d2d04e31bcb16166aeaf0432cd151bd5b3b997",
+      "size_bytes": 14024,
+      "mtime_utc": "2026-08-15T02:26:28.360022+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "20818c51cd45bbc0d18e39585ac00e2e3066358887a1dc7dd3ddae4430f031b7",
+      "size_bytes": 11945,
+      "mtime_utc": "2026-08-15T02:28:51.244722+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "material_litigation_compliance"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T02:31:33.465733+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3e0c76b34785e083a2faa6a0d8c75662f093d6a2cd1932db34ad1935893f6889",
+      "size_bytes": 13951,
+      "mtime_utc": "2026-08-15T02:55:37.356606+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "d8fe5835fbbb1c6f8c99f96f5f4aefc31a12693690a4f59131a47beb68b038a3",
+      "size_bytes": 12727,
+      "mtime_utc": "2026-08-15T02:30:30.637643+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "f2ee320af72ad6beb6f8f71c3806a7dabddf8678683981aaebecdfad8822b2eb",
+      "size_bytes": 12924,
+      "mtime_utc": "2026-08-15T02:27:57.766716+00:00"
+    },
+    {
+      "file": "ipo_2020_01167__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_01167",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "22aae28f8743d54546dc75107a6a0f4bb993c3769f1ed496abffec97606a78b2",
+      "size_bytes": 8919,
+      "mtime_utc": "2026-08-15T02:29:24.812806+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__cash_runway.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "40e3437c32150444abd046e0eb7960b871db19ec996e5df90280bff35ff214d1",
+      "size_bytes": 12735,
+      "mtime_utc": "2026-08-15T02:57:45.942926+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "980443f943392ae7884433d50c99cf9fe05e4ef6819351744dde5945d390042d",
+      "size_bytes": 6260,
+      "mtime_utc": "2026-08-15T02:58:44.804804+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "c7123d14cc2361d0d3a55b65b01b1ecac21f957105dc3884800eef402ef999ba",
+      "size_bytes": 14532,
+      "mtime_utc": "2026-08-15T03:00:53.822593+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "41dfdbcb45dcc3958f6e7f26b3b95d304c1a342c1500538c6dbd2f87c91d9887",
+      "size_bytes": 13270,
+      "mtime_utc": "2026-08-15T03:03:16.390508+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "d6c434152a9119d5e9ab96268b3bc5a064938b2379906cb6c66b431fd0e47d0b",
+      "size_bytes": 12589,
+      "mtime_utc": "2026-08-15T03:04:46.293755+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3dfec993ba0162bfa6e2ec6af0280f2833031e922608d09f5cd2afb111d32c16",
+      "size_bytes": 6101,
+      "mtime_utc": "2026-08-15T03:02:22.686022+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "2ce483f86046a756122c1ee28e5a1d47ec85710557b036c1a4dc30707f2fc3e0",
+      "size_bytes": 13007,
+      "mtime_utc": "2026-08-15T02:59:43.591271+00:00"
+    },
+    {
+      "file": "ipo_2020_01408__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_01408",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "05b073cdad5212f3f9183e362cac053d2875d161411ad972a9c4aa0cd380f044",
+      "size_bytes": 11520,
+      "mtime_utc": "2026-08-15T03:01:50.678138+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__cash_runway.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "cash_runway"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:12:54.490126+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "cd75fbe6dd339b90f3e240e997ed6e295a9ce3f7350291f018ff3e9a0b450afb",
+      "size_bytes": 5647,
+      "mtime_utc": "2026-08-15T03:13:34.323359+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "7cfee94c413b2880c42b2116fa14b6b72685e624f82011ac514004264203be5b",
+      "size_bytes": 11940,
+      "mtime_utc": "2026-08-15T03:15:44.715773+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "material_litigation_compliance"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:17:43.346633+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3d525b47eb1d1e28edb3e19549014481bd4367e529764f26a0f4584cb8fe9abb",
+      "size_bytes": 12300,
+      "mtime_utc": "2026-08-15T03:19:05.046384+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3fac5865b3bc8d872e38291b2f7fa9d6bbfa42da4f33e6901cceebf2d8b3029c",
+      "size_bytes": 4670,
+      "mtime_utc": "2026-08-15T03:17:23.365275+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "c3407363e300996e86e5814303e46f6ab16d8a655fbdaa0d3985c290678ad7e1",
+      "size_bytes": 13116,
+      "mtime_utc": "2026-08-15T03:14:38.272560+00:00"
+    },
+    {
+      "file": "ipo_2020_01942__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_01942",
+        "supplier_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:16:50.034272+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__cash_runway.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "90f36897d47ce9829001e1d8cf4f21c8d2cff4e080e30ae6e1a64bd4f93aa51d",
+      "size_bytes": 13671,
+      "mtime_utc": "2026-08-15T03:06:14.367383+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "61df258003075a44e5048959e24ac27eb8fe8c2e266da51b04c9648746a655c7",
+      "size_bytes": 2379,
+      "mtime_utc": "2026-08-15T03:06:50.681053+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "customer_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:08:22.057191+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "material_litigation_compliance"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:10:55.269779+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "fd297b994abf9349196a0f4080598cb904e9f83c99702cfe4be5fd30cc950249",
+      "size_bytes": 13905,
+      "mtime_utc": "2026-08-15T03:11:53.309348+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "1af662f83a619a1041c5ee604578fb0018dd767ab3267580463d049dd006ad97",
+      "size_bytes": 4902,
+      "mtime_utc": "2026-08-15T03:10:01.029570+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "bfcc6dddbf19889d54bcc268a7faa13d9e73744562d72b7e28d4043648365eed",
+      "size_bytes": 13202,
+      "mtime_utc": "2026-08-15T03:07:38.200746+00:00"
+    },
+    {
+      "file": "ipo_2020_01961__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_01961",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "e315081101ba771b6c604a987c3e4110bb15c34a21e2700faeede7f7e5d686f6",
+      "size_bytes": 12935,
+      "mtime_utc": "2026-08-15T03:09:29.152831+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__cash_runway.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "62b213f0f736d8e42489d5ad5c1471bb0f22cf64d44f2427a64284396f69c0d9",
+      "size_bytes": 8654,
+      "mtime_utc": "2026-08-15T03:20:55.059174+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "continuous_loss"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:21:18.310476+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "565eb74d1cd0c81e30ecb46fdd11435472d32182cb87b5d48c3b2c8524a6a1b0",
+      "size_bytes": 3956,
+      "mtime_utc": "2026-08-15T03:22:37.423512+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "ef9889416e84ab26819f418bafe8292a9e7a725cfcb8df9a2b729dfe090e62a7",
+      "size_bytes": 13023,
+      "mtime_utc": "2026-08-15T03:25:54.890354+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "e077c2cd62ec0cf46bda98a05be0bdb302ef48888efc7ea412363eadf160af4b",
+      "size_bytes": 13192,
+      "mtime_utc": "2026-08-15T03:26:58.556409+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "redemption_rights"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:24:35.023437+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "65690839894346cb03ffd5765d561a6046a7d987beeccd1259a685c057f4af84",
+      "size_bytes": 13529,
+      "mtime_utc": "2026-08-15T03:22:17.436957+00:00"
+    },
+    {
+      "file": "ipo_2020_02057__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_02057",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "e33fbc92b55b908adbfc4fb711a13b24dd2734d8be94448f6da8a681fd1f650f",
+      "size_bytes": 6319,
+      "mtime_utc": "2026-08-15T03:23:11.080175+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__cash_runway.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "811217b5af28eb9b10432ae60b3047c524876a62da13827454eea57ead9e7c72",
+      "size_bytes": 12306,
+      "mtime_utc": "2026-08-15T03:28:16.136059+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "7d06e12205048fbde5c2810c9b74049f67647a6b290b72b80b148a18c1266954",
+      "size_bytes": 9358,
+      "mtime_utc": "2026-08-15T03:29:03.868864+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "b8e28e22cca59051c7f16678d1f2ac7f1cbde49127c140825a88ad696c002f66",
+      "size_bytes": 11357,
+      "mtime_utc": "2026-08-15T03:31:10.082632+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "f8aac05c2fa56eef16ece298b6ae0cd52d2d438f9cf3f4fff186a8874d758e86",
+      "size_bytes": 13349,
+      "mtime_utc": "2026-08-15T03:33:18.653232+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "349b17f1b032af4f4bb1298da630e2578c205546f301e17399afbd3fe7d34df6",
+      "size_bytes": 12244,
+      "mtime_utc": "2026-08-15T03:34:14.228198+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "redemption_rights"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:32:30.690421+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "revenue_growth"
+      ],
+      "status": "failed",
+      "failure_kind": "validation",
+      "fallback": "stage1_union_order",
+      "sha256": "09e33d2caf81d2dad2c81f13a4eba37c7c13c80bf53787b787443c893084f8ab",
+      "size_bytes": 98,
+      "mtime_utc": "2026-08-15T03:30:02.191947+00:00"
+    },
+    {
+      "file": "ipo_2020_02135__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_02135",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "db7b881d94588b8aa778bc54ac9c93bd7329f50e03d00b5d01d439793d1f3b62",
+      "size_bytes": 10990,
+      "mtime_utc": "2026-08-15T03:31:58.785747+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__cash_runway.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "5bbf38ad70a6dba1fa85e4a085f92cb110fd01d05f57f780589fcb17129b775f",
+      "size_bytes": 9194,
+      "mtime_utc": "2026-08-15T03:35:59.171661+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "b819d2a691b930c4b3bc60b6c3dd6fdd6ccbc9972ba9afb156faa5330bce0426",
+      "size_bytes": 6676,
+      "mtime_utc": "2026-08-15T03:36:46.207979+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "6cebadedf936f7fa8d7ff5c443840602673a12fe60c716c2cd6db24b8cd92a26",
+      "size_bytes": 14217,
+      "mtime_utc": "2026-08-15T03:38:40.348238+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "d1b59c888c2effe3c490f1cd0d9b8ffa93cc196f6f98f0b8a94d6b2382cf845e",
+      "size_bytes": 13317,
+      "mtime_utc": "2026-08-15T03:40:48.788899+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "407d81e3ccdc381b742905c09d38febb9c8e99ecafb7ed1aba63c4030a648a8f",
+      "size_bytes": 12165,
+      "mtime_utc": "2026-08-15T03:41:53.366648+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "5fe3725e1aad9a3f6b1b5f453d4c0b51cfb7f158d7a202f7f193d41420126215",
+      "size_bytes": 2082,
+      "mtime_utc": "2026-08-15T03:39:42.620899+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "0e95f4e6797d4cb4b8a4d0e79eb2493429486ca2f8b804a5d27b422ef60a48b6",
+      "size_bytes": 13314,
+      "mtime_utc": "2026-08-15T03:37:41.876150+00:00"
+    },
+    {
+      "file": "ipo_2020_02263__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_02263",
+        "supplier_concentration"
+      ],
+      "status": "failed",
+      "failure_kind": "response_validation",
+      "fallback": "stage1_union_order",
+      "sha256": "d39b1b8e814bfa95317a802d8372cc670175d30d24978f7fb25fa76c4db8b6d8",
+      "size_bytes": 107,
+      "mtime_utc": "2026-08-15T03:39:22.190683+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__cash_runway.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "cash_runway"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "99d972a80a09d6c03c0789509eb757543f4003598044717578cb2b3e2ff347f4",
+      "size_bytes": 13355,
+      "mtime_utc": "2026-08-15T03:44:07.563656+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__continuous_loss.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "continuous_loss"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3857db5fb18ef9532fd2d2f7d91b87b8333d0d9f87f9c2be4d269542ff1f2ca0",
+      "size_bytes": 12775,
+      "mtime_utc": "2026-08-15T03:45:43.785774+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__customer_concentration.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "customer_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "5616b1d698694add8d904c73205e7dce048f845a862d7d1e890a04ed222e3195",
+      "size_bytes": 12496,
+      "mtime_utc": "2026-08-15T03:47:22.179359+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__material_litigation_compliance.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "material_litigation_compliance"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "e1d60ffaf7fe08980b848c5dbdc00cdc5d1161292555af88dfaf7fa1cd6f1b26",
+      "size_bytes": 13155,
+      "mtime_utc": "2026-08-15T03:51:42.118206+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__precommercial_product.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "precommercial_product"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3e9608aed09d2ac100fb5d5b05020d6661a06c156d8499fbec7f6d961b72c3a4",
+      "size_bytes": 11499,
+      "mtime_utc": "2026-08-15T03:52:46.693907+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__redemption_rights.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "redemption_rights"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3edbb96e7b593e629c7cd3005c00afeb17d7aaeb8b233ea08cb61a1930d04cf5",
+      "size_bytes": 9909,
+      "mtime_utc": "2026-08-15T03:50:37.073565+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__revenue_growth.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "revenue_growth"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "e3663903aa090b57a63e377fb6d7f5b8574ae16d30f07d003fac6b285f66d798",
+      "size_bytes": 13041,
+      "mtime_utc": "2026-08-15T03:46:42.286079+00:00"
+    },
+    {
+      "file": "ipo_2020_02599__supplier_concentration.json",
+      "task_key": [
+        "ipo_2020_02599",
+        "supplier_concentration"
+      ],
+      "status": "completed",
+      "failure_kind": null,
+      "fallback": null,
+      "sha256": "3cf7c392bea55b5d852b54ea763ccbac14eb20b87e36e849a1e5fb4b245687a5",
+      "size_bytes": 13748,
+      "mtime_utc": "2026-08-15T03:48:37.762615+00:00"
+    }
+  ],
+  "provider": "openai_responses",
+  "model": "ark-code-latest",
+  "temperature": "not_exposed_by_responses_adapter",
+  "prompt_version": "llm_evidence_reranker_v1",
+  "timeout_seconds": 300,
+  "failure_policy": "structured_failure_record_then_stage1_fallback",
+  "max_retries": 1,
+  "agent_used": false,
+  "verifier_used": false,
+  "git_branch": "eval/llm-evidence-reranker-pilot",
+  "git_head": "532ece133ff770cebd174abd64c15efda38989e4",
+  "gold_unlock_authorized": false,
+  "evaluation_run": false,
+  "commit_created": false,
+  "push_performed": false
+}

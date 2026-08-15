@@ -1,0 +1,220 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "81507933-6215-5d9c-bfbe-7d332e3ff006",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Consolidated cash flow statement summary with ending cash (37,976k HKD latest), operating cash flow, reporting periods, currency, and explicit cash flow statement label. Most complete for cash runway."
+      },
+      {
+        "candidate_id": "42b28490-1b9b-56c5-9fb3-5e989518db78",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Operating activities breakdown from cash flow statement with net operating cash flow figures. No ending cash, reporting period, or currency unit in excerpt. Supports cash runway indirectly."
+      },
+      {
+        "candidate_id": "6862a3a1-096a-5ba0-8622-b7504e290e5b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Full consolidated cash flow statement with ending cash, operating cash flow, periods, currency, plus narrative on liquidity sources. All five facets present and directly relevant."
+      },
+      {
+        "candidate_id": "f8ac5419-1671-5b0d-a1ed-580351fcd08b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Cash flow statement detail with financing activities, ending cash (37,976k HKD), operating cash flow components, periods, and currency. Comprehensive for cash runway."
+      },
+      {
+        "candidate_id": "68eaa705-ca27-55b8-a159-53a06ab7ea10",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Financial instruments classification table with cash-related balances and generic risk management discussion. Not cash flow data; limited relevance to cash runway."
+      },
+      {
+        "candidate_id": "41b4a22a-a0d5-5cd9-8ab6-b7d7cd17d9f8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed narrative on operating cash flow for FY2019 and 4-month periods, explaining negative operating cash flow drivers. Supports cash runway via operating cash burn analysis."
+      },
+      {
+        "candidate_id": "0bec298e-c79d-5d2b-8c5d-950c999e025e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Balance sheet note on bank balances and cash with interest rate info. No ending cash amounts or operating cash flow. Limited relevance to cash runway."
+      },
+      {
+        "candidate_id": "87be1833-e1a0-5115-b8d6-c565cf192024",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative on operating cash flow for FY2017 and FY2018 with working capital explanations. Historical context supporting cash runway trend analysis."
+      },
+      {
+        "candidate_id": "b3f3ca4f-3df9-50bd-affd-bc370839c293",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Credit risk analysis of financial assets including bank balances. Shows total bank balance values but in credit risk context, not cash flow. Low relevance to runway."
+      },
+      {
+        "candidate_id": "f2bbe9fc-d04b-5710-a3b6-e62aa2ea417d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Generic liquidity risk management language about maintaining adequate cash levels. No specific cash figures or operating cash flow. Standard boilerplate disclosure."
+      },
+      {
+        "candidate_id": "99eddd62-8f1d-5287-b368-4a2d8b27c38e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary narrative on operating cash flow changes across periods with specific amounts. Supports cash runway via operating cash flow trend analysis."
+      },
+      {
+        "candidate_id": "9ca2328c-aa5d-5ece-8d90-c8caaa084e7f",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Generic liquidity and capital risk management disclosure. No specific cash figures, operating cash flow, or ending cash. Standard boilerplate."
+      },
+      {
+        "candidate_id": "3331278e-e92c-5761-9ef7-b3aa3441a051",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [],
+        "reason": "Accounting policy for financial instrument classification and measurement. No cash flow data or cash figures. Irrelevant to cash runway assessment."
+      }
+    ]
+  }
+}

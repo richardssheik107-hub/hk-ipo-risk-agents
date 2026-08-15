@@ -1,0 +1,46 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "88064ae7-cb74-5e10-a681-4d96d2052537",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "General articles of association boilerplate. Mentions special rights (特別權利) for share classes and capital redemption reserve, but not investor redemption/put/repurchase rights. No actual investor, no specific redemption terms."
+      },
+      {
+        "candidate_id": "3c0027cc-5fcf-522a-8749-350fcd5b485f",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Liquidation procedures boilerplate. Mentions special rights (特別權利) only in context of asset distribution upon winding up, not investor redemption or put rights. No actual investor or redemption mechanism."
+      },
+      {
+        "candidate_id": "134b275e-9957-5f50-9c50-297d16046f31",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Corporate governance boilerplate on resolutions and voting. References special voting rights (表決特別權利) only, with zero connection to redemption, put, or repurchase rights. Least relevant of the three."
+      }
+    ]
+  }
+}

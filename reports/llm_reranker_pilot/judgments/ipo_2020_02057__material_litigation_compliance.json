@@ -1,0 +1,322 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "088f5483-0d3b-528e-826a-b5b26f7cf0e3",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Standard VIE risk-factor boilerplate about hypothetical arbitration/litigation; no actual proceedings or named disputes mentioned."
+      },
+      {
+        "candidate_id": "d5b4948a-8ac7-5ca1-aef5-3925b4cc82f4",
+        "risk_relevance": "high",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "regulatory_issue",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Direct admission of actual non-compliance with Chinese labor law on social insurance and housing fund; discusses penalties, accruals, and material adverse impact."
+      },
+      {
+        "candidate_id": "36d03fae-d50a-5345-9564-8cab97a997fb",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Business section confirms insufficient social insurance/housing fund payments with provisions made; also states no major labor disputes as a negative statement."
+      },
+      {
+        "candidate_id": "6e3bbd15-7dcc-5c99-9c8e-e5df89d5cbf3",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Detailed regulatory framework with specific penalty rates for social insurance/housing fund non-compliance; confirms issuer's non-compliance and accrual of estimated amounts."
+      },
+      {
+        "candidate_id": "225f2f8a-2832-593b-bc90-76b561d1e738",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "General regulatory framework for express delivery licenses with penalty schedules; no issuer-specific non-compliance mentioned."
+      },
+      {
+        "candidate_id": "6134dac7-1a5a-577c-a882-345d71b14fa7",
+        "risk_relevance": "medium",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Standard VIE risk factor about hypothetical government action; lists potential penalties including license revocation but no actual proceedings."
+      },
+      {
+        "candidate_id": "912b22b5-aa61-5075-ace7-1afd9ce3b855",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.83,
+        "completeness_facets": [],
+        "reason": "Hypothetical discussion of arbitration process for VIE shareholder disputes; no actual proceedings or named disputes."
+      },
+      {
+        "candidate_id": "93acccec-8448-512b-8e8d-8564636f99f4",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "General sanctions and anti-corruption compliance risk factors; issuer explicitly states no belief of violations. No actual proceedings."
+      },
+      {
+        "candidate_id": "9e77e609-ecf5-528b-9073-83ea14b1289e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Hypothetical VIE shareholder conflict and Foreign Investment Law risk; no actual proceedings or specific disputes."
+      },
+      {
+        "candidate_id": "9ad26e78-6a0e-5271-a7f8-59c991108b79",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "General tax compliance framework for indirect transfers under SAT Bulletins 7 and 37; no actual tax proceedings or disputes."
+      },
+      {
+        "candidate_id": "e935caf5-3076-5568-84d5-5be84e3e2e8a",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "regulatory_issue",
+          "current_status"
+        ],
+        "reason": "Regulatory risk about PCAOB audit inspection and potential delisting; general industry-wide issue, not issuer-specific litigation."
+      },
+      {
+        "candidate_id": "add9414a-72cf-510a-a8e7-cdde0d1e843b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "Describes license requirements including express delivery and road transport permits; general risk factor without specific non-compliance."
+      },
+      {
+        "candidate_id": "70b4061a-d23d-5a4f-aed6-3a1a6cb992c9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Specific franchise registration requirement not yet completed with potential penalties; also discloses input VAT amounts. Actual compliance gap."
+      },
+      {
+        "candidate_id": "43cba4c0-96c7-5356-9404-ee562abf6780",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Brief boilerplate mention of mandatory social insurance and housing fund contributions in directors section; no non-compliance discussed."
+      },
+      {
+        "candidate_id": "83231ba8-89cf-540f-8cca-fb3393905d2f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue",
+          "current_status"
+        ],
+        "reason": "States some network partners started express services before obtaining licenses; potential compliance issue using issuer's brand. Specific factual admission."
+      },
+      {
+        "candidate_id": "7b08cc09-43fc-563d-9892-627739342434",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "regulatory_issue",
+          "licence_permit",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Actual non-compliance with construction regulations; named subsidiary penalized ~RMB 3.2M. Specific proceeding with materiality and named entity."
+      },
+      {
+        "candidate_id": "69f8341b-08ac-51dc-b380-b7e732a0454d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "General regulatory framework for foreign investment and express delivery licensing; no issuer-specific compliance issue."
+      },
+      {
+        "candidate_id": "e29b268d-e75c-5705-a425-e3f3f11b14cc",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "General regulatory framework for express delivery franchise and security inspection; no issuer-specific non-compliance."
+      },
+      {
+        "candidate_id": "53929e35-0cd9-5a78-a837-d3c43ab48b64",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.88,
+        "completeness_facets": [],
+        "reason": "General business description with brief mention of insurance and social insurance; no compliance issues or litigation discussed."
+      },
+      {
+        "candidate_id": "a80f3c7c-b4d3-547d-b12a-40e1afd311fa",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "licence_permit",
+          "regulatory_issue"
+        ],
+        "reason": "General regulatory framework; notes two subsidiaries obtained drone licenses. No compliance issues or litigation."
+      }
+    ]
+  }
+}

@@ -1,0 +1,339 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "fabc2b46-90e5-5291-a87c-eaac37933145",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Nutrition Science Partners JV loss data: $38.2M loss in 2018, $0.2M profit in 2019 partial. Supports group loss context but JV-specific."
+      },
+      {
+        "candidate_id": "b047986c-40c7-5e5a-b1e2-0c0b370e1545",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Detailed NSP JV loss narrative: $38.2M loss in 2018 with impairment explanation. JV-specific context for group losses."
+      },
+      {
+        "candidate_id": "311cc125-652b-5ce0-9671-953008fe7dc7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Group net loss rose from $71.3M (2018) to $103.7M (2019); company share from $74.8M to $106M. Direct continuous loss evidence."
+      },
+      {
+        "candidate_id": "ec1df6d2-4820-5783-b0ee-1204962cb831",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Accounting policies for EPS, tax, segment reporting. Mentions net loss only in EPS calculation context. Boilerplate policy text."
+      },
+      {
+        "candidate_id": "6781def7-3192-51f8-8813-040a4499fbd1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "US GAAP/IFRS reconciliation shows net losses $74.8M, $106M, $125.7M for 2018-2020. Multi-period loss evidence in audited context."
+      },
+      {
+        "candidate_id": "f21b7a67-49a0-5606-bb8a-ee9ddf50658f",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "audited_financial_context"
+        ],
+        "reason": "Independent auditor's report for Shanghai Hutchison Pharma JV. No loss figures. Boilerplate audit opinion text only."
+      },
+      {
+        "candidate_id": "c9751da8-712e-58b7-8ffb-62e88bca98c1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Cash flow discussion links $32.4M net loss increase to operating cash outflow. 2018 vs 2019 comparison. Indirect loss evidence."
+      },
+      {
+        "candidate_id": "cd211b60-71d1-5a9e-9615-eaf0e4a71580",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Three-year net loss summary: $74.8M, $106M, $125.7M (2018-2020). Segment breakdown of oncology losses vs other profits. Strongest evidence."
+      },
+      {
+        "candidate_id": "b0adbb58-1a5e-5b4d-9dc8-b68b41b93699",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "audited_financial_context"
+        ],
+        "reason": "Independent auditor's report for Baiyunshan Hutchison JV. No loss figures. Boilerplate audit opinion text only."
+      },
+      {
+        "candidate_id": "8c96b95e-d6a4-5efc-bccf-d939c79eee85",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Full consolidated income statement: net losses $71.3M, $103.7M, $115.5M (2018-2020) with detailed line items. Strong primary evidence."
+      },
+      {
+        "candidate_id": "ee27329e-e057-50a1-b459-4314540f46b9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Net loss increased from $103.7M (2019) to $115.5M (2020); company share from $106M to $125.7M. Direct multi-period loss evidence."
+      },
+      {
+        "candidate_id": "4bd0f1d8-ae4f-535b-bca3-6ad6e2d9d599",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Cash flow discussion references net losses $71.3M (2018) and $103.7M (2019) with R&D increases. Indirect loss evidence via cash flow."
+      },
+      {
+        "candidate_id": "fff0cbc9-a076-5801-93a4-4332b56456cc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "US GAAP/IFRS reconciliation showing net losses $74.8M, $106M, $125.7M (2018-2020). Similar to other reconciliation but with lease/issuance context."
+      },
+      {
+        "candidate_id": "fcd17ae2-7f71-59ec-8028-57827df87b2b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Q1 2021 unaudited income statement: net loss $39.9M vs $15.4M Q1 2020. Shows losses continuing and worsening into 2021."
+      },
+      {
+        "candidate_id": "274f6227-60f4-5a29-a127-1d6652fd1731",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Q1 2021 comprehensive loss statement: total comprehensive loss $40.9M vs $17.1M Q1 2020. Extends loss evidence to 2021."
+      },
+      {
+        "candidate_id": "b280b678-d9a9-5d97-b090-77a2145c9aa0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Shanghai Hutchison Pharma JV comprehensive income showing profits. Not direct evidence of issuer continuous loss; contextual only."
+      },
+      {
+        "candidate_id": "ed73f569-f841-580d-8a1f-c0acb427db21",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Q1 2020 equity statement shows accumulated losses of $289.7M and quarterly net loss $16.1M. Demonstrates growing accumulated deficit."
+      },
+      {
+        "candidate_id": "43a05127-75b0-5f4e-8f7b-c95086c213a0",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "EPS calculation note showing Q1 net loss per share data for 2020 and 2021. Confirms loss but focuses on EPS mechanics."
+      },
+      {
+        "candidate_id": "3cce9a09-71ff-548b-b71f-d4692381ff4a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "Q1 2020 segment report showing oncology business losses driving overall net loss of $16.1M. Useful for loss composition analysis."
+      },
+      {
+        "candidate_id": "39b9573c-0327-56b2-ad89-1b6a7e98a1f3",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period"
+        ],
+        "reason": "Q1 2021 segment report showing oncology losses of $61.1M driving net loss of $41.1M. Extends loss trend into 2021 by segment."
+      }
+    ]
+  }
+}

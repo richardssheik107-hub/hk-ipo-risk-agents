@@ -1,8 +1,11 @@
+from datetime import date
 from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
 from ipo_risk.schemas import Evidence, IPOProfile, LLMCallMetadata, MarketSnapshot
+from ipo_risk.schemas.market import IPOMarketMetadata, MarketDailyBar
+from ipo_risk.schemas.market_features import MarketActivityObservation, MarketReferenceBar
 
 StructuredModel = TypeVar("StructuredModel", bound=BaseModel)
 
@@ -21,6 +24,34 @@ class LLMProvider(Protocol):
         response_model: type[StructuredModel],
     ) -> StructuredModel: ...
 class MarketDataProvider(Protocol):
+    """V04 market source while retaining the v0.3 snapshot compatibility call."""
+
     def get_snapshot(self, profile: IPOProfile) -> MarketSnapshot: ...
+
+    def get_listing_metadata(self, stock_code: str) -> IPOMarketMetadata | None: ...
+
+    def get_daily_bars(
+        self,
+        stock_code: str,
+        *,
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ) -> list[MarketDailyBar]: ...
+
+
+class MarketReferenceDataProvider(Protocol):
+    """V04-3 reference series, isolated from per-security market data."""
+
+    def get_benchmark_bars(
+        self, reference_id: str, *, end_date_exclusive: date
+    ) -> list[MarketReferenceBar]: ...
+
+    def get_industry_bars(
+        self, reference_id: str, *, end_date_exclusive: date
+    ) -> list[MarketReferenceBar]: ...
+
+    def get_market_activity(
+        self, *, end_date_exclusive: date
+    ) -> list[MarketActivityObservation]: ...
 class IPODataProvider(Protocol):
     def get_profile(self, company_name: str, stock_code: str = "") -> IPOProfile: ...

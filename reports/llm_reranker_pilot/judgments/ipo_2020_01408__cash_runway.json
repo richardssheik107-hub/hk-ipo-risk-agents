@@ -1,0 +1,318 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "b86d8e52-26c4-56e3-8397-670f3e923af1",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary cash flow table with ending cash (8,593–40,900千澳門元), operating cash flow, multiple periods incl. Feb 2020. Primary data for cash runway."
+      },
+      {
+        "candidate_id": "2e9ff5c8-33de-555b-933b-661b95c51c61",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed operating cash flow line items from formal cash flow statement. No ending cash in excerpt; operating cash flow data supports runway analysis."
+      },
+      {
+        "candidate_id": "a4789f1a-8dd0-5a91-a799-2abcdc7fb58a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Formal cash flow statement continuation with ending cash (8,593–40,900千澳門元) and financing/investing details across all periods incl. Feb 2020."
+      },
+      {
+        "candidate_id": "f8d2c379-bab8-5c92-9557-d623a1b23380",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "MD&A narrative explaining operating cash flow components for 2017–2019 with specific figures (15.2M–16.5M MOP). Supporting context for cash flow data."
+      },
+      {
+        "candidate_id": "7d68c9eb-26bd-5e1c-a89f-6563d23a20b3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "IFRS 9 financial instrument reclassification table. Mentions bank balances in classification context only; not directly relevant to cash runway."
+      },
+      {
+        "candidate_id": "ffa595c7-8a0c-5964-913c-df4db4bee3c4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "MD&A narrative on operating cash flow decline from 28.6M to 7.1M MOP with detailed reasons. Relevant to recent cash generation trend."
+      },
+      {
+        "candidate_id": "b5c7e956-d62b-52e9-a333-49702694d48a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Directors state sufficient working capital for at least 12 months. Key runway sufficiency assessment with financing cash flow details."
+      },
+      {
+        "candidate_id": "d7383020-b20f-5527-8cbc-1d55fb0c9093",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "MD&A cash flow summary explicitly cited from accountant's report. Full ending cash, operating cash flow, all periods incl. Feb 2020. Top-tier evidence."
+      },
+      {
+        "candidate_id": "a42a775b-4fad-5030-ab51-73d3327ed19e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.68,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Balance sheet discussion showing bank balances and cash (8,593–40,900千澳門元). Ending cash from balance sheet perspective."
+      },
+      {
+        "candidate_id": "5239477b-8179-599c-a284-cafafcd90b4c",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Formal consolidated balance sheet from accountant's report showing bank balances and cash. Ending cash from authoritative source."
+      },
+      {
+        "candidate_id": "079f160f-cabe-56d6-a323-14e2c47b5b84",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Parent company (not group) balance sheet with minimal cash (0–5千澳門元). Not relevant to group-level cash runway assessment."
+      },
+      {
+        "candidate_id": "cb13a17e-6ef2-58f1-831e-c91f226f485a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.68,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Accountant's report notes on bank balances: ending cash, pledged deposits, interest rates, currency breakdown. Detailed cash composition."
+      },
+      {
+        "candidate_id": "2327bf5d-3fa3-5af0-84ef-ef77acfcdcc4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Explicit 8-month cash runway estimate under COVID-19 stress scenario as of Feb 29 2020. Directly assesses cash runway risk."
+      },
+      {
+        "candidate_id": "51fc3c82-0acc-5edb-989e-896c2326c7ba",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Same 8-month runway estimate with complete assumption list (i–ix). Comprehensive stress-scenario runway assessment."
+      },
+      {
+        "candidate_id": "b00a448d-aca2-5018-9fdf-056ca9246fd8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Ending cash 40.9M MOP, 2-month operating buffer of 31.4M, expected year-end decrease. Direct runway adequacy discussion."
+      },
+      {
+        "candidate_id": "6adb257b-d63e-533d-bba7-04d82e6f76fe",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Capital risk management section. Mentions cash in capital structure context only. Not directly relevant to cash runway."
+      },
+      {
+        "candidate_id": "ea37d79e-663d-581f-b00f-446e52e5908a",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [],
+        "reason": "Standard liquidity risk management language. No specific cash figures or runway data. Boilerplate risk framework description."
+      },
+      {
+        "candidate_id": "bb184219-2352-5672-a088-9af3ee0b8132",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Accounting policy for financial instruments. Mentions bank balances as asset class. Irrelevant to cash runway assessment."
+      },
+      {
+        "candidate_id": "fc406cf1-25fa-586b-94b2-7d7b445ec4b8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "MD&A discussing working capital changes with bank balance figures (8.6M–40.9M MOP). Narrative context for cash position."
+      }
+    ]
+  }
+}

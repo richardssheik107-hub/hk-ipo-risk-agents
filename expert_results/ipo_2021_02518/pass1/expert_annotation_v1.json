@@ -1,0 +1,474 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02518",
+  "stock_code": "2518.HK",
+  "company_name": "汽車之家－Ｓ",
+  "document_id": "ipo_2021_02518",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The audited cash flow statement shows positive net cash inflow from operating activities in each comparable year, including RMB 3,325,631 thousand for the year ended 31 December 2020. Under Protocol v1.1.1, non-negative operating cash flow means there is no operating cash burn and cash runway is not applicable. The cash input uses cash and cash equivalents of RMB 1,751,222 thousand at 31 December 2020, excluding restricted cash in accordance with the formal cash definition and reconciliation.",
+      "calculation_required": true,
+      "calculation_method": "cash_runway",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 1751222,
+        "net_cash_from_operating_activities": 3325631,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The audited consolidated statements report positive net profit in all three comparable annual periods: RMB 2,863,531 thousand in 2018, RMB 3,200,645 thousand in 2019 and RMB 3,407,567 thousand in 2020. There are therefore zero comparable loss periods, so the continuous-loss definition is not met.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_metric": "net_profit",
+        "net_profit": [
+          2863531,
+          3200645,
+          3407567
+        ],
+        "comparable": true
+      },
+      "calculation_result": {
+        "loss_period_flags": [
+          false,
+          false,
+          false
+        ],
+        "comparable_loss_period_count": 0,
+        "assessment": "no_continuous_loss"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Audited total net revenues increased from RMB 7,233,151 thousand in 2018 to RMB 8,420,751 thousand in 2019 and RMB 8,658,559 thousand in 2020. The comparable year-on-year growth rates are approximately 16.42% and 2.82%, both above the frozen negative-growth trigger.",
+      "calculation_required": true,
+      "calculation_method": "year_over_year_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "revenue_metric": "total_net_revenues",
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "revenues": [
+          7233151,
+          8420751,
+          8658559
+        ]
+      },
+      "calculation_result": {
+        "2019_vs_2018_growth_pct": 16.41884705572993,
+        "2020_vs_2019_growth_pct": 2.8240711546986725,
+        "minimum_comparable_growth_pct": 2.8240711546986725,
+        "assessment": "no_negative_comparable_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants report states that no single customer accounted for 10% or more of total net revenues in 2018, 2019 or 2020. Preserving the strict disclosed bound, the largest-customer share is <10% and the aggregate share of any five customers is therefore <50%, excluding both the medium and high frozen concentration thresholds.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "single_customer_upper_bound_pct": 10,
+        "maximum_customers_considered": 5,
+        "bound_operator": "<"
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<10%",
+        "top_five_customer_bound": "<50%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The formal Business disclosure states that the five largest suppliers together accounted for less than 30% of purchases in each of 2018, 2019 and 2020. This strict aggregate bound also implies the largest supplier was <30%, excluding the frozen medium and high supplier-concentration thresholds.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "top_five_supplier_upper_bound_pct": 30,
+        "maximum_suppliers_considered": 5,
+        "bound_operator": "<"
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<30%",
+        "top_five_supplier_bound": "<30%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.88,
+      "reasoning": "The audited consolidated financial statements disclose that Tiantianpai, a consolidated subsidiary acquired at 31 December 2020, had issued series of preferred shares redeemable by holders upon events not wholly within Tiantianpai’s control, and the resulting interest is recognized as convertible redeemable non-controlling interests. This is an actual effective redemption feature. However, the obligation is at the consolidated subsidiary rather than directly at Autohome Inc.; under the Protocol requirement to distinguish issuer from shareholder/subsidiary obligations, final scope treatment requires review. The Protocol’s provisional candidate severity is medium.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.94,
+      "reasoning": "The formal Business/legal disclosure states that there was no current legal proceeding that management believed would materially adversely affect the business or operating results. PRC legal counsel further states that the principal PRC subsidiaries complied with applicable laws in all material respects, had obtained all major necessary licences and approvals for principal operations, those licences remained effective and valid at the latest practicable date, and there was no material legal obstacle to renewal. Regulatory sections disclose certain licence renewals in process, but do not establish expiry, non-compliance, or a material unresolved regulatory effect; the higher-authority legal conclusion therefore does not support the frozen risk trigger.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02518",
+      "stock_code": "2518.HK",
+      "company_name": "汽車之家－Ｓ",
+      "document_id": "ipo_2021_02518",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The formal Business disclosure describes an already commercialized automotive internet platform with multiple monetized service lines and reports substantial recurring net revenues of RMB 7,233.2 million in 2018, RMB 8,420.8 million in 2019 and RMB 8,658.6 million in 2020. The core business therefore is not a non-commercialized product with no product-sales revenue, so the precommercial-product candidate condition is not met.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "cash_runway",
+      "page": 293,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併現金流量表\n（以千為單位）\n截至12月31日止年度\n2018年 2019年 2020年\n人民幣 人民幣 人民幣 美元\n經營活動淨現金流入 . . . . . . . . . . . . . . . . . . . 3,111,438 2,889,369 3,325,631 509,675",
+      "evidence_reason": "Audited cash-flow evidence establishes positive operating cash flow for all comparable years, including the selected latest period.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "cash_runway",
+      "page": 305,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "現金及現金等價物包括可用現金、存放於銀行或其他金融機構的活期存款、定期存款以及貨幣市場基金，無提取及使用限制，且原到期日為三個月或以內。",
+      "evidence_reason": "Defines the authoritative cash-and-cash-equivalents input used for the runway assessment.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "cash_runway",
+      "page": 305,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "現金及現金等價物 . . . . . . . . . . . . . . . . . . . . . 211,970 1,988,298 1,751,222 268,387\n受限制現金. . . . . . . . . . . . . . . . . . . . . . . . . . . . 5,000 5,200 17,926 2,747\n合併現金流量表所示現金、現金等價物及\n　受限制現金總額 . . . . . . . . . . . . . . . . . . . . . 216,970 1,993,498 1,769,148 271,134",
+      "evidence_reason": "Provides the 2020 cash-and-cash-equivalents amount and separately identifies restricted cash, allowing the standard cash input to exclude restricted cash.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "continuous_loss",
+      "page": 291,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "淨利潤 . . . . . . . . . . . . . . . . . . . . . . . . . 2,863,531 3,200,645 3,407,567 522,230",
+      "evidence_reason": "The audited net-profit row for 2018-2020 shows profits rather than losses in all three comparable annual periods.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "revenue_growth",
+      "page": 291,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "淨收入總額\n（分別包括截至2018年、2019年及\n2020年12月31日止年度的為數\n　人民幣473,590元、人民幣\n447,350元及人民幣621,845元\n　（95,302美元）的關聯方交易）. . . . 7,233,151 8,420,751 8,658,559 1,326,981",
+      "evidence_reason": "Audited total net revenues provide the comparable 2018-2020 inputs used to calculate year-on-year revenue growth.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "customer_concentration",
+      "page": 320,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度，概無單獨佔淨收入總額10%以上的客戶。",
+      "evidence_reason": "This formal audited concentration disclosure proves a strict <10% per-customer revenue bound for each comparable year, which excludes the frozen concentration thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "supplier_concentration",
+      "page": 165,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度各年，我們的五大供應商合共分別佔我們採購額的30%以下。",
+      "evidence_reason": "The formal Business disclosure gives a strict <30% aggregate bound for the five largest suppliers in every comparable year.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "redemption_rights",
+      "page": 342,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "(a) 天天拍已向若干股東發行多個系列的優先股，可由該等股東於並非可由天天拍完全控制的若干事項後發生贖回。因此，該等優先股作為可換股可贖回少數股東權益入賬。",
+      "evidence_reason": "Shows an actual redemption feature exercisable by preferred shareholders upon events outside the subsidiary’s full control, requiring review under the frozen redemption-rights policy.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "redemption_rights",
+      "page": 290,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "夾層權益：\n可轉換可贖回少數股東權益. . . . . . . . 19 — — 1,056,237 161,875",
+      "evidence_reason": "Cross-supports that the redeemable non-controlling interest was recognized in consolidated mezzanine equity at 31 December 2020.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "material_litigation_compliance",
+      "page": 168,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們不時及未來會面臨我們的日常業務過程中產生的各種索償及法律、監管及╱或行政訴訟。目前並無面臨任何法律訴訟，而我們的管理層認為或會對我們的業務及經營業績產生重大不利影響。",
+      "evidence_reason": "Formal Business/legal disclosure states that no current proceeding was considered by management to have a material adverse effect, excluding a material pending litigation trigger.",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "material_litigation_compliance",
+      "page": 168,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們的中國法律顧問認為，於業績紀錄期，我們根據中國法律註冊成立的主要附屬公司已於所有重大方面遵守當前生效的相關中國法律法規，並已自相關政府部門獲得中國主要業務營運所需的所有主要的必要執照及批文，且於最後實際可行日期，此等執照及批文就主要業務營運而言仍具效力及有效，以及並無存在重續有關主要執照及批文的重大法律障礙。",
+      "evidence_reason": "PRC legal counsel confirms material compliance, possession and continuing validity of principal licences, and no material legal obstacle to renewal.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "material_litigation_compliance",
+      "page": 224,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "車之家信息及盛拓鴻遠均持有ICP許可證。盛拓鴻遠正處於更新其ICP許可證的過程中，並預計將在2021年3月取得更新後的ICP許可證。",
+      "evidence_reason": "Cross-checks a disclosed licence renewal in process; the text does not state that the existing licence was invalid or that renewal created a material unresolved effect.",
+      "confidence": 0.92
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "material_litigation_compliance",
+      "page": 233,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "目前我們正通過網站及移動應用程序提供互聯網直播服務。車之家信息已於2010年2月9日取得網絡傳播視聽節目許可證，該許可證目前正在重續中。",
+      "evidence_reason": "Cross-checks another renewal in process while confirming the licence had been obtained; no material unresolved effect is established by this passage.",
+      "confidence": 0.9
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "risk_code": "precommercial_product",
+      "page": 146,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於業績紀錄期，我們的經營業績強勁。我們的淨收益由2018年的人民幣7,233.2百萬元增長16.4%至2019年的人民幣8,420.8百萬元，並進一步增長2.8%至2020年的人民幣8,658.6百萬元（1,327.0百萬美元）。",
+      "evidence_reason": "Formal Business disclosure demonstrates substantial realized revenue across the track record period, proving that the core platform is already commercialized.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

@@ -6,7 +6,7 @@
 | v0.2.0 | 真实文档纵向闭环与赛事数据治理 | 已完成并发布 |
 | v0.3.0 | Financial、Legal、Business 多 Agent 招股书风险分析产品 | 已完成并发布 |
 | v0.3.5 | Expert Golden 重建与 Evidence Intelligence | 研究中（Phase 0.6B） |
-| v0.4.0 | 市场数据、收益标签与预测模型 | NOT STARTED |
+| v0.4.0 | 市场数据、收益标签与预测模型 | V04-1/V04-2 MERGED；V04-3 IMPLEMENTED PENDING REVIEW；模型未开始 |
 | v0.5.0 | 扩展人工标注与正式评测 | 计划中 |
 | v1.0.0 | 正式参赛版本 | 计划中 |
 
@@ -33,7 +33,9 @@
 - Golden 人工治理按`single_named_human_review_v1`完成；不将一审表述为独立双审；
 - 不把规则分描述为概率，不提供市场收益预测；
 - 2025 blind 数据未参与开发调优；
-- v0.4 Market Agent、市场标签、统计/机器学习模型尚未开始。
+- v0.4 的 Market Foundation 与V04-2文档风险快照/特征/数据集契约已合并；V04-3
+  上市前市场特征引擎已实现并等待Review。普通股-only证券资格及2025 blind outcome
+  均fail closed；生产真实行情adapter和模型尚未开始。
 
 详细状态以 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为准，
 Golden/waiver 语义见 [V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。

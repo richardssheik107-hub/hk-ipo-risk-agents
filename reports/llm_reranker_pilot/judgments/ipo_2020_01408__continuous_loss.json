@@ -1,0 +1,160 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "be580e8c-8d64-54f9-9dce-414d4a893dcb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Parent company reserves statement showing losses in 2017, 2019, and 2020 with accumulated losses resuming growth; most direct evidence of recurring losses in audited financials."
+      },
+      {
+        "candidate_id": "c0553095-d6e9-5dea-93e6-5ca1bb13cb51",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Consolidated summary P&L showing profits in all periods 2017–2020; key counter-context to parent company losses, with specific figures and multi-period coverage."
+      },
+      {
+        "candidate_id": "5a682969-0ceb-56f8-8242-8baa910b1d79",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history"
+        ],
+        "reason": "MD&A discussing profit decrease from 2017 to 2018; both years profitable, limited relevance to continuous loss assessment."
+      },
+      {
+        "candidate_id": "7bcae1d4-1360-5322-ab60-91fc29527084",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history"
+        ],
+        "reason": "MD&A discussing profit increase from 2018 to 2019; both years profitable, limited relevance to continuous loss assessment."
+      },
+      {
+        "candidate_id": "8b3a9b8d-0bc9-58b2-ac42-c5cdfd9c4d62",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Financial ratios showing positive net profit margins and ROE across all periods; contextual profitability indicator only."
+      },
+      {
+        "candidate_id": "d9d4434b-9d7a-59f0-8924-775b3fbe70df",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history"
+        ],
+        "reason": "Overview section summarizing revenue and profit figures; all periods profitable, summary-level context only."
+      },
+      {
+        "candidate_id": "1ecb025b-9a67-5f00-8f63-127063cbe0d7",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Full consolidated P&L statement with detailed line items showing all periods profitable; comprehensive counter-evidence in audited financial context."
+      },
+      {
+        "candidate_id": "0cb2569f-69f0-5545-898b-aaea8a7070a1",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Accountant's report note on profit composition via employee costs and depreciation; indirect relevance to loss assessment."
+      },
+      {
+        "candidate_id": "db112bb4-bab9-5100-884c-7af42a13161f",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "EPS calculation showing profit attributable to owners across all periods; tangential to continuous loss assessment."
+      }
+    ]
+  }
+}

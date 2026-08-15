@@ -1,0 +1,343 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "edbff4a0-f163-59cf-847c-7bd376aebf78",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Standard accounting policy text on consolidation, FX translation, and credit risk. No actual revenue figures or growth data. Boilerplate."
+      },
+      {
+        "candidate_id": "425dfeac-6056-5616-abdf-951f5911156e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "reporting_period"
+        ],
+        "reason": "Lease accounting policy and other income description. No revenue growth data. Boilerplate accounting policy."
+      },
+      {
+        "candidate_id": "301d67ec-5fa4-5019-a106-11e448043e9d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Q1 2020 segment revenue figures ($51.6M total) but single period only — no comparative periods for growth assessment."
+      },
+      {
+        "candidate_id": "f28d7ffe-85f0-5e11-bc20-b100fb19bad2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Defines two operating segments and discusses land compensation. No actual revenue figures for growth assessment."
+      },
+      {
+        "candidate_id": "b35b98b7-64af-5f49-93de-33dec777ff4f",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "JV segment revenue for 2020 only ($276M). Single period, no comparative — limited value for revenue growth."
+      },
+      {
+        "candidate_id": "feb62d95-d467-5e39-8d47-f9cec2aed4b1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Net income from other business for 2018-2020 ($41.4M/$41.5M/$72.8M). Shows earnings growth but not revenue itself."
+      },
+      {
+        "candidate_id": "dbac46e5-1145-5f8b-bc50-f13cba7e9aeb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "JV segment revenue for 2019 and 2020 ($215.4M to $232.4M). Comparative periods enable growth calculation."
+      },
+      {
+        "candidate_id": "3ad033ea-6030-5cba-8426-c6ddacba5d38",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Key evidence: consolidated revenue for 2018-2020 ($214.1M/$204.9M/$228.0M) from audited financials. Directly shows revenue trend."
+      },
+      {
+        "candidate_id": "c2a65f49-d8af-5c7a-a316-d90a911d9aa3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Revenue recognition policy for product sales and services. No actual revenue data. Standard accounting policy boilerplate."
+      },
+      {
+        "candidate_id": "d6bb49b4-14a3-5885-a272-a71aaa5aa797",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Goodwill impairment testing methodology mentioning revenue growth as assumption input. No actual revenue growth data."
+      },
+      {
+        "candidate_id": "c0eaaf97-f5bc-5ed1-80e8-ec0aebdb5473",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period"
+        ],
+        "reason": "Estimated revenue growth rates (11.9%/6.2%/18.8%) for goodwill fair value testing. Assumptions, not actual revenue growth."
+      },
+      {
+        "candidate_id": "afaaad57-0adf-5c62-baa0-a0a1dcbc2fe0",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed revenue breakdown by segment and type for 2018-2020 in thousands USD. Granular comparative revenue data."
+      },
+      {
+        "candidate_id": "7765c959-e48a-59dd-828a-1a3d012597a4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Other business revenue by product category for 2018-2020 ($172.9M/$178.1M/$197.8M). Comparative revenue with breakdown."
+      },
+      {
+        "candidate_id": "0b0e2926-57ff-5834-a580-a36d7ddf6561",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Non-consolidated JV revenue 2018-2020 ($215.8M/$215.4M/$232.4M). Not in consolidated revenue, but shows JV growth."
+      },
+      {
+        "candidate_id": "bbbb5400-8cd1-562a-ae1a-02eb70293cb7",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "JV revenue table for 2018-2020: Shanghai $275.6M/$272.1M/$276.4M, Baiyunshan $215.8M/$215.4M/$232.4M. Comparative revenue data."
+      },
+      {
+        "candidate_id": "5cf9fa7d-50e6-5066-abba-adcf69683822",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue"
+        ],
+        "reason": "Revenue recognition policy for other business — product sales and services. No actual revenue figures. Boilerplate."
+      },
+      {
+        "candidate_id": "43e97fff-a1c7-522c-ae35-8f918b25ede7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period"
+        ],
+        "reason": "Discusses expense ratios to revenue (R&D 67.4%→76.7%, admin 19.1%→21.9%) but no actual revenue figures or growth data."
+      },
+      {
+        "candidate_id": "22ca2500-25c9-52a2-8b72-d2bbc42fd9f2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Shanghai JV revenue 2019-2020 ($272.1M→$276.4M, +1.6%) with income statement and growth driver (麝香保心丸 +4.4%)."
+      },
+      {
+        "candidate_id": "f9fac529-0b82-50a6-889e-92c7c58b3bfa",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Discusses Shanghai JV expenses aligned with revenue growth, profit +9.3%. Indirect revenue growth reference, no direct figures."
+      },
+      {
+        "candidate_id": "7d049d14-a65d-5b9b-9863-1977fd639c16",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Baiyunshan JV revenue grew 7.9% from $215.4M to $232.4M (2019-2020), driven by 板藍根 sales post-COVID. Direct growth data."
+      }
+    ]
+  }
+}

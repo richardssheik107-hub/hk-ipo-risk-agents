@@ -1,0 +1,59 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "7d98ec78-1882-5ea1-a7f1-092d3dad1f65",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Shows parent company accumulated losses (RMB 569K and 780K) across two consecutive periods (2018–2019) within audited historical financial notes. Direct primary evidence of continuous loss at company level."
+      },
+      {
+        "candidate_id": "7531ddee-77e3-588b-aee7-38bb3a455fcc",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Multi-period group P&L summary showing revenue, gross profit, and net profit across 5 periods. Group was profitable, serving as relevant counter-evidence for continuous loss assessment. Marked unaudited."
+      },
+      {
+        "candidate_id": "100dbfc0-bba2-57af-98bc-d7d5873f1c61",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Provides adjusted profit figures showing declining trend (56,217→39,172) and revenue breakdown by segment. Supports Candidate 2 context but limited incremental value for direct continuous loss assessment."
+      }
+    ]
+  }
+}

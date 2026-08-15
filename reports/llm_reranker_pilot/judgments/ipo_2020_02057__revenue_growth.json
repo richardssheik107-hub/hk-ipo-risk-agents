@@ -1,0 +1,318 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c944745f-a316-5dfb-8c12-27dc76a5b7c5",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit",
+          "reporting_period"
+        ],
+        "reason": "Cost analysis for 2018-2019 with revenue percentage references; mentions materials sales revenue growth consistency but primarily about operating costs, not direct revenue growth."
+      },
+      {
+        "candidate_id": "59ed46a0-5d56-511b-ac4c-93c4c00a3be0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "HK listing rule disclosure requirements and accounting standards adoption (ASC 606 etc.); regulatory boilerplate with no actual revenue growth data."
+      },
+      {
+        "candidate_id": "2ddd410c-a581-514f-ab85-944d66c6d1bc",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit",
+          "income_statement_authority"
+        ],
+        "reason": "Summary income statement table with revenue by segment (express, freight, materials, other) for 2017-2019 and H1 2019/2020 in RMB and USD. Primary source for assessing revenue growth across periods."
+      },
+      {
+        "candidate_id": "a1ac960b-a07f-58e3-ab6c-ae22bca856f4",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit",
+          "reporting_period"
+        ],
+        "reason": "Operating cost components table with revenue percentages for 2017-2019 and H1 2019/2020. Specific figures but focused on costs; revenue only appears as denominator in ratios."
+      },
+      {
+        "candidate_id": "61393a30-9924-5ef2-ada3-c3d58baf8210",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Materials and other cost ratios as percentage of revenue; mentions revenue growth consistency for materials but primarily a cost-management discussion."
+      },
+      {
+        "candidate_id": "039611bc-5254-5c74-915f-5a510ab6a7f5",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Interest income, interest expense, FX gains, and income tax for H1 2019 vs H1 2020. Interest income is not operating revenue; irrelevant to revenue growth assessment."
+      },
+      {
+        "candidate_id": "03d314c1-5e1a-5973-9674-411b51946a36",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Interest income, investment impairments, unrealized investment gains, and income tax for 2018 vs 2019. Non-operating items; irrelevant to revenue growth."
+      },
+      {
+        "candidate_id": "b74162a2-349e-57ef-87d7-9f6dad07aa40",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Cost analysis for 2017 vs 2018 with revenue percentage references; mentions materials sales revenue growth but primarily about cost components."
+      },
+      {
+        "candidate_id": "c5323f54-fedb-5453-978c-d9f82a433268",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Interest income, disposal gains, FX losses, and income tax for 2017 vs 2018. Non-operating financial items; irrelevant to revenue growth."
+      },
+      {
+        "candidate_id": "b095bc66-552a-5466-bf5b-af75fe3fb240",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Acquisition accounting (COE business), goodwill, fair value measurement, and tax jurisdiction discussion. No revenue growth data."
+      },
+      {
+        "candidate_id": "fcd3b61d-9885-56d5-a013-3a6adb7169ac",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Tax rates across Cayman Islands, BVI, Hong Kong, and China jurisdictions. No revenue or revenue growth information."
+      },
+      {
+        "candidate_id": "74a5f562-7f7d-5c5d-9531-75f8bfcb9ec4",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Operating cash flow discussion mentioning revenue from express services generating RMB 9.6B net cash inflow for H1 2020. Revenue appears in cash flow context, not direct revenue analysis."
+      },
+      {
+        "candidate_id": "cee1a969-7c41-58ee-8efb-fe6e7c5ebd2d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Operating cash flow for 2017-2020 H1 with revenue cash inflow figures (RMB 221B for 2019, RMB 164B for 2018). Revenue in cash flow context, not direct growth analysis."
+      },
+      {
+        "candidate_id": "700fe28d-e389-5adc-8a0f-ac62ec551410",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Goodwill impairment testing methodology; mentions actual revenue performance as a qualitative factor but provides no revenue growth data."
+      },
+      {
+        "candidate_id": "9fbf29bd-8ce5-5e4d-b25a-a050759044cc",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "COVID-19 impact with specific quarterly revenue: Q1 2020 RMB 3,915.9M (down 14.4% YoY) and Q2 2020 RMB 6,402.4M (up 18.0% YoY). Primary evidence for recent revenue trend."
+      },
+      {
+        "candidate_id": "0a7c3e26-2810-547c-bf8e-dba7f805d54e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Qualitative discussion of revenue concentration in China and COVID-19 impact on total revenue. Contextual but lacks specific revenue growth figures."
+      },
+      {
+        "candidate_id": "1b144a9c-8a6e-5d3d-b442-2596944db753",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "comparative_periods",
+          "reporting_period"
+        ],
+        "reason": "Revenue drivers explained: parcel volume from 6,219M (2017) to 12,121M (2019) and H1 comparison. Specific volume data but no direct revenue figures; supports understanding revenue growth drivers."
+      },
+      {
+        "candidate_id": "9dcb6a97-225a-50e4-9b01-e97db90e15b2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "revenue",
+          "comparative_periods",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Direct H1 2020 vs H1 2019 revenue comparison: 3.2% growth from RMB 10B to RMB 10.3B. Explains drivers (volume +29.8%, price -20.5%) and segment changes. Primary evidence for revenue growth."
+      },
+      {
+        "candidate_id": "fa829e36-d93e-50e4-ab36-a518be8ab8ac",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "comparative_periods",
+          "currency_unit"
+        ],
+        "reason": "Operating expenses and cost productivity for H1 2020 vs H1 2019. Mentions per-parcel price decrease affecting margins but primarily about expenses, not revenue growth."
+      },
+      {
+        "candidate_id": "41b2608f-0a9d-519f-b977-23755870c188",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Market risk disclosures on inflation and FX risk. States revenue is primarily RMB-denominated but provides no revenue growth data."
+      }
+    ]
+  }
+}
