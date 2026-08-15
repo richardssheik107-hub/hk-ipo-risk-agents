@@ -1,0 +1,155 @@
+{
+  "manifest_version": "v04_source_manifest_v1",
+  "entries": [
+    {
+      "source_name": "V03 enhanced offline document pipeline",
+      "logical_id": "document_result_pipeline",
+      "dataset_version": "v03_enhanced_v2@96cb081c58b6c61b0cdfaae07e2f6ad899c0d6df",
+      "sha256": "6c7ca910d08fe98a60c48c02f8817d6ff47f79c419caa29552b6d4a484f54868",
+      "relative_path": "configs/v03_offline.yaml",
+      "coverage": {
+        "authoritative_snapshots_existing": 0,
+        "target_cases": 438
+      },
+      "availability": "available",
+      "provenance": {
+        "external_llm_calls_per_case": 0,
+        "full_batch_executed": false,
+        "workflow": "enhanced_v2"
+      }
+    },
+    {
+      "source_name": "Hang Seng Index daily closes",
+      "logical_id": "hsi",
+      "dataset_version": "not_supplied",
+      "sha256": null,
+      "relative_path": null,
+      "coverage": {
+        "target_cases": 438,
+        "usable_cases": 0
+      },
+      "availability": "missing",
+      "provenance": {
+        "blocker": "HSI_SOURCE_REQUIRED"
+      }
+    },
+    {
+      "source_name": "Governed industry-index daily closes",
+      "logical_id": "industry_index",
+      "dataset_version": "not_supplied",
+      "sha256": null,
+      "relative_path": null,
+      "coverage": {
+        "target_cases": 438,
+        "usable_cases": 0
+      },
+      "availability": "missing",
+      "provenance": {
+        "blocker": "INDUSTRY_INDEX_SOURCE_REQUIRED"
+      }
+    },
+    {
+      "source_name": "Authoritative IPO industry to benchmark mapping",
+      "logical_id": "industry_mapping",
+      "dataset_version": "not_supplied",
+      "sha256": null,
+      "relative_path": null,
+      "coverage": {
+        "ipo_industry_name_available": 432,
+        "mapped_to_index": 0,
+        "target_cases": 438
+      },
+      "availability": "missing",
+      "provenance": {
+        "blocker": "INDUSTRY_INDEX_MAPPING_REQUIRED",
+        "note": "An industry name is not an authoritative benchmark mapping."
+      }
+    },
+    {
+      "source_name": "Competition HK share EOD prices",
+      "logical_id": "ipo_eod",
+      "dataset_version": "competition_hkshareeodprices_v1",
+      "sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+      "relative_path": "hkshareeodprices.csv",
+      "coverage": {
+        "duplicate_stock_date_rows": 0,
+        "invalid_ohlcv_rows": 8590,
+        "matched": 432,
+        "missing": 6,
+        "target_cases": 438,
+        "valid_1d": 432,
+        "valid_20d": 432,
+        "valid_5d": 432,
+        "valid_60d": 432
+      },
+      "availability": "available",
+      "provenance": {
+        "data_root": "configured competition data root",
+        "invalid_row_policy": "exclude_and_report",
+        "outcome_cohorts_indexed": "2020-2024"
+      }
+    },
+    {
+      "source_name": "Official merged IPO metadata workbook",
+      "logical_id": "ipo_metadata",
+      "dataset_version": "sha256:2cc214e1f027f44de582eddb02b13dfc2f43f57cc8c530250431ad36ed222e25",
+      "sha256": "2cc214e1f027f44de582eddb02b13dfc2f43f57cc8c530250431ad36ed222e25",
+      "relative_path": "HK_Official_Merged_565_First_with_IPO.xlsx",
+      "coverage": {
+        "by_listing_year": {
+          "2020": 125,
+          "2021": 97,
+          "2022": 78,
+          "2023": 68,
+          "2024": 70
+        },
+        "matched": 438,
+        "target_cases": 438
+      },
+      "availability": "available",
+      "provenance": {
+        "bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
+        "catalog_bridge": "data/catalog/ipo_official_master_bridge.csv",
+        "security_type_warning": "ShareType H also occurs on explicit SPAC rows and is not normalized eligibility metadata."
+      }
+    },
+    {
+      "source_name": "HKEX total-market daily turnover",
+      "logical_id": "market_turnover",
+      "dataset_version": "not_supplied",
+      "sha256": null,
+      "relative_path": null,
+      "coverage": {
+        "target_cases": 438,
+        "usable_cases": 0
+      },
+      "availability": "missing",
+      "provenance": {
+        "blocker": "MARKET_TURNOVER_SOURCE_REQUIRED",
+        "note": "S_DQ_AMOUNT is per-security transaction amount, not total-market turnover."
+      }
+    },
+    {
+      "source_name": "HK share security description",
+      "logical_id": "security_master",
+      "dataset_version": "sha256:d04064097e776d54b7e32ad391a0ba162443bc2246432cdc0ad6da91df8df863",
+      "sha256": "d04064097e776d54b7e32ad391a0ba162443bc2246432cdc0ad6da91df8df863",
+      "relative_path": "hksharedescription.csv",
+      "coverage": {
+        "exact_wind_matches": 0,
+        "institution_id_matches": 0,
+        "matched": 0,
+        "normalized_code_matches": 0,
+        "security_id_matches": 0,
+        "source_rows": 803,
+        "target_cases": 438
+      },
+      "availability": "blocked",
+      "provenance": {
+        "blocker": "SECURITY_MASTER_SOURCE_REQUIRED",
+        "listing_date_scope": "legacy rows listed no later than 2009",
+        "quarantine_reason": "SECURITY_MASTER_TRUNCATED"
+      }
+    }
+  ]
+}
