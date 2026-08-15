@@ -96,20 +96,15 @@ def test_packets_contain_no_paths_or_answer_artifacts() -> None:
             assert not any(marker in text for marker in forbidden), path
 
 
-def test_assignment_starts_unassigned() -> None:
+def test_assignment_tracker_matches_frozen_taskset() -> None:
     with (ROOT / "team_case_assignment.csv").open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         assert set(reader.fieldnames or ()) == ASSIGNMENT_COLUMNS
         rows = list(reader)
     assert len(rows) == 100
-    for row in rows:
-        assert not row["primary_annotator"]
-        assert row["primary_status"] == "not_started"
-        assert not row["second_pass_annotator"]
-        assert row["second_pass_status"] == "not_started"
-        assert row["adjudication_status"] == "not_started"
-        assert row["final_status"] == "not_started"
-        assert not row["notes"]
+    assert {row["case_id"] for row in rows} == {row["case_id"] for row in _manifest()}
+    assert {row["taskset_version"] for row in rows} == {"expert_golden_100_v1"}
+    assert {row["task_index"] for row in rows} == {str(index) for index in range(1, 101)}
 
 
 def test_assignment_uses_only_documented_progress_statuses() -> None:
