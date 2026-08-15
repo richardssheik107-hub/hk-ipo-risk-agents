@@ -39,3 +39,7 @@ class BlindDataLeakageError(MarketDatasetGovernanceError):
 
 class UnexpectedCohortYearError(MarketDatasetGovernanceError):
     """Raised when a cohort falls outside the frozen 2020-2025 universe."""
+
+
+class IneligibleMarketSecurityError(MarketDatasetGovernanceError):
+    """Raised when a security is outside the frozen v0.4 modeling universe."""

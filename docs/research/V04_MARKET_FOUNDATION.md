@@ -41,9 +41,43 @@ Every record has a named source and versioned provenance.
 
 `IPOMarketMetadata` records case/document identity, stock code, governance
 cohort year, listing date, official listing price when available, currency,
-exchange, source, and provenance. Missing listing price or date remains missing;
-the foundation never guesses it. The current committed catalog contains listing
-facts and EOD coverage metadata, but no committed OHLCV history.
+exchange, security type, modeling eligibility, eligibility reason/policy, source,
+and provenance. Missing listing price or date remains missing; the foundation
+never guesses it. The current committed catalog contains listing facts and EOD
+coverage metadata, but no committed OHLCV history.
+
+### 5.1 Cohort-year consistency
+
+When `listing_date` exists, its year must equal `cohort_year`; inconsistent
+metadata and labels fail schema validation. The catalog audit found 51 rows where
+the prospectus `source_year` differs from `official_listed_date.year`. Therefore
+`source_year` is not a safe modeling cohort proxy: a production market metadata
+adapter must derive cohort year from the authoritative official listing date,
+and must not silently inherit the document-source split.
+
+### 5.2 Security universe and eligibility
+
+Policy `v04_market_security_eligibility_v1` freezes the initial modeling universe:
+
+```text
+ordinary_equity -> eligible
+REIT            -> ineligible / outside v1 modeling universe
+SPAC            -> ineligible / outside v1 modeling universe
+warrant         -> ineligible / outside v1 modeling universe
+unknown         -> ineligible / unknown security type
+```
+
+Every `IPOMarketMetadata` row carries `security_type`, `modeling_eligibility`,
+`eligibility_reason`, and `eligibility_policy_version`. The decision must match
+the frozen policy, and `MarketSecurityEligibilityPolicy.require_eligible` is the
+modeling-universe gate. Unknown never defaults to ordinary equity.
+
+The official bridge exposes listing board and listing method, not a normalized
+authoritative security-type column. The existing catalog has explicit governance
+for known REIT/SPAC-warrant special lines, but absence from that small registry
+is not used here to guess ordinary-equity status. Until a production adapter
+supplies authoritative normalized security type, metadata defaults to `unknown`
+and is ineligible for modeling.
 
 ## 6. Canonical return formula
 
@@ -114,7 +148,9 @@ The split is deterministic and has no random fallback or legacy exception:
 ```
 
 The cohort is carried as explicit metadata and the expected split is derived in
-code. The v0.2-only `development_exception` is not inherited by V04 modeling.
+code. A known listing date must agree with that cohort, so a 2025 listing cannot
+be labeled as a 2024 validation row. The v0.2-only `development_exception` is not
+inherited by V04 modeling.
 
 ## 17. 2025 blind protection
 
@@ -134,6 +170,8 @@ No current timestamp, random value, LLM, or network call affects label output.
 ## 19. Current limitations
 
 - No production OHLCV adapter or downloaded raw market dump is committed.
+- No production adapter currently normalizes authoritative security type; unknown
+  securities fail closed at the modeling-eligibility gate.
 - No reliable benchmark series is integrated.
 - Missing official listing price produces unavailable labels.
 - Observed-session counting cannot distinguish an exchange holiday from another

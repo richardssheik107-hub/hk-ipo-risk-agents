@@ -7,10 +7,15 @@ import pytest
 
 from ipo_risk.market.exceptions import (
     BlindDataLeakageError,
+    IneligibleMarketSecurityError,
     MarketDatasetGovernanceError,
     UnexpectedCohortYearError,
 )
-from ipo_risk.market.governance import MarketDatasetGuard, MarketDatasetSplitPolicy
+from ipo_risk.market.governance import (
+    MarketDatasetGuard,
+    MarketDatasetSplitPolicy,
+    MarketSecurityEligibilityPolicy,
+)
 from ipo_risk.market.labels import MarketLabelGenerator
 from ipo_risk.market.validation import MarketDataValidator
 from ipo_risk.schemas.market import (
@@ -19,6 +24,8 @@ from ipo_risk.schemas.market import (
     MarketDataProvenance,
     MarketDatasetSplit,
     MarketExchange,
+    MarketSecurityEligibility,
+    MarketSecurityType,
 )
 
 
@@ -69,6 +76,62 @@ def bars(info: IPOMarketMetadata, count: int = 60) -> list[MarketDailyBar]:
 )
 def test_frozen_year_split(year: int, expected: MarketDatasetSplit) -> None:
     assert MarketDatasetSplitPolicy().split_for_year(year) is expected
+
+
+def test_ordinary_equity_is_accepted_and_policy_version_is_preserved() -> None:
+    policy = MarketSecurityEligibilityPolicy()
+    decision = policy.assess(MarketSecurityType.ORDINARY_EQUITY)
+    info = IPOMarketMetadata(
+        case_id="ipo_2024_00001",
+        stock_code="0001.HK",
+        cohort_year=2024,
+        listing_date=date(2024, 1, 2),
+        listing_price=Decimal("10"),
+        currency="HKD",
+        exchange=MarketExchange.HKEX,
+        security_type=decision.security_type,
+        modeling_eligibility=decision.eligibility,
+        eligibility_reason=decision.reason,
+        eligibility_policy_version=decision.policy_version,
+        source="fixture",
+        provenance=provenance("ordinary-equity"),
+    )
+
+    assert policy.require_eligible(info).eligibility is MarketSecurityEligibility.ELIGIBLE
+    assert info.eligibility_policy_version == "v04_market_security_eligibility_v1"
+
+
+@pytest.mark.parametrize(
+    "security_type",
+    [
+        MarketSecurityType.REIT,
+        MarketSecurityType.SPAC,
+        MarketSecurityType.WARRANT,
+        MarketSecurityType.UNKNOWN,
+    ],
+)
+def test_nonordinary_and_unknown_security_types_are_explicitly_ineligible(
+    security_type: MarketSecurityType,
+) -> None:
+    policy = MarketSecurityEligibilityPolicy()
+    decision = policy.assess(security_type)
+    info = IPOMarketMetadata(
+        case_id="ipo_2024_00001",
+        stock_code="0001.HK",
+        cohort_year=2024,
+        listing_date=date(2024, 1, 2),
+        exchange=MarketExchange.HKEX,
+        security_type=decision.security_type,
+        modeling_eligibility=decision.eligibility,
+        eligibility_reason=decision.reason,
+        eligibility_policy_version=decision.policy_version,
+        source="fixture",
+        provenance=provenance(security_type.value),
+    )
+
+    assert decision.eligibility is MarketSecurityEligibility.INELIGIBLE
+    with pytest.raises(IneligibleMarketSecurityError):
+        policy.require_eligible(info)
 
 
 def test_unexpected_year_is_rejected() -> None:

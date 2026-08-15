@@ -585,8 +585,9 @@ v0.3批量评测完成后增加：
 
 V04-1 Market Foundation 已实现并等待Review：包含市场数据Schema、IPO市场元数据、
 MarketDataProvider历史数据契约、1/5/20/60交易session标签、2020—2025时间分割、
-2025 blind代码级保护与完整性校验。这不代表完整v0.4完成；生产行情适配、Market Agent、
-文档特征契约及模型仍按后续阶段推进。专项政策见
+cohort/listing-year一致性、普通股-only证券资格、2025 blind代码级保护与完整性校验。
+这不代表完整v0.4完成；生产行情及证券类型metadata适配、Market Agent、文档特征契约及
+模型仍按后续阶段推进。专项政策见
 `docs/research/V04_MARKET_FOUNDATION.md`。
 
 | **编号** | **任务** | **主要输出** |

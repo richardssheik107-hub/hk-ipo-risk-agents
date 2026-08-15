@@ -17,6 +17,9 @@ from ipo_risk.schemas.market import (
     MarketLabelHorizon,
     MarketLabelPolicy,
     MarketOutcomeLabel,
+    MarketSecurityEligibility,
+    MarketSecurityEligibilityReason,
+    MarketSecurityType,
 )
 
 
@@ -92,6 +95,63 @@ def test_metadata_keeps_unavailable_listing_price_and_currency_missing() -> None
     )
     assert metadata.listing_price is None
     assert metadata.currency is None
+    assert metadata.security_type is MarketSecurityType.UNKNOWN
+    assert metadata.modeling_eligibility is MarketSecurityEligibility.INELIGIBLE
+    assert metadata.eligibility_reason is MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE
+
+
+@pytest.mark.parametrize(
+    "cohort_year,listing_year",
+    [(2024, 2024), (2025, 2025)],
+)
+def test_metadata_accepts_consistent_cohort_and_listing_year(
+    cohort_year: int, listing_year: int
+) -> None:
+    result = IPOMarketMetadata(
+        case_id=f"ipo_{cohort_year}_00001",
+        stock_code="0001.HK",
+        cohort_year=cohort_year,
+        listing_date=date(listing_year, 1, 2),
+        exchange=MarketExchange.HKEX,
+        source="catalog",
+        provenance=provenance(),
+    )
+    assert result.listing_date.year == result.cohort_year
+
+
+@pytest.mark.parametrize(
+    "cohort_year,listing_year",
+    [(2024, 2025), (2025, 2024)],
+)
+def test_metadata_rejects_cohort_and_listing_year_mismatch(
+    cohort_year: int, listing_year: int
+) -> None:
+    with pytest.raises(ValidationError, match="listing date year must equal cohort year"):
+        IPOMarketMetadata(
+            case_id=f"ipo_{cohort_year}_00001",
+            stock_code="0001.HK",
+            cohort_year=cohort_year,
+            listing_date=date(listing_year, 1, 2),
+            exchange=MarketExchange.HKEX,
+            source="catalog",
+            provenance=provenance(),
+        )
+
+
+def test_metadata_rejects_security_decision_that_conflicts_with_policy() -> None:
+    with pytest.raises(ValidationError, match="security eligibility decision conflicts"):
+        IPOMarketMetadata(
+            case_id="ipo_2024_00001",
+            stock_code="0001.HK",
+            cohort_year=2024,
+            listing_date=date(2024, 1, 2),
+            exchange=MarketExchange.HKEX,
+            security_type=MarketSecurityType.UNKNOWN,
+            modeling_eligibility=MarketSecurityEligibility.ELIGIBLE,
+            eligibility_reason=MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
+            source="catalog",
+            provenance=provenance(),
+        )
 
 
 def test_metadata_rejects_invalid_currency_and_missing_provenance() -> None:

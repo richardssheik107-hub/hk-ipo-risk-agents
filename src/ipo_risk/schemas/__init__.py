@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from ipo_risk.schemas.market import (
     IPOMarketMetadata,
+    MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION,
     MarketBasePriceSource,
     MarketDailyBar,
     MarketDataProvenance,
@@ -21,6 +22,10 @@ from ipo_risk.schemas.market import (
     MarketLabelMissingReason,
     MarketLabelPolicy,
     MarketOutcomeLabel,
+    MarketSecurityEligibility,
+    MarketSecurityEligibilityDecision,
+    MarketSecurityEligibilityReason,
+    MarketSecurityType,
     MarketValidationIssue,
     MarketValidationResult,
     MarketValidationSeverity,

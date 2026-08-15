@@ -6,13 +6,20 @@ from collections.abc import Iterable
 
 from ipo_risk.market.exceptions import (
     BlindDataLeakageError,
+    IneligibleMarketSecurityError,
     MarketDatasetGovernanceError,
     UnexpectedCohortYearError,
 )
 from ipo_risk.schemas.market import (
+    IPOMarketMetadata,
+    MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION,
     MarketDatasetSplit,
     MarketOutcomeLabel,
+    MarketSecurityEligibility,
+    MarketSecurityEligibilityDecision,
+    MarketSecurityType,
     expected_market_split,
+    expected_security_eligibility,
 )
 
 
@@ -26,6 +33,39 @@ class MarketDatasetSplitPolicy:
             return expected_market_split(cohort_year)
         except ValueError as exc:
             raise UnexpectedCohortYearError(str(exc)) from exc
+
+
+class MarketSecurityEligibilityPolicy:
+    """Frozen ordinary-equity-only modeling universe for V04."""
+
+    version = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
+
+    def assess(
+        self, security_type: MarketSecurityType
+    ) -> MarketSecurityEligibilityDecision:
+        eligibility, reason = expected_security_eligibility(security_type)
+        return MarketSecurityEligibilityDecision(
+            security_type=security_type,
+            eligibility=eligibility,
+            reason=reason,
+            policy_version=self.version,
+        )
+
+    def require_eligible(
+        self, metadata: IPOMarketMetadata
+    ) -> MarketSecurityEligibilityDecision:
+        decision = MarketSecurityEligibilityDecision(
+            security_type=metadata.security_type,
+            eligibility=metadata.modeling_eligibility,
+            reason=metadata.eligibility_reason,
+            policy_version=metadata.eligibility_policy_version,
+        )
+        if decision.eligibility is not MarketSecurityEligibility.ELIGIBLE:
+            raise IneligibleMarketSecurityError(
+                f"{metadata.stock_code} is ineligible under {self.version}: "
+                f"{decision.reason.value}"
+            )
+        return decision
 
 
 class MarketDatasetGuard:

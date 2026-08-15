@@ -33,7 +33,8 @@
 - Golden 人工治理按`single_named_human_review_v1`完成；不将一审表述为独立双审；
 - 不把规则分描述为概率，不提供市场收益预测；
 - 2025 blind 数据未参与开发调优；
-- v0.4 的 Market Foundation 已实现并等待 Review；Market Agent 与统计/机器学习模型尚未开始。
+- v0.4 的 Market Foundation 已实现并等待 Review；其普通股-only证券资格政策对
+  REIT、SPAC、权证和未知类别 fail closed，Market Agent 与统计/机器学习模型尚未开始。
 
 详细状态以 [PROJECT_MASTER_CHECKLIST.md](PROJECT_MASTER_CHECKLIST.md) 为准，
 Golden/waiver 语义见 [V03_GATE_A_CLOSEOUT.md](V03_GATE_A_CLOSEOUT.md)。

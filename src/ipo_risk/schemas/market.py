@@ -54,6 +54,30 @@ class MarketDatasetSplit(StrEnum):
     BLIND = "blind"
 
 
+class MarketSecurityType(StrEnum):
+    ORDINARY_EQUITY = "ordinary_equity"
+    REIT = "reit"
+    SPAC = "spac"
+    WARRANT = "warrant"
+    UNKNOWN = "unknown"
+
+
+class MarketSecurityEligibility(StrEnum):
+    ELIGIBLE = "eligible"
+    INELIGIBLE = "ineligible"
+
+
+class MarketSecurityEligibilityReason(StrEnum):
+    ORDINARY_EQUITY_SUPPORTED = "ordinary_equity_supported"
+    REIT_OUTSIDE_MODELING_UNIVERSE = "reit_outside_modeling_universe"
+    SPAC_OUTSIDE_MODELING_UNIVERSE = "spac_outside_modeling_universe"
+    WARRANT_OUTSIDE_MODELING_UNIVERSE = "warrant_outside_modeling_universe"
+    UNKNOWN_SECURITY_TYPE = "unknown_security_type"
+
+
+MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION = "v04_market_security_eligibility_v1"
+
+
 class MarketValidationSeverity(StrEnum):
     ERROR = "error"
     WARNING = "warning"
@@ -69,6 +93,58 @@ def expected_market_split(cohort_year: int) -> MarketDatasetSplit:
     if cohort_year == 2025:
         return MarketDatasetSplit.BLIND
     raise ValueError(f"unsupported market cohort year: {cohort_year}")
+
+
+def expected_security_eligibility(
+    security_type: MarketSecurityType,
+) -> tuple[MarketSecurityEligibility, MarketSecurityEligibilityReason]:
+    """Return the frozen v1 modeling-universe decision for a known type."""
+
+    mapping = {
+        MarketSecurityType.ORDINARY_EQUITY: (
+            MarketSecurityEligibility.ELIGIBLE,
+            MarketSecurityEligibilityReason.ORDINARY_EQUITY_SUPPORTED,
+        ),
+        MarketSecurityType.REIT: (
+            MarketSecurityEligibility.INELIGIBLE,
+            MarketSecurityEligibilityReason.REIT_OUTSIDE_MODELING_UNIVERSE,
+        ),
+        MarketSecurityType.SPAC: (
+            MarketSecurityEligibility.INELIGIBLE,
+            MarketSecurityEligibilityReason.SPAC_OUTSIDE_MODELING_UNIVERSE,
+        ),
+        MarketSecurityType.WARRANT: (
+            MarketSecurityEligibility.INELIGIBLE,
+            MarketSecurityEligibilityReason.WARRANT_OUTSIDE_MODELING_UNIVERSE,
+        ),
+        MarketSecurityType.UNKNOWN: (
+            MarketSecurityEligibility.INELIGIBLE,
+            MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE,
+        ),
+    }
+    return mapping[security_type]
+
+
+class MarketSecurityEligibilityDecision(BaseModel):
+    """Versioned, explicit decision about the v0.4 modeling universe."""
+
+    model_config = ConfigDict(frozen=True)
+
+    security_type: MarketSecurityType
+    eligibility: MarketSecurityEligibility
+    reason: MarketSecurityEligibilityReason
+    policy_version: str = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
+
+    @model_validator(mode="after")
+    def validate_frozen_policy(self) -> "MarketSecurityEligibilityDecision":
+        if self.policy_version != MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION:
+            raise ValueError("unsupported market security eligibility policy version")
+        expected_eligibility, expected_reason = expected_security_eligibility(
+            self.security_type
+        )
+        if self.eligibility is not expected_eligibility or self.reason is not expected_reason:
+            raise ValueError("security eligibility decision conflicts with frozen policy")
+        return self
 
 
 class MarketDataProvenance(BaseModel):
@@ -126,6 +202,12 @@ class IPOMarketMetadata(BaseModel):
     listing_price: Decimal | None = Field(default=None, gt=0, allow_inf_nan=False)
     currency: str | None = None
     exchange: MarketExchange
+    security_type: MarketSecurityType = MarketSecurityType.UNKNOWN
+    modeling_eligibility: MarketSecurityEligibility = MarketSecurityEligibility.INELIGIBLE
+    eligibility_reason: MarketSecurityEligibilityReason = (
+        MarketSecurityEligibilityReason.UNKNOWN_SECURITY_TYPE
+    )
+    eligibility_policy_version: str = MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION
     source: str = Field(min_length=1)
     provenance: MarketDataProvenance
 
@@ -146,6 +228,20 @@ class IPOMarketMetadata(BaseModel):
     def validate_cohort_year(cls, value: int) -> int:
         expected_market_split(value)
         return value
+
+    @model_validator(mode="after")
+    def validate_market_governance(self) -> "IPOMarketMetadata":
+        if self.listing_date is not None and self.listing_date.year != self.cohort_year:
+            raise ValueError("listing date year must equal cohort year")
+        decision = MarketSecurityEligibilityDecision(
+            security_type=self.security_type,
+            eligibility=self.modeling_eligibility,
+            reason=self.eligibility_reason,
+            policy_version=self.eligibility_policy_version,
+        )
+        if decision.policy_version != self.eligibility_policy_version:
+            raise ValueError("security eligibility policy version mismatch")
+        return self
 
 
 class MarketLabelPolicy(BaseModel):
@@ -210,6 +306,8 @@ class MarketOutcomeLabel(BaseModel):
             raise ValueError(
                 f"cohort year {self.cohort_year} must use {expected.value} split"
             )
+        if self.listing_date is not None and self.listing_date.year != self.cohort_year:
+            raise ValueError("listing date year must equal cohort year")
         required = (self.listing_date, self.base_price, self.target_trading_date, self.target_close)
         if self.availability is MarketLabelAvailability.AVAILABLE:
             if any(value is None for value in required) or self.raw_return is None:
