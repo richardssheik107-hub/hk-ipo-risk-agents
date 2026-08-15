@@ -1,0 +1,568 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_01927",
+  "stock_code": "1927.HK",
+  "company_name": "久久王",
+  "document_id": "ipo_2021_01927",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "按 Protocol 的现金跑道口径，采用现金流量表的现金及现金等价物，并以最近可比期间的经营活动现金流判断是否存在经营现金消耗。截至2020年8月31日止八个月，经营活动所得现金净额为正数人民币8,144千元，期末现金及现金等价物为人民币22,275千元。因此该期间不存在经营现金消耗，monthly_operating_cash_burn 与 cash_runway_months 均应为 null，cash_runway 不触发。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_from_operating_cash_flow",
+      "calculation_inputs": {
+        "period": "eight months ended 31 August 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 22275,
+        "net_cash_from_operating_activities": 8144,
+        "period_months": 8
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告所列三个完整年度及两个可比八个月期间均录得溢利而非亏损：2017、2018、2019年度分别为人民币46,415千元、38,686千元、43,196千元；截至2019年及2020年8月31日止八个月分别为人民币25,548千元及25,818千元。不存在两个或三个可比亏损期间，故 continuous_loss 不适用。",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "annual_periods": [
+          {
+            "period": "year ended 31 December 2017",
+            "profit_or_loss": 46415
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "profit_or_loss": 38686
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "profit_or_loss": 43196
+          }
+        ],
+        "interim_comparable_periods": [
+          {
+            "period": "eight months ended 31 August 2019",
+            "profit_or_loss": 25548
+          },
+          {
+            "period": "eight months ended 31 August 2020",
+            "profit_or_loss": 25818
+          }
+        ]
+      },
+      "calculation_result": {
+        "annual_loss_period_count": 0,
+        "interim_loss_period_count": 0,
+        "assessment": "no_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "会计师报告列示收益：2017、2018、2019年度分别为人民币355,793千元、380,815千元、414,082千元；截至2019年及2020年8月31日止八个月分别为人民币259,689千元及237,854千元。2018年同比增长约7.03%，2019年同比增长约8.74%，而2020年前八个月相对2019年同期下降约8.41%。该最新可比增长率低于0%但高于-20%，按冻结阈值触发 medium。",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparisons": [
+          {
+            "current_period": "year ended 31 December 2018",
+            "prior_period": "year ended 31 December 2017",
+            "current_revenue": 380815,
+            "prior_revenue": 355793
+          },
+          {
+            "current_period": "year ended 31 December 2019",
+            "prior_period": "year ended 31 December 2018",
+            "current_revenue": 414082,
+            "prior_revenue": 380815
+          },
+          {
+            "current_period": "eight months ended 31 August 2020",
+            "prior_period": "eight months ended 31 August 2019",
+            "current_revenue": 237854,
+            "prior_revenue": 259689
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          7.032741,
+          8.735738,
+          -8.408134
+        ],
+        "minimum_growth_rate_pct": -8.408134,
+        "triggered_period": "eight months ended 31 August 2020 versus eight months ended 31 August 2019",
+        "assessment": "medium_trigger"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "截至2020年8月31日止八个月，最大客户交易额为人民币47,467千元，五大客户合计人民币101,221千元，总收益人民币237,854千元；精确计算分别约为19.96%及42.56%。正式业务披露的四个往绩期间最大客户比例均不超过25.1%，五大客户比例均不超过48.8%。因此最大客户低于30%、五大客户低于60%，medium 及 high 阈值均未触发。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "eight months ended 31 August 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 237854,
+        "largest_customer_revenue": 47467,
+        "top_five_customer_revenue": 101221
+      },
+      "calculation_result": {
+        "largest_customer_pct": 19.95636,
+        "top_five_customer_pct": 42.555938,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "截至2020年8月31日止八个月，最大供应商采购额为人民币14,054千元，五大供应商合计人民币54,327千元，总采购额人民币134,079千元；精确计算分别约为10.48%及40.52%。正式业务披露的四个往绩期间最大供应商比例均不超过13.8%，五大供应商比例均不超过49.3%。因此最大供应商低于30%、五大供应商低于60%，medium 及 high 阈值均未触发。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "eight months ended 31 August 2020",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_purchases": 134079,
+        "largest_supplier_purchases": 14054,
+        "top_five_supplier_purchases": 54327
+      },
+      "calculation_result": {
+        "largest_supplier_pct": 10.48188,
+        "top_five_supplier_pct": 40.518649,
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "正式首次公开发售前投资披露明确说明，除投资协议外，本集团与首次公开发售前投资者之间概无其他协议、附带协议或承诺，且投资条款中的“特殊权利”为“并无授予特殊权利”。招股书其他关于可赎回股份/公司购回股份的内容属于一般组织章程及开曼公司法说明，并非向该首次公开发售前投资者授予的实际有效或可恢复特殊权利。因此 redemption_rights 不适用。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.88,
+      "reasoning": "招股书明确披露无重大未决或受威胁的法律、仲裁或行政程序，且现行业务所需牌照、许可证及批文已取得。但历史上中国附属公司未足额缴纳社会保险费及住房公积金，存在补缴、滞纳金或罚款的法定后果；虽截至最后实际可行日期未受相关处罚或追缴命令，并已取得若干政府确认且中国法律顾问认为受罚风险相对较低，招股书同时明确表示尚未取得有关当局确认不存在住房公积金违法的确认函。因此，对该历史合规事项是否已完全解决以及其监管影响/重大性仍存在披露层面的不确定性。按 Protocol 对 unresolved regulatory effect 或 materiality ambiguity 的规则，标记 needs_review，并按协议保留 provisional medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_01927",
+      "stock_code": "1927.HK",
+      "company_name": "久久王",
+      "document_id": "ipo_2021_01927",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "正式业务披露显示本集团于1999年成立并长期生产及销售甜食产品，拥有自有生产设施和多条生产线。往绩期间存在大量实际产品销售收入，例如截至2020年8月31日止八个月仅OEM产品销售收益即约人民币99.5百万元，占总收益约41.8%。核心业务并非未商业化且不存在“无产品销售收入”的情形，因此 precommercial_product 不适用。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "cash_runway",
+      "page": 341,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金淨額\n14,912\n79,049\n47,795\n14,901\n8,144",
+      "evidence_reason": "会计师报告现金流量表直接给出各期间经营活动所得现金净额；最新八个月期间为正人民币8,144千元，按 Protocol 证明不存在经营现金消耗。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "cash_runway",
+      "page": 342,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年末的現金及現金等價物\n33,604\n43,393\n37,684\n5,638\n22,275",
+      "evidence_reason": "会计师报告现金流量表直接给出现金及现金等价物；2020年8月31日期末余额人民币22,275千元，是 cash_runway 的标准现金输入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "continuous_loss",
+      "page": 335,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期內溢利\n46,415\n38,686\n43,196\n25,548\n25,818",
+      "evidence_reason": "会计师报告列示三个年度及两个八个月期间均为正溢利，支持可比亏损期间计数为零。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "revenue_growth",
+      "page": 335,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合損益及其他全面收益表\n截至12月31日止年度\n截至8月31日止期間\n2017年\n2018年\n2019年\n2019年\n2020年\n附註\n人民幣千元\n人民幣千元\n人民幣千元\n人民幣千元\n人民幣千元\n（未經審核）\n收益\n6\n355,793\n380,815\n414,082\n259,689\n237,854",
+      "evidence_reason": "会计师报告提供年度及可比八个月期间的权威收益数字，用于计算收入增长率；2020年前八个月较2019年同期下降。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "customer_concentration",
+      "page": 174,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019 年12 月31 日止年度以及截至2020 年8 月31 日止八個月，\n來自我們最大客戶的收益分別佔我們總收益約22.2%、25.1%、23.8% 及20.0%，而來自我\n們五大客戶的收益則合共分別佔我們總收益的約46.7%、48.8%、46.0% 及42.6%。於往績\n記錄期間，本集團與五大客戶維持約6 至17 年的業務關係。",
+      "evidence_reason": "正式业务披露直接交叉核对各往绩期间最大客户和五大客户占总收益比例，均低于冻结的 medium 阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "customer_concentration",
+      "page": 178,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1\n格瑞兄弟糖果（1）\nOEM產品，即\n 酷滋及魔吉\n 哥哥品牌壓片\n 糖果，建議\n 零售價分別\n 介乎每件\n 約人民幣7元至\n 人民幣16元及\n 每盒人民幣\n 130元至人民幣\n 1,000.0元\n於中國成立的有限公司，\n 其註冊資本為人民幣10百萬元，\n 主要從事銷售其品牌壓片糖果。\n 有關更多詳情，請參閱本節\n 「我們與格瑞兄弟糖果\n 的關係」一段。\n約6年\n預付購買金額30%的\n 款項及收到發票後\n 180天內透過銀行\n 轉賬結清餘額（2）\n47,467\n20.0",
+      "evidence_reason": "正式客户表给出2020年前八个月最大客户交易额人民币47,467千元及占比20.0%，提供精确比率计算的分子。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "customer_concentration",
+      "page": 178,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "小計\n101,221\n42.6\n所有其他客戶\n136,633\n57.4\n\n\n總計\n237,854\n100.0",
+      "evidence_reason": "同一正式客户表给出五大客户小计人民币101,221千元和总收益人民币237,854千元，提供 top-five 精确比率的分子和分母。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "supplier_concentration",
+      "page": 183,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "截至2017年、2018年及2019 年12 月31 日止年度以及截至2020 年8 月31 日止八個月，\n向我們最大供應商作出的採購額分別佔我們總採購額的約13.8%、12.4%、12.7%及\n10.5%，而向我們五大供應商作出的採購額則合共分別佔我們總採購額的約40.5%、\n42.3%、49.3%及40.4%。於往績記錄期間，我們的所有五大供應商均為獨立第三方。於\n往績記錄期間，本集團與五大供應商維持約4 至19年的業務關係。",
+      "evidence_reason": "正式业务披露直接交叉核对各往绩期间最大供应商和五大供应商占总采购额比例，均低于冻结的 medium 阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "supplier_concentration",
+      "page": 187,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "1\n供應商B\n果粉及木糖醇\n於中國成立之有限公司，\n 從事食物原材料批發及零售。\n約19年\n預付購買金額20%的\n 款項及收到發票後\n 60天內透過銀行\n 轉賬結清餘額\n14,054\n10.5",
+      "evidence_reason": "正式供应商表给出2020年前八个月最大供应商采购额人民币14,054千元及占比10.5%，提供精确比率计算的分子。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "supplier_concentration",
+      "page": 187,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "小計\n54,327\n40.4\n所有其他供應商\n79,752\n59.6\n\n\n總計\n134,079\n100.0",
+      "evidence_reason": "同一正式供应商表给出五大供应商小计人民币54,327千元和总采购额人民币134,079千元，提供 top-five 精确比率的分子和分母。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "redemption_rights",
+      "page": 119,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "特殊權利\n：\n並無授予特殊權利。",
+      "evidence_reason": "首次公开发售前投资正式条款明确否定授予特殊权利，直接排除实际有效或可恢复的投资者特殊赎回类权利。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "redemption_rights",
+      "page": 119,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "該交易已於2018 年12 月7 日妥為依法完成。除投資協議外，本集團與\n首次公開發售前投資者之間概無其他協議、附帶協議或承諾。",
+      "evidence_reason": "该披露进一步排除未披露的附带协议或承诺，支持“无特殊权利”的正式条款。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 198,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期間及截至最後實際可行日期，我們並無牽涉任何重大法律、仲裁或\n行政程序，我們亦不知悉有任何針對我們或我們任何董事的尚未了結或面臨威脅的法\n律、仲裁或行政程序，據我們的管理層認為可能會對我們的業務或財務狀況產生重大\n不利影響。我們的董事確認，本集團成員公司現時概無捲入任何重大訴訟、仲裁或行\n政程序。",
+      "evidence_reason": "正式法律披露排除重大未决/受威胁诉讼、仲裁或行政程序，因此该风险的候选来源主要是后续披露的历史合规事项。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 199,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們的中國附屬公\n司未能按中國相關\n法律法規的要求為\n員工繳納全額社會\n保險費及住房公積\n金。",
+      "evidence_reason": "正式不合规事件表确认存在实际历史社会保险及住房公积金少缴情形，是监管合规候选风险的事实基础。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 199,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於最後實際可行日期，相關\n政府概無就該不合規事件處\n以任何行政訴訟、罰款或處\n罰，本公司亦未收到任何勒\n令以清償任何尚未償還的社\n會保險付款及住房公積金供\n款金額。",
+      "evidence_reason": "该正式披露说明截至最后实际可行日期没有行政诉讼、罚款、处罚或追缴命令，是评估事项是否已形成实质监管影响的必要证据。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 199,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "截至2017年、2018年及\n2019年12月31日止年度，\n我們未支付的社會保險\n金及住房公積金供款總\n額估計分別約為人民幣\n1.8百萬元、人民幣1.9百\n萬元及人民幣0.5百萬元。",
+      "evidence_reason": "正式披露量化历史少缴金额，为判断该不合规事项的规模及重大性提供必要事实。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 199,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "根據晉江市人力資源和\n社會保障局、泉州市醫\n療保障基金管理中心晉\n江管理部於2020年12月\n1日及泉州市住房公積\n金管理中心晉江市管理\n部於2020年12月2日發\n出的確認函，本集團的\n相關附屬公司並無遭受\n罰款且於往績記錄期間\n本集團的相關附屬公司\n並無就社會保險及住房\n公積金供款與相關政府\n機構捲入任何糾紛或仲\n裁。我們的中國法律顧\n問確認相關政府機關有\n權且合資格作出確認。\n根據確認及與相關政府\n機構的討論，我們的中\n國法律顧問認為本集團\n遭受處罰的風險相對較\n低。",
+      "evidence_reason": "主管机关确认、无罚款/争议及中国法律顾问的低受罚风险意见是支持事项可能不重大或部分已解决的重要反向证据。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 200,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "鑒於(i)我們尚未取得有\n關當局發出的確認函，\n確認我們並未違反有關\n住房公積金的法律法\n規，我們並未受到有關\n部門的任何行政處罰及\n處分以及有關部門要求\n支付尚未支付的社會保\n險金；(ii)我們的中國法\n律顧問認為相關公司受\n到處罰的風險相對較\n低；及(iii)我們的控股股\n東已同意就本次不合規\n事件所引致的任何要求\n或罰款向本集團作出彌\n償，董事相信該不合規\n事件對我們的業務並無\n造成重大影響，亦未反\n應其對本集團、董事或\n高級管理層按合規方式\n經營的能力造成負面影\n響。",
+      "evidence_reason": "该披露一方面记录董事认为无重大影响及法律顾问认为受罚风险低，另一方面明确指出尚未取得确认不存在住房公积金违法的主管机关确认函，形成“是否完全解决/是否重大”的关键不确定性，按 Protocol 应 needs_review。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "material_litigation_compliance",
+      "page": 189,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們的總部負責管理、審查及續新我們的牌照、許可證及批文。據我們的中國法\n律顧問告知，於往績記錄期間及直至最後實際可行日期，我們已向有關政府部門取得\n對我們在中國經營業務而言屬必要的一切牌照、許可證及批文。",
+      "evidence_reason": "正式牌照披露交叉核对现行业务许可状态，未发现现行业务必要牌照缺失这一独立触发因素。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "precommercial_product",
+      "page": 127,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們於1999年成立，是中國的甜食產品製造商。我們生產及銷售甜食產品，包括膠\n基糖果、壓片糖果、充氣糖果及硬糖。我們一般向供應商採購原材料，在我們的內部\n生產設施中生產及包裝甜食產品，及(i) 以我們OEM客戶所擁有或獲授權的品牌於中國\n及海外國家銷售我們的產品，或(ii)以我們的自有品牌（即酷莎、拉拉卜及久久王）向中\n國的分銷商及終端客戶銷售我們的產品。",
+      "evidence_reason": "正式业务概览说明公司自1999年已从事制造和销售甜食产品，直接否定核心产品尚未商业化的候选条件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "risk_code": "precommercial_product",
+      "page": 127,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2017 年、2018 年及\n2019年12月31日止年度以及截至2020 年8 月31 日止八個月，我們分別有33 名、33 名、37\n名及22名OEM客戶，銷售OEM產品所產生的收益分別約為人民幣191.2 百萬元、人民幣\n215.6百萬元、人民幣202.7百萬元及人民幣99.5 百萬元，分別佔我們相應期間總收益的\n約53.8%、56.6%、48.9%及41.8%。",
+      "evidence_reason": "正式业务披露确认各往绩期间存在实质产品销售收入，直接排除“无产品销售收入”的候选条件。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
