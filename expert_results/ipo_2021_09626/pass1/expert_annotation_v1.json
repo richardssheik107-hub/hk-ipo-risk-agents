@@ -1,0 +1,476 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_09626",
+  "stock_code": "9626.HK",
+  "company_name": "嗶哩嗶哩－ＳＷ",
+  "document_id": "ipo_2021_09626",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "以最新可比完整年度2020年为评估期。会计师报告的合并现金流量表披露经营活动提供的现金净额为正人民币753,103千元，年末现金及现金等价物为人民币4,678,109千元。按照Protocol v1.1.1，经营现金流为正或零时不存在经营现金消耗，不计算月度cash burn或cash runway，因此该风险不适用。",
+      "calculation_required": true,
+      "calculation_method": "cash_runway",
+      "calculation_inputs": {
+        "period": "year ended 31 December 2020",
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents": 4678109,
+        "net_cash_from_operating_activities": 753103,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "会计师报告披露2018年、2019年及2020年三个连续、口径可比的完整财政年度均录得净亏损，分别为人民币565,021千元、1,303,570千元及3,054,017千元。按照冻结规则，至少3个可比亏损期间对应high。",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "comparable_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "net_loss": -565021
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "net_loss": -1303570
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "net_loss": -3054017
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_period_count": 3,
+        "assessment": "three_comparable_loss_periods"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "会计师报告披露净营业额由2018年的人民币4,128,931千元增至2019年的6,777,922千元，并于2020年增至11,998,976千元。计算得到2019同比增长64.1568%，2020同比增长77.0303%，均不低于0%，未触发冻结的负增长阈值。",
+      "calculation_required": true,
+      "calculation_method": "year_on_year_revenue_growth",
+      "calculation_inputs": {
+        "currency": "CNY",
+        "unit": "RMB'000",
+        "revenues": [
+          {
+            "period": "year ended 31 December 2018",
+            "value": 4128931
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "value": 6777922
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "value": 11998976
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_2019_vs_2018_pct": 64.1568,
+        "growth_2020_vs_2019_pct": 77.0303,
+        "minimum_comparable_growth_pct": 64.1568,
+        "assessment": "no_negative_revenue_growth"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露2018年、2019年及2020年各年的五大客户合计占总收入比例均低于6%。由于单一最大客户占比不可能高于五大客户合计占比，因此largest customer亦严格低于6%；这同时排除largest>=30%及top five>=60%的medium阈值，也排除high阈值。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "denominator": "total revenue",
+        "top_five_customer_upper_bound_pct": 6,
+        "bound_operator": "<",
+        "bound_basis": "largest_customer_share <= top_five_customer_share"
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<6%",
+        "top_five_customer_bound": "<6%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Business正式披露2018年、2019年及2020年各年的五大供应商合计占营业成本及经营开支比例均低于30%。因此最大单一供应商占比也严格低于30%，且五大供应商合计远低于60%，冻结的medium及high阈值均被正式bound proof排除。",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "periods": [
+          "year ended 31 December 2018",
+          "year ended 31 December 2019",
+          "year ended 31 December 2020"
+        ],
+        "denominator": "operating costs and operating expenses",
+        "top_five_supplier_upper_bound_pct": 30,
+        "bound_operator": "<",
+        "bound_basis": "largest_supplier_share <= top_five_supplier_share"
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<30%",
+        "top_five_supplier_bound": "<30%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "历史首次公开发售前优先股曾赋予持有人赎回权，但会计师报告明确披露，在2018年4月美国首次公开发售完成后，所有已发行在外的首次公开发售前优先股均被重新指定/转换为Y类或Z类普通股；截至2018年末相关优先股余额为零。招股书未发现这些历史特殊赎回权在香港上市时仍有效或可恢复的条款。2020年报表中的“可赎回非控制性权益”属于合并子公司/可变利益实体层面的非控制性权益会计项目，而非Bilibili Inc.股东的首次公开发售前特殊赎回权，因此不据此触发本风险。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Business法律程序及合规披露称近110宗版权诉讼个别或整体对公司影响均不重大，并称不存在管理层认为可能产生重大不利影响的其他法律程序、调查或索赔。中国法律顾问同时确认主要中国子公司在所有重大方面遵守适用法律并取得经营所需全部重大牌照及批文且仍有效；会计师报告亦称未解决诉讼不可能对财务状况、经营业绩或现金流产生重大不利影响，且未确认任何重大诉讼负债。因此未发现冻结定义下的重大未决事项或未解决监管/牌照影响。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09626",
+      "stock_code": "9626.HK",
+      "company_name": "嗶哩嗶哩－ＳＷ",
+      "document_id": "ipo_2021_09626",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Business正式披露公司已经实现多元商业化，并从移动游戏、增值服务、广告、电商及其他业务取得收入；其中游戏虚拟物品、付费内容/虚拟物品以及ACG相关商品均存在实际销售，电商业务还明确通过销售产品取得收入。因此“核心产品未商业化且无产品销售收入”的候选条件不成立，OPEN-02严重性政策无需启用。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "cash_runway",
+      "page": 365,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併現金流量表\n（所有金額均以千計）\n截至12月31日止年度\n2018年\n2019年\n2020年\n2020年\n人民幣元\n人民幣元\n人民幣元\n美元\n附註2(e)\n經營活動提供的現金淨額\n737,286\n194,551\n753,103\n115,418\n年終的現金及現金等價物\n3,540,031\n4,962,660\n4,678,109\n716,952",
+      "evidence_reason": "会计师报告的现金流量表同时提供2020年经营活动现金净额和年末现金及现金等价物；经营现金流为正，按Protocol直接排除经营现金消耗型cash runway风险。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "continuous_loss",
+      "page": 360,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併經營狀況及全面虧損表\n（除股份及每股數據外，所有金額均以千計）\n截至12月31日止年度\n2018年\n2019年\n2020年\n2020年\n人民幣元\n人民幣元\n人民幣元\n美元\n附註2(e)\n淨虧損\n(565,021)\n(1,303,570)\n(3,054,017)\n(468,049)",
+      "evidence_reason": "同一会计师报告表格给出三个连续完整财政年度的可比净亏损金额，可直接计数为3个可比亏损期间。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "revenue_growth",
+      "page": 360,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "合併經營狀況及全面虧損表\n（除股份及每股數據外，所有金額均以千計）\n截至12月31日止年度\n2018年\n2019年\n2020年\n2020年\n人民幣元\n人民幣元\n人民幣元\n美元\n附註2(e)\n淨營業額\n4,128,931\n6,777,922\n11,998,976\n1,838,924",
+      "evidence_reason": "会计师报告提供2018至2020年净营业额的同口径年度金额，用于计算2019/2018及2020/2019同比增长率。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "customer_concentration",
+      "page": 225,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們擁有廣泛的客戶基礎，截至2018年、2019年及2020年12月31日止年度各年，我們\n的五大客戶佔我們總收入的比例均低於6%。",
+      "evidence_reason": "正式Business披露给出五大客户占总收入的严格上界“低于6%”，足以作threshold-exclusion bound并排除全部冻结阈值。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "customer_concentration",
+      "page": 395,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度，概無任何單一客戶佔貴集團淨營業額\n的10%或以上。",
+      "evidence_reason": "会计师报告进一步交叉核对，确认三个年度均无单一客户达到净营业额10%，与Business的低集中度结论一致。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "supplier_concentration",
+      "page": 225,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "截至2018年、2019年及2020年12月31日止年度各年，我們的五大供應商佔我們營業成\n本及經營開支的比例均低於30%。我們的最大供應商主要包括遊戲及內容許可持有人、營\n銷供應商、雲及數據服務供應商及電商商品供應商。",
+      "evidence_reason": "正式Business披露给出五大供应商相对营业成本及经营开支的严格上界“低于30%”；该上界同时约束最大单一供应商并排除冻结的medium/high阈值。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "redemption_rights",
+      "page": 407,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "首次公開發售前A、A+、B、C、C1/C2及D1/D2系列優先股統稱為「首次公開發售前優\n先股」。貴集團於合併資產負債表上將首次公開發售前優先股歸類為夾層股權（因為持有人\n可隨時選擇贖回該等優先股），並入賬記錄首次公開發售前優先股自發行日期起至最早贖回\n日期的贖回價值增加。於貴公司美國首次公開發售完成後，所有已發行及在外流通的首次\n公開發售前優先股被分別重新指定為Y類普通股及Z類普通股。更多資料，請參閱附註14。",
+      "evidence_reason": "该正式附注明确区分历史赎回权及其终止结果：原优先股可随时赎回，但美国IPO后全部已发行在外优先股均重新指定为普通股。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "redemption_rights",
+      "page": 412,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "於貴公司美國首次公開發售在2018年4月完成後，所有在外流通的首次公開發售前優\n先股及其他永久股權均已被轉換為25,336,888股Y類普通股及141,808,970股Z類普通股。",
+      "evidence_reason": "另一会计师报告附注交叉确认全部在外流通首次公开发售前优先股及其他永久股权在2018年美国IPO后已转换为普通股。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "redemption_rights",
+      "page": 392,
+      "evidence_role": "context",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "就貴公司擁有過半數股權的子公司及合併可變利益實體而言，非控制性權益的確認\n乃旨在反映貴公司作為控制性股東不直接或間接應佔的股權部分。通過業務合併收購的非\n控制性權益按收購日期的公允價值確認，而該公允價值參照收購日期的每股收購價估算。",
+      "evidence_reason": "该会计政策说明“非控制性权益”属于子公司及合并可变利益实体层面的权益，用于区分报表中的非控制性权益项目与Bilibili Inc.自身股东的历史首次公开发售前特殊赎回权。",
+      "confidence": 0.95
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "material_litigation_compliance",
+      "page": 236,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們目前因平台上提供的內容而牽涉近110宗被指控侵犯第三方版權的訴訟，但個別或整體\n而言對本公司的影響概不重大。無論訴訟或任何其他法律或行政程序結果如何，均可能產\n生重大成本並導致我們的資源（包括管理層的時間及注意力）轉移。",
+      "evidence_reason": "正式Business法律披露确认当前近110宗版权诉讼无论个别或整体均不重大，直接用于判断是否存在重大未决诉讼。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "material_litigation_compliance",
+      "page": 237,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "我們目前並無涉及亦不知悉我們管理層認為可能對我們的業務、財務狀況或經營業\n績產生重大不利影響的任何其他法律程序、調查或索賠。\n我們的中國法律顧問認為，於業績記錄期，在中國註冊成立的主要子公司在所有重\n大方面均未違反或違背當前生效的相關中國法律法規，而可能對我們的業務、財務狀況或\n經營業績產生重大不利影響，且於業績記錄期及於最後實際可行日期，在中國註冊成立的\n主要子公司已從有關政府部門獲得其在中國經營所需的所有重大牌照及批文，而於最後實\n際可行日期，該等牌照及批文在其運營所需的範圍內仍然生效及有效。",
+      "evidence_reason": "该页同时覆盖其他重大法律程序以及重大牌照/批文状态：未发现可能造成重大不利影响的其他程序，且法律顾问确认所需重大牌照及批文已取得并保持有效。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "material_litigation_compliance",
+      "page": 413,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "貴集團不時牽涉在業務日常運作過程中產生的索賠及法律訴訟。根據目前可供使用\n的資料，管理層認為，任何未解決事項的最終結果，無論就個別或整體而言，均不可能地\n對貴集團的財務狀況、經營業績或現金流量產生重大不利影響。\n然而，訴訟本身具有不確定性，而貴集團對該等事項的觀點或會在未來發生改變。\n當可能已產生負債及可合理估計損失金額時，貴集團將期確認為負債。貴集團會定期檢討\n是否將相關負債入賬。截至2018年、2019年及2020年12月31日，貴集團並無就此確認任何重\n大負債。",
+      "evidence_reason": "会计师报告对未决诉讼作财务交叉核对：管理层认为不会产生重大不利影响，且截至2020年末未确认任何重大诉讼负债。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "precommercial_product",
+      "page": 197,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們專注於滿足用戶多元且不斷擴大的興趣。我們以高質量內容吸引用戶，以充滿\n活力的社區留住他們，並提供合適的內容來滿足他們的消費需求。我們實現了多元的商業\n化，主要以移動遊戲、增值服務、廣告、電商及其他方式創收。\n• 移動遊戲：我們在平台上主要為第三方遊戲開發商發行移動遊戲。用戶可以免\n費下載並以嗶哩嗶哩賬號遊玩，也可購買遊戲中的虛擬物品以獲得更好的遊戲\n體驗，遊戲中的虛擬物品銷售是我們移動遊戲收入的主要來源。\n• 增值服務：我們的增值服務收入來自(i)大會員的訂閱費，付費會員可以專享或提\n前觀看原創或授權內容，(ii)直播頻道內虛擬禮物的銷售，及(iii)在我們的視頻、\n音頻及漫畫平台上銷售的付費內容和虛擬物品。\n• 電商及其他：我們的收入來自線上銷售ACG相關商品和線下表演及活動票務的\n收入。",
+      "evidence_reason": "Business正式披露已实现多元商业化，并存在游戏虚拟物品、付费内容/虚拟物品及ACG商品的实际销售收入，直接排除“核心产品未商业化且无产品销售收入”的候选条件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "risk_code": "precommercial_product",
+      "page": 216,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "我們的電商業務主要圍繞ACG相關內容的IP價值。我們提供ACG內容相關的商品，並\n通過銷售這些產品獲得收入。例如，對於某款動漫特別感興趣的用戶，我們會向他們推薦\n相同主題的商品，並鼓勵他們在我們的平台下單。我們還從舉辦的若干線下活動中獲得收\n入，包括銷售活動門票及周邊產品。",
+      "evidence_reason": "进一步明确存在通过销售实体/ACG相关产品取得收入，支持并强化已商业化结论。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
