@@ -1,0 +1,545 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02190",
+  "stock_code": "2190.HK",
+  "company_name": "歸創通橋－Ｂ",
+  "document_id": "ipo_2021_02190",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "會計師報告顯示2019年及2020年年末現金及現金等價物分別為人民幣46,130千元及59,556千元，同期經營活動現金流出淨額分別為人民幣53,092千元及82,334千元。按12個月平均經營現金消耗計算，現金跑道分別約為10.43個月及8.68個月，均低於12個月但不低於6個月，符合medium門檻。2020年初始期限超過三個月的人民幣100,000千元定期存款已按正式現金定義排除，未加回現金及現金等價物。",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "cash_definition": "cash_flow_statement_cash_and_cash_equivalents",
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "period_months": 12,
+            "cash_and_cash_equivalents": 46130,
+            "net_cash_from_operating_activities": -53092
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "period_months": 12,
+            "cash_and_cash_equivalents": 59556,
+            "net_cash_from_operating_activities": -82334,
+            "time_deposits_with_original_maturity_over_three_months_excluded": 100000
+          }
+        ]
+      },
+      "calculation_result": {
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "monthly_operating_cash_burn": 4424.333333,
+            "cash_runway_months": 10.42643,
+            "assessment": "medium"
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "monthly_operating_cash_burn": 6861.166667,
+            "cash_runway_months": 8.680156,
+            "assessment": "medium"
+          }
+        ],
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "會計師報告的兩個可比完整年度均錄得年內虧損：2019年人民幣66,647千元、2020年人民幣100,468千元。兩個可比虧損期間符合continuous_loss的medium門檻；招股書未提供第三個可比年度的經審計實際虧損期。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "comparable_periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "loss": -66647
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "loss": -100468
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_loss_period_count": 2,
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "會計師報告顯示收入由2019年人民幣4,917千元增至2020年人民幣27,631千元，可比年度同比增長約461.95%，並非負增長，因此不觸發revenue_growth的medium或high門檻。",
+      "calculation_required": true,
+      "calculation_method": "year_over_year_percentage_change",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "prior_period": "截至2019年12月31日止年度",
+        "prior_period_revenue": 4917,
+        "current_period": "截至2020年12月31日止年度",
+        "current_period_revenue": 27631
+      },
+      "calculation_result": {
+        "revenue_growth_pct": 461.948342,
+        "medium_threshold_triggered": false,
+        "high_threshold_triggered": false,
+        "assessment": "not_applicable"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "業務章節披露2019年及2020年五大客戶銷售分別佔收入90.0%及87.8%，最大客戶分別佔30.8%及78.3%。以客戶銷售額除以會計師報告收入交叉計算後，2019年五大客戶約89.85%，2020年最大客戶約78.32%且五大客戶約87.80%。至少五大客戶>=80%，且2020年最大客戶>=50%，明確觸發high門檻。",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "人民幣千元",
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "revenue": 4917,
+            "largest_customer_sales": 1515.4,
+            "top_five_customer_sales": 4417.7
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "revenue": 27631,
+            "largest_customer_sales": 21640.3,
+            "top_five_customer_sales": 24261.3
+          }
+        ]
+      },
+      "calculation_result": {
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "largest_customer_pct": 30.819605,
+            "top_five_customer_pct": 89.845434,
+            "assessment": "high"
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "largest_customer_pct": 78.318917,
+            "top_five_customer_pct": 87.80464,
+            "assessment": "high"
+          }
+        ],
+        "assessment": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.93,
+      "reasoning": "POLICY_AMBIGUITY: 業務章節正式披露2019年最大供應商佔採購總額50.5%（high），而2020年最大供應商佔31.0%（medium）；五大供應商分別為58.1%及51.0%。Protocol凍結了百分比門檻，但未凍結跨多個披露期間出現不同嚴重度時的聚合／選期規則。因此風險明確適用，但不自行選擇high或medium，將expected_level保留為null並標記needs_review。",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "largest_supplier_pct": 50.5,
+            "top_five_supplier_pct": 58.1
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "largest_supplier_pct": 31.0,
+            "top_five_supplier_pct": 51.0
+          }
+        ],
+        "high_thresholds": {
+          "largest_supplier_pct_gte": 50,
+          "top_five_supplier_pct_gte": 80
+        },
+        "medium_thresholds": {
+          "largest_supplier_pct_gte": 30,
+          "top_five_supplier_pct_gte": 60
+        }
+      },
+      "calculation_result": {
+        "periods": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "assessment": "high"
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "assessment": "medium"
+          }
+        ],
+        "policy_ambiguity": "cross_period_severity_aggregation_not_frozen",
+        "assessment": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "首次公開發售前投資者獲授撤資權；部分撤資權自2021年1月31日起暫停並擬於上市後終止，但若未在指定期限提交上市申請或全球發售並未發生，相關撤資權可自動恢復。這屬Protocol所指actual/restorable special rights，應標記needs_review；medium為凍結的候選暫定嚴重度。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.94,
+      "reasoning": "董事確認不存在會造成重大不利影響的法律、仲裁或行政程序，且截至最後實際可行日期已取得對業務有重大影響的必要牌照。但往績記錄期間存在部分僱員社會保險及住房公積金未全數繳納的實際不合規，已計提人民幣1.7百萬元撥備，並披露可能被要求補繳、支付滯納金或罰款；截至最後實際可行日期公司仍計劃於2021年盡快全數繳納。雖然主管部門證明、董事及中國法律顧問均認為不會造成重大不利影響且未有處罰，但整改尚待完成，對『resolved regulatory effect』存在判斷空間，依Protocol標記needs_review，候選嚴重度暫定medium。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_02190",
+      "stock_code": "2190.HK",
+      "company_name": "歸創通橋－Ｂ",
+      "document_id": "ipo_2021_02190",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "業務章節明確披露兩款核心產品蛟龍顱內取栓支架及Ultrafree DCB均已在中國實現商業化，且往績記錄期間已有6種產品商業化並由產品銷售產生收入。會計師報告亦確認2019年及2020年商品銷售收入分別為人民幣4,917千元及27,631千元，因此不符合『核心產品未商業化且無產品銷售收入』的候選條件。",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "cash_runway",
+      "page": 535,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合現金流量表\n截至12月31日止年度\n附註\n2019年\n2020年\n人民幣千元\n人民幣千元\n經營活動所得現金流量\n經營所用現金\n29(a)\n(53,181)\n(82,694)\n已收利息\n89\n360\n經營活動的現金流出淨額\n(53,092)\n(82,334)\n投資活動所得現金流量\n購買物業、廠房及設備\n(41,582)\n(45,140)\n於定期存款的投資\n–\n(100,000)\n購買以公允價值計量且其變動計入\n 當期損益的金融資產\n21\n(466,000)\n(389,200)\n出售以公允價值計量且其變動計入\n 當期損益的金融資產的所得款項\n21\n416,967\n285,123\n出售物業、廠房及設備的所得款項\n22\n41\n投資活動的現金流出淨額\n(90,593)\n(249,176)\n融資活動所得現金流量\n權益持有人的注資\n180,000\n336,376\n借款所得款項\n17,500\n35,500\n償還借款\n(15,000)\n(23,000)\n借款已付利息\n(748)\n(422)\n租賃付款的本金組成部分\n(2,021)\n(2,673)\n租賃付款的利息組成部分\n(287)\n(244)\n融資活動的現金流入淨額\n179,444\n345,537\n現金及現金等價物增加淨額\n35,759\n14,027\n年初現金及現金等價物\n10,480\n46,130\n現金及現金等價物匯兌虧損\n(109)\n(601)\n年末現金及現金等價物\n22\n46,130\n59,556",
+      "evidence_reason": "會計師報告的綜合現金流量表同時給出2019/2020經營活動現金流出淨額及年末現金及現金等價物，提供現金跑道計算的核心輸入。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "cash_runway",
+      "page": 571,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "22 \n現金及現金等價物以及定期存款\n貴集團\n於12月31日\n2019年\n2020年\n人民幣千元\n人民幣千元\n銀行存款\n46,118\n159,556\n手頭現金\n12\n–\n46,130\n159,556\n減：初始期限超過三個月的定期存款(a)\n–\n(100,000)\n46,130\n59,556",
+      "evidence_reason": "附註22證明2020年人民幣100,000千元初始期限超過三個月的定期存款已從現金及現金等價物中扣除，支持Protocol的標準現金定義。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "continuous_loss",
+      "page": 531,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合全面收益表\n截至12月31日止年度\n附註\n2019年\n2020年\n人民幣千元\n人民幣千元\n收入\n6\n4,917\n27,631\n銷售成本\n7\n(3,725)\n(11,344)\n毛利\n1,192\n16,287\n銷售及分銷開支\n7\n(6,759)\n(20,453)\n行政開支\n7\n(16,962)\n(30,992)\n研發開支\n7\n(53,028)\n(72,065)\n其他收入\n9\n7,656\n9,997\n其他開支\n9\n(840)\n(257)\n其他收益╱（虧損）淨額\n10\n3,040\n(2,679)\n經營虧損\n(65,701)\n(100,162)\n財務收入\n11\n89\n360\n財務成本\n11\n(1,035)\n(666)\n財務成本淨額\n(946)\n(306)\n除所得稅前虧損\n(66,647)\n(100,468)\n所得稅開支\n12\n–\n–\n年內虧損\n(66,647)\n(100,468)",
+      "evidence_reason": "經審計可比完整年度的年內虧損為2019年人民幣66,647千元及2020年人民幣100,468千元，支持兩個可比虧損期間的判定。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "revenue_growth",
+      "page": 531,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合全面收益表\n截至12月31日止年度\n附註\n2019年\n2020年\n人民幣千元\n人民幣千元\n收入\n6\n4,917\n27,631",
+      "evidence_reason": "會計師報告提供2019年及2020年收入人民幣4,917千元和27,631千元，可直接計算可比年度收入增長。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "customer_concentration",
+      "page": 349,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "客戶\n我們的客戶主要為中國及海外的分銷商，其購買我們的產品並直接或間接銷往醫\n院。截至2019年12月31日及2020年12月31日止年度，我們對五大客戶的銷售總額分別\n為人民幣4.4百萬元及人民幣24.3百萬元，分別佔我們收入的90.0%及87.8%。同期我們\n對最大客戶的銷售額分別為人民幣1.5百萬元及人民幣21.6百萬元，分別佔我們收入的\n30.8%及78.3%。以下是我們在所示期間對五大客戶的銷售概況：\n截至2019年12月31日止年度\n截至2020年12月31日止年度\n五大客戶\n覆蓋地區\n銷售額\n佔收入\n百分比\n五大客戶\n覆蓋地區\n銷售額\n佔收入\n百分比\n人民幣千元\n人民幣千元\n客戶A(1). . . .\n土耳其\n1,515.4\n30.8%\n客戶F(6). . . .\n中國\n21,640.3\n78.3%\n客戶B(2). . . .\n法國\n1,049.9\n21.4%\n客戶C(3) . . .\n波蘭\n745.5\n2.7%\n客戶C(3). . . .\n波蘭\n774.6\n15.8%\n客戶A(1) . . .\n土耳其\n742.3\n2.7%\n客戶D(4). . . .\n土耳其\n726.2\n14.8%\n客戶B(2) . . .\n法國\n710.0\n2.6%\n客戶E(5). . . .\n中國\n351.6\n7.2%\n客戶G(7) . . .\n土耳其\n423.2\n1.5%\n合計 . . . . . .\n4,417.7\n90.0%\n合計. . . . . .\n24,261.3\n87.8%",
+      "evidence_reason": "正式Business披露五大客戶及最大客戶的銷售額與收入佔比，是客戶集中度分子及披露比例的主要證據。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "customer_concentration",
+      "page": 531,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "綜合全面收益表\n截至12月31日止年度\n附註\n2019年\n2020年\n人民幣千元\n人民幣千元\n收入\n6\n4,917\n27,631",
+      "evidence_reason": "會計師報告提供2019年及2020年總收入，與Business客戶銷售額共同構成exact-ratio計算的分母證據。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "supplier_concentration",
+      "page": 350,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "原材料和供應商\n供應商\n於往績記錄期間，我們的供應商主要包括臨床試驗服務供應商、設備供應商及原\n材料供應商。截至2019年12月31日及2020年12月31日止年度，我們向五大供應商的採\n購總金額分別佔我們採購總額（含增值稅）的58.1%及51.0%，我們向最大供應商的採購\n額分別佔我們同期採購總額（含增值稅）的50.5%及31.0%。",
+      "evidence_reason": "正式Business披露2019/2020最大供應商及五大供應商佔採購總額（含增值稅）的百分比，可直接與凍結門檻比較。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "supplier_concentration",
+      "page": 351,
+      "evidence_role": "supporting",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "以下是我們在所示期間向五大供應商的採購概況：\n截至2019年\n12月31日止年度\n的五大供應商\n採購\n採購金額\n佔採購總額\n的百分比\n人民幣千元\n供應商A . . . . . . . . . \n生產設施建設\n42,622.9\n50.5%\n供應商B . . . . . . . . .\n臨床研究服務\n2,675.9\n3.2%\n供應商C . . . . . . . . .\n物業租賃服務\n1,363.8\n1.6%\n供應商D . . . . . . . . . \n市場調研及諮詢服務\n1,200.0\n1.4%\n供應商E . . . . . . . . .\n臨床研究服務\n1,143.4\n1.4%\n合計：\n49,006.0\n58.1%\n截至2020年\n12月31日止年度\n的五大供應商\n採購\n採購金額\n佔採購總額\n的百分比\n人民幣千元\n供應商A . . . . . . . . . \n生產設施建設\n39,759.2\n31.0%\n供應商F . . . . . . . . .\n生產設施建設及翻新\n11,192.1\n8.7%\n供應商G . . . . . . . . .",
+      "evidence_reason": "五大供應商明細表交叉核對最大供應商與五大供應商的披露百分比和採購金額。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "redemption_rights",
+      "page": 261,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "(3) \n首次公開發售前投資者的權利\n根據股東之間訂立的日期為2021年1月20日的股東協議及本公司分別與各首次公\n開發售前投資者於2021年2月訂立的補充協議，首次公開發售前投資者獲授若干特別權\n利，包括（其中包括）(i)優先購買權及共同銷售權；(ii)反攤薄權；(iii)清算權；(iv)撤\n資權；及(v)資料權。除下述撤資權外，所有其他特別權利於上市後不再生效及終止。\n撤資權\n具體撤資事件發生時，各首次公開發售前投資者均有權要求趙博士、南京語意\n慧、WEA和僱員激勵平台（統稱為「公司股東」）以特定的購買價格購買各首次公開發售\n前投資者當時持有的股份。\n根據股東於2021年1月20日訂立的股東協議及本公司與各首次公開發售前投資者\n於2021年2月訂立的補充協議，我們的首次公開發售前投資者（視情況而定）：\n(i) \n同意自2021年1月31日起暫停相關撤資權，該等撤資權將於上市後終止，\n除非(a)本公司未能於指定期限內提交其H股在聯交所上市的申請或(b)全球\n發售並未發生，否則有關撤資權將自動恢復；或\n(ii) \n確認自相關投資及股東協議訂立之日起，相關撤資權已無效。\n本公司已於上文(i)(a)項下條件中所載特定期間內提交H股在聯交所上市的申請。",
+      "evidence_reason": "首次公開發售前投資條款明確列示撤資權、暫停/終止安排以及在全球發售未發生等情形下自動恢復，直接證明restorable special rights。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "redemption_rights",
+      "page": 262,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "(4) \n聯席保薦人確認\n基於(i)首次公開發售前投資之對價於我們首次向聯交所提交上市申請之日前超過\n28個淨日不可撤銷地結清；及(ii)授予首次公開發售前投資者的特別權利將於上市後不\n再生效並終止（除上述撤資權外），聯席保薦人確認，首次公開發售前投資符合聯交所\n於2010年10月13日發佈並於2017年3月更新的有關首次公開發售前投資的臨時指引及\n聯交所於2012年10月頒佈並於2013年7月及2017年3月更新的指引信HKEX-GL43-12。",
+      "evidence_reason": "聯席保薦人確認其他特別權利於上市後終止但撤資權例外，與上一頁的撤資權安排相互印證。",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "material_litigation_compliance",
+      "page": 365,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "法律程序與不合規\n法律程序\n我們可能會不時捲入我們的日常經營活動所引起的法律、仲裁或行政程序。董事\n確認，截至最後實際可行日期，我們作為當事方（無論個別或整體）的任何法律、仲裁\n或行政程序概不會對我們的業務、財務狀況或經營業績造成重大不利影響，而董事亦\n不知悉我們曾經或將會被列為當事人的任何正在進行、潛在或可能進行的法律、仲裁\n或行政程序。\n董事進一步確認，董事或高級管理人員概無個別牽涉任何可能對我們的業務、財\n務狀況或經營業績產生重大不利影響的法律、仲裁或行政程序。\n不合規\n於往績記錄期間及直至最後實際可行日期，我們並無發生董事認為將個別或共同\n對我們整體業務的營運或財務狀況造成重大影響的任何不合規事件。誠如中國法律顧\n問所告知，於往績記錄期間及直至最後實際可行日期，除對我們的整體業務不會產生\n重大不利影響的不合規事件外，我們已在所有重大方面遵守適用法律及法規。\n於往績記錄期間及截至最後實際可行日期，我們並無按照相關中國法律及法規為\n部分僱員全數繳納社會保險及住房公積金供款。截至2020年12月31日，我們就往績記\n錄期間的社會保險及住房公積金供款差額計提撥備人民幣1.7百萬元。撥備基準為僱員\n的實際工資基數與用於繳納社會保險及住房公積金供款的工資基數之間的差額，以及",
+      "evidence_reason": "正式法律程序與不合規披露同時說明不存在重大法律程序，並揭示社會保險及住房公積金未全數繳納及人民幣1.7百萬元撥備。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "material_litigation_compliance",
+      "page": 366,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "業 \n務\n– 356 –\n對僱員流動的考慮。我們已收到中國有關地方當局出具的證明書（「證明書」），證明我\n們並無逾期繳納社會保險及住房公積金，且我們並無因此而受到處罰。\n根據相關中國法律及法規，相關中國政府部門或會要求我們於規定時限內繳交未\n付社會保險供款，而且我們每遲交一日須繳納相當於未付金額0.05%的滯納金。倘我\n們未能作出相關付款，則或須繳交相當於未付供款一至三倍金額的罰款。倘我們未能\n全數繳納所規定的住房公積金，則中國住房公積金管理中心可勒令我們於規定時限內\n支付未繳款項。倘我們未能於上述規定時限內繳付款項，其可向中國法院申請強制執\n行。請參閱「風險因素－與在中國經營業務有關的風險－未能遵守有關僱員股權激勵\n計劃或強制性社會保險的中國法規，可能使中國計劃參與者或我們面臨罰款及其他法\n律或行政制裁」。\n董事認為，基於以下原因，有關不合規情況將不會對我們的業務或經營業績造成\n重大不利影響：(i)我們已收到中國主管部門出具的證明書；(ii)於往績記錄期間及直至\n最後實際可行日期，我們並無因有關不合規事宜而面臨任何行政行動、罰款或處罰，\n且並無收到相關中國部門的任何通知，要求我們補繳有關社會保險及住房公積金的不\n足金額或任何滯納金；(iii)於往績記錄期間及直至最後實際可行日期，我們並不知悉任\n何僱員針對我們提出投訴，亦無涉及因社會保險及住房公積金而與僱員發生的任何勞\n資糾紛；及(iv)誠如中國法律顧問所告知，考慮到相關監管政策及上述事實，不合規情\n況將不會對我們的整體財務狀況或經營業績及全球發售造成重大不利影響。\n於往績記錄期間及直至最後實際可行日期，我們已就社會保險及住房公積金供\n款的不足金額作出撥備。我們計劃於2021年在切實可行的情況下盡快全數繳納社會\n保險及住房公積金供款，以調整在中國相關部門備案的僱員工資基數。我們已加強內\n部監控措施，包括實施符合相關中國法律及法規的社會保險及住房公積金供款政策。\n此外，我們已指定人力資源部負責審閱及監察社會保險及住房公積金的申報及供款情\n況，而我們將會定期就相關中國法律及法規諮詢中國法律顧問的意見，以便我們及時\n了解相關監管發展。",
+      "evidence_reason": "該頁披露主管部門證明、潛在補繳/滯納金/罰款、無既有處罰及法律顧問的非重大意見，同時顯示公司仍計劃於2021年完成全數繳納，支持needs_review判斷。",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "material_litigation_compliance",
+      "page": 367,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "牌照和許可證\n截至最後實際可行日期，我們已從有關部門取得對我們的業務有重大影響的所有\n必要的牌照、批准及許可證。下表載列我們在中國和海外經營所需的重要許可證的相\n關詳情：",
+      "evidence_reason": "牌照章節明確確認已取得對業務有重大影響的所有必要牌照、批准及許可證，排除重大牌照缺失這一子風險。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "material_litigation_compliance",
+      "page": 709,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "訴訟\n截至最後實際可行日期，本集團成員公司概無牽涉任何重大訴訟、仲裁、行政訴\n訟或申索，且據我們所知，本集團任何成員公司並無尚未完結或面臨的重大訴訟、仲\n裁、行政訴訟或申索。",
+      "evidence_reason": "附錄七再次確認本集團沒有重大訴訟、仲裁、行政訴訟或申索，交叉核對Business法律披露。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "precommercial_product",
+      "page": 272,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們的兩款核\n心產品是蛟龍顱內取栓支架（「蛟龍顱內取栓支架」）和UltrafreeTM 藥物洗脫PTA球囊擴\n張導管（「Ultrafree DCB」），這兩款核心產品已在中國實現商業化，且我們正在對這兩\n款核心產品展開進一步研發。截至最後實際可行日期，我們的廣泛產品組合包括中國\n及海外的合共12款獲批產品(1)，其中包括6款用於治療神經血管疾病的獲批產品及6款\n用於治療外周血管疾病的獲批產品。我們亦在中國擁有36款處於不同開發階段的候選\n產品，其中6款處於註冊階段、9款處於臨床試驗階段、11款處於型檢階段及10款處於\n設計階段。於往績記錄期間，我們在中國和海外實現了6種產品的商業化，並自該等產\n品的銷售中產生收入。於2020年，我們大幅增加在中國的銷售，我們於中國銷售的收\n入佔2020年總收入的87.9%。隨著我們目前的產品和候選產品在中國獲得更多的上市\n批准，我們預計將在中國產生更多的銷售額。截至最後實際可行日期，中國政府並無\n就卒中治療及預防器械設定指導價。",
+      "evidence_reason": "Business正式披露兩款核心產品均已在中國商業化，且往績記錄期間六種產品已商業化並從銷售中產生收入，直接排除候選條件。",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "risk_code": "precommercial_product",
+      "page": 551,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "6 \n收入\n截至12月31日止年度\n2019年\n2020年\n人民幣千元\n人民幣千元\n商品銷售收入\n－於某一時間點\n4,917\n27,631\n截至12月31日止年度\n2019年\n2020年\n人民幣千元\n人民幣千元\n商品銷售收入\n－外周血管介入器械\n4,917\n7,691\n－神經血管介入器械\n–\n19,940\n4,917\n27,631",
+      "evidence_reason": "會計師報告確認2019年及2020年存在商品銷售收入，並按外周/神經血管介入器械拆分，交叉核對產品銷售收入確實存在。",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}
