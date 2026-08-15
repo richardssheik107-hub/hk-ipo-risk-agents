@@ -1,0 +1,40 @@
+name: expert-annotation-phase1-audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/expert-annotation-phase1-audit
+    paths:
+      - "src/ipo_risk/quality/**"
+      - "scripts/audit_expert_annotations.py"
+      - "tests/unit/test_annotation_audit.py"
+      - ".github/workflows/expert-annotation-phase1-audit.yml"
+  pull_request:
+    paths:
+      - "src/ipo_risk/quality/**"
+      - "scripts/audit_expert_annotations.py"
+      - "tests/unit/test_annotation_audit.py"
+      - "expert_results/ipo_*/pass1/expert_annotation_v1.json"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e .[dev]
+      - name: Phase-1 audit unit and regression tests
+        run: pytest -q tests/unit/test_annotation_audit.py
+      - name: Run read-only annotation audit
+        run: python scripts/audit_expert_annotations.py
+      - name: Verify pass1 artifacts were not modified
+        run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json'
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: expert-annotation-phase1-audit
+          path: reports/annotation_audit/
