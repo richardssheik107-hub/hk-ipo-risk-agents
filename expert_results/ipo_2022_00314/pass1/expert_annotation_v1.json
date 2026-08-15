@@ -1,0 +1,361 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_00314",
+  "stock_code": "0314.HK",
+  "company_name": "思派健康",
+  "document_id": "ipo_2022_00314",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "At June 30, 2022, cash and cash equivalents were RMB1,366.423 million and net operating cash outflow for the six-month period was RMB215.008 million. Using the frozen cash-flow-statement definition and the latest comparable period gives approximately 38.13 months of runway, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 1366423,
+        "net_cash_from_operating_activities": -215008,
+        "period_months": 6,
+        "monthly_cash_burn": 35834.666666666664
+      },
+      "calculation_result": {
+        "months": 38.13131604405418,
+        "cash_runway_months": 38.13131604405418,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The audited historical financial information reports losses for each of the three comparable full years 2019, 2020 and 2021. Three comparable loss periods meet the frozen high-risk definition. The additional six-month 2022 loss is not needed to establish the threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2019", "loss": -596071},
+          {"period": "year ended December 31, 2020", "loss": -1042029},
+          {"period": "year ended December 31, 2021", "loss": -3748503}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 3,
+        "threshold": "at least 3 comparable loss periods",
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB1,550.044 million in the six months ended June 30, 2021 to RMB1,887.652 million in the comparable 2022 period, a 21.78% increase. The latest comparable growth is positive and does not meet the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "six months ended June 30, 2021",
+        "current_period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 1550044,
+        "current_revenue": 1887652
+      },
+      "calculation_result": {
+        "growth_pct": 21.780543003940533,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the latest period, the largest customer contributed 2.4% and the top five customers 7.3% of total revenue. Both exact disclosed ratios are far below the frozen medium thresholds of 30% and 60%, respectively.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_customer_pct": 2.4,
+        "top_five_customer_pct": 7.3,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_threshold_triggered": false,
+        "top_five_customer_threshold_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "For the latest period, the largest supplier accounted for 39.1% and the top five suppliers 73.5% of total purchases. Both exceed the frozen medium thresholds (30% and 60%) but remain below the high thresholds (50% and 80%).",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_supplier_pct": 39.1,
+        "top_five_supplier_pct": 73.5,
+        "medium_largest_threshold_pct": 30,
+        "high_largest_threshold_pct": 50,
+        "medium_top_five_threshold_pct": 60,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": true,
+        "largest_supplier_high_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "top_five_supplier_high_triggered": false,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The formal Pre-IPO Investments disclosure states that the relevant redemption rights were terminated immediately before submission of the listing application. It contains no disclosed restoration or revival condition; other special rights were to terminate upon completion of the Global Offering.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The formal Business legal and compliance section states that there were no material proceedings or threatened proceedings and no material non-compliance incidents resulting in fines, enforcement actions or other penalties through the Latest Practicable Date.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00314",
+      "stock_code": "0314.HK",
+      "company_name": "思派健康",
+      "document_id": "ipo_2022_00314",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The issuer is an operating pharmacy and health-services group, not a precommercial product developer. It states that it does not manufacture pharmaceutical products, and the accountants' report records substantial revenue from specialty pharmacy, physician research assistance and health insurance services throughout the track record periods.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "cash_runway",
+      "page": 396,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "Cash and cash equivalents . . . . . . . . . . . . . . . . . . . . . . 26 199,110 1,628,021 535,849 1,366,423",
+      "evidence_reason": "The latest audited statement-of-financial-position cash and cash equivalents figure supplies the frozen cash input for the runway calculation.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "cash_runway",
+      "page": 403,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "Net cash flows used in operating activities .................... (327,160) (192,117) (621,919) (474,535) (215,008)",
+      "evidence_reason": "The latest six-month operating cash outflow supplies the burn input and its six-month period is identified by the statement headings.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "continuous_loss",
+      "page": 394,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "LOSS FOR THE YEAR/PERIOD . . . (596,071) (1,042,029) (3,748,503) (2,516,772) (345,987)",
+      "evidence_reason": "Under the 2019, 2020, 2021 and comparative six-month headings, the audited statement proves losses in three comparable full years and both six-month periods.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "revenue_growth",
+      "page": 394,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "audited_financial_statement",
+      "exact_text": "REVENUE ...................... 5 1,039,011 2,699,647 3,473,930 1,550,044 1,887,652",
+      "evidence_reason": "The audited statement provides the 2021 and 2022 comparable six-month revenue values used in the growth calculation.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "customer_concentration",
+      "page": 219,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For each of the years ended December 31, 2019, 2020 and 2021, and for the six months ended June 30, 2022, our top five customers accounted for 8.4%, 6.3%, 5.4% and 7.3% of our total revenue, respectively. Revenue from our largest customer accounted for 3.9%, 1.6%, 1.5% and 2.4% of our total revenue during each of these periods.",
+      "evidence_reason": "The formal customer disclosure supplies exact largest-customer and top-five ratios for every track-record period, including the latest period used for threshold comparison.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "customer_concentration",
+      "page": 435,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "accountants_report",
+      "exact_text": "No information about major customers is presented as there was no single customer from which over 10% or more of the Group's revenue was derived during the years ended December 31, 2019, 2020 and 2021 and the six months ended June 30, 2021 and 2022.",
+      "evidence_reason": "The accountants' report independently cross-checks that no single-customer concentration approached the frozen 30% medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "supplier_concentration",
+      "page": 228,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For each of the years ended December 31, 2019, 2020 and 2021, and for the six months ended June 30, 2022, our top five Specialty Pharmacy Business suppliers accounted for 70.5%, 70.5%, 71.9% and 73.5% of our total purchases, respectively. Purchases from our largest Specialty Pharmacy Business supplier accounted for 27.6%, 32.1%, 37.2% and 39.1% of our total purchases during each of these periods.",
+      "evidence_reason": "The formal major-suppliers disclosure provides the exact top-five and largest-supplier ratios needed to establish medium concentration in the latest period.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "redemption_rights",
+      "page": 150,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "Certain special rights, including rights of refusal and co-sale, information and inspection rights, dividend preference rights, drag-along rights and liquidation rights, were granted to our Pre-IPO Investors under our existing shareholders agreement and memorandum and articles. The relevant redemption rights were terminated immediately prior to the submission of the listing to the Stock Exchange for the purpose of the Global Offering. All the other special rights will be automatically terminated upon the completion of the Global Offering.",
+      "evidence_reason": "The authoritative Pre-IPO rights disclosure distinguishes already-terminated redemption rights from other rights terminating at offering completion and discloses no restoration clause.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "material_litigation_compliance",
+      "page": 238,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had not been and were not a party to any material legal, arbitral or administrative proceedings, and we were not aware of any pending or threatened legal, arbitral or administrative proceedings against us or our Directors that could, individually or in the aggregate, have a material adverse effect on our business, financial condition and results of operations.",
+      "evidence_reason": "The formal legal-proceedings section directly excludes material pending or threatened proceedings through the Latest Practicable Date.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "material_litigation_compliance",
+      "page": 238,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had not been and were not involved in any material noncompliance incidents that have led to fines, enforcement actions or other penalties that could, individually or in the aggregate, have a material adverse effect on our business, financial condition and results of operations.",
+      "evidence_reason": "The adjacent formal compliance disclosure directly excludes material non-compliance incidents with enforcement consequences.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "precommercial_product",
+      "page": 237,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Since we do not manufacture pharmaceutical products, according to our PRC Legal Adviser, we are not required to maintain product liability insurance under the applicable PRC laws and regulations, which is also consistent with the industry practice.",
+      "evidence_reason": "The business disclosure establishes that the issuer is not developing or manufacturing a proprietary pharmaceutical product whose commercialization is pending.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "risk_code": "precommercial_product",
+      "page": 435,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Specialty Pharmacy Business ...... 863,600 2,482,006 3,136,484 1,407,134 1,646,388; Physician Research Assistance Business ..................... 173,195 185,652 244,857 102,133 149,154; Health Insurance Services Business ..................... 2,216 31,989 92,589 40,777 92,110; Total revenue from contracts with customers .................... 1,039,011 2,699,647 3,473,930 1,550,044 1,887,652",
+      "evidence_reason": "The accountants' report shows substantial commercial revenue across the issuer's operating pharmacy and service lines in every track-record period.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 551,
+    "source_document_sha256_expected": "f774411f7d88a9f0fa10209ed7cd2fa6adba693d27475006b0e83792704f4501"
+  }
+}
