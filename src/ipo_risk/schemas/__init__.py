@@ -30,6 +30,22 @@ from ipo_risk.schemas.market import (
     MarketValidationResult,
     MarketValidationSeverity,
 )
+from ipo_risk.schemas.modeling import (
+    DOCUMENT_FEATURE_SCHEMA_VERSION,
+    V04_MODELING_DATASET_VERSION,
+    DocumentFeatureDefinition,
+    DocumentFeatureDType,
+    DocumentFeatureManifest,
+    DocumentFeatureVector,
+    DocumentRiskFeature,
+    DocumentRiskFeatureState,
+    DocumentRiskSnapshotBuildContext,
+    V03DocumentRiskSnapshot,
+    V04BlindFeatureDataset,
+    V04BlindFeatureRecord,
+    V04ModelingDataset,
+    V04ModelingRecord,
+)
 
 
 def now() -> datetime:

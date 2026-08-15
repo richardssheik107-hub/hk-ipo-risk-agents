@@ -14,8 +14,9 @@ for formal promotion, while independent second review remains optional and
 must stay traceable when it exists. Financial, Legal and Business formal
 Golden evaluation is complete; actual cross-domain metrics are reported
 without tuning. The historical Owner Waiver is superseded. The independent
-V04-1 Market Foundation is implemented pending review; calibrated decline
-probabilities and production market prediction have not started.
+V04-1 Market Foundation is merged and V04-2 document-to-market feature contract
+is implemented pending review; calibrated decline probabilities and production
+market prediction have not started.
 
 ## v0.3.5 Evidence Intelligence research program
 
@@ -30,8 +31,8 @@ Before tuning retrieval, Phase 0.6 reconstructs an independent Expert Golden tha
 separates risk instances, evidence records, evidence roles and multi-page
 relationships. Phase 0.7 designs domain-specific Evidence Intelligence, Phase 0.8
 runs a controlled A/B, and only Phase 0.9 selects/tunes retrieval algorithms.
-V04-1 proceeds as a decoupled foundation; document-feature integration and
-production model development remain later gates.
+V04-1 remains a decoupled foundation; V04-2 adds a versioned snapshot/dataset
+boundary, while production market-feature and model development remain later gates.
 
 The collaboration method is LLM-assisted, not GPT-as-Gold: blind GPT evidence
 investigation -> deterministic validation -> independent GPT audit -> conflict
@@ -267,6 +268,10 @@ Expert Golden，Phase 0.7 设计 domain-specific evidence search，Phase 0.8 进
 V04-1 已实现市场数据契约、上市后标签、cohort/listing-year 一致性、版本化普通股
 modeling eligibility、年度隔离与完整性校验；生产行情及证券类型 metadata 适配器、
 Market Agent、Logistic、LightGBM和SHAP仍属于后续v0.4阶段。
+
+V04-2 已实现最终 `IPOAnalysisResult` 到版本化 `V03DocumentRiskSnapshot`、固定100项
+数值特征及 development/validation modeling dataset 的契约。2025只允许输出不含
+MarketOutcomeLabel的feature-only blind dataset；本阶段不训练模型。
 
 ## 11. 当前实施状态
 

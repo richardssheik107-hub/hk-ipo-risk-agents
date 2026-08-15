@@ -598,6 +598,9 @@ Verifier和Supervisor使用确定性规则实现，以自动验证Evidence、Cal
 - `enhanced_v2` 是发布的三 Agent 工作流，`mvp_v1`、Mock 与 unavailable 回退保留；
 - V04-1 Market Foundation 已实现独立的历史数据Provider契约与标签/治理层；Market Agent
   与生产市场数据Provider仍未实现，属于后续v0.4阶段。
+- V04-2新增独立`ipo_risk.modeling`边界：只消费最终`IPOAnalysisResult`，生成版本化
+  DocumentRiskSnapshot、稳定数值manifest及受年度隔离保护的modeling dataset；不反向
+  依赖Retriever、Agent或LLM。
 
 v0.3.5 研究不会回写或重构这些冻结公共边界。
 
