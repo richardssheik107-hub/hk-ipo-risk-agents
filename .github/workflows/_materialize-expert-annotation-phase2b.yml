@@ -26,10 +26,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add 'expert_results/ipo_*/audit/structured_input_backfill_v1.json'
-          git add reports/annotation_audit/phase2b/phase2b_summary.json
-          git add reports/annotation_audit/phase2b/phase2b_backfill_results.csv
-          git add reports/annotation_audit/phase2b/phase2b_unresolved.csv
-          git add reports/annotation_audit/phase2b/phase2b_reaudit_conflicts.csv
+          git add -f reports/annotation_audit/phase2b/phase2b_summary.json
+          git add -f reports/annotation_audit/phase2b/phase2b_backfill_results.csv
+          git add -f reports/annotation_audit/phase2b/phase2b_unresolved.csv
+          git add -f reports/annotation_audit/phase2b/phase2b_reaudit_conflicts.csv
           git diff --cached --name-only
           if git diff --cached --quiet; then
             echo "No Phase-2b artifacts to materialize."
