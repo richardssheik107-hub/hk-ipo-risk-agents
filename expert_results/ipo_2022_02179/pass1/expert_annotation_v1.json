@@ -1,0 +1,326 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02179",
+  "stock_code": "2179.HK",
+  "company_name": "瑞科生物－Ｂ",
+  "document_id": "ipo_2022_02179",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the nine months ended September 30, 2021, the audited cash flow statement reports net cash flows used in operating activities of RMB342,777 thousand and cash and cash equivalents at period end of RMB1,086,933 thousand. Monthly operating cash burn is approximately RMB38,086 thousand and cash runway is approximately 28.54 months, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 1086933,
+        "net_cash_used_in_operating_activities": -342777,
+        "period_months": 9,
+        "monthly_cash_burn": 38086.333333333336
+      },
+      "calculation_result": {
+        "months": 28.53866216228043,
+        "cash_runway_months": 28.53866216228043,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows a loss for the year/period of RMB138,270 thousand, RMB179,400 thousand, RMB72,494 thousand and RMB520,364 thousand for 2019, 2020, 9M2020 and 9M2021 respectively. Three or more comparable loss periods meet the frozen high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2019", "loss": -138270},
+          {"period": "year ended December 31, 2020", "loss": -179400},
+          {"period": "nine months ended September 30, 2020", "loss": -72494},
+          {"period": "nine months ended September 30, 2021", "loss": -520364}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 4,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "POLICY_AMBIGUITY OPEN-01: The Group has no products approved for commercial sale and generated no revenue from vaccine sales during the Track Record Period. Because the revenue denominator is zero and the frozen policy for zero-revenue growth is not resolved, the risk is reported as needs_review rather than forced to not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "zero_revenue_policy_ambiguity",
+      "calculation_inputs": {
+        "period": "years ended December 31, 2019 and 2020 and nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "vaccine_sales_revenue": 0
+      },
+      "calculation_result": {
+        "assessment": "zero_revenue_denominator_undefined",
+        "policy_ambiguity": "OPEN-01"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "POLICY_AMBIGUITY OPEN-01: The Group had no commercialized vaccines and therefore no customers during the Track Record Period. With zero revenue and an undefined customer-concentration denominator, the open policy requires needs_review rather than a forced not_applicable conclusion.",
+      "calculation_required": true,
+      "calculation_method": "zero_revenue_customer_denominator_policy_ambiguity",
+      "calculation_inputs": {
+        "period": "years ended December 31, 2019 and 2020 and nine months ended September 30, 2021",
+        "commercialized_products": 0,
+        "customers": 0,
+        "total_revenue": 0
+      },
+      "calculation_result": {
+        "assessment": "zero_revenue_denominator_undefined",
+        "policy_ambiguity": "OPEN-01"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2021, the largest supplier accounted for approximately 11.8% and the five largest suppliers accounted for approximately 27.4% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_supplier_pct": 11.8,
+        "top_five_supplier_pct": 27.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "Series A and Series B Pre-IPO financings created redemption liabilities on owners' capital. The formal disclosure states that the redemption obligations associated with these transactions were terminated in March 2021 and the redemption liabilities were nil as of September 30, 2021. No restoration of the redemption rights is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The statutory and general information section states that during the Track Record Period and as of the Latest Practicable Date the Group was not engaged in any litigation, arbitration or claim of material importance and no such matter was pending or threatened with a material adverse effect.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02179",
+      "stock_code": "2179.HK",
+      "company_name": "瑞科生物－Ｂ",
+      "document_id": "ipo_2022_02179",
+      "risk_code": "precommercial_product",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.98,
+      "reasoning": "The Group is a clinical-stage vaccine company with no products approved for commercial sale and no revenue from vaccine sales. The core product is not commercialized, so the risk is applicable; because precommercial severity is an open policy item (OPEN-02), expected_level remains null.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "approved_products_for_sale": 0,
+        "product_sales_revenue": 0
+      },
+      "calculation_result": {
+        "assessment": "core_product_not_commercialized",
+        "policy_ambiguity": "OPEN-02"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "cash_runway",
+      "page": 461,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows used in operating activities (138,639) (70,336) (43,880) (342,777)",
+      "evidence_reason": "The audited cash flow statement provides the 9M2021 operating cash burn input of RMB342,777 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "cash_runway",
+      "page": 463,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 7,239 355,821 19,750 1,086,933",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB1,086,933 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "continuous_loss",
+      "page": 457,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "LOSS FOR THE YEAR/PERIOD (138,270) (179,400) (72,494) (520,364)",
+      "evidence_reason": "The audited statement of profit or loss proves losses in all four comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "revenue_growth",
+      "page": 24,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "summary",
+      "exact_text": "We currently have no products approved for commercial sale and have not generated any revenue from vaccine sales.",
+      "evidence_reason": "The prospectus establishes the zero-revenue fact that triggers the OPEN-01 policy ambiguity.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "customer_concentration",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had no commercialized vaccines and therefore had no customers.",
+      "evidence_reason": "The formal Business disclosure establishes the zero-customer/zero-revenue fact that triggers the OPEN-01 policy ambiguity.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "supplier_concentration",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, our purchases from our five largest suppliers in aggregate in each year/period accounted for 39.3%, 60.3% and 27.4% of our total purchases for the same year/period, respectively, and purchases from our largest supplier in each year/period accounted for 13.9%, 18.9% and 11.8% of our total purchases, respectively for the same year/period.",
+      "evidence_reason": "The formal supplier disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "redemption_rights",
+      "page": 26,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "Our redemption liabilities on owners' capital decreased from RMB1,952.9 million as of December 31, 2020 to nil as of September 30, 2021, as our redemption obligations associated with the aforementioned transactions have been terminated.",
+      "evidence_reason": "The formal financial information and Pre-IPO disclosure prove the redemption obligations were terminated in March 2021 and are not restorable.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "material_litigation_compliance",
+      "page": 644,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "Litigation During the Track Record Period and as of the Latest Practicable Date, we were not engaged in any litigation, arbitration or claim of material importance and no litigation, arbitration or claim of material importance was known to our Directors to be pending or threatened by or against us, that would have a material adverse effect on our results of operations or financial conditions.",
+      "evidence_reason": "The formal statutory litigation disclosure excludes material pending or threatened proceedings.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "risk_code": "precommercial_product",
+      "page": 24,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "We currently have no products approved for commercial sale and have not generated any revenue from vaccine sales.",
+      "evidence_reason": "The formal disclosure proves the core vaccine products are not commercialized and have generated no product sales revenue.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 655,
+    "source_document_sha256_expected": "aa8c5e8e370e0072e8158afde83eee9d28fa8a0637a278514d242fae9d863ceb"
+  }
+}

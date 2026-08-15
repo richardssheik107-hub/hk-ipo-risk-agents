@@ -1,0 +1,321 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02237",
+  "stock_code": "2237.HK",
+  "company_name": "中國石墨",
+  "document_id": "ipo_2022_02237",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For FY2021, the audited cash flow statement reports net cash generated from operating activities of RMB75,698 thousand and cash and cash equivalents at year end of RMB33,934 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 33934,
+        "net_cash_from_operating_activities": 75698,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year of RMB24,549 thousand, RMB37,859 thousand and RMB53,325 thousand for 2019, 2020 and 2021 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 24549},
+          {"period": "year ended December 31, 2020", "profit": 37859},
+          {"period": "year ended December 31, 2021", "profit": 53325}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB168,749 thousand in 2020 to RMB198,365 thousand in 2021, an increase of approximately 17.55%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "year ended December 31, 2020",
+        "current_period": "year ended December 31, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 168749,
+        "current_revenue": 198365
+      },
+      "calculation_result": {
+        "growth_pct": 17.550326224155402,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 2021, the largest customer group accounted for approximately 20.1% and the five largest customers accounted for approximately 55.7% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "largest_customer_pct": 20.1,
+        "top_five_customer_pct": 55.7,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 2021, the largest supplier accounted for approximately 27.5% and the five largest suppliers accounted for approximately 57.0% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "largest_supplier_pct": 27.5,
+        "top_five_supplier_pct": 57.0,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The corporate history describes a family-owned Chinese graphite business that was reorganized into an offshore listing structure, with Sandy Mining Limited and Mr. Zhao identified as Controlling Shareholders. No external pre-IPO investor holding redemption, repurchase, put or other restorable special rights was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.92,
+      "reasoning": "The formal Legal Proceedings and Regulatory Compliance section states that no member of the Group was a party to litigation, arbitration or administrative proceedings and none was pending or threatened with a material adverse effect. The disclosed non-compliance incidents, including property title defects and social insurance/housing provident fund shortfalls, were remediated, not penalized, and assessed by the Directors as immaterial.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02237",
+      "stock_code": "2237.HK",
+      "company_name": "中國石墨",
+      "document_id": "ipo_2022_02237",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established graphite producer and processor that has sold flake graphite concentrate and spherical graphite since 2006 and 2012 respectively, with revenue of RMB198.4 million in 2021. Its core products are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "cash_runway",
+      "page": 384,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from operating activities 11,244 24,544 75,698",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest year.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "cash_runway",
+      "page": 384,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at end of the year 19 1,861 10,007 33,934",
+      "evidence_reason": "The audited cash flow statement provides the period-end cash input of RMB33,934 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "continuous_loss",
+      "page": 378,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year 24,549 37,859 53,325",
+      "evidence_reason": "The audited statement of comprehensive income shows profit in every comparable year.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "revenue_growth",
+      "page": 378,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 123,736 168,749 198,365",
+      "evidence_reason": "The audited statement provides the 2020 and 2021 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "customer_concentration",
+      "page": 176,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the three years ended December 31, 2019, 2020 and 2021, our five largest customers accounted for approximately 62.9%, 59.0% and 55.7% of our Group's total revenue, and sales to the largest customer group accounted for approximately 37.9%, 37.9% and 20.1% of our Group's total revenue, respectively.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-year ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "supplier_concentration",
+      "page": 182,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the three years ended December 31, 2019, 2020 and 2021, purchases from our top five suppliers accounted for approximately 69.2%, 63.8% and 57.0% of our total purchases for the same period, respectively, and purchases from our top supplier accounted for approximately 36.1%, 34.7% and 27.5% of our total purchases for the same period, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-year ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "redemption_rights",
+      "page": 24,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "Therefore, each of Sandy Mining Limited and Mr. Zhao will be our Controlling Shareholders for the purpose of the Listing Rules.",
+      "evidence_reason": "The corporate structure disclosure identifies family/controlling-shareholder ownership rather than external pre-IPO investors with special redemption rights.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "material_litigation_compliance",
+      "page": 24,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "To the best knowledge of our Directors, as at the Latest Practicable Date, no member of our Group was a party to any litigation, arbitration or administrative proceedings, and our Directors were not aware of any pending or threatened litigation, arbitration or administrative proceedings against our Group, that would have a material adverse effect on our business, results of operations and financial conditions.",
+      "evidence_reason": "The formal legal compliance statement excludes material pending or threatened proceedings.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "risk_code": "precommercial_product",
+      "page": 10,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the three years ended December 31, 2019, 2020 and 2021, we sold (i) approximately 18,400 tonnes, 34,100 tonnes and 37,300 tonnes of flake graphite concentrate; and (ii) approximately 8,300 tonnes, 10,400 tonnes and 13,800 tonnes of spherical graphite and its by-products, respectively.",
+      "evidence_reason": "The formal Business disclosure proves the core graphite products have been sold in commercial volumes during the Track Record Period.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 662,
+    "source_document_sha256_expected": "347f579d031a1aafe298ed756b336b39b5359c8f075af1301d2522386a4314a9"
+  }
+}

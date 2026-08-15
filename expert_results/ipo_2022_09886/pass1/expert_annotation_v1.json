@@ -1,0 +1,332 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09886",
+  "stock_code": "9886.HK",
+  "company_name": "叮噹健康",
+  "document_id": "ipo_2022_09886",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended March 31, 2022, the audited cash flow statement reports net cash from operating activities of RMB12,877 thousand and cash and cash equivalents at period end of RMB1,498,232 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 1498232,
+        "net_cash_from_operating_activities": 12877,
+        "period_months": 3
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows losses of RMB103,172 thousand, RMB273,932 thousand, RMB919,680 thousand, RMB1,598,974 thousand, RMB748,916 thousand and RMB404,416 thousand for 2018, 2019, 2020, 2021, 3M2021 and 3M2022 respectively. Six comparable loss periods meet the frozen high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2018", "loss": -103172},
+          {"period": "year ended December 31, 2019", "loss": -273932},
+          {"period": "year ended December 31, 2020", "loss": -919680},
+          {"period": "year ended December 31, 2021", "loss": -1598974},
+          {"period": "three months ended March 31, 2021", "loss": -748916},
+          {"period": "three months ended March 31, 2022", "loss": -404416}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 6,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB779,712 thousand in 3M2021 to RMB987,407 thousand in 3M2022, an increase of approximately 26.64%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "three months ended March 31, 2021",
+        "current_period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 779712,
+        "current_revenue": 987407
+      },
+      "calculation_result": {
+        "growth_pct": 26.6373994500534,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest customer accounted for approximately 4.0% and the five largest customers accounted for approximately 8.2% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_customer_pct": 4.0,
+        "top_five_customer_pct": 8.2,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest supplier accounted for approximately 18.5% and the five largest suppliers accounted for approximately 54.4% of total purchases. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_supplier_pct": 18.5,
+        "top_five_supplier_pct": 54.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "The Preferred Shares carry redemption rights that were terminated before the listing application, but the rights shall automatically be restored if the Global Offering has not been consummated within six months after the initial submission (as extended by a March 2022 shareholders' resolution). Because the termination is conditional with an express restoration mechanism, the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "rights_status": "terminated_conditionally",
+        "restoration_condition": "global_offering_not_consummated_by_revival_date"
+      },
+      "calculation_result": {
+        "assessment": "restorable_redemption_rights_present",
+        "needs_review_reason": "termination_with_revival_date"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The formal Legal Proceedings and Compliance section discloses administrative penalties for licensing, food labelling and packaging violations that were all fully settled. It further states that the Group was not a party to any material legal, arbitral or administrative proceedings and was not aware of any pending or threatened proceedings with a material adverse effect. No material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09886",
+      "stock_code": "9886.HK",
+      "company_name": "叮噹健康",
+      "document_id": "ipo_2022_09886",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established digital healthcare and on-demand pharmacy service provider with substantial revenue from pharmaceutical and healthcare product sales and services throughout the Track Record Period. Its core products and services are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "cash_runway",
+      "page": 465,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash from/(used in) operating activities 10,167 (265,897) (193,046) (295,490) (16,551) 12,877",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest three-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "cash_runway",
+      "page": 467,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at the end of the year/period, represented by 46,242 144,691 260,574 1,552,994 426,961 1,498,232",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB1,498,232 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "continuous_loss",
+      "page": 459,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Loss and total comprehensive expense for the year/period (103,172) (273,932) (919,680) (1,598,974) (748,916) (404,416)",
+      "evidence_reason": "The audited statement proves losses in all six comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "revenue_growth",
+      "page": 459,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5B 584,612 1,275,589 2,228,563 3,678,690 779,712 987,407",
+      "evidence_reason": "The audited statement provides the 3M2021 and 3M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "customer_concentration",
+      "page": 250,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The sales to our largest customer in 2018, 2019, 2020, 2021 and for the three months ended March 31, 2022, amounted to RMB38.9 million, RMB38.2 million, RMB41.7 million, RMB93.8 million and RMB39.9 million, representing 6.7%, 3.0%, 1.9%, 2.6% and 4.0% of our total sales of the respective periods, and the sales to our five largest customers ... representing 12.4%, 8.8%, 5.0%, 6.1% and 8.2% of our total sales of the respective periods.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "supplier_concentration",
+      "page": 251,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The purchases to our largest supplier in 2018, 2019, 2020, 2021 and for the three months ended March 31, 2022, amounted to RMB94.3 million, RMB189.4 million, RMB286.5 million, RMB485.9 million and RMB137.8 million, representing 25.3%, 21.3%, 18.0%, 18.1% and 18.5% of our total purchases of the respective periods, and the purchases to our five largest suppliers ... representing 73.2%, 54.4%, 43.2%, 54.0% and 54.4% of our total purchases of the respective periods.",
+      "evidence_reason": "The formal Business supplier disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "redemption_rights",
+      "page": 176,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The redemption rights have been terminated before the Company submits its application for the listing of our Shares on the Stock Exchange, provided that if the Global Offering has not been consummated within six months after the initial submission of the listing application to the Stock Exchange (the Revival Date), such redemption rights shall automatically be restored in all respects as of such date and the Pre-IPO Investors shall be entitled to such rights retroactively.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption rights are terminated only conditionally and may be restored on listing failure, requiring needs_review.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "material_litigation_compliance",
+      "page": 286,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, we had not been and were not a party to any material legal, arbitral or administrative proceedings, and we were not aware of any pending or threatened legal, arbitral or administrative proceedings against us or our Directors that could, individually or in the aggregate, have a material adverse effect on our business, financial condition and results of operations.",
+      "evidence_reason": "The formal legal disclosure excludes material pending or threatened proceedings, and the disclosed administrative penalties were fully settled.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "risk_code": "precommercial_product",
+      "page": 459,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5B 584,612 1,275,589 2,228,563 3,678,690 779,712 987,407",
+      "evidence_reason": "The audited statement proves substantial commercial revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 619,
+    "source_document_sha256_expected": "b63e16c1dda2cd8a0e567b597b34fa5a07ab7c1ca33a7b26befe9f364f2e993a"
+  }
+}

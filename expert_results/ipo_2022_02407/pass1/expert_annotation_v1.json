@@ -1,0 +1,331 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02407",
+  "stock_code": "2407.HK",
+  "company_name": "高視醫療",
+  "document_id": "ipo_2022_02407",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the six months ended June 30, 2022, the audited cash flow statement reports net cash flows from operating activities of RMB75,268 thousand and cash and cash equivalents at period end of RMB582,226 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 582226,
+        "net_cash_from_operating_activities": 75268,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "The accountants' report shows a loss for the year of RMB38,026 thousand in 2019, profit of RMB98,538 thousand in 2020, and a loss of RMB191,571 thousand in 2021. There are two comparable full-year loss periods, meeting the frozen medium threshold of two comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2019", "loss": -38026},
+          {"period": "year ended December 31, 2021", "loss": -191571}
+        ],
+        "profit_periods": [
+          {"period": "year ended December 31, 2020", "profit": 98538}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 2,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "Revenue decreased from RMB578,568 thousand in H1 2021 to RMB577,874 thousand in H1 2022, a decline of approximately 0.12%. The decline is below zero but above the -20% high threshold, so the frozen medium revenue-growth threshold is triggered.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "six months ended June 30, 2021",
+        "current_period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 578568,
+        "current_revenue": 577874
+      },
+      "calculation_result": {
+        "growth_pct": -0.1199513281066357,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest customer accounted for approximately 9.3% and the five largest customers accounted for approximately 22.7% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_customer_pct": 9.3,
+        "top_five_customer_pct": 22.7,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest supplier accounted for approximately 13.0% and the five largest suppliers accounted for approximately 44.1% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_supplier_pct": 13.0,
+        "top_five_supplier_pct": 44.1,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.9,
+      "reasoning": "The Pre-IPO Investors' Preferred Shares carry redemption rights that cease to be exercisable immediately before the first filing of the listing application and resume to be exercisable upon the failure to achieve a qualified public offering before specified dates. Because the rights are suspended rather than finally terminated and contain a restoration mechanism, the risk is left as needs_review.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "rights_status": "suspended_until_qualified_offering",
+        "restoration_condition": "failure_to_achieve_qualified_public_offering_before_specified_dates"
+      },
+      "calculation_result": {
+        "assessment": "restorable_redemption_rights_present",
+        "needs_review_reason": "suspension_with_restoration"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.92,
+      "reasoning": "The formal litigation and compliance disclosure states that no charge has been laid against the former director or the Group in connection with the Incident and that the Group was not engaged in litigation, arbitration or claim of material importance with none pending or threatened. The historical product recalls were insignificant and no material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02407",
+      "stock_code": "2407.HK",
+      "company_name": "高視醫療",
+      "document_id": "ipo_2022_02407",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established ophthalmic medical device distributor and manufacturer with substantial revenue from distribution, proprietary products and technical services throughout the Track Record Period. Its core products are already commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "cash_runway",
+      "page": 484,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows from operating activities 171,064 130,001 164,486 14,051 75,268",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest six-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "cash_runway",
+      "page": 485,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 24 332,762 307,490 608,996 481,229 582,226",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB582,226 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "continuous_loss",
+      "page": 478,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "(LOSS)/PROFIT FOR THE YEAR/PERIOD (38,026) 98,538 (191,571) (34,585) (53,264)",
+      "evidence_reason": "The audited statement proves losses in 2019 and 2021 and profit in 2020, establishing two comparable full-year loss periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "revenue_growth",
+      "page": 477,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "REVENUE 5 1,106,655 962,075 1,298,218 578,568 577,874",
+      "evidence_reason": "The audited statement provides the H1 2021 and H1 2022 revenue inputs for the negative growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "customer_concentration",
+      "page": 291,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Rank Customer Transaction amount % of total revenue ... For the six months ended June 30, 2022 1 CustomerA 53,575 9.3 ... Total 251,621 22.7",
+      "evidence_reason": "The formal Business customer table proves the latest-period largest-customer and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "supplier_concentration",
+      "page": 70,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, all of our five largest suppliers in each period during the Track Record Period were our brand partners, which accounted for 71.3%, 70.1%, 66.9% and 44.1% of the total purchases for the years ended December 31, 2019, 2020 and 2021 and the six months ended June 30, 2022, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves the latest-period top-five ratio remains below the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "redemption_rights",
+      "page": 205,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "upon the occurrence of certain events, each Preferred Share and any additional securities held by such Pre-IPO Investor shall be redeemable at its option ... The special rights referred to in paragraph (3) above shall cease to be exercisable immediately before the first filing of the listing application by our Company with the Stock Exchange, and shall resume to be exercisable upon the failure by our Company to achieve a qualified public offering before specified dates.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption rights are suspended with a restoration condition, requiring needs_review rather than rejection.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "material_litigation_compliance",
+      "page": 37,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "THE INCIDENT Before the Track Record Period, one of our former directors ... served as a witness in a bribery case against an Independent Third Party ... No charge has been laid against such former director or the Group by any judicial authorities in connection with such incident.",
+      "evidence_reason": "The formal disclosure proves the historical incident did not result in charges against the Group and was not a material pending matter.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "risk_code": "precommercial_product",
+      "page": 10,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "We are the largest domestic player and the fourth largest player in terms of revenue in 2021 with a market share of 6.7% in China's ophthalmic medical device market ... we distribute a broad spectrum of ophthalmic medical equipment and consumables, and also provide our end customers with related technical services.",
+      "evidence_reason": "The formal Business overview proves the core products and services are commercialized and revenue-generating.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 686,
+    "source_document_sha256_expected": "76558d6414b429e7397dd05358487f35789b8615c836edf915fad893433de0fe"
+  }
+}

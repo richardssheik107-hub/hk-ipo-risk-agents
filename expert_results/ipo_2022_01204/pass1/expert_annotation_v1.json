@@ -1,0 +1,347 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_01204",
+  "stock_code": "1204.HK",
+  "company_name": "博維智慧",
+  "document_id": "ipo_2022_01204",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "For FY2021, the audited cash flow statement reports net cash used in operating activities of HK$49,730 thousand and cash and cash equivalents at year end of HK$14,485 thousand. Monthly operating cash burn is approximately HK$4,144 thousand and cash runway is approximately 3.50 months, below the 6-month high threshold and at or above the 3-month critical threshold.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "cash": 14485,
+        "net_cash_used_in_operating_activities": -49730,
+        "period_months": 12,
+        "monthly_cash_burn": 4144.166666666667
+      },
+      "calculation_result": {
+        "months": 3.495274482203901,
+        "cash_runway_months": 3.495274482203901,
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year of HK$25,219 thousand, HK$29,858 thousand and HK$24,003 thousand for FY2019, FY2020 and FY2021 respectively. There are zero comparable loss periods, so the continuous-loss condition is not met.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 25219},
+          {"period": "year ended December 31, 2020", "profit": 29858},
+          {"period": "year ended December 31, 2021", "profit": 24003}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "Revenue increased from HK$475,308 thousand in FY2020 to HK$534,302 thousand in FY2021, an increase of approximately 12.41%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "year ended December 31, 2020",
+        "current_period": "year ended December 31, 2021",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "previous_revenue": 475308,
+        "current_revenue": 534302
+      },
+      "calculation_result": {
+        "growth_pct": 12.411741439235191,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For FY2021, the largest customer accounted for 22.1% and the five largest customers accounted for 47.4% of total revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%, respectively.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "currency": "HKD",
+        "unit": "HK$'000",
+        "largest_customer_pct": 22.1,
+        "top_five_customer_pct": 47.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For FY2021, the largest supplier accounted for 14.4% and the five largest suppliers accounted for 54.4% of total purchases. Both disclosed ratios remain below the frozen medium thresholds of 30% and 60%, respectively.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "largest_supplier_pct": 14.4,
+        "top_five_supplier_pct": 54.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "DHQ and Kallo made Pre-IPO Investments and DHQ was granted a put option and rights of first refusal that were contingent on the Listing not being consummated by December 31, 2023. The formal Pre-IPO disclosure states that no special rights were granted to the Pre-IPO Investors that will survive the Listing, so the put/redemption-style rights terminate on consummation of the Global Offering without a disclosed restoration condition.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.9,
+      "reasoning": "The formal Compliance and Legal Proceedings section states that all material licences, permits and approvals were obtained and valid, and that the Group had not been materially penalised. The disclosed historical non-compliances, including late tax filings and partial social insurance and housing provident fund contributions, were remediated, indemnified by Controlling Shareholders, and assessed by the Directors as not material to operations; no material pending litigation was disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01204",
+      "stock_code": "1204.HK",
+      "company_name": "博維智慧",
+      "document_id": "ipo_2022_01204",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Business and History section describes a leading Macau IT solutions company operating since 2010 with substantial revenue from professional IT services, managed services, distribution and resale. The core services are already commercialized and revenue-generating; this is not a precommercial product-development issuer.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "cash_runway",
+      "page": 378,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from/(used in) operating activities 33,067 20,241 (49,730)",
+      "evidence_reason": "The audited consolidated cash flow statement provides the FY2021 annual operating cash burn input of HK$49,730 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "cash_runway",
+      "page": 378,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at end of the year 21 28,510 29,899 14,485",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of HK$14,485 thousand for the runway calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "continuous_loss",
+      "page": 373,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year 25,219 29,858 24,003",
+      "evidence_reason": "The audited statement of profit or loss proves profits in all three comparable years, so there are no loss periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "revenue_growth",
+      "page": 373,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 502,742 475,308 534,302",
+      "evidence_reason": "The audited statement provides the FY2020 and FY2021 revenue inputs for the positive latest-period growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "customer_concentration",
+      "page": 200,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Revenue from (i) our five largest customers in each year during the Track Record Period collectively accounted for 54.9%, 42.3% and 47.4% of our total revenue during the relevant year, respectively; and (ii) our largest customer in each year during the Track Record Period accounted for 14.8%, 13.0% and 22.1% of our total revenue during the relevant year, respectively.",
+      "evidence_reason": "The formal Business major-customers disclosure supplies the latest-year largest-customer and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "supplier_concentration",
+      "page": 219,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Purchase from (i) our five largest suppliers in each year during the Track Record Period in aggregate accounted for 57.2%, 52.1% and 54.4% of our total purchase during the relevant year, respectively; and (ii) our largest supplier in each year during the Track Record Period accounted for 20.5%, 21.1% and 14.4% of our total purchase during the relevant year, respectively.",
+      "evidence_reason": "The formal Business major-suppliers disclosure proves both FY2021 ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "redemption_rights",
+      "page": 139,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "Put option If the Listing is not consummated on or before 31 December 2023, DHQ shall have the right on or before 31 December 2025 to require our Company or Tai Wah to purchase all the new Shares subscribed by DHQ (the Option Shares) under the Pre-IPO Investment at the price equal to the sum of the total consideration of the Shares subscribed by DHQ under the Pre-IPO Investment and a fixed rate interest.",
+      "evidence_reason": "The formal Pre-IPO disclosure identifies the put option as the redemption-style right whose exercise is contingent on failure to consummate the Listing.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "redemption_rights",
+      "page": 140,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "No special rights were granted to the Pre-IPO Investors that will survive the Listing.",
+      "evidence_reason": "The formal disclosure establishes that the put and other special rights do not survive the Listing, so they are not restorable after the offering.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "material_litigation_compliance",
+      "page": 244,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "To the best of our knowledge after making all reasonable enquiries, (i) during the Track Record Period and up to the Latest Practicable Date, we had obtained all material licences, permits and approvals necessary for our business operations in the jurisdictions in which we carried on our business; and (ii) as at the Latest Practicable Date, such licences, permits and approvals are valid and remain in effect and had not been revoked, cancelled or otherwise expired; and (iii) during the Track Record Period and up to the Latest Practicable Date, we had not been materially penalised by national or local authorities for violations of the terms or conditions of such licences, permits or approvals.",
+      "evidence_reason": "The formal legal compliance section establishes material licence and permit compliance through the Latest Practicable Date.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "material_litigation_compliance",
+      "page": 248,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "We believe that the non-compliance incidents are not crucial to our operation and would not materially affect our business and results of operations and our Directors are of the view that we have taken all reasonable steps to establish a proper internal control system to prevent future recurrence of the non-compliance incidents.",
+      "evidence_reason": "The formal compliance disclosure states the Directors' materiality assessment and confirms remediation of the historical non-compliances.",
+      "confidence": 0.96
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "risk_code": "precommercial_product",
+      "page": 128,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "We are the leading company in the Macau IT solutions market. During our operating history, we have been dedicated to providing reliable end-to-end and high quality enterprise IT solutions covering professional IT services and managed services, to customers which include globally renowned enterprises or bodies in TMT, gaming and hospitality and public sectors in Macau.",
+      "evidence_reason": "The formal Business/History overview identifies an established, revenue-generating IT solutions business rather than a precommercial product developer.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 502,
+    "source_document_sha256_expected": "d71271444d8ef2dfa72756b41838051a7be3e6cbb4d3038034678edbb3ea147d"
+  }
+}

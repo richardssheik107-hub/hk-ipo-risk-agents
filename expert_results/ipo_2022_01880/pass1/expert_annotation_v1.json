@@ -1,0 +1,348 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_01880",
+  "stock_code": "1880.HK",
+  "company_name": "中國中免",
+  "document_id": "ipo_2022_01880",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended March 31, 2022, the audited cash flow statement reports net cash used in operating activities of RMB1,233,256 thousand and cash and cash equivalents at period end of RMB13,962,570 thousand. Monthly operating cash burn is approximately RMB411,085 thousand, giving a cash runway of approximately 33.97 months, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 13962570,
+        "net_cash_used_in_operating_activities": -1233256,
+        "period_months": 3,
+        "monthly_cash_burn": 411085.3333333333
+      },
+      "calculation_result": {
+        "months": 33.96513781404672,
+        "cash_runway_months": 33.96513781404672,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of RMB5,471,078 thousand, RMB7,109,363 thousand, RMB12,441,251 thousand, RMB3,427,625 thousand and RMB2,933,672 thousand for 2019, 2020, 2021, Q1 2021 and Q1 2022 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 5471078},
+          {"period": "year ended December 31, 2020", "profit": 7109363},
+          {"period": "year ended December 31, 2021", "profit": 12441251},
+          {"period": "three months ended March 31, 2022", "profit": 2933672}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "Revenue decreased from RMB18,133,529 thousand in the three months ended March 31, 2021 to RMB16,782,286 thousand in the same period of 2022, a decline of approximately 7.45%. The decline is below zero but above the -20% high threshold, so the frozen medium revenue-growth threshold is triggered.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "three months ended March 31, 2021",
+        "current_period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 18133529,
+        "current_revenue": 16782286
+      },
+      "calculation_result": {
+        "growth_pct": -7.451627314242032,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The formal customer disclosure states that none of the Group's customers accounted for 5% or more of total revenue in 2019, 2020, 2021 or Q1 2022 and that the Group did not rely on any single customer. This strict bound is far below the frozen concentration thresholds.",
+      "calculation_required": true,
+      "calculation_method": "formal_bound_threshold_exclusion",
+      "calculation_inputs": {
+        "period": "2019, 2020, 2021 and three months ended March 31, 2022",
+        "single_customer_upper_bound_pct": 5,
+        "bound_operator": "<",
+        "medium_largest_threshold_pct": 30
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<5%",
+        "medium_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For the three months ended March 31, 2022, purchases from the largest supplier accounted for 30.2% and purchases from the top five suppliers accounted for 56.7% of total purchases. The largest-supplier share exceeds the 30% medium threshold, while the top-five share remains below the 60% medium threshold; neither reaches the high thresholds.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_supplier_pct": 30.2,
+        "top_five_supplier_pct": 56.7,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": true,
+        "largest_supplier_high_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "top_five_supplier_high_triggered": false,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The Company has been listed on the Shanghai Stock Exchange since 2009 and its controlling shareholder, CTG, acquired control through a state-owned share transfer. No external pre-IPO investor holding redemption, repurchase, put or other restorable special rights was disclosed in the corporate history.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.72,
+      "reasoning": "The formal Legal and Arbitration Proceedings section states there were no litigation, arbitration or administrative proceedings pending or threatened with a material adverse effect as of the Latest Practicable Date. However, the disclosed idle-land compliance matter remained subject to a construction commencement deadline extended to November 2022, with a potential idle-land fee of RMB174.1 million or, in the event of forfeiture, loss of land premium of RMB870.3 million. Because the deadline and regulatory consequence were not finally resolved at the date of the prospectus, the risk is left as needs_review rather than rejected.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_01880",
+      "stock_code": "1880.HK",
+      "company_name": "中國中免",
+      "document_id": "ipo_2022_01880",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established global travel retail operator with substantial revenue from continuing operations throughout the Track Record Period. Its core duty-free retail business is fully commercialized and revenue-generating; it is not a precommercial product-development issuer.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "cash_runway",
+      "page": 417,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from/(used in) operating activities 3,717,059 8,814,395 8,328,825 79,027 (1,233,256)",
+      "evidence_reason": "The audited cash flow statement provides the Q1 2022 operating cash burn input of RMB1,233,256 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "cash_runway",
+      "page": 419,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at 31 December/31 March 22(a) 11,985,340 14,658,688 16,656,542 14,415,777 13,962,570",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB13,962,570 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "continuous_loss",
+      "page": 408,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year/period 5,471,078 7,109,363 12,441,251 3,427,625 2,933,672",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "revenue_growth",
+      "page": 408,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 4 48,012,590 52,597,807 67,675,515 18,133,529 16,782,286",
+      "evidence_reason": "The audited statement provides the Q1 2021 and Q1 2022 revenue inputs for the negative growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "customer_concentration",
+      "page": 16,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "However, none of our customers accounted for 5% or more of our total revenue for 2019, 2020 and 2021 and the three months ended March 31, 2022 and we did not rely on any single customer during the Track Record Period.",
+      "evidence_reason": "The formal customer disclosure proves a strict upper bound far below the frozen concentration thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "supplier_concentration",
+      "page": 16,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "In 2019, 2020 and 2021 and the three months ended March 31, 2022, the aggregate purchases from our Group's top five suppliers accounted for 54.9%, 58.4%, 60.3% and 56.7% of our total purchases, respectively. For the same periods, purchases from our largest supplier accounted for 14.1%, 27.0%, 28.6% and 30.2% of our total purchases, respectively.",
+      "evidence_reason": "The formal procurement disclosure supplies the exact latest-period largest-supplier and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "redemption_rights",
+      "page": 145,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "Since October 2009, our A Shares have been listed on the main board of the Shanghai Stock Exchange (stock code: 601888).",
+      "evidence_reason": "The corporate history establishes that the Company was already publicly listed and that the H-share listing is not accompanied by a new pre-IPO investor rights package.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "redemption_rights",
+      "page": 148,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "In July 2016, as part of the reorganization of our parent group, CITS Group entered into a share transfer agreement with CTG ... Upon the completion of this share transfer, CTG held 55.30% of the equity interest in our Company and thus became our Controlling Shareholder.",
+      "evidence_reason": "CTG's control was acquired through a state-owned share transfer of listed A shares, with no disclosed investor redemption or put rights.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "material_litigation_compliance",
+      "page": 241,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "LEGAL AND ARBITRATION PROCEEDINGS AND COMPLIANCE MATTERS We may from time to time become a party to various litigation, arbitration or administrative proceedings arising in the ordinary course of our business. As of the Latest Practicable Date, there were no litigation, arbitration or administrative proceedings pending or threatened against the Company or any of our Directors which could have a material and adverse effect on our business, financial condition or results of operations.",
+      "evidence_reason": "The formal legal section confirms the absence of material pending litigation, but the adjacent compliance matters must still be assessed for unresolved regulatory effect.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "material_litigation_compliance",
+      "page": 242,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "In November 2021, the application to extend the commencement of construction work on these parcels by one year was approved by the Municipal Government of Haikou. In the same month, we entered into an amendment of the land grant contracts pursuant to which the deadline to commence the construction work on these parcels was extended to November 2022. As of the Latest Practicable Date, we had started our preparation for the commencement of construction work on all of the parcels ... Our Directors are of the view that the non-compliance incidents would not have any material and adverse impact on our operation or financial condition ... In the unlikely event of a land forfeiture, the land premium accounts for 8.9% of profit attributable to equity shareholders of the Company in 2021.",
+      "evidence_reason": "The compliance disclosure shows the idle-land matter was not finally resolved at the prospectus date and carried a potentially material penalty, supporting needs_review.",
+      "confidence": 0.9
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "risk_code": "precommercial_product",
+      "page": 408,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 4 48,012,590 52,597,807 67,675,515 18,133,529 16,782,286",
+      "evidence_reason": "The audited statement proves substantial commercial revenue in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 623,
+    "source_document_sha256_expected": "60f2c7ad3a69088d7f13707f4de0623e9b9c03c18691d76873f3aa51f4bb4b37"
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02145",
+  "stock_code": "2145.HK",
+  "company_name": "上美股份",
+  "document_id": "ipo_2022_02145",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "For the six months ended June 30, 2022, the audited cash flow statement reports net cash flows used in operating activities of RMB74,558 thousand and cash and cash equivalents at period end of RMB114,965 thousand. Monthly operating cash burn is approximately RMB12,426 thousand and cash runway is approximately 9.25 months, below the 12-month trigger and at or above the 6-month high threshold.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 114965,
+        "net_cash_used_in_operating_activities": -74558,
+        "period_months": 6,
+        "monthly_cash_burn": 12426.333333333334
+      },
+      "calculation_result": {
+        "months": 9.251723490436975,
+        "cash_runway_months": 9.251723490436975,
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of RMB59,398 thousand, RMB203,182 thousand, RMB338,771 thousand, RMB174,258 thousand and RMB62,781 thousand for 2019, 2020, 2021, H1 2021 and H1 2022 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 59398},
+          {"period": "year ended December 31, 2020", "profit": 203182},
+          {"period": "year ended December 31, 2021", "profit": 338771},
+          {"period": "six months ended June 30, 2022", "profit": 62781}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "Revenue decreased from RMB1,831,718 thousand in H1 2021 to RMB1,262,394 thousand in H1 2022, a decline of approximately 31.08%. The decline is at or below the frozen -20% high threshold.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "six months ended June 30, 2021",
+        "current_period": "six months ended June 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 1831718,
+        "current_revenue": 1262394
+      },
+      "calculation_result": {
+        "growth_pct": -31.0814219219334,
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest customer accounted for approximately 13.8% and the top five customers accounted for approximately 35.3% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_customer_pct": 13.8,
+        "top_five_customer_pct": 35.3,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For H1 2022, the largest supplier accounted for approximately 12.7% and the five largest suppliers accounted for approximately 29.6% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "six months ended June 30, 2022",
+        "largest_supplier_pct": 12.7,
+        "top_five_supplier_pct": 29.6,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The Pre-IPO Investors were granted special rights under the Series A and Series B investment agreements. Supplemental agreements provide that the special rights lapse or are terminated upon submission of the listing application documents to the CSRC, and the Joint Sponsors confirmed that all special rights have been terminated or will cease to be effective prior to the Listing. No restoration is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.93,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that the Group had not been and was not a party to any material legal, arbitral or administrative proceedings and was not aware of any pending or threatened proceedings with a material adverse effect. The disclosed advertising and social-insurance compliance issues were immaterial or subject to remediation, and no material pending proceeding was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02145",
+      "stock_code": "2145.HK",
+      "company_name": "上美股份",
+      "document_id": "ipo_2022_02145",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established Chinese cosmetics company manufacturing and selling skin care, maternity and childcare and toiletries products, with substantial revenue throughout the Track Record Period. Its core brands and products are commercialized and revenue-generating; new brands in the pipeline are supplementary rather than a precommercial core product.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "cash_runway",
+      "page": 477,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows generated from/(used in) operating activities 77,356 265,974 335,193 174,081 (74,558)",
+      "evidence_reason": "The audited consolidated cash flow statement provides the H1 2022 operating cash burn input of RMB74,558 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "cash_runway",
+      "page": 478,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 24 132,374 154,195 145,208 113,481 114,965",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB114,965 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "continuous_loss",
+      "page": 467,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year/period 59,398 203,182 338,771 174,258 62,781",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "revenue_growth",
+      "page": 467,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 2,874,321 3,381,633 3,618,882 1,831,718 1,262,394",
+      "evidence_reason": "The audited statement provides the H1 2021 and H1 2022 revenue inputs for the negative growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "customer_concentration",
+      "page": 265,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Revenue generated from our top five customers in each period during the Track Record Period amounted to RMB996.1 million, RMB893.2 million, RMB1,016.0 million and RMB446.0 million, respectively, representing 34.7%, 26.4%, 28.1% and 35.3% of our revenue in the respective period. Revenue generated from our largest customer, Company A, which is an offline retailer, in each period during the Track Record Period amounted to RMB494.2 million, RMB363.5 million, RMB417.4 million and RMB173.9 million, respectively, representing 17.2%, 10.7%, 11.5% and 13.8% of our revenue in the respective period.",
+      "evidence_reason": "The formal Business customer disclosure supplies the latest-period largest-customer and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "supplier_concentration",
+      "page": 18,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Purchase from our five largest suppliers in each period during the Track Record Period amounted to RMB597.5 million, RMB631.8 million, RMB862.2 million and RMB257.6 million, respectively, representing 28.3%, 24.2%, 35.0% and 29.6%, of our total purchase amount in the respective period. Purchase from our largest supplier, Company G, in each period during the Track Record Period amounted to RMB299.6 million, RMB281.4 million, RMB433.9 million and RMB110.7 million, respectively, representing 14.2%, 10.8%, 17.6% and 12.7% of our total purchase amount in the respective period.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "redemption_rights",
+      "page": 153,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The investment agreement entered into between our Company and Ximei Investment was further supplemented ... pursuant to which the special rights granted to Ximei Investment shall lapse or be terminated upon the submission of the application documents for the Listing to the China Securities Regulatory Commission. The respective investment agreements entered into between our Company and each of the Series B Investors were supplemented by the supplemental agreements ... pursuant to which the special rights granted to each of the Series B Investors shall lapse or be terminated upon the submission of the application documents for the Listing to the China Securities Regulatory Commission.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the special rights, including any redemption-style rights, terminate before the Listing with no restoration condition.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "material_litigation_compliance",
+      "page": 297,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "LEGAL PROCEEDINGS AND COMPLIANCE Legal Proceedings From time to time, we may become involved in legal proceedings in the ordinary course of our business. During the Track Record Period and up to the Latest Practicable Date, we had not been and were not a party to any material legal, arbitral or administrative proceedings, and we were not aware of any pending or threatened legal, arbitral or administrative proceedings against us or our Directors that could, individually or in the aggregate, have a material adverse effect on our business, financial condition, and results of operations.",
+      "evidence_reason": "The formal legal proceedings and compliance section excludes material pending proceedings through the Latest Practicable Date.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "risk_code": "precommercial_product",
+      "page": 15,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "The following table sets forth our revenue by product category for the periods indicated: ... Skin care 2,254.8 78.4 2,577.6 76.2 2,679.7 74.0 1,391.9 76.0 929.7 73.6 ... Total 2,874.3 100.0 3,381.6 100.0 3,618.9 100.0 1,831.7 100.0 1,262.4 100.0",
+      "evidence_reason": "The formal Business revenue table proves the core cosmetics products are commercialized and revenue-generating throughout the Track Record Period.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 664,
+    "source_document_sha256_expected": "46cc827247065aa6f3003249a663e3ed4116e7123cc5750cc18c959a74dc2d7e"
+  }
+}

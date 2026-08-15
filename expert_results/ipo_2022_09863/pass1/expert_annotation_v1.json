@@ -1,0 +1,332 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_09863",
+  "stock_code": "9863.HK",
+  "company_name": "零跑汽車",
+  "document_id": "ipo_2022_09863",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended March 31, 2022, the audited cash flow statement reports net cash used in operating activities of RMB385,214 thousand and cash and cash equivalents at period end of RMB4,277,140 thousand. Monthly operating cash burn is approximately RMB128,405 thousand and cash runway is approximately 33.31 months, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 4277140,
+        "net_cash_used_in_operating_activities": -385214,
+        "period_months": 3,
+        "monthly_cash_burn": 128404.666666667
+      },
+      "calculation_result": {
+        "months": 33.3098485517141,
+        "cash_runway_months": 33.3098485517141,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows losses of RMB901,131 thousand, RMB1,100,093 thousand, RMB2,845,773 thousand, RMB397,235 thousand and RMB1,042,203 thousand for 2019, 2020, 2021, 3M2021 and 3M2022 respectively. Five comparable loss periods meet the frozen high threshold.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "year ended December 31, 2019", "loss": -901131},
+          {"period": "year ended December 31, 2020", "loss": -1100093},
+          {"period": "year ended December 31, 2021", "loss": -2845773},
+          {"period": "three months ended March 31, 2021", "loss": -397235},
+          {"period": "three months ended March 31, 2022", "loss": -1042203}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 5,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB278,047 thousand in 3M2021 to RMB1,991,837 thousand in 3M2022, an increase of approximately 616.37%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "three months ended March 31, 2021",
+        "current_period": "three months ended March 31, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 278047,
+        "current_revenue": 1991837
+      },
+      "calculation_result": {
+        "growth_pct": 616.367017087039,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest customer accounted for approximately 1.7% and the five largest customers accounted for approximately 6.1% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_customer_pct": 1.7,
+        "top_five_customer_pct": 6.1,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For 3M2022, the largest supplier accounted for approximately 16.2% and the five largest suppliers accounted for approximately 35.4% of cost of sales. The top-five ratio reaches the frozen medium threshold of 30%, triggering a medium concentration risk.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "three months ended March 31, 2022",
+        "largest_supplier_pct": 16.2,
+        "top_five_supplier_pct": 35.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": true,
+        "assessment": "medium_top_five_threshold_triggered",
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The Pre-IPO Investors had been granted special rights including redemption rights. All special rights have ceased to be effective and been discontinued as of the Latest Practicable Date, and the financial instruments with preferred rights at amortized cost were derecognized in December 2020. No restoration mechanism is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "rights_status": "terminated",
+        "derecognition_date": "december_31_2020"
+      },
+      "calculation_result": {
+        "assessment": "redemption_rights_terminated",
+        "restoration_mechanism_disclosed": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.96,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that during the Track Record Period and up to the Latest Practicable Date there were no legal proceedings pending or threatened against the Group or its Directors that could, individually or in aggregate, have a material adverse effect, and that the PRC Legal Advisor confirmed material compliance. No material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_09863",
+      "stock_code": "9863.HK",
+      "company_name": "零跑汽車",
+      "document_id": "ipo_2022_09863",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established pure-play smart EV manufacturer with revenue from sales of vehicles and parts, automotive regulatory credits and services throughout the Track Record Period. Its core EV products are fully commercialized and delivered to customers.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "cash_runway",
+      "page": 478,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash used in operating activities (674,734) (731,940) (1,018,637) (138,646) (385,214)",
+      "evidence_reason": "The audited cash flow statement provides the 3M2022 operating cash burn input of RMB385,214 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "cash_runway",
+      "page": 479,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at end of the year/period 22 205,690 100,806 4,337,967 737,107 4,277,140",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB4,277,140 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "continuous_loss",
+      "page": 471,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Loss and total comprehensive loss for the year/period attributable to the equity holders of the Company (901,131) (1,100,093) (2,845,773) (397,235) (1,042,203)",
+      "evidence_reason": "The audited statement proves losses in all five comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "revenue_growth",
+      "page": 471,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 116,963 631,301 3,132,059 278,047 1,991,837",
+      "evidence_reason": "The audited statement provides the 3M2021 and 3M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "customer_concentration",
+      "page": 273,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Revenue generated from our largest customer for 2019, 2020, 2021 and the three months ended March 31, 2022 accounted for 6.8%, 5.1%, 2.3% and 1.7%, respectively, of our total revenue during those periods. Revenue generated from our five largest customers during the Track Record Period accounted for 27.1%, 16.2%, 9.5% and 6.1%, respectively, of our total revenue during those periods.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "supplier_concentration",
+      "page": 276,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Purchases from our largest supplier for 2019, 2020, 2021 and the three months ended March 31, 2022 accounted for 5.4%, 21.4%, 19.1% and 16.2%, respectively, of our cost of sales during those periods. Purchases from our five largest suppliers accounted for 17.1%, 28.2%, 33.7% and 35.4%, respectively, of our cost of sales for each of the same periods.",
+      "evidence_reason": "The formal Business supplier disclosure proves the top-five ratio reaches the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "redemption_rights",
+      "page": 207,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "The Pre-IPO Investors had been granted certain special rights, including, among others, ... (iv) redemption rights ... All special rights have ceased to be effective and been discontinued as of the Latest Practicable Date.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption rights were terminated and discontinued without a disclosed restoration mechanism.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "material_litigation_compliance",
+      "page": 296,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "During the Track Record Period and up to the Latest Practicable Date, there were no legal proceedings pending or threatened against us or our Directors that could, individually or in the aggregate, have a material adverse effect on our business, financial condition and results of operations.",
+      "evidence_reason": "The formal legal disclosure excludes material pending or threatened proceedings and material non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "risk_code": "precommercial_product",
+      "page": 471,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 116,963 631,301 3,132,059 278,047 1,991,837",
+      "evidence_reason": "The audited statement proves substantial commercial revenue from smart EV sales in every comparable period, excluding a precommercial product stage.",
+      "confidence": 1.0
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 740,
+    "source_document_sha256_expected": "6eb1b59f728ffad582efa6f62d578bfe81ee833665d9f2ad4933ac8e5fcc6290"
+  }
+}
