@@ -1,0 +1,295 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "7ce27eb9-e96b-53c8-8a33-a3c0ed811d55",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Direct negative statement: no single customer contributed ≥10% of total revenue during track record period. Provides total revenue figures and geographic split from accountant's report."
+      },
+      {
+        "candidate_id": "bee2817c-c496-5c58-a7d4-36ae20f555b6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Segment assets and liabilities data; no customer concentration information whatsoever."
+      },
+      {
+        "candidate_id": "3ae79da0-9b85-5fd7-b2bf-7d00415160d3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Revenue by customer type incl. affiliated company sales to director-related parties. No concentration thresholds stated; provides revenue denominator and customer identity context."
+      },
+      {
+        "candidate_id": "ad6e4a89-1bf2-5af4-a41b-91fa0e2e6c77",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor background details; not related to customer concentration."
+      },
+      {
+        "candidate_id": "640b384d-0b78-5476-9802-a0b4e1afb622",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Revenue by product brand category (international/own/manufacturer); not customer concentration."
+      },
+      {
+        "candidate_id": "50d57298-ef47-50af-98ce-681f3b65da11",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor subscription allocation table; not customer concentration."
+      },
+      {
+        "candidate_id": "9498d435-dcbd-517f-ba5c-e9d677aade13",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor lock-up restrictions and conditions; not customer concentration."
+      },
+      {
+        "candidate_id": "57c30697-65cb-5958-810a-52b34e9bc72e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Gross profit and margin by brand category; not customer concentration."
+      },
+      {
+        "candidate_id": "57ea2511-18b9-5fc4-9d22-609f1a698ec6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "P&L summary and revenue by customer type with percentages; no concentration thresholds. Contextual only."
+      },
+      {
+        "candidate_id": "3650cf97-eea5-5513-99bf-96481dbb510a",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Summary revenue by customer type; no concentration thresholds. Contextual duplicate of other pages."
+      },
+      {
+        "candidate_id": "c62500af-3f98-531c-9096-ab557e88d11c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Product sales volumes and average selling prices by category; not customer concentration."
+      },
+      {
+        "candidate_id": "5e96e3c7-242f-51e4-b2b7-f1aca90019ba",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Revenue by brand category and sales volumes; not customer concentration."
+      },
+      {
+        "candidate_id": "2bca4026-a5f7-5c37-97c1-f1c3fe918abb",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Industry market size by product type for Malaysia; not company-specific customer concentration."
+      },
+      {
+        "candidate_id": "30d3de9f-e6ac-5b0a-941e-2b19aa3b12f4",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Revenue by business segment with customer types; no concentration thresholds. Contextual only."
+      },
+      {
+        "candidate_id": "36baa8b0-1924-59bd-aba6-9fd12e743c72",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Gross margin analysis by product type; not customer concentration."
+      },
+      {
+        "candidate_id": "6133f8ba-4619-5be9-a81b-946bb6000e40",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Gross profit by retail brand; not customer concentration."
+      },
+      {
+        "candidate_id": "dc69491c-b1ea-5e8b-b11f-5f9a8472d159",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Revenue by customer type with percentages; no concentration thresholds. Duplicates other pages."
+      },
+      {
+        "candidate_id": "2f1a0ade-45b9-5196-b9d1-0750a83d61c8",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Revenue by product brand category and brand descriptions; not customer concentration."
+      },
+      {
+        "candidate_id": "066506b2-bd1e-5cbf-a96a-19d69e7066ed",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Revenue by business channel with employee-shareholder retail store context; no concentration thresholds."
+      },
+      {
+        "candidate_id": "c7eb0955-40ce-579d-8106-d63aa9c4ddec",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Rental expenses and product portfolio discussion; not customer concentration."
+      }
+    ]
+  }
+}

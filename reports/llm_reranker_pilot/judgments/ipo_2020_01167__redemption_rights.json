@@ -1,0 +1,288 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "f98ba086-88c1-528d-a31c-aeb9780f5630",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Mentions A-round preferred shares have no redemption rights (無贖回權) in context of EPS calculation. Negative statement adds value but is incidental to accounting purpose."
+      },
+      {
+        "candidate_id": "8d470017-08f2-586e-95aa-51e6a9131d87",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "redemption_put_repurchase"
+        ],
+        "reason": "Directly details redemption rights triggering events for B/C/C+ round redeemable preferred shares: breach of shareholders agreement, illegal acts, material misrepresentation. Highly specific primary evidence."
+      },
+      {
+        "candidate_id": "5377ab7a-fbe4-5dcd-849a-3d7bfcbddd7b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Share capital re-designation table showing B-round redeemable preferred share movements. Provides structural context but does not detail redemption right terms."
+      },
+      {
+        "candidate_id": "876a33a9-745c-55f3-9dde-40200bf9eadb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "redemption_put_repurchase",
+          "termination",
+          "listing_condition",
+          "current_status"
+        ],
+        "reason": "Most comprehensive evidence: covers pre-IPO investors, special rights, redemption rights with specified price, repurchase obligations, termination upon listing, and current status (waived). Covers nearly all facets."
+      },
+      {
+        "candidate_id": "57210d9b-baa8-552a-83a1-a54e8cd34ae1",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "listing_condition"
+        ],
+        "reason": "Pro forma financials describing conversion of redeemable preferred shares from liability to equity upon listing. Indirectly related to redemption rights through accounting treatment."
+      },
+      {
+        "candidate_id": "3f64b8a3-0059-5b51-9d34-e5d693430f53",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Cornerstone investor details (LAV Funds). No content about redemption rights despite term match."
+      },
+      {
+        "candidate_id": "f403f623-26e4-5572-987f-10233b8bb4d1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Accounting policy section 2.13 describes preference financial instruments redeemable upon future events and their fair value classification. Supports understanding of redemption structure."
+      },
+      {
+        "candidate_id": "592b1a4f-7641-5213-903b-d3719e1c8fef",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "listing_condition"
+        ],
+        "reason": "Duplicate pro forma financial content about conversion of redeemable preferred shares upon listing. No new information beyond candidate 5."
+      },
+      {
+        "candidate_id": "9c2caff6-0d19-5ea3-8854-5ec80f373b7b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "General articles of association about share class rights modification. Mentions special rights generically, not redemption rights specifically."
+      },
+      {
+        "candidate_id": "f63c9dd8-7e0e-563b-be71-620189589b9b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "General articles of association about capital changes and share transfers. Special rights mentioned in generic governance context only."
+      },
+      {
+        "candidate_id": "4b665d46-4d59-57c7-96df-d147c542ec8b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Articles of association about liquidation distribution rights. Special rights referenced in liquidation context, unrelated to redemption rights."
+      },
+      {
+        "candidate_id": "349e695e-79e0-5b09-9151-a9834ec39c01",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Lock-up restrictions for Hillhouse. The term 贖回權 appears as 'foreclosure' in pledge context, not preferred share redemption."
+      },
+      {
+        "candidate_id": "2524fb4a-1c7e-5e76-8103-b3041c249afc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "General articles of association about special/ordinary resolutions and voting rights. Special rights referenced generically."
+      },
+      {
+        "candidate_id": "171110f7-7652-5254-849a-1f9cc166e491",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "redemption_put_repurchase"
+        ],
+        "reason": "Note 21 details B-round shares split into 15,712,000 with redemption rights and 2,812,193 without, plus C/C+ round details and conversion terms. Primary structural evidence."
+      },
+      {
+        "candidate_id": "aeafecde-2111-5f6d-84a0-6e20d34a083c",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [],
+        "reason": "Risk factors discussing fair value measurement and valuation uncertainty of redeemable preferred shares. Supports understanding financial impact of redemption structure."
+      },
+      {
+        "candidate_id": "531ad11d-9348-5ae1-bd10-e7fadd0e5ee3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Listing rule waivers for LAV as cornerstone investor. No content about redemption rights."
+      },
+      {
+        "candidate_id": "cb0d0807-d644-5c90-93b8-51899214084e",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [],
+        "reason": "Risk factors about net liability position caused by redeemable preferred shares recorded as liabilities. Discusses financial impact and post-listing conversion."
+      },
+      {
+        "candidate_id": "f43109b8-dade-5895-8e0c-188a4d68f2a5",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Balance sheet showing convertible redeemable preferred share balances at period ends. Financial data only, no redemption right terms."
+      },
+      {
+        "candidate_id": "4100d067-7bd4-5a10-8a16-a5c64daccbb2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [],
+        "reason": "Standard articles of association provision about board power to issue shares with optional redemption terms. Generic boilerplate, not specific to current preferred shares."
+      },
+      {
+        "candidate_id": "9a16495e-20df-5aa6-9595-12debf9b955f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "not_applicable",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Post-IPO corporate structure diagram showing shareholder percentages. No content about redemption rights."
+      }
+    ]
+  }
+}

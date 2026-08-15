@@ -1,0 +1,558 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_06628",
+  "stock_code": "6628.HK",
+  "company_name": "創勝集團－Ｂ",
+  "document_id": "ipo_2021_06628",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows negative operating cash flow in each selected reporting period, but cash and cash equivalents were sufficient for more than 12 months of operating cash burn in every period tested. The minimum calculated runway is approximately 23.40 months (2019), so none of the frozen <12, <6, or <3 month thresholds is met.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "cash_and_cash_equivalents": 458100,
+            "net_cash_from_operating_activities": -234960,
+            "period_months": 12
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "cash_and_cash_equivalents": 813592,
+            "net_cash_from_operating_activities": -174398,
+            "period_months": 12
+          },
+          {
+            "period": "three months ended 31 March 2021",
+            "cash_and_cash_equivalents": 1038373,
+            "net_cash_from_operating_activities": -48037,
+            "period_months": 3
+          }
+        ]
+      },
+      "calculation_result": {
+        "runway_by_period": [
+          {
+            "period": "year ended 31 December 2019",
+            "monthly_operating_cash_burn": 19580.0,
+            "cash_runway_months": 23.39632277834525
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "monthly_operating_cash_burn": 14533.166666666666,
+            "cash_runway_months": 55.98174290989576
+          },
+          {
+            "period": "three months ended 31 March 2021",
+            "monthly_operating_cash_burn": 16012.333333333334,
+            "cash_runway_months": 64.848325249287
+          }
+        ],
+        "minimum_cash_runway_months": 23.39632277834525,
+        "medium_threshold_months": 12,
+        "high_threshold_months": 6,
+        "critical_threshold_months": 3,
+        "assessment": "threshold_not_met"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "The audited historical financial information records losses for both comparable annual periods (2019 and 2020) and both comparable three-month periods (Q1 2020 and Q1 2021). There are two comparable loss periods in each duration set, meeting the frozen medium threshold of two comparable periods, but no set of three comparable loss periods is disclosed to support high.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "annual_periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "loss_for_period": -437354
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "loss_for_period": -322900
+          }
+        ],
+        "three_month_periods": [
+          {
+            "period": "three months ended 31 March 2020",
+            "loss_for_period": -24782,
+            "unaudited_comparative": true
+          },
+          {
+            "period": "three months ended 31 March 2021",
+            "loss_for_period": -70044
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_annual_loss_periods": 2,
+        "comparable_three_month_loss_periods": 2,
+        "maximum_comparable_loss_count": 2,
+        "assessment": "medium_threshold_met"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Comparable revenue increased in both available comparisons: 2020 versus 2019 and Q1 2021 versus Q1 2020. Both calculated growth rates are positive, so neither the frozen medium threshold (<0%) nor the high threshold (<=-20%) is met.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "comparisons": [
+          {
+            "current_period": "year ended 31 December 2020",
+            "current_revenue": 80980,
+            "prior_period": "year ended 31 December 2019",
+            "prior_revenue": 44140
+          },
+          {
+            "current_period": "three months ended 31 March 2021",
+            "current_revenue": 7883,
+            "prior_period": "three months ended 31 March 2020",
+            "prior_revenue": 6810
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_by_comparison_pct": [
+          {
+            "comparison": "2020 vs 2019",
+            "revenue_growth_pct": 83.46171273221567
+          },
+          {
+            "comparison": "Q1 2021 vs Q1 2020",
+            "revenue_growth_pct": 15.756240822320116
+          }
+        ],
+        "minimum_growth_pct": 15.756240822320116,
+        "medium_threshold_pct": 0,
+        "high_threshold_pct": -20,
+        "assessment": "threshold_not_met"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "For the three months ended 31 March 2021, Customer G generated RMB5.025 million of the group's RMB7.883 million revenue, or approximately 63.74%. This exceeds the frozen 50% largest-customer high threshold. The Business section independently cross-checks the rounded largest-customer share at 63.7% and top-five customer share at 88.7%, both of which also satisfy high thresholds.",
+      "calculation_required": true,
+      "calculation_method": "exact_ratio",
+      "calculation_inputs": {
+        "period": "three months ended 31 March 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 7883,
+        "largest_customer_revenue": 5025,
+        "disclosed_top_five_customer_pct": 88.7
+      },
+      "calculation_result": {
+        "largest_customer_pct": 63.7447672206013,
+        "top_five_customer_pct": 88.7,
+        "largest_customer_high_threshold_pct": 50,
+        "top_five_customer_high_threshold_pct": 80,
+        "high_threshold_met": true,
+        "assessment": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.9,
+      "reasoning": "The Business section discloses that the five largest suppliers represented 68.3% of total purchases in 2019, which exceeds the frozen 60% top-five medium threshold but remains below the 80% high threshold. The largest supplier was 26.2%, below the 30% largest-supplier medium threshold. Concentration declined in 2020 and Q1 2021, but the disclosed 2019 track-record period establishes a medium-level concentration instance.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_percentage_threshold_comparison",
+      "calculation_inputs": {
+        "periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "largest_supplier_pct": 26.2,
+            "top_five_suppliers_pct": 68.3
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_supplier_pct": 17.3,
+            "top_five_suppliers_pct": 39.9
+          },
+          {
+            "period": "three months ended 31 March 2021",
+            "largest_supplier_pct": 8.6,
+            "top_five_suppliers_pct": 34.8
+          }
+        ],
+        "medium_thresholds": {
+          "largest_supplier_pct": 30,
+          "top_five_suppliers_pct": 60
+        },
+        "high_thresholds": {
+          "largest_supplier_pct": 50,
+          "top_five_suppliers_pct": 80
+        }
+      },
+      "calculation_result": {
+        "highest_largest_supplier_pct": 26.2,
+        "highest_top_five_suppliers_pct": 68.3,
+        "trigger_period": "year ended 31 December 2019",
+        "medium_threshold_met": true,
+        "high_threshold_met": false,
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.5,
+      "reasoning": "TERMINATION_RESTORATION_AMBIGUITY: the accountants' report records a contractual redemption feature under which A, B and C preferred shareholders could require repurchase if a qualified IPO had not occurred by 31 December 2023. The pre-IPO investment disclosure separately states that preferred shareholders no longer held redemption rights after the listing application was submitted and that special rights would not survive listing. The prospectus evidence reviewed does not clearly state whether the redemption feature would be restored if the listing did not complete. Under the frozen protocol, unclear termination/restoration requires needs_review with provisional medium severity.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The Business section states that through the Latest Practicable Date the group was not involved in any actual or, to its knowledge, threatened material legal or administrative proceedings, had no material EHS fines or penalties, and had obtained all material licences, approvals and permits necessary for its operations. The disclosed 2023 drug manufacturing licence renewal was expected to face no impediment and had no significant GMP compliance findings.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_06628",
+      "stock_code": "6628.HK",
+      "company_name": "創勝集團－Ｂ",
+      "document_id": "ipo_2021_06628",
+      "risk_code": "precommercial_product",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": null,
+      "confidence": 0.99,
+      "reasoning": "The Business section identifies MSB2311 as the core product and states it would be further evaluated in a Phase II study. Financial Information states that the group had no products approved for commercial sale and had generated no product-sales revenue. These facts establish the precommercial-product candidate. POLICY_AMBIGUITY (OPEN-02): Protocol v1.1.1 leaves severity for precommercial_product unfrozen, so expected_level is null rather than guessed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "cash_runway",
+      "page": 555,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所用現金淨額 (234,960) (174,398) (42,827) (48,037)",
+      "evidence_reason": "The accountants' report provides the signed operating cash-flow amounts for 2019, 2020, Q1 2020 and Q1 2021; these are the operating cash-burn inputs.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "cash_runway",
+      "page": 557,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期末現金及現金等價物（以銀行結餘及現金列示） 458,100 813,592 631,767 1,038,373",
+      "evidence_reason": "This is the cash-flow-statement cash and cash-equivalents series required by the protocol for the cash numerator.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "continuous_loss",
+      "page": 550,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年╱期內虧損 (437,354) (322,900) (24,782) (70,044)",
+      "evidence_reason": "The accountants' report records losses for the two annual periods and the two comparable three-month periods used to count continuous-loss periods.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "revenue_growth",
+      "page": 550,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收益 6 44,140 80,980 6,810 7,883",
+      "evidence_reason": "These audited historical revenue figures provide the numerator and denominator facts for 2019-to-2020 and Q1 2020-to-Q1 2021 comparable growth calculations.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "customer_concentration",
+      "page": 577,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "於往績記錄期，來自為貴集團貢獻10%以上總收益的客戶收益如下：\n客戶A 14,659 不適用 2,390 不適用\n客戶B 13,496 10,274 – 不適用\n客戶C 6,624 不適用 – 不適用\n客戶D 不適用 8,300 3,467 不適用\n客戶E – 25,573 不適用 775\n客戶F – 12,738 不適用 –\n客戶G – 10,361 不適用 5,025\n不適用：少於總收益的10%金額不披露",
+      "evidence_reason": "The accountants' report identifies Customer G revenue of RMB5.025 million in Q1 2021 and defines N/A as less than 10% of total revenue, supporting identification of the largest customer.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "customer_concentration",
+      "page": 550,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收益 6 44,140 80,980 6,810 7,883",
+      "evidence_reason": "Q1 2021 total revenue of RMB7.883 million is the denominator for the exact largest-customer ratio.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "customer_concentration",
+      "page": 356,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "business_section",
+      "exact_text": "於2019年和2020年以及截至2021年3月31日止三個月，來自我們五大客戶的收益合共分別佔我們各相關期間總收益的89.6%、83.0%及88.7%，而僅來自我們最大客戶的收益分別佔我們各相關期間總收益的33.2%、31.6%及63.7%。",
+      "evidence_reason": "The Business section independently confirms the rounded largest-customer and top-five concentration percentages, including 63.7% and 88.7% in Q1 2021.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "supplier_concentration",
+      "page": 361,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於2019年、2020年及截至2021年3月31日止三個月，來自我們五大供應商的採購合共分別佔我們各相關期間總採購的68.3%、39.9%及34.8%，而僅來自我們最大供應商的採購分別佔我們同期總採購的26.2%、17.3%及8.6%。",
+      "evidence_reason": "This formal Business disclosure provides the largest-supplier and top-five supplier percentages for every track-record period; the 2019 top-five share of 68.3% crosses the frozen 60% medium threshold.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "redemption_rights",
+      "page": 605,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "(d) 贖回特徵\n倘截至2023年12月31日合資格首次公開發售尚未發生，則於其後任何時間，A系列優先股、B系列優先股或C系列優先股持有人可要求貴公司購回其優先股。",
+      "evidence_reason": "The accountants' report records an actual contractual preferred-share redemption feature triggered if a qualified IPO had not occurred by 31 December 2023.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "redemption_rights",
+      "page": 233,
+      "evidence_role": "cross_check",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "首次公開發售前投資者根據首次公開發售前股東協議獲授若干特殊權利，包括優先參與未來各輪融資的慣常權利、知情權及反攤薄及否決權（若適用）等。遵照聯交所發出的指引信HKEX-GL43-12，授予首次公開發售前投資者的該等特殊權利將不會於上市後存續且於向聯交所提交本公司上市申請後優先股持有人亦無持有贖回權。",
+      "evidence_reason": "This pre-IPO investment disclosure states that redemption rights were no longer held after submission of the listing application and special rights would not survive listing, creating the termination/restoration issue that requires review.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "material_litigation_compliance",
+      "page": 375,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期及直至最後實際可行日期，我們並無因不遵守EHS法律或法規而受到任何重大罰款或其他重大處罰，亦無發生任何重大工作場所事故。\n法律程序及合規\n於往績記錄期及直至最後實際可行日期，我們並無牽涉任何實際的或（據我們所深知）可能面臨的重大法律或行政訴訟程序。",
+      "evidence_reason": "The legal/compliance disclosure directly negates material EHS penalties and material actual or threatened legal or administrative proceedings through the Latest Practicable Date.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "material_litigation_compliance",
+      "page": 376,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於往績記錄期及直至最後實際可行日期，我們已從有關當局獲得對我們的經營而言屬重大的一切必要牌照、批准和許可證。",
+      "evidence_reason": "This disclosure confirms that all licences, approvals and permits material to operations had been obtained, excluding an unresolved material licensing effect.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "material_litigation_compliance",
+      "page": 376,
+      "evidence_role": "cross_check",
+      "requirement": "supporting_only",
+      "source_authority": "legal_disclosure",
+      "exact_text": "藥品生產許可證需要在2023年5月7日到期時換證。截至最後實際可行日期，我們預計於2023年續領藥品生產許可證不會遇到任何阻礙。",
+      "evidence_reason": "The only specifically highlighted licence renewal was prospective and was disclosed as expected to face no impediment, supporting the non-trigger conclusion.",
+      "confidence": 0.94
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "precommercial_product",
+      "page": 253,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "MSB2311：我們的核心產品MSB2311為第二代PD-L1抑制劑，較其他PD-(L)1抗體具有獨特性。MSB2311將作為TMB-H泛型實體瘤的單藥療法在2期研究中進一步評估。",
+      "evidence_reason": "The formal Business section identifies MSB2311 as the core product and places it in Phase II clinical development rather than commercialization.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "risk_code": "precommercial_product",
+      "page": 446,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "儘管我們目前尚無獲准可進行商業銷售的產品，亦未產生任何產品銷售收益，惟隨著一款或多款候選藥物進入最後開發階段，我們預期於隨後幾年內商業化一款或多款候選藥物。",
+      "evidence_reason": "Financial Information directly states that no product was approved for commercial sale and that no product-sales revenue had been generated, satisfying the second candidate condition.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

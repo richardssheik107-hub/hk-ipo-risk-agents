@@ -1,0 +1,5 @@
+{
+  "status": "failed",
+  "failure_kind": "response_validation",
+  "fallback": "stage1_union_order"
+}

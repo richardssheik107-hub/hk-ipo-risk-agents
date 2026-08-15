@@ -1,0 +1,333 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "7a8d5951-448c-5ff1-87c9-ef354d70225f",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A narrative directly explains year-on-year loss increase from RMB155.9M (2018) to RMB425.8M (2019) with driver analysis. Specific figures and clear reporting periods."
+      },
+      {
+        "candidate_id": "a0745131-4666-599c-8a8c-428ab6046e53",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Audited statement of changes in equity showing 2018 annual loss of RMB155.9M and accumulated deficit. Primary financial statement evidence from accountant's report."
+      },
+      {
+        "candidate_id": "d8c934a5-e4f6-58ef-9e72-073b5b7b325e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Audited equity statement showing 2019 loss of RMB425.8M and accumulated deficit growing to RMB636M. Demonstrates worsening loss trajectory."
+      },
+      {
+        "candidate_id": "c189412b-c38c-5df2-84a8-164d5076cee8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Parent company (non-consolidated) equity changes showing losses from 2018 incorporation through 2019. Less relevant than consolidated figures but still shows loss pattern."
+      },
+      {
+        "candidate_id": "d85ab617-0ef7-5b09-94d9-004e05750367",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Complete income statement across 4 periods (FY2018, FY2019, H1 2019, H1 2020) with detailed line items from R&D through net loss. Most comprehensive single-source evidence of continuous losses."
+      },
+      {
+        "candidate_id": "d4a12fcc-e969-55b6-a123-aef0363974b3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.92,
+        "completeness_facets": [],
+        "reason": "Accounting policies for pensions, share-based payments, and government grants. No loss data; mentions comprehensive income statement only in policy descriptions."
+      },
+      {
+        "candidate_id": "a53767a7-baff-50ca-a4ab-d49a0724c1b5",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Summary section income statement with same 4-period loss data as page 416. Duplicate data but from summary section; supports consolidated figures."
+      },
+      {
+        "candidate_id": "63fa52f2-3719-544c-8b03-91ea35a13d84",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Financial data section with identical income statement as page 18/416. Third occurrence of same 4-period loss data; supporting but redundant."
+      },
+      {
+        "candidate_id": "1222d903-a477-5daf-980e-33806138a024",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.92,
+        "completeness_facets": [],
+        "reason": "Accounting policies for government grants, leases, and dividends. No loss information; references to comprehensive income statement are purely policy-related."
+      },
+      {
+        "candidate_id": "84168114-bbdb-5241-a7ab-216bcd4c856b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "MD&A explaining H1 2020 loss surge to RMB810.9M from RMB155.1M in H1 2019, with driver analysis. Direct narrative on loss progression."
+      },
+      {
+        "candidate_id": "5cbddaf5-949e-54e9-85e2-0db1eb6aefcd",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Formal statement of comprehensive loss across 4 periods from audited accountant's report. Shows both annual/period loss and total comprehensive loss including OCI items."
+      },
+      {
+        "candidate_id": "f6ba51ff-736c-5d75-9f70-5d3fe909fcc6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Equity changes statement for H1 2019 showing period loss of RMB155.1M and growing accumulated deficit. Single period from audited statements."
+      },
+      {
+        "candidate_id": "67af9884-9e5d-5ea3-9a98-756dc1c17ceb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Equity changes for H1 2020 showing largest period loss of RMB810.9M and accumulated deficit of RMB1.45B. Strong evidence of accelerating losses."
+      },
+      {
+        "candidate_id": "e51a150d-2f48-559a-9919-9f2622c31540",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Parent company equity changes showing H1 2019 and H1 2020 losses. Non-consolidated perspective; supports but less directly relevant than consolidated data."
+      },
+      {
+        "candidate_id": "1d055658-6e8a-5cda-a018-2c829b1ea53d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.92,
+        "completeness_facets": [],
+        "reason": "Accounting policies for share-based payments, government grants, and fair value estimates. No loss data; comprehensive income statement mentioned only in policy context."
+      },
+      {
+        "candidate_id": "ba1aa6f5-8588-5049-8c89-546a1a2b9d05",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Cash flow MD&A citing net losses (RMB155.9M, 425.8M, 810.9M) across all periods to explain operating cash outflows. Losses are supporting context for cash flow discussion."
+      },
+      {
+        "candidate_id": "6ecf3950-9069-5046-9ae0-8e50b4f5fcd9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "profit_loss",
+          "reporting_period",
+          "audited_financial_context"
+        ],
+        "reason": "Going concern note from audited statements citing H1 2020 net loss of RMB810.9M, accumulated deficit of RMB1.45B, and total deficit of RMB1.28B. Directly addresses financial distress from continuous losses."
+      },
+      {
+        "candidate_id": "95bb1543-00f2-55f8-b12b-223ad26543a9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "profit_loss"
+        ],
+        "reason": "Risk factor summary stating 'significant net losses since inception' and expecting continued losses. Standard IPO risk factor boilerplate language; no specific figures in this excerpt."
+      },
+      {
+        "candidate_id": "1aaa0add-c477-53b5-8b61-fbafd733d044",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "profit_loss",
+          "multi_period_history",
+          "reporting_period"
+        ],
+        "reason": "Detailed risk factor section citing specific net losses (RMB155.9M, 425.8M, 810.9M) across three periods with explanation of causes. Substantive content beyond boilerplate."
+      },
+      {
+        "candidate_id": "e0164c66-bd5c-5142-8d6f-f7ab394f6729",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Financial risk management section on FX exposure; net loss mentioned only in sensitivity analysis context. No direct loss evidence for continuous loss assessment."
+      }
+    ]
+  }
+}

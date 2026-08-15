@@ -1,0 +1,322 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c7cd7a33-ef1e-5bae-9aae-e81c8984b237",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Confirms three material pending lawsuits exist and provides standard negative statement on other litigation. Direct current status as of prospectus date."
+      },
+      {
+        "candidate_id": "f3315951-e318-5675-ba76-48dd1011ea42",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "regulatory_issue",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Details multiple non-compliance categories (construction, advertising, social insurance, tax) with RMB 43.2M fines paid, corrective measures, and materiality assessment by PRC counsel."
+      },
+      {
+        "candidate_id": "93cc2103-872d-507c-abd2-1dc7952f137d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "named_dispute"
+        ],
+        "reason": "Negative statement about no major contractor disputes; mostly about contractor selection and payment terms. Only tangential litigation reference."
+      },
+      {
+        "candidate_id": "4cf249f1-df80-592d-9662-319d20437e76",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Specific construction contract dispute lawsuit filed Dec 2018 against subsidiary Yueyang Xiongcheng with detailed claim amounts and court details."
+      },
+      {
+        "candidate_id": "a0be6e0a-306a-58e5-9cac-ac675882a83b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.62,
+        "completeness_facets": [
+          "materiality"
+        ],
+        "reason": "Financial data context referencing fines for late tax and non-compliance, plus compensation for delayed delivery. Supporting but not direct litigation evidence."
+      },
+      {
+        "candidate_id": "fe17fb6f-4842-5c93-a040-cfb51c314074",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [],
+        "reason": "COVID-19 impact discussion with tangential compliance mentions. Not about material litigation or compliance events."
+      },
+      {
+        "candidate_id": "f1dc3f00-bd7c-5fcf-b158-7928f044a8f9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "Summary about land acquisitions, bond issuances, and COVID-19. No material litigation or compliance content."
+      },
+      {
+        "candidate_id": "9503919d-9488-5f3f-b1d4-a275c8a51c17",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "regulatory_issue",
+          "remediation",
+          "current_status",
+          "materiality"
+        ],
+        "reason": "Detailed presale proceeds non-compliance remediation: topped up escrow shortfalls by Aug 2020, received authority confirmations, PRC counsel assessed low penalty risk."
+      },
+      {
+        "candidate_id": "0db72c55-a75f-5e22-b447-b2e5ef02ac10",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": true,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "actual_proceeding",
+          "current_status",
+          "materiality"
+        ],
+        "reason": "Appendix V formal statement: no material litigation or arbitration pending. Also details indemnification for non-compliance and legal proceedings. Standard but authoritative."
+      },
+      {
+        "candidate_id": "05883280-4710-58a5-bbb3-f279f615c2a2",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Detailed Dingyuan property sales lawsuit with background, claims, legal counsel assessment, and resolution (voluntarily dismissed June 2020)."
+      },
+      {
+        "candidate_id": "cc63c3fa-8323-5796-9239-8a0e1e149ad2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "General PRC lending regulations and Supreme Court provisions. Legal background, not issuer-specific litigation or compliance."
+      },
+      {
+        "candidate_id": "5c6e21e3-9993-50fe-9258-e69e477cd3d2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.58,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Risk factor section mentions 21 project companies penalized for improper advertising/pricing/marketing. Mix of boilerplate risk language and actual penalty disclosure."
+      },
+      {
+        "candidate_id": "21f74b8d-f97d-533d-aead-35eee914d94e",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [],
+        "reason": "Employee training and compensation section with generic mention of mandatory housing fund and social security contributions. No compliance issue or litigation."
+      },
+      {
+        "candidate_id": "1a92659d-f8a6-5040-bcc1-e0e79b1c2525",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.2,
+        "completeness_facets": [],
+        "reason": "Project design outsourcing section. No litigation or compliance content whatsoever."
+      },
+      {
+        "candidate_id": "ba4fcecf-40b4-59fd-9f5b-1d17fd666634",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit",
+          "remediation",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Directors' views on non-compliance remediation, internal controls, and subsidiary qualifications/licenses. Confirms fines paid, corrective measures, and license status."
+      },
+      {
+        "candidate_id": "80049282-3ea8-5f7f-8b17-48179662b510",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.32,
+        "completeness_facets": [
+          "licence_permit"
+        ],
+        "reason": "Risk factor about potential building area exceeding permitted area. Hypothetical compliance risk, not actual proceeding or confirmed issue."
+      },
+      {
+        "candidate_id": "c22dea80-26da-5a7c-bcaf-38971844f09d",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.38,
+        "completeness_facets": [
+          "licence_permit"
+        ],
+        "reason": "Construction permits and licenses described in operational context. No litigation or compliance issue identified."
+      },
+      {
+        "candidate_id": "5cb73719-7dea-5893-9a88-e82c91bab332",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Yueyang construction dispute judicial assessment and guarantee lawsuit filed by asset management company for RMB 50M and 150M. Both pending as of prospectus date."
+      },
+      {
+        "candidate_id": "4c63d398-d842-5d48-96d1-27b9361bc789",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Guarantee lawsuit details: RMB 107.6M loans, borrower liquidation, asset management company claims, proceedings resumed and pending. Also begins Dingyuan property sales lawsuit."
+      },
+      {
+        "candidate_id": "38aa0baa-2623-5759-9181-c7bfc5e96c41",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.15,
+        "completeness_facets": [],
+        "reason": "Glossary/definitions section. No litigation or compliance content."
+      }
+    ]
+  }
+}

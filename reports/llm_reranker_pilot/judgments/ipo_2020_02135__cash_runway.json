@@ -1,0 +1,327 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "a1fad16f-0df6-5ad3-9ef5-91ecbe15e168",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Cash flow statement ending balances from accountant's report; shows ending cash for 5 periods including latest interim"
+      },
+      {
+        "candidate_id": "cf89eea5-a946-568b-839b-d7740b4fe9fa",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Operating cash flow section from accountant's report; net operating cash flow for 5 periods with working capital detail"
+      },
+      {
+        "candidate_id": "c60935c4-7678-59d1-b08d-199badad906b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Acquisition-specific cash flow analysis; not relevant to group-level cash runway assessment"
+      },
+      {
+        "candidate_id": "1b774519-40c5-5b4e-915e-aad7a62ec28b",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative explanation of operating cash flow trends across periods; supports runway but lacks table precision"
+      },
+      {
+        "candidate_id": "240135a1-cb6c-516f-9818-8f83dac4f1cf",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "strong_supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accounting policy definition of cash equivalents; boilerplate with no actual financial data for runway"
+      },
+      {
+        "candidate_id": "3cbcf459-4111-5732-9a26-aa30b2f7ff42",
+        "risk_relevance": "high",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factor section with specific operating cash outflow figure and explicit liquidity risk discussion"
+      },
+      {
+        "candidate_id": "9472593f-02d3-52b9-991f-0724032eaead",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Parent company-only balance sheet; not consolidated group cash position for runway assessment"
+      },
+      {
+        "candidate_id": "79cf34fd-525e-5673-99da-5f67beaf645d",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Comprehensive cash flow summary with operating CF, ending cash, all periods and currency in one table"
+      },
+      {
+        "candidate_id": "9bf6bd32-fc05-5e15-bdd0-fc4830ae69a6",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Financial instruments classification table; cash as line item only, not runway-relevant data"
+      },
+      {
+        "candidate_id": "26f6072c-db22-5bdc-81a2-0509c079d1ab",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cash flow summary table with operating CF, ending cash across 4 periods; direct runway evidence"
+      },
+      {
+        "candidate_id": "a8a1339e-778a-5c9e-8b67-04b2b0f350c9",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Consolidated balance sheet showing cash and equivalents for all 4 periods; provides ending cash"
+      },
+      {
+        "candidate_id": "b99a5308-72b2-5d2b-8ba5-8bb9a6c1c358",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Financial instruments classification for 2018-2019; cash as line item only, not runway data"
+      },
+      {
+        "candidate_id": "df642982-1b9e-5037-bfe4-e393a749b105",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative on working capital and cash changes; context but lacks precise ending cash figures"
+      },
+      {
+        "candidate_id": "eca82e86-3350-5176-bcca-2f005b805250",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Investing activities narrative; not directly relevant to cash runway assessment"
+      },
+      {
+        "candidate_id": "3f7eb2e9-2567-5be9-b42a-605ec221d5df",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Credit risk disclosure table; cash as line item, not runway-relevant"
+      },
+      {
+        "candidate_id": "daac0f39-efda-5f85-b2a3-1c82494b0aae",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Credit risk table for 2018-2019; cash as line item only, not runway data"
+      },
+      {
+        "candidate_id": "95b4f38b-2e94-52f3-a346-14548f0e2869",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Credit risk table and liquidity risk note; cash as line item, limited runway relevance"
+      },
+      {
+        "candidate_id": "a687f537-bc34-50ef-b572-a25ba9f3a5a8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary balance sheet with cash and equivalents for all periods; provides ending cash data"
+      },
+      {
+        "candidate_id": "3828dc32-4b91-51b1-a86c-be2fd4a13142",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Financial ratios discussion; mentions cash in net debt calc, not direct runway data"
+      },
+      {
+        "candidate_id": "a2f72523-4483-5033-8bdb-1cdbe2efee79",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "ROA, ROE discussion; cash mentioned tangentially, not runway-relevant"
+      }
+    ]
+  }
+}

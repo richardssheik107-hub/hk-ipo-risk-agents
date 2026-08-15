@@ -1,0 +1,152 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "64eaf8ca-e70a-52db-a876-075e555bb1e4",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "current_status"
+        ],
+        "reason": "Directly states no special rights granted to pre-IPO investors. Names investors (One Wesco, Bridge Capital) and their shareholdings. Strong negative evidence on redemption rights."
+      },
+      {
+        "candidate_id": "94dbf01c-11e8-5ef0-9727-9b7fdd48346d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "General articles of association provisions on share class rights modification. Standard boilerplate not specific to investor redemption rights."
+      },
+      {
+        "candidate_id": "88999ca3-7ab5-5786-b826-0f7ffb770301",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "General articles summary on share class special rights amendment. Standard corporate governance boilerplate, not about investor redemption rights."
+      },
+      {
+        "candidate_id": "79c5d064-4abe-55da-9b02-9828322a2ca2",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles summary on capital changes and share class rights. Standard boilerplate provisions unrelated to investor redemption rights."
+      },
+      {
+        "candidate_id": "fa39a47d-6c0f-586a-bec2-e70d6c78d979",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Liquidation provisions referencing special rights in winding-up context. Standard articles boilerplate, not about investor redemption/put rights."
+      },
+      {
+        "candidate_id": "a936f5f3-3aa0-5fae-9c0c-0f95b10842b0",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "redemption_put_repurchase",
+          "current_status"
+        ],
+        "reason": "Pre-IPO investment terms explicitly state no special rights including no divestment rights (撤資權). Directly addresses redemption/put rights for named investors."
+      },
+      {
+        "candidate_id": "de16b4ec-f05c-519e-8772-6b2c78c23601",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "current_status"
+        ],
+        "reason": "Valuation discussion confirms no special rights granted to pre-IPO investors per agreement terms. Supports primary evidence on absence of redemption rights."
+      },
+      {
+        "candidate_id": "d00a7bed-a8fa-5cd4-9b7e-fe76a4c83c9e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.87,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "listing_condition",
+          "current_status"
+        ],
+        "reason": "Sponsor confirms no special rights granted to pre-IPO investors, citing HKEx guidance compliance. Strong supporting evidence with listing condition context."
+      },
+      {
+        "candidate_id": "914dabd6-ab0a-5be0-8f31-0573c2414e22",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles provisions on voting rights and special resolutions. Standard boilerplate referencing special rights only in general voting context."
+      }
+    ]
+  }
+}

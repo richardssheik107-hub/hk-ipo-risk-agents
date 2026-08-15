@@ -1,0 +1,307 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "6d3339c5-bc0a-5db6-be5d-697a54581656",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "regulatory_issue",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Detailed table of 6 actual medical advertising non-compliance events with dates, entities, causes, and references to penalties and corrective measures. Primary disclosure of real regulatory violations."
+      },
+      {
+        "candidate_id": "5902792b-f436-590d-9e1b-0b40dba683ce",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "regulatory_issue",
+          "materiality"
+        ],
+        "reason": "Indemnity deed provisions referencing non-compliance events including social insurance and housing fund shortfalls. Supports the disclosure of compliance issues but is legal indemnification context, not direct evidence."
+      },
+      {
+        "candidate_id": "ce95b76a-18bf-598c-9662-afaa1046aa77",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "actual_proceeding",
+          "current_status",
+          "materiality"
+        ],
+        "reason": "Direct negative statement: no material litigation, arbitration or claims as of latest practicable date. Key current-status evidence for material litigation assessment."
+      },
+      {
+        "candidate_id": "7ea97654-a513-5b89-ba6b-43022a6ca5ac",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Underwriting agreement boilerplate termination conditions listing hypothetical litigation, investigations, and sanctions. No actual events described."
+      },
+      {
+        "candidate_id": "c9c98810-e50a-502d-a554-8fb309e2e599",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "regulatory_issue"
+        ],
+        "reason": "Risk factor section confirming subsidiaries were fined for medical advertising law violations during track record period, referencing detailed disclosure. Contextual confirmation of actual non-compliance."
+      },
+      {
+        "candidate_id": "6db26d9e-6ca9-5b00-8a9d-127164e041f2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "licence_permit",
+          "current_status"
+        ],
+        "reason": "States no material difficulties in obtaining or renewing licenses and permits, with forward-looking expectation. Relevant to licence/permit compliance status."
+      },
+      {
+        "candidate_id": "0bbd80d0-c56d-5665-afd5-c7c9804b30f3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "actual_proceeding",
+          "regulatory_issue",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Detailed disclosure of 3 non-compliance events (unsigned medical documents, unqualified treatment) with dates, penalties, causes, materiality assessment, and remediation measures. Highly specific."
+      },
+      {
+        "candidate_id": "6e4d6815-67f0-5ad2-851c-e2cbf7fda83f",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "licence_permit",
+          "current_status"
+        ],
+        "reason": "Lists specific licenses and permits with effective/expiry dates for each institution. Factual listing of licence status but no compliance issue identified."
+      },
+      {
+        "candidate_id": "4469c960-a78c-554e-a1df-6fc25313871d",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "actual_proceeding",
+          "regulatory_issue",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Extremely detailed disclosure of social insurance and housing fund non-compliance with amounts, legal consequences, authority confirmations, provisions made, and remediation. Comprehensive evidence."
+      },
+      {
+        "candidate_id": "bcd5e8fa-a523-5858-8b1d-7ce2d8010413",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Share option plan conditions and termination provisions. Completely unrelated to material litigation or compliance issues."
+      },
+      {
+        "candidate_id": "d5037719-bd24-55e3-8129-867a683932ea",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.82,
+        "completeness_facets": [],
+        "reason": "Risk factor about VIE shareholder conflicts and hypothetical legal proceedings. Generic risk-factor language without actual events."
+      },
+      {
+        "candidate_id": "9d6a5d6f-753b-588e-b2d9-3d21170a86a8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "actual_proceeding",
+          "current_status",
+          "remediation",
+          "materiality"
+        ],
+        "reason": "Contains remediation summary with internal control review, and direct negative statement that no material litigation/arbitration/administrative proceedings are pending. Also confirms no medical malpractice incidents."
+      },
+      {
+        "candidate_id": "d0d40b21-bb89-59c5-94b0-69e0c89388a1",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Profit forecast assumptions listing material litigation and arbitration as force majeure. Generic assumption boilerplate, no actual events."
+      },
+      {
+        "candidate_id": "5428960a-e103-593d-b5e2-5a6dcbeeb0ca",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Legal opinion on VIE contractual arrangements, mentioning arbitration enforceability. About VIE structure validity, not material litigation/compliance issues."
+      },
+      {
+        "candidate_id": "985b990b-0a78-567e-99d9-54349399f643",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "licence_permit"
+        ],
+        "reason": "General business operations description mentioning monitoring of qualifications and permits. Broad operational context, not specific compliance evidence."
+      },
+      {
+        "candidate_id": "fe950481-1020-579f-b590-03e92e947bc9",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Underwriting agreement boilerplate termination conditions about market conditions, tax changes, and force majeure. No actual litigation or compliance events."
+      },
+      {
+        "candidate_id": "e1609fad-7fff-5c77-bed3-76a4cd36f63f",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Summary of key risk factors in preliminary pages. Generic risk-factor listing including potential legal claims against physicians. No specific actual events."
+      },
+      {
+        "candidate_id": "f60031ba-6843-56e7-89e8-9ee698deff31",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [],
+        "reason": "Risk factor about enforcing VIE contractual arrangements and potential tax consequences. About VIE enforceability risks, not material litigation/compliance."
+      },
+      {
+        "candidate_id": "0105a6d9-2c4a-553d-9fc1-79c214d42be9",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "supporting",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.88,
+        "completeness_facets": [],
+        "reason": "About compliance advisor appointment, startup costs, promoters, and shareholder taxation. No connection to material litigation or compliance violations."
+      },
+      {
+        "candidate_id": "05df63a8-c337-5a15-be47-8ce1ce997da3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "VIE voting rights proxy agreement details. Mentions legal procedures only in context of filing documents. Unrelated to material litigation or compliance."
+      }
+    ]
+  }
+}

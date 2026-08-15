@@ -1,0 +1,286 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "a80fce8c-5c0e-511a-9ace-ae4a683b187e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.98,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Most complete: latest-year top 5 supplier table with identities, amounts, and all-period ratio trends (top5 82%, largest 51%)."
+      },
+      {
+        "candidate_id": "4081c89a-6680-58ec-8e92-31cfc83ceb79",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "reporting_period"
+        ],
+        "reason": "Summary page with all-period top 5 and largest supplier ratios (82%, 51% latest). Lacks individual supplier details."
+      },
+      {
+        "candidate_id": "81410942-3b9b-5c26-b4c6-25bfe8a751de",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed FY2017 top 5 supplier table with identities, amounts, ratios (total 39.4%). One year only."
+      },
+      {
+        "candidate_id": "f5d6c5b7-8541-544a-8981-223644a9a51f",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "FY2018 top 5 supplier table with identities and amounts. Truncated; missing total ratio and 5th supplier details."
+      },
+      {
+        "candidate_id": "55b5af32-0c40-5721-a8e5-6103abe10dcc",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "FY2019 top 5 supplier table with identities and amounts. Truncated; missing total and 5th supplier details."
+      },
+      {
+        "candidate_id": "225057a8-4468-543c-b63d-47699602a632",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Confirms top 5 suppliers are independent and no long-term supply agreements. Context only, no concentration ratios."
+      },
+      {
+        "candidate_id": "633a86c7-40d8-5c6c-88d2-b84c98d37776",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Generic competitive advantage summary mentioning stable supplier relationships. No concentration data."
+      },
+      {
+        "candidate_id": "53306bbe-c787-5cd9-854a-f791752300c0",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Discusses customer/subcontractor overlap; only notes top 5 customers aren't suppliers. Not supplier concentration."
+      },
+      {
+        "candidate_id": "1e682f5b-ad84-55bf-83b8-16abf5b11b18",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "FY2017 top 5 subcontractor table, not supplier. Brief note one subcontractor is also a supplier."
+      },
+      {
+        "candidate_id": "96aceaf8-fbf5-5fc6-8784-d861b6bbfbbd",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Legal disclosure: no directors/shareholders have interests in top 5 suppliers. Boilerplate, no concentration data."
+      },
+      {
+        "candidate_id": "8a4d0218-098b-5ebc-b3ae-bb34d088f397",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Describes procurement policy and materials. No supplier concentration ratios. Context for supplier section."
+      },
+      {
+        "candidate_id": "fd439744-c5ce-59bf-bf05-025599dd5ccc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Summary of business, bid rates, projects. No supplier concentration data at all."
+      },
+      {
+        "candidate_id": "92fbcde4-d961-5754-b1f8-c89f67569a6b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Risk factors summary; mentions customer concentration risk only. No supplier concentration data."
+      },
+      {
+        "candidate_id": "6b5d1668-5bfa-5eb6-8344-15229f619feb",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Contract terms (defect liability, retention, safety). No supplier concentration data."
+      },
+      {
+        "candidate_id": "3e2118fa-c07e-5856-9bac-c452e5840a84",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Legal info on shareholders and directors' interests. No supplier concentration data."
+      },
+      {
+        "candidate_id": "16a7ee96-b614-54b0-95a1-935d390d7001",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Share option plan details; 'suppliers' mentioned only as potential participants. No concentration data."
+      },
+      {
+        "candidate_id": "ee24b3aa-e944-5749-bc3d-d0857e4edf8a",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "FY2018 top 5 subcontractor table. Notes one subcontractor is also a supplier. Not supplier concentration."
+      },
+      {
+        "candidate_id": "afcc31c7-33c6-53a7-836e-e09627300359",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Major shareholders table. No supplier concentration data whatsoever."
+      },
+      {
+        "candidate_id": "dcddd592-b662-579f-93a0-729eb46356f4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Share option plan caps and limits. No supplier concentration data."
+      }
+    ]
+  }
+}

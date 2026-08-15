@@ -1,0 +1,335 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "bdd1e71a-6786-516f-a594-cce4eabe6b1a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Summary consolidated cash flow statement with ending cash (420,833; 314,338; 167,337; 336,000 RMB'000) and operating cash outflows across four reporting periods. Directly enables cash runway calculation."
+      },
+      {
+        "candidate_id": "a9c09f50-6293-5b4b-9461-a774a4e10126",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Detailed consolidated cash flow statement from accountant's report showing operating cash outflows and investing activities across four periods. Missing ending cash line in excerpt but provides authoritative cash flow data."
+      },
+      {
+        "candidate_id": "058d2753-242e-5f26-aa0b-a87d954ae8ab",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Reconciliation note showing cash and bank balances and cash and cash equivalents (420,833; 314,338; 336,000 RMB'000) with adjustment for >3-month deposits. Supports ending cash verification but lacks operating cash flow."
+      },
+      {
+        "candidate_id": "5f3adf3b-ea8e-5f44-913a-b530744073a8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Cash flow summary table with ending cash and operating cash outflows, plus narrative explaining negative operating cash flow due to R&D expenses and no sales revenue. Exceptional for cash runway assessment."
+      },
+      {
+        "candidate_id": "97d3eff2-d278-5ce8-8ec9-7989c0eaf041",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report cash flow statement continuation showing financing activities, net cash change, beginning/ending cash (420,833; 314,338; 167,337; 336,000 RMB'000) and exchange rate effects. Full reconciliation of cash position."
+      },
+      {
+        "candidate_id": "bc1ef53f-fe88-5c32-b885-002311eddfd6",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Directly states cash runway: at least 18 months from June 30, 2020 without IPO proceeds. Provides monthly cash burn rates (RMB 8.0M, 9.7M, 12.1M) defined as operating cash outflow plus capex. Core evidence for runway assessment."
+      },
+      {
+        "candidate_id": "3e8e54ca-67cb-5ab7-a497-27d13c257f32",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Note 17 breaks down cash and bank balances by currency (RMB/USD) for group and company (420,833; 314,338; 405,481 RMB'000). Useful for cash position detail but no operating cash flow or runway calculation."
+      },
+      {
+        "candidate_id": "938c7254-7d4f-58c7-aa8a-ce0dad183161",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factor section with specific operating cash outflow figures (RMB 79.9M, 113.0M, 72.0M), operating losses, and explicit statement that existing capital may be insufficient. Specific numbers, not generic boilerplate."
+      },
+      {
+        "candidate_id": "eaa19f46-bd95-5be6-a4f7-df8cf4bdd0e3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Standard accounting policy defining cash and cash equivalents for cash flow statement preparation. Provides definitional context but no actual cash figures or runway data."
+      },
+      {
+        "candidate_id": "30b9f7c7-d55f-511f-91e4-ddeb9b32c113",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Financial risk management section discussing FX and interest rate risk on USD-denominated cash balances. No ending cash or operating cash flow figures for runway assessment."
+      },
+      {
+        "candidate_id": "407a244e-b130-55f2-94b2-a0526de2abf3",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Note 27 showing operating cash flow reconciliation with operating cash used before interest (80,080; 115,620; 47,492; 73,412 RMB'000). Supports operating cash burn analysis but no ending cash."
+      },
+      {
+        "candidate_id": "be70414e-792c-5d82-9980-238b4fc41591",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Current assets/liabilities table showing cash and bank balances (420,833; 314,338; 405,481; 618,711 RMB'000) including Oct 2020 update. Useful for cash position but lacks operating cash flow."
+      },
+      {
+        "candidate_id": "bc60339f-4c90-5a88-a2d1-46178e3e3665",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative on cash and bank balances declining from 420.8M to 314.3M RMB due to increased business operations. Provides context for cash burn but limited for runway calculation."
+      },
+      {
+        "candidate_id": "281b8aaa-e3ca-5976-897d-39ebdd305435",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative on cash increase from 314.3M to 405.5M RMB due to C+ round financing. Explains financing inflows affecting cash position but limited runway relevance."
+      },
+      {
+        "candidate_id": "dce09ce0-3306-5137-a7e7-c7e554b75de6",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Working capital confirmation: directors believe sufficient resources for 12+ months at 125% of costs. References cash burn rate and R&D spending. Direct runway adequacy statement."
+      },
+      {
+        "candidate_id": "2f1dcaa4-159b-5044-9fbf-84dd4ec993ae",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Consolidated balance sheet showing cash and bank balances (420,833; 314,338; 405,481 RMB'000) alongside shareholders' deficit. Provides cash position but no cash flow data."
+      },
+      {
+        "candidate_id": "c845ab9c-bea1-5070-9324-b217daace20a",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Company-level (not group) balance sheet with cash and bank balances (376,904; 235,114; 377,328 RMB'000). Less relevant for consolidated runway assessment."
+      },
+      {
+        "candidate_id": "848a9081-bad5-5f83-9a63-3441e238ded2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Standard credit risk discussion noting cash and bank balances credit risk is low. No cash figures or runway-relevant data. Generic risk management language."
+      },
+      {
+        "candidate_id": "20fe7eb0-3464-524c-8e87-218d462250d8",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Liquidity risk and capital management disclosure. Mentions no net debt at period ends but focuses on financial liability maturity and capital ratios, not cash runway."
+      },
+      {
+        "candidate_id": "c6c3a5bd-d591-5783-beca-a5711366545c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Fair value estimation and accounting estimates section. Only mentions cash and bank balances book value approximates fair value. No runway-relevant data."
+      }
+    ]
+  }
+}

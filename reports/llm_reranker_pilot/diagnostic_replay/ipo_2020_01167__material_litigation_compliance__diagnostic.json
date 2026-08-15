@@ -1,0 +1,23 @@
+{
+  "actual_candidate_count": 20,
+  "candidate_count": 20,
+  "candidate_set_hash": "9b1c016c3533f28091e138c56fbcf370aa58eedbbc6e235454a8fdda82ab5abf",
+  "case_id": "ipo_2020_01167",
+  "diagnostic_only": true,
+  "duplicate_candidate_ids": [],
+  "expected_candidate_count": 20,
+  "failure_stage": null,
+  "missing_candidate_ids": [],
+  "model": "ark-code-latest",
+  "official_cache_modified": false,
+  "parsed_payload_hash": "c52fe9fd968b363c66e6af5596c0b3e2d72728f09c436445d91a6d818f985114",
+  "prompt_version": "llm_evidence_reranker_v1",
+  "provider": "openai_responses",
+  "provider_attempt_count": 1,
+  "pydantic_errors": [],
+  "response_hash": "a3eb12268d5128e48058a760e7046e06ccc95ba88bb0f88414efb9bdd10020f3",
+  "risk_code": "material_litigation_compliance",
+  "status": "completed",
+  "unknown_candidate_ids": [],
+  "unknown_facets": []
+}

@@ -1,0 +1,326 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "e9cd595f-fe7e-5a90-a30a-be6a55518784",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period"
+        ],
+        "reason": "Prospectus summary with ending cash (3.2B to 2.4B RMB), operating cash flow across 5 periods, and narrative on negative operating cash flows in 2017, 2018, and 4M2020. Directly supports cash runway assessment."
+      },
+      {
+        "candidate_id": "ec3d2629-39b2-5eed-9685-ed3bb22df64b",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "operating_cash_flow"
+        ],
+        "reason": "Accountant's report showing operating cash flow net figures across 5 periods including negative values. No ending cash or period/currency labels visible in excerpt."
+      },
+      {
+        "candidate_id": "84504d5b-6309-53c0-a4fa-a964f3aaf39a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Accountant's report with ending cash reconciliation, restricted cash breakdown, explicit RMB thousands, period labels, and cash flow statement authority. Most complete ending cash evidence."
+      },
+      {
+        "candidate_id": "199af3d4-d24e-538d-9f58-5e54ea60fcb9",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "currency_unit"
+        ],
+        "reason": "Subsidiary (生祥祺) financial statement with operating cash flow. Not consolidated; limited relevance to group-level cash runway assessment."
+      },
+      {
+        "candidate_id": "94fc731e-519b-50c6-811a-863d6c35a754",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "currency_unit"
+        ],
+        "reason": "Acquisition fair value table listing cash acquired (12,789 RMB thousands). Not about ending cash or operating cash flow for cash runway."
+      },
+      {
+        "candidate_id": "f5e6e652-1ce3-5642-a11a-0eb637e50fc8",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "currency_unit"
+        ],
+        "reason": "Subsidiary financials with operating cash flow. Not consolidated group data; limited relevance to overall cash runway."
+      },
+      {
+        "candidate_id": "8be27199-13ab-5026-98c1-c1b677a1e356",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Standard accounting policy defining cash and cash equivalents for cash flow statement. No specific financial data; boilerplate policy disclosure."
+      },
+      {
+        "candidate_id": "2f97e433-5a8b-55c4-b88e-61ccce709d1e",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "currency_unit"
+        ],
+        "reason": "Subsidiary financial statements with operating cash flow used. Not consolidated; minimal relevance to group cash runway."
+      },
+      {
+        "candidate_id": "a97b8630-f104-5925-b8b4-e4541d47c1db",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Acquisition details listing cash acquired (718,369 RMB thousands). Not about ending cash or operating cash flow for cash runway."
+      },
+      {
+        "candidate_id": "b227332c-0543-5fe2-9abb-cebb3d170edb",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Parent company-only balance sheet showing zero cash and cash equivalents. Not consolidated; no cash runway relevance."
+      },
+      {
+        "candidate_id": "887825f7-9f0d-5d3c-8c58-95638b9ae9ea",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed narrative on operating cash flow for 4M2020 (RMB -3,168.3M net used) with breakdown of interest, tax, and working capital changes. Strong supporting context for cash runway."
+      },
+      {
+        "candidate_id": "3c5fc8b2-715a-5441-a8ed-93eaf78a5c4d",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [],
+        "reason": "Accounting policy text on cash definition, provisions, and tax. No specific cash runway data; standard boilerplate disclosure."
+      },
+      {
+        "candidate_id": "321744bd-5573-5c47-baf5-b139e6853c45",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Detailed narrative on 2017 operating cash flow (RMB -12,332.4M net used) with breakdown. Historical period but strong supporting evidence for cash runway trend."
+      },
+      {
+        "candidate_id": "aaf6e860-f2ae-5584-9eab-52662a577b70",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Acquisition details for subsidiary with cash acquired. Not about ending cash or operating cash flow for cash runway."
+      },
+      {
+        "candidate_id": "bcaf17ee-3165-5380-969b-a3a6e36dbcb6",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period"
+        ],
+        "reason": "Narrative on negative operating cash outflows in 2017-2018 and working capital needs. Mixed with unrelated investment product discussion; moderate relevance."
+      },
+      {
+        "candidate_id": "72a40fbb-a992-5dbf-b3ad-012926a25894",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow"
+        ],
+        "reason": "Cash flow summary table with ending cash and operating cash flow across 5 periods. Same data as top candidate but without narrative context or explicit labels."
+      },
+      {
+        "candidate_id": "7f2c822c-a835-5ea7-b964-98a9a122f039",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "ending_cash"
+        ],
+        "reason": "Consolidated balance sheet showing cash and cash equivalents (3.2B to 2.4B RMB) across 4 dates. From balance sheet not cash flow statement; no explicit period or currency labels in excerpt."
+      },
+      {
+        "candidate_id": "56c0d189-4ed8-5099-84c1-5b9d431b5f85",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.25,
+        "completeness_facets": [
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Acquisition details for subsidiary with cash acquired. Not relevant to cash runway assessment."
+      },
+      {
+        "candidate_id": "e4b2a045-7003-5c3f-96c2-00ceb97077d2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "operating_cash_flow"
+        ],
+        "reason": "Subsidiary financial statements with operating cash flow. Not consolidated; minimal relevance to group cash runway."
+      },
+      {
+        "candidate_id": "f2a82592-0b94-5f10-9734-792c17472e75",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative on capital commitments, ending cash (RMB 2,446.9M as of Apr 2020), restricted cash, and credit facilities. Strong supporting context for cash runway and liquidity."
+      }
+    ]
+  }
+}

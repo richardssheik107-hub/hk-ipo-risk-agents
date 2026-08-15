@@ -1,0 +1,439 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_09898",
+  "stock_code": "9898.HK",
+  "company_name": "微博－ＳＷ",
+  "document_id": "ipo_2021_09898",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows positive net cash from operating activities of USD 338,357 thousand for the six months ended 30 June 2021. Under Protocol v1.1.1, non-negative operating cash flow means there is no operating cash burn; monthly_operating_cash_burn and cash_runway_months must therefore be null, so the cash_runway risk is not applicable.",
+      "calculation_required": true,
+      "calculation_method": "cash_runway_from_operating_cash_flow",
+      "calculation_inputs": {
+        "period": "six months ended 30 June 2021",
+        "currency": "USD",
+        "unit": "USD'000",
+        "cash_and_cash_equivalents": 2005106,
+        "net_cash_from_operating_activities": 338357,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The audited historical statement reports positive net profit in each of the three comparable annual periods 2018, 2019 and 2020 (USD 572,620 thousand, USD 492,833 thousand and USD 314,597 thousand, respectively). The comparable interim periods for the six months ended 30 June 2020 and 2021 are also profitable. There are zero comparable loss periods, so the frozen continuous_loss threshold is not met.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": {
+        "currency": "USD",
+        "unit": "USD'000",
+        "annual_periods": [
+          {
+            "period": "year ended 31 December 2018",
+            "net_profit": 572620
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "net_profit": 492833
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "net_profit": 314597
+          }
+        ],
+        "interim_comparable_periods": [
+          {
+            "period": "six months ended 30 June 2020",
+            "net_profit": 250004
+          },
+          {
+            "period": "six months ended 30 June 2021",
+            "net_profit": 129950
+          }
+        ]
+      },
+      "calculation_result": {
+        "comparable_annual_loss_periods": 0,
+        "comparable_interim_loss_periods": 0,
+        "assessment": "continuous_loss_threshold_not_met"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.96,
+      "reasoning": "Audited annual revenue decreased from USD 1,766,914 thousand in 2019 to USD 1,689,931 thousand in 2020, a comparable growth rate of -4.3569%. This is below 0% but above -20%, meeting the frozen medium threshold. The same audited statement also shows positive 2019 versus 2018 growth and a strong rebound in the comparable six-month 2021 period; these do not change the fact that the 2019-to-2020 comparable annual growth itself meets the medium trigger.",
+      "calculation_required": true,
+      "calculation_method": "comparable_revenue_growth",
+      "calculation_inputs": {
+        "currency": "USD",
+        "unit": "USD'000",
+        "comparisons": [
+          {
+            "from_period": "year ended 31 December 2018",
+            "to_period": "year ended 31 December 2019",
+            "from_revenue": 1718518,
+            "to_revenue": 1766914
+          },
+          {
+            "from_period": "year ended 31 December 2019",
+            "to_period": "year ended 31 December 2020",
+            "from_revenue": 1766914,
+            "to_revenue": 1689931
+          },
+          {
+            "from_period": "six months ended 30 June 2020",
+            "to_period": "six months ended 30 June 2021",
+            "from_revenue": 710782,
+            "to_revenue": 1033362
+          }
+        ]
+      },
+      "calculation_result": {
+        "growth_rates_pct": [
+          {
+            "comparison": "2019_vs_2018",
+            "growth_pct": 2.8161
+          },
+          {
+            "comparison": "2020_vs_2019",
+            "growth_pct": -4.3569
+          },
+          {
+            "comparison": "H1_2021_vs_H1_2020",
+            "growth_pct": 45.3838
+          }
+        ],
+        "trigger_comparison": "2020_vs_2019",
+        "trigger_growth_pct": -4.3569,
+        "assessment": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Business section formally discloses that the five largest customers accounted for less than 30% of total net revenue in each year and period of the track record period. Because the largest customer is necessarily no greater than the top-five aggregate, both the largest-customer medium threshold (>=30%) and the top-five medium threshold (>=60%) are excluded; the high thresholds are also excluded.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "top_five_customer_upper_bound_pct": 30,
+        "bound_operator": "<",
+        "period_scope": "each year and period of the track record period"
+      },
+      "calculation_result": {
+        "largest_customer_bound": "<30%",
+        "top_five_customer_bound": "<30%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Business section formally discloses that the five largest suppliers accounted for less than 30% of purchases in each year and period of the track record period. Because the largest supplier is necessarily no greater than the top-five aggregate, both the largest-supplier medium threshold (>=30%) and the top-five medium threshold (>=60%) are excluded; the high thresholds are also excluded.",
+      "calculation_required": true,
+      "calculation_method": "threshold_exclusion_bound",
+      "calculation_inputs": {
+        "top_five_supplier_upper_bound_pct": 30,
+        "bound_operator": "<",
+        "period_scope": "each year and period of the track record period"
+      },
+      "calculation_result": {
+        "largest_supplier_bound": "<30%",
+        "top_five_supplier_bound": "<30%",
+        "medium_threshold_excluded": true,
+        "high_threshold_excluded": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.92,
+      "reasoning": "The accountants' report discloses an actual contingent redemption obligation: after acquiring a majority stake in Jiamian Technology, the Group agreed in certain circumstances to redeem the minority interest held by its founder and CEO, and the interest is classified as redeemable non-controlling interest because the contingency is not wholly within the Group's control. This is an actual effective redemption right rather than boilerplate. Protocol v1.1.1 requires actual effective/restorable special rights to be marked needs_review; medium is retained only as the protocol's provisional candidate severity.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "material_litigation_compliance",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "The Regulatory Overview discloses two SAMR antitrust investigation notices concerning alleged failure to make merger-control filings: one resulted in an RMB 500,000 fine and the other remained ongoing as of the prospectus date, with the Company unable to predict its status or outcome. This is an unresolved regulatory/compliance matter. Protocol v1.1.1 requires unresolved regulatory effects or ambiguity about materiality/resolution to be marked needs_review; medium is the provisional candidate severity.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2021_09898",
+      "stock_code": "9898.HK",
+      "company_name": "微博－ＳＷ",
+      "document_id": "ipo_2021_09898",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Business section states that Weibo began monetizing as early as 2012 and reports substantial revenue from advertising and marketing services, including USD 1,689.9 million in 2020 and USD 1,033.4 million in the six months ended 30 June 2021. The core social-media platform is therefore commercialized and revenue-generating, so the precommercial_product candidate condition is not met.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "cash_runway",
+      "page": 398,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "經營活動所得現金淨額             488,007     631,653     741,646      185,264     338,357",
+      "evidence_reason": "Provides the signed net cash from operating activities for the selected six-month period. The 2021 value is positive, which under the protocol means there is no operating cash burn.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "cash_runway",
+      "page": 399,
+      "evidence_role": "supporting",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "年末 ╱ 期末現金及現金等價物        $1,234,596    $1,452,985    $1,814,844     $1,472,251    $2,005,106",
+      "evidence_reason": "Provides the cash-flow-statement period-end cash and cash equivalents required by the protocol's frozen cash definition.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "continuous_loss",
+      "page": 394,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "淨利潤                       572,620      492,833       314,597      250,004     129,950",
+      "evidence_reason": "Shows positive net profit for all three comparable annual periods and both presented comparable six-month periods, excluding the continuous-loss thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "revenue_growth",
+      "page": 394,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "收入總額                     1,718,518    1,766,914     1,689,931     710,782    1,033,362",
+      "evidence_reason": "Provides authoritative comparable revenue values. The 2019-to-2020 annual change is negative and calculates to -4.3569%, meeting the frozen medium threshold.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "customer_concentration",
+      "page": 224,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "於往績記錄期間，我們的五大客戶佔我們各年度及期間淨收入\n總額不足30%。",
+      "evidence_reason": "The formal Business disclosure provides a strict top-five customer concentration bound of <30%, which excludes both frozen medium and high customer-concentration thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "supplier_concentration",
+      "page": 224,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "我們的五大供應商（通常為營銷或帶寬服務供應商）佔我們於往績記錄期間各年度及期\n間的採購額不足30%。",
+      "evidence_reason": "The formal Business disclosure provides a strict top-five supplier concentration bound of <30%, which excludes both frozen medium and high supplier-concentration thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "redemption_rights",
+      "page": 468,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "      於2020年第四季度，貴集團與假面科技當時的現有股東訂立一系列購股協議，以\n      收購該公司的大部分股權（附註6）。貴集團同意於收購後數年內在若干情況下贖\n      回該公司創始人兼行政總裁持有的少數股東權益。貴集團確定，附有贖回權的少\n      數股東權益應分類為可贖回少數股東權益，原因是其於出現若干條件情況時或有\n      贖回，且有關情況並非完全在貴集團控制範圍內。",
+      "evidence_reason": "Establishes an actual contingent redemption right/obligation borne by the Group and states that the triggering circumstances are not wholly within the Group's control.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "material_litigation_compliance",
+      "page": 324,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "於2021年8月，國家市監局就微夢創科涉嫌違反《中華人民共和國反壟斷法》規定的經\n營者非法集中向其發出兩份調查通知，其中一項調查結果為未按照《中華人民共和國反\n壟斷法》提前申報的經營者集中行為處以人民幣500,000元罰款，而截至本文件日期，\n另一項調查仍在進行中。微夢創科正在積極配合國家市監局開展相關調查。現階段，\n我們無法預測調查的情況或結果。",
+      "evidence_reason": "Shows an actual regulatory enforcement matter, including a completed fine and a second antitrust investigation still ongoing with an unpredictable outcome.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "risk_code": "precommercial_product",
+      "page": 208,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "早在2012年我們就開始變現，此後隨著利潤率擴大，我們錄得穩健的收入增長，2016\n年至2020年我們的收入按26.7%的複合年增長率錄得增長，我們的經營利潤率從2016\n年的21.5%提高至2020 年的30.0%。我們主要通過提供廣告及營銷服務產生收入。於\n2020年，我們的收入達到1,689.9百萬美元，其中廣告及營銷收入為1,486.2百萬美元。\n於截至2021年6月30日止六個月，我們的收入達到1,033.4百萬美元，其中廣告及營銷\n收入為892.3百萬美元。",
+      "evidence_reason": "Directly establishes that the core platform has been monetized since 2012 and generated substantial recurring commercial revenue, excluding a pre-commercial product condition.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

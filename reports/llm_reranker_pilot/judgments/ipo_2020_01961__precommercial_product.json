@@ -1,0 +1,317 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "2b8fb65f-7aba-5d47-9d4a-7a75b3e42026",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director biography; '製造及銷售' refers to a former employer's business (中建置地), not the issuer's products. No relevance to precommercial product risk."
+      },
+      {
+        "candidate_id": "b07ae328-e7c3-5f13-93f9-31a4b0b6d81c",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.92,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Describes issuer's core products (mobile games, digital media), revenue model (virtual item sales), and business lines. Directly evidences commercialization status and revenue generation."
+      },
+      {
+        "candidate_id": "92378aca-8caa-547c-b5ce-4ab96dc46b51",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director biography; '生產及銷售' refers to former employers (construction materials, TCM), not issuer's products. No relevance to precommercial product risk."
+      },
+      {
+        "candidate_id": "2f320356-92bd-5dcf-aebd-57d4ffc9fbb4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Business overview mentioning diversified game product portfolio, revenue from virtual item sales, competitive advantages and strategy. Provides context on commercialization but less specific than other candidates."
+      },
+      {
+        "candidate_id": "6928291b-1898-551e-bf59-6832f8e6c0f9",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Risk factor summary with generic language about game product portfolio including self-developed/licensed games and dependency risks. Boilerplate risk language with limited specificity."
+      },
+      {
+        "candidate_id": "a60c07e7-2fa2-51a9-aca3-527c9f765814",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "CFO biography; '製造及' refers to former employer's medical device business, not issuer's products. No relevance to precommercial product risk."
+      },
+      {
+        "candidate_id": "17b0c537-ae6e-5943-8c48-2d7fea359e01",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Biographies of independent non-executive directors. No information about issuer's products or commercialization status. Completely irrelevant."
+      },
+      {
+        "candidate_id": "8b4b8b68-eeb7-53c3-94f9-40df9ff839e5",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "commercialization",
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Comprehensive overview with core products (mobile games, e-magazines), development timeline, and detailed revenue breakdown by business line with specific figures across multiple fiscal years."
+      },
+      {
+        "candidate_id": "5721590e-36c2-567a-b3d9-472f275a5846",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Detailed table of top-revenue games with launch dates, types, pricing, ARPU, and paying user counts. Highly specific evidence of commercialized products generating revenue."
+      },
+      {
+        "candidate_id": "f2827841-2c59-5821-aff4-0636871bbf07",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Definitions section defining '暫停事件' (suspension event) and cross-referencing product portfolio section. Pure boilerplate with no substantive content on commercialization."
+      },
+      {
+        "candidate_id": "45adf784-ef47-5b85-a1b6-660b1fba8b54",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Risk factors section with specific data: revenue from 496, 222, 91, 79 games across fiscal years; percentages of self-developed games. Provides concrete commercialization and product portfolio evidence."
+      },
+      {
+        "candidate_id": "12ff199b-d3e4-5ff5-8058-382d1053b595",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "development_stage"
+        ],
+        "reason": "Risk factors about game development uncertainty; mentions 3-day to 2-week dev cycle and R&D expenses. Mostly generic risk boilerplate with limited direct relevance to precommercial status."
+      },
+      {
+        "candidate_id": "c34b91d0-2d29-5a61-aaaf-28f1b9a61b50",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "commercialization"
+        ],
+        "reason": "Corporate milestones showing business history from 2011: starting digital media, launching first mobile games in 2014, operating 700+ games by 2015. Supports assessment of development stage and commercialization timeline."
+      },
+      {
+        "candidate_id": "4fc9b9e4-caa9-5056-abdc-d3b05106b134",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "development_stage",
+          "commercialization",
+          "product_sales"
+        ],
+        "reason": "Business section describing game development/operations: product types, game lifecycles (4-7 months), first multiplayer game Jan 2019, revenue from virtual items. Directly evidences commercialization."
+      },
+      {
+        "candidate_id": "08055cd1-c432-52c5-bf98-51b926e0344a",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "core_product",
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Detailed business section with specific game counts (496, 222, 91, 79), self-developed percentages, and distribution channel data. Strong quantitative evidence of commercialized product portfolio."
+      },
+      {
+        "candidate_id": "e7c376f6-b265-513f-9465-393a673e9e2a",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Management team description; mentions building diversified game product portfolio but focuses on personnel qualifications. Marginal relevance to product commercialization."
+      },
+      {
+        "candidate_id": "8fec554d-7674-582f-be88-c6865edbb25d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director biography with career history at construction and investment companies. No information about issuer's products or commercialization. Irrelevant."
+      },
+      {
+        "candidate_id": "fcdfb845-1a4d-53ed-a051-c56c3d56eb6d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "development_stage",
+          "core_product"
+        ],
+        "reason": "Business strategy section: plans to develop 12-16 new premium games by end of 2021, hire 25 R&D staff. Provides forward-looking product pipeline information relevant to development stage."
+      },
+      {
+        "candidate_id": "1da1f6a7-d9f4-55cf-ba10-1d6abc155b78",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Director and senior management biographies with investment company backgrounds. No information about issuer's products or commercialization. Irrelevant."
+      },
+      {
+        "candidate_id": "0346ede7-d76b-57f7-af55-6fe9650c5a2b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Acquisition strategy section discussing criteria for acquiring complementary game developers. Tangentially related to product portfolio expansion but not directly about current commercialization status."
+      }
+    ]
+  }
+}

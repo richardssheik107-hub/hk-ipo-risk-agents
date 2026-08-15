@@ -1,0 +1,354 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "27bb67af-ebd1-5085-a57c-9eadfa9ec271",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Consolidated cash flow statement showing year-end cash 86M/121M/236M (2018-2020). Audited primary data. Operating activities section not in excerpt."
+      },
+      {
+        "candidate_id": "04349cc7-3df0-5741-aa30-230be4888ec1",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Cash flow note reconciling net loss to operating cash used. Net losses 71M/104M/116M USD (2018-2020). Supporting burn rate detail."
+      },
+      {
+        "candidate_id": "bc7f647a-a5bf-50e5-969a-69ac6adcf864",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Parent company-only balance sheet; cash just 46K/44K/21K USD. Not representative of group cash runway."
+      },
+      {
+        "candidate_id": "628bb286-e11e-5ffe-b43c-000da1cdfd6d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary narrative: operating cash used 32.8M (2018) and 80.9M USD (2019). Explains drivers. Supporting burn context."
+      },
+      {
+        "candidate_id": "878760ab-4eb6-5c7b-9a41-dac774e682b9",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Q1 2021 cash flow statement: operating cash used 22.4M, ending cash 346.1M USD. Most recent quarterly data with full detail."
+      },
+      {
+        "candidate_id": "eee74467-e3e9-5daa-81c6-04affc23d952",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Q1 2021 cash flow statement (appendix copy): operating cash used 22.4M, ending cash 346.1M USD. Duplicate of p.37 data."
+      },
+      {
+        "candidate_id": "11937cca-c6a1-5ace-8727-03af062fc02a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "JV Shanghai Hutchison Pharma cash flow: positive operating cash 103M USD (2020), ending cash 72.5M. Relevant via dividends."
+      },
+      {
+        "candidate_id": "82b928b4-ed9c-59b1-ad58-3fa46f358a2a",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Q1 2021 reconciliation: net loss to operating cash used 22.4M USD. Shows JV dividends 30.5M offsetting burn."
+      },
+      {
+        "candidate_id": "688d4f3e-0c49-5b6a-a588-ccf182464b43",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "JV cash flow (likely Baiyunshan Hutchison): positive operating cash 57M USD (2020), ending cash 16.6M. Indirect via dividends."
+      },
+      {
+        "candidate_id": "817e454f-1e50-560f-aced-14e314f250c2",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Narrative: Q1 2021 operating cash used 22.4M vs Q1 2020 1.8M USD. R&D spending increase drives burn. Supporting context."
+      },
+      {
+        "candidate_id": "3d9a5ff2-56d9-5d2d-9a51-a65321260f27",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Key liquidity disclosure: cash 235.6M, ST investments 199.5M, undrawn facilities 69.4M USD at Dec 31 2020. Sufficient for 12 months."
+      },
+      {
+        "candidate_id": "f52ff922-fd6c-547c-adde-b44e5eb1cf14",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "MD&A narrative: operating cash used 80.9M (2019) vs 62.1M USD (2020). JV dividend increase offsets higher losses."
+      },
+      {
+        "candidate_id": "1982346d-85d2-561a-86c1-6c568093d390",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Accounting policy notes on equity method and ASU adoption. No cash runway data. Pure boilerplate."
+      },
+      {
+        "candidate_id": "dd286148-035b-52e9-9fca-3a30637b3c14",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "strong_supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Summary: operating cash used 80.9M (2019) and 62.1M USD (2020). References risk of continued net cash outflow."
+      },
+      {
+        "candidate_id": "82cce909-1258-5ee2-8fcb-76614611a53e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Note 5 cash breakdown: bank deposits plus <=3-month deposits totaling 86M/121M/236M USD (2018-2020). Fair value Level 1."
+      },
+      {
+        "candidate_id": "46f222f2-0da0-5b25-a2c4-d8978a14f637",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factors with specific operating cash used 32.8M/80.9M/62.1M USD (2018-2020). Embedded in risk language."
+      },
+      {
+        "candidate_id": "4dd251e7-d22c-5102-aaaf-00e8686d3656",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Q1 2021 balance sheet: cash 346.1M USD and ST investments 49.9M at Mar 31 2021. Current cash position snapshot."
+      },
+      {
+        "candidate_id": "5178be58-0eb9-520e-8377-efbaf8b670e3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "supporting",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Risk factors: operating cash used 32.8M/80.9M/62.1M USD. Management states resources sufficient for 12 months. Key runway assessment."
+      },
+      {
+        "candidate_id": "fb1968a1-3d73-52c9-bf7f-877fe6f550df",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "ending_cash",
+          "operating_cash_flow",
+          "reporting_period",
+          "currency_unit",
+          "cash_flow_statement_authority"
+        ],
+        "reason": "Small JV (Nutrition Science Partners) cash flow: minimal cash 16.8M USD, operating cash used 551K. Marginal relevance to group runway."
+      },
+      {
+        "candidate_id": "b1c8266e-b9a2-51dd-bf47-3541c2aef151",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "ending_cash",
+          "reporting_period",
+          "currency_unit"
+        ],
+        "reason": "Consolidated balance sheet: cash 86M/121M/236M USD and ST investments 215M/96M/200M (2018-2020). Key cash position data."
+      }
+    ]
+  }
+}

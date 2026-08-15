@@ -1,0 +1,340 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c29ad9cc-61a8-5a7f-8869-7e3c02c11e01",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Primary risk-factor disclosure with all key metrics: top-5 ratios (93.7%-97.3%), largest customer ratios (57.9%-85.9%), Customer D identity and ranking across 4 reporting periods. Complete and specific."
+      },
+      {
+        "candidate_id": "d1f1e814-b6c2-5f65-a57a-42d412fbb30e",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed top-5 customer table with revenue amounts, percentages, and customer backgrounds. Confirms 97.3% top-5 and 85.9% largest customer for latest period, plus all-period ratios and independence status."
+      },
+      {
+        "candidate_id": "98f42e9e-2a10-5684-9b20-747e94eda553",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.78,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period",
+          "revenue_denominator"
+        ],
+        "reason": "Customer D revenue growth and project-level details showing rising concentration (7.8M to 72.6M MOP). Provides identity context and trend but lacks direct concentration ratios."
+      },
+      {
+        "candidate_id": "4e0d98fe-6ab6-5c1b-9560-30e7340f1b21",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Describes 進力 as major customer since 2011 with ranking history and future outlook with Customer D. Provides relationship context but no concentration ratios."
+      },
+      {
+        "candidate_id": "17b256b5-3d6d-50cf-b41f-759402f2494d",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Summary section with all concentration metrics: top-5 ratios, largest customer ratios, Customer D and 進力 revenue amounts and percentages across 4 periods. Complete and authoritative."
+      },
+      {
+        "candidate_id": "4fb60f5a-9e5a-5b52-b1ae-ea3c110c5221",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "General risk factors about casino license renewal, COVID-19, and Macau economy. Mentions customers tangentially but does not address customer concentration at all."
+      },
+      {
+        "candidate_id": "65c402bd-a08c-571e-aac2-1640265f3def",
+        "risk_relevance": "high",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Directly addresses concentration risk implications: no long-term contracts with Customer D, dependency risk, insolvency exposure. Company-specific risk narrative tied to named customers."
+      },
+      {
+        "candidate_id": "d3d24db8-3675-54e6-a708-28c605839109",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.98,
+        "completeness_facets": [],
+        "reason": "Independent non-executive directors' biographies. Completely unrelated to customer concentration risk."
+      },
+      {
+        "candidate_id": "548e566e-89d7-5747-b56f-e0ebf3d47428",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Top-5 customer table for 2 months to Feb 2020 with revenue amounts, percentages (Customer D 85.9%), and detailed customer backgrounds. Complete for that period."
+      },
+      {
+        "candidate_id": "09a7714f-c6db-5f49-89c0-dc9890dd52c8",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Customer D and 進力 revenue with percentages across all 4 periods, plus Customer D entity structure and business history. Provides both concentration ratios and identity context."
+      },
+      {
+        "candidate_id": "e6525c2e-59c6-5665-8a16-fc81e9d95818",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.82,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Customer D revenue amounts and percentages across 4 periods, entity breakdown (D1-D3), and detailed identity context. Lacks top-5 aggregate ratio but highly specific for largest customer."
+      },
+      {
+        "candidate_id": "0e3dd732-60dd-5a7c-95f6-7462eddc56fd",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "2017 top-5 customer table with 進力 at 57.9%, Customer D at 4.8%, total 93.7%. Detailed customer backgrounds and revenue amounts. Complete for 2017."
+      },
+      {
+        "candidate_id": "33514e7a-b356-5df9-a868-e71f3c5aaf41",
+        "risk_relevance": "medium",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Management rationale for customer concentration and sustainability claims. Provides qualitative context but no quantitative metrics. Partially generic industry arguments."
+      },
+      {
+        "candidate_id": "ab80ea69-dcba-5a3c-9b9c-ee9b0733ed2f",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Pre-IPO investor connections to Customer D's controlling shareholder. Tangentially relevant to concentration risk via potential connected-party concerns, but no concentration metrics."
+      },
+      {
+        "candidate_id": "b017dceb-0a99-5b4e-ae5a-de4aaa22e342",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Pre-IPO investment background mentioning Customer A as major customer. Tangential to concentration risk; primarily about investment rationale."
+      },
+      {
+        "candidate_id": "fbc34a61-d13a-5d29-90dd-ec8ffae9058a",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [],
+        "reason": "Business strategy about main contractor role expansion. Mentions major customer relationships generically but no concentration data. Low relevance to customer concentration."
+      },
+      {
+        "candidate_id": "6c4c6297-4fd6-564a-9043-e85e631e1b28",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.72,
+        "completeness_facets": [
+          "customer_identity_context",
+          "reporting_period",
+          "revenue_denominator"
+        ],
+        "reason": "Project-level revenue and gross profit table for Customer D across periods. Granular detail supporting concentration analysis but no aggregate concentration ratios."
+      },
+      {
+        "candidate_id": "a6ebd20c-ce97-5d66-9799-691bd3fe2154",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Continuation of 2017 top-5 table: Customer D at 4.8%, total 93.7%, plus notes on entity structure and supplier relationships. Specific quantitative data for 2017."
+      },
+      {
+        "candidate_id": "363afeee-6949-58c1-b3b8-21ee26ada696",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.98,
+        "completeness_facets": [],
+        "reason": "Executive directors' biographies. Completely unrelated to customer concentration risk."
+      },
+      {
+        "candidate_id": "9c6aee52-0d9e-553d-98cb-a8d9a6b69dfb",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "largest_customer_ratio",
+          "top_five_customer_ratio",
+          "revenue_denominator",
+          "customer_identity_context",
+          "reporting_period"
+        ],
+        "reason": "2018 top-5 customer table with 進力 at 40.4%, Customer D ranked second, detailed backgrounds. Complete quantitative and identity data for 2018 period."
+      }
+    ]
+  }
+}

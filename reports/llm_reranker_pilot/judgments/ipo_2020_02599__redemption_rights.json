@@ -1,0 +1,252 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "35af5bfd-db11-5259-976a-7fa4823b6093",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles of association boilerplate on share class rights; mentions special rights generically but no redemption rights or actual investors."
+      },
+      {
+        "candidate_id": "542b9074-dfe8-5249-8a19-1bb529784fa8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "special_right",
+          "redemption_put_repurchase"
+        ],
+        "reason": "Articles provision allowing shares issued on redeemable terms at company or holder option; general enabling clause, not tied to actual investors."
+      },
+      {
+        "candidate_id": "810045b8-9d2d-5e01-a297-bcb59c6d4218",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles boilerplate on class meeting quorum and capital changes; special rights mentioned generically, no redemption specifics."
+      },
+      {
+        "candidate_id": "64423a39-3e03-5137-915d-146c13786fdc",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles boilerplate on board share disposal and borrowing powers; special rights mentioned in passing, no redemption content."
+      },
+      {
+        "candidate_id": "2626165f-f252-5243-a844-150cd6fdb6ec",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles boilerplate on liquidation; special rights mentioned only in surplus asset distribution context, no redemption."
+      },
+      {
+        "candidate_id": "ed392ff8-d056-52f6-84ed-1486b7a45916",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_investor",
+          "special_right",
+          "current_status"
+        ],
+        "reason": "Explicitly states pre-IPO investors (Golden Stone) have NO special rights. Directly addresses redemption rights risk with actual investor."
+      },
+      {
+        "candidate_id": "cf85c986-2edb-58cd-8476-5ab9f98588fc",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.5,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Trust financing terms discussing lender veto rights, not investor redemption rights; tangential to redemption rights risk."
+      },
+      {
+        "candidate_id": "6c0581eb-c445-5a65-ba62-f064e23f7416",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.45,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Category 3 trust financing; lender veto rights are protective creditor rights, not investor redemption or special rights."
+      },
+      {
+        "candidate_id": "83b89f81-250d-5037-961d-e6297a9c5d22",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Overview of trust financing with veto rights for lenders holding >10% equity; about creditor rights, not investor redemption."
+      },
+      {
+        "candidate_id": "631baca3-505b-5908-b1cc-c9c6b8a55746",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.35,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Data table of trust financing arrangements with veto rights column; no investor redemption rights information."
+      },
+      {
+        "candidate_id": "109d4293-86a7-509a-b596-9fe8064dc7c1",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Continuation of trust financing data table; veto rights column for lenders, irrelevant to investor redemption rights."
+      },
+      {
+        "candidate_id": "56ea03a8-5379-5bfb-931a-3fdde030c390",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Continuation of trust financing data table; veto rights column, no redemption rights content."
+      },
+      {
+        "candidate_id": "90272b47-962b-5bb7-9617-6b66bf8cf112",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Continuation of trust financing data table; veto rights column, no investor redemption rights."
+      },
+      {
+        "candidate_id": "dff2de76-25b1-5023-a3f8-c80980da4bb3",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.3,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Continuation of trust financing data table; veto rights column, no investor redemption rights content."
+      },
+      {
+        "candidate_id": "45fb8cb9-a184-5c50-8bb2-4b00ceca484c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.4,
+        "completeness_facets": [
+          "special_right",
+          "redemption_put_repurchase",
+          "current_status"
+        ],
+        "reason": "Trust financing veto rights detail and equity repurchase terms; lender rights not investor redemption, but notes repurchase and current status."
+      },
+      {
+        "candidate_id": "fcc4fff9-23b0-52f3-bc8e-c7fdd8318e6c",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "special_right"
+        ],
+        "reason": "Articles boilerplate on voting rights and special resolutions; special rights in voting context only, no redemption content."
+      }
+    ]
+  }
+}

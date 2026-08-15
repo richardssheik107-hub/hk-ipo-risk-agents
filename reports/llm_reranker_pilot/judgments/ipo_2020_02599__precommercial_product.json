@@ -1,0 +1,287 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "3cb2c49c-09c3-55f1-b122-efd117be79b6",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Boilerplate summary of competitive advantages; mentions product portfolio generically in real estate context with no pre-commercial product detail."
+      },
+      {
+        "candidate_id": "405fd279-fab8-59f4-8ff6-09703846296d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Detailed description of four residential property series with target segments; identifies core products and shows they are commercialized, not pre-commercial."
+      },
+      {
+        "candidate_id": "d9a630d6-28f6-51bb-a4e2-52581ff860cf",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Forward-looking strategy to optimize existing product lines; not about pre-commercial product status or development stage."
+      },
+      {
+        "candidate_id": "41e6c860-d765-54a8-a8e5-16d651baf5d4",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.88,
+        "completeness_facets": [
+          "commercialization",
+          "product_sales",
+          "revenue_generation"
+        ],
+        "reason": "Detailed financial data showing billions in revenue from property sales, directly evidencing commercialized products and revenue generation."
+      },
+      {
+        "candidate_id": "126509b0-45e5-5eac-a84d-e174b474459a",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "development_stage"
+        ],
+        "reason": "Land reserve broken down by development stage (completed, developing, future); shows pipeline but not directly about pre-commercial products."
+      },
+      {
+        "candidate_id": "bed4d054-49ad-5363-bdb8-bbafa358ae91",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Company background listing subsidiaries in property development; confirms core business but no pre-commercial product info."
+      },
+      {
+        "candidate_id": "21239923-1750-5a39-8a0f-5ee5a37a4407",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.55,
+        "completeness_facets": [
+          "development_stage"
+        ],
+        "reason": "Expansion and land acquisition strategy; not relevant to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "dd4a8355-f7d7-5976-9cb8-37bffff489c2",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "development_stage",
+          "commercialization"
+        ],
+        "reason": "Describes commercial property portfolio and one under-construction complex expected 2023; limited development stage relevance."
+      },
+      {
+        "candidate_id": "35fa00b7-e62d-561e-9f24-9f389cfc8f45",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "7664ab42-4fac-553e-97a9-c8e10b42b264",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Generic business strategy about geographic expansion; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "a5406541-959c-5118-9404-1ddc6360b1c3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Generic strategy about financing and HR; no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "2e80683e-1692-5404-a019-2d9ecbe7e7af",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Holding company empty balance sheet; no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "d180a00a-90c0-5401-8bef-33e5537bcc6f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "b6e99652-1aac-5628-b63a-1722d613728c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "1086aeb2-91c0-5daa-b758-9f75da89512e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "c76df02b-b476-5835-9f66-9eea0aa6a8ab",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "255db8a8-109c-5595-81a2-8ab5352dbb3c",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "ddb31654-4103-59af-8d1c-5a8c88298b32",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "f5a71580-258d-5cf2-9b9e-e8ff829c665e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      },
+      {
+        "candidate_id": "ac93828e-9c4e-5eb0-a02a-82e528cd5b35",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Boilerplate subsidiary listing; no pre-commercial product relevance."
+      }
+    ]
+  }
+}

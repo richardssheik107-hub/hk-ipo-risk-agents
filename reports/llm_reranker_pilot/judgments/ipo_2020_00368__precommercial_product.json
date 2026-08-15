@@ -1,0 +1,303 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "c212caa6-a99e-58ef-a12e-f2451407cd4c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "Subsidiary listing showing decoration services as main business; indirectly relevant as it identifies core business but lacks commercialization stage detail."
+      },
+      {
+        "candidate_id": "2688ff0f-4b1f-5240-b838-06f914262d83",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Business strategy describing main goal as decoration contractor with expansion plans; shows established commercial operations but no pre-commercial products."
+      },
+      {
+        "candidate_id": "989b9433-7095-564d-90e7-a06954b0764c",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product"
+        ],
+        "reason": "General company info stating group provides decoration services; broadly identifies core business but lacks specifics on commercialization or revenue stage."
+      },
+      {
+        "candidate_id": "6000caf4-99c1-5408-86ea-e6777e058610",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Accounting policies and HKFRS standards; pure boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "961c9c3e-dda8-57d6-bb87-66fa5c18b706",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Business history since 2004 with milestones showing established decoration contractor; indirectly relevant as it demonstrates long commercial operating history."
+      },
+      {
+        "candidate_id": "f4608060-f1d9-58af-8b34-04bcca653249",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "core_product",
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Business strategy with specific revenue percentages (98.8%+) from decoration services and market growth data; directly shows commercialized product with revenue."
+      },
+      {
+        "candidate_id": "46fec55b-7d5d-5e37-acca-6e6fcd0f4c52",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "revenue_generation",
+          "commercialization"
+        ],
+        "reason": "Detailed customer revenue (159M-402M HKD), supplier and pricing details; strong evidence of significant existing commercial revenue."
+      },
+      {
+        "candidate_id": "316d4260-1bf4-5c1e-875d-e3f468dcbd5d",
+        "risk_relevance": "medium",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Financial summary showing 552M-879M HKD revenue across three years; strong evidence of established commercial operations with product sales."
+      },
+      {
+        "candidate_id": "25772c9e-7c27-5f72-8539-a592eba2486b",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Top 5 customer revenue breakdown for 2019 totaling 852M HKD; shows existing commercial revenue but focused on customer concentration."
+      },
+      {
+        "candidate_id": "304bbf1e-b7f9-5af2-a5b5-d90a22030a24",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue_generation"
+        ],
+        "reason": "Customer concentration details with revenue figures from major groups; shows existing revenue but primarily addresses customer concentration risk."
+      },
+      {
+        "candidate_id": "9a761d1f-59ef-560e-8b0f-649a0cb0f880",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director biography and dissolved company listings; standard prospectus boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "eade5edb-3f59-537e-a535-299a154f9cf5",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Regulatory overview of payment protection ordinance for construction industry; no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "a8692b85-f903-5aad-a2af-f6867138dd34",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "core_product",
+          "commercialization"
+        ],
+        "reason": "Business milestones 2016-2019 and corporate history showing ongoing operations; indirectly relevant to commercialization status."
+      },
+      {
+        "candidate_id": "c1803efd-e1c6-5e81-b0d8-c565a85b54c8",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director dissolved companies and accounting definitions; standard prospectus boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "de319da9-b224-59db-84a0-b563d17a1823",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Professor's biography and dissolved company details; standard prospectus boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "f841f721-1048-59c9-960c-02b50fbf1761",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Repeat customers contributing 93-98% of revenue and supplier relationships; shows established commercial operations but indirectly relevant."
+      },
+      {
+        "candidate_id": "b7fb4cf1-2801-5850-83b0-c2dcccd81b71",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "commercialization",
+          "revenue_generation"
+        ],
+        "reason": "Business diversification strategy with gross margin data; shows existing commercial operations but primarily about growth strategy."
+      },
+      {
+        "candidate_id": "c747f53a-20bf-56fb-b396-176276ba3384",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Director's dissolved company and company secretary biography; standard prospectus boilerplate with no relevance to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "f445c787-bfd1-56fa-a537-d5e9967d48c3",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.95,
+        "completeness_facets": [],
+        "reason": "Hong Kong share application process and subscription rules; completely irrelevant to pre-commercial product assessment."
+      },
+      {
+        "candidate_id": "8e551d54-8bce-5c48-bc64-b7f16e8c0b70",
+        "risk_relevance": "low",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_generation",
+          "product_sales"
+        ],
+        "reason": "Top 5 customer revenue breakdown for 2018 totaling 732M HKD; shows existing commercial revenue but focused on customer details."
+      }
+    ]
+  }
+}

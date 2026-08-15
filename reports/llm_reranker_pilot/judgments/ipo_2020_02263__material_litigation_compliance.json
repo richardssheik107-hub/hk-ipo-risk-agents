@@ -1,0 +1,319 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "3c7c3110-37c9-52c6-998c-696483632e95",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status"
+        ],
+        "reason": "Direct negative statement from Business section: no material litigation or arbitration as of last practicable date. Specific, factual, and current. Primary disclosure of litigation status."
+      },
+      {
+        "candidate_id": "f1dec7a4-5a23-5f83-8781-0d4efa1173ab",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "actual_proceeding",
+          "named_dispute",
+          "materiality",
+          "current_status",
+          "regulatory_issue"
+        ],
+        "reason": "Contains same direct no-material-litigation statement plus indemnity deed covering legal proceedings, regulatory actions, and tax claims. Richer context than standalone litigation disclosure."
+      },
+      {
+        "candidate_id": "d8e99fa2-c041-5e3a-8432-77bdf506ac21",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.85,
+        "completeness_facets": [
+          "actual_proceeding",
+          "materiality",
+          "current_status",
+          "regulatory_issue"
+        ],
+        "reason": "Summary page states no fines/penalties for non-compliance and no involvement in material legal proceedings, arbitration, or administrative proceedings during track record period. Strong negative statement."
+      },
+      {
+        "candidate_id": "35fceb31-5b5a-5236-9af7-00516c340d27",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit",
+          "materiality",
+          "current_status",
+          "remediation"
+        ],
+        "reason": "Discloses actual non-compliance events (inaccurate SFC financial statements, failure to send renewal notices), remediation taken, and confirms all licenses valid. Directly relevant to compliance assessment."
+      },
+      {
+        "candidate_id": "41b89486-4946-544b-b8fd-35327bf233bd",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "named_dispute",
+          "current_status"
+        ],
+        "reason": "Negative statement: no IP infringement, no IP claims or material IP disputes. Also no material insurance claims. Supporting evidence for litigation/compliance assessment."
+      },
+      {
+        "candidate_id": "9e558ffe-b388-50de-91fc-3a7a24e63fd7",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "named_dispute",
+          "current_status"
+        ],
+        "reason": "Specific risk factor about potential IP infringement litigation over unregistered 'Sinomax' trademark. Identifies a concrete, named litigation risk rather than generic boilerplate."
+      },
+      {
+        "candidate_id": "6d0b0789-f619-549f-8d03-09de611ffe23",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "named_dispute",
+          "regulatory_issue"
+        ],
+        "reason": "Tax indemnity deed referencing legal proceedings, tax claims, and regulatory matters. Structures indemnification for potential litigation/tax issues. Indirectly relevant."
+      },
+      {
+        "candidate_id": "c00891ee-c329-5ff5-aa32-53ab86b99c83",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "current_status",
+          "regulatory_issue"
+        ],
+        "reason": "States no recruitment non-compliance and no health/safety fines or penalties. Tangentially relevant to compliance but not directly about material litigation."
+      },
+      {
+        "candidate_id": "d1e8fc93-984b-56cc-9d6c-b4f1891869a8",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Risk management section discussing potential regulatory consequences (fines, litigation, license suspension). Forward-looking risk factor language, no actual proceedings."
+      },
+      {
+        "candidate_id": "1fe02893-06b9-5380-8640-99e1a34f5322",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Risk factor about compliance costs and potential consequences of regulatory changes. No actual proceedings; generic risk language."
+      },
+      {
+        "candidate_id": "cb64ccfb-edc0-5708-9456-71bc492792f4",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Risk factors on operational, liquidity, and trading risks. Mentions potential legal proceedings as consequence. Generic risk factor boilerplate."
+      },
+      {
+        "candidate_id": "77aa4864-7773-591a-a0b7-c4e9c31fd40b",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Risk factor about regulatory compliance and potential consequences including legal proceedings. Generic risk factor boilerplate."
+      },
+      {
+        "candidate_id": "2b6c2b8c-6623-5a7f-8b0a-d4c3d57a69f7",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "regulatory_issue",
+          "licence_permit"
+        ],
+        "reason": "Risk factor about SFC investigations and financial resource requirements. Mentions potential disciplinary actions. Boilerplate risk language."
+      },
+      {
+        "candidate_id": "58539fde-fdc1-5840-a8c1-25eea77e9766",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Risk factor about personnel misconduct and potential litigation losses. Generic risk factor boilerplate with no actual proceedings."
+      },
+      {
+        "candidate_id": "fc7d476a-4541-54c0-bcfa-dd3494565657",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "actual_proceeding"
+        ],
+        "reason": "Underwriting agreement termination clause listing potential litigation as a condition. Boilerplate contractual language, not evidence of actual proceedings."
+      },
+      {
+        "candidate_id": "411052c4-af2d-5238-b321-a790046bea3a",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "licence_permit"
+        ],
+        "reason": "Future plans section mentioning license renewal/maintenance as an assumption. Minimal relevance to material litigation."
+      },
+      {
+        "candidate_id": "bf20aa36-2b39-58a3-bb5d-635adf170159",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.8,
+        "completeness_facets": [],
+        "reason": "Discusses client officer commission arrangements. Only tangentially mentions SFO compliance obligations. Not about material litigation."
+      },
+      {
+        "candidate_id": "7a65ea94-f29e-5ea7-8f95-a741e857f549",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Directors and senior management listing table. No relevance to material litigation or compliance."
+      },
+      {
+        "candidate_id": "3aebc3a3-5ae3-546a-85e1-988fe8572dc0",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Appendix IV with sponsor information and expert qualifications. No relevance to material litigation or compliance."
+      },
+      {
+        "candidate_id": "1f2f711b-90d2-5663-88b6-3e733d2b62c6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Summary page about listing expenses, offering statistics, and recent developments. No relevance to material litigation."
+      }
+    ]
+  }
+}

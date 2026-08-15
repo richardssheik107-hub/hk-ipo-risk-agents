@@ -1,0 +1,299 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "5cf7a02f-ef64-5953-80f6-caad8c389327",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Risk factors section with complete concentration data: top-five ratios (43.9%-53.3%), largest supplier 祥生建設 ratios (38.3%-50.1%), named related party, all reporting periods, total purchases denominator, plus risk discussion."
+      },
+      {
+        "candidate_id": "f3a12b0c-872b-5944-8b9b-285f6c0db644",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.95,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Summary section with all concentration ratios plus absolute RMB amounts for top-five and largest supplier 祥生建設 (related party), all reporting periods, total purchases denominator. All 5 facets present with monetary detail."
+      },
+      {
+        "candidate_id": "f73bf8db-0c26-53e0-aaf8-29e8a78135b3",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.93,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Business section with same ratios and amounts as summary, plus supplier relationship duration (2-25 years) and additional related party supplier names (祥生園林綠化, 浙江祥磊澤義貿易). All 5 facets with enriched identity context."
+      },
+      {
+        "candidate_id": "15417cda-2ad8-5f2c-8be1-40e82bcf0c64",
+        "risk_relevance": "high",
+        "evidence_specificity": "high",
+        "source_authority": "primary",
+        "evidence_role": "primary",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.9,
+        "completeness_facets": [
+          "largest_supplier_ratio",
+          "top_five_supplier_ratio",
+          "purchase_denominator",
+          "supplier_identity_context",
+          "reporting_period"
+        ],
+        "reason": "Detailed top-5 supplier table with individual amounts, percentages, business activities, start year, independent status, and credit terms. Named 祥生建設 at 41.1% for latest period. Granular supplier-level data, truncated but highly specific."
+      },
+      {
+        "candidate_id": "62f3fbf7-20cf-5c63-aa71-41a0a96d8449",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Discusses 祥生建設 and 祥生園林綠化 as related party top-five suppliers from independence angle. Provides mitigation context (alternative suppliers available) but no concentration ratios. Supporting evidence for risk assessment."
+      },
+      {
+        "candidate_id": "05ce76f9-e1e2-5b37-8c31-03146e303bcc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "About environmental compliance, permits, and legal proceedings. Mentions suppliers/contractors only incidentally in context of disputes. No supplier concentration data whatsoever."
+      },
+      {
+        "candidate_id": "57c617e0-e806-53e5-97e7-cb7a77627da8",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "About customer warranty claims, key personnel retention, and historical financial performance. No supplier concentration data. Customer revenue figures are about customer not supplier concentration."
+      },
+      {
+        "candidate_id": "7846c21a-896c-5ed9-bfa0-422077bb6d19",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Financial data section about property development cost breakdown (construction, land, interest). Mentions material costs as cost driver but contains no supplier concentration information."
+      },
+      {
+        "candidate_id": "8eef4b04-b11c-537f-a101-b312cad7eaf5",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Summary section about confirmed GFA, average selling prices, and cost breakdown by type. No supplier concentration data. Query term matches appear spurious."
+      },
+      {
+        "candidate_id": "9e57cd78-f531-5370-b842-85c5ccb6d5fe",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "About customer concentration (five largest customers' revenue 0.2%-1.7%), controlling shareholders, and pre-IPO investment. Not about supplier concentration."
+      },
+      {
+        "candidate_id": "ac193c97-887b-535a-b7cc-839ee14cc0ef",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "About impairment losses, fair value of financial assets, and environmental/health compliance. No supplier concentration data. Incidental query term matches."
+      },
+      {
+        "candidate_id": "4959be02-f4b5-54d6-bbbe-6f4c5357e84c",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Discusses contractor engagement, payment terms (70-85% at completion), credit periods (1-3 months), and references top-five suppliers' credit terms. Provides supplier relationship context but no concentration ratios."
+      },
+      {
+        "candidate_id": "35e834ad-5ffb-526b-b19c-fdaa145055d8",
+        "risk_relevance": "medium",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": true,
+        "confidence": 0.8,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Explicitly acknowledges supplier concentration (供應商集中) and provides directors' mitigation rationale: stable relationships, internal qualified contractor list, no major disputes. Important context for risk assessment."
+      },
+      {
+        "candidate_id": "b2b2bd14-5416-538f-ae46-99038949765b",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "supporting",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": true,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "supplier_identity_context"
+        ],
+        "reason": "Confirms no undisclosed director/shareholder interests in five largest suppliers (except related parties). Primarily about customer concentration with tangential supplier identity confirmation."
+      },
+      {
+        "candidate_id": "7826e4ea-a82d-5a38-9526-6499cf257469",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Standard director declaration boilerplate confirming no undisclosed interests in five largest customers or suppliers. No concentration data, purely compliance language."
+      },
+      {
+        "candidate_id": "c2043851-acc8-5713-b98c-82968629c9a4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "About property management/hotel revenue, net losses, and insurance coverage. No supplier concentration data. Incidental query term matches only."
+      },
+      {
+        "candidate_id": "45098e4a-7321-56de-abd1-157bb1479fcc",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Industry overview about land price and construction material (steel, cement) price trends. Industry-level cost factors, not supplier concentration."
+      },
+      {
+        "candidate_id": "6de83c39-e6cf-5573-b191-4d79938195ed",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "About cost and budget management processes, working capital management. No supplier concentration data. Internal operational processes only."
+      },
+      {
+        "candidate_id": "51f9f1c8-9963-55b8-a733-b2d448651cd4",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Sales cost breakdown by business segment and property type. Financial cost allocation data, not supplier concentration."
+      },
+      {
+        "candidate_id": "24dd6d05-589e-5cb8-8845-d4124b1a0e2e",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Sensitivity analysis for construction and land acquisition costs. About cost sensitivity, not supplier concentration."
+      }
+    ]
+  }
+}

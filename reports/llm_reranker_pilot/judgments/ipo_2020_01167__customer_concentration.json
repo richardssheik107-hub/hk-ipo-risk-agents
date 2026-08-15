@@ -1,0 +1,281 @@
+{
+  "status": "completed",
+  "bundle": {
+    "judgments": [
+      {
+        "candidate_id": "dc9347bd-538b-52b9-ba24-3ab1794117f3",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "boilerplate",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.75,
+        "completeness_facets": [
+          "customer_identity_context"
+        ],
+        "reason": "Only candidate mentioning top five customers, but in a boilerplate compliance disclosure stating no directors/shareholders have interests in them. No concentration ratios, no customer identities, no revenue data."
+      },
+      {
+        "candidate_id": "4035d053-d87b-5c93-8bea-4e90d3b201ed",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Discusses shareholder interests and director service contracts/remuneration. No customer concentration content whatsoever despite matched query terms."
+      },
+      {
+        "candidate_id": "0a9df625-9143-5606-9252-b997fb7ce29f",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.9,
+        "completeness_facets": [],
+        "reason": "Other information section covering litigation, startup costs, estate duty, promoters, listing application. No customer concentration content."
+      },
+      {
+        "candidate_id": "f6f0ccdd-91dd-5f97-ae72-21880ab10d6f",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Provides SUPPLIER concentration percentages (not customer) for 2018/2019/H1 2020 and states no revenue from product sales. Directly explains absence of customer concentration but is not customer data itself."
+      },
+      {
+        "candidate_id": "d540298b-948a-52f9-a5fa-652b9000e06a",
+        "risk_relevance": "low",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.7,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "States products not approved for commercial sale and no revenue from product sales, directly explaining why customer concentration cannot be assessed. Provides reporting periods 2018/2019/H1 2020."
+      },
+      {
+        "candidate_id": "728822fa-d949-55da-adc8-fda57d61ee68",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Summary section about strategy, R&D platform, and KRAS/SHP2 programs. No customer concentration data whatsoever."
+      },
+      {
+        "candidate_id": "cd4cdc6f-ab65-5bed-a0be-b182e1a9337b",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "medium",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.6,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Financial table showing only losses with no revenue line item, indirectly confirming zero revenue basis. No customer concentration metrics. Reporting periods shown."
+      },
+      {
+        "candidate_id": "fd8d5d00-bdb1-584b-b096-0e4c7642a0ad",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Cost structure discussion covering R&D and administrative expenses. No customer concentration data at all."
+      },
+      {
+        "candidate_id": "e8085d85-3d3a-5db5-9c9c-a4d7cf539d95",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Commercialization production and facility construction discussion. No customer concentration data."
+      },
+      {
+        "candidate_id": "542715ff-0b93-509c-8e0c-12d4f3311ad6",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Commercialization strategy and AbbVie collaboration details. No customer concentration data."
+      },
+      {
+        "candidate_id": "e23630de-ebcb-5d4c-8719-492de632e735",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Internal controls and governance policies. No customer concentration data."
+      },
+      {
+        "candidate_id": "350930fd-458d-582c-84a5-a7e6b8614cec",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Accounting standards discussion (IFRS 16, IFRS 9, IFRS 15). No customer concentration data."
+      },
+      {
+        "candidate_id": "515e32d5-55b9-59fa-b836-9acd78c171ca",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Business strategy, AbbVie collaboration, manufacturing plans. No customer concentration data."
+      },
+      {
+        "candidate_id": "b48df694-d322-5c85-bd0c-c74684ae14bc",
+        "risk_relevance": "low",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "context",
+        "boilerplate": false,
+        "current_status_relevance": "direct",
+        "supports_risk_assessment": false,
+        "confidence": 0.65,
+        "completeness_facets": [
+          "revenue_denominator",
+          "reporting_period"
+        ],
+        "reason": "Risk factors noting no commercial sales and no revenue from product sales. Confirms zero revenue basis but no customer concentration metrics."
+      },
+      {
+        "candidate_id": "955b9cfc-f299-56cf-a70d-1c05de065701",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Milestone payments, royalties, and commercialization discussion. No customer concentration data."
+      },
+      {
+        "candidate_id": "f1abb02c-166f-5075-9f02-715be901e264",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Funding operations and significant accounting policies. No customer concentration data."
+      },
+      {
+        "candidate_id": "654479b3-2b8b-5ed8-8c9f-070e6228be67",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factors about net losses and future expenses. No customer concentration data despite mentioning no revenue."
+      },
+      {
+        "candidate_id": "a982e9de-68c6-582c-a903-9f159b1db92d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "indirect",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factors about additional funding needs. Mentions no product sales revenue but no customer concentration data."
+      },
+      {
+        "candidate_id": "e2eefec8-78ab-526a-ac5b-f60177ffe2ed",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": true,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "Risk factors about commercialization inexperience and competition. No customer concentration data."
+      },
+      {
+        "candidate_id": "851d7b05-a55f-5a1f-8e08-1cd0697bab7d",
+        "risk_relevance": "irrelevant",
+        "evidence_specificity": "broad",
+        "source_authority": "primary",
+        "evidence_role": "irrelevant",
+        "boilerplate": false,
+        "current_status_relevance": "none",
+        "supports_risk_assessment": false,
+        "confidence": 0.85,
+        "completeness_facets": [],
+        "reason": "CRO partnerships and CMC manufacturing capabilities. No customer concentration data."
+      }
+    ]
+  }
+}
