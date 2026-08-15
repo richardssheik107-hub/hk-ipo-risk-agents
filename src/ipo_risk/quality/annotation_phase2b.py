@@ -27,8 +27,8 @@ from .annotation_backfill_normalizers import (
     BACKFILL_VERSION,
     PHASE2B_VERSION,
     P0,
-    canonicalize_record,
 )
+from .annotation_backfill_normalizers_v2 import canonicalize_record
 
 
 def _evidence_refs(bundle: Mapping[str, Any], risk_code: str) -> list[dict[str, Any]]:
