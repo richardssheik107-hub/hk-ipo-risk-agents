@@ -13,7 +13,7 @@ Evidence-backed multi-agent risk analysis for Hong Kong IPO prospectuses.
 v0.2.0-real-document-slice = RELEASED
 v0.3.0-multi-agent-risk-analysis = RELEASED
 v0.3 Human Golden governance = COMPLETE (single named human review policy)
-v0.4 Market prediction work = NOT STARTED
+v0.4 Market Prediction Track = V04-1 IMPLEMENTED PENDING REVIEW
 ```
 
 ## 当前研究阶段：v0.3.5 Evidence Intelligence
@@ -35,7 +35,7 @@ Phase 0.6D  Expert Golden v2                         = NOT STARTED
 Phase 0.7   Evidence Intelligence Architecture       = NOT STARTED
 Phase 0.8   Architecture A/B Evaluation              = NOT STARTED
 Phase 0.9   Retriever / Ranking Optimization         = NOT STARTED
-v0.4        Market Prediction                        = NOT STARTED
+v0.4        Market Prediction                        = V04-1 FOUNDATION PENDING REVIEW
 ```
 
 方法与安全协作入口见
@@ -189,8 +189,10 @@ python scripts/check_real_v02_e2e.py
 ## 方法与限制
 
 - v0.3 是招股书证据驱动的文档风险系统，不包含市场收益预测；
-- Market Agent、真实 MarketDataProvider、1/5/20/60 日标签、LightGBM、SHAP 和概率校准
-  均属于 v0.4，当前未开始；
+- V04-1 已实现独立的 MarketDataProvider 历史数据契约、1/5/20/60 交易 session 标签、
+  cohort/listing-year 一致性、版本化普通股 modeling eligibility、年度分割、2025 blind
+  保护和完整性校验，但尚无生产行情及证券类型 metadata 适配器；
+- Market Agent、Logistic、LightGBM、SHAP、概率校准和 2025 blind evaluation 尚未实现；
 - 扫描型 PDF 的 OCR 和 PDF 格式报告导出不在本版范围；本版提供 Markdown/JSON；
 - 正式指标基于单次具名人工复核政策；它不是独立双审指标，实际数值见最终收口报告；
 - 真实外部 LLM endpoint smoke 为可选项，未提供凭证时明确跳过；
