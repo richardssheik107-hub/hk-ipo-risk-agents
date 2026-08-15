@@ -11,11 +11,27 @@
     {
       "risk_code": "cash_runway",
       "finding_code": "CASH_RUNWAY_LABEL_CONFLICT",
-      "original": {"applicable": true, "expected_status": "verified", "expected_level": "high"},
-      "replacement": {"applicable": true, "expected_status": "verified", "expected_level": "medium"},
+      "original": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "replacement": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
       "audit_message": "Recomputed cash runway is 9.25172 months; stored label does not match frozen thresholds.",
-      "deterministic_details": {"cash": 114965.0, "cash_runway_months": 9.251723490436975, "monthly_cash_burn": 12426.333333333334}
+      "deterministic_details": {
+        "cash": 114965.0,
+        "monthly_cash_burn": 12426.333333333334,
+        "cash_runway_months": 9.251723490436975
+      }
     }
   ],
-  "safety": {"pass1_overwritten": false, "evidence_text_modified": false, "reasoning_text_modified": false}
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false
+  }
 }
