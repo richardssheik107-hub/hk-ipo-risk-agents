@@ -39,7 +39,7 @@ task_index,taskset_version,case_id,stock_code,company_name,source_year,dataset_s
 38,expert_golden_100_v1,ipo_2021_09626,9626.HK,嗶哩嗶哩－ＳＷ,2021,development,,not_started,,not_started,not_started,not_started,
 39,expert_golden_100_v1,ipo_2021_09898,9898.HK,微博－ＳＷ,2021,development,,not_started,,not_started,not_started,not_started,
 40,expert_golden_100_v1,ipo_2021_09982,9982.HK,中原建業,2021,development,,not_started,,not_started,not_started,not_started,
-41,expert_golden_100_v1,ipo_2022_00314,0314.HK,思派健康,2022,development,,not_started,,not_started,not_started,not_started,
+41,expert_golden_100_v1,ipo_2022_00314,0314.HK,思派健康,2022,development,chatgpt_codex,completed,,not_started,not_started,not_started,
 42,expert_golden_100_v1,ipo_2022_00816,0816.HK,金茂服務,2022,development,,not_started,,not_started,not_started,not_started,
 43,expert_golden_100_v1,ipo_2022_01204,1204.HK,博維智慧,2022,development,,not_started,,not_started,not_started,not_started,
 44,expert_golden_100_v1,ipo_2022_01406,1406.HK,清晰醫療,2022,development,,not_started,,not_started,not_started,not_started,
