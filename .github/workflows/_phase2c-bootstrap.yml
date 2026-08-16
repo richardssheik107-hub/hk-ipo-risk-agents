@@ -21,13 +21,15 @@ jobs:
       - name: Verify staged transfer parts
         run: |
           echo "e0cbd0a7080ced41e82217f5e73bf51da65496a564b67df1503129b3db273c84  .phase2c_bootstrap/part00" | sha256sum -c -
-          echo "19938e6995985630bb75f0652ac043c7f447febb7274d2c6071064963488d042  .phase2c_bootstrap/part01" | sha256sum -c -
+          echo "bbdab56297f7aca0de9e6e0a808b9e7bb1e5a4e253e2f1eaf28b776c2b2eaa6d  .phase2c_bootstrap/part01a" | sha256sum -c -
+          echo "5fe7de82aec4df10c533096f0af748e09965e369f198b62f6865a34ed907bc5b  .phase2c_bootstrap/part01b" | sha256sum -c -
+          echo "b0dedcf168084db99e23e0926206b7478cfea6f8ff51631c51649804efe8c5c1  .phase2c_bootstrap/part01c" | sha256sum -c -
           echo "42ed6bbda03c4b7d2fced669dda55826860a453e69343e127354c7fcc64c778f  .phase2c_bootstrap/part02" | sha256sum -c -
           echo "7c198c3f05885b9761203885ebfb0dd8140f29be2770c8e1548aa37c37d611db  .phase2c_bootstrap/part03" | sha256sum -c -
           echo "af8629494da4512949e822b126f3ffbc8ab5eed9daf60159c771b1abbd77e214  .phase2c_bootstrap/part04" | sha256sum -c -
       - name: Materialize reviewed Phase-2c source bundle
         run: |
-          cat .phase2c_bootstrap/part00 .phase2c_bootstrap/part01 .phase2c_bootstrap/part02 .phase2c_bootstrap/part03 .phase2c_bootstrap/part04 > /tmp/phase2c_bundle.b64
+          cat .phase2c_bootstrap/part00 .phase2c_bootstrap/part01a .phase2c_bootstrap/part01b .phase2c_bootstrap/part01c .phase2c_bootstrap/part02 .phase2c_bootstrap/part03 .phase2c_bootstrap/part04 > /tmp/phase2c_bundle.b64
           echo "f18d0d0bf7d12d5ae2fd9ed2fcd7a8bdf67a42111ba3039aaa996490533a98fd  /tmp/phase2c_bundle.b64" | sha256sum -c -
           base64 -d /tmp/phase2c_bundle.b64 > /tmp/phase2c_bundle.tar.gz
           echo "1762f3e5851d363b3c4356950b8782a12a000a0e201f3a9a8be0f246269a46f8  /tmp/phase2c_bundle.tar.gz" | sha256sum -c -
