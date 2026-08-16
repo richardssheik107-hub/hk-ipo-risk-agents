@@ -40,13 +40,12 @@ jobs:
           echo "1762f3e5851d363b3c4356950b8782a12a000a0e201f3a9a8be0f246269a46f8  /tmp/phase2c_bundle.tar.gz" | sha256sum -c -
           tar -xzf /tmp/phase2c_bundle.tar.gz -C .
           python -m py_compile src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py tests/unit/test_annotation_phase2c.py
-      - name: Commit only Phase-2c source files
+      - name: Commit source, tests and policy only
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py tests/unit/test_annotation_phase2c.py docs/annotation/gpt_expert_v1_1/GPT_EXPERT_POLICY_ADDENDUM_V1_1_2.md .github/workflows/expert-annotation-phase2c.yml
+          git add src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py tests/unit/test_annotation_phase2c.py docs/annotation/gpt_expert_v1_1/GPT_EXPERT_POLICY_ADDENDUM_V1_1_2.md
           git rm -r .phase2c_bootstrap
-          git rm .github/workflows/_phase2c-bootstrap.yml
           git diff --cached --name-only
-          git commit -m "phase2c: close financial audit issue set"
+          git commit -m "phase2c: close financial audit issue set [skip ci]"
           git push origin HEAD:agent/expert-annotation-phase2c
