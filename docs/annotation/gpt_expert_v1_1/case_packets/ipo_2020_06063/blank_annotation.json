@@ -1,0 +1,238 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_06063",
+  "stock_code": "6063.HK",
+  "company_name": "智中國際",
+  "document_id": "ipo_2020_06063",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "cash_runway",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "continuous_loss",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "revenue_growth",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "customer_concentration",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "supplier_concentration",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "redemption_rights",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "material_litigation_compliance",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2020_06063",
+      "stock_code": "6063.HK",
+      "company_name": "智中國際",
+      "document_id": "ipo_2020_06063",
+      "risk_code": "precommercial_product",
+      "applicable": null,
+      "expected_status": null,
+      "expected_level": null,
+      "confidence": null,
+      "reasoning": null,
+      "calculation_required": null,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    }
+  }
+}

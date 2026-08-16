@@ -1,8 +1,10 @@
 # Documentation Index
 
-本目录只保留对**当前主线开发**有直接指导价值的活文档。
+本目录只把**当前主线开发真正需要阅读的文档**作为活文档维护。
 
-历史 v0.2 / v0.3 阶段的审计包、人工 review packet、handoff、Gate-A 执行计划、旧 Retriever pilot 和阶段性讨论稿已从当前 `main` 文档树移除。它们没有被抹除，仍可通过 Git history、旧 commit、PR 或 release 查询。
+历史 v0.2 / v0.3 阶段的审计说明、人工 review packet、handoff、Gate-A 执行计划、旧 Retriever pilot 和阶段性讨论稿已从当前 `main` 文档树移除。它们仍可通过 Git history、旧 commit、PR 或 release 查询。
+
+> `docs/annotation/gpt_expert_v1_1/` 是一个例外：其中只保留被测试与 Retriever preflight 直接依赖的 frozen 100-case machine fixtures（case packets + manifests）。它不是当前阅读指引，也不再保留旧 annotation prompt / protocol / workflow prose。
 
 ## 当前主线
 
@@ -51,6 +53,19 @@ Prospectus PDF
 
 Retriever V3 / BM25 / Table / LambdaMART 等研究成果已经进入主线历史，但当前冻结，不作为 v0.4 前置条件。历史 Locked 10 已经正式消费，后续不得重新把它当作独立 blind set 调参；若 v0.5 重启 Retriever 优化，必须建立新的 unseen / external / temporal holdout。
 
+## Machine fixtures（不作为阅读文档）
+
+`annotation/gpt_expert_v1_1/` 当前只保留：
+
+```text
+expert_golden_100_taskset.csv
+source_manifest.csv
+team_case_assignment.csv
+case_packets/
+```
+
+这些文件被现有测试、`validate_expert_taskset.py` 和 Retriever V3 preflight 直接读取，因此属于受保护的 frozen evaluation fixtures，而不是可删除的历史说明文档。
+
 ## 当前下一项工作
 
 以最新 readiness audit 为基准：
@@ -76,11 +91,12 @@ CL-5 Build model-ready dataset
 
 ## 文档维护规则
 
-以后新增文档前先判断它属于哪一类：
+以后新增内容按以下原则处理：
 
 - **长期契约 / 当前执行指引**：可以进入 `docs/`；
-- **阶段性实验结果**：优先进入可版本化 report / artifact，不长期堆在 `docs/`；
+- **运行时 / 测试夹具**：优先放 `tests/fixtures` 或其他数据目录；现有 annotation fixtures 暂为兼容性例外；
+- **阶段性实验结果**：优先进入可版本化 report / artifact；
 - **一次性 review packet / handoff / 临时计划**：完成后不保留在当前活文档树；
-- **已被新版本替代的文档**：从当前树删除，由 Git history 保存历史。
+- **已被新版本替代的说明**：从当前树删除，由 Git history 保存历史。
 
 目标是让任何新成员进入 `docs/` 后，能在几分钟内知道：**项目现在做到哪里、下一步做什么、哪些边界不能破坏。**

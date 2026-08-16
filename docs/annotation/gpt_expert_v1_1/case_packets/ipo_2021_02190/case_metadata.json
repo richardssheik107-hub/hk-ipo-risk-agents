@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02190",
+  "stock_code": "2190.HK",
+  "company_name": "歸創通橋－Ｂ",
+  "document_id": "ipo_2021_02190",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 716,
+  "pdf_sha256": "930888e3492f193ace220d15efae981ba5474bdcdc020e8838af2c2ee360beed",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

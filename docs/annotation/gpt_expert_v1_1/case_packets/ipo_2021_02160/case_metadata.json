@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_02160",
+  "stock_code": "2160.HK",
+  "company_name": "心通醫療－Ｂ",
+  "document_id": "ipo_2021_02160",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 544,
+  "pdf_sha256": "bd38e50bf3967507acb9c3978944d71b41f0b05a42de5b4233ff3c7e41df6687",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

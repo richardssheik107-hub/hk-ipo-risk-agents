@@ -1,0 +1,10 @@
+{
+  "case_id": "real_case_001",
+  "stock_code": "2410.HK",
+  "company_name": "同源康醫藥－Ｂ",
+  "document_id": "real_case_001",
+  "dataset_split": "development_exception",
+  "page_count": 706,
+  "pdf_sha256": "6c8179a58ac265d5a729895ef30db910dc15cee0a53ce653e866d487d29655cb",
+  "annotation_version": "gpt_expert_v1.1"
+}

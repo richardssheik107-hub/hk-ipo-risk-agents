@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_00606",
+  "stock_code": "0606.HK",
+  "company_name": "中駿商管",
+  "document_id": "ipo_2021_00606",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 525,
+  "pdf_sha256": "163c377cafbd01cd32a3fb8176787a3eb29b0f4512f04ca3e184017b1660d228",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

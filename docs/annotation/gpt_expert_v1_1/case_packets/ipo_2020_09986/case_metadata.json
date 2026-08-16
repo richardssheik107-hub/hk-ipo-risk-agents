@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2020_09986",
+  "stock_code": "9986.HK",
+  "company_name": "大山教育",
+  "document_id": "ipo_2020_09986",
+  "source_year": 2020,
+  "dataset_split": "development",
+  "page_count": 611,
+  "pdf_sha256": "ba5f00703a5535c1b75eb5d9af50d5397966f2c8accee78e5c1299785b79bbff",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_01111",
+  "stock_code": "1111.HK",
+  "company_name": "華視集團控股",
+  "document_id": "ipo_2023_01111",
+  "source_year": 2023,
+  "dataset_split": "development",
+  "page_count": 642,
+  "pdf_sha256": "292dfaade58de1135ec5382bd5c37e6360928d5bd168e02fc19fb30b148cdc5c",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

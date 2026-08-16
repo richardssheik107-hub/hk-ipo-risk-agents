@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_09626",
+  "stock_code": "9626.HK",
+  "company_name": "嗶哩嗶哩－ＳＷ",
+  "document_id": "ipo_2021_09626",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 450,
+  "pdf_sha256": "be35c5e041222cc20f900625efb9a4b9ebbc293a5287d4e2b61bf95983e2e27c",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

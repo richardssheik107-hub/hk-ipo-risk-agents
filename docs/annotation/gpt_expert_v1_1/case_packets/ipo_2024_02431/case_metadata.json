@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_02431",
+  "stock_code": "2431.HK",
+  "company_name": "佑駕創新",
+  "document_id": "ipo_2024_02431",
+  "source_year": 2024,
+  "dataset_split": "validation",
+  "page_count": 694,
+  "pdf_sha256": "9bdea1f191199eda4c6fd99ec1ed453797309bc96ea9f28d5b4e151121546ba6",
+  "source_validation_status": "validated_from_catalog_metadata"
+}

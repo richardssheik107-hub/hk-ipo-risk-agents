@@ -1,0 +1,13 @@
+{
+  "taskset_version": "expert_golden_100_v1",
+  "annotation_protocol_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2021_09982",
+  "stock_code": "9982.HK",
+  "company_name": "中原建業",
+  "document_id": "ipo_2021_09982",
+  "source_year": 2021,
+  "dataset_split": "development",
+  "page_count": 430,
+  "pdf_sha256": "e5ac20fa4fca1816bfe65f6f1a467bf83beefd77f5b2f043f29d4efa3203b075",
+  "source_validation_status": "validated_from_catalog_metadata"
+}
