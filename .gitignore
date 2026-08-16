@@ -31,3 +31,5 @@ models/*
 
 # Local, single-prospectus validation harness (not part of the product surface).
 scripts/run_jingfa_full_demo.py
+.pytest-oracle-*/
+data/cache/
