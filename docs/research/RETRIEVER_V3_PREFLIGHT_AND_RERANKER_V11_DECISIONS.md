@@ -1,237 +1,124 @@
-# Retriever V3 Preflight Findings and LLM Reranker V1.1 Design
+# Retriever V3 — Frozen Research Decisions
 
-## Status
+Status: **MERGED / FROZEN / DEFERRED UNTIL v0.5**
 
-`PHASE = R3-A1 WEB PREFLIGHT / RERANKER V1.1 DESIGN ONLY`
+本文件只保留 Retriever 研究对未来仍有约束力的结论，不再作为当前 v0.4 执行计划。
 
-This document records the work that can be completed without the original 60 prospectus PDFs and without new LLM calls. It does not tune production retrieval and does not unlock the 10-case locked implementation-validation split.
+## 1. 数据治理状态
 
-## 1. Verified 60-case Retrieval Gold inventory
-
-GitHub Actions preflight on `agent/expert-annotation-phase2c` verified:
-
-- cases: **60**
-- total Evidence rows: **823**
-- Required Evidence rows: **669**
-- development cases: **50**
-- locked implementation-validation cases: **10**
-- development Evidence rows: **689**
-- development Required Evidence rows: **558**
-- pass1/audit mutation during preflight: **none**
-- production Retriever modification: **false**
-- LLM calls: **0**
-
-The locked split remains an engineering/research lock, not a strict external blind claim. Locked Evidence text is not exported by preflight and locked metrics require an explicit unlock flag.
-
-## 2. Development Evidence pattern snapshot
-
-| Risk | Evidence | Required | Dominant authority pattern | Table-like rate |
-| --- | ---: | ---: | --- | ---: |
-| cash_runway | 105 | 98 | accountants report 94/105 | 89.52% |
-| continuous_loss | 53 | 52 | accountants report 47/53 | 84.91% |
-| revenue_growth | 58 | 53 | accountants report 45/58 | 87.93% |
-| customer_concentration | 88 | 77 | business section 65/88 | 87.50% |
-| supplier_concentration | 78 | 66 | business section 71/78 | 91.03% |
-| redemption_rights | 95 | 65 | pre-IPO investment 45/95; corporate structure 18/95 | 28.42% |
-| material_litigation_compliance | 128 | 83 | legal disclosure 114/128 | 15.62% |
-| precommercial_product | 84 | 64 | business section 49/84; accountants report 27/84 | 55.95% |
-
-These are **Gold-distribution diagnostics**, not retrieval-performance results.
-
-### Research implications that can already be frozen
-
-1. A single universal recall strategy is unlikely to be optimal across all eight risks.
-2. Table-aware/microchunk hypotheses deserve explicit testing for the five financial/concentration risks because their Gold is strongly table-like.
-3. Legal recall should not be optimized primarily through table handling; authority/status semantics and lexical/semantic coverage are more plausible bottlenecks.
-4. `precommercial_product` is intrinsically cross-section: business/product status and financial/product-sales evidence frequently live in different authority classes.
-5. Source authority should be a feature/routing signal, not a hard filter. Valid required evidence can appear outside the dominant authority.
-6. No BM25, dense, microchunk or authority lane should be promoted before the frozen 50-case PDF baseline identifies actual candidate-coverage misses.
-
-## 3. Retriever V3 feature inventory for later LTR
-
-The existing Retriever family already exposes a large deterministic feature set. Future Learning-to-Rank work should reuse it rather than replace it.
-
-### V1-derived features
-
-- exact query hit
-- alias hit count
-- domain positive/negative context
-- preferred/discouraged section text signal
-- financial-table heuristic
-- structured-table-row signal
-- statement-neighborhood context
-- summary/note/negative context
-- deterministic relevance score
-
-### V2-derived features
-
-- query hit provenance
-- first/second round
-- neighbor provenance
-- missing completeness groups
-- fusion position/score
-- matched query multiplicity
-
-### V2.1-derived features
-
-- query-family identity
-- specificity tier
-- family-capped RRF contribution
-- query-family multiplicity
-- V1 head anchor
-- neighbor-only / round2-only flags
-- Legal boilerplate flag
-- final candidate tier
-
-### Evaluation-only/future-lane features
-
-- predicted source authority
-- numeric density
-- percentage/currency/year signals
-- table/microchunk provenance
-- future BM25 rank/score
-- future dense rank/score
-
-No company, stock code, document ID, physical Gold page, Evidence ID or outcome variable may be used as a production ranking feature.
-
-## 4. Hard-negative governance
-
-R3-A1 will export Top-5/20/50 pages that are not selected Gold for a `case × risk` as **sampled hard negatives**.
-
-They are not automatically formal semantic negatives. A non-Gold page may still contain useful but redundant evidence. Before supervised LTR promotion, the training policy must distinguish:
-
-- Gold positive
-- sampled hard negative
-- adjudicated true negative (if later created)
-
-This prevents treating expert selection sparsity as proof of irrelevance.
-
-## 5. LLM Reranker V1.1: problem statement
-
-Revision 4 established positive semantic ordering but poor structured-output reliability:
-
-- official tasks: 80
-- LLM completed: 65
-- fallback: 15
-- fallback rate: **18.75%**
-- Stage1 Union Required@5: 42.24%
-- LLM Required@5: 50.86%
-- Stage1 Union MRR: 0.2690
-- LLM MRR: 0.3304
-
-The current structured contract asks the model to return one `LLMCandidateJudgmentBundle` containing judgments for the full candidate batch. Deterministic validation then requires exact candidate-ID coverage and valid facet enums. One malformed/missing/duplicate member can therefore invalidate the whole batch and force Stage1 fallback.
-
-V1.1 should improve **engineering reliability without changing the semantic role of the LLM**: the model judges evidence quality; Python remains responsible for final deterministic ordering.
-
-## 6. Reranker V1.1 design requirements
-
-### 6.1 Preserve semantic contract
-
-The LLM must continue to judge only:
-
-- risk relevance
-- evidence specificity
-- source authority
-- evidence role
-- boilerplate
-- current-status relevance
-- whether the evidence supports risk assessment
-- completeness facets
-- confidence/reason
-
-It must not decide the issuer's final risk, assign the final risk score, or directly emit the final rank.
-
-### 6.2 Remove batch-atomic failure as the default failure unit
-
-Candidate V1.1 architecture:
+Retriever V3 使用的研究集为：
 
 ```text
-Stage1 Top20
-    ↓
-stable candidate IDs
-    ↓
-small deterministic micro-batches
-    ↓
-validate each returned judgment independently
-    ↓
-keep valid judgments
-    ↓
-missing/invalid candidate → candidate-level deterministic fallback
-    ↓
-Python tier ordering
+60 total cases
+50 development cases
+10 locked cases
 ```
 
-The exact micro-batch size must be benchmarked rather than guessed. Candidate sizes such as 5 or 10 may be compared, but no value is promoted by this document.
+历史 Locked 10 已经在最终验证中正式打开并消费。
 
-### 6.3 Partial recovery
+因此从现在开始：
 
-A failure affecting one candidate must not automatically discard validated judgments for unrelated candidates. Recovery rules must be deterministic and auditable:
+- Locked 10 只作为历史评测结果；
+- 不允许根据其结果调参后再次把它称为 blind / locked；
+- v0.5 如果重启 Retriever 优化，只能在 development 上开发；
+- 新版本需要新的 unseen / external / temporal holdout 才能做独立验证。
 
-- valid candidate judgment: retain
-- missing candidate: Stage1 fallback metadata for that candidate
-- duplicate candidate ID: reject duplicates and fall back for the affected ID
-- unknown candidate ID: ignore for ranking and record telemetry
-- unknown completeness facet: strip nothing silently; mark that judgment invalid and fall back for that candidate
-- provider/transport failure for an entire micro-batch: fallback only that micro-batch
+## 2. 已冻结的 Retriever V3 方向
 
-### 6.4 Sanitized telemetry
+当前研究成果已经验证并进入仓库历史的主要组成包括：
 
-Persist no raw provider response or credentials. Persist enough sanitized diagnostics to reproduce reliability statistics:
+```text
+V1 / V2 / V2.1 deterministic retrieval lanes
++ BM25 candidate lane
++ table-aware candidate lane
++ deterministic feature builder
++ LambdaMART LTR
+```
 
-- task/case/risk
-- candidate-set hash
-- micro-batch index and size
-- attempt count
-- expected/actual candidate count
-- missing/unknown/duplicate candidate IDs
-- Pydantic validation error paths
-- unknown facet counts
-- provider failure class
-- candidate-level fallback count
-- validated-judgment count
-- final aggregate output hash
+Development OOF 中选定的主要 ranking baseline 为 LTR-C。它相对于 equal-weight RRF 明显改善整体早排指标，但不是所有 risk 都单调提升。
 
-### 6.5 Stable caching and freeze
+冻结研究结果中需要保留的事实：
 
-A formal run must freeze:
+- LTR 整体 ranking quality 有明显提升；
+- `customer_concentration` 存在局部 regression 风险；
+- Locked evaluation 中 `material_litigation_compliance` 也出现局部 regression；
+- `precommercial_product` 仍是弱项，天然更依赖跨 section / semantic evidence；
+- candidate generation 的 ceiling 仍高于最终 ranking，说明未来还有排序空间；
+- 非 Gold candidate 不能自动当作 true negative。
 
-1. candidate pool
-2. prompt/schema version
-3. micro-batch partition
-4. model/provider identity
-5. validated judgment cache
-6. fallback records
+因此最终研究结论应理解为：
 
-Gold evaluation occurs only after those artifacts are frozen.
+> Candidate generation generalizes; ranking improvement is meaningful overall but mixed by risk.
 
-## 7. Reranker V1.1 reliability gates
+不能包装成“所有风险均 FULL PASS”。
 
-The next reranker experiment should report semantic value and engineering reliability separately.
+## 3. 风险类型差异
 
-Minimum required reliability metrics:
+Gold / evidence 结构表明，不同风险不应强行使用同一种 recall 策略：
 
-- task-level complete success rate
-- candidate-level judgment success rate
-- candidate-level fallback rate
-- micro-batch failure rate
-- coverage mismatch rate
-- schema/Pydantic failure rate
-- retry count distribution
+- Financial / concentration 类风险高度 table-like，适合 table-aware / numeric features；
+- Legal 风险更依赖 authority、status、conditional language 与 lexical/semantic coverage；
+- `precommercial_product` 更容易跨 section，需要 multi-evidence / semantic reasoning。
 
-A working development target is to reduce candidate-level fallback to a low single-digit percentage while preserving the semantic gains of Revision 4. This is a development gate, not a claimed result.
+未来 v0.5 若继续优化，优先考虑 risk-aware routing / feature interaction，而不是简单继续叠加统一检索通道。
 
-Do not compare V1.1 semantic performance until its candidate input set is frozen. If Retriever V3 changes Stage1 coverage, V1.1 must be evaluated on that newly frozen candidate distribution rather than directly reusing the old 10-case numeric result as if it were the same experiment.
+## 4. LLM Reranker V1.1 冻结设计
 
-## 8. Work intentionally deferred until PDFs / execution capacity are available
+历史 pilot 证明 LLM semantic reranking 有价值，但 batch-atomic structured output 的 fallback 可靠性不足。
 
-The web preflight cannot truthfully produce the following without the original prospectus PDFs:
+未来如果重启，推荐固定为：
 
-- 50-case V1/V2/V2.1 Recall@K
-- V1∪V2∪V2.1 candidate-coverage ceiling
-- real failure-taxonomy counts
-- real hard-negative pages/excerpts
-- evidence preservation vs parser on all 50 development cases
-- BM25/microchunk/dense lane gains
-- LTR training/CV metrics
+```text
+Frozen Stage-1 Top20
+→ stable candidate IDs
+→ deterministic micro-batches
+→ independent candidate validation
+→ keep valid judgments
+→ per-candidate fallback
+→ Python final ordering
+```
 
-Those are execution tasks, not documentation gaps. The infrastructure is now designed so they can be produced by a single frozen development run once exact PDFs are supplied by catalog SHA-256.
+必须同时报告两类指标：
+
+### Semantic value
+
+- Required Recall@K
+- MRR
+- NDCG
+- completion
+
+### Engineering reliability
+
+- candidate success rate
+- candidate fallback rate
+- retry rate
+- schema failure rate
+- latency
+- token / cost telemetry
+
+目标是把 fallback 压到低个位数，同时保留语义收益。
+
+## 5. 当前项目优先级
+
+Retriever V3 不再是当前主线。
+
+当前执行顺序以：
+
+- `../END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
+- `../ROADMAP.md`
+
+为准。
+
+在 v0.4 End-to-End Closed Loop 冻结前，不继续为了提高几个百分点的 Retriever 指标而阻断 Document Features → Market Dataset → Prediction → Final Report 的完整链路。
+
+## 6. v0.5 重新打开 Retriever 的前置条件
+
+只有满足以下条件才重新进入 Retriever / LLM Reranker 研究：
+
+1. v0.4 完整闭环已经冻结；
+2. 端到端失败分析证明 retrieval / ranking 是主要瓶颈之一；
+3. 新的 development experiment plan 预先冻结；
+4. 新的独立 unseen holdout 已定义；
+5. 不重新使用历史 Locked 10 进行“二次 blind”。
+
+这样才能保证 Retriever 优化继续具有研究可信度。
