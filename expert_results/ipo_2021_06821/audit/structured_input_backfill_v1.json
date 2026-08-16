@@ -1,0 +1,69 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_06821",
+  "source_pass1": "expert_results/ipo_2021_06821/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "1a70e3c8a583f5279b32771e486aad8a22a251811573ec5882daeeba83547503",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "customer_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 235,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 236,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 235,
+          "evidence_role": "cross_check",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "largest_customer_pct": 27.870892210664216,
+        "top_five_customer_pct": 64.02838071590372
+      },
+      "normalized_facts": [
+        {
+          "period": "year ended 31 December 2018",
+          "largest_pct": 27.870892210664216,
+          "top_five_pct": 64.02838071590372,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "total_revenue",
+        "largest_customer_revenue",
+        "total_revenue",
+        "top_five_customer_revenues"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

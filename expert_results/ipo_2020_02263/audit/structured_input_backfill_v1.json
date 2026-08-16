@@ -1,0 +1,53 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_02263",
+  "source_pass1": "expert_results/ipo_2020_02263/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "e4cb8eed8777b9149ee697a454cfd7cb24b0eff258db8217a2e28359fa8f915b",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 172,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "INSUFFICIENT_INPUT",
+      "finding_code": "PHASE2B_CONCENTRATION_FACTS_STILL_INSUFFICIENT",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": {
+        "assessed": [],
+        "incomplete": [
+          {
+            "period": "track record period",
+            "largest_pct": null,
+            "top_five_pct": null,
+            "level": null
+          }
+        ]
+      },
+      "source_fields": [],
+      "message": "",
+      "compatibility_layer": "legacy_structured_alias_v2"
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

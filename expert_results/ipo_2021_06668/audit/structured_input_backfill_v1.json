@@ -1,0 +1,61 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_06668",
+  "source_pass1": "expert_results/ipo_2021_06668/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "99da1bdb8bc82dcc1cebf563ea679eb83a6941d8a6eeced8b19d22dfccf51c0c",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 230,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 436,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "largest_supplier_pct": 30.7,
+        "top_five_supplier_pct": 41.0
+      },
+      "normalized_facts": [
+        {
+          "period": "nine months ended 30 September 2020",
+          "largest_pct": 30.7,
+          "top_five_pct": 41.0,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "disclosed_largest_supplier_pct",
+        "disclosed_top_five_supplier_pct"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

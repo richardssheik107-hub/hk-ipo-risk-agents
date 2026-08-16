@@ -1,0 +1,297 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2020_08489",
+  "source_pass1": "expert_results/ipo_2020_08489/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "1f9b323e24910f42c0b476b991d2108eed4399032666d96ce4e1fc7c8ad511d1",
+  "entry_count": 4,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "LOSS_PERIODS_MISSING",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 299,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "not_applicable",
+        "canonical_calculation_inputs": {
+          "loss_periods": [
+            {
+              "period": "year ended 31 December 2017",
+              "loss": 12614.0
+            },
+            {
+              "period": "year ended 31 December 2018",
+              "loss": 4238.0
+            },
+            {
+              "period": "year ended 31 December 2019",
+              "loss": -7439.0
+            }
+          ]
+        },
+        "normalized_facts": {
+          "FY": {
+            "loss_count": 1,
+            "level": "not_applicable",
+            "periods": [
+              {
+                "period": "year ended 31 December 2017",
+                "loss": 12614.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended 31 December 2018",
+                "loss": 4238.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended 31 December 2019",
+                "loss": -7439.0,
+                "signature": "FY"
+              }
+            ]
+          }
+        },
+        "source_fields": [
+          "annual_periods",
+          "profit_loss",
+          "annual_periods",
+          "profit_loss",
+          "annual_periods",
+          "profit_loss"
+        ],
+        "message": "All comparable duration groups imply the same continuous-loss level."
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "revenue_growth",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 299,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "POLICY_AMBIGUITY_REVENUE_PERIOD_AGGREGATION",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": [
+          {
+            "prior_period": "year ended 31 December 2017",
+            "current_period": "year ended 31 December 2018",
+            "previous_revenue": 425414.0,
+            "current_revenue": 463050.0,
+            "growth_pct": 8.846911479170878,
+            "level": "not_applicable"
+          },
+          {
+            "prior_period": "year ended 31 December 2018",
+            "current_period": "year ended 31 December 2019",
+            "previous_revenue": 463050.0,
+            "current_revenue": 353341.0,
+            "growth_pct": -23.692689774322428,
+            "level": "high"
+          },
+          {
+            "prior_period": "eight months ended 31 August 2019",
+            "current_period": "eight months ended 31 August 2020",
+            "previous_revenue": 214318.0,
+            "current_revenue": 553367.0,
+            "growth_pct": 158.1990313459439,
+            "level": "not_applicable"
+          }
+        ],
+        "source_fields": [
+          "comparisons",
+          "prior_revenue",
+          "current_revenue",
+          "comparisons",
+          "prior_revenue",
+          "current_revenue",
+          "comparisons",
+          "prior_revenue",
+          "current_revenue"
+        ],
+        "message": "Multiple comparable growth pairs imply different levels; aggregation/selection is not frozen.",
+        "compatibility_layer": "legacy_structured_alias_v2"
+      },
+      "message": "v1.1.2 retains the most adverse valid comparable-period state; later improvement does not erase an observed trigger.",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 142,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 299,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "medium",
+        "canonical_calculation_inputs": {
+          "largest_customer_pct": 37.46157613301841,
+          "top_five_customer_pct": 67.92960187362094
+        },
+        "normalized_facts": [
+          {
+            "period": "eight months ended 31 August 2020",
+            "largest_pct": 37.46157613301841,
+            "top_five_pct": 67.92960187362094,
+            "level": "medium"
+          }
+        ],
+        "source_fields": [
+          "total_revenue",
+          "largest_customer_revenue",
+          "total_revenue",
+          "top_five_customer_revenue"
+        ],
+        "message": "Stored label agrees with frozen deterministic rule."
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 152,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 299,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "medium",
+        "canonical_calculation_inputs": {
+          "largest_supplier_pct": 22.644643164578753,
+          "top_five_supplier_pct": 68.03520249536676
+        },
+        "normalized_facts": [
+          {
+            "period": "eight months ended 31 August 2020",
+            "largest_pct": 22.644643164578753,
+            "top_five_pct": 68.03520249536676,
+            "level": "medium"
+          }
+        ],
+        "source_fields": [
+          "total_supplier_purchases",
+          "largest_supplier_purchases",
+          "total_supplier_purchases",
+          "top_five_supplier_purchase_sum"
+        ],
+        "message": "Stored label agrees with frozen deterministic rule.",
+        "compatibility_layer": "legacy_structured_alias_v2"
+      },
+      "message": "",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

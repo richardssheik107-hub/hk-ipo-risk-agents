@@ -1,0 +1,45 @@
+name: expert-annotation-phase2c
+
+on:
+  push:
+    branches:
+      - agent/expert-annotation-phase2c
+  pull_request:
+    paths:
+      - "src/ipo_risk/quality/annotation_phase2c.py"
+      - "scripts/run_expert_annotation_phase2c.py"
+      - "tests/unit/test_annotation_phase2c.py"
+      - "docs/annotation/gpt_expert_v1_1/GPT_EXPERT_POLICY_ADDENDUM_V1_1_2.md"
+      - "expert_results/ipo_*/audit/financial_resolution_v1.json"
+      - "reports/annotation_audit/phase2c/**"
+      - ".github/workflows/expert-annotation-phase2c.yml"
+
+jobs:
+  phase2c:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e .[dev]
+      - name: Phase 1/2/2b/2c tests
+        run: pytest -q tests/unit/test_annotation_audit.py tests/unit/test_annotation_phase2.py tests/unit/test_annotation_phase2b.py tests/unit/test_annotation_phase2b_legacy_v2.py tests/unit/test_annotation_phase2c.py
+      - name: Close all known financial audit issues
+        run: python scripts/run_expert_annotation_phase2c.py
+      - name: Verify pass1 artifacts were not modified
+        run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json'
+      - name: Verify committed Case resolutions are reproducible
+        run: git diff --exit-code -- 'expert_results/ipo_*/audit/financial_resolution_v1.json'
+      - name: Verify committed Phase-2c reports are reproducible
+        run: git diff --exit-code -- reports/annotation_audit/phase2c/phase2c_summary.json reports/annotation_audit/phase2c/phase2c_resolutions.csv reports/annotation_audit/phase2c/phase2c_remaining_unresolved.csv
+      - name: Byte-compile Phase-2c modules
+        run: python -m py_compile src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py
+      - name: Upload Phase-2c results
+        uses: actions/upload-artifact@v4
+        with:
+          name: expert-annotation-phase2c
+          path: |
+            reports/annotation_audit/phase2c/
+            expert_results/ipo_*/audit/financial_resolution_v1.json

@@ -1,0 +1,51 @@
+name: expert-annotation-phase2b
+
+on:
+  push:
+    branches:
+      - agent/expert-annotation-phase2b
+  pull_request:
+    paths:
+      - "src/ipo_risk/quality/annotation_backfill_normalizers.py"
+      - "src/ipo_risk/quality/annotation_backfill_normalizers_v2.py"
+      - "src/ipo_risk/quality/annotation_phase2b.py"
+      - "scripts/run_expert_annotation_phase2b.py"
+      - "tests/unit/test_annotation_phase2b.py"
+      - "tests/unit/test_annotation_phase2b_legacy_v2.py"
+      - "expert_results/ipo_*/audit/structured_input_backfill_v1.json"
+      - "reports/annotation_audit/phase2b/**"
+      - ".github/workflows/expert-annotation-phase2b.yml"
+
+jobs:
+  phase2b:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e .[dev]
+      - name: Phase 1/2/2b audit tests
+        run: pytest -q tests/unit/test_annotation_audit.py tests/unit/test_annotation_phase2.py tests/unit/test_annotation_phase2b.py tests/unit/test_annotation_phase2b_legacy_v2.py
+      - name: Run Phase-2b P0 backfill and re-audit
+        run: python scripts/run_expert_annotation_phase2b.py
+      - name: Verify pass1 artifacts were not modified
+        run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json'
+      - name: Verify committed Case backfills are reproducible
+        run: git diff --exit-code -- 'expert_results/ipo_*/audit/structured_input_backfill_v1.json'
+      - name: Verify committed Phase-2b reports are reproducible
+        run: |
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_summary.json
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_backfill_results.csv
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_unresolved.csv
+          git diff --exit-code -- reports/annotation_audit/phase2b/phase2b_reaudit_conflicts.csv
+      - name: Byte-compile Phase-2b modules
+        run: python -m py_compile src/ipo_risk/quality/annotation_backfill_normalizers.py src/ipo_risk/quality/annotation_backfill_normalizers_v2.py src/ipo_risk/quality/annotation_phase2b.py scripts/run_expert_annotation_phase2b.py
+      - name: Upload Phase-2b results
+        uses: actions/upload-artifact@v4
+        with:
+          name: expert-annotation-phase2b
+          path: |
+            reports/annotation_audit/phase2b/
+            expert_results/ipo_*/audit/structured_input_backfill_v1.json

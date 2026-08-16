@@ -1,0 +1,190 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_02190",
+  "source_pass1": "expert_results/ipo_2021_02190/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "9f005d20889e259364a957a7e06c2a841607d5e2ad1f90cc71612958e5049cc0",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 3,
+  "entries": [
+    {
+      "risk_code": "cash_runway",
+      "source_pass1_finding_code": "CASH_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 535,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        },
+        {
+          "page": 571,
+          "evidence_role": "supporting",
+          "requirement": "supporting_only",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "period": "截至2020年12月31日止年度",
+        "cash": 59556.0,
+        "net_cash_used_in_operating_activities": -82334.0,
+        "period_months": 12.0
+      },
+      "normalized_facts": [
+        {
+          "period": "截至2019年12月31日止年度",
+          "cash": 46130.0,
+          "net_cash_used_in_operating_activities": -53092.0,
+          "period_months": 12.0,
+          "level": "medium",
+          "cash_runway_months": 10.426429593912454
+        },
+        {
+          "period": "截至2020年12月31日止年度",
+          "cash": 59556.0,
+          "net_cash_used_in_operating_activities": -82334.0,
+          "period_months": 12.0,
+          "level": "medium",
+          "cash_runway_months": 8.680156435980274
+        }
+      ],
+      "source_fields": [
+        "cash_and_cash_equivalents",
+        "net_cash_from_operating_activities",
+        "period_months",
+        "cash_and_cash_equivalents",
+        "net_cash_from_operating_activities",
+        "period_months"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    },
+    {
+      "risk_code": "continuous_loss",
+      "source_pass1_finding_code": "LOSS_PERIODS_MISSING",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 531,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "COMPARABILITY_AMBIGUITY_CONTINUOUS_LOSS",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": {
+        "groups": {
+          "UNKNOWN": [
+            {
+              "period": "截至2019年12月31日止年度",
+              "loss": -66647.0,
+              "signature": "UNKNOWN"
+            },
+            {
+              "period": "截至2020年12月31日止年度",
+              "loss": -100468.0,
+              "signature": "UNKNOWN"
+            }
+          ]
+        },
+        "unknown": [
+          {
+            "period": "截至2019年12月31日止年度",
+            "loss": -66647.0,
+            "signature": "UNKNOWN"
+          },
+          {
+            "period": "截至2020年12月31日止年度",
+            "loss": -100468.0,
+            "signature": "UNKNOWN"
+          }
+        ]
+      },
+      "source_fields": [
+        "comparable_periods",
+        "loss",
+        "comparable_periods",
+        "loss"
+      ],
+      "message": ""
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 349,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 531,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "high",
+      "canonical_calculation_inputs": {
+        "largest_customer_pct": 78.31891715826427,
+        "top_five_customer_pct": 87.80463971626072
+      },
+      "normalized_facts": [
+        {
+          "period": "截至2019年12月31日止年度",
+          "largest_pct": 30.819605450477937,
+          "top_five_pct": 89.84543420785032,
+          "level": "high"
+        },
+        {
+          "period": "截至2020年12月31日止年度",
+          "largest_pct": 78.31891715826427,
+          "top_five_pct": 87.80463971626072,
+          "level": "high"
+        }
+      ],
+      "source_fields": [
+        "revenue",
+        "largest_customer_sales",
+        "revenue",
+        "top_five_customer_sales",
+        "revenue",
+        "largest_customer_sales",
+        "revenue",
+        "top_five_customer_sales"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

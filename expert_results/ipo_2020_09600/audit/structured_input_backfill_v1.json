@@ -1,0 +1,135 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_09600",
+  "source_pass1": "expert_results/ipo_2020_09600/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "ce9c864c633842b19ef17295ca04abe2c60a2a00b004fa91810c80063415d748",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 2,
+  "entries": [
+    {
+      "risk_code": "customer_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 208,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": [
+        {
+          "period": "year ended 31 December 2017",
+          "largest_pct": 25.7,
+          "top_five_pct": 82.8,
+          "level": "high"
+        },
+        {
+          "period": "year ended 31 December 2018",
+          "largest_pct": 24.0,
+          "top_five_pct": 65.8,
+          "level": "medium"
+        },
+        {
+          "period": "year ended 31 December 2019",
+          "largest_pct": 16.0,
+          "top_five_pct": 52.9,
+          "level": "not_applicable"
+        },
+        {
+          "period": "six months ended 30 June 2020",
+          "largest_pct": 22.6,
+          "top_five_pct": 62.7,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "largest_customer_pct",
+        "top_five_customers_pct",
+        "largest_customer_pct",
+        "top_five_customers_pct",
+        "largest_customer_pct",
+        "top_five_customers_pct",
+        "largest_customer_pct",
+        "top_five_customers_pct"
+      ],
+      "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 215,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": [
+        {
+          "period": "year ended 31 December 2017",
+          "largest_pct": 36.0,
+          "top_five_pct": 88.0,
+          "level": "high"
+        },
+        {
+          "period": "year ended 31 December 2018",
+          "largest_pct": 22.8,
+          "top_five_pct": 77.7,
+          "level": "medium"
+        },
+        {
+          "period": "year ended 31 December 2019",
+          "largest_pct": 36.8,
+          "top_five_pct": 85.9,
+          "level": "high"
+        },
+        {
+          "period": "six months ended 30 June 2020",
+          "largest_pct": 32.7,
+          "top_five_pct": 67.2,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "largest_supplier_pct",
+        "top_five_suppliers_pct",
+        "largest_supplier_pct",
+        "top_five_suppliers_pct",
+        "largest_supplier_pct",
+        "top_five_suppliers_pct",
+        "largest_supplier_pct",
+        "top_five_suppliers_pct"
+      ],
+      "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

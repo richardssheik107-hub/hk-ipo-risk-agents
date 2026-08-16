@@ -1,0 +1,111 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_01961",
+  "source_pass1": "expert_results/ipo_2020_01961/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "106a8b3cdd74930aaf997c237f8f5f73a9a60571861668a018bece2af8e04178",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 2,
+  "entries": [
+    {
+      "risk_code": "revenue_growth",
+      "source_pass1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 466,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        },
+        {
+          "page": 370,
+          "evidence_role": "cross_check",
+          "requirement": "supporting_only",
+          "source_authority": "financial_information"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "previous_revenue": 170654.0,
+        "current_revenue": 142979.0
+      },
+      "normalized_facts": [
+        {
+          "prior_period": null,
+          "current_period": null,
+          "previous_revenue": 170654.0,
+          "current_revenue": 142979.0,
+          "growth_pct": -16.217023919744044,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "previous_revenue",
+        "current_revenue"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule.",
+      "compatibility_layer": "legacy_structured_alias_v2"
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 237,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 466,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "largest_supplier_pct": 34.35057960816266,
+        "top_five_supplier_pct": 78.33043220621457
+      },
+      "normalized_facts": [
+        {
+          "period": "nine months ended 30 September 2019",
+          "largest_pct": 34.35057960816266,
+          "top_five_pct": 78.33043220621457,
+          "level": "medium"
+        }
+      ],
+      "source_fields": [
+        "total_supplier_purchases",
+        "largest_supplier_purchases",
+        "total_supplier_purchases",
+        "top_five_supplier_purchase_sum"
+      ],
+      "message": "Stored label agrees with frozen deterministic rule.",
+      "compatibility_layer": "legacy_structured_alias_v2"
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

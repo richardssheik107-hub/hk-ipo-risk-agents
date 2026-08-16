@@ -1,0 +1,35 @@
+{
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "cases_scanned": 60,
+  "p0_records_targeted": 51,
+  "backfill_case_count": 31,
+  "re_audit_status_counts": {
+    "INSUFFICIENT_INPUT": 1,
+    "PASS": 32,
+    "POLICY_AMBIGUITY": 18
+  },
+  "by_risk_code": {
+    "cash_runway": {
+      "PASS": 2
+    },
+    "continuous_loss": {
+      "PASS": 9,
+      "POLICY_AMBIGUITY": 1
+    },
+    "customer_concentration": {
+      "PASS": 9,
+      "POLICY_AMBIGUITY": 5
+    },
+    "revenue_growth": {
+      "PASS": 4,
+      "POLICY_AMBIGUITY": 7
+    },
+    "supplier_concentration": {
+      "INSUFFICIENT_INPUT": 1,
+      "PASS": 8,
+      "POLICY_AMBIGUITY": 5
+    }
+  },
+  "pass1_unchanged": true,
+  "pass1_file_count": 60
+}

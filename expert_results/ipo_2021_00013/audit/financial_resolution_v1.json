@@ -1,0 +1,302 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2021_00013",
+  "source_pass1": "expert_results/ipo_2021_00013/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "c59ecef39b11cd42620584d0c0bec2dd73219a70683566fd5af1e0b26377c973",
+  "entry_count": 4,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "LOSS_PERIODS_MISSING",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 507,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        },
+        {
+          "page": 507,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "high",
+        "canonical_calculation_inputs": {
+          "loss_periods": [
+            {
+              "period": "year ended 31 December 2018",
+              "loss": -71286.0
+            },
+            {
+              "period": "year ended 31 December 2019",
+              "loss": -103679.0
+            },
+            {
+              "period": "year ended 31 December 2020",
+              "loss": -115517.0
+            }
+          ]
+        },
+        "normalized_facts": {
+          "FY": {
+            "loss_count": 3,
+            "level": "high",
+            "periods": [
+              {
+                "period": "year ended 31 December 2018",
+                "loss": -71286.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended 31 December 2019",
+                "loss": -103679.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended 31 December 2020",
+                "loss": -115517.0,
+                "signature": "FY"
+              }
+            ]
+          }
+        },
+        "source_fields": [
+          "periods",
+          "net_loss",
+          "periods",
+          "net_loss",
+          "periods",
+          "net_loss"
+        ],
+        "message": "All comparable duration groups imply the same continuous-loss level."
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "revenue_growth",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 507,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        },
+        {
+          "page": 507,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "POLICY_AMBIGUITY_REVENUE_PERIOD_AGGREGATION",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": [
+          {
+            "prior_period": "year ended 31 December 2018",
+            "current_period": "year ended 31 December 2019",
+            "previous_revenue": 214109.0,
+            "current_revenue": 204890.0,
+            "growth_pct": -4.305750809167294,
+            "level": "medium"
+          },
+          {
+            "prior_period": "year ended 31 December 2019",
+            "current_period": "year ended 31 December 2020",
+            "previous_revenue": 204890.0,
+            "current_revenue": 227976.0,
+            "growth_pct": 11.267509395285275,
+            "level": "not_applicable"
+          }
+        ],
+        "source_fields": [
+          "periods",
+          "revenue",
+          "revenue",
+          "periods",
+          "revenue",
+          "revenue"
+        ],
+        "message": "Multiple comparable growth pairs imply different levels; aggregation/selection is not frozen."
+      },
+      "message": "v1.1.2 retains the most adverse valid comparable-period state; later improvement does not erase an observed trigger.",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 304,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 507,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "not_applicable",
+        "canonical_calculation_inputs": {
+          "largest_customer_pct": 16.0,
+          "top_five_customer_pct": 44.873144541530685
+        },
+        "normalized_facts": [
+          {
+            "period": "year ended 31 December 2018",
+            "largest_pct": 11.0,
+            "top_five_pct": 35.402528618600805,
+            "level": "not_applicable"
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_pct": 13.0,
+            "top_five_pct": 36.94665430230856,
+            "level": "not_applicable"
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "largest_pct": 16.0,
+            "top_five_pct": 44.873144541530685,
+            "level": "not_applicable"
+          }
+        ],
+        "source_fields": [
+          "largest_customer_disclosed_pct",
+          "total_revenue",
+          "top_five_customer_revenue",
+          "largest_customer_disclosed_pct",
+          "total_revenue",
+          "top_five_customer_revenue",
+          "largest_customer_disclosed_pct",
+          "total_revenue",
+          "top_five_customer_revenue"
+        ],
+        "message": "Stored label agrees with frozen deterministic rule."
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "CONCENTRATION_BOUND_PROOF_REQUIRES_REVIEW",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 305,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "FORMAL_BOUND_EXCLUDES_MEDIUM",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "policy_bucket": "BOUND_PROOF_DETERMINISTICALLY_RESOLVED",
+        "resolution_status": "resolved",
+        "resolution_code": "DETERMINISTIC_BOUND_EXCLUDES_MEDIUM",
+        "resolved_level": "not_applicable",
+        "requires_human_review": false,
+        "details": {
+          "largest_upper_bound": {
+            "value": 20.0,
+            "strict": true,
+            "source": "largest<=(top_five_supplier_upper_bound_pct)"
+          },
+          "top_five_upper_bound": {
+            "value": 20.0,
+            "strict": true,
+            "source": "top_five_supplier_upper_bound_pct"
+          }
+        }
+      },
+      "message": "",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

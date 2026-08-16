@@ -1,0 +1,141 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2020_01167",
+  "source_pass1": "expert_results/ipo_2020_01167/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "a120ebe548d57f4313b9e97cd36bb8fc73f376def40e1a8642bd2ee36c187ca3",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 3,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_pass1_finding_code": "LOSS_PERIODS_MISSING",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 416,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "year ended 2018-12-31",
+            "loss": -155935.0
+          },
+          {
+            "period": "year ended 2019-12-31",
+            "loss": -425817.0
+          }
+        ]
+      },
+      "normalized_facts": {
+        "FY": {
+          "loss_count": 2,
+          "level": "medium",
+          "periods": [
+            {
+              "period": "year ended 2018-12-31",
+              "loss": -155935.0,
+              "signature": "FY"
+            },
+            {
+              "period": "year ended 2019-12-31",
+              "loss": -425817.0,
+              "signature": "FY"
+            }
+          ]
+        }
+      },
+      "source_fields": [
+        "comparable_full_year_periods",
+        "loss",
+        "comparable_full_year_periods",
+        "loss"
+      ],
+      "message": "All comparable duration groups imply the same continuous-loss level."
+    },
+    {
+      "risk_code": "revenue_growth",
+      "source_pass1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 294,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "REVENUE_GROWTH_DENOMINATOR_NONPOSITIVE",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": [
+        {
+          "prior_period": "year ended 2018-12-31",
+          "current_period": "year ended 2019-12-31",
+          "previous_revenue": 0.0,
+          "current_revenue": 0.0
+        }
+      ],
+      "source_fields": [
+        "prior_period_revenue",
+        "current_period_revenue"
+      ],
+      "message": ""
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 294,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "OPEN_01_ZERO_REVENUE_CONCENTRATION",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": [
+        {
+          "period": "six months ended 2020-06-30",
+          "largest_pct": null,
+          "top_five_pct": null
+        }
+      ],
+      "source_fields": [],
+      "message": "Customer concentration denominator is zero; OPEN-01 remains unresolved."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

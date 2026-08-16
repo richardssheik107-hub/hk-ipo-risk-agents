@@ -1,0 +1,104 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_02235",
+  "source_pass1": "expert_results/ipo_2021_02235/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "7417ec0d5cb40441d0debfa9f72123d9c2b8a02c18152003e8c3b2021e3e49f4",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_pass1_finding_code": "LOSS_PERIODS_MISSING",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 490,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "audited_financial_statement"
+        }
+      ],
+      "re_audit_status": "PASS",
+      "finding_code": "PASS",
+      "recomputed_level": "medium",
+      "canonical_calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "year ended 31 December 2019",
+            "loss": -78614.0
+          },
+          {
+            "period": "year ended 31 December 2020",
+            "loss": -121250.0
+          },
+          {
+            "period": "four months ended 30 April 2020",
+            "loss": -4098.0
+          },
+          {
+            "period": "four months ended 30 April 2021",
+            "loss": -2581.0
+          }
+        ]
+      },
+      "normalized_facts": {
+        "FY": {
+          "loss_count": 2,
+          "level": "medium",
+          "periods": [
+            {
+              "period": "year ended 31 December 2019",
+              "loss": -78614.0,
+              "signature": "FY"
+            },
+            {
+              "period": "year ended 31 December 2020",
+              "loss": -121250.0,
+              "signature": "FY"
+            }
+          ]
+        },
+        "4M": {
+          "loss_count": 2,
+          "level": "medium",
+          "periods": [
+            {
+              "period": "four months ended 30 April 2020",
+              "loss": -4098.0,
+              "signature": "4M"
+            },
+            {
+              "period": "four months ended 30 April 2021",
+              "loss": -2581.0,
+              "signature": "4M"
+            }
+          ]
+        }
+      },
+      "source_fields": [
+        "loss_periods",
+        "loss",
+        "loss_periods",
+        "loss",
+        "loss_periods",
+        "loss",
+        "loss_periods",
+        "loss"
+      ],
+      "message": "All comparable duration groups imply the same continuous-loss level.",
+      "compatibility_layer": "legacy_structured_alias_v2"
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "artifact_version": "expert_annotation_structured_input_backfill_v1",
+  "phase2b_version": "expert_annotation_phase2b_backfill_v1",
+  "case_id": "ipo_2021_09982",
+  "source_pass1": "expert_results/ipo_2021_09982/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "9c5dbc1117836e1b57fa97dd944bd326e46fb4918ae531e883c1b6d3f8adf1e3",
+  "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "supplier_concentration",
+      "source_pass1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "backfill_method": "legacy_structured_fact_normalization",
+      "evidence_refs": [
+        {
+          "page": 167,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 168,
+          "evidence_role": "cross_check",
+          "requirement": "alternative",
+          "source_authority": "business_section"
+        }
+      ],
+      "re_audit_status": "POLICY_AMBIGUITY",
+      "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+      "recomputed_level": null,
+      "canonical_calculation_inputs": {},
+      "normalized_facts": [
+        {
+          "period": "截至2018年12月31日止年度",
+          "largest_pct": 27.3,
+          "top_five_pct": 67.1,
+          "level": "medium"
+        },
+        {
+          "period": "截至2019年12月31日止年度",
+          "largest_pct": 19.5,
+          "top_five_pct": 48.6,
+          "level": "not_applicable"
+        },
+        {
+          "period": "截至2020年12月31日止年度",
+          "largest_pct": 8.6,
+          "top_five_pct": 27.3,
+          "level": "not_applicable"
+        }
+      ],
+      "source_fields": [
+        "largest_supplier_pct",
+        "top_five_suppliers_pct",
+        "largest_supplier_pct",
+        "top_five_suppliers_pct",
+        "largest_supplier_pct",
+        "top_five_suppliers_pct"
+      ],
+      "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false
+  }
+}

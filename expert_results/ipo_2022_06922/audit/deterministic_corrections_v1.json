@@ -1,0 +1,36 @@
+{
+  "artifact_version": "expert_annotation_deterministic_corrections_v1",
+  "phase2_version": "expert_annotation_phase2_audit_v1",
+  "case_id": "ipo_2022_06922",
+  "source_pass1": "expert_results/ipo_2022_06922/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "384033e8e4ed99f0da44a7368bd271589a8d32c7d357d27a67620ff4f52704ab",
+  "review_outcome": "deterministic_audit_correction",
+  "promoted_to_final": false,
+  "correction_count": 1,
+  "corrections": [
+    {
+      "risk_code": "customer_concentration",
+      "finding_code": "CONCENTRATION_LABEL_CONFLICT",
+      "original": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "replacement": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "audit_message": "Recomputed customer concentration is largest=10.8%, top-five=40.3%; stored label conflicts with 30/60 medium and 50/80 high thresholds.",
+      "deterministic_details": {
+        "largest_pct": 10.8,
+        "top_five_pct": 40.3
+      }
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false
+  }
+}
