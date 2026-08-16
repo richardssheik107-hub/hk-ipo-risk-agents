@@ -1,0 +1,900 @@
+{
+  "manifest_version": "retriever_v3_source_refresh_v1",
+  "remote_ref": "origin/main",
+  "remote_commit": "c360b19fe7aeb11e00be3193d57ed13a967e34e0",
+  "remote_filter": "^expert_results/ipo_\\d{4}_[^/]+/pass1/expert_annotation_v1\\.json$",
+  "real_case_excluded": true,
+  "local_annotation_count_before": 41,
+  "local_annotations": [
+    {
+      "path": "expert_results/ipo_2020_00368/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_00368",
+      "sha256": "e80444879eca8d38cbf41b20d15c81da09976f580acf2cd2956d28e7d614e0b6"
+    },
+    {
+      "path": "expert_results/ipo_2020_01167/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01167",
+      "sha256": "3ffcdc17808fdd3c7e3528d928d6353eb2693b55812c9164d44b67b9aa4f3e29"
+    },
+    {
+      "path": "expert_results/ipo_2020_01408/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01408",
+      "sha256": "170eb64044dca10dbb9e0266ea638f913278b91194e1ee3e74d4b4e03aaf3df1"
+    },
+    {
+      "path": "expert_results/ipo_2020_01942/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01942",
+      "sha256": "1dab978381c287c26d3045040e2a9b900972e628bb0d8ac610fb97682a851778"
+    },
+    {
+      "path": "expert_results/ipo_2020_01961/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01961",
+      "sha256": "106a8b3cdd74930aaf997c237f8f5f73a9a60571861668a018bece2af8e04178"
+    },
+    {
+      "path": "expert_results/ipo_2020_02057/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02057",
+      "sha256": "a3a9b62ccb3d019df67c49d7d138058ff25ee26e02761ea7e203b87b856d22e5"
+    },
+    {
+      "path": "expert_results/ipo_2020_02135/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02135",
+      "sha256": "5d26db4cff1e349fd96c59a8faea8ee5dddc12da3e88a7327da229ef9770d4b4"
+    },
+    {
+      "path": "expert_results/ipo_2020_02263/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02263",
+      "sha256": "e4cb8eed8777b9149ee697a454cfd7cb24b0eff258db8217a2e28359fa8f915b"
+    },
+    {
+      "path": "expert_results/ipo_2020_02599/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02599",
+      "sha256": "d5eaece55db64921367b5836e34565a2dcd68cb3827460e95b02f612b23780ad"
+    },
+    {
+      "path": "expert_results/ipo_2020_03347/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_03347",
+      "sha256": "256cc37e15cdbc5a272a2b8e0186bc4c8916159d76508c337caf529476b04041"
+    },
+    {
+      "path": "expert_results/ipo_2020_06063/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06063",
+      "sha256": "99a42c6899e7884014c862a9215cc06992a585022d8170554838a8b789f7cea5"
+    },
+    {
+      "path": "expert_results/ipo_2020_06618/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06618",
+      "sha256": "5bae7ad7cbb40b525a0c66f59e1494238cc2c9a7e8efb3a1f2ee460e75fa0da7"
+    },
+    {
+      "path": "expert_results/ipo_2020_06688/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06688",
+      "sha256": "0f633eae4cff760f899e8874ab2e6fabe0ad1ca2d98984406293d0af8622e2cf"
+    },
+    {
+      "path": "expert_results/ipo_2020_06900/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06900",
+      "sha256": "98d938c81d4aef0b1fe89858088677ea6b15b4e781aa2408aecd4504da86fcba"
+    },
+    {
+      "path": "expert_results/ipo_2020_06968/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06968",
+      "sha256": "4b5087fe201887cc85ab7af874533bc02c26f6b060c87994c403f16d53bf892a"
+    },
+    {
+      "path": "expert_results/ipo_2020_08489/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_08489",
+      "sha256": "1f9b323e24910f42c0b476b991d2108eed4399032666d96ce4e1fc7c8ad511d1"
+    },
+    {
+      "path": "expert_results/ipo_2020_09600/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09600",
+      "sha256": "ce9c864c633842b19ef17295ca04abe2c60a2a00b004fa91810c80063415d748"
+    },
+    {
+      "path": "expert_results/ipo_2020_09633/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09633",
+      "sha256": "6e40223383bc145d9eef3e59be79f05d2e42471b0251bd1b585e65c5b8dce54e"
+    },
+    {
+      "path": "expert_results/ipo_2020_09901/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09901",
+      "sha256": "e331896200cc901b0c36eb0bbf7832343037163f981a18afe81519e154999fb1"
+    },
+    {
+      "path": "expert_results/ipo_2020_09986/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09986",
+      "sha256": "66a0fc63a68bf3e8933c789cca45120f0d334d9bf151cc7a38144aeabb93a33e"
+    },
+    {
+      "path": "expert_results/ipo_2021_00013/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_00013",
+      "sha256": "c59ecef39b11cd42620584d0c0bec2dd73219a70683566fd5af1e0b26377c973"
+    },
+    {
+      "path": "expert_results/ipo_2021_00606/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_00606",
+      "sha256": "ce5ba8bd4c7f76d3ccea79ed032b3be1489b2473264cb85d8ebec557925063f0"
+    },
+    {
+      "path": "expert_results/ipo_2021_01024/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01024",
+      "sha256": "3f49be722d31ff86787be06c718a69b7a709b8d265663187caabce7210c5637c"
+    },
+    {
+      "path": "expert_results/ipo_2021_01413/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01413",
+      "sha256": "49c4e403abdb96f58ce0928b3672f66daa848879387784b4d1d1d5ff9eaf2253"
+    },
+    {
+      "path": "expert_results/ipo_2021_01927/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01927",
+      "sha256": "24c2d90904228e5cf86a04a442a003e5e3cfb21b6f052fea35d0441b8a2dbba8"
+    },
+    {
+      "path": "expert_results/ipo_2021_02015/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02015",
+      "sha256": "30144ff88bf138f799175e46502c86144494db4e34cec4040ec4c2594580a27e"
+    },
+    {
+      "path": "expert_results/ipo_2021_02137/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02137",
+      "sha256": "d0fe5015ef66a6235e218c99c5086065a7a211288a5a579351e7f15b0f98ec56"
+    },
+    {
+      "path": "expert_results/ipo_2021_02160/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02160",
+      "sha256": "bb628cf0e5254939618f6a3e3d0f2e90778d8eab84919d677e594e4b567d6c6e"
+    },
+    {
+      "path": "expert_results/ipo_2021_02190/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02190",
+      "sha256": "d24faaf0274470dda556ce84c1199cf4dc2f68327b87db1b9010f977efb4bdeb"
+    },
+    {
+      "path": "expert_results/ipo_2021_02215/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02215",
+      "sha256": "03cbcf6149cddf45f209a897bc0c02c635d081c63a4938e6b724eb5336394d11"
+    },
+    {
+      "path": "expert_results/ipo_2021_02235/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02235",
+      "sha256": "dce1a7b6d33f12553072b02f2bf066adec53f77efff0a3f65c9ddbbd4ba358b2"
+    },
+    {
+      "path": "expert_results/ipo_2021_02518/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02518",
+      "sha256": "eca76d4ba88efcfea78fc6690f8c14cb9d64a0d137dbeaf260793f892ae1d600"
+    },
+    {
+      "path": "expert_results/ipo_2021_03658/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_03658",
+      "sha256": "40070e85ad20e5253dc580f84c570222bc3124a89517af0796aba91eea3fa0ad"
+    },
+    {
+      "path": "expert_results/ipo_2021_06601/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06601",
+      "sha256": "14b5bae64b95668b3668c3d9ac82fe090c5396ffe9a2d8c02da850585d0e9385"
+    },
+    {
+      "path": "expert_results/ipo_2021_06628/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06628",
+      "sha256": "0d93e0b1ce1a029a2ae98618afac6e9d66b640b7d3e465443b6980c196605683"
+    },
+    {
+      "path": "expert_results/ipo_2021_06668/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06668",
+      "sha256": "3efb0ee9590a14b8169a18900d855c0e713d77033647cc2934213c2c9f49d949"
+    },
+    {
+      "path": "expert_results/ipo_2021_06821/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06821",
+      "sha256": "813b21ac6def1847f3c1c713cb2dfe5cd54b8ca1b6257345ad788a59cd88f090"
+    },
+    {
+      "path": "expert_results/ipo_2021_09626/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09626",
+      "sha256": "db8d220827692131587908a4fc0e98602d980851305df6443f8fcc3be68e1d02"
+    },
+    {
+      "path": "expert_results/ipo_2021_09898/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09898",
+      "sha256": "a531ac53584aaa0b9d6662ee7a8ef54115e8b32d59af1c85b69d02dec245acc6"
+    },
+    {
+      "path": "expert_results/ipo_2021_09982/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09982",
+      "sha256": "fc27eb76b11934fafe5e7907b45e87a8cc857fa1ee2932fda4d8e4e4d7400769"
+    },
+    {
+      "path": "expert_results/real_case_001/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2024_02410",
+      "sha256": "db4a809addfd7938307039bc197ed7bde1bc92a21435434cfafd6794eb2cdc55"
+    }
+  ],
+  "remote_annotation_count": 60,
+  "remote_annotations": [
+    {
+      "path": "expert_results/ipo_2020_00368/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_00368",
+      "sha256": "92e9d6be1fd3a40da0f61e41bdd0522e0e3f27a8d9414086fc1327fb3abd2520"
+    },
+    {
+      "path": "expert_results/ipo_2020_01167/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01167",
+      "sha256": "a120ebe548d57f4313b9e97cd36bb8fc73f376def40e1a8642bd2ee36c187ca3"
+    },
+    {
+      "path": "expert_results/ipo_2020_01408/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01408",
+      "sha256": "57b2617f6e9e8419e82dfcbe5872abfdd73f336dda67e933a4c127247439426e"
+    },
+    {
+      "path": "expert_results/ipo_2020_01942/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01942",
+      "sha256": "1dab978381c287c26d3045040e2a9b900972e628bb0d8ac610fb97682a851778"
+    },
+    {
+      "path": "expert_results/ipo_2020_01961/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_01961",
+      "sha256": "106a8b3cdd74930aaf997c237f8f5f73a9a60571861668a018bece2af8e04178"
+    },
+    {
+      "path": "expert_results/ipo_2020_02057/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02057",
+      "sha256": "c4b8c993ef63829a899bd89c01cad4a1c9af48332ba9aa6e868842bae3c56936"
+    },
+    {
+      "path": "expert_results/ipo_2020_02135/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02135",
+      "sha256": "59ac2ea072ac2b860118c523d56c2784c7c5d69e37231e550861491059fcb3a5"
+    },
+    {
+      "path": "expert_results/ipo_2020_02263/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02263",
+      "sha256": "e4cb8eed8777b9149ee697a454cfd7cb24b0eff258db8217a2e28359fa8f915b"
+    },
+    {
+      "path": "expert_results/ipo_2020_02599/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_02599",
+      "sha256": "d5eaece55db64921367b5836e34565a2dcd68cb3827460e95b02f612b23780ad"
+    },
+    {
+      "path": "expert_results/ipo_2020_03347/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_03347",
+      "sha256": "256cc37e15cdbc5a272a2b8e0186bc4c8916159d76508c337caf529476b04041"
+    },
+    {
+      "path": "expert_results/ipo_2020_06063/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06063",
+      "sha256": "f054a67f4c8fb0c6a1a17607e261fe0c56266587c9feb3b6aa709e5925b741ca"
+    },
+    {
+      "path": "expert_results/ipo_2020_06618/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06618",
+      "sha256": "5bae7ad7cbb40b525a0c66f59e1494238cc2c9a7e8efb3a1f2ee460e75fa0da7"
+    },
+    {
+      "path": "expert_results/ipo_2020_06688/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06688",
+      "sha256": "5fff76f68a0a5fb5498383d700cbb7e01c3ad6606aa72ed61e6536b6c63150bc"
+    },
+    {
+      "path": "expert_results/ipo_2020_06900/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06900",
+      "sha256": "98d938c81d4aef0b1fe89858088677ea6b15b4e781aa2408aecd4504da86fcba"
+    },
+    {
+      "path": "expert_results/ipo_2020_06968/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_06968",
+      "sha256": "4549a7e3d6d420a2e93d18cc34ac224a599e270ffe33ec7c598bc0b125b893fd"
+    },
+    {
+      "path": "expert_results/ipo_2020_08489/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_08489",
+      "sha256": "1f9b323e24910f42c0b476b991d2108eed4399032666d96ce4e1fc7c8ad511d1"
+    },
+    {
+      "path": "expert_results/ipo_2020_09600/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09600",
+      "sha256": "ce9c864c633842b19ef17295ca04abe2c60a2a00b004fa91810c80063415d748"
+    },
+    {
+      "path": "expert_results/ipo_2020_09633/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09633",
+      "sha256": "6e40223383bc145d9eef3e59be79f05d2e42471b0251bd1b585e65c5b8dce54e"
+    },
+    {
+      "path": "expert_results/ipo_2020_09901/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09901",
+      "sha256": "e331896200cc901b0c36eb0bbf7832343037163f981a18afe81519e154999fb1"
+    },
+    {
+      "path": "expert_results/ipo_2020_09986/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2020_09986",
+      "sha256": "66a0fc63a68bf3e8933c789cca45120f0d334d9bf151cc7a38144aeabb93a33e"
+    },
+    {
+      "path": "expert_results/ipo_2021_00013/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_00013",
+      "sha256": "c59ecef39b11cd42620584d0c0bec2dd73219a70683566fd5af1e0b26377c973"
+    },
+    {
+      "path": "expert_results/ipo_2021_00606/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_00606",
+      "sha256": "9452aa47149c05415c04f048c7ca6565b1c7270acf88f6a6712add98af9b65f3"
+    },
+    {
+      "path": "expert_results/ipo_2021_01024/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01024",
+      "sha256": "0b9853e2bdbbb42ba05a80dcaef82c8d17c2bbde8124ca6a259e1dea94254a0f"
+    },
+    {
+      "path": "expert_results/ipo_2021_01413/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01413",
+      "sha256": "3a57a8ce8b39bf6e14e1c1798e8a1ae41a40e2fdb2881d8475ee3caf980c8829"
+    },
+    {
+      "path": "expert_results/ipo_2021_01927/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_01927",
+      "sha256": "15b7870e67d31564d1b9e2f1ca3e5802191bfee35661d256d53152097c4a848a"
+    },
+    {
+      "path": "expert_results/ipo_2021_02015/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02015",
+      "sha256": "98acc600a67e3f02ff82b533c778f660a6ed46bfc0c0b951a094c324acc079c6"
+    },
+    {
+      "path": "expert_results/ipo_2021_02137/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02137",
+      "sha256": "58c67fd17a580e4df35b9f54830dc8ead2a6aa423c468a22969792ebe2f463a1"
+    },
+    {
+      "path": "expert_results/ipo_2021_02160/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02160",
+      "sha256": "b1aeaf66cb5cc0240f793187b74053aab36f1b0df7c90e611e4084ed5330ee5d"
+    },
+    {
+      "path": "expert_results/ipo_2021_02190/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02190",
+      "sha256": "9f005d20889e259364a957a7e06c2a841607d5e2ad1f90cc71612958e5049cc0"
+    },
+    {
+      "path": "expert_results/ipo_2021_02215/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02215",
+      "sha256": "ef3589acdc413846910b152391a601cdb3326bd741abccf25d2eeeded04ac41d"
+    },
+    {
+      "path": "expert_results/ipo_2021_02235/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02235",
+      "sha256": "7417ec0d5cb40441d0debfa9f72123d9c2b8a02c18152003e8c3b2021e3e49f4"
+    },
+    {
+      "path": "expert_results/ipo_2021_02518/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_02518",
+      "sha256": "ac452a5a56da3fe65f809db5e86343560ede668579d58d31c4d66980f3dba174"
+    },
+    {
+      "path": "expert_results/ipo_2021_03658/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_03658",
+      "sha256": "f64509a19264163c1ec803429246b887198807a193f11f9598a00213c9249fc8"
+    },
+    {
+      "path": "expert_results/ipo_2021_06601/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06601",
+      "sha256": "bcf1b20f9f35b3943191cb0baef573bc0a9f80b5c57b1d305a08bc045dae50d2"
+    },
+    {
+      "path": "expert_results/ipo_2021_06628/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06628",
+      "sha256": "60fca941d131cebc7f500a5ef2fb654b5685ade2521abcba6c8f3022f38d3599"
+    },
+    {
+      "path": "expert_results/ipo_2021_06668/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06668",
+      "sha256": "99da1bdb8bc82dcc1cebf563ea679eb83a6941d8a6eeced8b19d22dfccf51c0c"
+    },
+    {
+      "path": "expert_results/ipo_2021_06821/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_06821",
+      "sha256": "1a70e3c8a583f5279b32771e486aad8a22a251811573ec5882daeeba83547503"
+    },
+    {
+      "path": "expert_results/ipo_2021_09626/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09626",
+      "sha256": "9376d31310dca1c3f167afa2fbf73f49c7dae7904c0f48dd1ca343df948aa280"
+    },
+    {
+      "path": "expert_results/ipo_2021_09898/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09898",
+      "sha256": "16d72c6e2f57c16ea4e5e92d0424c47657b0839cda4606ee44ef6c47dd7cfea1"
+    },
+    {
+      "path": "expert_results/ipo_2021_09982/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2021_09982",
+      "sha256": "9c5dbc1117836e1b57fa97dd944bd326e46fb4918ae531e883c1b6d3f8adf1e3"
+    },
+    {
+      "path": "expert_results/ipo_2022_00314/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_00314",
+      "sha256": "27ca165e62e31527c9c3dafeca9aea6e9e596717c198fc3fbf343b42affa22cc"
+    },
+    {
+      "path": "expert_results/ipo_2022_00816/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_00816",
+      "sha256": "1096090d3c4ba31c1f8245436c8bf16c0f42d6bdf4276f7613a190dee15fcffe"
+    },
+    {
+      "path": "expert_results/ipo_2022_01204/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_01204",
+      "sha256": "ce8c7a9ebf530611a297c7b2f59df69203f09f346a31b24c02419e3aed732a58"
+    },
+    {
+      "path": "expert_results/ipo_2022_01406/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_01406",
+      "sha256": "55e99319bfc2ece949f025f9d49cd5b840e3a02d95ae17576821ff5c0902a1ed"
+    },
+    {
+      "path": "expert_results/ipo_2022_01880/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_01880",
+      "sha256": "0ef36fcb570b40373d59a267e5fae3650578cfee219cf10c6d6cec8ab81119ed"
+    },
+    {
+      "path": "expert_results/ipo_2022_02121/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02121",
+      "sha256": "5d0f2050af70c3b129f53740b22223ddc987319c47f8a58d5fbac9fa697e2298"
+    },
+    {
+      "path": "expert_results/ipo_2022_02145/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02145",
+      "sha256": "e865c380beedd2645ebdb03aabbd78f3e3e5f73abfe443df279e8f1c45067835"
+    },
+    {
+      "path": "expert_results/ipo_2022_02179/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02179",
+      "sha256": "f349d3454578fea59f6bed58c2309b42861d4fcbde2a0520050688f697e28842"
+    },
+    {
+      "path": "expert_results/ipo_2022_02237/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02237",
+      "sha256": "39d1470ed32edfcc08054cdea1ec31a120f24581c9525112188b182d900a175f"
+    },
+    {
+      "path": "expert_results/ipo_2022_02372/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02372",
+      "sha256": "9e36d3934f226b3ea8ff78682302662ac97b56243ca11302d0cedfee135fccd6"
+    },
+    {
+      "path": "expert_results/ipo_2022_02407/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02407",
+      "sha256": "9a5bbbb63ca8374ee980aff94721ac094b6d91b976c711996abfe85abc93aca6"
+    },
+    {
+      "path": "expert_results/ipo_2022_02450/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02450",
+      "sha256": "ce44a6ca5417ba1a87ec52e63771e67d18e53c8820c1fbabe9a044bd8cec3602"
+    },
+    {
+      "path": "expert_results/ipo_2022_02602/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_02602",
+      "sha256": "970d9e202e1a3ced984d6c35316d2cab23613c8243f3c98a6afa56812c85dcb1"
+    },
+    {
+      "path": "expert_results/ipo_2022_06610/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_06610",
+      "sha256": "c69a518ec566b96f6fefbf3d1714a573ffb35c3182de74ba0fc9c649b304b9b8"
+    },
+    {
+      "path": "expert_results/ipo_2022_06698/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_06698",
+      "sha256": "b80277074b7190557983084e719fe3ab4bf267672947254ab730ddd68cd1f082"
+    },
+    {
+      "path": "expert_results/ipo_2022_06922/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_06922",
+      "sha256": "384033e8e4ed99f0da44a7368bd271589a8d32c7d357d27a67620ff4f52704ab"
+    },
+    {
+      "path": "expert_results/ipo_2022_09638/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_09638",
+      "sha256": "297482f3aaedd4a2d560234df6ec3c1f031da8ce2c2287c14f412b0690509fb3"
+    },
+    {
+      "path": "expert_results/ipo_2022_09863/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_09863",
+      "sha256": "9cb5ae8f750a6f992c04edeb4e6c42c2a42b225be792dfba84d52d22095077eb"
+    },
+    {
+      "path": "expert_results/ipo_2022_09886/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_09886",
+      "sha256": "b58c62dbfbaed5148b56e340a254a39a07e46b269d76d687c7b4184db61281bd"
+    },
+    {
+      "path": "expert_results/ipo_2022_09985/pass1/expert_annotation_v1.json",
+      "case_id": "ipo_2022_09985",
+      "sha256": "8d0525364e9cc07060c50069f4b5807bfa9d554820c3a2ed48955320a9d2605c"
+    }
+  ],
+  "remote_audit_overlay_count": 64,
+  "remote_audit_overlays": [
+    {
+      "path": "expert_results/ipo_2020_00368/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_00368",
+      "sha256": "ddd499031079b9e303b5fae480e3f25ecabfdb6423b3c700058675398118d9a1"
+    },
+    {
+      "path": "expert_results/ipo_2020_01167/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_01167",
+      "sha256": "bc3f07febf95b4ad9ef92418adf229e83e93f78896bcd8b0a1e910cb31259ed7"
+    },
+    {
+      "path": "expert_results/ipo_2020_01408/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_01408",
+      "sha256": "b705d882f4bdb8d221b069a09a747693277771ed239fa74451741a79d8d5e449"
+    },
+    {
+      "path": "expert_results/ipo_2020_01942/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_01942",
+      "sha256": "7b0e1d85a702d215c5cda34d44c92548617330772b2502e3fd02dd6c6b022929"
+    },
+    {
+      "path": "expert_results/ipo_2020_01961/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_01961",
+      "sha256": "b1b7bc9945ee568e0849bc1464381d0f1446b9d067877dfc7417c0f918403b99"
+    },
+    {
+      "path": "expert_results/ipo_2020_02057/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_02057",
+      "sha256": "83ce133686a717945937e3f2b355db7e0ad92d52015ef9d8e9f32cf6badfccad"
+    },
+    {
+      "path": "expert_results/ipo_2020_02135/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_02135",
+      "sha256": "3f55b4f1493e4f7b23a081a9076ae70b9dee4ff776cc6009687768bababebf85"
+    },
+    {
+      "path": "expert_results/ipo_2020_02263/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_02263",
+      "sha256": "2fa18d1defb542168746da8411c80ede3cdcd42599b0e39fdb95d86daa80b262"
+    },
+    {
+      "path": "expert_results/ipo_2020_02599/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_02599",
+      "sha256": "b48103f44dc10e15f1a3015461133e0fef30422d6ee12a11d82a3eed92edc6c3"
+    },
+    {
+      "path": "expert_results/ipo_2020_03347/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_03347",
+      "sha256": "fb405ad5d980750d2867327bc0cd6c62feb9a1e9410fcd4a7df7e3fad249f8da"
+    },
+    {
+      "path": "expert_results/ipo_2020_06063/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_06063",
+      "sha256": "09ae63bce50a17708784f6b22d20873f342f04febcc860d5b62ea290ebd7da35"
+    },
+    {
+      "path": "expert_results/ipo_2020_06618/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_06618",
+      "sha256": "968f670c4c522234a0bd42149e13b03f4d62ace202c73d92a58c971fd7f62b0d"
+    },
+    {
+      "path": "expert_results/ipo_2020_06688/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_06688",
+      "sha256": "1ae94307fed4337ba12f99115fa2852711107bae450c1c2160f9b36c9a439091"
+    },
+    {
+      "path": "expert_results/ipo_2020_06900/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_06900",
+      "sha256": "a06b7dff0ca21b0e837a7da9891f17e5004fafa0c076a4c9e417297f3e0573a3"
+    },
+    {
+      "path": "expert_results/ipo_2020_06968/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_06968",
+      "sha256": "2e73e7c3043935b6342608f9c7f559b50d22197655d50df848aed0384afb23cf"
+    },
+    {
+      "path": "expert_results/ipo_2020_08489/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_08489",
+      "sha256": "f97a092d047b10d2f53c715c2c97e28114e2fcef9a42569f081c0e50d6450635"
+    },
+    {
+      "path": "expert_results/ipo_2020_09600/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_09600",
+      "sha256": "c72b026533c3596993a8956bb795cbd499ad7744ee841f266cfc29e2cbb5fb3d"
+    },
+    {
+      "path": "expert_results/ipo_2020_09633/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_09633",
+      "sha256": "a055088566056f700985858e6d17d68f3d68ff1b9a1c777534a8890fc05c3fc0"
+    },
+    {
+      "path": "expert_results/ipo_2020_09901/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_09901",
+      "sha256": "eb156f1155af95398b9415aedcf35e34aaed701c816798aa4d979af3e5b3725f"
+    },
+    {
+      "path": "expert_results/ipo_2020_09986/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2020_09986",
+      "sha256": "9ed992da6721950ea77451a506f733726bb50365f27f89e9ca88b28886d3016c"
+    },
+    {
+      "path": "expert_results/ipo_2021_00013/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_00013",
+      "sha256": "50875d51fbb135c7283663f6d2a9ef4b79ac32d0c8e4d17f91cc07c92d6705a7"
+    },
+    {
+      "path": "expert_results/ipo_2021_00606/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_00606",
+      "sha256": "0793ca9fe2624b2c965f2752eb348ed582c8b14ed11094dec8469139ca2d5255"
+    },
+    {
+      "path": "expert_results/ipo_2021_01024/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_01024",
+      "sha256": "a063961d5a0465aa9c7a9f75428094e24bc9dd1fe06da94459cc9b656aed6619"
+    },
+    {
+      "path": "expert_results/ipo_2021_01413/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_01413",
+      "sha256": "d9f2084022c855b1b2aca52b00d1c6488355ce96dec17effd94cf8c0c289d575"
+    },
+    {
+      "path": "expert_results/ipo_2021_01927/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_01927",
+      "sha256": "1456e713b9da09e4ff60d85a45d2bf77ddf4fc0cf697fa2c0ad791902e1efb36"
+    },
+    {
+      "path": "expert_results/ipo_2021_02015/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02015",
+      "sha256": "397eb039b9f6dd2a7e0a55f1a715040834aa26c3b97a0273fc16b395d7512972"
+    },
+    {
+      "path": "expert_results/ipo_2021_02137/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02137",
+      "sha256": "aa88d18df0abb90736a0ae39be3dc360e3c72aaaa4f9fb10587937adb6b1e8c0"
+    },
+    {
+      "path": "expert_results/ipo_2021_02160/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02160",
+      "sha256": "ad7ee6ed9f8f40443c4f3fbf90f45e938e803763966c0fcb04e0175bca7e1e2c"
+    },
+    {
+      "path": "expert_results/ipo_2021_02190/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02190",
+      "sha256": "ebc473047322a6b81c6d27241f17f673706c5d44d3955eb2e14d0af85b034edb"
+    },
+    {
+      "path": "expert_results/ipo_2021_02215/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02215",
+      "sha256": "19393a9350cb55377f359a658dba537efd1f80c8fd8a9fdfcc08fd27183dc293"
+    },
+    {
+      "path": "expert_results/ipo_2021_02235/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02235",
+      "sha256": "78c063a2524c560abbf41ee14b8cebe35d55bf300e460926015fd7334f93d49a"
+    },
+    {
+      "path": "expert_results/ipo_2021_02518/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_02518",
+      "sha256": "78d729d5c9796283ce402ac99bf0f4f4253e0ffee158e384e6612a1d95e66424"
+    },
+    {
+      "path": "expert_results/ipo_2021_03658/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_03658",
+      "sha256": "68ac26678686211d3a2d9287347ca050400079cbd412320ed2537e705eb77ee0"
+    },
+    {
+      "path": "expert_results/ipo_2021_06601/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_06601",
+      "sha256": "55c4c5d2b68f1b27a9d58184b9e8b4a9fe909209d74f142bf674a803867ca2d3"
+    },
+    {
+      "path": "expert_results/ipo_2021_06628/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_06628",
+      "sha256": "19ca82dc561925319451e767e2c1c4d995b46078a1990286f4052fa4d51fb7e9"
+    },
+    {
+      "path": "expert_results/ipo_2021_06668/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_06668",
+      "sha256": "ed1f04609f298e5965ee41e9701fe4793267c930e9cd95f8d257a5eb6ddda20f"
+    },
+    {
+      "path": "expert_results/ipo_2021_06821/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_06821",
+      "sha256": "ae133d1abf7daba084b2f851434d89234339f3379b8b6f4b62451ab029c0cf2f"
+    },
+    {
+      "path": "expert_results/ipo_2021_09626/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_09626",
+      "sha256": "3c631f8219cfdfdbe72018c9e2b3ba374507f8b5ce55653e69aed5106415b0f5"
+    },
+    {
+      "path": "expert_results/ipo_2021_09898/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_09898",
+      "sha256": "f2ae45b3ae31e6051a7ad391361e84db741cdffb6eacb4787ad1f608f400b548"
+    },
+    {
+      "path": "expert_results/ipo_2021_09982/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2021_09982",
+      "sha256": "229cf2160889eab1496c14aa832e35f9713eccc59835e2445731f4c6259b7116"
+    },
+    {
+      "path": "expert_results/ipo_2022_00816/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_00816",
+      "sha256": "248a9ebd253fedcf4e6a080e2438d9f793afd6ae3c6261e1ef6c72bcec3b6418"
+    },
+    {
+      "path": "expert_results/ipo_2022_01204/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_01204",
+      "sha256": "b01084b767352b67f64f0cd9fe1334acc537d8d963d885af04864038ff201ffa"
+    },
+    {
+      "path": "expert_results/ipo_2022_01406/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_01406",
+      "sha256": "5bc1f0e4228ac3ce7485a4d7944df8fa25e8664bcb0224bedcfade93fdd699e7"
+    },
+    {
+      "path": "expert_results/ipo_2022_01880/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_01880",
+      "sha256": "969ceb95bf55cab74903644706b942e2e3292f1b69635b09429d1ab8fadc68e7"
+    },
+    {
+      "path": "expert_results/ipo_2022_02121/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02121",
+      "sha256": "e8582fb39b01a8e18de5d9cd10e4f682ec189446cc75ecfef5d2a3965d45a611"
+    },
+    {
+      "path": "expert_results/ipo_2022_02145/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_02145",
+      "sha256": "14dda53f7fec94f5426563a82c18f42da3a8147cf255f11c5b11d197ee406e8b"
+    },
+    {
+      "path": "expert_results/ipo_2022_02145/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02145",
+      "sha256": "901e458a34c744baf2e1d0708a8e7af3b5268941c64c7dccde3667139fd91abf"
+    },
+    {
+      "path": "expert_results/ipo_2022_02179/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02179",
+      "sha256": "928a3be5d6706ed7030a9ca1e97d247f4ba466897be480e098dc78d152a81fd0"
+    },
+    {
+      "path": "expert_results/ipo_2022_02237/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02237",
+      "sha256": "1ab95d1d09ef1c02a9414e93a8585df41d19c820205de5d47913f646f5ce7ae6"
+    },
+    {
+      "path": "expert_results/ipo_2022_02372/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02372",
+      "sha256": "6527b70204523d0f13b35e858fd4434a5b03f64ff20a2140bbf804e95c6626e3"
+    },
+    {
+      "path": "expert_results/ipo_2022_02450/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02450",
+      "sha256": "ba415f2685764e73ded3cda0af68b4148e96149da40fea22b0e1efa7902c92a2"
+    },
+    {
+      "path": "expert_results/ipo_2022_02602/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_02602",
+      "sha256": "4c74f2276777aebc7bc37b4b60d723a2e902121fc50028a2f44edb2ea0c66c6c"
+    },
+    {
+      "path": "expert_results/ipo_2022_06610/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_06610",
+      "sha256": "7b0decf4902f6b13fa3b80d7505a33bd7d9297beafca15520a4067f12fc30a9e"
+    },
+    {
+      "path": "expert_results/ipo_2022_06610/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_06610",
+      "sha256": "2583718d59f510beccc6f0a776d0cfe459e699fe1eeea35514308336baec1b28"
+    },
+    {
+      "path": "expert_results/ipo_2022_06698/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_06698",
+      "sha256": "56adf7b2958321f43149233d745dd7616c5df036119029a4cdeeabee1d8db81c"
+    },
+    {
+      "path": "expert_results/ipo_2022_06698/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_06698",
+      "sha256": "fd4e83a5f046a6cb83fd35927915b91a99bd40a1116023f2ede7d30cd85d7d70"
+    },
+    {
+      "path": "expert_results/ipo_2022_06922/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_06922",
+      "sha256": "db2984d48f1a1c4e60b5127fef2363cec8b9d2cba2dddc07bca7a0199ed2c9b2"
+    },
+    {
+      "path": "expert_results/ipo_2022_06922/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_06922",
+      "sha256": "616f7610adfb755e21f817e66bcf25a0f548fb4889e4e48bbc1e69f41b1f0220"
+    },
+    {
+      "path": "expert_results/ipo_2022_09638/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_09638",
+      "sha256": "364792252548f21780cb260ef68be03cf7d600e669f95a2ef6d828dc8c020259"
+    },
+    {
+      "path": "expert_results/ipo_2022_09863/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_09863",
+      "sha256": "27757eafe109088ceeba6e3af332f05fe6bdaccbb6327d4af0a8293189357212"
+    },
+    {
+      "path": "expert_results/ipo_2022_09863/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_09863",
+      "sha256": "b279d5199762f346013e68f390bab4e0eb09a436ca8f3b3496405f8cbe600044"
+    },
+    {
+      "path": "expert_results/ipo_2022_09886/audit/deterministic_corrections_v1.json",
+      "case_id": "ipo_2022_09886",
+      "sha256": "6f5eaf763a28707f48be9bdf335274f3b404aae616c240e6756af07b93e9233a"
+    },
+    {
+      "path": "expert_results/ipo_2022_09886/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_09886",
+      "sha256": "5f9cda08384109f78a598dede1aae02326d34e4eff2057f54f529e3f195303b3"
+    },
+    {
+      "path": "expert_results/ipo_2022_09985/audit/financial_resolution_v1.json",
+      "case_id": "ipo_2022_09985",
+      "sha256": "6a502ccb628b115cf95780f34dddc07b47aba001682c6a03df471a752abed73a"
+    }
+  ],
+  "comparison": {
+    "same_hashes": 13,
+    "changed_hashes": 27,
+    "changed_case_ids": [
+      "ipo_2020_00368",
+      "ipo_2020_01167",
+      "ipo_2020_01408",
+      "ipo_2020_02057",
+      "ipo_2020_02135",
+      "ipo_2020_06063",
+      "ipo_2020_06688",
+      "ipo_2020_06968",
+      "ipo_2021_00606",
+      "ipo_2021_01024",
+      "ipo_2021_01413",
+      "ipo_2021_01927",
+      "ipo_2021_02015",
+      "ipo_2021_02137",
+      "ipo_2021_02160",
+      "ipo_2021_02190",
+      "ipo_2021_02215",
+      "ipo_2021_02235",
+      "ipo_2021_02518",
+      "ipo_2021_03658",
+      "ipo_2021_06601",
+      "ipo_2021_06628",
+      "ipo_2021_06668",
+      "ipo_2021_06821",
+      "ipo_2021_09626",
+      "ipo_2021_09898",
+      "ipo_2021_09982"
+    ],
+    "new_case_count": 20,
+    "new_case_ids": [
+      "ipo_2022_00314",
+      "ipo_2022_00816",
+      "ipo_2022_01204",
+      "ipo_2022_01406",
+      "ipo_2022_01880",
+      "ipo_2022_02121",
+      "ipo_2022_02145",
+      "ipo_2022_02179",
+      "ipo_2022_02237",
+      "ipo_2022_02372",
+      "ipo_2022_02407",
+      "ipo_2022_02450",
+      "ipo_2022_02602",
+      "ipo_2022_06610",
+      "ipo_2022_06698",
+      "ipo_2022_06922",
+      "ipo_2022_09638",
+      "ipo_2022_09863",
+      "ipo_2022_09886",
+      "ipo_2022_09985"
+    ],
+    "excluded_local_case_ids": [
+      "ipo_2024_02410"
+    ]
+  }
+}

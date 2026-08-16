@@ -1,0 +1,265 @@
+{
+  "status": "COMPLETE",
+  "LOCKED_VALIDATION_CONSUMED": true,
+  "consumed_at": "2026-08-16T09:44:38.968754+00:00",
+  "consumed_by": "Phase R3-E",
+  "protocol_sha256": "49c0f8d9825c42f9f343c7433c22960498176438d9a73ec01f5f566b68db9d9e",
+  "used_for_tuning_before_evaluation": false,
+  "outcome": "CANDIDATE_PASS_RANKING_MIXED",
+  "locked_cases": 10,
+  "locked_gold": 93,
+  "metrics": {
+    "RRF": {
+      "r5": 0.6021505376344086,
+      "r10": 0.6881720430107527,
+      "r20": 0.8064516129032258,
+      "r50": 0.9139784946236559,
+      "r100": 0.9354838709677419,
+      "completion_at_5": 0.55,
+      "completion_at_20": 0.775,
+      "mrr": 0.399553604316677,
+      "ndcg_at_5": 0.4180522599072912,
+      "ndcg_at_10": 0.44724274413994164,
+      "ndcg_at_20": 0.4799354696270887
+    },
+    "LTR-C": {
+      "r5": 0.6989247311827957,
+      "r10": 0.7849462365591398,
+      "r20": 0.8924731182795699,
+      "r50": 0.9139784946236559,
+      "r100": 0.946236559139785,
+      "completion_at_5": 0.65,
+      "completion_at_20": 0.875,
+      "mrr": 0.5637167477202307,
+      "ndcg_at_5": 0.565265784491952,
+      "ndcg_at_10": 0.5935743168614207,
+      "ndcg_at_20": 0.6233237488572061
+    }
+  },
+  "oracles": {
+    "old": {
+      "at_20": 0.7204301075268817,
+      "at_50": 0.8064516129032258,
+      "at_100": 0.8172043010752689,
+      "native": 0.8172043010752689
+    },
+    "plus_bm25": {
+      "at_20": 0.8924731182795699,
+      "at_50": 0.9139784946236559,
+      "at_100": 0.9354838709677419,
+      "native": 0.9354838709677419
+    },
+    "full": {
+      "at_20": 0.9032258064516129,
+      "at_50": 0.946236559139785,
+      "at_100": 0.946236559139785,
+      "native": 0.946236559139785
+    }
+  },
+  "per_risk": {
+    "cash_runway": {
+      "gold": 20,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.8,
+      "ltr_r5": 0.95,
+      "rrf_r20": 0.85,
+      "ltr_r20": 1.0,
+      "rrf_completion_at_5": 0.6,
+      "ltr_completion_at_5": 0.9,
+      "rrf_completion_at_20": 0.7,
+      "ltr_completion_at_20": 1.0
+    },
+    "continuous_loss": {
+      "gold": 10,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.6,
+      "ltr_r5": 1.0,
+      "rrf_r20": 1.0,
+      "ltr_r20": 1.0,
+      "rrf_completion_at_5": 0.6,
+      "ltr_completion_at_5": 1.0,
+      "rrf_completion_at_20": 1.0,
+      "ltr_completion_at_20": 1.0
+    },
+    "customer_concentration": {
+      "gold": 10,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.8,
+      "ltr_r5": 0.6,
+      "rrf_r20": 0.9,
+      "ltr_r20": 0.8,
+      "rrf_completion_at_5": 0.8,
+      "ltr_completion_at_5": 0.6,
+      "rrf_completion_at_20": 0.9,
+      "ltr_completion_at_20": 0.8
+    },
+    "material_litigation_compliance": {
+      "gold": 12,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.6666666666666666,
+      "ltr_r5": 0.5,
+      "rrf_r20": 1.0,
+      "ltr_r20": 0.8333333333333334,
+      "rrf_completion_at_5": 0.6,
+      "ltr_completion_at_5": 0.4,
+      "rrf_completion_at_20": 1.0,
+      "ltr_completion_at_20": 0.8
+    },
+    "precommercial_product": {
+      "gold": 10,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.1,
+      "ltr_r5": 0.1,
+      "rrf_r20": 0.2,
+      "ltr_r20": 0.5,
+      "rrf_completion_at_5": 0.1,
+      "ltr_completion_at_5": 0.1,
+      "rrf_completion_at_20": 0.2,
+      "ltr_completion_at_20": 0.5
+    },
+    "redemption_rights": {
+      "gold": 11,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.5454545454545454,
+      "ltr_r5": 0.6363636363636364,
+      "rrf_r20": 0.9090909090909091,
+      "ltr_r20": 0.9090909090909091,
+      "rrf_completion_at_5": 0.6,
+      "ltr_completion_at_5": 0.6,
+      "rrf_completion_at_20": 0.9,
+      "ltr_completion_at_20": 0.9
+    },
+    "revenue_growth": {
+      "gold": 10,
+      "case_risk_groups": 10,
+      "rrf_r5": 0.1,
+      "ltr_r5": 0.7,
+      "rrf_r20": 0.5,
+      "ltr_r20": 1.0,
+      "rrf_completion_at_5": 0.1,
+      "ltr_completion_at_5": 0.7,
+      "rrf_completion_at_20": 0.5,
+      "ltr_completion_at_20": 1.0
+    },
+    "supplier_concentration": {
+      "gold": 10,
+      "case_risk_groups": 10,
+      "rrf_r5": 1.0,
+      "ltr_r5": 0.9,
+      "rrf_r20": 1.0,
+      "ltr_r20": 1.0,
+      "rrf_completion_at_5": 1.0,
+      "ltr_completion_at_5": 0.9,
+      "rrf_completion_at_20": 1.0,
+      "ltr_completion_at_20": 1.0
+    }
+  },
+  "case_metrics": [
+    {
+      "case_id": "ipo_2022_01204",
+      "gold": 11,
+      "rrf_r20": 0.9090909090909091,
+      "ltr_r20": 0.9090909090909091,
+      "delta": 0.0
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "gold": 10,
+      "rrf_r20": 0.8,
+      "ltr_r20": 0.8,
+      "delta": 0.0
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "gold": 9,
+      "rrf_r20": 0.6666666666666666,
+      "ltr_r20": 0.6666666666666666,
+      "delta": 0.0
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "gold": 9,
+      "rrf_r20": 0.8888888888888888,
+      "ltr_r20": 1.0,
+      "delta": 0.11111111111111116
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "gold": 9,
+      "rrf_r20": 0.7777777777777778,
+      "ltr_r20": 0.8888888888888888,
+      "delta": 0.11111111111111105
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "gold": 9,
+      "rrf_r20": 0.7777777777777778,
+      "ltr_r20": 0.8888888888888888,
+      "delta": 0.11111111111111105
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "gold": 9,
+      "rrf_r20": 0.8888888888888888,
+      "ltr_r20": 1.0,
+      "delta": 0.11111111111111116
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "gold": 9,
+      "rrf_r20": 0.6666666666666666,
+      "ltr_r20": 0.8888888888888888,
+      "delta": 0.2222222222222222
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "gold": 9,
+      "rrf_r20": 0.7777777777777778,
+      "ltr_r20": 0.8888888888888888,
+      "delta": 0.11111111111111105
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "gold": 9,
+      "rrf_r20": 0.8888888888888888,
+      "ltr_r20": 1.0,
+      "delta": 0.11111111111111116
+    }
+  ],
+  "movement": {
+    "promoted_at_5": 15,
+    "lost_at_5": 6,
+    "net_at_5": 9,
+    "promoted_at_20": 11,
+    "lost_at_20": 3,
+    "net_at_20": 8
+  },
+  "candidate_recovery": {
+    "old_complete_misses": 17,
+    "full_complete_misses": 5,
+    "bm25_unique_recovery": 11,
+    "table_unique_recovery": 1
+  },
+  "gates": {
+    "A_candidate_generalization": true,
+    "B_ltr_r20": true,
+    "C_top5": true,
+    "D_completion": true,
+    "E_case_direction": true,
+    "F_per_risk": false
+  },
+  "serious_regressions": [
+    "customer_concentration",
+    "material_litigation_compliance"
+  ],
+  "algorithm_or_config_changed_during_evaluation": false,
+  "disk": {
+    "before_bytes": 8399396864,
+    "after_bytes": 8399396864,
+    "peak_temporary_bytes": 1167745175,
+    "before_gib": 7.822547912597656,
+    "after_gib": 7.822547912597656,
+    "peak_mib": 1113.6485815048218
+  },
+  "runtime_seconds": 523.5036311149597
+}
