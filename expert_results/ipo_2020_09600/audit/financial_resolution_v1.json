@@ -1,0 +1,277 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2020_09600",
+  "source_pass1": "expert_results/ipo_2020_09600/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "ce9c864c633842b19ef17295ca04abe2c60a2a00b004fa91810c80063415d748",
+  "entry_count": 4,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "LOSS_PERIODS_MISSING",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 379,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "not_applicable",
+        "canonical_calculation_inputs": {
+          "loss_periods": [
+            {
+              "period": "six months ended 30 June 2019",
+              "loss": 2402.0
+            },
+            {
+              "period": "six months ended 30 June 2020",
+              "loss": 3054.0
+            }
+          ]
+        },
+        "normalized_facts": {
+          "H1": {
+            "loss_count": 0,
+            "level": "not_applicable",
+            "periods": [
+              {
+                "period": "six months ended 30 June 2019",
+                "loss": 2402.0,
+                "signature": "H1"
+              },
+              {
+                "period": "six months ended 30 June 2020",
+                "loss": 3054.0,
+                "signature": "H1"
+              }
+            ]
+          }
+        },
+        "source_fields": [
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss"
+        ],
+        "message": "All comparable duration groups imply the same continuous-loss level.",
+        "compatibility_layer": "legacy_structured_alias_v2"
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "revenue_growth",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 379,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "REVIEW_STATE",
+      "action": "SET_REVIEW_STATE",
+      "policy_code": "EVIDENCE_LIMITED_FINAL_REVIEW_STATE",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "source_outcome": {
+        "re_audit_status": "INSUFFICIENT_INPUT",
+        "finding_code": "PHASE2B_REVENUE_COMPARABLE_PAIR_INSUFFICIENT",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": null,
+        "source_fields": [],
+        "message": "",
+        "compatibility_layer": "legacy_structured_alias_v2"
+      },
+      "message": "Existing cited evidence does not support a frozen numeric threshold proof. The correct closed state is needs_review, not an invented number.",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 208,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": [
+          {
+            "period": "year ended 31 December 2017",
+            "largest_pct": 25.7,
+            "top_five_pct": 82.8,
+            "level": "high"
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "largest_pct": 24.0,
+            "top_five_pct": 65.8,
+            "level": "medium"
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_pct": 16.0,
+            "top_five_pct": 52.9,
+            "level": "not_applicable"
+          },
+          {
+            "period": "six months ended 30 June 2020",
+            "largest_pct": 22.6,
+            "top_five_pct": 62.7,
+            "level": "medium"
+          }
+        ],
+        "source_fields": [
+          "largest_customer_pct",
+          "top_five_customers_pct",
+          "largest_customer_pct",
+          "top_five_customers_pct",
+          "largest_customer_pct",
+          "top_five_customers_pct",
+          "largest_customer_pct",
+          "top_five_customers_pct"
+        ],
+        "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+      },
+      "message": "v1.1.2 retains the most adverse valid comparable-period state; later improvement does not erase an observed trigger.",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CONCENTRATION_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 215,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": [
+          {
+            "period": "year ended 31 December 2017",
+            "largest_pct": 36.0,
+            "top_five_pct": 88.0,
+            "level": "high"
+          },
+          {
+            "period": "year ended 31 December 2018",
+            "largest_pct": 22.8,
+            "top_five_pct": 77.7,
+            "level": "medium"
+          },
+          {
+            "period": "year ended 31 December 2019",
+            "largest_pct": 36.8,
+            "top_five_pct": 85.9,
+            "level": "high"
+          },
+          {
+            "period": "six months ended 30 June 2020",
+            "largest_pct": 32.7,
+            "top_five_pct": 67.2,
+            "level": "medium"
+          }
+        ],
+        "source_fields": [
+          "largest_supplier_pct",
+          "top_five_suppliers_pct",
+          "largest_supplier_pct",
+          "top_five_suppliers_pct",
+          "largest_supplier_pct",
+          "top_five_suppliers_pct",
+          "largest_supplier_pct",
+          "top_five_suppliers_pct"
+        ],
+        "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+      },
+      "message": "v1.1.2 retains the most adverse valid comparable-period state; later improvement does not erase an observed trigger.",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

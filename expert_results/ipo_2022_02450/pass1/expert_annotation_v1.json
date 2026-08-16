@@ -1,0 +1,322 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02450",
+  "stock_code": "2450.HK",
+  "company_name": "淮北綠金股份",
+  "document_id": "ipo_2022_02450",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the nine months ended September 30, 2022, the audited cash flow statement reports net cash generated from operating activities of RMB112,271 thousand and cash and cash equivalents at period end of RMB277,171 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 277171,
+        "net_cash_from_operating_activities": 112271,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of RMB168,876 thousand, RMB182,513 thousand, RMB98,894 thousand, RMB79,242 thousand and RMB77,596 thousand for 2019, 2020, 2021, 9M2021 and 9M2022 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 168876},
+          {"period": "year ended December 31, 2020", "profit": 182513},
+          {"period": "year ended December 31, 2021", "profit": 98894},
+          {"period": "nine months ended September 30, 2022", "profit": 77596}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB280,741 thousand in 9M2021 to RMB313,289 thousand in 9M2022, an increase of approximately 11.59%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "nine months ended September 30, 2021",
+        "current_period": "nine months ended September 30, 2022",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 280741,
+        "current_revenue": 313289
+      },
+      "calculation_result": {
+        "growth_pct": 11.593604069231072,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2022, the largest customer accounted for approximately 29.2% and the five largest customers accounted for approximately 54.3% of revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2022",
+        "largest_customer_pct": 29.2,
+        "top_five_customer_pct": 54.3,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2022, the largest supplier/subcontractor accounted for approximately 14.0% and the five largest suppliers/subcontractors accounted for approximately 46.5% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2022",
+        "largest_supplier_pct": 14.0,
+        "top_five_supplier_pct": 46.5,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The Group is controlled by state-owned Huaibei Construction Investment and its related entities. The corporate history describes capital contributions and reorganizations by controlling shareholders and local state-owned entities, with no external pre-IPO investor holding redemption, repurchase, put or other restorable special rights.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.94,
+      "reasoning": "The Business compliance sections state that the Group did not experience material litigation or claims from customers, did not experience material product returns or recalls with material adverse effect, had not been subject to material penalties for health, safety or environmental non-compliance, and its PRC Legal Advisers confirmed material compliance. No material pending proceeding was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02450",
+      "stock_code": "2450.HK",
+      "company_name": "淮北綠金股份",
+      "document_id": "ipo_2022_02450",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established construction aggregate and ready-mixed concrete producer with substantial revenue throughout the Track Record Period. Its core products are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "cash_runway",
+      "page": 583,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from operating activities 164,832 291,717 244,843 175,972 112,271",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest nine-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "cash_runway",
+      "page": 584,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at the end of the year/period 16(a) 180,773 61,504 581,670 580,533 277,171",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB277,171 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "continuous_loss",
+      "page": 575,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year/period 168,876 182,513 98,894 79,242 77,596",
+      "evidence_reason": "The audited statement of profit or loss shows profit in every comparable period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "revenue_growth",
+      "page": 575,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 4 492,542 506,382 370,327 280,741 313,289",
+      "evidence_reason": "The audited statement provides the 9M2021 and 9M2022 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "customer_concentration",
+      "page": 26,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Our Group's sales to our five largest customers in each year during the year ended 31 December 2019, 2020 and 2021 and the nine months ended 30 September 2022 accounted for approximately RMB190.5 million, RMB231.1 million, RMB211.0 million and RMB170.2 million, respectively, representing approximately 38.7%, 45.7%, 57.0% and 54.3% of our total revenue. Sales to the largest customer of our Group ... amounted to approximately RMB51.3 million, RMB92.1 million, RMB114.0 million and RMB91.4 million, respectively, representing approximately 10.4%, 18.2%, 30.8% and 29.2% of our total revenue.",
+      "evidence_reason": "The formal Business customer disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "supplier_concentration",
+      "page": 256,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For each of the financial year ended 31 December 2019, 2020 and 2021 and the nine months ended 30 September 2022, purchases from our five largest suppliers and subcontractors amounted to approximately RMB74.0 million, RMB64.0 million, RMB102.9 million and RMB51.5 million, representing approximately 49.2%, 48.4%, 60.6% and 46.5% of our total purchases, respectively, and purchases from our largest supplier/subcontractor amounted to approximately RMB30.8 million, RMB21.0 million, RMB73.9 million and RMB15.5 million, representing approximately 20.5%, 15.9%, 43.6% and 14.0% of our total purchases in the same periods, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "redemption_rights",
+      "page": 77,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "Huaibei Construction Investment, one of our Controlling Shareholders, may be subject to a number of regulatory requirements and guidelines ...",
+      "evidence_reason": "The corporate and risk disclosures identify state-owned controlling-shareholder ownership rather than external pre-IPO investors with special redemption rights.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "material_litigation_compliance",
+      "page": 271,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "We did not experience any material litigation or claims from our customers, or any return on sales or recalls of our delivered products which had a material adverse effect on our financial and business operation during the Track Record Period and up to the Latest Practicable Date.",
+      "evidence_reason": "The formal Business disclosure excludes material customer litigation, returns or recalls.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "risk_code": "precommercial_product",
+      "page": 10,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the three years ended 31 December 2021 and the nine months ended 30 September 2022, our revenue was approximately RMB492.5 million, RMB506.4 million, RMB370.3 million and RMB313.3 million, respectively.",
+      "evidence_reason": "The formal summary and Business disclosures prove the core aggregate and concrete products are commercialized and revenue-generating.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 871,
+    "source_document_sha256_expected": "ea5002bf4b6f57a58aa228de338d2c1a5de39bdb240c797d3e0241e88dc116f7"
+  }
+}

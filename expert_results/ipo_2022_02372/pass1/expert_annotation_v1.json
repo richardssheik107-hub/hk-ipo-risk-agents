@@ -1,0 +1,325 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02372",
+  "stock_code": "2372.HK",
+  "company_name": "偉立控股",
+  "document_id": "ipo_2022_02372",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For FY2021, the audited cash flow statement reports net cash generated from operating activities of RMB28,628 thousand and cash and cash equivalents at year end of RMB58,578 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 58578,
+        "net_cash_from_operating_activities": 28628,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year of RMB34,297 thousand, RMB42,171 thousand and RMB35,687 thousand for 2019, 2020 and 2021 respectively. There are zero comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2019", "profit": 34297},
+          {"period": "year ended December 31, 2020", "profit": 42171},
+          {"period": "year ended December 31, 2021", "profit": 35687}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB318,346 thousand in 2020 to RMB370,311 thousand in 2021, an increase of approximately 16.32%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "year ended December 31, 2020",
+        "current_period": "year ended December 31, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 318346,
+        "current_revenue": 370311
+      },
+      "calculation_result": {
+        "growth_pct": 16.323434250783738,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For FY2021, the largest customer accounted for approximately 25.4% and the five largest customers accounted for approximately 75.4% of total revenue. The top-five share exceeds the 60% medium threshold, while the largest-customer share remains below the 30% medium threshold and neither reaches the high thresholds.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "largest_customer_pct": 25.4,
+        "top_five_customer_pct": 75.4,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60,
+        "high_largest_threshold_pct": 50,
+        "high_top_five_threshold_pct": 80
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "largest_customer_high_triggered": false,
+        "top_five_customer_medium_triggered": true,
+        "top_five_customer_high_triggered": false,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For FY2021, the largest supplier accounted for approximately 22.6% and the five largest suppliers accounted for approximately 54.0% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "year ended December 31, 2021",
+        "largest_supplier_pct": 22.6,
+        "top_five_supplier_pct": 54.0,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The Pre-IPO Investment was a simple transfer of 3.00% of the equity interest in Hubei Qiangda from Mr. Hu to an independent Pre-IPO Investor at arm's length consideration. The corporate history does not disclose any redemption, repurchase, put or other restorable special rights granted to the Pre-IPO Investor.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.92,
+      "reasoning": "The formal Litigation and Claims section states that as of the Latest Practicable Date the Group was not engaged in any litigation, arbitration or claim of material importance and none was pending or threatened with a material adverse effect. The disclosed construction-permit, real-estate-certificate and social-insurance/housing-fund non-compliances were remediated or assessed by the Directors as immaterial.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02372",
+      "stock_code": "2372.HK",
+      "company_name": "偉立控股",
+      "document_id": "ipo_2022_02372",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The Group is an established cigarette packaging paper manufacturer that has generated substantial revenue from the sale of transfer paper, laminated paper and frame paper throughout the Track Record Period. Its core products are fully commercialized and revenue-generating.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "cash_runway",
+      "page": 349,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash generated from operating activities 24,415 70,770 28,628",
+      "evidence_reason": "The audited cash flow statement proves positive net cash from operating activities in the latest year.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "cash_runway",
+      "page": 345,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents 23(a) 26,535 37,559 58,578",
+      "evidence_reason": "The audited statement of financial position provides the period-end cash input of RMB58,578 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "continuous_loss",
+      "page": 344,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Profit for the year 34,297 42,171 35,687",
+      "evidence_reason": "The audited statement of comprehensive income shows profit in every comparable year.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "revenue_growth",
+      "page": 344,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 5 312,800 318,346 370,311",
+      "evidence_reason": "The audited statement provides the 2020 and 2021 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "customer_concentration",
+      "page": 166,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For FY2019, FY2020 and FY2021, the percentage of our total revenue attributable to our top customer amounted to approximately 27.1%, 28.8% and 25.4%, respectively, while the percentage of our total revenue attributable to our top five customers combined amounted to approximately 62.7%, 68.6% and 75.4%, respectively.",
+      "evidence_reason": "The formal Business customer disclosure supplies the latest-year largest-customer and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "supplier_concentration",
+      "page": 12,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For FY2019, FY2020 and FY2021, the percentage of our total purchases attributable from our top supplier amounted to approximately 15.4%, 21.9% and 22.6%, respectively, while the percentage of our total purchases from our top five suppliers combined amounted to approximately 52.3%, 59.0% and 54.0%, respectively.",
+      "evidence_reason": "The formal Business supplier disclosure proves both latest-year ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "redemption_rights",
+      "page": 17,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "On 12 April 2021, as part of our Reorganisation, Mr. Hu and the Pre-IPO Investor, entered into an equity transfer agreement, pursuant to which, Mr. Hu agreed to sell and transfer to the Pre-IPO Investor, and the Pre-IPO Investor agreed to acquire from Mr. Hu, 3.00% of equity interest in Hubei Qiangda at a consideration of RMB3.927 million.",
+      "evidence_reason": "The formal Pre-IPO disclosure describes a simple equity transfer without redemption, put or other special rights.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "material_litigation_compliance",
+      "page": 19,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "As at the Latest Practicable Date, we were not engaged in any litigation, arbitration or claim of material importance, and no litigation, arbitration or claim of material importance is known to our Directors to be pending or threatened by or against us, that would have a material adverse effect on our business, results of operations or financial condition.",
+      "evidence_reason": "The formal litigation disclosure excludes material pending or threatened proceedings.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "risk_code": "precommercial_product",
+      "page": 10,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, our revenue was mainly derived from the sale of cigarette packaging paper. Our products are categorised into (i) transfer paper; (ii) laminated paper; and (iii) frame paper.",
+      "evidence_reason": "The formal Business disclosure proves the core packaging paper products are commercialized and revenue-generating.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 466,
+    "source_document_sha256_expected": "f4f69ded626517bb0b69d2744c1dcc8033697830db88c279596a4ceb72e34e33"
+  }
+}

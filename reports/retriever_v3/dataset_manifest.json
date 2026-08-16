@@ -1,0 +1,618 @@
+{
+  "manifest_version": "retriever_v3_dataset_v1",
+  "annotation_count": 60,
+  "case_id_unique_count": 60,
+  "real_case_excluded": true,
+  "cases": [
+    {
+      "case_id": "ipo_2020_00368",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_00368/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "92e9d6be1fd3a40da0f61e41bdd0522e0e3f27a8d9414086fc1327fb3abd2520",
+      "source_year": "2020",
+      "pdf_filename": "00368_30-06-2020_德合集團_股份發售.pdf",
+      "pdf_sha256": "642a84775c107ebbc4a7534f88b2aba6399410937933d678b223feb342977a82",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_01167",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_01167/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "a120ebe548d57f4313b9e97cd36bb8fc73f376def40e1a8642bd2ee36c187ca3",
+      "source_year": "2020",
+      "pdf_filename": "01167_09-12-2020_加科思－Ｂ_全球發售.pdf",
+      "pdf_sha256": "2263d1fbe46705b3132c4c2a2e2a4dc2dd8d2d19d52d596489ca26cfdc01acdf",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_01408",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_01408/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "57b2617f6e9e8419e82dfcbe5872abfdd73f336dda67e933a4c127247439426e",
+      "source_year": "2020",
+      "pdf_filename": "01408_31-08-2020_濠江機電_全球發售.pdf",
+      "pdf_sha256": "400222a946ae16db10f27cf06a19d47d56699dacf59e94a5b8038daece4b0306",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_01942",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_01942/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "1dab978381c287c26d3045040e2a9b900972e628bb0d8ac610fb97682a851778",
+      "source_year": "2020",
+      "pdf_filename": "01942_27-03-2020_MOG HOLDINGS_全球發售.pdf",
+      "pdf_sha256": "3ebcaf5da05e1b9f32b1aa14098ed396b04fdcf0543dc87703125f5c56caf3bb",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_01961/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "106a8b3cdd74930aaf997c237f8f5f73a9a60571861668a018bece2af8e04178",
+      "source_year": "2020",
+      "pdf_filename": "01961_27-02-2020_九尊數字互娛_全球發售.pdf",
+      "pdf_sha256": "18be934a7173d7d26738ad563536dc5542d15015725822ff9e254d23737d611b",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_02057/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "c4b8c993ef63829a899bd89c01cad4a1c9af48332ba9aa6e868842bae3c56936",
+      "source_year": "2020",
+      "pdf_filename": "02057_17-09-2020_中通快遞－ＳＷ_全球發售.pdf",
+      "pdf_sha256": "521c1b742aa384a7e6d4e062fabf2db097c5b2dbe9f870d4672fb0ce7cfd392a",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_02135",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_02135/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "59ac2ea072ac2b860118c523d56c2784c7c5d69e37231e550861491059fcb3a5",
+      "source_year": "2020",
+      "pdf_filename": "02135_15-12-2020_瑞麗醫美_全球發售.pdf",
+      "pdf_sha256": "9aaa6a7245cb9629ac31a2955049ec834cedf05ab28b41ba24515ba58799a0dc",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_02263/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "e4cb8eed8777b9149ee697a454cfd7cb24b0eff258db8217a2e28359fa8f915b",
+      "source_year": "2020",
+      "pdf_filename": "02263_31-01-2020_富石金融_股份發售.pdf",
+      "pdf_sha256": "d1b350f04dd5859fe25ceb6ab4197c443bfa82bbfaef4d82310c7c776788194c",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_02599",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_02599/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "d5eaece55db64921367b5836e34565a2dcd68cb3827460e95b02f612b23780ad",
+      "source_year": "2020",
+      "pdf_filename": "02599_30-10-2020_祥生控股集團_全球發售.pdf",
+      "pdf_sha256": "2a15fa8876dbbbbaa5363a8d15e1c1888a09006f39251e4e3980904af8d2ecde",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_03347",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_03347/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "256cc37e15cdbc5a272a2b8e0186bc4c8916159d76508c337caf529476b04041",
+      "source_year": "2020",
+      "pdf_filename": "03347_28-07-2020_泰格醫藥_全球發售.pdf",
+      "pdf_sha256": "b23e631896c4c40fb47309b3a4fe1f282dc54ba338805820a5e439946f7fa55b",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_06063",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_06063/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "f054a67f4c8fb0c6a1a17607e261fe0c56266587c9feb3b6aa709e5925b741ca",
+      "source_year": "2020",
+      "pdf_filename": "06063_30-03-2020_智中國際_股份發售.pdf",
+      "pdf_sha256": "b1ee364b8d449c72bee552da969dfb05f8bd34a01ad02233d0468957a0012741",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_06618",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_06618/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "5bae7ad7cbb40b525a0c66f59e1494238cc2c9a7e8efb3a1f2ee460e75fa0da7",
+      "source_year": "2020",
+      "pdf_filename": "06618_26-11-2020_京東健康_全球發售.pdf",
+      "pdf_sha256": "37762cd54042ca0e15c35e1c6dc13532ac13365d9ac7fb1f145608c0e23d8e5c",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_06688",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_06688/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "5fff76f68a0a5fb5498383d700cbb7e01c3ad6606aa72ed61e6536b6c63150bc",
+      "source_year": "2020",
+      "pdf_filename": "06688_26-10-2020_螞蟻集團_H股首次公開發售.pdf",
+      "pdf_sha256": "a1f87c72f4631cbe9567b2a04c25b00f75ff5d57dfc339601cde93f8225ddcd0",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_06900",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_06900/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "98d938c81d4aef0b1fe89858088677ea6b15b4e781aa2408aecd4504da86fcba",
+      "source_year": "2020",
+      "pdf_filename": "06900_30-10-2020_上坤地產_全球發售.pdf",
+      "pdf_sha256": "dd1a3d2d44eed483b018cfb6c32853993eb4435b6dc6b27e09ca31e310893dda",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_06968",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_06968/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "4549a7e3d6d420a2e93d18cc34ac224a599e270ffe33ec7c598bc0b125b893fd",
+      "source_year": "2020",
+      "pdf_filename": "06968_29-06-2020_港龍中國地產_全球發售.pdf",
+      "pdf_sha256": "070505746a931b3e2e7423864f5fa93f5a8774905838939fa1a3a326d5458b94",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_08489",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_08489/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "1f9b323e24910f42c0b476b991d2108eed4399032666d96ce4e1fc7c8ad511d1",
+      "source_year": "2020",
+      "pdf_filename": "08489_30-12-2020_裕程物流_以股份發售方式於香港聯合交易所有限公司GEM上市.pdf",
+      "pdf_sha256": "44b6b4041bc32772c62b176b882f66f7878d176f1864194f5208c4258064b592",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_09600",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_09600/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "ce9c864c633842b19ef17295ca04abe2c60a2a00b004fa91810c80063415d748",
+      "source_year": "2020",
+      "pdf_filename": "09600_21-12-2020_新紐科技_全球發售.pdf",
+      "pdf_sha256": "910a88642233aabbdb2f008d84deb7b1ca124bdb0e224d63db948076d8ce9809",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_09633",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_09633/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "6e40223383bc145d9eef3e59be79f05d2e42471b0251bd1b585e65c5b8dce54e",
+      "source_year": "2020",
+      "pdf_filename": "09633_25-08-2020_農夫山泉_全球發售.pdf",
+      "pdf_sha256": "0ccd4fd34d53384bab305753d8884ecae9d72c2df949865b1741b61caf314bce",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_09901",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_09901/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "e331896200cc901b0c36eb0bbf7832343037163f981a18afe81519e154999fb1",
+      "source_year": "2020",
+      "pdf_filename": "09901_29-10-2020_新東方－Ｓ_全球發售.pdf",
+      "pdf_sha256": "f4f6a1b6833f58abf57a19a2152c8130048758947786eb79bd12176e241e6c3d",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2020_09986",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2020_09986/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "66a0fc63a68bf3e8933c789cca45120f0d334d9bf151cc7a38144aeabb93a33e",
+      "source_year": "2020",
+      "pdf_filename": "09986_30-06-2020_大山教育_股份發售.pdf",
+      "pdf_sha256": "ba5f00703a5535c1b75eb5d9af50d5397966f2c8accee78e5c1299785b79bbff",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_00013",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_00013/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "c59ecef39b11cd42620584d0c0bec2dd73219a70683566fd5af1e0b26377c973",
+      "source_year": "2021",
+      "pdf_filename": "00013_18-06-2021_和黃醫藥_全球發售.pdf",
+      "pdf_sha256": "84ee3b9d141df98e3cdc4d85836e1ddcfa4dc983fd222a5258c44da468d13f47",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_00606",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_00606/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9452aa47149c05415c04f048c7ca6565b1c7270acf88f6a6712add98af9b65f3",
+      "source_year": "2021",
+      "pdf_filename": "00606_21-06-2021_中駿商管_全球發售.pdf",
+      "pdf_sha256": "163c377cafbd01cd32a3fb8176787a3eb29b0f4512f04ca3e184017b1660d228",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_01024/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "0b9853e2bdbbb42ba05a80dcaef82c8d17c2bbde8124ca6a259e1dea94254a0f",
+      "source_year": "2021",
+      "pdf_filename": "01024_26-01-2021_快手－Ｗ_全球發售.pdf",
+      "pdf_sha256": "7f37b0bd780b18d368ec8d15350fbb9615497b2ae0546e4391cd7503602fea6d",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_01413",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_01413/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "3a57a8ce8b39bf6e14e1c1798e8a1ae41a40e2fdb2881d8475ee3caf980c8829",
+      "source_year": "2021",
+      "pdf_filename": "01413_26-02-2021_廣聯工程控股_股份發售.pdf",
+      "pdf_sha256": "c44cfcb11038be254e385c8f8770359a783bb13dd4e09b5b8316996a6d52ee53",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_01927",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_01927/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "15b7870e67d31564d1b9e2f1ca3e5802191bfee35661d256d53152097c4a848a",
+      "source_year": "2021",
+      "pdf_filename": "01927_26-02-2021_久久王_全球發售.pdf",
+      "pdf_sha256": "13ec97ab513909d3a8ebf7e6b74f3e99f2b5559edd9a6897f92c6715528ddd5c",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02015",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02015/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "98acc600a67e3f02ff82b533c778f660a6ed46bfc0c0b951a094c324acc079c6",
+      "source_year": "2021",
+      "pdf_filename": "02015_03-08-2021_理想汽車－Ｗ_全球發售.pdf",
+      "pdf_sha256": "182f6d8aeb9436c058609e7e4f908419b2913859b3fddcbc610ea7ef5e931332",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02137",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02137/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "58c67fd17a580e4df35b9f54830dc8ead2a6aa423c468a22969792ebe2f463a1",
+      "source_year": "2021",
+      "pdf_filename": "02137_30-06-2021_騰盛博藥－Ｂ_全球發售.pdf",
+      "pdf_sha256": "5b5816e86391892d1495b2341e00bf0b5f8fc36d8032de2b7f813d950e90d01b",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02160",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02160/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "b1aeaf66cb5cc0240f793187b74053aab36f1b0df7c90e611e4084ed5330ee5d",
+      "source_year": "2021",
+      "pdf_filename": "02160_26-01-2021_心通醫療－Ｂ_全球發售.pdf",
+      "pdf_sha256": "bd38e50bf3967507acb9c3978944d71b41f0b05a42de5b4233ff3c7e41df6687",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02190/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9f005d20889e259364a957a7e06c2a841607d5e2ad1f90cc71612958e5049cc0",
+      "source_year": "2021",
+      "pdf_filename": "02190_22-06-2021_歸創通橋－Ｂ_全球發售.pdf",
+      "pdf_sha256": "930888e3492f193ace220d15efae981ba5474bdcdc020e8838af2c2ee360beed",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02215",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02215/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "ef3589acdc413846910b152391a601cdb3326bd741abccf25d2eeeded04ac41d",
+      "source_year": "2021",
+      "pdf_filename": "02215_29-06-2021_德信服務集團_全球發售.pdf",
+      "pdf_sha256": "994398f93e51959b8b94c3b9767970651c2099f60c9c1cc831ee2708939a48a1",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02235",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02235/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "7417ec0d5cb40441d0debfa9f72123d9c2b8a02c18152003e8c3b2021e3e49f4",
+      "source_year": "2021",
+      "pdf_filename": "02235_06-10-2021_微泰醫療－Ｂ_全球發售.pdf",
+      "pdf_sha256": "aef0d7097739d39590dc68ffac9110e82e640985e6f6ff8f86a39067016974e2",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_02518",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_02518/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "ac452a5a56da3fe65f809db5e86343560ede668579d58d31c4d66980f3dba174",
+      "source_year": "2021",
+      "pdf_filename": "02518_04-03-2021_汽車之家－Ｓ_全球發售.pdf",
+      "pdf_sha256": "1a9d25b9f9249c172d6dce5c3f843054ee916cb812dcc98b86032d624d9709a9",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_03658",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_03658/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "f64509a19264163c1ec803429246b887198807a193f11f9598a00213c9249fc8",
+      "source_year": "2021",
+      "pdf_filename": "03658_11-05-2021_新希望服務_全球發售.pdf",
+      "pdf_sha256": "5ff761f55e35e056ba8ca9889a4e75e2adfadff17663c6908a5314eb91f4dd97",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_06601",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_06601/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "bcf1b20f9f35b3943191cb0baef573bc0a9f80b5c57b1d305a08bc045dae50d2",
+      "source_year": "2021",
+      "pdf_filename": "06601_26-02-2021_朝雲集團_全球發售.pdf",
+      "pdf_sha256": "191f896ca0332fcfc6ff6d3a35e41d0fd20c6f3b6949468097010d8cd80d59b9",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_06628/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "60fca941d131cebc7f500a5ef2fb654b5685ade2521abcba6c8f3022f38d3599",
+      "source_year": "2021",
+      "pdf_filename": "06628_14-09-2021_創勝集團－Ｂ_全球發售.pdf",
+      "pdf_sha256": "f9935fcc36c5ee958b98c0ce92a8c5449f99daceb3ca0f9517df277106470556",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_06668",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_06668/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "99da1bdb8bc82dcc1cebf563ea679eb83a6941d8a6eeced8b19d22dfccf51c0c",
+      "source_year": "2021",
+      "pdf_filename": "06668_14-01-2021_星盛商業_全球發售.pdf",
+      "pdf_sha256": "241ca562155cae66a4437831986cad4416d7d42191afb75a9829c424104d5ba0",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_06821",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_06821/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "1a70e3c8a583f5279b32771e486aad8a22a251811573ec5882daeeba83547503",
+      "source_year": "2021",
+      "pdf_filename": "06821_30-11-2021_凱萊英_全球發售.pdf",
+      "pdf_sha256": "ea3b41013c970e476a840bb4b972be64953b7a4380f48f3eb8cfab0cfd4be8be",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_09626",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_09626/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9376d31310dca1c3f167afa2fbf73f49c7dae7904c0f48dd1ca343df948aa280",
+      "source_year": "2021",
+      "pdf_filename": "09626_18-03-2021_嗶哩嗶哩－ＳＷ_全球發售.pdf",
+      "pdf_sha256": "be35c5e041222cc20f900625efb9a4b9ebbc293a5287d4e2b61bf95983e2e27c",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_09898",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_09898/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "16d72c6e2f57c16ea4e5e92d0424c47657b0839cda4606ee44ef6c47dd7cfea1",
+      "source_year": "2021",
+      "pdf_filename": "09898_29-11-2021_微博－ＳＷ_全球發售.pdf",
+      "pdf_sha256": "7553299e1dfbd2f1e4269d4e351d013c521d7d4e6903744682c7fd6e0821a9f7",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2021_09982",
+      "split": "historical_development",
+      "annotation_path": "expert_results/ipo_2021_09982/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9c5dbc1117836e1b57fa97dd944bd326e46fb4918ae531e883c1b6d3f8adf1e3",
+      "source_year": "2021",
+      "pdf_filename": "09982_18-05-2021_中原建業_全球發售.pdf",
+      "pdf_sha256": "e5ac20fa4fca1816bfe65f6f1a467bf83beefd77f5b2f043f29d4efa3203b075",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_00314",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_00314/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "27ca165e62e31527c9c3dafeca9aea6e9e596717c198fc3fbf343b42affa22cc",
+      "source_year": "2022",
+      "pdf_filename": "00314_12-12-2022_思派健康_全球發售.pdf",
+      "pdf_sha256": "f774411f7d88a9f0fa10209ed7cd2fa6adba693d27475006b0e83792704f4501",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_00816/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "1096090d3c4ba31c1f8245436c8bf16c0f42d6bdf4276f7613a190dee15fcffe",
+      "source_year": "2022",
+      "pdf_filename": "00816_25-02-2022_金茂服務_全球發售.pdf",
+      "pdf_sha256": "60676b038ecf142ebed311c9344efd12fe78124e4a85143c4ff6add7fca95100",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_01204",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_01204/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "ce8c7a9ebf530611a297c7b2f59df69203f09f346a31b24c02419e3aed732a58",
+      "source_year": "2022",
+      "pdf_filename": "01204_29-06-2022_博維智慧_全球發售.pdf",
+      "pdf_sha256": "d71271444d8ef2dfa72756b41838051a7be3e6cbb4d3038034678edbb3ea147d",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_01406",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_01406/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "55e99319bfc2ece949f025f9d49cd5b840e3a02d95ae17576821ff5c0902a1ed",
+      "source_year": "2022",
+      "pdf_filename": "01406_31-01-2022_清晰醫療_全球發售.pdf",
+      "pdf_sha256": "622e4ea97bd041404406e1da3472fde245f7c775d058a56043790e152fbdd500",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_01880",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_01880/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "0ef36fcb570b40373d59a267e5fae3650578cfee219cf10c6d6cec8ab81119ed",
+      "source_year": "2022",
+      "pdf_filename": "01880_15-08-2022_中國中免_全球發售.pdf",
+      "pdf_sha256": "60f2c7ad3a69088d7f13707f4de0623e9b9c03c18691d76873f3aa51f4bb4b37",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_02121/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "5d0f2050af70c3b129f53740b22223ddc987319c47f8a58d5fbac9fa697e2298",
+      "source_year": "2022",
+      "pdf_filename": "02121_17-01-2022_創新奇智_全球發售.pdf",
+      "pdf_sha256": "e335e0af377fb176407797dc5fdb72fcc88d27166b728c7ed516d2157520e057",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02145",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_02145/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "e865c380beedd2645ebdb03aabbd78f3e3e5f73abfe443df279e8f1c45067835",
+      "source_year": "2022",
+      "pdf_filename": "02145_12-12-2022_上美股份_全球發售.pdf",
+      "pdf_sha256": "46cc827247065aa6f3003249a663e3ed4116e7123cc5750cc18c959a74dc2d7e",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02179",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_02179/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "f349d3454578fea59f6bed58c2309b42861d4fcbde2a0520050688f697e28842",
+      "source_year": "2022",
+      "pdf_filename": "02179_21-03-2022_瑞科生物－Ｂ_全球發售.pdf",
+      "pdf_sha256": "aa8c5e8e370e0072e8158afde83eee9d28fa8a0637a278514d242fae9d863ceb",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02237",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_02237/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "39d1470ed32edfcc08054cdea1ec31a120f24581c9525112188b182d900a175f",
+      "source_year": "2022",
+      "pdf_filename": "02237_30-06-2022_中國石墨_全球發售.pdf",
+      "pdf_sha256": "347f579d031a1aafe298ed756b336b39b5359c8f075af1301d2522386a4314a9",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02372",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_02372/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9e36d3934f226b3ea8ff78682302662ac97b56243ca11302d0cedfee135fccd6",
+      "source_year": "2022",
+      "pdf_filename": "02372_17-06-2022_偉立控股_股份發售.pdf",
+      "pdf_sha256": "f4f69ded626517bb0b69d2744c1dcc8033697830db88c279596a4ceb72e34e33",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02407",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_02407/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9a5bbbb63ca8374ee980aff94721ac094b6d91b976c711996abfe85abc93aca6",
+      "source_year": "2022",
+      "pdf_filename": "02407_30-11-2022_高視醫療_全球發售.pdf",
+      "pdf_sha256": "76558d6414b429e7397dd05358487f35789b8615c836edf915fad893433de0fe",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02450",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_02450/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "ce44a6ca5417ba1a87ec52e63771e67d18e53c8820c1fbabe9a044bd8cec3602",
+      "source_year": "2022",
+      "pdf_filename": "02450_30-12-2022_淮北綠金股份_全球發售.pdf",
+      "pdf_sha256": "ea5002bf4b6f57a58aa228de338d2c1a5de39bdb240c797d3e0241e88dc116f7",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_02602",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_02602/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "970d9e202e1a3ced984d6c35316d2cab23613c8243f3c98a6afa56812c85dcb1",
+      "source_year": "2022",
+      "pdf_filename": "02602_19-09-2022_萬物雲_全球發售.pdf",
+      "pdf_sha256": "398087b758fce1142427d2014de1d94e00310c1cd0ea03fc30fc96042f85755f",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_06610/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "c69a518ec566b96f6fefbf3d1714a573ffb35c3182de74ba0fc9c649b304b9b8",
+      "source_year": "2022",
+      "pdf_filename": "06610_29-09-2022_飛天雲動_全球發售.pdf",
+      "pdf_sha256": "726e923278ee3b3040fc5c65f5fe3b791bbb9857ed66f85bd23eb33e0b776967",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_06698",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_06698/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "b80277074b7190557983084e719fe3ab4bf267672947254ab730ddd68cd1f082",
+      "source_year": "2022",
+      "pdf_filename": "06698_15-12-2022_星空華文_全球發售.pdf",
+      "pdf_sha256": "1c90b9375beccdcffaf6c3ad8d20057b0ba0497c0be09fae4e9d7446e9b9fb92",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_06922",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_06922/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "384033e8e4ed99f0da44a7368bd271589a8d32c7d357d27a67620ff4f52704ab",
+      "source_year": "2022",
+      "pdf_filename": "06922_16-12-2022_康灃生物－Ｂ_全球發售.pdf",
+      "pdf_sha256": "870bae207ad9c308d9d8f32b46ebf78f3aa5f6bd6368206001d12cf897491272",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_09638",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_09638/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "297482f3aaedd4a2d560234df6ec3c1f031da8ce2c2287c14f412b0690509fb3",
+      "source_year": "2022",
+      "pdf_filename": "09638_22-03-2022_法拉帝_全球發售.pdf",
+      "pdf_sha256": "6030a6fea23dc00889a9c1cff82d93c66897c2c54a5b644811dd93814f488d08",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_09863",
+      "split": "new_development",
+      "annotation_path": "expert_results/ipo_2022_09863/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "9cb5ae8f750a6f992c04edeb4e6c42c2a42b225be792dfba84d52d22095077eb",
+      "source_year": "2022",
+      "pdf_filename": "09863_20-09-2022_零跑汽車_全球發售.pdf",
+      "pdf_sha256": "6eb1b59f728ffad582efa6f62d578bfe81ee833665d9f2ad4933ac8e5fcc6290",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_09886",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_09886/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "b58c62dbfbaed5148b56e340a254a39a07e46b269d76d687c7b4184db61281bd",
+      "source_year": "2022",
+      "pdf_filename": "09886_01-09-2022_叮噹健康_全球發售.pdf",
+      "pdf_sha256": "b63e16c1dda2cd8a0e567b597b34fa5a07ab7c1ca33a7b26befe9f364f2e993a",
+      "pdf_locatable": true
+    },
+    {
+      "case_id": "ipo_2022_09985",
+      "split": "locked_validation",
+      "annotation_path": "expert_results/ipo_2022_09985/pass1/expert_annotation_v1.json",
+      "annotation_sha256": "8d0525364e9cc07060c50069f4b5807bfa9d554820c3a2ed48955320a9d2605c",
+      "source_year": "2022",
+      "pdf_filename": "09985_05-12-2022_衛龍_全球發售.pdf",
+      "pdf_sha256": "358b23fe1620fa20fa4c915d3d7fcb3235410525158041df161eb6f2f6077aee",
+      "pdf_locatable": true
+    }
+  ],
+  "schema_validation": {
+    "json_readable": 60,
+    "compatible": 60,
+    "top_level_schema_variant_count": 1
+  },
+  "year_counts": {
+    "2020": 20,
+    "2021": 20,
+    "2022": 20
+  }
+}

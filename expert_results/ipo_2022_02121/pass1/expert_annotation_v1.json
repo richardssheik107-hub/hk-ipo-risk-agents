@@ -1,0 +1,325 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_02121",
+  "stock_code": "2121.HK",
+  "company_name": "創新奇智",
+  "document_id": "ipo_2022_02121",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the nine months ended September 30, 2021, the audited cash flow statement reports net cash used in operating activities of RMB174,386 thousand and cash and cash equivalents at period end of RMB1,654,623 thousand. Monthly operating cash burn is approximately RMB19,376 thousand and cash runway is approximately 85.40 months, above the 12-month trigger.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_absolute_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash": 1654623,
+        "net_cash_used_in_operating_activities": -174386,
+        "period_months": 9,
+        "monthly_cash_burn": 19376.222222222223
+      },
+      "calculation_result": {
+        "months": 85.3945098803803,
+        "cash_runway_months": 85.3945098803803,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows a loss for the period/year in each of 2018, 2019, 2020, 9M2020 and 9M2021, with amounts of RMB71,174 thousand, RMB248,359 thousand, RMB360,635 thousand, RMB233,010 thousand and RMB438,019 thousand respectively. Five comparable loss periods exceed the frozen high threshold of at least three comparable loss periods.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "loss_periods": [
+          {"period": "period from February 6 to December 31, 2018", "loss": -71174},
+          {"period": "year ended December 31, 2019", "loss": -248359},
+          {"period": "year ended December 31, 2020", "loss": -360635},
+          {"period": "nine months ended September 30, 2020", "loss": -233010},
+          {"period": "nine months ended September 30, 2021", "loss": -438019}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 5,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Revenue increased from RMB297,639 thousand in 9M2020 to RMB553,015 thousand in 9M2021, an increase of approximately 85.80%. The latest comparable growth is positive and does not trigger the frozen negative-growth thresholds.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "nine months ended September 30, 2020",
+        "current_period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 297639,
+        "current_revenue": 553015
+      },
+      "calculation_result": {
+        "growth_pct": 85.80062683270931,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2021, the largest customer accounted for approximately 14.0% and the five largest customers accounted for approximately 44.3% of total revenue. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_customer_pct": 14.0,
+        "top_five_customer_pct": 44.3,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_customer_medium_triggered": false,
+        "top_five_customer_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For 9M2021, the largest supplier accounted for approximately 18.5% and the five largest suppliers accounted for approximately 43.9% of total purchases. Both ratios remain below the frozen medium thresholds of 30% and 60%.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_supplier_pct": 18.5,
+        "top_five_supplier_pct": 43.9,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Pre-IPO investors held Redeemable Shares with redemption rights, liquidation preference, anti-dilution, tag-along and drag-along rights. On March 30, 2021, these shareholders waived the redeemable rights against the Company, tag-long rights, drag-along rights, anti-dilution and liquidation preference, and the financial liabilities of redeemable shares were transferred to capital reserve. No restoration of the waived rights is disclosed.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that as of the Latest Practicable Date the Group was not a party to, and was not aware of any threat of, any legal, arbitral or administrative proceedings likely to have a material adverse effect, and that it had complied with applicable laws and regulations in all material respects. No material pending matter was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_02121",
+      "stock_code": "2121.HK",
+      "company_name": "創新奇智",
+      "document_id": "ipo_2022_02121",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The Group conducts research and development and sells AI-based software and hardware technology solutions in China. Its core AI-based products and solutions generated substantial revenue throughout the Track Record Period, so the core products are already commercialized and are not a precommercial product stage.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "cash_runway",
+      "page": 372,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash used in operating activities (2,893) (188,987) (174,205) (141,261) (174,386)",
+      "evidence_reason": "The audited cash flow statement provides the 9M2021 operating cash burn input of RMB174,386 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "cash_runway",
+      "page": 372,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Cash and cash equivalents at the end of the period/year 27(b) 74,396 605,631 1,042,502 415,387 1,654,623",
+      "evidence_reason": "The audited cash flow statement supplies the standard cash input of RMB1,654,623 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "continuous_loss",
+      "page": 364,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Loss for the period/year (71,174) (248,359) (360,635) (233,010) (438,019)",
+      "evidence_reason": "The audited consolidated statement of comprehensive income proves losses in all five comparable periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "revenue_growth",
+      "page": 364,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Revenue 6 37,208 229,141 462,324 297,639 553,015",
+      "evidence_reason": "The audited statement provides the 9M2020 and 9M2021 revenue inputs for the positive growth calculation.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "customer_concentration",
+      "page": 199,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "Revenue generated from our largest customer for 2018, 2019, 2020 and the nine months ended September 30, 2021 accounted for approximately 9.8%, 7.2%, 11.6% and 14.0%, respectively, of our total revenues during those periods. Revenue generated from our five largest customers in each of 2018, 2019, 2020 and the nine months ended September 30, 2021 accounted for approximately 38.8%, 29.3%, 42.1% and 44.3%, respectively, of our total revenue during those periods.",
+      "evidence_reason": "The formal Business top-customers disclosure supplies the latest-period largest-customer and top-five ratios.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "supplier_concentration",
+      "page": 12,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "During the Track Record Period, our five largest suppliers contributed a total of 75.8%, 30.6%, 32.9% and 43.9% of our total purchases for each of the relevant year/period, respectively. Our largest supplier accounted for 21.0%, 8.3%, 13.0% and 18.5% of our total purchases for each of the same periods, respectively.",
+      "evidence_reason": "The formal Business major-suppliers disclosure proves both latest-period ratios are below the frozen medium thresholds.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "redemption_rights",
+      "page": 22,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "On March 30, 2021, pursuant to the agreement among shareholders, shareholders with redeemable shares waived redeemable rights against the Company, tag-long rights, drag-along rights, anti-dilution and liquidation preference. As a result, the Company transferred the balance of financial liabilities of redeemable shares to capital reserve. Therefore, we do not expect to recognize any further loss or gain from change of the present value of redemption amount.",
+      "evidence_reason": "The formal Pre-IPO disclosure proves the redemption and other special rights were waived before the Listing with no disclosed restoration.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "material_litigation_compliance",
+      "page": 221,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "LEGAL PROCEEDINGS AND COMPLIANCE Legal Proceedings As of the Latest Practicable Date, we were not a party to, and we were not aware of any threat of, any legal, arbitral or administrative proceedings, which, individually or in the aggregate, in our opinion, is likely to have a material and adverse effect on our business, financial condition or results of operations. ... Compliance During the Track Record Period and up to the Latest Practicable Date, we had complied with the applicable laws an regulations in relation to our business in all material respects.",
+      "evidence_reason": "The formal legal proceedings and compliance section excludes material pending proceedings and material non-compliance.",
+      "confidence": 0.98
+    },
+    {
+      "case_id": "ipo_2022_02121",
+      "risk_code": "precommercial_product",
+      "page": 373,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "The Company and its subsidiaries (collectively, the “Group”) conduct research and development and sells Artificial Intelligence based software and hardware technology solutions in China.",
+      "evidence_reason": "The accountants' report general-information note establishes that the Group sells its AI technology solutions, i.e., the core products are commercialized.",
+      "confidence": 0.98
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 546,
+    "source_document_sha256_expected": "e335e0af377fb176407797dc5fdb72fcc88d27166b728c7ed516d2157520e057"
+  }
+}

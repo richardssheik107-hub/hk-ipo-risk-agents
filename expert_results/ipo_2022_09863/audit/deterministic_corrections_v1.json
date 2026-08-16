@@ -1,0 +1,36 @@
+{
+  "artifact_version": "expert_annotation_deterministic_corrections_v1",
+  "phase2_version": "expert_annotation_phase2_audit_v1",
+  "case_id": "ipo_2022_09863",
+  "source_pass1": "expert_results/ipo_2022_09863/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "9cb5ae8f750a6f992c04edeb4e6c42c2a42b225be792dfba84d52d22095077eb",
+  "review_outcome": "deterministic_audit_correction",
+  "promoted_to_final": false,
+  "correction_count": 1,
+  "corrections": [
+    {
+      "risk_code": "supplier_concentration",
+      "finding_code": "CONCENTRATION_LABEL_CONFLICT",
+      "original": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "replacement": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "audit_message": "Recomputed supplier concentration is largest=16.2%, top-five=35.4%; stored label conflicts with 30/60 medium and 50/80 high thresholds.",
+      "deterministic_details": {
+        "largest_pct": 16.2,
+        "top_five_pct": 35.4
+      }
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false
+  }
+}

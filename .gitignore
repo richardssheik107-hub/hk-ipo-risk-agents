@@ -18,6 +18,8 @@ data/competition/*
 reports/*
 !reports/retrieval_40_baseline/
 !reports/retrieval_40_baseline/**
+!reports/retriever_v3/
+!reports/retriever_v3/**
 !reports/.gitkeep
 !reports/llm_reranker_pilot/
 !reports/llm_reranker_pilot/**

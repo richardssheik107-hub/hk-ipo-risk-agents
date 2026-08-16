@@ -1,0 +1,249 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2021_02160",
+  "source_pass1": "expert_results/ipo_2021_02160/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "b1aeaf66cb5cc0240f793187b74053aab36f1b0df7c90e611e4084ed5330ee5d",
+  "entry_count": 3,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "LOSS_PERIODS_MISSING",
+      "priority": "P0_POSITIVE_OR_NEEDS_REVIEW",
+      "evidence_refs": [
+        {
+          "page": 409,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "CANONICAL_INPUTS_CONFIRM_LABEL",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "source_outcome": {
+        "re_audit_status": "PASS",
+        "finding_code": "PASS",
+        "recomputed_level": "medium",
+        "canonical_calculation_inputs": {
+          "loss_periods": [
+            {
+              "period": "year ended 31 December 2018",
+              "loss": -60263.0
+            },
+            {
+              "period": "year ended 31 December 2019",
+              "loss": -144522.0
+            },
+            {
+              "period": "seven months ended 31 July 2019",
+              "loss": -83499.0
+            },
+            {
+              "period": "seven months ended 31 July 2020",
+              "loss": -192628.0
+            }
+          ]
+        },
+        "normalized_facts": {
+          "FY": {
+            "loss_count": 2,
+            "level": "medium",
+            "periods": [
+              {
+                "period": "year ended 31 December 2018",
+                "loss": -60263.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended 31 December 2019",
+                "loss": -144522.0,
+                "signature": "FY"
+              }
+            ]
+          },
+          "7M": {
+            "loss_count": 2,
+            "level": "medium",
+            "periods": [
+              {
+                "period": "seven months ended 31 July 2019",
+                "loss": -83499.0,
+                "signature": "7M"
+              },
+              {
+                "period": "seven months ended 31 July 2020",
+                "loss": -192628.0,
+                "signature": "7M"
+              }
+            ]
+          }
+        },
+        "source_fields": [
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss"
+        ],
+        "message": "All comparable duration groups imply the same continuous-loss level.",
+        "compatibility_layer": "legacy_structured_alias_v2"
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "revenue_growth",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "REVENUE_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 429,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        },
+        {
+          "page": 254,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 255,
+          "evidence_role": "supporting",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "ZERO_REVENUE_DENOMINATOR_NOT_APPLICABLE",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "OPEN_01_ZERO_REVENUE_GROWTH",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {
+          "zero_revenue_fields": {
+            "comparator_revenue": 0
+          }
+        },
+        "normalized_facts": {
+          "zero_revenue_fields": [
+            "comparator_revenue"
+          ]
+        },
+        "source_fields": [
+          "comparator_revenue"
+        ],
+        "message": "Zero-revenue growth denominator remains an open policy item."
+      },
+      "message": "Exact zero revenue excludes a negative-growth/customer-concentration threshold test. Ratios remain null; no synthetic 0% ratio is created.",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "customer_concentration",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 255,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 256,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        },
+        {
+          "page": 429,
+          "evidence_role": "cross_check",
+          "requirement": "supporting_only",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "medium"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "POLICY_AMBIGUITY_CONCENTRATION_PERIOD",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": [
+          {
+            "period": "year ended 31 December 2019",
+            "largest_pct": 27.1,
+            "top_five_pct": 69.4,
+            "level": "medium"
+          },
+          {
+            "period": "seven months ended 31 July 2020",
+            "largest_pct": 21.8,
+            "top_five_pct": 58.2,
+            "level": "not_applicable"
+          }
+        ],
+        "source_fields": [
+          "largest_customer_pct",
+          "top_five_customer_pct",
+          "largest_customer_pct",
+          "top_five_customer_pct"
+        ],
+        "message": "Canonicalized periods imply different concentration states; latest-vs-any-period policy is not frozen."
+      },
+      "message": "v1.1.2 retains the most adverse valid comparable-period state; later improvement does not erase an observed trigger.",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

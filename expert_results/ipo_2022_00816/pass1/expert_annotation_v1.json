@@ -1,0 +1,340 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2022_00816",
+  "stock_code": "0816.HK",
+  "company_name": "金茂服務",
+  "document_id": "ipo_2022_00816",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "For the nine months ended September 30, 2021, the audited cash flow statement reports net cash flows from operating activities of RMB38,538 thousand and cash and cash equivalents at the end of the period of RMB274,169 thousand. Because net cash from operating activities is positive, the frozen protocol rule treats the period as having no operating cash burn; no cash runway is calculated.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "cash_and_cash_equivalents_at_end": 274169,
+        "net_cash_from_operating_activities": 38538,
+        "period_months": 9
+      },
+      "calculation_result": {
+        "monthly_operating_cash_burn": null,
+        "cash_runway_months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "continuous_loss",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The accountants' report shows profit for the year/period of RMB17,487 thousand, RMB22,624 thousand, RMB77,124 thousand, RMB53,329 thousand and RMB109,351 thousand for 2018, 2019, 2020, 9M2020 and 9M2021 respectively. There are zero comparable loss periods, so the continuous-loss condition is not met.",
+      "calculation_required": false,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "profit_periods": [
+          {"period": "year ended December 31, 2018", "profit": 17487},
+          {"period": "year ended December 31, 2019", "profit": 22624},
+          {"period": "year ended December 31, 2020", "profit": 77124},
+          {"period": "nine months ended September 30, 2021", "profit": 109351}
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 0
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Audited revenue increased from RMB665,322 thousand in 9M2020 to RMB1,048,685 thousand in 9M2021, an increase of approximately 57.62%. The frozen negative-growth thresholds are not triggered.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_period": "nine months ended September 30, 2020",
+        "current_period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "previous_revenue": 665322,
+        "current_revenue": 1048685
+      },
+      "calculation_result": {
+        "growth_pct": 57.62067089319157,
+        "threshold_triggered": false
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.98,
+      "reasoning": "For the nine months ended September 30, 2021, the single largest customer (Sinochem Group and its subsidiaries, joint ventures and associates, including China Jinmao) contributed 46.1% of total revenue and the five largest customers contributed 50.4% in aggregate. The largest-customer share exceeds the frozen 30% medium threshold but remains below 50%; the top-five share remains below the 60% medium threshold.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "currency": "RMB",
+        "unit": "RMB'000",
+        "total_revenue": 1048685,
+        "largest_customer_revenue": 483800,
+        "top_five_customer_revenue": 528400,
+        "largest_customer_pct": 46.1,
+        "top_five_customer_pct": 50.4
+      },
+      "calculation_result": {
+        "largest_customer_share_pct": 46.1,
+        "top_five_customer_share_pct": 50.4,
+        "medium_largest_triggered": true,
+        "medium_top_five_triggered": false,
+        "high_largest_triggered": false,
+        "high_top_five_triggered": false,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "For the nine months ended September 30, 2021, the single largest supplier accounted for 23.9% and the five largest suppliers accounted for 37.1% of total purchases. Both disclosed ratios remain below the frozen medium thresholds of 30% and 60%, respectively.",
+      "calculation_required": true,
+      "calculation_method": "exact_disclosed_ratio_threshold_comparison",
+      "calculation_inputs": {
+        "period": "nine months ended September 30, 2021",
+        "largest_supplier_pct": 23.9,
+        "top_five_supplier_pct": 37.1,
+        "medium_largest_threshold_pct": 30,
+        "medium_top_five_threshold_pct": 60
+      },
+      "calculation_result": {
+        "largest_supplier_medium_triggered": false,
+        "top_five_supplier_medium_triggered": false,
+        "assessment": "below_medium_thresholds"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The corporate history and reorganization disclosure shows the Company was incorporated as a wholly-owned subsidiary of China Jinmao and that capital contributions were made by China Jinmao without allotment or issuance of new shares. No external pre-IPO investor holding redemption, repurchase, put or other restorable special rights was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.92,
+      "reasoning": "The formal Legal Proceedings and Compliance section states that as of the Latest Practicable Date there were no litigation, arbitration or administrative proceedings pending or threatened which would have a material adverse effect, and that the Group had no material non-compliance incidents with material financial or operational impact. The disclosed non-compliances, including failure to file brokerage licenses and a RMB3.05 million electricity-pricing fine, were remediated, immaterial in amount or revenue impact, and did not remain pending.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2022_00816",
+      "stock_code": "0816.HK",
+      "company_name": "金茂服務",
+      "document_id": "ipo_2022_00816",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "The formal Business overview describes the Group as a fast-growing upscale property management and city operation service provider with revenue of RMB1,048.7 million in 9M2021. Its core services are already commercialized and revenue-generating; it is not a precommercial product-development issuer.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "cash_runway",
+      "page": 575,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "Net cash flows (used in)/from operating activities (19,825) 15,904 136,246 5,483 38,538",
+      "evidence_reason": "The audited consolidated cash flow statement proves positive net cash from operating activities of RMB38,538 thousand in the latest nine-month period.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "cash_runway",
+      "page": 576,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "CASH AND CASH EQUIVALENTS AT END OF YEAR/PERIOD 160,030 155,113 270,818 145,124 274,169",
+      "evidence_reason": "The audited cash flow statement provides the period-end cash and cash equivalents input of RMB274,169 thousand.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "continuous_loss",
+      "page": 568,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "PROFIT FOR THE YEAR/PERIOD 17,487 22,624 77,124 53,329 109,351",
+      "evidence_reason": "The audited consolidated statement of profit or loss shows profit in every comparable period, so there are no loss periods.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "revenue_growth",
+      "page": 568,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "accountants_report",
+      "exact_text": "REVENUE 5 574,503 788,323 944,210 665,322 1,048,685",
+      "evidence_reason": "The audited statement provides the 9M2020 and 9M2021 revenue inputs used to calculate positive revenue growth.",
+      "confidence": 1.0
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "customer_concentration",
+      "page": 281,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2018, 2019 and 2020 and the nine months ended September 30, 2021, revenue from our single largest customer in each year/period for the Track Record Period amounted to RMB280.0 million, RMB351.3 million, RMB410.8 million and RMB483.8 million, representing 48.7%, 44.6%, 43.5% and 46.1% of our total revenue, respectively. For the same periods, revenue from our five largest customers in each year/period for the Track Record Period, in aggregate amounted to RMB336.6 million, RMB405.6 million, RMB461.8 million and RMB528.4 million, representing 58.5%, 51.5%, 48.8% and 50.4% of our total revenue, respectively.",
+      "evidence_reason": "The formal Business major-customers disclosure supplies exact largest-customer and top-five ratios for the latest period.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "supplier_concentration",
+      "page": 291,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "For the years ended December 31, 2018, 2019 and 2020 and the nine months ended September 30, 2021, purchase from our single largest supplier in each year/period for the Track Record Period amounted to RMB22.4 million, RMB52.9 million, RMB63.0 million and RMB125.1 million, representing 10.7%, 16.7%, 15.6% and 23.9% of our total purchase amount, respectively. For the years ended December 31, 2018, 2019 and 2020 and the nine months ended September 30, 2021, purchase from our five largest suppliers in each year/period for the Track Record Period, amounted to in aggregate RMB76.3 million, RMB121.8 million, RMB148.5 million and RMB193.9 million, representing 36.4%, 38.4%, 36.9% and 37.1% of our total purchase amount, respectively.",
+      "evidence_reason": "The formal Business major-suppliers disclosure proves both ratios are below the frozen medium thresholds in the latest period.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "redemption_rights",
+      "page": 203,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "corporate_structure",
+      "exact_text": "On September 14, 2020, our Company was incorporated in Hong Kong under the Companies Ordinance as a company with limited liability and a wholly-owned subsidiary of China Jinmao. As of the date of incorporation, one fully-paid Share was issued to China Jinmao at HK$1. On January 26, 2022, China Jinmao made a capital injection of HK$125,000,000 to our Company, and our share capital was increased by the same amount without allotment and issuance of any new Shares.",
+      "evidence_reason": "The authoritative reorganization disclosure shows the listing vehicle was held by the controlling shareholder without an external pre-IPO investor holding special redemption rights.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "material_litigation_compliance",
+      "page": 310,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "As advised by our PRC Legal Advisers, as of the Latest Practicable Date, we had obtained all material permits, licenses, registrations and filings necessary to conduct our business operations during the Track Record Period from the relevant government authorities, all of which are valid and in force, and we had been in compliance in all material respects with the applicable PRC laws and regulations.",
+      "evidence_reason": "The formal legal proceedings and compliance section establishes material compliance as of the Latest Practicable Date.",
+      "confidence": 0.99
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "material_litigation_compliance",
+      "page": 312,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "In August and September 2021, the relevant local governmental authorities deemed Jinmao PM in violation of the Pricing Law of the PRC by failing to charge end users electricity fees according to governmental pricing standard for certain projects under its management from May 2018 to April 2021, and therefore ordered Jinmao PM to rectify such non-compliance and imposed a total fine of RMB3.05 million on Jinmao PM. By the end of September 2021, Jinmao PM had rectified such non-compliance, including, among others, refunding and compensating for the additional electricity fees collected and strictly implementing the governmental pricing mechanism in the collection of electricity fees, and had paid the fine in full.",
+      "evidence_reason": "The disclosed electricity-pricing fine was fully paid and rectified; it is quantified and did not remain an unresolved material regulatory matter.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2022_00816",
+      "risk_code": "precommercial_product",
+      "page": 209,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "OVERVIEW We are a fast-growing upscale property management and city operation service provider in China.",
+      "evidence_reason": "The formal Business overview identifies an established, revenue-generating property management and city operation business rather than a precommercial product developer.",
+      "confidence": 0.99
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "source_document_page_count": 684,
+    "source_document_sha256_expected": "60676b038ecf142ebed311c9344efd12fe78124e4a85143c4ff6add7fca95100"
+  }
+}

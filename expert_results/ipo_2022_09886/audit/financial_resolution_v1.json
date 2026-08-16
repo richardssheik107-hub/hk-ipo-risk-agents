@@ -1,0 +1,156 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2022_09886",
+  "source_pass1": "expert_results/ipo_2022_09886/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "b58c62dbfbaed5148b56e340a254a39a07e46b269d76d687c7b4184db61281bd",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "COMPARABILITY_AMBIGUITY_CONTINUOUS_LOSS",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 459,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "accountants_report"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "POLICY_RESOLVED",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "MAX_SEVERITY_WITHIN_HOMOGENEOUS_DURATION_GROUP",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "COMPARABILITY_AMBIGUITY_CONTINUOUS_LOSS",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": {
+          "FY": {
+            "loss_count": 4,
+            "level": "high",
+            "periods": [
+              {
+                "period": "year ended December 31, 2018",
+                "loss": -103172.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2019",
+                "loss": -273932.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2020",
+                "loss": -919680.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2021",
+                "loss": -1598974.0,
+                "signature": "FY"
+              }
+            ]
+          },
+          "3M": {
+            "loss_count": 2,
+            "level": "medium",
+            "periods": [
+              {
+                "period": "three months ended March 31, 2021",
+                "loss": -748916.0,
+                "signature": "3M"
+              },
+              {
+                "period": "three months ended March 31, 2022",
+                "loss": -404416.0,
+                "signature": "3M"
+              }
+            ]
+          }
+        },
+        "source_fields": [
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss"
+        ],
+        "message": "Comparable duration groups imply different levels; Phase 2b does not pool them.",
+        "v112_continuous_loss_resolution": {
+          "groups": {
+            "FY": [
+              {
+                "period": "year ended December 31, 2018",
+                "loss": -103172.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2019",
+                "loss": -273932.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2020",
+                "loss": -919680.0,
+                "signature": "FY"
+              },
+              {
+                "period": "year ended December 31, 2021",
+                "loss": -1598974.0,
+                "signature": "FY"
+              }
+            ],
+            "3M": [
+              {
+                "period": "three months ended March 31, 2021",
+                "loss": -748916.0,
+                "signature": "3M"
+              },
+              {
+                "period": "three months ended March 31, 2022",
+                "loss": -404416.0,
+                "signature": "3M"
+              }
+            ]
+          },
+          "counts": {
+            "FY": 4,
+            "3M": 2
+          },
+          "max_comparable_loss_count": 4
+        }
+      },
+      "message": "v1.1.2 never pools unlike durations; it evaluates each homogeneous duration group and keeps the most severe group.",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}
