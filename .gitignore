@@ -26,6 +26,8 @@ reports/*
 reports/llm_reranker_pilot/*.log
 models/*
 !models/.gitkeep
+!models/retriever_v3/
+!models/retriever_v3/ltr_v3.txt
 *.pkl
 *.joblib
 *.onnx

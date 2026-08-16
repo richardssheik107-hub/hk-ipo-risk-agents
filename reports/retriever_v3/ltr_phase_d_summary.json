@@ -1,0 +1,750 @@
+{
+  "result": "PASS",
+  "pass": true,
+  "model": "LightGBM LambdaMART",
+  "lightgbm_version": "4.6.0",
+  "development_cases": 50,
+  "locked_cases": 10,
+  "locked_metrics_opened": false,
+  "candidate_sources": [
+    "V1",
+    "V2",
+    "V2.1",
+    "BM25-B",
+    "TABLE-C"
+  ],
+  "selected_variant": "LTR-C",
+  "feature_variants": {
+    "LTR-A": [
+      "v1_present",
+      "v1_rank",
+      "v1_rr",
+      "v2_present",
+      "v2_rank",
+      "v2_rr",
+      "v21_present",
+      "v21_rank",
+      "v21_rr",
+      "bm25_present",
+      "bm25_rank",
+      "bm25_rr",
+      "table_present",
+      "table_rank",
+      "table_rr",
+      "retriever_hit_count",
+      "equal_rrf_score",
+      "rrf_rank"
+    ],
+    "LTR-B": [
+      "v1_present",
+      "v1_rank",
+      "v1_rr",
+      "v2_present",
+      "v2_rank",
+      "v2_rr",
+      "v21_present",
+      "v21_rank",
+      "v21_rr",
+      "bm25_present",
+      "bm25_rank",
+      "bm25_rr",
+      "table_present",
+      "table_rank",
+      "table_rr",
+      "retriever_hit_count",
+      "equal_rrf_score",
+      "rrf_rank",
+      "bm25_score_norm",
+      "bm25_score_percentile",
+      "table_score_norm",
+      "table_score_percentile",
+      "table_block_hit_count",
+      "table_candidate_signal"
+    ],
+    "LTR-C": [
+      "v1_present",
+      "v1_rank",
+      "v1_rr",
+      "v2_present",
+      "v2_rank",
+      "v2_rr",
+      "v21_present",
+      "v21_rank",
+      "v21_rr",
+      "bm25_present",
+      "bm25_rank",
+      "bm25_rr",
+      "table_present",
+      "table_rank",
+      "table_rr",
+      "retriever_hit_count",
+      "equal_rrf_score",
+      "rrf_rank",
+      "bm25_score_norm",
+      "bm25_score_percentile",
+      "table_score_norm",
+      "table_score_percentile",
+      "table_block_hit_count",
+      "table_candidate_signal",
+      "page_text_length_log",
+      "page_numeric_density",
+      "page_percentage_count_log",
+      "page_currency_count_log",
+      "page_year_count",
+      "page_table_signal",
+      "risk_cash_runway",
+      "risk_continuous_loss",
+      "risk_customer_concentration",
+      "risk_material_litigation_compliance",
+      "risk_precommercial_product",
+      "risk_redemption_rights",
+      "risk_revenue_growth",
+      "risk_supplier_concentration"
+    ]
+  },
+  "model_config": {
+    "objective": "lambdarank",
+    "metric": "ndcg",
+    "learning_rate": 0.05,
+    "n_estimators": 250,
+    "num_leaves": 15,
+    "min_child_samples": 20,
+    "reg_lambda": 1.0,
+    "random_state": 20260816,
+    "verbosity": -1,
+    "force_col_wise": true,
+    "n_jobs": 1
+  },
+  "weak_negative_policy": {
+    "selected_per_query": 40,
+    "sensitivity": 20,
+    "neighbor_exclusion": 1,
+    "deterministic": true
+  },
+  "metrics": {
+    "RRF": {
+      "r5": 0.5451388888888888,
+      "r10": 0.6440972222222222,
+      "r20": 0.7534722222222222,
+      "r50": 0.8715277777777778,
+      "r100": 0.9479166666666666,
+      "completion_at_5": 0.5088161209068011,
+      "completion_at_20": 0.7178841309823678,
+      "mrr": 0.47072441989057695,
+      "ndcg_at_5": 0.43809157575395147,
+      "ndcg_at_10": 0.47510619640040036,
+      "ndcg_at_20": 0.5022985963114779
+    },
+    "LTR-A": {
+      "r5": 0.5763888888888888,
+      "r10": 0.6770833333333334,
+      "r20": 0.7777777777777778,
+      "r50": 0.8819444444444444,
+      "r100": 0.9461805555555556,
+      "completion_at_5": 0.5440806045340051,
+      "completion_at_20": 0.7506297229219143,
+      "mrr": 0.522869388152012,
+      "ndcg_at_5": 0.4833056785464527,
+      "ndcg_at_10": 0.5172708399526708,
+      "ndcg_at_20": 0.542101888775425
+    },
+    "LTR-B": {
+      "r5": 0.6041666666666666,
+      "r10": 0.6961805555555556,
+      "r20": 0.765625,
+      "r50": 0.8767361111111112,
+      "r100": 0.9496527777777778,
+      "completion_at_5": 0.5944584382871536,
+      "completion_at_20": 0.7329974811083123,
+      "mrr": 0.5471108666682694,
+      "ndcg_at_5": 0.508744471515757,
+      "ndcg_at_10": 0.5375166253079598,
+      "ndcg_at_20": 0.5550065115884313
+    },
+    "LTR-C": {
+      "r5": 0.6302083333333334,
+      "r10": 0.7326388888888888,
+      "r20": 0.8090277777777778,
+      "r50": 0.890625,
+      "r100": 0.9479166666666666,
+      "completion_at_5": 0.6146095717884131,
+      "completion_at_20": 0.7884130982367759,
+      "mrr": 0.6099672533330405,
+      "ndcg_at_5": 0.5607580631970678,
+      "ndcg_at_10": 0.5946382588759246,
+      "ndcg_at_20": 0.6125068199795415
+    }
+  },
+  "source_oracle": {
+    "at_20": 0.859375,
+    "at_50": 0.9392361111111112,
+    "at_100_native": 0.9600694444444444
+  },
+  "pool_oracle": {
+    "r5": 0.9600694444444444,
+    "r10": 0.9600694444444444,
+    "r20": 0.9600694444444444,
+    "r50": 0.9600694444444444,
+    "r100": 0.9600694444444444,
+    "completion_at_5": 0.9496221662468514,
+    "completion_at_20": 0.9496221662468514,
+    "mrr": 0.98,
+    "ndcg_at_5": 0.98,
+    "ndcg_at_10": 0.98,
+    "ndcg_at_20": 0.98
+  },
+  "ranking_gap_closed": {
+    "at_5": 0.20502092050209225,
+    "at_20": 0.5245901639344264
+  },
+  "per_risk": {
+    "cash_runway": {
+      "gold": 97,
+      "rrf_r5": 0.8350515463917526,
+      "ltr_r5": 0.9072164948453608,
+      "rrf_r20": 0.9587628865979382,
+      "ltr_r20": 0.9896907216494846
+    },
+    "continuous_loss": {
+      "gold": 53,
+      "rrf_r5": 0.5471698113207547,
+      "ltr_r5": 0.8113207547169812,
+      "rrf_r20": 0.8679245283018868,
+      "ltr_r20": 0.9433962264150944
+    },
+    "customer_concentration": {
+      "gold": 79,
+      "rrf_r5": 0.5949367088607594,
+      "ltr_r5": 0.5569620253164557,
+      "rrf_r20": 0.8354430379746836,
+      "ltr_r20": 0.7721518987341772
+    },
+    "material_litigation_compliance": {
+      "gold": 92,
+      "rrf_r5": 0.5652173913043478,
+      "ltr_r5": 0.6304347826086957,
+      "rrf_r20": 0.8043478260869565,
+      "ltr_r20": 0.8586956521739131
+    },
+    "precommercial_product": {
+      "gold": 67,
+      "rrf_r5": 0.16417910447761194,
+      "ltr_r5": 0.16417910447761194,
+      "rrf_r20": 0.29850746268656714,
+      "ltr_r20": 0.3582089552238806
+    },
+    "redemption_rights": {
+      "gold": 67,
+      "rrf_r5": 0.40298507462686567,
+      "ltr_r5": 0.417910447761194,
+      "rrf_r20": 0.6417910447761194,
+      "ltr_r20": 0.6716417910447762
+    },
+    "revenue_growth": {
+      "gold": 53,
+      "rrf_r5": 0.3584905660377358,
+      "ltr_r5": 0.7358490566037735,
+      "rrf_r20": 0.5660377358490566,
+      "ltr_r20": 0.8679245283018868
+    },
+    "supplier_concentration": {
+      "gold": 68,
+      "rrf_r5": 0.7058823529411765,
+      "ltr_r5": 0.7647058823529411,
+      "rrf_r20": 0.9117647058823529,
+      "ltr_r20": 0.9558823529411765
+    }
+  },
+  "macro_risk": {
+    "rrf_r5": 0.5217390694951256,
+    "ltr_r5": 0.6235723185853768,
+    "rrf_r20": 0.7355724035194451,
+    "ltr_r20": 0.8021990158105486
+  },
+  "fold_stability": [
+    {
+      "fold": 1,
+      "gold": 123,
+      "rrf_r20": 0.6910569105691057,
+      "ltr_r20": 0.7560975609756098,
+      "delta": 0.06504065040650409
+    },
+    {
+      "fold": 2,
+      "gold": 127,
+      "rrf_r20": 0.7086614173228346,
+      "ltr_r20": 0.7322834645669292,
+      "delta": 0.023622047244094557
+    },
+    {
+      "fold": 3,
+      "gold": 110,
+      "rrf_r20": 0.7636363636363637,
+      "ltr_r20": 0.8636363636363636,
+      "delta": 0.09999999999999998
+    },
+    {
+      "fold": 4,
+      "gold": 104,
+      "rrf_r20": 0.7884615384615384,
+      "ltr_r20": 0.8461538461538461,
+      "delta": 0.05769230769230771
+    },
+    {
+      "fold": 5,
+      "gold": 112,
+      "rrf_r20": 0.8303571428571429,
+      "ltr_r20": 0.8660714285714286,
+      "delta": 0.0357142857142857
+    }
+  ],
+  "fold_diagnostics": {
+    "LTR-A": [
+      {
+        "fold": 1,
+        "train_rows": 13019,
+        "validation_rows": 3286,
+        "train_groups": 313,
+        "validation_groups": 79,
+        "positive_labels": 499,
+        "weak_negatives": 12520,
+        "best_iteration": 21
+      },
+      {
+        "fold": 2,
+        "train_rows": 13050,
+        "validation_rows": 3255,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 490,
+        "weak_negatives": 12560,
+        "best_iteration": 20
+      },
+      {
+        "fold": 3,
+        "train_rows": 13060,
+        "validation_rows": 3245,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 500,
+        "weak_negatives": 12560,
+        "best_iteration": 3
+      },
+      {
+        "fold": 4,
+        "train_rows": 13104,
+        "validation_rows": 3201,
+        "train_groups": 315,
+        "validation_groups": 77,
+        "positive_labels": 504,
+        "weak_negatives": 12600,
+        "best_iteration": 15
+      },
+      {
+        "fold": 5,
+        "train_rows": 12987,
+        "validation_rows": 3318,
+        "train_groups": 312,
+        "validation_groups": 80,
+        "positive_labels": 507,
+        "weak_negatives": 12480,
+        "best_iteration": 1
+      }
+    ],
+    "LTR-B": [
+      {
+        "fold": 1,
+        "train_rows": 13019,
+        "validation_rows": 3286,
+        "train_groups": 313,
+        "validation_groups": 79,
+        "positive_labels": 499,
+        "weak_negatives": 12520,
+        "best_iteration": 19
+      },
+      {
+        "fold": 2,
+        "train_rows": 13050,
+        "validation_rows": 3255,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 490,
+        "weak_negatives": 12560,
+        "best_iteration": 4
+      },
+      {
+        "fold": 3,
+        "train_rows": 13060,
+        "validation_rows": 3245,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 500,
+        "weak_negatives": 12560,
+        "best_iteration": 32
+      },
+      {
+        "fold": 4,
+        "train_rows": 13104,
+        "validation_rows": 3201,
+        "train_groups": 315,
+        "validation_groups": 77,
+        "positive_labels": 504,
+        "weak_negatives": 12600,
+        "best_iteration": 29
+      },
+      {
+        "fold": 5,
+        "train_rows": 12987,
+        "validation_rows": 3318,
+        "train_groups": 312,
+        "validation_groups": 80,
+        "positive_labels": 507,
+        "weak_negatives": 12480,
+        "best_iteration": 2
+      }
+    ],
+    "LTR-C": [
+      {
+        "fold": 1,
+        "train_rows": 13019,
+        "validation_rows": 3286,
+        "train_groups": 313,
+        "validation_groups": 79,
+        "positive_labels": 499,
+        "weak_negatives": 12520,
+        "best_iteration": 63
+      },
+      {
+        "fold": 2,
+        "train_rows": 13050,
+        "validation_rows": 3255,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 490,
+        "weak_negatives": 12560,
+        "best_iteration": 10
+      },
+      {
+        "fold": 3,
+        "train_rows": 13060,
+        "validation_rows": 3245,
+        "train_groups": 314,
+        "validation_groups": 78,
+        "positive_labels": 500,
+        "weak_negatives": 12560,
+        "best_iteration": 77
+      },
+      {
+        "fold": 4,
+        "train_rows": 13104,
+        "validation_rows": 3201,
+        "train_groups": 315,
+        "validation_groups": 77,
+        "positive_labels": 504,
+        "weak_negatives": 12600,
+        "best_iteration": 137
+      },
+      {
+        "fold": 5,
+        "train_rows": 12987,
+        "validation_rows": 3318,
+        "train_groups": 312,
+        "validation_groups": 80,
+        "positive_labels": 507,
+        "weak_negatives": 12480,
+        "best_iteration": 59
+      }
+    ]
+  },
+  "one_fold_audit": {
+    "fold": 1,
+    "train_rows": 13019,
+    "validation_rows": 3286,
+    "train_groups": 313,
+    "validation_groups": 79,
+    "positive_labels": 499,
+    "weak_negatives": 12520,
+    "best_iteration": 21
+  },
+  "weak_negative_sensitivity": {
+    "weak20_r20": 0.8055555555555556,
+    "weak40_r20": 0.8090277777777778,
+    "r20_abs_difference": 0.00347222222222221
+  },
+  "movement": {
+    "top5_promoted": 74,
+    "top5_lost": 30,
+    "top5_net": 44,
+    "top20_promoted": 58,
+    "top20_lost": 28,
+    "top20_net": 30,
+    "rrf_top100_missed": 30,
+    "ltr_top100_missed": 30,
+    "source_unavailable": 23,
+    "rrf_top100_cap_loss": 7,
+    "ltr_top100_cap_loss": 7
+  },
+  "serious_regressions": [
+    "customer_concentration"
+  ],
+  "gates": {
+    "A_r20": true,
+    "B_r5": true,
+    "C_4_of_5_folds": true,
+    "D_multi_risk": true,
+    "E_serious_regressions_at_most_one": true,
+    "F_top100_not_lower": true
+  },
+  "feature_importance": [
+    {
+      "feature": "bm25_score_norm",
+      "gain": 13641.432905197144
+    },
+    {
+      "feature": "page_numeric_density",
+      "gain": 3000.6229939460754
+    },
+    {
+      "feature": "v1_rank",
+      "gain": 1023.130720615387
+    },
+    {
+      "feature": "risk_precommercial_product",
+      "gain": 980.7233176231384
+    },
+    {
+      "feature": "page_currency_count_log",
+      "gain": 717.0555839538574
+    },
+    {
+      "feature": "v21_rank",
+      "gain": 700.4635715484619
+    },
+    {
+      "feature": "rrf_rank",
+      "gain": 628.9738788604736
+    },
+    {
+      "feature": "table_block_hit_count",
+      "gain": 614.2987537384033
+    },
+    {
+      "feature": "equal_rrf_score",
+      "gain": 577.7434320449829
+    },
+    {
+      "feature": "page_percentage_count_log",
+      "gain": 477.6919775009155
+    },
+    {
+      "feature": "page_text_length_log",
+      "gain": 458.33826637268066
+    },
+    {
+      "feature": "v2_rank",
+      "gain": 448.12548875808716
+    },
+    {
+      "feature": "risk_customer_concentration",
+      "gain": 403.735568523407
+    },
+    {
+      "feature": "table_candidate_signal",
+      "gain": 303.4321084022522
+    },
+    {
+      "feature": "bm25_rank",
+      "gain": 236.5653977394104
+    },
+    {
+      "feature": "table_score_norm",
+      "gain": 221.87756395339966
+    },
+    {
+      "feature": "page_table_signal",
+      "gain": 220.85687971115112
+    },
+    {
+      "feature": "table_rank",
+      "gain": 129.9747495651245
+    },
+    {
+      "feature": "risk_continuous_loss",
+      "gain": 106.84591150283813
+    },
+    {
+      "feature": "risk_material_litigation_compliance",
+      "gain": 43.4948091506958
+    },
+    {
+      "feature": "risk_cash_runway",
+      "gain": 38.22427940368652
+    },
+    {
+      "feature": "risk_revenue_growth",
+      "gain": 38.074339389801025
+    },
+    {
+      "feature": "page_year_count",
+      "gain": 35.524280071258545
+    },
+    {
+      "feature": "v21_rr",
+      "gain": 23.459199905395508
+    },
+    {
+      "feature": "table_rr",
+      "gain": 22.75967025756836
+    },
+    {
+      "feature": "v1_rr",
+      "gain": 20.725099563598633
+    },
+    {
+      "feature": "v2_rr",
+      "gain": 19.298419952392578
+    },
+    {
+      "feature": "risk_supplier_concentration",
+      "gain": 18.608590602874756
+    },
+    {
+      "feature": "risk_redemption_rights",
+      "gain": 12.552799701690674
+    },
+    {
+      "feature": "bm25_rr",
+      "gain": 9.838370323181152
+    },
+    {
+      "feature": "table_present",
+      "gain": 8.593509674072266
+    },
+    {
+      "feature": "retriever_hit_count",
+      "gain": 7.207149982452393
+    },
+    {
+      "feature": "bm25_present",
+      "gain": 0.0
+    },
+    {
+      "feature": "bm25_score_percentile",
+      "gain": 0.0
+    },
+    {
+      "feature": "table_score_percentile",
+      "gain": 0.0
+    },
+    {
+      "feature": "v1_present",
+      "gain": 0.0
+    },
+    {
+      "feature": "v21_present",
+      "gain": 0.0
+    },
+    {
+      "feature": "v2_present",
+      "gain": 0.0
+    }
+  ],
+  "examples": [
+    {
+      "case_id": "ipo_2020_01408",
+      "risk_code": "customer_concentration",
+      "page": 390,
+      "rrf_rank": 40,
+      "ltr_rank": 6,
+      "signals": "bm25_score_norm, page_numeric_density, rrf_rank"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "revenue_growth",
+      "page": 466,
+      "rrf_rank": 30,
+      "ltr_rank": 7,
+      "signals": "bm25_score_norm, page_numeric_density, v1_rank"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "supplier_concentration",
+      "page": 466,
+      "rrf_rank": 52,
+      "ltr_rank": 15,
+      "signals": "bm25_score_norm, page_numeric_density, page_currency_count_log"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "redemption_rights",
+      "page": 150,
+      "rrf_rank": 38,
+      "ltr_rank": 14,
+      "signals": "bm25_score_norm, page_numeric_density, rrf_rank"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "material_litigation_compliance",
+      "page": 270,
+      "rrf_rank": 25,
+      "ltr_rank": 9,
+      "signals": "bm25_score_norm, page_numeric_density, v21_rank"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "risk_code": "precommercial_product",
+      "page": 167,
+      "rrf_rank": 21,
+      "ltr_rank": 4,
+      "signals": "bm25_score_norm, page_numeric_density, risk_precommercial_product"
+    },
+    {
+      "case_id": "ipo_2020_02057",
+      "risk_code": "revenue_growth",
+      "page": 300,
+      "rrf_rank": 25,
+      "ltr_rank": 2,
+      "signals": "bm25_score_norm, page_numeric_density, v1_rank"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "revenue_growth",
+      "page": 397,
+      "rrf_rank": 23,
+      "ltr_rank": 1,
+      "signals": "bm25_score_norm, page_numeric_density, v1_rank"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "customer_concentration",
+      "page": 397,
+      "rrf_rank": 26,
+      "ltr_rank": 3,
+      "signals": "bm25_score_norm, page_numeric_density, page_currency_count_log"
+    },
+    {
+      "case_id": "ipo_2020_02263",
+      "risk_code": "material_litigation_compliance",
+      "page": 212,
+      "rrf_rank": 36,
+      "ltr_rank": 14,
+      "signals": "bm25_score_norm, page_numeric_density, page_currency_count_log"
+    }
+  ],
+  "final_model": {
+    "saved": true,
+    "path": "models/retriever_v3/ltr_v3.txt",
+    "size_mb": 0.10942268371582031
+  },
+  "disk": {
+    "before_bytes": 8408526848,
+    "after_bytes": 8404574208,
+    "peak_temporary_bytes": 1424393005,
+    "before_gib": 7.831050872802734,
+    "after_gib": 7.827369689941406,
+    "peak_mib": 1358.4070253372192,
+    "feature_dataset_mb": 3.3650922775268555,
+    "final_model_mb": 0.10942268371582031
+  },
+  "runtime_seconds": 377.119544506073
+}
