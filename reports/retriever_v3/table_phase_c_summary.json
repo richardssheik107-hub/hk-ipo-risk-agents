@@ -1,0 +1,167 @@
+{
+  "result": "PASS",
+  "pass": true,
+  "development_cases": 50,
+  "locked_cases": 10,
+  "locked_metrics_opened": false,
+  "selected_variant": "TABLE-C",
+  "frozen_bm25": {
+    "name": "BM25-B",
+    "tokenizer": "cjk_bigram",
+    "k1": 1.5,
+    "b": 0.75,
+    "top_k": 100
+  },
+  "variants": [
+    {
+      "name": "TABLE-A",
+      "aggregation": "page_filter",
+      "genuine_recovered_at_50": 1,
+      "overall_unique_at_50": 4
+    },
+    {
+      "name": "TABLE-B",
+      "aggregation": "block_max",
+      "genuine_recovered_at_50": 3,
+      "overall_unique_at_50": 6
+    },
+    {
+      "name": "TABLE-C",
+      "aggregation": "block_coverage",
+      "genuine_recovered_at_50": 4,
+      "overall_unique_at_50": 7
+    }
+  ],
+  "remaining_before": {
+    "total": 30,
+    "QUERY_COVERAGE_MISS": 10,
+    "TABLE_FRAGMENTATION": 8,
+    "SECTION_AUTHORITY_MISS": 6,
+    "NEIGHBOR_PAGE_MISS": 4,
+    "MULTIPAGE_FRAGMENTATION": 2
+  },
+  "table_miss_recovery": {
+    "original": {
+      "total": 8,
+      "at_10": 0,
+      "at_20": 0,
+      "at_50": 4,
+      "remaining": 4
+    },
+    "genuine": {
+      "total": 6,
+      "reclassified": 2,
+      "at_10": 0,
+      "at_20": 0,
+      "at_50": 4,
+      "remaining": 2
+    }
+  },
+  "table_raw_recall": {
+    "r10": 0.546875,
+    "r20": 0.6319444444444444,
+    "r50": 0.7239583333333334
+  },
+  "genuine_diversity": {
+    "cases": 4,
+    "risks": 2
+  },
+  "unique_contribution": {
+    "gold": 7,
+    "cases": 7,
+    "risks": 2
+  },
+  "oracle": {
+    "before": {
+      "at_20": 0.8333333333333334,
+      "at_50": 0.9131944444444444,
+      "at_100_native": 0.9479166666666666
+    },
+    "after": {
+      "at_20": 0.859375,
+      "at_50": 0.9392361111111112,
+      "at_100_native": 0.9600694444444444
+    },
+    "gain": {
+      "at_20": 0.02604166666666663,
+      "at_50": 0.02604166666666674,
+      "at_100_native": 0.01215277777777779
+    }
+  },
+  "rrf": {
+    "before": {
+      "r5": 0.5381944444444444,
+      "r20": 0.7361111111111112,
+      "r50": 0.8628472222222222,
+      "r100": 0.9322916666666666
+    },
+    "after": {
+      "r5": 0.5451388888888888,
+      "r20": 0.7534722222222222,
+      "r50": 0.8715277777777778,
+      "r100": 0.9479166666666666
+    }
+  },
+  "candidate_pool": {
+    "mean": 100,
+    "median": 100,
+    "p95": 100,
+    "max": 100
+  },
+  "bounded_union": {
+    "newly_recovered_gold": 12,
+    "lost_previous_gold": 3,
+    "net_gold_gain": 9
+  },
+  "remaining": {
+    "total": 23,
+    "by_type": {
+      "QUERY_COVERAGE_MISS": 8,
+      "TABLE_FRAGMENTATION": 2,
+      "SECTION_AUTHORITY_MISS": 7,
+      "NEIGHBOR_PAGE_MISS": 4,
+      "MULTIPAGE_FRAGMENTATION": 2,
+      "OTHER_UNKNOWN": 0
+    }
+  },
+  "gates": {
+    "A_recover_at_least_4_genuine": true,
+    "B_at_least_3_cases": true,
+    "C_at_least_2_risks": true,
+    "D_oracle_positive": true,
+    "E_bounded_union_net_positive": true
+  },
+  "strategic_recommendation": "STOP_AND_MOVE_TO_RANKING",
+  "strategic_reason": "当前 Stage1 Candidate Recall 已达到至少95%，剩余错误少且分散；下一阶段应开始设计 LTR。",
+  "cost": {
+    "implementation_complexity": "MEDIUM",
+    "runtime_overhead": "one case-local table-block index; three variants only in this offline experiment",
+    "memory_overhead": "case-local only; released after each PDF",
+    "disk_overhead": "summary/audit metadata only"
+  },
+  "diagnostics": {
+    "TABLE-A": {
+      "mean_table_pages": 314.94,
+      "mean_table_blocks": 763.94
+    },
+    "TABLE-B": {
+      "mean_table_pages": 314.94,
+      "mean_table_blocks": 763.94
+    },
+    "TABLE-C": {
+      "mean_table_pages": 314.94,
+      "mean_table_blocks": 763.94
+    }
+  },
+  "disk": {
+    "before_bytes": 8408346624,
+    "after_bytes": 8408948736,
+    "peak_temporary_bytes": 1424393005,
+    "before_gib": 7.830883026123047,
+    "after_gib": 7.831443786621094,
+    "peak_mib": 1358.4070253372192
+  },
+  "persistent_table_index": false,
+  "persistent_bm25_index": false,
+  "model_download": false
+}
