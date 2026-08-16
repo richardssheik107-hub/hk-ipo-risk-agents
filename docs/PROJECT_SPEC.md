@@ -1,292 +1,243 @@
-# 港股IPO多智能体风险预警系统项目规格
+# HK IPO Risk Agents — Current Project Specification
 
-## v0.3 released status
+## 1. 项目定位
 
-`v0.3.0-multi-agent-risk-analysis` is released and frozen with eight document-risk
-types, three real professional Agents, deterministic specialized verification,
-`enhanced_v2`, cross-domain supervision, Service integration, Streamlit and
-Markdown/JSON reporting. `mvp_v1`, Mock mode and the released v0.2 cash-runway
-slice remain compatible.
+HK IPO Risk Agents 是一个**证据驱动、多智能体协同、可审计**的港股 IPO 招股书分析与上市后风险预警系统。
 
-Human Golden governance now uses the permanent
-`single_named_human_review_v1` policy: one named human review is sufficient
-for formal promotion, while independent second review remains optional and
-must stay traceable when it exists. Financial, Legal and Business formal
-Golden evaluation is complete; actual cross-domain metrics are reported
-without tuning. The historical Owner Waiver is superseded. The independent
-V04-1 Market Foundation and V04-2 document-to-market feature contract are merged;
-V04-3 pre-listing market feature engine is implemented pending review. Production
-market-data coverage remains limited; calibrated decline probabilities and production
-market prediction have not started.
+系统不追求“让一个大模型直接读完整招股书并给结论”，而是把任务拆为：
 
-## v0.3.5 Evidence Intelligence research program
+```text
+Document Parsing
+→ Evidence Retrieval
+→ Domain Agents
+→ Deterministic Skills
+→ Verification / Supervision
+→ Structured Document Features
+→ Market Modeling
+→ Explainable Final Report
+```
 
-The released v0.3 runtime remains frozen. Phase 0.5 completed the real Responses
-API baseline, the 2410.HK real-LLM gate, and the 14-case Human Golden A/B. The
-observed pattern was higher precision without higher risk recall, with low
-Evidence Recall@3. Retrieval coverage is the primary bottleneck; LLM extraction/
-runtime is secondary, and downstream Legal verification remains an additional
-bottleneck.
-
-Before tuning retrieval, Phase 0.6 reconstructs an independent Expert Golden that
-separates risk instances, evidence records, evidence roles and multi-page
-relationships. Phase 0.7 designs domain-specific Evidence Intelligence, Phase 0.8
-runs a controlled A/B, and only Phase 0.9 selects/tunes retrieval algorithms.
-V04-1 remains a decoupled foundation; V04-2 adds a versioned snapshot/dataset
-boundary; V04-3 adds deterministic point-in-time market controls while production
-data adapters and model development remain later gates.
+输出中的规则分或未经校准的模型分数，不得描述为真实下跌概率，也不构成投资建议。
 
-The collaboration method is LLM-assisted, not GPT-as-Gold: blind GPT evidence
-investigation -> deterministic validation -> independent GPT audit -> conflict
-detection -> selective human adjudication -> Expert Golden v2. Open policy items
-must not be resolved by Codex or an annotator.
+## 2. 当前版本状态
 
-## 1. 项目名称
+### 已冻结稳定层：v0.3
 
-中文名称：
-
-基于证据驱动多智能体协同的港股IPO招股书解析与上市后风险预警系统
+当前文档智能层已经具备：
 
-英文名称：
+- 真实 PDF 解析；
+- Financial / Legal / Business 三专业 Agent；
+- 8 类正式文档风险；
+- Evidence、Calculation 与物理页码追踪；
+- Specialized Verifier；
+- Supervisor；
+- `IPOAnalysisService`；
+- Streamlit；
+- Markdown / JSON 报告；
+- Mock / offline / optional-AI 降级路径。
 
-Evidence-Driven Multi-Agent Hong Kong IPO Risk Analysis and Early Warning System
+v0.3 作为当前 Document Intelligence 基线冻结，不再要求继续优化 Retriever 才能进入下一阶段。
 
-项目简称：
+### 当前主线：v0.4 End-to-End Closed Loop
 
-HK IPO Risk Agents
+v0.4 的任务是把文档风险真正连接到上市后市场表现：
 
-## 2. 项目背景
-
-港股IPO招股书通常篇幅较长，包含复杂的财务数据、公司架构、关联交易、股东特殊权利、监管要求、业务模式和风险因素。
-
-传统人工分析方式存在以下问题：
-
-1. 阅读成本高；
-2. 风险信息分散；
-3. 财务、法务、业务和市场信息难以统一分析；
-4. 不同分析人员可能形成不一致结论；
-5. 大语言模型直接分析长文档可能产生证据缺失和幻觉；
-6. 传统系统通常只分析基本面，缺少对上市时市场环境的结合。
-
-本项目拟构建一个基于多智能体协同的港股IPO风险分析与预警系统。
-
-系统通过文档解析、证据检索、财务分析、法务分析、业务分析、市场分析、证据核验和风险预测，对港股IPO项目进行结构化分析。
-
-## 3. 项目目标
-
-系统输入：
-
-1. 港股IPO招股书PDF；
-2. 公司名称；
-3. 股票代码；
-4. 上市日期；
-5. IPO基础信息；
-6. 上市前市场数据。
-
-系统输出：
-
-1. 财务风险；
-2. 法务合规风险；
-3. 业务经营风险；
-4. 市场环境风险；
-5. 综合风险评分；
-6. 上市后五个交易日显著下跌风险评分；
-7. 风险对应的招股书页码和原文证据；
-8. 风险计算过程；
-9. 智能体执行日志；
-10. 风险预警报告。
-
-## 4. 稳定架构基线
+```text
+Prospectus
+→ Document Risk
+→ IPO-level Features
+→ Pre-IPO Market Features
+→ Post-IPO Outcome
+→ Prediction Model
+→ Market Agent
+→ Final Supervisor
+→ Full E2E Report
+```
 
-项目以已发布的架构级MVP为稳定基础。
-
-架构级MVP应满足：
-
-1. 项目具有完整、清晰、可扩展的工程目录；
-2. 前端、应用服务、工作流、Agent、Skill、预测模型、数据接口和评测模块相互分离；
-3. 所有模块通过统一的数据Schema进行通信；
-4. 使用LangGraph建立完整多智能体工作流；
-5. 暂未完成的业务模块允许使用Mock或unavailable实现；
-6. 使用Mock数据时，端到端流程也必须能够运行；
-7. 后续五名成员可以分别替换各自负责的Mock模块；
-8. 替换某个Mock模块时，不需要重构其他模块；
-9. 项目必须包含测试、配置、日志和开发文档；
-10. 项目不能依赖一个大型Python文件运行。
-
-## 5. 最终业务流程
-
-用户上传招股书PDF并填写公司信息后，系统依次执行：
-
-1. 文档解析；
-2. 文档切片；
-3. 文档索引；
-4. 证据检索；
-5. 财务Agent分析；
-6. 法务Agent分析；
-7. 业务Agent分析；
-8. 市场Agent分析；
-9. Verifier Agent核验证据；
-10. Supervisor Agent处理冲突并汇总结论；
-11. Predictor输出风险评分；
-12. Report Builder生成结构化报告；
-13. Streamlit展示风险、证据和执行日志。
-
-## 6. 智能体角色
-
-### 6.1 Financial Agent
-
-负责：
-
-1. 连续亏损识别；
-2. 收入增长分析；
-3. 毛利率变化分析；
-4. 经营现金流分析；
-5. 现金跑道计算；
-6. 客户集中度分析；
-7. 供应商集中度分析；
-8. 财务异常识别。
-
-### 6.2 Legal Agent
-
-负责：
-
-1. 对赌和赎回条款；
-2. 股东特殊权利；
-3. 关联交易；
-4. 重大诉讼；
-5. 行政处罚；
-6. 牌照和监管风险；
-7. 公司治理风险；
-8. 条款是否仍然有效的判断。
-
-### 6.3 Business Agent
-
-负责：
-
-1. 商业模式分析；
-2. 核心产品商业化状态；
-3. 单一产品依赖；
-4. 客户依赖；
-5. 供应商依赖；
-6. 行业竞争；
-7. 技术和研发风险；
-8. 业务可持续性分析。
-
-### 6.4 Market Agent
-
-负责：
-
-1. 恒生指数表现；
-2. 行业指数表现；
-3. 近期港股IPO破发率；
-4. 近期IPO五日收益；
-5. 市场成交活跃度；
-6. 市场波动率；
-7. IPO市场情绪评分。
-
-### 6.5 Verifier Agent
-
-负责：
-
-1. 检查风险是否有原文证据；
-2. 检查证据是否支持风险结论；
-3. 检查数字是否由Skill计算；
-4. 检查不同Agent是否存在冲突；
-5. 检查风险等级是否被过度夸大；
-6. 将无法核验的风险标记为待人工复核。
-
-### 6.6 Supervisor Agent
-
-负责：
-
-1. 汇总各专业Agent结果；
-2. 合并重复风险；
-3. 处理Agent冲突；
-4. 确定最终风险等级；
-5. 生成结构化分析摘要；
-6. 组织最终报告内容。
-
-## 7. 风险类型范围
-
-公共Schema和风险注册表支持以下风险类型：
-
-1. 连续亏损；
-2. 经营现金流为负；
-3. 现金跑道不足；
-4. 客户集中度过高；
-5. 供应商集中度过高；
-6. 对赌或赎回条款；
-7. 股东特殊权利；
-8. 重大关联交易；
-9. 核心产品未商业化；
-10. 单一产品依赖；
-11. 监管审批风险；
-12. IPO市场环境较弱。
-
-真实实现范围按版本逐步扩展，不得为尚未实现的风险生成虚构结论。
-
-## 8. 当前组件状态
-
-真实或确定性实现：
-
-1. PyMuPDF DocumentParser；
-2. 已泛化到八类v0.3查询族的KeywordDocumentRetriever；
-3. Mock、OpenAI-compatible与Unavailable LLMProvider基础设施；
-4. 现金跑道链路，以及独立可调用的`V03FinancialAgent`、`V03FinancialVerifier`、财务事实抽取和Decimal Skills；
-5. standalone Legal Agent、两类Legal风险链路及Legal domain Verifiers；
-6. standalone `V03BusinessAgent`及`precommercial_product`确定性规则；
-7. RuleVerifier、RuleSupervisor和RuleBasedPredictor；
-8. `CatalogIPODataProvider`、批量运行和黄金评测基础设施；
-9. LangGraph `mvp_v1`、IPOAnalysisService、JSON Repository和Streamlit。
-
-实现与共享集成必须区分：Financial、Legal与Business三个v0.3核心已进入共享Container/Workflow/Service；Catalog Provider、Specialized Verifier、Supervisor和v0.3 ReportGenerator已完成注册与装配。`enhanced_v2`已经完成，同时保留`mvp_v1`、Mock与unavailable回退。Market Agent和真实市场数据Provider仍未实现，属于v0.4范围。所有Mock、真实和unavailable实现继续遵守相同公共接口和Schema。
-
-## 9. 当前范围边界
-
-暂时不实现：
-
-1. 大语言模型微调；
-2. 完整GraphRAG；
-3. Neo4j知识图谱；
-4. 微服务；
-5. Kafka；
-6. Redis任务队列；
-7. Kubernetes；
-8. 实时新闻系统；
-9. 复杂深度学习预测模型；
-10. React前端；
-11. 覆盖所有港股行业；
-12. 精确股价预测；
-13. 高频实时行情系统；
-14. 完整企业级权限系统。
-
-## 10. 当前迭代方向
-
-v0.3 已发布并冻结，Gate A、三 Agent 共享集成、`enhanced_v2`、产品 UI 与正式
-评测已经完成。当前进入 v0.3.5 Evidence Intelligence 研究计划：Phase 0.6 重建
-Expert Golden，Phase 0.7 设计 domain-specific evidence search，Phase 0.8 进行
-受控架构 A/B，Phase 0.9 才进行 Retriever/ranking 算法优化。
-
-V04-1 已实现市场数据契约、上市后标签、cohort/listing-year 一致性、按权威官方IPO
-case universe成员身份决定的版本化modeling eligibility、年度隔离与完整性校验；证券类型
-metadata仅用于描述与分组分析；生产参考市场数据适配器、
-Market Agent、Logistic、LightGBM和SHAP仍属于后续v0.4阶段。
-
-V04-2 已实现最终 `IPOAnalysisResult` 到版本化 `V03DocumentRiskSnapshot`、固定100项
-数值特征及 development/validation modeling dataset 的契约。2025只允许输出不含
-MarketOutcomeLabel的feature-only blind dataset；本阶段不训练模型。
-
-V04-3 已实现只使用上市日前数据的恒指、行业、近期IPO、市场波动率及真实全市场成交额
-契约，冻结20项market manifest，并新增不改变V04-2语义的120项document+market join。
-仓库尚无受治理的真实HSI、行业指数或全市场turnover序列，production adapter仍不可用。
-
-## 11. 当前实施状态
-
-当前稳定版本为`v0.3.0-multi-agent-risk-analysis`；`v0.2.0-real-document-slice`
-仍作为稳定回退版本。v0.3 已完成共享 Registry、Container、`enhanced_v2`、Service、
-Specialized Verifier、Supervisor、Streamlit、Report 与正式 Golden 评测。
-
-历史 `main@b60570ef...` 和 owner waiver 仅是技术收口过程的审计基线，不是当前
-状态。当前 Golden 治理以 `single_named_human_review_v1` 和
-`docs/V03_GATE_A_CLOSEOUT.md` 为准；v0.3.5 研究状态以主清单和 research 文档为准。
+当前优先完成完整闭环，再在 v0.5 回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
 
+## 3. 输入
+
+系统正式输入包括：
+
+1. 港股 IPO 招股书 PDF；
+2. `case_id` / 公司 / 股票代码等受控身份字段；
+3. 官方上市日期与 IPO 基础信息；
+4. 严格截止于上市前可获得的市场数据；
+5. 版本化配置与数据源 provenance。
+
+不得使用上市后信息构造模型输入 X。
+
+## 4. 文档风险范围
+
+v0.3 冻结的 8 类正式风险为：
+
+### Financial
+
+- `cash_runway`
+- `continuous_loss`
+- `revenue_growth`
+- `customer_concentration`
+- `supplier_concentration`
+
+### Legal
+
+- `redemption_rights`
+- `material_litigation_compliance`
+
+### Business
+
+- `precommercial_product`
+
+每条正式 RiskItem 必须能追溯到 Evidence；需要精确数字的结论必须通过确定性 Skill / Calculation 生成。
+
+## 5. 信任边界
+
+### LLM 可以做
+
+- 语义提取；
+- Evidence relevance / role 判断；
+- 状态、条件、上下文理解；
+- 受约束的结构化解释。
+
+### LLM 不可以做
+
+- 替代 Python 完成精确金融计算；
+- 无 Evidence 创造 verified 风险；
+- 修改底层市场模型预测；
+- 将规则分包装为概率；
+- 绕过 Verifier / Supervisor 的治理边界。
+
+### 确定性代码负责
+
+- 财务计算；
+- Schema 校验；
+- 数据时间边界；
+- 特征生成；
+- 市场标签生成；
+- 版本与 provenance；
+- 模型评测与数据切分。
+
+## 6. v0.4 模型任务
+
+第一版主研究对象为**上市后 5 个交易日弱表现风险**。
+
+建议同时保留：
+
+- `return_1d / 5d / 20d / 60d`；
+- benchmark-adjusted / abnormal return；
+- 5D classification label。
+
+分类阈值只允许由 Development 数据决定。
+
+正式比较必须包含：
+
+```text
+A. Market-only
+B. Document-only
+C. Document + Market
+```
+
+核心研究问题为：
+
+```text
+Performance(Document + Market)
+>
+Performance(Market-only) ?
+```
+
+即：Multi-Agent 招股书风险特征是否提供传统 IPO / 市场变量之外的增量信息。
+
+## 7. 数据切分与 Blind Policy
+
+市场建模统一使用：
+
+```text
+2020–2023  Development / Training
+2024       Validation
+2025       Blind Test
+```
+
+规则：
+
+- 2020–2023：训练、CV、特征选择、阈值、超参数；
+- 2024：模型选择与正式 validation；
+- 2025：模型与 feature policy 冻结后一次性 blind evaluation；
+- 2025 不得用于开发调参；
+- 一旦 blind 被查看，不能根据其结果调参后继续称其为 blind。
+
+Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测结果；未来重启 Retriever 研究时必须另建新的 unseen holdout。
+
+## 8. 当前真实数据状态
+
+以当前 v0.4 readiness audit 为基准：
+
+- 官方 2020–2024 IPO universe：438 cases；
+- IPO OHLCV：432 / 438 可用，6 个 outcome unavailable；
+- authoritative Document Risk Snapshot pipeline 已存在；
+- 全 438 case 的 authoritative document snapshot 尚未 materialize；
+- HSI 历史源仍缺；
+- authoritative industry benchmark mapping / history 仍缺；
+- total-market turnover 源仍缺；
+- `MODEL_READY_DATA_GATE` 尚未打开。
+
+详细口径见 `research/V04_DATA_READINESS.md`。
+
+## 9. 架构保护边界
+
+公共接口与模块边界以 `ARCHITECTURE.md`、`DATA_SCHEMA.md` 和根目录 `AGENTS.md` 为准。
+
+重点保护：
+
+```text
+src/ipo_risk/schemas/
+src/ipo_risk/agents/base.py
+src/ipo_risk/parsers/base.py
+src/ipo_risk/retrieval/base.py
+src/ipo_risk/predictors/base.py
+src/ipo_risk/providers/
+src/ipo_risk/workflows/state.py
+src/ipo_risk/services/analysis_service.py
+src/ipo_risk/core/container.py
+src/ipo_risk/domain/risk_codes.py
+```
+
+Streamlit 只通过 `IPOAnalysisService` 访问业务能力，不得直接调用 Parser、Agent、Predictor 或 Repository。
+
+## 10. v0.4 当前非目标
+
+闭环冻结前不把以下工作作为主线：
+
+- 新 Retriever 算法；
+- Retriever V3 继续调参；
+- LLM Reranker VNext；
+- SFT / LoRA；
+- 新增专业 Agent；
+- 深度学习市场预测模型；
+- 大规模 UI 重构。
+
+只有阻断闭环、造成数据泄漏、明显错误或不可复现的问题可以打断该优先级。
+
+## 11. v0.4 完成定义
+
+v0.4 首先以**完整、可信、可重建**为成功标准：
+
+- PDF → Document Risk 正常；
+- Document Features 可重建；
+- Market Data / Outcome 可重建；
+- Model-ready Dataset 可重建；
+- Logistic / Linear baseline 可运行；
+- LightGBM 可运行并解释；
+- Market Agent 可输出结构化说明；
+- Final Supervisor 可统一 Document + Market 风险；
+- Streamlit 可展示 3–5 个真实 IPO 的完整链路；
+- provenance、version、failure state 可审计；
+- 2025 blind 未参与开发调优。
+
+## 12. 当前下一项任务
+
+当前正式进入：
+
+> **CL-1 / CL-2：冻结现有 Document Intelligence，并批量生成第一版 IPO-level Document Risk Feature Dataset。**
+
+完成后立即进入最小真实 Market Data、5D Outcome 和 Model-ready Dataset 闭环。

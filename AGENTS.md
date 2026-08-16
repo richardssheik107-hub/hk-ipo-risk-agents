@@ -1,47 +1,55 @@
-# Codex与团队开发规则
+# Codex 与团队开发规则
 
-## 1. 项目目标
+## 1. 当前项目目标
 
-本项目构建一个基于证据驱动多智能体协同的港股IPO招股书解析与上市后风险预警系统。
+本项目构建一个**证据驱动、多智能体协同、可审计**的港股 IPO 招股书解析与上市后风险预警系统。
 
-当前稳定版本为`v0.2.0-real-document-slice`。当前开发目标是v0.3.0真实多Agent文档风险分析，同时保持公共接口、Mock流程和v0.2现金跑道回归稳定。
+当前稳定基线是 `v0.3.0-multi-agent-risk-analysis`；当前开发主线是 **v0.4 End-to-End Closed Loop**：
 
-所有版本继续遵守：模块边界清晰、公共接口稳定、真实与Mock组件可配置替换、五人可并行开发，且不依赖单个大型Python文件。
+```text
+Document Intelligence
+→ IPO-level Document Features
+→ Pre-IPO Market Features
+→ Outcome
+→ Model-ready Dataset
+→ Baseline / LightGBM
+→ Market Agent
+→ Final Supervisor
+→ Full E2E Demo
+```
+
+Retriever V3 等研究成果已冻结并归档，当前不作为 v0.4 前置条件。历史 Retriever Locked 10 已消费，不得继续用其调参后重新描述为 blind。
 
 ## 2. 开始任务前
 
-执行任何代码任务前必须：
+执行代码任务前必须先：
 
-1. 阅读docs/PROJECT_SPEC.md；
-2. 阅读docs/ARCHITECTURE.md；
-3. 阅读docs/DATA_SCHEMA.md；
-4. 阅读本AGENTS.md；
-5. 检查当前仓库结构；
-6. 检查现有测试；
-7. 说明准备修改的文件；
-8. 说明是否影响公共接口。
+1. 阅读 `docs/README.md`；
+2. 阅读 `docs/PROJECT_SPEC.md`；
+3. 阅读 `docs/ARCHITECTURE.md`；
+4. 阅读 `docs/DATA_SCHEMA.md`；
+5. 阅读本 `AGENTS.md`；
+6. 涉及路线 / 数据 / 建模时，再读 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`、`docs/ROADMAP.md` 和对应 `docs/research/V04_*.md`；
+7. 检查仓库结构与现有测试；
+8. 说明准备修改的文件及是否影响公共接口。
 
-面对较大任务时，先提交实施计划，再开始编码。
+面对较大任务，先给出实施计划，再开始编码。
 
 ## 3. 架构规则
 
-1. 采用模块化单体架构；
-2. 不建立微服务；
-3. 不引入Kafka；
-4. 不引入Redis任务队列；
-5. 不引入Neo4j；
-6. 不引入Kubernetes；
-7. 不引入与当前阶段无关的复杂基础设施；
-8. 不得将主要业务逻辑集中在app.py或streamlit_app.py；
-9. 前端只能调用IPOAnalysisService；
-10. Agent不得直接操作前端；
-11. Parser不得依赖Agent；
-12. Skill不得依赖Agent；
-13. schemas不得依赖具体业务实现。
+1. 保持模块化单体架构；
+2. 当前阶段不引入与闭环无关的微服务、Kafka、Redis 队列、Neo4j、Kubernetes；
+3. 业务逻辑不得集中在 `streamlit_app.py`；
+4. Streamlit 只能通过 `IPOAnalysisService` 访问业务能力；
+5. Agent 不直接操作前端或 Repository；
+6. Parser 不依赖 Agent；
+7. Skill 不依赖 Agent；
+8. Schema 不依赖具体业务实现；
+9. Mock 与真实实现必须可配置替换。
 
-## 4. 公共接口
+## 4. 受保护公共接口
 
-以下内容属于公共接口，修改前必须明确说明影响：
+以下路径属于公共接口 / 核心架构边界，修改前必须明确说明影响并补充测试：
 
 ```text
 src/ipo_risk/schemas/
@@ -52,185 +60,138 @@ src/ipo_risk/predictors/base.py
 src/ipo_risk/providers/
 src/ipo_risk/workflows/state.py
 src/ipo_risk/services/analysis_service.py
-```
-
-未经明确任务要求，不得随意：
-
-1. 重命名公共字段；
-2. 删除公共字段；
-3. 改变字段含义；
-4. 改变Agent统一返回类型；
-5. 改变Parser统一返回类型；
-6. 改变Predictor统一返回类型。
-
-## 5. Schema规则
-
-1. 所有跨模块数据使用Pydantic模型；
-2. Parser返回list[DocumentChunk]；
-3. Retriever返回Evidence或DocumentChunk；
-4. 专业Agent返回list[RiskItem]；
-5. Predictor返回PredictionResult；
-6. AnalysisService返回IPOAnalysisResult；
-7. Skill返回SkillResult或明确的Pydantic结果；
-8. 禁止使用结构不稳定的任意字典作为公共接口。
-
-## 6. Agent规则
-
-1. 所有专业Agent实现统一RiskAgent接口；
-2. Agent必须具有明确职责；
-3. Agent不得自行定义公共Schema；
-4. Agent不得直接修改数据库；
-5. Agent不得直接调用Streamlit；
-6. Agent不得使用LLM完成精确金融计算；
-7. Agent不得将无证据结论标记为verified；
-8. Agent发生错误时必须写入AgentLog；
-9. 不确定风险应标记为pending或needs_review；
-10. 新增Agent必须增加契约测试。
-
-## 7. Skill规则
-
-1. 精确金融计算必须放入skills模块；
-2. Skill应尽量使用纯Python确定性实现；
-3. Skill必须可独立测试；
-4. Skill必须处理缺失值；
-5. Skill不得静默吞掉错误；
-6. Skill输入中的关键数据应关联Evidence；
-7. Skill结果必须记录版本；
-8. 新增Skill必须增加单元测试。
-
-## 8. Evidence规则
-
-1. 所有正式风险必须有Evidence；
-2. Evidence必须包含页码和原文；
-3. 包含具体数字的结论必须具有Calculation；
-4. Calculation必须说明输入、公式、结果和单位；
-5. 无Evidence风险进入pending_risks；
-6. Verifier可以将风险标记为verified、rejected或needs_review；
-7. 不得使用不存在的页码或虚构原文。
-
-## 9. 前端规则
-
-Streamlit只能：
-
-1. 构造IPOAnalysisRequest；
-2. 调用IPOAnalysisService；
-3. 展示IPOAnalysisResult；
-4. 展示错误信息。
-
-Streamlit不得：
-
-1. 直接调用LLM；
-2. 直接调用Agent；
-3. 直接解析PDF；
-4. 直接访问Repository；
-5. 直接运行Predictor；
-6. 直接进行财务计算。
-
-## 10. 配置和敏感信息
-
-1. API Key只能通过环境变量读取；
-2. 不得提交.env；
-3. 必须提供.env.example；
-4. 不得提交密码；
-5. 不得提交Token；
-6. 不得提交用户本地绝对路径；
-7. 模型名称和Provider通过配置管理；
-8. Mock和真实实现通过配置切换。
-
-## 11. 代码质量
-
-1. 使用类型标注；
-2. 公共函数添加简短docstring；
-3. 使用清晰的模块名；
-4. 避免循环依赖；
-5. 对文件、模型和网络调用增加异常处理；
-6. 不得通过except Exception后完全忽略错误；
-7. 日志中不得泄漏敏感信息；
-8. 避免无必要的全局变量；
-9. 避免在导入阶段执行耗时操作；
-10. 保持函数职责单一。
-
-## 12. 测试要求
-
-项目测试至少包括：
-
-1. Schema测试；
-2. Skill单元测试；
-3. Agent契约测试；
-4. Parser契约测试；
-5. Predictor契约测试；
-6. Service集成测试；
-7. Mock端到端测试；
-8. 黄金案例回归测试。
-
-提交代码前必须运行相关测试。
-
-如果仓库已配置完整测试命令，应运行完整测试。
-
-不得：
-
-1. 删除有效测试；
-2. 弱化断言以掩盖问题；
-3. 修改预期结果来迁就错误实现；
-4. 声称测试通过但未执行测试。
-
-## 13. 修改任务的标准流程
-
-每次任务应遵循：
-
-1. 阅读规格文件；
-2. 检查现有实现；
-3. 提交修改计划；
-4. 列出新增和修改文件；
-5. 实现最小必要修改；
-6. 添加或更新测试；
-7. 运行测试；
-8. 修复失败；
-9. 总结修改内容；
-10. 列出剩余限制。
-
-## 14. Git规则
-
-1. 不直接向main提交未经测试的代码；
-2. 每个功能使用独立分支；
-3. Commit信息应说明修改内容；
-4. Pull Request应说明测试结果；
-5. 公共Schema修改必须由组长审核；
-6. 不提交大型原始PDF和敏感数据；
-7. 不提交模型缓存和临时文件；
-8. 不自动执行git push，除非用户明确要求；
-9. 不自动创建Pull Request，除非用户明确要求；
-10. 不自动提交Commit，除非用户明确要求。
-
-## 15. 完成任务后的汇报格式
-
-完成代码任务后必须说明：
-
-1. 创建了哪些文件；
-2. 修改了哪些文件；
-3. 实现了哪些功能；
-4. 是否改变公共接口；
-5. 运行了哪些测试；
-6. 测试结果；
-7. 如何启动；
-8. 当前仍使用哪些Mock模块；
-9. 已知限制；
-10. 下一阶段建议。
-
-## 16. 真实模块替换规则
-
-1. 新的真实实现必须先通过现有公共接口的契约测试；
-2. 不得删除 Mock 实现；
-3. Mock 与真实实现必须可通过配置切换；
-4. 不得在 Service 中硬编码真实实现；
-5. 新组件必须注册到 ComponentRegistry；
-6. 真实模块失败时仍需返回结构化 AnalysisError；
-7. 新功能不得破坏 v0.2.0 现金跑道回归和 Mock 端到端测试。
-
-以下核心文件同样视为受保护的架构边界，修改时必须说明影响并补充测试：
-
-```text
 src/ipo_risk/core/container.py
 src/ipo_risk/domain/risk_codes.py
 ```
 
+未经明确任务要求，不得随意重命名 / 删除公共字段、改变字段含义、改变统一返回类型或破坏兼容工作流。
+
+## 5. Schema / Agent / Skill 规则
+
+- 跨模块公共数据使用 Pydantic 模型；
+- Parser 返回 `list[DocumentChunk]`；
+- Retriever 返回稳定 Evidence / DocumentChunk 契约；
+- 专业 Agent 返回 `list[RiskItem]`；
+- Predictor 返回 `PredictionResult`；
+- AnalysisService 返回 `IPOAnalysisResult`；
+- Skill 返回明确的 Pydantic / versioned 结果；
+- 精确金融计算必须由 deterministic Skill 完成，不能交给 LLM；
+- Agent 不得自行创建公共 Schema；
+- 新 Agent / Skill / Provider 必须增加契约或单元测试。
+
+## 6. Evidence 与 Verification 规则
+
+1. 所有正式风险必须有 Evidence；
+2. Evidence 必须保留真实页码和原文；
+3. 含具体数字的结论必须有 Calculation；
+4. Calculation 必须记录 inputs、formula、result、unit、evidence IDs；
+5. 无法核验的风险进入 `pending` / `needs_review`；
+6. 不得虚构页码、原文、市场数据或模型输入；
+7. LLM 不得绕过 Specialized Verifier / Supervisor 直接制造 `verified` 结论。
+
+## 7. v0.4 数据与建模规则
+
+当前 v0.4 必须严格遵守 point-in-time 与 no-leakage：
+
+```text
+2020–2023  Development / Training
+2024       Validation
+2025       Blind Test
+```
+
+- 所有 X 特征必须在上市前可获得；
+- 2025 不得用于选特征、阈值、规则或超参数；
+- classification threshold 只能由 Development 数据决定；
+- 数据缺失必须显式记录，不得猜测或静默填补；
+- provenance、source version、feature version、model version 必须可追踪；
+- Market-only / Document-only / Combined 必须使用相同切分公平比较；
+- 未经校准的 score 不得表述为真实概率。
+
+Retriever 历史 Locked 10 只保留为历史评测，未来优化 Retriever 必须建立新的 unseen holdout。
+
+## 8. 前端规则
+
+Streamlit 只能：
+
+1. 构造请求；
+2. 调用 `IPOAnalysisService` / 受控上层 service；
+3. 展示结构化结果；
+4. 展示错误和 provenance。
+
+Streamlit 不得直接调用 LLM、Agent、Parser、Repository 或执行金融计算。
+
+## 9. 配置与敏感信息
+
+- API Key / Token / 密码只从环境变量读取；
+- 不提交 `.env`；
+- 不提交本地绝对路径；
+- 模型名和 Provider 通过配置管理；
+- Mock / real / unavailable 实现通过注册与配置切换；
+- 日志不得泄漏凭证或敏感内容。
+
+## 10. 代码质量
+
+- 使用类型标注；
+- 公共函数有简短 docstring；
+- 避免循环依赖；
+- 文件 / 模型 / 网络调用必须有明确异常处理；
+- 不得通过宽泛异常静默吞错；
+- 避免导入阶段执行耗时逻辑；
+- 保持函数和模块职责单一。
+
+## 11. 测试要求
+
+提交前运行相关测试；能运行完整 CI 时优先运行完整测试。
+
+完整测试环境：
+
+```bash
+pip install -e '.[dev,retrieval-research]'
+pytest -q
+```
+
+不得：
+
+- 删除有效测试；
+- 弱化断言以掩盖问题；
+- 修改期望结果迁就错误实现；
+- 未运行测试却声称测试通过。
+
+新功能不得破坏 Mock E2E、v0.2 现金跑道回归、v0.3 Multi-Agent 回归及当前数据治理检查。
+
+## 12. 标准任务流程
+
+1. 阅读当前活文档；
+2. 检查实现与测试；
+3. 列出修改范围 / 公共接口影响；
+4. 实现最小必要修改；
+5. 增加或更新测试；
+6. 运行测试并修复失败；
+7. 汇报变更、测试、限制和下一步。
+
+## 13. Git 规则
+
+1. 不直接向 `main` 提交未经测试的代码；
+2. 每个功能使用独立分支；
+3. Commit 信息说明真实修改内容；
+4. PR 说明测试结果与剩余限制；
+5. 公共 Schema 修改必须明确审核；
+6. 不提交大型原始 PDF、模型缓存、临时文件或敏感数据；
+7. 只有用户明确要求时才执行 push / PR / merge 等写操作。
+
+## 14. 组件替换规则
+
+- 新真实实现先通过现有公共接口契约测试；
+- 不删除仍承担降级 / 测试职责的 Mock；
+- Service 不硬编码真实实现；
+- 新组件注册到 ComponentRegistry；
+- 真实模块失败时返回结构化错误；
+- 替换某个模块不能要求无关模块一起重构。
+
+## 15. 当前优先级
+
+除非出现阻断闭环的 bug、数据泄漏或不可复现问题，当前开发顺序以：
+
+`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
+
+为准。当前正式任务是 **CL-1 / CL-2：冻结 Document Intelligence，并批量生成 IPO-level Document Risk Features。**
