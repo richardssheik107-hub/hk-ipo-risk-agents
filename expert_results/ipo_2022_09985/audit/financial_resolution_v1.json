@@ -1,0 +1,116 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2022_09985",
+  "source_pass1": "expert_results/ipo_2022_09985/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "8d0525364e9cc07060c50069f4b5807bfa9d554820c3a2ed48955320a9d2605c",
+  "entry_count": 2,
+  "entries": [
+    {
+      "risk_code": "customer_concentration",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "CONCENTRATION_BOUND_PROOF_REQUIRES_REVIEW",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 179,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "FORMAL_BOUND_EXCLUDES_MEDIUM",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "policy_bucket": "BOUND_PROOF_DETERMINISTICALLY_RESOLVED",
+        "resolution_status": "resolved",
+        "resolution_code": "DETERMINISTIC_BOUND_EXCLUDES_MEDIUM",
+        "resolved_level": "not_applicable",
+        "requires_human_review": false,
+        "details": {
+          "largest_upper_bound": {
+            "value": 6.2,
+            "strict": false,
+            "source": "largest_customer_upper_bound_pct"
+          },
+          "top_five_upper_bound": {
+            "value": 6.2,
+            "strict": false,
+            "source": "top_five_customer_pct"
+          }
+        }
+      },
+      "message": "",
+      "pass1_modified": false
+    },
+    {
+      "risk_code": "supplier_concentration",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "CONCENTRATION_BOUND_PROOF_REQUIRES_REVIEW",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 196,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "business_section"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "DETERMINISTIC",
+      "action": "CONFIRM_EXISTING",
+      "policy_code": "FORMAL_BOUND_EXCLUDES_MEDIUM",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "source_outcome": {
+        "policy_bucket": "BOUND_PROOF_DETERMINISTICALLY_RESOLVED",
+        "resolution_status": "resolved",
+        "resolution_code": "DETERMINISTIC_BOUND_EXCLUDES_MEDIUM",
+        "resolved_level": "not_applicable",
+        "requires_human_review": false,
+        "details": {
+          "largest_upper_bound": {
+            "value": 29.6,
+            "strict": false,
+            "source": "largest_supplier_upper_bound_pct"
+          },
+          "top_five_upper_bound": {
+            "value": 29.6,
+            "strict": false,
+            "source": "top_five_supplier_pct"
+          }
+        }
+      },
+      "message": "",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}
