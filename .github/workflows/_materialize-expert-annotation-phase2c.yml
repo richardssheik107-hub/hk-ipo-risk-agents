@@ -1,0 +1,38 @@
+name: materialize-expert-annotation-phase2c
+
+on:
+  push:
+    branches:
+      - agent/expert-annotation-phase2c
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: ${{ !contains(github.event.head_commit.message, '[skip materialize]') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/expert-annotation-phase2c
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .[dev]
+      - run: python scripts/run_expert_annotation_phase2c.py
+      - name: Commit governed Phase-2c resolution artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'expert_results/ipo_*/audit/financial_resolution_v1.json'
+          git add -f reports/annotation_audit/phase2c/phase2c_summary.json
+          git add -f reports/annotation_audit/phase2c/phase2c_resolutions.csv
+          git add -f reports/annotation_audit/phase2c/phase2c_remaining_unresolved.csv
+          git diff --cached --name-only
+          if git diff --cached --quiet; then
+            echo "No Phase-2c artifacts to materialize."
+            exit 0
+          fi
+          git commit -m "phase2c: materialize financial closure artifacts [skip materialize]"
+          git push origin HEAD:agent/expert-annotation-phase2c
