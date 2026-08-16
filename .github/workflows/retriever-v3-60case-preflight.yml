@@ -1,0 +1,53 @@
+name: retriever-v3-60case-preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/expert-annotation-phase2c
+    paths:
+      - "configs/retriever_v3_split_manifest.json"
+      - "src/ipo_risk/evaluation/retriever_v3_dataset.py"
+      - "src/ipo_risk/evaluation/retriever_v3_baseline.py"
+      - "scripts/run_retriever_v3_baseline.py"
+      - "tests/unit/test_retriever_v3_baseline.py"
+      - "docs/research/RETRIEVER_V3_60CASE_BASELINE.md"
+      - ".github/workflows/retriever-v3-60case-preflight.yml"
+      - "expert_results/ipo_*/pass1/expert_annotation_v1.json"
+      - "expert_results/ipo_*/audit/*.json"
+  pull_request:
+    paths:
+      - "configs/retriever_v3_split_manifest.json"
+      - "src/ipo_risk/evaluation/retriever_v3_dataset.py"
+      - "src/ipo_risk/evaluation/retriever_v3_baseline.py"
+      - "scripts/run_retriever_v3_baseline.py"
+      - "tests/unit/test_retriever_v3_baseline.py"
+      - "expert_results/ipo_*/pass1/expert_annotation_v1.json"
+      - "expert_results/ipo_*/audit/*.json"
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e .[dev]
+      - name: Retriever V3 dataset/evaluator tests
+        run: pytest -q tests/unit/test_retriever_v3_baseline.py
+      - name: Build 60-case audited Retrieval Gold preflight
+        run: python scripts/run_retriever_v3_baseline.py preflight
+      - name: Verify Expert annotations remain immutable
+        run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json' 'expert_results/ipo_*/audit/*.json'
+      - name: Byte-compile Retriever V3 research modules
+        run: python -m py_compile src/ipo_risk/evaluation/retriever_v3_dataset.py src/ipo_risk/evaluation/retriever_v3_baseline.py scripts/run_retriever_v3_baseline.py
+      - name: Upload preflight artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: retriever-v3-60case-preflight
+          path: reports/retriever_v3/preflight/
