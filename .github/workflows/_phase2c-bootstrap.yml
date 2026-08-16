@@ -1,0 +1,39 @@
+name: phase2c-bootstrap
+
+on:
+  push:
+    branches:
+      - agent/expert-annotation-phase2c
+    paths:
+      - ".phase2c_bootstrap/bundle.b64"
+      - ".github/workflows/_phase2c-bootstrap.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/expert-annotation-phase2c
+      - name: Materialize reviewed Phase-2c source bundle
+        run: |
+          base64 -d .phase2c_bootstrap/bundle.b64 > /tmp/phase2c_bundle.tar.gz
+          tar -xzf /tmp/phase2c_bundle.tar.gz -C .
+          python -m py_compile src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py tests/unit/test_annotation_phase2c.py
+      - name: Commit only Phase-2c source files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/ipo_risk/quality/annotation_phase2c.py
+          git add scripts/run_expert_annotation_phase2c.py
+          git add tests/unit/test_annotation_phase2c.py
+          git add docs/annotation/gpt_expert_v1_1/GPT_EXPERT_POLICY_ADDENDUM_V1_1_2.md
+          git add .github/workflows/expert-annotation-phase2c.yml
+          git rm .phase2c_bootstrap/bundle.b64
+          git rm .github/workflows/_phase2c-bootstrap.yml
+          git diff --cached --name-only
+          git commit -m "phase2c: close financial audit issue set"
+          git push origin HEAD:agent/expert-annotation-phase2c
