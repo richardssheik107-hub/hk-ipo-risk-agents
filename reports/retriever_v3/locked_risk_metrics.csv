@@ -1,0 +1,9 @@
+﻿risk_code,gold,case_risk_groups,rrf_r5,ltr_r5,rrf_r20,ltr_r20,rrf_completion_at_5,ltr_completion_at_5,rrf_completion_at_20,ltr_completion_at_20
+cash_runway,20,10,0.8,0.95,0.85,1.0,0.6,0.9,0.7,1.0
+continuous_loss,10,10,0.6,1.0,1.0,1.0,0.6,1.0,1.0,1.0
+customer_concentration,10,10,0.8,0.6,0.9,0.8,0.8,0.6,0.9,0.8
+material_litigation_compliance,12,10,0.6666666666666666,0.5,1.0,0.8333333333333334,0.6,0.4,1.0,0.8
+precommercial_product,10,10,0.1,0.1,0.2,0.5,0.1,0.1,0.2,0.5
+redemption_rights,11,10,0.5454545454545454,0.6363636363636364,0.9090909090909091,0.9090909090909091,0.6,0.6,0.9,0.9
+revenue_growth,10,10,0.1,0.7,0.5,1.0,0.1,0.7,0.5,1.0
+supplier_concentration,10,10,1.0,0.9,1.0,1.0,1.0,0.9,1.0,1.0

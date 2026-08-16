@@ -1,0 +1,131 @@
+{
+  "protocol_version": "retriever_v3_phase_e_locked_v1",
+  "evaluation_timestamp": "2026-08-16T09:42:17.320238+00:00",
+  "protocol_frozen": true,
+  "locked_metrics_opened": false,
+  "split_manifest_hash": "20c0c48ae61822871ddf4d882d8a0ea4401b412295a78f67477d7c6a36e3c951",
+  "candidate_sources": [
+    "V1",
+    "V2",
+    "V2.1",
+    "BM25-B",
+    "TABLE-C"
+  ],
+  "bm25_config": {
+    "tokenizer": "cjk_bigram",
+    "k1": 1.5,
+    "b": 0.75,
+    "top_k": 100
+  },
+  "table_config": {
+    "variant": "TABLE-C",
+    "description": "table-block multi-hit aggregation",
+    "top_k": 50
+  },
+  "ltr_variant": "LTR-C",
+  "ltr_model_path": "models/retriever_v3/ltr_v3.txt",
+  "ltr_model_sha256": "47ef0a13426a031fd26dc642d7475c104ca61799d1978902fee1b6b807bfe5f8",
+  "feature_schema": [
+    "v1_present",
+    "v1_rank",
+    "v1_rr",
+    "v2_present",
+    "v2_rank",
+    "v2_rr",
+    "v21_present",
+    "v21_rank",
+    "v21_rr",
+    "bm25_present",
+    "bm25_rank",
+    "bm25_rr",
+    "table_present",
+    "table_rank",
+    "table_rr",
+    "retriever_hit_count",
+    "equal_rrf_score",
+    "rrf_rank",
+    "bm25_score_norm",
+    "bm25_score_percentile",
+    "table_score_norm",
+    "table_score_percentile",
+    "table_block_hit_count",
+    "table_candidate_signal",
+    "page_text_length_log",
+    "page_numeric_density",
+    "page_percentage_count_log",
+    "page_currency_count_log",
+    "page_year_count",
+    "page_table_signal",
+    "risk_cash_runway",
+    "risk_continuous_loss",
+    "risk_customer_concentration",
+    "risk_material_litigation_compliance",
+    "risk_precommercial_product",
+    "risk_redemption_rights",
+    "risk_revenue_growth",
+    "risk_supplier_concentration"
+  ],
+  "candidate_cap": 100,
+  "fusion_baseline": {
+    "method": "equal-weight RRF",
+    "rrf_k": 60
+  },
+  "primary_ranking_metrics": [
+    "required_recall_at_5",
+    "required_recall_at_10",
+    "required_recall_at_20",
+    "required_completion_at_5",
+    "required_completion_at_20"
+  ],
+  "secondary_metrics": [
+    "recall_at_50",
+    "recall_at_100",
+    "mrr",
+    "ndcg_at_5",
+    "ndcg_at_10",
+    "ndcg_at_20"
+  ],
+  "candidate_metrics": [
+    "old_v1_v2_v21_oracle",
+    "bm25_standalone",
+    "old_plus_bm25_oracle",
+    "full_v3_oracle"
+  ],
+  "predeclared_risk_watch": [
+    "customer_concentration"
+  ],
+  "pass_gates": {
+    "A_candidate_generalization": "full_oracle_gain_at_50 >= 0.05 OR full_oracle_gain_at_native >= 0.05",
+    "B_ltr_r20": "delta_r20 > 0 AND (delta_r20 >= 0.02 OR net_gold_at_20 >= 2)",
+    "C_top5": "ltr_r5 >= rrf_r5",
+    "D_completion": "ltr_completion_at_20 >= rrf_completion_at_20",
+    "E_case_direction": "improved_cases >= regressed_cases",
+    "F_per_risk": "at most one risk has r20 delta < -0.05; customer_concentration is always reported"
+  },
+  "outcome_policy": {
+    "CANDIDATE_FAIL": "Gate A fails",
+    "CANDIDATE_PASS_RANKING_FAIL": "Gate A passes but Gate B or D fails",
+    "CANDIDATE_PASS_RANKING_MIXED": "A/B/D pass but C/E/F is not fully satisfied",
+    "FULL_PASS": "all frozen gates pass"
+  },
+  "frozen_state": {
+    "candidate_sources": true,
+    "bm25_config": true,
+    "table_config": true,
+    "ltr_features": true,
+    "ltr_model": true,
+    "evaluation_gates": true
+  },
+  "code_sha256": {
+    "src/ipo_risk/evaluation/retrieval_40_benchmark.py": "155aa1a0e6672ada97c54addf136cef7f127528b1733cc93364d7604d195710d",
+    "src/ipo_risk/retrieval/keyword.py": "12f59b365a4ee7dbc6a9486e309fd6a56f0d0c1ecf4da62b7853a60ec896ef2e",
+    "src/ipo_risk/retrieval/domain_aware_v2.py": "50dda86eba86542fbfd26a2035976408d87cc6c22dfb8866140a7b6940d7490a",
+    "src/ipo_risk/retrieval/domain_aware_v21.py": "69fb197d5e2c10429fa1b4acfd0204535b3f5c72275d22a5521c418d25e90f69",
+    "src/ipo_risk/retrieval/bm25_v3.py": "d38d5eb86a54026887bece94cfd5ca4003973da9bc92cb8020d83f5ed06677ea",
+    "src/ipo_risk/retrieval/table_v3.py": "0e3af6a7e2cbcbc4c74d263cd56ee3ab2c0e36c47b803b7af4544994d13f2955",
+    "src/ipo_risk/ranking/ltr_v3.py": "7a141bb996e27d3dc5b6d5641ed36f3ddb4a33d0c89b4ca0505eeeaddd3e6e8d",
+    "src/ipo_risk/parsers/pymupdf_parser.py": "0ee5257c031b92e47c0d3f8337133a13ae2ff7f10f01a8705eccbfa1743a7b5a",
+    "models/retriever_v3/ltr_v3.txt": "47ef0a13426a031fd26dc642d7475c104ca61799d1978902fee1b6b807bfe5f8",
+    "reports/retriever_v3/split_manifest.json": "20c0c48ae61822871ddf4d882d8a0ea4401b412295a78f67477d7c6a36e3c951"
+  }
+}
