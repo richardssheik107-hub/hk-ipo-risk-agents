@@ -46,12 +46,31 @@ Prospectus PDF
 - [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — Document Risk → 模型特征契约。
 - [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — 严格上市前市场特征契约。
 - [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 当前真实数据覆盖、缺失源和 model-ready gate。
+- [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — evaluation-only 的专家 Gold 上限建模路径，用于区分“文档信号本身不足”与“生产文档流水线提取误差”，不进入生产运行时。
 
 ## 冻结研究参考
 
 - [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md)
 
 Retriever V3 / BM25 / Table / LambdaMART 等研究成果已经进入主线历史，但当前冻结，不作为 v0.4 前置条件。历史 Locked 10 已经正式消费，后续不得重新把它当作独立 blind set 调参；若 v0.5 重启 Retriever 优化，必须建立新的 unseen / external / temporal holdout。
+
+## Oracle modeling 的定位
+
+Oracle modeling 已作为 v0.4 的**诊断性旁路**进入主线：
+
+```text
+Reviewed Expert Gold
+→ Oracle Document Features
+→ Same Market X / Same y / Same Split / Same Model
+→ Compare with Production Document Features
+```
+
+它的目的不是替代当前 Document Intelligence，而是在 model-ready dataset 完成后回答两个问题：
+
+1. 如果 Oracle Document Features 也没有预测增量，问题更可能在“招股书风险信号本身 / target / sample size”；
+2. 如果 Oracle 明显有效而生产 Document Features 较弱，问题更可能在 Retriever / Agent / Verification / feature materialization 的信息损失。
+
+Oracle track 不允许读取 2025 blind y，也不阻塞 CL-1～CL-5 的主线推进。
 
 ## Machine fixtures（不作为阅读文档）
 
@@ -72,6 +91,7 @@ case_packets/
 
 - v0.3 Document Intelligence 已可作为稳定基线；
 - v0.4 Document / Market feature contracts 已存在；
+- Oracle Document Feature / baseline foundations 已合入；
 - 官方 2020–2024 IPO universe 为 438 个 case；
 - IPO OHLCV 现有覆盖 432 / 438；
 - 438-case authoritative document snapshot 全量 materialization 尚未执行；
@@ -85,9 +105,10 @@ CL-2 Materialize IPO-level Document Risk Features
 CL-3 Close minimum real Market Data
 CL-4 Freeze 5D Outcome policy
 CL-5 Build model-ready dataset
+CL-6 Run baseline + Oracle diagnostic comparison
 ```
 
-后续模型、Market Agent、Final Supervisor 和 Streamlit E2E 按 Master Plan 顺序推进。
+后续 LightGBM、Market Agent、Final Supervisor 和 Streamlit E2E 按 Master Plan 顺序推进。
 
 ## 文档维护规则
 

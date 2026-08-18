@@ -12,6 +12,7 @@ dependencies = ["pydantic>=2.7", "PyYAML>=6.0", "langgraph>=0.2", "streamlit>=1.
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 retrieval-research = ["lightgbm==4.6.0", "scikit-learn>=1.4,<2"]
+modeling = ["scikit-learn>=1.5,<2"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
