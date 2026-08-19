@@ -190,8 +190,16 @@ pytest -q
 
 ## 15. 当前优先级
 
-除非出现阻断闭环的 bug、数据泄漏或不可复现问题，当前开发顺序以：
+CL-1 已完成并冻结。当前唯一正式执行里程碑是：
 
-`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
+> **PR-A — Document + Oracle Materialization & Coverage**
 
-为准。当前正式任务是 **CL-1 / CL-2：冻结 Document Intelligence，并批量生成 IPO-level Document Risk Features。**
+执行顺序以 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` 为准。PR-A 首个代码 deliverable 是一个薄 orchestration CLI：
+
+```text
+scripts/run_v04_pr_a.py
+```
+
+它只串联已有 Production batch、authoritative snapshot materialization、Production feature vectorization、Oracle materialization 与 unified coverage，不复制 Parser / Retriever / Agent 业务逻辑，不修改受保护公共接口。
+
+PR-A PASS 前，不把 Retriever 调参、LLM Reranker、Fine-tuning、市场模型训练或 UI 重构重新拉回主线。
