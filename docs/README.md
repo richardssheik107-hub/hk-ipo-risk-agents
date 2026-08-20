@@ -34,16 +34,18 @@ CL-1 Document Intelligence freeze 已完成。当前不继续优化 Retriever、
 
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — **唯一权威执行总计划**，包含 PR-A 的步骤与 Gate；
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人并行执行计划**，规定角色、并行关系、时间窗口、交付物与 Gate；
-3. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
-4. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
-5. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
-6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
-7. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
+3. [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — **A / Pipeline Lead 当前操作手册**，包含网页端实现、本地 Pilot、438 全量与 determinism 验收；
+4. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
+5. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
+6. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
+7. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
+8. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
 
 ## v0.4 当前工作文档
 
+- [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — A 负责人 PR-A 运行、Coverage、Reproducibility 的直接执行手册；
 - [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最近一次真实 readiness 审计；PR-A ready 与 full model-ready blocked 的区别；
 - [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — 市场数据、标签、年度切分和 blind 治理基础；
 - [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — Production Document Risk → 模型特征契约；
@@ -97,7 +99,7 @@ PR-A 不是“再优化一次 Agent”，而是回答四个基础问题：
 4. Production 与 Oracle 的公平交集有多少？
 ```
 
-当前底层能力已经存在：
+底层能力已经存在：
 
 - `scripts/run_v03_batch_analysis.py` — Production batch analysis；
 - `src/ipo_risk/modeling/materialization.py` — authoritative snapshot boundary；
@@ -105,13 +107,15 @@ PR-A 不是“再优化一次 Agent”，而是回答四个基础问题：
 - `scripts/index_oracle_gold.py` — Oracle eligibility / provenance inventory；
 - `scripts/build_oracle_document_features.py` — Oracle feature materialization。
 
-当前缺少的是一个**PR-A 统一执行入口**：
+A 负责人统一执行入口目前已经在活动分支实现：
 
 ```text
 scripts/run_v04_pr_a.py
 ```
 
-它必须是薄 orchestration CLI，只串联既有模块，不把 Parser / Retriever / Agent 业务逻辑复制进去。
+该 CLI 只串联既有模块，不复制 Parser / Retriever / Agent 业务逻辑。网页端已经具备 A0 execution-context freeze、official cohort selection、Production Snapshot / Feature 串联、Oracle 状态、A5 Coverage Builder 与 A6 determinism checker；**真实 5-case Pilot、438-case Production materialization 与基于真实 artifact 的第二次 determinism run 仍必须在有本地 PDF 的环境执行。**
+
+详细命令与 Gate 见 [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md)。
 
 ## 五人并行执行
 
@@ -150,7 +154,7 @@ PR-A5  Build unified coverage table
 PR-A6  Rerun and verify deterministic hashes
 ```
 
-只有 PR-A PASS 后才进入 PR-B Market-X Core 的正式合流，但 PR-B / PR-C 的准备工作可以提前并行。
+当前工程状态：A0/A1/A5/A6 的代码与测试已经进入活动分支；A2/A3 以及真实 artifact 上的 A6 尚待本地数据运行。只有 PR-A 最终 Gate PASS 后才进入 PR-B Market-X Core 的正式合流，但 PR-B / PR-C 的准备工作可以提前并行。
 
 ## 当前真实 readiness
 
