@@ -33,11 +33,12 @@ CL-1 Document Intelligence freeze 已完成。当前不继续优化 Retriever、
 遇到口径冲突时，按以下顺序理解当前项目：
 
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — **唯一权威执行总计划**，包含 PR-A 的步骤与 Gate；
-2. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
-3. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
-4. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
-5. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
-6. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
+2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人并行执行计划**，规定角色、并行关系、时间窗口、交付物与 Gate；
+3. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
+4. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
+5. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
+6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
+7. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
 
@@ -112,6 +113,31 @@ scripts/run_v04_pr_a.py
 
 它必须是薄 orchestration CLI，只串联既有模块，不把 Parser / Retriever / Agent 业务逻辑复制进去。
 
+## 五人并行执行
+
+完整角色与时间安排见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
+
+固定角色：
+
+```text
+A  Tech Lead / Pipeline
+B  Document / Agent
+C  Market Data / PIT
+D  Quant / ML Research
+E  Oracle / Product Integration
+```
+
+当前推荐的并行关系：
+
+```text
+PR-A Production ─────┐
+PR-B Market-X ───────┼──→ PR-D Dataset → PR-E Diagnostic
+PR-C Outcome ────────┘                         ↓
+                                     PR-F / PR-G → PR-H
+```
+
+E 同时推进 Oracle 和 Streamlit skeleton；B 在 PR-A 跑批期间负责 Document failure / evidence QA；C、D 不需要等待 PR-A 才开始工作。
+
 ## PR-A 的严格顺序
 
 ```text
@@ -124,7 +150,7 @@ PR-A5  Build unified coverage table
 PR-A6  Rerun and verify deterministic hashes
 ```
 
-只有 PR-A PASS 后才进入 PR-B Market-X Core。
+只有 PR-A PASS 后才进入 PR-B Market-X Core 的正式合流，但 PR-B / PR-C 的准备工作可以提前并行。
 
 ## 当前真实 readiness
 
@@ -165,4 +191,4 @@ PR-A6  Rerun and verify deterministic hashes
 - **真实 readiness 数字**：只有真实运行后更新；
 - **已被新版本替代的说明或死链接**：从当前树 / 当前正文移除，由 Git history 保存。
 
-目标是让新成员进入 `docs/` 后几分钟内就能回答：**现在做到哪里、下一步只做什么、哪些边界不能破坏。**
+目标是让新成员进入 `docs/` 后几分钟内就能回答：**现在做到哪里、下一步只做什么、谁负责什么、哪些任务可以并行、哪些边界不能破坏。**
