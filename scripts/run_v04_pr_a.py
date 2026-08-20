@@ -1,8 +1,8 @@
 """Canonical PR-A orchestration for v0.4 Document + Oracle materialization.
 
-This is intentionally a thin orchestration layer. It reuses the frozen v0.3
-batch runner, authoritative V04 document materializer, frozen document feature
-manifest/vectorizer, and the evaluation-only Oracle feature builder.
+This module is intentionally a thin orchestration layer. It reuses the frozen
+v0.3 batch runner, authoritative V04 document materializer, frozen document
+feature manifest/vectorizer, and the evaluation-only Oracle feature builder.
 
 The command never reads 2025 blind outcomes and never changes Retriever/Agent
 business logic. The official Production cohort is resolved from the governed
@@ -33,7 +33,6 @@ import hashlib
 import json
 import platform
 import re
-import sys
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any, Iterable
@@ -48,7 +47,6 @@ from ipo_risk.modeling.oracle_document import (
     ORACLE_DOCUMENT_FEATURE_MANIFEST_HASH,
     build_oracle_document_features,
 )
-from ipo_risk.providers.catalog import CatalogIPODataProvider
 from ipo_risk.providers.competition_market import CompetitionCSVMarketDataProvider
 from ipo_risk.schemas.market import IPOMarketMetadata, expected_market_split
 from ipo_risk.schemas.modeling import (
@@ -130,7 +128,9 @@ def select_metadata(
         by_case = {item.case_id: item for item in ordered}
         missing = [case_id for case_id in wanted if case_id not in by_case]
         if missing:
-            raise ValueError(f"case ids outside official 2020-2024 cohort: {', '.join(missing)}")
+            raise ValueError(
+                f"case ids outside official 2020-2024 cohort: {', '.join(missing)}"
+            )
         ordered = tuple(by_case[case_id] for case_id in wanted)
     if limit is not None:
         if limit <= 0:
@@ -146,7 +146,9 @@ def build_snapshot_context(
 ) -> DocumentRiskSnapshotBuildContext:
     revision = pipeline_commit.strip().lower()
     if not _HEX_REVISION.fullmatch(revision):
-        raise ValueError("pipeline commit must be a 7-64 character hexadecimal git revision")
+        raise ValueError(
+            "pipeline commit must be a 7-64 character hexadecimal git revision"
+        )
     if metadata.cohort_year >= 2025:
         raise ValueError("2025 blind cohort is forbidden in PR-A")
     if not metadata.document_id:
@@ -168,19 +170,27 @@ def build_snapshot_context(
     )
 
 
-def _write_json_conflict_safe(path: Path, payload: dict[str, Any], *, resume: bool) -> str:
+def _write_json_conflict_safe(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    resume: bool,
+) -> str:
     """Write deterministic JSON and fail closed on incompatible reuse.
 
-    Returns ``created`` or ``reused``. Existing different content is never
-    overwritten, including when resume mode is enabled.
+    ``resume`` documents caller intent; it never authorizes overwriting changed
+    provenance. Exact content is reused, different content always fails closed.
     """
 
+    del resume
     encoded = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     if path.exists():
         existing = json.loads(path.read_text(encoding="utf-8"))
         if existing == payload:
             return "reused"
-        raise ValueError(f"existing artifact differs; use a new output directory: {path.name}")
+        raise ValueError(
+            f"existing artifact differs; use a new output directory: {path.name}"
+        )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(encoded, encoding="utf-8")
     return "created"
@@ -239,11 +249,17 @@ def freeze_execution_context(
         "implementation": platform.python_implementation(),
         "package_versions": _package_versions(),
         "selected_case_count": len(selected),
-        "selected_case_ids_hash": _content_hash([item.case_id for item in selected]),
+        "selected_case_ids_hash": _content_hash(
+            [item.case_id for item in selected]
+        ),
         "selected_case_ids": [item.case_id for item in selected],
         "blind_outcomes_included": False,
     }
-    _write_json_conflict_safe(output_dir / "execution_context.json", payload, resume=resume)
+    _write_json_conflict_safe(
+        output_dir / "execution_context.json",
+        payload,
+        resume=resume,
+    )
     return payload
 
 
@@ -258,7 +274,9 @@ def _feature_artifact(
         "document_id": snapshot.document_id,
         "stock_code": snapshot.stock_code,
         "cohort_year": snapshot.cohort_year,
-        "listing_date": snapshot.listing_date.isoformat() if snapshot.listing_date else None,
+        "listing_date": snapshot.listing_date.isoformat()
+        if snapshot.listing_date
+        else None,
         "dataset_split": snapshot.dataset_split.value,
         "snapshot_hash": snapshot_hash,
         "feature_schema_version": vector.feature_schema_version,
@@ -280,6 +298,7 @@ def run_production(
     revision: str,
     resume: bool,
 ) -> dict[str, dict[str, Any]]:
+    output_dir.mkdir(parents=True, exist_ok=True)
     analysis_dir = output_dir / "production_analysis"
     report = run_batch(
         catalog_dir=catalog_dir,
@@ -291,7 +310,9 @@ def run_production(
         include_blind_test=False,
     )
     outcome_by_case = {item.case_id: item for item in report.outcomes}
-    materializer = V04DocumentSnapshotMaterializer(output_dir / "production_document")
+    materializer = V04DocumentSnapshotMaterializer(
+        output_dir / "production_document"
+    )
     states: dict[str, dict[str, Any]] = {}
 
     for metadata in selected:
@@ -299,7 +320,9 @@ def run_production(
         state: dict[str, Any] = {
             "case_id": metadata.case_id,
             "analysis_status": outcome.status if outcome else "missing",
-            "analysis_message": outcome.message if outcome else "batch outcome missing",
+            "analysis_message": outcome.message
+            if outcome
+            else "batch outcome missing",
             "snapshot_status": "not_run",
             "feature_status": "not_run",
             "production_document_available": False,
@@ -312,7 +335,9 @@ def run_production(
         case_file = analysis_dir / "cases" / f"{metadata.case_id}.json"
         if not case_file.is_file():
             state["failure_stage"] = "analysis"
-            state["failure_reason"] = state["analysis_message"] or "analysis result missing"
+            state["failure_reason"] = (
+                state["analysis_message"] or "analysis result missing"
+            )
             states[metadata.case_id] = state
             continue
 
@@ -331,12 +356,18 @@ def run_production(
 
         try:
             snapshot_path = (
-                output_dir / "production_document" / "snapshots" / f"{metadata.case_id}.json"
+                output_dir
+                / "production_document"
+                / "snapshots"
+                / f"{metadata.case_id}.json"
             )
             snapshot = V03DocumentRiskSnapshot.model_validate_json(
                 snapshot_path.read_text(encoding="utf-8")
             )
-            artifact = _feature_artifact(snapshot, snapshot_hash=state["snapshot_hash"])
+            artifact = _feature_artifact(
+                snapshot,
+                snapshot_hash=state["snapshot_hash"],
+            )
             status = _write_json_conflict_safe(
                 output_dir / "production_features" / f"{metadata.case_id}.json",
                 artifact,
@@ -357,7 +388,13 @@ def run_production(
         "cases": [states[item.case_id] for item in selected],
     }
     (output_dir / "production_status.json").write_text(
-        json.dumps(status_payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        json.dumps(
+            status_payload,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
         encoding="utf-8",
     )
     return states
@@ -370,6 +407,7 @@ def run_oracle(
     output_dir: Path,
     resume: bool,
 ) -> dict[str, dict[str, Any]]:
+    output_dir.mkdir(parents=True, exist_ok=True)
     states: dict[str, dict[str, Any]] = {}
     features_dir = output_dir / "oracle_features"
     for metadata in selected:
@@ -392,9 +430,16 @@ def run_oracle(
             }
             continue
         try:
-            artifact = build_oracle_document_features(repo_root, metadata.case_id)
+            artifact = build_oracle_document_features(
+                repo_root,
+                metadata.case_id,
+            )
             target = features_dir / f"{metadata.case_id}.json"
-            status = _write_json_conflict_safe(target, artifact, resume=resume)
+            status = _write_json_conflict_safe(
+                target,
+                artifact,
+                resume=resume,
+            )
             states[metadata.case_id] = {
                 "case_id": metadata.case_id,
                 "status": status,
@@ -402,7 +447,9 @@ def run_oracle(
                 "failure_reason": "",
                 "feature_hash": artifact["content_hash"],
                 "feature_manifest_hash": artifact["oracle_manifest_hash"],
-                "effective_annotation_hash": artifact["effective_annotation_hash"],
+                "effective_annotation_hash": artifact[
+                    "effective_annotation_hash"
+                ],
             }
         except Exception as exc:
             states[metadata.case_id] = {
@@ -433,6 +480,16 @@ def _load_status(path: Path) -> dict[str, dict[str, Any]]:
     return {row["case_id"]: row for row in payload.get("cases", [])}
 
 
+def _csv_string_rows(rows: list[dict[str, Any]]) -> list[dict[str, str]]:
+    return [
+        {
+            key: "" if value is None else str(value)
+            for key, value in row.items()
+        }
+        for row in rows
+    ]
+
+
 def build_coverage(
     *,
     selected: tuple[IPOMarketMetadata, ...],
@@ -453,9 +510,17 @@ def build_coverage(
                 "stock_code": metadata.stock_code,
                 "source_year": source_row.get("source_year", ""),
                 "official_listing_year": metadata.cohort_year,
-                "dataset_split": expected_market_split(metadata.cohort_year).value,
-                "production_analysis_status": prod.get("analysis_status", "not_run"),
-                "production_snapshot_status": prod.get("snapshot_status", "not_run"),
+                "dataset_split": expected_market_split(
+                    metadata.cohort_year
+                ).value,
+                "production_analysis_status": prod.get(
+                    "analysis_status",
+                    "not_run",
+                ),
+                "production_snapshot_status": prod.get(
+                    "snapshot_status",
+                    "not_run",
+                ),
                 "production_document_available": str(
                     bool(prod.get("production_document_available", False))
                 ).lower(),
@@ -464,53 +529,68 @@ def build_coverage(
                 "production_snapshot_hash": prod.get("snapshot_hash", ""),
                 "production_feature_hash": prod.get("feature_hash", ""),
                 "production_feature_manifest_hash": prod.get(
-                    "feature_manifest_hash", DOCUMENT_FEATURE_MANIFEST_V1.content_hash()
+                    "feature_manifest_hash",
+                    DOCUMENT_FEATURE_MANIFEST_V1.content_hash(),
                 ),
                 "oracle_document_available": str(
                     bool(ora.get("oracle_document_available", False))
                 ).lower(),
-                "oracle_failure_reason": ora.get("failure_reason", "not_run"),
+                "oracle_failure_reason": ora.get(
+                    "failure_reason",
+                    "not_run",
+                ),
                 "oracle_feature_hash": ora.get("feature_hash", ""),
                 "oracle_feature_manifest_hash": ora.get(
-                    "feature_manifest_hash", ORACLE_DOCUMENT_FEATURE_MANIFEST_HASH
+                    "feature_manifest_hash",
+                    ORACLE_DOCUMENT_FEATURE_MANIFEST_HASH,
                 ),
                 "oracle_effective_annotation_hash": ora.get(
-                    "effective_annotation_hash", ""
+                    "effective_annotation_hash",
+                    "",
                 ),
             }
         )
 
-    fieldnames = list(rows[0]) if rows else ["case_id"]
+    csv_rows = _csv_string_rows(rows)
+    fieldnames = list(csv_rows[0]) if csv_rows else ["case_id"]
     output_dir.mkdir(parents=True, exist_ok=True)
-    with (output_dir / "coverage.csv").open("w", encoding="utf-8", newline="") as handle:
+    with (output_dir / "coverage.csv").open(
+        "w",
+        encoding="utf-8",
+        newline="",
+    ) as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(csv_rows)
 
     production_materialized = sum(
-        row["production_document_available"] == "true" for row in rows
+        row["production_document_available"] == "true" for row in csv_rows
     )
-    oracle_materialized = sum(row["oracle_document_available"] == "true" for row in rows)
+    oracle_materialized = sum(
+        row["oracle_document_available"] == "true" for row in csv_rows
+    )
     intersection = sum(
         row["production_document_available"] == "true"
         and row["oracle_document_available"] == "true"
-        for row in rows
+        for row in csv_rows
     )
     failures_by_stage: dict[str, int] = {}
-    for row in rows:
+    for row in csv_rows:
         stage = row["production_failure_stage"]
         if stage:
             failures_by_stage[stage] = failures_by_stage.get(stage, 0) + 1
 
     summary = {
         "pr_a_version": PR_A_VERSION,
-        "selected_case_count": len(rows),
+        "selected_case_count": len(csv_rows),
         "production_materialized_count": production_materialized,
-        "production_failure_count": len(rows) - production_materialized,
-        "production_failure_count_by_stage": dict(sorted(failures_by_stage.items())),
+        "production_failure_count": len(csv_rows) - production_materialized,
+        "production_failure_count_by_stage": dict(
+            sorted(failures_by_stage.items())
+        ),
         "oracle_materialized_count": oracle_materialized,
         "production_oracle_intersection_count": intersection,
-        "coverage_hash": _content_hash(rows),
+        "coverage_hash": _content_hash(csv_rows),
     }
     (output_dir / "coverage_summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -524,37 +604,62 @@ def verify_determinism(
     selected: tuple[IPOMarketMetadata, ...],
     output_dir: Path,
 ) -> dict[str, Any]:
+    output_dir.mkdir(parents=True, exist_ok=True)
     mismatches: list[dict[str, str]] = []
     for metadata in selected:
         snapshot_path = (
-            output_dir / "production_document" / "snapshots" / f"{metadata.case_id}.json"
+            output_dir
+            / "production_document"
+            / "snapshots"
+            / f"{metadata.case_id}.json"
         )
-        feature_path = output_dir / "production_features" / f"{metadata.case_id}.json"
+        feature_path = (
+            output_dir / "production_features" / f"{metadata.case_id}.json"
+        )
         if snapshot_path.is_file() and feature_path.is_file():
             snapshot = V03DocumentRiskSnapshot.model_validate_json(
                 snapshot_path.read_text(encoding="utf-8")
             )
             feature = json.loads(feature_path.read_text(encoding="utf-8"))
-            expected = _feature_artifact(snapshot, snapshot_hash=snapshot.content_hash())
+            expected = _feature_artifact(
+                snapshot,
+                snapshot_hash=snapshot.content_hash(),
+            )
             if feature != expected:
                 mismatches.append(
-                    {"case_id": metadata.case_id, "layer": "production_feature"}
+                    {
+                        "case_id": metadata.case_id,
+                        "layer": "production_feature",
+                    }
                 )
 
         oracle_path = output_dir / "oracle_features" / f"{metadata.case_id}.json"
         if oracle_path.is_file():
             oracle = json.loads(oracle_path.read_text(encoding="utf-8"))
             expected_hash = _content_hash(
-                {key: value for key, value in oracle.items() if key != "content_hash"}
+                {
+                    key: value
+                    for key, value in oracle.items()
+                    if key != "content_hash"
+                }
             )
             if oracle.get("content_hash") != expected_hash:
-                mismatches.append({"case_id": metadata.case_id, "layer": "oracle_feature"})
+                mismatches.append(
+                    {
+                        "case_id": metadata.case_id,
+                        "layer": "oracle_feature",
+                    }
+                )
 
     coverage_path = output_dir / "coverage.csv"
     summary_path = output_dir / "coverage_summary.json"
     coverage_hash_ok = False
     if coverage_path.is_file() and summary_path.is_file():
-        with coverage_path.open("r", encoding="utf-8", newline="") as handle:
+        with coverage_path.open(
+            "r",
+            encoding="utf-8",
+            newline="",
+        ) as handle:
             rows = list(csv.DictReader(handle))
         summary = json.loads(summary_path.read_text(encoding="utf-8"))
         coverage_hash_ok = summary.get("coverage_hash") == _content_hash(rows)
@@ -584,14 +689,28 @@ def _parse_case_ids(raw: str | None) -> list[str] | None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--catalog-dir", type=Path, default=Path("data/catalog"))
     parser.add_argument("--data-root", type=Path, default=Path("data/inputs"))
-    parser.add_argument("--output-dir", type=Path, default=Path("reports/v04_pr_a"))
-    parser.add_argument("--config", type=Path, default=Path("configs/v03_offline.yaml"))
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("reports/v04_pr_a"),
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=Path("configs/v03_offline.yaml"),
+    )
     parser.add_argument("--limit", type=int, help="deterministic pilot limit")
-    parser.add_argument("--case-ids", help="comma-separated diagnostic/pilot case ids")
+    parser.add_argument(
+        "--case-ids",
+        help="comma-separated diagnostic/pilot case ids",
+    )
     parser.add_argument("--resume", action="store_true")
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--production-only", action="store_true")
@@ -604,22 +723,49 @@ def main() -> int:
     args = parser.parse_args()
 
     repo_root = args.repo_root.resolve()
-    catalog_dir = (repo_root / args.catalog_dir).resolve() if not args.catalog_dir.is_absolute() else args.catalog_dir
-    config_path = (repo_root / args.config).resolve() if not args.config.is_absolute() else args.config
-    output_dir = (repo_root / args.output_dir).resolve() if not args.output_dir.is_absolute() else args.output_dir
-    data_root = (repo_root / args.data_root).resolve() if not args.data_root.is_absolute() else args.data_root
+    catalog_dir = (
+        (repo_root / args.catalog_dir).resolve()
+        if not args.catalog_dir.is_absolute()
+        else args.catalog_dir
+    )
+    config_path = (
+        (repo_root / args.config).resolve()
+        if not args.config.is_absolute()
+        else args.config
+    )
+    output_dir = (
+        (repo_root / args.output_dir).resolve()
+        if not args.output_dir.is_absolute()
+        else args.output_dir
+    )
+    data_root = (
+        (repo_root / args.data_root).resolve()
+        if not args.data_root.is_absolute()
+        else args.data_root
+    )
 
     if output_dir.exists() and any(output_dir.iterdir()) and not args.resume:
-        parser.error("output directory is not empty; use --resume or a new output directory")
+        parser.error(
+            "output directory is not empty; use --resume or a new output directory"
+        )
 
     official = load_official_metadata(catalog_dir)
     case_ids = _parse_case_ids(args.case_ids)
-    selected = select_metadata(official, case_ids=case_ids, limit=args.limit)
+    selected = select_metadata(
+        official,
+        case_ids=case_ids,
+        limit=args.limit,
+    )
     if not selected:
         parser.error("no official 2020-2024 cases selected")
-    if case_ids is None and args.limit is None and len(official) != EXPECTED_FULL_COHORT_SIZE:
+    if (
+        case_ids is None
+        and args.limit is None
+        and len(official) != EXPECTED_FULL_COHORT_SIZE
+    ):
         raise RuntimeError(
-            f"official cohort drift: expected {EXPECTED_FULL_COHORT_SIZE}, found {len(official)}"
+            "official cohort drift: "
+            f"expected {EXPECTED_FULL_COHORT_SIZE}, found {len(official)}"
         )
 
     revision = code_revision().strip().lower()
@@ -666,7 +812,10 @@ def main() -> int:
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
 
     if args.verify_determinism:
-        report = verify_determinism(selected=selected, output_dir=output_dir)
+        report = verify_determinism(
+            selected=selected,
+            output_dir=output_dir,
+        )
         print(json.dumps(report, ensure_ascii=False, sort_keys=True))
         return 2 if not report["passed"] else 0
     return 0
