@@ -1,5 +1,7 @@
 # HK IPO Risk Agents — Current Project Specification
 
+> Status snapshot: **2026-08-20**
+
 ## 1. 项目定位
 
 HK IPO Risk Agents 是一个**证据驱动、多智能体协同、可审计**的港股 IPO 招股书分析与上市后风险预警系统。
@@ -54,7 +56,7 @@ Prospectus
 → Full E2E Report
 ```
 
-当前优先完成完整闭环，再在 v0.5 回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
+当前优先完成完整闭环，再依据 PR-E 的 Oracle diagnostic 决定 v0.5 是否回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
 
 ## 3. 输入
 
@@ -122,31 +124,33 @@ v0.3 冻结的 8 类正式风险为：
 
 第一版主研究对象为**上市后 5 个交易日弱表现风险**。
 
-建议同时保留：
+正式建模时同时保留：
 
 - `return_1d / 5d / 20d / 60d`；
-- benchmark-adjusted / abnormal return；
+- raw / benchmark-adjusted return（当 governed benchmark 可用）；
 - 5D classification label。
 
 分类阈值只允许由 Development 数据决定。
 
-正式比较必须包含：
+正式比较至少包含：
 
 ```text
-A. Market-only
-B. Document-only
-C. Document + Market
+M   = Market-only
+P   = Production Document-only
+O   = Oracle Document-only
+PM  = Production Document + Market
+OM  = Oracle Document + Market
 ```
 
 核心研究问题为：
 
 ```text
-Performance(Document + Market)
+Performance(Production Document + Market)
 >
 Performance(Market-only) ?
 ```
 
-即：Multi-Agent 招股书风险特征是否提供传统 IPO / 市场变量之外的增量信息。
+同时用 Oracle 回答：招股书风险本身是否有信号，以及 Production Pipeline 捕获了多少专家可提取的信息。
 
 ## 7. 数据切分与 Blind Policy
 
@@ -160,9 +164,9 @@ Performance(Market-only) ?
 
 规则：
 
-- 2020–2023：训练、CV、特征选择、阈值、超参数；
-- 2024：模型选择与正式 validation；
-- 2025：模型与 feature policy 冻结后一次性 blind evaluation；
+- 2020–2023：训练、CV、特征策略、阈值、超参数；
+- 2024：冻结方案的正式 validation / model-family comparison；不得基于 2024 反复调参后继续称其为 untouched validation；
+- 2025：feature / target / model policy 冻结后一次性 blind evaluation；
 - 2025 不得用于开发调参；
 - 一旦 blind 被查看，不能根据其结果调参后继续称其为 blind。
 
@@ -176,14 +180,49 @@ Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测�
 - IPO OHLCV：432 / 438 可用，6 个 outcome unavailable；
 - authoritative Document Risk Snapshot pipeline 已存在；
 - 全 438 case 的 authoritative document snapshot 尚未 materialize；
+- Production Document Feature manifest / vectorizer 已存在；
+- Oracle Document Feature builder 已存在；
 - HSI 历史源仍缺；
 - authoritative industry benchmark mapping / history 仍缺；
 - total-market turnover 源仍缺；
 - `MODEL_READY_DATA_GATE` 尚未打开。
 
-详细口径见 `research/V04_DATA_READINESS.md`。
+这些数字只来自最近一次真实 readiness audit，不能因为计划文档更新而擅自改变。详细口径见 `research/V04_DATA_READINESS.md`。
 
-## 9. 架构保护边界
+## 9. Production 与 Oracle 永久分离
+
+### Production
+
+```text
+Prospectus PDF
+→ Parser
+→ Retriever
+→ Financial / Legal / Business Agents
+→ Skills
+→ Verifier
+→ Document Supervisor
+→ V03DocumentRiskSnapshot
+→ Production Document X
+```
+
+这是最终产品使用的路径，不依赖专家答案。
+
+### Oracle
+
+```text
+Reviewed Expert Gold
+→ EffectiveRiskGoldView
+→ Oracle Document X
+```
+
+Oracle 只用于研究上限 / 错误归因：
+
+- 不进入 Production runtime；
+- 不替代 Retriever / Agent；
+- 不向 Production X 泄漏 Gold page、Evidence ID 或专家答案；
+- 不读取 2025 blind y。
+
+## 10. 架构保护边界
 
 公共接口与模块边界以 `ARCHITECTURE.md`、`DATA_SCHEMA.md` 和根目录 `AGENTS.md` 为准。
 
@@ -202,9 +241,9 @@ src/ipo_risk/core/container.py
 src/ipo_risk/domain/risk_codes.py
 ```
 
-Streamlit 只通过 `IPOAnalysisService` 访问业务能力，不得直接调用 Parser、Agent、Predictor 或 Repository。
+Streamlit 只通过 `IPOAnalysisService` / 受控上层 service 访问业务能力，不得直接调用 Parser、Agent、Provider 或 Predictor。
 
-## 10. v0.4 当前非目标
+## 11. v0.4 当前非目标
 
 闭环冻结前不把以下工作作为主线：
 
@@ -218,7 +257,7 @@ Streamlit 只通过 `IPOAnalysisService` 访问业务能力，不得直接调用
 
 只有阻断闭环、造成数据泄漏、明显错误或不可复现的问题可以打断该优先级。
 
-## 11. v0.4 完成定义
+## 12. v0.4 完成定义
 
 v0.4 首先以**完整、可信、可重建**为成功标准：
 
@@ -234,10 +273,24 @@ v0.4 首先以**完整、可信、可重建**为成功标准：
 - provenance、version、failure state 可审计；
 - 2025 blind 未参与开发调优。
 
-## 12. 当前下一项任务
+## 13. 当前唯一任务
 
-当前正式进入：
+CL-1 已完成并冻结。当前正式进入：
 
-> **CL-1 / CL-2：冻结现有 Document Intelligence，并批量生成第一版 IPO-level Document Risk Feature Dataset。**
+> **PR-A — Document + Oracle Materialization & Coverage**
 
-完成后立即进入最小真实 Market Data、5D Outcome 和 Model-ready Dataset 闭环。
+PR-A 要把已经存在的 Document Intelligence 批量转换为可审计的 Production Document X / Oracle X，并生成统一 coverage 与 determinism report。
+
+严格顺序：
+
+```text
+PR-A0  Freeze execution context / hashes
+PR-A1  Implement thin scripts/run_v04_pr_a.py + tests
+PR-A2  Run deterministic Development pilot
+PR-A3  Run 2020–2024 Production materialization
+PR-A4  Run Oracle materialization
+PR-A5  Build unified coverage table
+PR-A6  Rerun and verify stable hashes
+```
+
+PR-A PASS 后才进入 PR-B Market-X Core。

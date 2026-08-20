@@ -1,195 +1,233 @@
-# V04-4A Data Readiness and Materialization
+# V04 Data Readiness — Current Reference Snapshot
 
-Status: **IN PROGRESS / BLOCKED ON REAL SOURCES**
+> Last real audit snapshot: **preserved from the latest completed readiness run**  
+> Documentation review: **2026-08-20**  
+> Status: **PR-A INPUT READY / FULL MODEL-READY GATE STILL BLOCKED**
 
-This phase prepares reproducible 2020-2024 inputs for the merged V04-1,
-V04-2 and V04-3 contracts. It does not train a model, choose a target threshold,
-read a 2025 outcome, or treat synthetic data as a production source.
+本文件记录最近一次**真实数据 readiness 审计结果**。计划文档更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改这些统计。
 
-## 1. Reproduced baseline
+当前 PR-A 可以开始，因为 Document pipeline、438-case official universe、Production feature contract 和 Oracle path 都已存在。完整 Market-X / model-ready gate 仍因 HSI、industry benchmark、total-market turnover 等 governed source 缺失而阻塞。
 
-The audit was rerun from main commit
-`96cb081c58b6c61b0cdfaae07e2f6ad899c0d6df` against the configured local
-competition data root. The official listing-year universe contains 438 matched
-IPOs: 125 in 2020, 97 in 2021, 78 in 2022, 68 in 2023 and 70 in 2024.
+## 1. Official 2020–2024 modeling universe
 
-The governed EOD scan matches 432 of 438 cases. There are still zero existing
-authoritative `V03DocumentRiskSnapshot` artifacts; the older 398 JSON files are
-mock/degraded `mvp_v1` outputs and remain prohibited for V04 modeling.
+最近一次审计确认 official listing-year universe 为 **438 cases**：
 
-## 2. Official IPO metadata workbook
+- 2020：125
+- 2021：97
+- 2022：78
+- 2023：68
+- 2024：70
 
-`HK_Official_Merged_565_First_with_IPO.xlsx` is the supplemental authoritative
-source for IPO identity, listing date, issue price, board, listing method and
-industry name. The committed bridge selects the 438 official 2020-2024 cases
-from that wider workbook and retains its checksum.
+该 438-case universe 基于 authoritative official IPO metadata / listing year，不等于旧 565-document corpus 的 `source_year` 分组。
 
-The workbook does not establish normalized security-type classification. In particular,
-`ShareType=H` appears on both conventional IPO rows and explicit SPAC rows, and
-no authoritative codebook supplied with the data defines `ShareType2` as the
-V04 security types. Neither field is therefore guessed into
-`ordinary_equity`, `reit`, `spac` or `warrant`. Classification is optional and
-descriptive; it does not determine eligibility.
+## 2. Official IPO metadata
 
-## 3. Security-master identifier audit
+`HK_Official_Merged_565_First_with_IPO.xlsx` 是 IPO identity、listing date、issue price、board、listing method、industry name 等 supplemental authoritative source。
 
-The available `hksharedescription.csv` was decoded as GB18030 and audited using:
+`data/catalog/ipo_official_master_bridge.csv` 连接赛事文档与官方 IPO 主数据，并保留受控 provenance / checksum。
 
-- exact Wind code;
-- normalized numeric code, leading zeros and `.HK` suffix;
-- IPO `security_id` against source `OBJECT_ID`;
-- IPO `institution_id` against source `S_INFO_COMPCODE`;
-- listing-date coverage and historical identifier scope.
-
-Result: 0/438 by every join route. The file contains 803 records, but its
-non-null listing dates are 2009 or earlier; it is the already quarantined
-`SECURITY_MASTER_TRUNCATED` source, not the 2020-2024 target universe.
-
-Owner decision: V04 eligibility is defined by membership in the authoritative
-2020-2024 official IPO case universe. All 438 official cases are eligible by
-construction under `v04_market_security_eligibility_v2`. Independent Security
-Master or Security Description classification is not required. The 438 rows
-retain `security_type=unknown` where classification is unavailable; unknown type
-does not mean ineligible and is never converted to ordinary equity.
-
-Security Master is now an optional descriptive/subgroup-analysis source. The
-identifier audit remains useful, but its availability and match coverage cannot
-change eligible counts, target materialization eligibility or the overall gate.
-
-## 4. Governed IPO OHLCV adapter
-
-`CompetitionCSVMarketDataProvider` reads the official bridge and local
-`hkshareeodprices.csv` using a configurable relative data root. It scans the EOD
-file once, indexes byte offsets only for the 2020-2024 target securities, has no
-network dependency, and records source name, version, record ID and checksum
-without serializing an absolute local path.
-
-The real adapter audit reports:
-
-- target IPOs: 438;
-- eligible by authoritative-universe policy: 438;
-- matched: 432;
-- missing: 6;
-- duplicate stock/date rows: 0;
-- conventionally invalid OHLCV rows: 8,590;
-- valid date coverage: 2020-01-02 through 2026-05-22;
-- valid 1D/5D/20D/60D session coverage: 432 at every horizon.
-
-The six missing cases are `ipo_2020_01248`, `ipo_2020_06688`,
-`ipo_2020_06813`, `ipo_2021_01491`, `ipo_2022_06678` and
-`ipo_2022_07841`. These six cases are eligible but outcome unavailable; they are
-not security-ineligible. Invalid rows are excluded and counted; values are never
-repaired or imputed. Duplicate stock/date keys fail closed. This phase does not
-materialize labels.
-
-## 5. Reference-market audit
-
-No governed HSI daily-close series was found. A text hit for Hang Seng Bank is
-not the Hang Seng Index. `HSI_SOURCE_REQUIRED`.
-
-The IPO workbook supplies an industry name for 432 of the 438 target cases, but
-an industry name is not an authoritative industry-to-index mapping. No governed
-mapping or industry-index daily-close series was found.
-`INDUSTRY_INDEX_MAPPING_REQUIRED` and `INDUSTRY_INDEX_SOURCE_REQUIRED`.
-
-The EOD field `S_DQ_AMOUNT` is each security's transaction amount. It is not
-total HKEX daily turnover and is not substituted, averaged or aggregated into
-that feature. No governed total-market series was found.
-`MARKET_TURNOVER_SOURCE_REQUIRED`.
-
-These reference inputs were selected by the merged V04-3 market-feature
-contract; they are not silently inferred from the competition workbook. V04-3
-can represent their absence, but the complete real market-X gate remains
-blocked while they are unavailable.
-
-## 6. Authoritative document-result materialization
-
-All 438 target cases have local prospectus files. The repository already has
-`CatalogIPODataProvider`, `run_batch`, `IPOAnalysisService`, resume support and
-the `enhanced_v2` workflow. `configs/v03_offline.yaml` uses the real PyMuPDF
-parser, keyword Retriever and V03 Financial, Legal and Business agents with no
-external LLM provider.
-
-`V04DocumentSnapshotMaterializer` adds the governed final boundary:
+Security type 当前不是 eligibility gate：
 
 ```text
-official case manifest
-  -> enhanced_v2 IPOAnalysisResult
-  -> authoritative-result validation
-  -> DocumentRiskSnapshotBuilder
-  -> versioned V03DocumentRiskSnapshot
+authoritative official IPO universe member -> eligible
+security_type                                -> descriptive metadata
 ```
 
-It accepts only completed/partial `enhanced_v2` results carrying
-`use_mock=false` and real parser, Retriever and professional-agent component
-modes. It rejects `mvp_v1`, mock, unfinished and 2025 results. Pipeline version,
-pipeline commit, workflow and schema provenance are retained. A persisted case
-is reused only when its semantic snapshot is identical; different content or
-provenance raises a conflict and is never overwritten. Batch reports are sorted
-and include a failure CSV.
+未知 security type 不自动转成 ordinary equity，也不使 official case 失去 eligibility。
 
-The offline configuration makes zero external LLM calls. Legal or Business
-capabilities that require an unavailable LLM degrade explicitly in the final
-result rather than being fabricated. A real-PDF smoke on development case
-`ipo_2020_00368` completed with zero pipeline errors, produced a deterministic
-snapshot, and reused it on the second materialization with the same hash. It
-took about 16 seconds on the audit workstation. Naive sequential extrapolation
-is roughly two hours for 438 cases, but one case is not a reliable performance
-sample. The full run has not been started automatically and still requires
-owner scheduling.
+## 3. Quarantined Security Master
 
-## 7. Versioned source manifest
+现有 `hksharedescription.csv` 只覆盖较早历史记录，对 2020–2024 target universe 的多种 join route 均为 0 / 438。
 
-`data/catalog/v04_source_manifest.json` uses
-`v04_source_manifest_v1`. Entries are in stable logical-ID order and record
-portable relative paths, source versions, SHA-256 checksums where a supplied
-file exists, coverage, availability and provenance. Canonical JSON has a stable
-content hash.
+因此它继续处于隔离 / descriptive-only 状态：
 
-| Source | Required for | Status | Coverage | Blocker |
-|---|---|---:|---:|---|
-| Official IPO metadata | identity | AVAILABLE | 438/438 | none |
-| Official IPO universe | eligibility | AVAILABLE | 438/438 eligible | none |
-| Security type | descriptive metadata | NOT_REQUIRED | 0/438 classified | optional; not a gate |
-| IPO OHLCV | labels | AVAILABLE | 432/438 | six eligible cases have unavailable outcomes |
-| HSI closes | market X | MISSING | 0/438 | `HSI_SOURCE_REQUIRED` |
-| Industry mapping | market X | MISSING | 0/438 mapped | `INDUSTRY_INDEX_MAPPING_REQUIRED` |
-| Industry-index closes | market X | MISSING | 0/438 | `INDUSTRY_INDEX_SOURCE_REQUIRED` |
-| Total-market turnover | market X | MISSING | 0/438 | `MARKET_TURNOVER_SOURCE_REQUIRED` |
-| V03 final snapshots | document X | AVAILABLE pipeline / not run | 0/438 existing | full batch not executed |
+- 不决定 v0.4 eligibility；
+- 不用于猜 listing date；
+- 不用于猜 issue price；
+- 不用于把 unknown security type 强行分类。
 
-`MODEL_READY_DATA_GATE = BLOCKED`.
+## 4. Governed IPO OHLCV
 
-## 8. Exact owner inputs still required
+`CompetitionCSVMarketDataProvider` 已能从受控 bridge + 本地 `hkshareeodprices.csv` 读取 official target securities，并保留 source/version/checksum provenance。
 
-1. HSI history: trading date, close, stable index identifier, source and
-   version, covering the pre-listing windows required for 2020-2024 IPOs. A
-   single stock or current index value is not a substitute.
-2. Industry benchmark mapping: authoritative IPO industry identifier/name to
-   governed benchmark index ID, with effective dates, source and version. An
-   industry name alone is not a substitute.
-3. Industry-index history: index ID, trading date, close, source and version
-   for every governed mapping and required pre-listing window. HSI alone is not
-   a substitute for industry-relative features.
-4. HKEX total-market turnover: trading date, total-market turnover value, unit,
-   market scope, source and version for the required pre-listing windows.
-   Per-security amount or volume is not a substitute.
-5. Owner scheduling approval for the 438-case offline real-PDF batch after the
-   smoke runtime is reviewed. No paid API is required by the frozen offline
-   configuration.
+最近一次真实审计：
 
-A newer Security Master may optionally supply identifiers, security type,
-effective dates and provenance for descriptive/subgroup analysis, but it is not
-a remaining model-readiness input.
+- target IPOs：438；
+- eligible：438；
+- matched：432；
+- missing：6；
+- duplicate stock/date rows：0；
+- conventionally invalid OHLCV rows：8,590；
+- valid date coverage：2020-01-02 至 2026-05-22；
+- valid 1D / 5D / 20D / 60D session coverage：432 cases。
 
-## 9. Target and scope governance
+6 个 outcome unavailable case：
 
-The target remains `five_day_significant_decline_risk`, but no threshold is
-selected. `TARGET_POLICY_OWNER_DECISION_PENDING_DATA`. A future -5/-10/-15/-20
-percent balance report may use eligible 2020-2023 development labels only.
-Neither 2024 validation nor 2025 blind data may select the policy.
+```text
+ipo_2020_01248
+ipo_2020_06688
+ipo_2020_06813
+ipo_2021_01491
+ipo_2022_06678
+ipo_2022_07841
+```
 
-No Retriever, Parser, professional Agent, Verifier, Supervisor, Expert Golden,
-V04-1 label policy, V04-2 document feature semantics or V04-3 formulas are
-changed. The V04-1 eligibility policy alone is updated by owner decision.
-Logistic, LightGBM, feature selection and training remain out of scope.
+它们是 eligible but outcome unavailable，不得改写成 security-ineligible。
+
+## 5. Reference-market inputs
+
+### Available / partially usable
+
+- authoritative IPO metadata；
+- 432 / 438 governed IPO EOD histories；
+- prior-IPO point-in-time context foundations；
+- IPO structure features。
+
+### Still missing
+
+- governed HSI daily close history：`HSI_SOURCE_REQUIRED`；
+- authoritative industry-to-index mapping：`INDUSTRY_INDEX_MAPPING_REQUIRED`；
+- governed industry-index history：`INDUSTRY_INDEX_SOURCE_REQUIRED`；
+- governed HKEX total-market turnover：`MARKET_TURNOVER_SOURCE_REQUIRED`。
+
+注意：
+
+- Hang Seng Bank ≠ Hang Seng Index；
+- workbook industry name ≠ authoritative industry benchmark mapping；
+- 单只证券 `S_DQ_AMOUNT` ≠ HKEX total-market turnover。
+
+这些数据不能用不等价代理静默替代。
+
+## 6. Production Document readiness
+
+所有 438 target cases 均有本地 prospectus。
+
+当前已有：
+
+```text
+CatalogIPODataProvider
+run_batch
+IPOAnalysisService
+configs/v03_offline.yaml
+V04DocumentSnapshotMaterializer
+DOCUMENT_FEATURE_MANIFEST_V1
+vectorize_document_snapshot(...)
+```
+
+Production path：
+
+```text
+official case
+→ enhanced_v2 IPOAnalysisResult
+→ authoritative validation
+→ V03DocumentRiskSnapshot
+→ Production Document Feature Vector
+```
+
+`V04DocumentSnapshotMaterializer` 只接受 completed / partial `enhanced_v2` result，且要求：
+
+```text
+use_mock = false
+parser = real
+retriever = real
+financial_agent = real
+legal_agent = real
+business_agent = real
+cohort_year <= 2024
+```
+
+它拒绝 `mvp_v1`、Mock、未完成和 2025 blind result；不同 provenance / content 不允许静默覆盖。
+
+最近一次 readiness audit 时：
+
+```text
+authoritative snapshots = 0 / 438 existing
+```
+
+这表示**尚未执行全量 materialization**，不是 pipeline unavailable。
+
+一个 development smoke 曾成功完成、生成 deterministic snapshot，并在第二次 materialization 复用相同 hash。历史约 16 秒 / case 仅作为容量参考，不是 SLA。
+
+## 7. Oracle readiness
+
+当前已有：
+
+```text
+scripts/index_oracle_gold.py
+scripts/build_oracle_document_features.py
+src/ipo_risk/modeling/oracle_document.py
+```
+
+Oracle path 只使用 reviewed expert annotation / explicit audit overlay，保留完整 provenance，并且 `evaluation_only = true`。
+
+Oracle 不要求覆盖全部 438，也不能进入 Production runtime。
+
+## 8. Current source manifest status
+
+`data/catalog/v04_source_manifest.json` 使用 `v04_source_manifest_v1`，记录逻辑 source ID、portable relative path、source version、checksum、coverage、availability 与 provenance。
+
+| Source | Required for | Status | Coverage / note |
+|---|---|---|---|
+| Official IPO metadata | identity | AVAILABLE | 438 / 438 |
+| Official IPO universe | eligibility | AVAILABLE | 438 / 438 eligible |
+| Security type | descriptive | OPTIONAL | unknown allowed |
+| IPO OHLCV | outcomes / prior-IPO context | AVAILABLE | 432 / 438 |
+| HSI closes | extended Market X | MISSING | 0 / 438 |
+| Industry mapping | extended Market X | MISSING | 0 / 438 mapped |
+| Industry-index closes | extended Market X | MISSING | not available |
+| Total-market turnover | extended Market X | MISSING | not available |
+| V03 authoritative snapshots | Production Document X | PIPELINE AVAILABLE / NOT MATERIALIZED | 0 / 438 at latest audit |
+
+当前：
+
+```text
+MODEL_READY_DATA_GATE = BLOCKED
+```
+
+但：
+
+```text
+PR-A_DOCUMENT_MATERIALIZATION_GATE = READY TO IMPLEMENT / RUN
+```
+
+二者不能混为一谈。
+
+## 9. What PR-A must change
+
+PR-A 不负责补 HSI / industry / turnover，也不训练模型。
+
+PR-A 只需要把现有 Document capability 变成真实资产：
+
+```text
+438 official cases
+→ Production analysis status
+→ authoritative snapshots
+→ Production feature vectors
+→ Oracle inventory / features
+→ unified coverage
+→ deterministic rerun
+```
+
+因此下一次允许修改本文件核心 readiness 数字的事件是：
+
+- PR-A 完成真实 Production / Oracle materialization；或
+- 新 governed market source 被正式审计接入。
+
+## 10. External data still required for full Market-X
+
+完整 Market-X 仍需要：
+
+1. HSI history：date、close、stable index ID、source、version；
+2. authoritative industry benchmark mapping：IPO industry → benchmark ID + effective dates + provenance；
+3. industry-index history：benchmark ID、date、close、source、version；
+4. HKEX total-market turnover：date、value、unit、market scope、source、version。
+
+这些是 PR-B / 后续完整 Market-X 的输入，不是 PR-A 的前置阻塞。
+
+## 11. Target governance
+
+主研究对象仍是 5 trading-day weak-performance risk，但 classification threshold 尚未冻结。
+
+任何 -5% / -10% / -15% / -20% 等候选阈值比较只能使用 2020–2023 Development outcome；2024 Validation 与 2025 Blind 不允许参与阈值选择。
+
+在 PR-C 正式冻结 target policy 前，不把某个阈值写成最终标签定义。

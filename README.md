@@ -11,10 +11,11 @@ Evidence-backed multi-agent risk analysis and market-risk modeling for Hong Kong
 ```text
 v0.3.0 Multi-Agent Document Intelligence  = RELEASED / FROZEN
 Retriever V3 research                      = MERGED / FROZEN
+Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 v0.4 End-to-End Closed Loop                = ACTIVE
 ```
 
-当前执行策略是 **End-to-End Closed Loop First**：先把完整项目跑通，再回头优化 Retriever、LLM Reranker、Agent 与 Verifier。
+当前执行策略是 **End-to-End Closed Loop First**：先把完整项目跑通，再依据实证结果决定是否回头优化 Retriever、LLM Reranker、Agent 与 Verifier。
 
 当前链路目标：
 
@@ -34,20 +35,27 @@ Prospectus PDF
 → Streamlit Full E2E
 ```
 
-当前下一项正式工作：**CL-1 / CL-2，冻结现有 Document Intelligence，并批量 materialize 第一版 IPO-level Document Risk Feature Dataset。**
+当前唯一正式工作：
+
+> **PR-A — Document + Oracle Materialization & Coverage**
+
+CL-1 Document Intelligence freeze 已完成。PR-A 首先把现有系统批量转换成可审计的 Production Document X / Oracle X 与统一 coverage，不训练模型、不重新调 Retriever。
 
 ## Current Data Readiness
 
-以当前 v0.4 readiness audit 为基准：
+以最近一次真实 v0.4 readiness audit 为基准：
 
 - 官方 2020–2024 IPO universe：438 cases；
+- local prospectus：438 / 438；
 - IPO OHLCV outcome coverage：432 / 438；
 - authoritative document snapshot pipeline：available；
-- full 438-case snapshot materialization：尚未执行；
-- HSI、行业 benchmark mapping / history、全市场 turnover：完整 market-X 仍缺；
+- authoritative snapshots：最近一次 audit 时 0 / 438；
+- Production Document feature manifest / vectorizer：available；
+- Oracle Document feature builder：available；
+- HSI、行业 benchmark mapping / history、全市场 turnover：仍缺；
 - model-ready gate：blocked。
 
-详细见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
+`0 / 438` 只表示 full materialization 尚未执行，不表示 Document pipeline 不可运行。详细见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
 
 ## Document Risk Scope
 
@@ -77,14 +85,14 @@ Prospectus PDF
       ↓
 DocumentParser → DocumentChunk
       ↓
-Shared DocumentRetriever → Evidence
+Stable DocumentRetriever → Evidence
       ↓
 Financial Agent ─┐
 Legal Agent ─────┼→ Specialized Verifier → Document Supervisor
 Business Agent ──┘                         ↓
-                                    Document Risk Features
+                                    Production Document X
                                              ↓
-                                      Market Modeling
+                               Market X + Outcome Modeling
                                              ↓
                                         Market Agent
                                              ↓
@@ -93,7 +101,9 @@ Business Agent ──┘                         ↓
                                    Streamlit / Report / JSON
 ```
 
-项目保持模块化单体架构。Streamlit 只通过 `IPOAnalysisService` 调用业务能力，不直接调用 Parser、Agent、Provider 或 Predictor。
+项目保持模块化单体架构。Streamlit 只通过 `IPOAnalysisService` / 受控上层 service 调用业务能力，不直接调用 Parser、Agent、Provider 或 Predictor。
+
+Oracle 路径与 Production 永久分离，只做 research ceiling / error attribution，不进入产品 runtime。
 
 ## Quick Start
 
@@ -108,7 +118,7 @@ pytest -q
 python scripts/validate_project.py
 ```
 
-启动稳定 offline 产品：
+启动稳定 offline 文档产品：
 
 ```powershell
 $env:IPO_RISK_CONFIG = "configs/v03_offline.yaml"
@@ -134,18 +144,19 @@ python -m streamlit run app/streamlit_app.py
 ## Current Components
 
 - Parser: `mock`, `mock_alt`, `pymupdf`
-- Retriever: stable production `mock` / `keyword`; Retriever V3 research is frozen/deferred
+- Retriever: stable production `mock` / `keyword`; Retriever V3 research frozen/deferred
 - Financial Agent: `mock`, `cash_runway`, `v03`
 - Legal Agent: `mock`, `disabled`, `v03`
 - Business Agent: `mock`, `disabled`, `v03`
-- Market Agent: `mock`, `disabled` — v0.4 MVP pending
+- Market Agent: `mock`, `disabled` — v0.4 production implementation pending
 - Verifier: `rule`, `specialized_v03`
 - Supervisor: `rule`, `v03`
-- Predictor: `rule_based`, `fault`; market prediction model pending
+- Predictor: current `rule_based` compatibility path; market model pending
 - LLMProvider: `mock`, `openai_compatible`, `unavailable`
-- MarketDataProvider: foundation + governed adapters; production coverage still incomplete
+- MarketDataProvider: market-foundation contracts + governed adapters
 - IPODataProvider: `mock`, `request`, `catalog`
 - ReportGenerator: `mock`, `v03`
+- Modeling boundary: Production snapshot/features + Oracle foundations + Market dataset foundations
 
 ## Modeling Governance
 
@@ -157,20 +168,36 @@ python -m streamlit run app/streamlit_app.py
 2025       Blind Test
 ```
 
-2025 不得用于特征、阈值或超参数调优。
+2025 不得用于特征、阈值、模型或超参数调优。
 
-Retriever 历史 Locked 10 已经正式消费，未来若重启 Retriever 优化必须建立新的 unseen / external / temporal validation set。
+Retriever 历史 Locked 10 已正式消费；未来若重启 Retriever 优化必须建立新的 unseen / external / temporal validation set。
+
+## PR-A Execution
+
+当前第一步严格为：
+
+```text
+PR-A0  Freeze execution context / hashes
+PR-A1  Implement thin scripts/run_v04_pr_a.py + tests
+PR-A2  Run deterministic Development pilot
+PR-A3  Materialize 2020–2024 Production snapshots/features
+PR-A4  Materialize Oracle inventory/features
+PR-A5  Build unified coverage table
+PR-A6  Rerun and verify stable hashes
+```
+
+PR-A PASS 后才进入 PR-B Market-X Core。
 
 ## Documentation
 
-当前 `docs/` 已精简为活文档。入口：
+当前 `docs/` 只保留活文档与仍有约束力的冻结研究参考：
 
 - [`docs/README.md`](docs/README.md) — 文档索引与 source-of-truth 顺序
-- [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 后续总计划
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — 当前进度与阻塞项
+- [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 权威后续总计划
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — 当前进度与 Gate
 - [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md) — 当前产品规格
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — 架构
-- [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md) — 公共 Schema
-- [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md) — 数据宇宙与年度切分
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — 当前架构，不保留旧设计历史
+- [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约
+- [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md) — 原始数据宇宙与 v0.4 cohort 区分
 
-开发前请先阅读 [`AGENTS.md`](AGENTS.md)。历史阶段性文档不再保留在当前活文档树，可从 Git history / release 查询。
+开发前请先阅读 [`AGENTS.md`](AGENTS.md)。历史阶段性文档通过 Git history / release 查询，不再作为当前执行入口。

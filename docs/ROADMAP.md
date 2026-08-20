@@ -1,6 +1,6 @@
 # Roadmap
 
-> Status snapshot: **2026-08-19**  
+> Status snapshot: **2026-08-20**  
 > 当前唯一主线：**End-to-End Closed Loop First**。  
 > 当前唯一执行里程碑：**PR-A — Document + Oracle Materialization & Coverage**。
 
@@ -8,7 +8,7 @@
 
 | 版本 / Track | 目标 | 状态 |
 | --- | --- | --- |
-| v0.2.0 | 真实文档纵向切片与数据治理 | RELEASED |
+| v0.2.0 | 真实文档纵向切片与数据治理 | RELEASED / HISTORICAL |
 | v0.3.0 | Financial / Legal / Business 多 Agent 文档风险分析 | RELEASED / FROZEN |
 | Retriever V3 research | BM25 / Table / LambdaMART / Locked evaluation | MERGED / FROZEN |
 | Oracle Document Modeling | Expert Gold 上限特征 + baseline foundations | MERGED / EVALUATION-ONLY |
@@ -27,7 +27,7 @@
 当前稳定基线已具备：
 
 - 真实 PDF Parser；
-- 共享 Retriever；
+- 稳定 Production Retriever；
 - Financial / Legal / Business Agents；
 - 8 类正式文档风险；
 - deterministic Skills / Calculations；
@@ -82,7 +82,8 @@ Oracle 不能进入 Production runtime，也不能读取 2025 blind y。
 | HSI history | MISSING |
 | Industry benchmark mapping / history | MISSING |
 | Total-market turnover | MISSING |
-| Model-ready gate | BLOCKED |
+| PR-A Document materialization gate | READY |
+| Full Model-ready data gate | BLOCKED |
 
 `0 / 438` 表示最近一次 readiness audit 时尚未进行全量 authoritative materialization，不代表 pipeline 不可运行。
 
@@ -101,8 +102,6 @@ Oracle 不能进入 Production runtime，也不能读取 2025 blind y。
 | CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | NOT STARTED | PDF → Final Report complete |
 
 ## PR-A 当前任务拆解
-
-PR-A 必须按以下顺序推进：
 
 ```text
 PR-A0  Freeze execution context / hashes
@@ -137,7 +136,7 @@ oracle_feature_manifest_hash
 oracle_effective_annotation_hash
 ```
 
-以及四个核心统计：
+以及：
 
 ```text
 Production materialized count
@@ -171,7 +170,7 @@ v0.4 Freeze
 
 ## 正式建模比较
 
-PR-D/PR-E 至少冻结：
+PR-D / PR-E 至少冻结：
 
 ```text
 M   = Market-only
@@ -191,6 +190,8 @@ Production 与 Oracle 比较必须使用相同 cohort、split、target、preproc
 2025       Blind Test
 ```
 
+2024 用于冻结方案的正式 validation / model-family comparison，不允许反复调参后继续称 untouched validation。
+
 2025 在 feature / target / model policy 冻结前不得用于调参。Oracle 同样禁止读取 2025 blind y。
 
 ## 当前禁止主线化的工作
@@ -205,12 +206,27 @@ Production 与 Oracle 比较必须使用相同 cohort、split、target、preproc
 - 深度学习市场模型；
 - 大规模 UI 重构。
 
+## 文档治理状态
+
+2026-08-20 已重新审核当前活文档：
+
+- `ARCHITECTURE.md` 已移除 v0.2 当前基线、`competition_v3`、“第一阶段只实现 mvp_v1 / RuleBasedPredictor”、旧 v0.3.5 Evidence Intelligence 死链接等过时内容；
+- `PROJECT_SPEC.md` 已把旧 CL-1 / CL-2 下一步改为 PR-A；
+- `COMPETITION_DATA_OVERVIEW.md` 已明确 legacy document corpus split 与 v0.4 official modeling cohort 的区别；
+- `DATA_SCHEMA.md` 已明确 legacy `MarketSnapshot` 与 v0.4 `PreListingMarketFeatureSnapshot` 的区别；
+- `V04_PRELISTING_MARKET_FEATURES.md` 已修正 recent-IPO governed EOD foundation 的真实可用性；
+- Oracle 文档已改用当前 M / P / O / PM / OM diagnostic，而不是旧 Retriever-version comparison。
+
+剩余 research 文档均仍有当前契约或冻结治理价值，不因“清理”而删除。
+
 ## 当前文档入口
 
 - 总执行计划：[`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 - 当前规格：[`PROJECT_SPEC.md`](PROJECT_SPEC.md)
+- 当前架构：[`ARCHITECTURE.md`](ARCHITECTURE.md)
+- Schema / modeling contracts：[`DATA_SCHEMA.md`](DATA_SCHEMA.md)
 - 数据 readiness：[`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
 - Document / Market feature contract：[`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md)
-- Pre-listing Market X contract：[`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
-- Oracle 评测路径：[`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md)
+- Pre-listing Market X：[`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
+- Oracle：[`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md)
 - 完整文档索引：[`README.md`](README.md)
