@@ -33,22 +33,7 @@ $outputPath = if ([IO.Path]::IsPathRooted($OutputDir)) {
     [IO.Path]::GetFullPath((Join-Path $repoRoot $OutputDir))
 }
 $dataRootPath = (Resolve-Path -LiteralPath $DataRoot).Path
-
-$official = Import-Csv -LiteralPath (Join-Path $repoRoot "data/catalog/ipo_official_master_bridge.csv")
-$manifest = Import-Csv -LiteralPath (Join-Path $repoRoot "data/catalog/ipo_prospectus_manifest.csv")
-$manifestByCase = @{}
-foreach ($row in $manifest) { $manifestByCase[$row.case_id] = $row }
-if ($official.Count -ne 438) { throw "Official cohort drift: expected 438" }
-foreach ($row in $official) {
-    if (-not $manifestByCase.ContainsKey($row.case_id)) {
-        throw "Manifest row missing for $($row.case_id)"
-    }
-    $pdf = Join-Path $dataRootPath $manifestByCase[$row.case_id].relative_path
-    if (-not (Test-Path -LiteralPath $pdf -PathType Leaf) -or
-        (Get-Item -LiteralPath $pdf).Length -le 0) {
-        throw "Prospectus input unavailable for $($row.case_id)"
-    }
-}
+Write-Output "Official cohort validation delegated to canonical Python PR-A gate."
 
 $offlineEnvironment = @(
     "IPO_RISK_LLM_PROVIDER", "IPO_RISK_LLM_API_KEY",

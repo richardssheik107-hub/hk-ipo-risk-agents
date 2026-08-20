@@ -186,6 +186,43 @@ def test_dirty_worktree_is_rejected_before_production(
         pr_a.main()
 
 
+def test_unattended_runner_delegates_cohort_gate_to_python() -> None:
+    runner = Path("scripts/run_v04_pr_a_unattended.ps1").read_text(
+        encoding="utf-8"
+    )
+
+    assert "Official cohort validation delegated to canonical Python PR-A gate." in runner
+    assert "Import-Csv" not in runner
+    assert "$official.Count -ne 438" not in runner
+
+
+def test_full_cohort_drift_fails_before_materialization(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    official = tuple(SimpleNamespace(case_id=f"case-{index:03d}") for index in range(437))
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_v04_pr_a.py",
+            "--repo-root",
+            str(tmp_path),
+            "--data-root",
+            str(tmp_path / "pdfs"),
+        ],
+    )
+    monkeypatch.setattr(pr_a, "require_clean_worktree", lambda *args: None)
+    monkeypatch.setattr(pr_a, "load_official_metadata", lambda *args: official)
+    monkeypatch.setattr(
+        pr_a,
+        "code_revision",
+        lambda: pytest.fail("materialization boundary was reached"),
+    )
+
+    with pytest.raises(RuntimeError, match="expected 438, found 437"):
+        pr_a.main()
+
+
 def test_offline_config_masks_and_restores_ambient_llm_environment(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
