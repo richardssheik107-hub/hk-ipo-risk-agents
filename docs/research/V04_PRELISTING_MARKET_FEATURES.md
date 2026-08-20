@@ -1,99 +1,152 @@
 # V04-3 Pre-listing Market Features
 
-Status: **MERGED**
+> Contract status: **MERGED / FROZEN FOR v0.4**  
+> Documentation review: **2026-08-20**
 
 ## 1. Scope
 
-V04-3 adds a deterministic, point-in-time market-control feature layer above the
-merged V04-1 market foundation and V04-2 document feature contract. It does not
-train a model or change document risk semantics.
+V04-3 defines the deterministic, point-in-time Market-X contract used above V04-1 Market Foundation and V04-2 Document Feature Contract.
 
-All canonical V04-3 features are point-in-time features available strictly
-before the target IPO listing date.
+它不训练模型，也不改变 Document Risk 语义。
 
-Post-listing `MarketOutcomeLabel` is never used to construct the target IPO's
-pre-listing feature snapshot.
+所有 canonical Market-X 必须在目标 IPO 上市前可获得：
+
+```text
+market_data_date <= observation_date < listing_date
+```
+
+目标 IPO 的 post-listing `MarketOutcomeLabel` 永远不能用于构造该 IPO 的 pre-listing X。
 
 ## 2. Architecture
 
 ```text
-V03DocumentRiskSnapshot -> 100-position document vector
-governed reference data -> PreListingMarketFeatureEngine -> 20-position market vector
-document vector + market vector + non-blind MarketOutcomeLabel
-    -> V04MarketAugmentedModelingDataset
+V03DocumentRiskSnapshot
+→ 100-position Production Document Vector
+
+Governed pre-listing reference / prior IPO data
+→ PreListingMarketFeatureEngine
+→ 20-position Market Vector
+
+Document X + Market X + non-blind Outcome
+→ V04MarketAugmentedModelingDataset
 ```
 
-`MarketReferenceDataProvider` is separate from the V04-1 per-security
-`MarketDataProvider`. The replaceable reference provider supplies benchmark,
-industry and total-market activity series with an exclusive end date. The pure
-engine has no network, clock, random, LLM, Retriever or Agent dependency.
+`MarketReferenceDataProvider` 与 V04-1 per-security `MarketDataProvider` 分离。纯 feature engine 不依赖 network、clock、random、LLM、Retriever 或 Agent。
 
-## 3. Observation cutoff and no-lookahead policy
+## 3. Observation cutoff
 
-Policy `v04_prelisting_market_features_v1` requires every market row date to be
-strictly less than target `listing_date`. `observation_date` is the last valid
-benchmark trading session before listing. Listing-day and later rows are removed
-before series validation or computation, so adding or modifying T/T+N data cannot
-change a legal historical snapshot.
+Policy `v04_prelisting_market_features_v1` 要求：
 
-Every series used by a feature also satisfies
-`market_data_date <= observation_date < listing_date`. When no historical
-benchmark row exists, `observation_date` and all observation-dependent feature
-families remain explicitly unavailable.
+- `observation_date` 为目标 IPO 上市日前最后一个可用 reference session；
+- 上市日及之后的数据在计算前被排除；
+- 修改 T / T+N 数据不能改变合法历史 feature snapshot；
+- 无合法历史 observation 时，对应 feature family 显式 unavailable。
 
-## 4. Return and volatility formulas
+## 4. Return / volatility formulas
 
-HSI uses observed benchmark sessions ending at `observation_date`:
+HSI / industry return 使用 observed sessions：
 
 ```text
-hsi_return_5d  = close(t) / close(t-5)  - 1  # requires 6 closes
-hsi_return_20d = close(t) / close(t-20) - 1  # requires 21 closes
+return_5d  = close(t) / close(t-5)  - 1
+return_20d = close(t) / close(t-20) - 1
 ```
 
-Industry returns use the same 5/20 observed-session formulas. The industry
-reference ID must come from authoritative metadata; the engine never infers an
-industry from a company name, stock code or LLM. Missing mapping and missing
-series are distinct states.
+20D volatility 使用 21 个 close 生成 20 个单期 log return，再计算 population standard deviation (`ddof=0`)，不做年化。
 
-`market_volatility_20d` uses the last 21 benchmark closes, forms 20 one-session
-log returns `ln(close_i / close_(i-1))`, then calculates the population standard
-deviation (`ddof=0`). It is not annualized.
+Industry benchmark ID 必须来自 authoritative mapping；不允许根据公司名、股票代码或 LLM 猜行业指数。
 
 ## 5. Turnover semantics
 
-`market_turnover_20d_mean` is the arithmetic mean of actual total-market turnover
-over the latest 20 valid sessions through `observation_date`. Single-stock volume
-is not an accepted proxy. A missing governed turnover source remains
-`unavailable / missing_turnover_source`.
+`market_turnover_20d_mean` 只能使用 governed total-market turnover。
 
-## 6. Recent IPO universe and outcomes
+禁止：
 
-The V1 universe contains at most the 20 most recent eligible authoritative IPO cases
-whose listing date is within the 60 calendar days before the target listing and
-no later than `observation_date`. The target case and target stock code are both
-excluded. Security type is descriptive only; official cases with unknown, REIT,
-SPAC or warrant annotations are not excluded on type. Non-members remain
-fail-closed under the V04-1 V2 eligibility policy.
+- 用单股 volume 替代；
+- 用单股 `S_DQ_AMOUNT` 替代；
+- 在 source 缺失时填 0。
 
-`recent_ipo_break_rate` is
-`count(raw_return_1d < 0) / completed known 1D sample count`.
-`recent_ipo_return_5d` is the mean completed known prior-IPO 5D raw return. A
-prior label is known only when its `target_trading_date <= observation_date`.
-Outcomes formed later are ignored before duplicate validation and aggregation.
-Zero valid samples produce `None`, not a zero return/rate; the two sample-count
-features remain zero.
+无 source 时保持：
 
-## 7. Missing-data contract
+```text
+unavailable / missing_turnover_source
+```
 
-Each raw feature carries value, availability, missing reason and provenance.
-Missing reasons distinguish insufficient history, missing benchmark, missing
-industry mapping, missing industry series, no recent IPO sample, missing turnover
-source and a generally unavailable source. Missing is never converted to a safe
-or market-neutral zero.
+## 6. Recent IPO context
 
-## 8. Feature manifest and provenance
+V1 recent-IPO universe：最多取目标上市日前 60 calendar days 内、且 listing date 不晚于 observation date 的最近 20 个 eligible official IPO。
 
-Schema `v04_market_features_v1` freezes ten raw positions:
+目标 case / stock 必须排除。
+
+已知 prior-IPO outcome 还需满足：
+
+```text
+prior_label.target_trading_date <= target_observation_date
+```
+
+也就是说，即使 prior IPO 已经上市，如果其 5D outcome 在目标 IPO 的 observation date 当时还没有形成，也不能使用。
+
+核心 feature：
+
+```text
+recent_ipo_break_rate
+recent_ipo_return_5d
+recent_ipo_1d_sample_count
+recent_ipo_5d_sample_count
+```
+
+零有效样本返回 `None` + sample_count=0，而不是把 return / break rate 填成 0。
+
+## 7. Current real-data correction
+
+旧版本文档曾写“recent IPO labels cannot be materialized until governed price history exists”。该表述已经过时。
+
+当前 readiness 已经确认：
+
+```text
+Governed IPO OHLCV coverage = 432 / 438
+```
+
+因此 recent-IPO point-in-time context **已有真实 governed IPO EOD foundation**，可以在满足 availability cutoff 的前提下构造。
+
+当前真正仍缺的是：
+
+```text
+HSI history
+industry benchmark mapping
+industry-index history
+total-market turnover
+```
+
+所以当前状态应理解为：
+
+- recent IPO context：**foundation available**；
+- HSI / industry / turnover families：**source incomplete / missing**；
+- full 20-position Market-X 在完整真实源层面尚未全覆盖。
+
+## 8. Missing-data contract
+
+每个 raw feature 都保留：
+
+- value；
+- availability；
+- missing reason；
+- provenance。
+
+Missing reason 区分：
+
+- insufficient history；
+- missing benchmark；
+- missing industry mapping；
+- missing industry series；
+- no recent IPO sample；
+- missing turnover source；
+- generic unavailable source。
+
+缺失不得转换为 market-neutral zero。
+
+## 9. Feature manifest
+
+`v04_market_features_v1` 冻结 10 个 raw positions：
 
 1. `hsi_return_5d`
 2. `hsi_return_20d`
@@ -106,49 +159,51 @@ Schema `v04_market_features_v1` freezes ten raw positions:
 9. `market_turnover_20d_mean`
 10. `market_volatility_20d`
 
-Each raw position is immediately followed by an explicit `__missing` indicator,
-for 20 ordered numeric positions total. Definitions include index, dtype, source
-and missing semantics. Canonical JSON produces a deterministic SHA-256 manifest
-hash. Snapshots retain source/dataset/record provenance and deterministic content
-hashes. The legacy `MarketSnapshot.sentiment_score` is not part of this manifest.
+每个 raw feature 紧跟一个 `__missing` indicator，共 20 个 ordered numeric positions。
 
-## 9. Combined modeling contract
+Manifest 有 deterministic SHA-256 hash；legacy `MarketSnapshot.sentiment_score` 不属于该 manifest。
 
-V04-3 does not mutate `v04_document_features_v1` or `V04ModelingRecord`. The new
-`V04MarketAugmentedModelingRecord` records both manifest versions/hashes, market
-policy, observation date, document pipeline version/commit, label policy, split
-policy and dataset version. Combined order is explicitly:
+## 10. Combined modeling contract
+
+组合顺序固定：
 
 ```text
-[100 document features] + [20 market features] = 120 positions
+[100 Production Document features]
++
+[20 Market features]
+=
+120 positions
 ```
 
-Development accepts 2020-2023 rows; validation accepts only 2024. The dedicated
-2025 exporter accepts document X plus pre-listing market X and its schema forbids
-outcome/target fields. It has no label argument.
+Development 只接受 2020–2023；Validation 只接受 2024。
 
-## 10. Blind protection
+2025 只允许 feature-only export：
 
-No real 2025 outcome is read or used. A 2025 `MarketOutcomeLabel` cannot enter
-the merged V04-2 dataset and therefore cannot reach the augmented builder. The
-2025 feature-only record contains no post-listing outcome, label horizon or y.
+```text
+Document X + pre-listing Market X
+```
 
-## 11. Real-data availability
+不得包含 outcome / target / label horizon。
 
-At the V04-3 merge, `REAL_MARKET_FEATURE_DATA_NOT_READY` remained true. The
-subsequent V04-4A readiness layer adds a governed local IPO OHLCV adapter, but no
-governed HSI closes, industry mapping/index closes or total-market turnover has
-been supplied. See `V04_DATA_READINESS.md`. V04-3 itself remains the contracts,
-pure engine and deterministic in-memory reference provider; no external market
-API or ungoverned download was introduced.
+## 11. Current limitations
 
-## 12. Current limitations and out of scope
+- governed HSI series 尚未接入；
+- authoritative industry-to-index mapping / series 尚未接入；
+- governed total-market turnover 尚未接入；
+- recent IPO context 受 432 / 438 IPO EOD coverage 和 point-in-time outcome availability 限制；
+- exchange calendar 仍采用 supplied observed sessions，而非完整独立 HKEX calendar source；
+- sentiment 不属于当前 frozen Market-X contract。
 
-- Authoritative industry names exist, but industry-to-index mapping and series do not.
-- Real recent-IPO labels cannot be materialized until governed price history exists.
-- There is no governed market sentiment policy; sentiment remains unavailable.
-- Exchange-calendar semantics use observed sessions from supplied versioned series.
-- Market Agent, Logistic Regression, LightGBM, SHAP, calibration, tuning and 2025
-  outcome evaluation are out of scope.
-- Parser, Retriever, professional Agents, Verifier, Supervisor, Expert Golden,
-  V04-1 label policy and V04-2 document feature semantics are unchanged.
+这些限制进入 PR-B，不应回头修改 PR-A 的 Document materialization 范围。
+
+## 12. Out of scope
+
+V04-3 不实现：
+
+- Market Agent；
+- Logistic / LightGBM training；
+- SHAP / calibration；
+- 2025 outcome evaluation；
+- Parser / Retriever / Agent / Verifier / Supervisor 调优。
+
+当前执行顺序以 `../END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` 为准。
