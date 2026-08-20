@@ -1,329 +1,322 @@
-# 公共数据Schema设计
+# 公共数据 Schema 与 v0.4 建模契约
+
+> Status snapshot: **2026-08-20**
+
+本文件描述当前仍有效的跨模块数据边界。**代码中的 Pydantic Schema 是最终权威实现**；本文用于解释语义，不应替代源码做字段推断。
 
 ## 1. 设计原则
 
-所有跨模块数据必须通过Pydantic模型传递。
+所有跨模块数据必须通过明确、可版本化的 Pydantic 模型传递。
 
-禁止不同模块自行定义含义相近但字段不同的字典。
+原则：
 
-公共Schema应满足：
-
-1. 字段含义明确；
-2. 类型明确；
-3. 支持校验；
-4. 支持序列化；
-5. 支持版本管理；
-6. 尽量向后兼容；
-7. 新增字段应优先提供默认值。
+1. 字段含义与类型明确；
+2. 支持校验、序列化和版本管理；
+3. 新字段优先保持向后兼容；
+4. 不同模块不得自行创造含义相近但不兼容的 dict；
+5. 缺失值必须有明确语义，不能自动当作“安全 / 0”；
+6. provenance、source version、feature version、model version 必须可追踪。
 
 ## 2. DocumentChunk
 
-表示PDF解析后的一个文档片段。
+表示 PDF 解析后的文档片段，核心字段包括：
 
-字段：
+- `document_id`
+- `chunk_id`
+- `page`
+- `section`
+- `text`
+- `block_type`
+- `bbox`
+- `metadata`
 
-* document_id: 文档唯一标识；
-* chunk_id: 文档片段唯一标识；
-* page: PDF页码；
-* section: 所属章节；
-* text: 文本内容；
-* block_type: text、table、title或其他类型；
-* bbox: 文本在页面中的坐标；
-* metadata: 其他扩展信息。
+`page` 必须保留真实 PDF 页码；`bbox` 可为空。Parser 统一返回：
 
-建议约束：
-
-1. page必须大于等于1；
-2. text不能为空；
-3. chunk_id在同一文档中唯一；
-4. bbox允许为空；
-5. metadata默认为空字典。
+```text
+list[DocumentChunk]
+```
 
 ## 3. Evidence
 
-表示支持风险结论的证据。
+表示支持风险结论的证据，核心语义包括：
 
-字段：
+- 来源 document / chunk / page / section；
+- 原文 `text`；
+- 可选 `bbox`；
+- `source_type`；
+- relevance / metadata。
 
-* evidence_id: 证据唯一标识；
-* document_id: 来源文档；
-* chunk_id: 来源片段；
-* page: PDF页码；
-* section: 所属章节；
-* text: 原文内容；
-* bbox: 页面坐标；
-* source_type: prospectus、market_data、ipo_data或calculation；
-* relevance_score: 证据与风险的相关性；
-* metadata: 扩展信息。
+正式 RiskItem 所依赖的 Evidence 必须可回到原始招股书或受控数据源，不允许虚构页码、文本或来源。
 
 ## 4. Calculation
 
-表示风险结论中的确定性计算过程。
+表示确定性计算过程，必须能够审计：
 
-字段：
+```text
+skill_name / skill_version
+inputs
+formula
+result
+unit
+evidence_ids
+success / error
+```
 
-* skill_name: 使用的Skill；
-* skill_version: Skill版本；
-* inputs: 输入数据；
-* formula: 计算公式；
-* result: 计算结果；
-* unit: 单位；
-* evidence_ids: 输入数据对应的证据；
-* success: 是否计算成功；
-* error: 错误信息。
+精确金融计算由 deterministic Skill 完成，不能把 LLM 自然语言计算直接当作正式 Calculation。
 
 ## 5. RiskItem
 
-表示一个Agent识别出的风险。
+RiskItem 是专业 Agent 的统一公共风险边界。核心语义包括：
 
-字段：
+- `risk_id`
+- `risk_code`
+- `category`
+- `risk_type`
+- `level`
+- `score`
+- `conclusion`
+- `evidence`
+- `calculation`
+- `agent_name`
+- `confidence`
+- `verification_status`
+- `verification_notes`
+- `created_at`
+- `metadata`
 
-* risk_id: 风险实例唯一标识；
-* risk_code: 标准风险代码；
-* category: financial、legal、business或market；
-* risk_type: 风险名称；
-* level: low、medium、high或critical；
-* score: 0到100的风险分；
-* conclusion: 风险结论；
-* evidence: Evidence列表；
-* calculation: Calculation或空值；
-* agent_name: 生成该风险的Agent；
-* confidence: 0到1的置信度；
-* verification_status: pending、verified、rejected或needs_review；
-* verification_notes: 核验说明；
-* created_at: 创建时间；
-* metadata: 扩展信息。
+专业 Agent 统一返回：
 
-## 6. AgentLog
+```text
+list[RiskItem]
+```
 
-表示Agent或Skill的执行记录。
+风险是否必须有 Evidence / Calculation 由 domain 风险注册表决定，不通过解析 conclusion 文本来猜。
 
-字段：
+## 6. Verification / Supervision
 
-* log_id: 日志唯一标识；
-* task_id: 分析任务ID；
-* step: 执行顺序；
-* agent_name: Agent名称；
-* action: 执行动作；
-* tool_name: 调用的Skill或工具；
-* status: started、success、failed或skipped；
-* input_summary: 输入摘要；
-* output_summary: 输出摘要；
-* evidence_ids: 使用的证据ID；
-* error: 错误信息；
-* started_at: 开始时间；
-* finished_at: 结束时间；
-* duration_ms: 执行耗时；
-* metadata: 扩展信息。
+当前正式 verification 状态包括：
 
-## 7. RiskFactor
+```text
+verified
+pending
+rejected
+needs_review
+```
 
-表示影响预测结果的一个因素。
+`VerificationResult` 负责结构化划分 verified / pending / rejected；`SupervisionResult` 负责最终去重、冲突、组合发现和摘要，同时保持 `IPOAnalysisResult` 对外兼容。
 
-字段：
+Verifier / Supervisor 不得创造新的原始 Evidence。
 
-* feature_name: 特征名称；
-* feature_value: 特征值；
-* contribution: 对风险的贡献；
-* direction: increase或decrease；
-* explanation: 解释；
-* source: feature、risk_item或market_data。
+## 7. AgentLog 与 AnalysisError
+
+Agent / Skill / Workflow 的失败必须结构化记录，而不是静默吞掉。
+
+`AgentLog` 用于记录执行步骤、组件、状态、摘要、Evidence IDs、错误和耗时；`AnalysisError` 用于记录 stage、component、code、message、recoverable、context、occurred_at 等失败信息。
+
+日志不得保存 API Key / Token 等敏感信息。
 
 ## 8. PredictionResult
 
-表示上市后风险预测结果。
+`PredictionResult` 是 Predictor 的统一公共返回类型。
 
-字段：
+当前 `RuleBasedPredictor` 只提供兼容 / 对照风险评分；其分数不得描述为经过校准的真实概率。
 
-* model_name: 模型名称；
-* model_version: 模型版本；
-* target: 预测目标；
-* risk_score: 0到100的风险分；
-* risk_level: low、medium、high或critical；
-* probabilities: 各类别概率；
-* top_factors: RiskFactor列表；
-* explanation: 模型解释；
-* feature_snapshot: 本次使用的特征；
-* created_at: 创建时间；
-* metadata: 扩展信息。
-
-第一阶段的target建议为：
+v0.4 的 Logistic / Linear / LightGBM 市场模型在正式接入公共预测输出前，必须先完成：
 
 ```text
-five_day_significant_decline_risk
+PR-A Document X
+→ PR-B Market X
+→ PR-C target policy
+→ PR-D canonical model-ready dataset
+→ PR-E baseline diagnostic
 ```
 
-第一阶段RuleBasedPredictor输出的是风险评分，不应直接描述为经过校准的真实概率。
+未经校准的任何 score 仍不能表述为真实下跌概率。
 
-## 9. MarketSnapshot
+## 9. MarketSnapshot：legacy runtime compatibility
 
-表示上市前的市场环境。
+现有 `MarketSnapshot` 属于旧 runtime / compatibility 输入边界，不能与 v0.4 建模的 `PreListingMarketFeatureSnapshot` 混为一谈。
 
-字段：
+特别是：
 
-* observation_date: 观察日期；
-* hsi_return_5d: 恒生指数五日收益；
-* hsi_return_20d: 恒生指数二十日收益；
-* industry_return_5d: 行业五日收益；
-* industry_return_20d: 行业二十日收益；
-* recent_ipo_break_rate: 近期IPO破发率；
-* recent_ipo_return_5d: 近期IPO五日平均收益；
-* market_turnover: 市场成交额；
-* market_volatility: 市场波动率；
-* sentiment_score: 市场情绪分；
-* source: 数据来源；
-* metadata: 扩展信息。
+- legacy `sentiment_score` 不属于 `v04_market_features_v1`；
+- 单股成交额不能替代 total-market turnover；
+- legacy snapshot 缺失不允许被偷偷补成 market-neutral 0。
 
-## 10. IPOAnalysisRequest
+v0.4 正式 Market X 以 `PreListingMarketFeatureSnapshot` + `MarketFeatureManifest` 为准。
 
-表示一次完整分析请求。
+## 10. IPOAnalysisRequest / IPOAnalysisResult
 
-字段：
+`IPOAnalysisRequest` 是一次分析请求；`IPOAnalysisResult` 是 Document Runtime 的最终公共结果。
 
-* request_id: 请求唯一标识；
-* company_name: 公司名称；
-* stock_code: 股票代码；
-* listing_date: 上市日期；
-* prospectus_path: 招股书路径；
-* workflow_version: 工作流版本；
-* parser_name: Parser实现；
-* predictor_name: Predictor实现；
-* market_snapshot: MarketSnapshot或空值；
-* use_mock: 是否使用Mock；
-* options: 其他配置；
-* created_at: 创建时间。
+`IPOAnalysisResult` 保留：
 
-## 11. ReportSection
+- case / company / stock / workflow / schema identity；
+- verified / pending / rejected risks；
+- prediction（可为空）；
+- agent logs；
+- report sections（可为空）；
+- status；
+- structured errors；
+- timestamps / metadata。
 
-表示最终报告中的一个章节。
+`status=partial` 是合法状态：表示部分组件失败但已有结果仍可返回。
 
-字段：
+## 11. V03DocumentRiskSnapshot
 
-* section_id: 章节ID；
-* title: 标题；
-* summary: 摘要；
-* risks: RiskItem列表；
-* evidence_ids: 关联证据；
-* order: 展示顺序；
-* metadata: 扩展信息。
+`V03DocumentRiskSnapshot` 是 v0.4 Document Modeling 的权威中间层，只从最终 `IPOAnalysisResult` 构造。
 
-## 12. IPOAnalysisResult
+它为 8 个 canonical risk 保留固定位置及显式状态：
 
-表示完整分析结果。
+```text
+verified
+pending
+needs_review
+rejected
+not_emitted
+unavailable
+```
 
-字段：
+同时保留：
 
-* analysis_id: 分析任务ID；
-* request_id: 请求ID；
-* company_name: 公司名称；
-* stock_code: 股票代码；
-* workflow_version: 工作流版本；
-* schema_version: Schema版本；
-* verified_risks: 已核验RiskItem列表；
-* pending_risks: 待核验RiskItem列表；
-* rejected_risks: 被拒绝RiskItem列表；
-* prediction: PredictionResult；
-* agent_logs: AgentLog列表；
-* report_sections: ReportSection列表；
-* status: pending、running、completed、partial或failed；
-* errors: 错误信息列表；
-* started_at: 开始时间；
-* finished_at: 完成时间；
-* metadata: 扩展信息。
+- case / document / stock identity；
+- cohort / listing date / split；
+- workflow / schema version；
+- document pipeline version / commit；
+- source analysis identity / status；
+- feature schema version；
+- eligibility / provenance。
 
-## 13. SkillResult
+不同 provenance 的 artifact 不允许静默覆盖。
 
-表示Skill执行结果。
+## 12. Production Document Feature Contract
 
-字段：
+`DocumentFeatureManifest` 当前版本：
 
-* skill_name: Skill名称；
-* skill_version: Skill版本；
-* success: 是否成功；
-* value: 返回值；
-* evidence_ids: 使用的证据；
-* error: 错误信息；
-* metadata: 扩展信息。
+```text
+v04_document_features_v1
+```
 
-## 14. 兼容性要求
+冻结 100 个有序数值位置：
 
-1. 公共字段不得随意重命名；
-2. 删除字段前必须进行版本升级；
-3. 新增字段应尽量提供默认值；
-4. 所有跨模块结果必须经过Pydantic校验；
-5. Repository保存结果时必须记录schema_version；
-6. Mock实现和真实实现必须使用相同Schema；
-7. 测试必须验证Schema兼容性。
+- 每个风险 11 项，共 88 项；
+- aggregate 12 项；
+- 总计 100 项。
 
-## 15. 补充Schema
+缺失语义：
 
-### AnalysisError
+- 未 verified 的 score / level 保留 null；
+- 每类状态有独立 indicator；
+- `missing` 是显式特征；
+- Evidence count 为 0 只表示没有附着 Evidence，不表示风险为 0。
 
-表示一次可追踪的结构化失败，字段包括stage、component、code、message、recoverable、context和occurred_at。
+向量携带 feature schema version 与 deterministic manifest hash。
 
-### DocumentParseRequest
+## 13. Oracle Document Feature Contract
 
-表示Parser输入，字段包括document_id、prospectus_path和options。
+Oracle 路径是 evaluation-only：
 
-### IPOProfile
+```text
+Reviewed Expert Gold
+→ EffectiveRiskGoldView
+→ expert_oracle_document_features_v1
+```
 
-表示IPO基础信息，字段包括company_name、stock_code、listing_date、industry、issue_price、issue_size和metadata。
+Oracle 不能：
 
-### ReportContext
+- 进入 Production runtime；
+- 把 Gold page / Evidence ID / 专家答案写进 Production X；
+- 读取 2025 blind y；
+- 代替 Retriever / Agent 输出最终产品结论。
 
-表示ReportGenerator输入，只包含analysis_id、IPOProfile、三类风险列表、PredictionResult、日志摘要和选项。
+Oracle artifact 必须保留 pass1 / audit provenance 与 deterministic content hash。
 
-### VerificationResult 与 SupervisionResult
+## 14. MarketOutcomeLabel
 
-VerificationResult 将风险分为 verified_risks、pending_risks 和 rejected_risks；
-SupervisionResult 返回去重后的 verified_risks 及摘要。它们分别是 Verifier 与
-Supervisor 的结构化输入输出边界，同时保持 IPOAnalysisResult 的对外结构兼容。
+Market Foundation 提供 1D / 5D / 20D / 60D outcome contract。
 
-### V03DocumentRiskSnapshot 与 V04 Modeling Dataset
+核心规则：
 
-`V03DocumentRiskSnapshot`只从最终`IPOAnalysisResult`构造，为8类正式风险保留固定位置、
-显式verified/pending/needs_review/rejected/not_emitted/unavailable状态，以及document
-pipeline commit、workflow/schema和feature schema provenance。
+- return base 使用 official listing price；
+- horizon 按 observed eligible trading sessions；
+- 缺 listing price / forward history 时显式 unavailable；
+- benchmark / excess return 在 governed benchmark 不存在时保持 unavailable；
+- 2025 blind outcome 不允许进入 development / validation modeling record。
 
-`DocumentFeatureManifest`版本`v04_document_features_v1`冻结100项特征的名称、顺序、
-dtype、来源和缺失语义。`V04ModelingRecord`将该向量与一个`MarketOutcomeLabel`按case、
-stock、cohort/listing date和split严格连接；blind outcome不能构成modeling record。
+## 15. PreListingMarketFeatureSnapshot
 
-### PreListingMarketFeatureSnapshot 与 Market-Augmented Dataset
+`PreListingMarketFeatureSnapshot` 记录严格早于目标上市日的 Market X。
 
-`PreListingMarketFeatureSnapshot`记录case/stock/cohort/listing identity、严格早于上市日的
-`observation_date`、benchmark/industry reference、policy/schema版本、来源provenance，
-以及10个raw市场特征各自的value、availability和missing reason。
+必须满足：
 
-`MarketFeatureManifest`版本`v04_market_features_v1`为每个raw numeric位置保留value与
-显式`__missing` indicator，共20项，顺序和SHA-256 hash固定。上层
-`V04MarketAugmentedModelingRecord`按`[100 document]+[20 market]`连接非blind标签；
-2025专用feature-only schema不含outcome、target或label horizon字段。
+```text
+market_data_date <= observation_date < listing_date
+```
 
-## 16. 当前契约与降级语义
+`MarketFeatureManifest` 当前版本：
 
-风险是否需要 Evidence 或 Calculation 由 domain 风险注册表定义，包含
-requires_evidence 与 requires_calculation 元数据；不得通过解析 conclusion 中是否出现
-数字来判断。
+```text
+v04_market_features_v1
+```
 
-对于 requires_evidence 的风险，Evidence 为空时不得进入 verified_risks。对于
-requires_calculation 的风险，Calculation 缺失、失败，或其 evidence_ids 不能引用该风险
-的 Evidence 时，不得进入 verified_risks。规则型、条款型风险不因没有 Calculation 而被
-拒绝。
+其 10 个 raw feature 均带独立 `__missing` indicator，共 20 个有序位置。
 
-IPOAnalysisResult.status 可为 partial：表示部分节点失败但结果仍可返回。
-预测失败时 prediction 允许为空；报告生成失败时 report_sections 允许为空；两类失败均必须
-在 errors 中记录结构化 AnalysisError，并在 agent_logs 中记录失败日志。
+当前 contract 包括 HSI、industry、recent IPO、turnover、volatility 等 feature family；某数据源缺失时保留显式 missing reason，不允许用不等价代理静默替换。
 
-## v0.3 兼容扩展
+## 16. V04 Modeling Dataset
 
-v0.3 仅新增带默认值的公共模型/字段，不删除或改名既有字段：
+`V04ModelingRecord` / `V04ModelingDataset` 只在 identity / cohort / listing date / split / eligibility / policy 全部一致后连接 Document X 与非-blind outcome。
 
-- `ComponentDiagnostic`：记录未产生风险、证据缺失、抽取失败、值冲突、不支持布局、人工复核和组件失败；
-- `LLMCallMetadata`：记录 Provider、模型、Prompt 版本、延迟、token、请求 ID 和原始响应哈希；
-- `DuplicateRiskGroup`、`RiskConflict`、`CompositeFinding`：分别承载 Supervisor 的去重、冲突和组合发现；
-- `SupervisionResult.duplicate_groups/conflicts/composite_findings/metadata`：均使用安全默认值，旧调用方保持兼容。
+Market-augmented dataset 明确顺序：
 
-Financial、Legal、Business 的候选抽取模型属于 Agent 内部 Pydantic 模型，不直接进入 `IPOAnalysisResult`。它们必须先转换为带 Evidence 的 `RiskItem`，才能进入工作流公共边界。
+```text
+[100 Production Document features]
++
+[20 Market features]
+```
 
----
+Oracle comparison 使用独立 Oracle X，但必须与 Production comparison 保持相同：
+
+```text
+cohort
+split
+target
+preprocessing
+model family
+```
+
+2025 使用 feature-only blind export，不包含 outcome / target 字段。
+
+## 17. 时间治理
+
+```text
+2020–2023  Development / Training
+2024       Validation
+2025       Blind Test
+```
+
+Development 用于训练、CV、feature policy、threshold 和超参数；2024 用于冻结方案 validation / model-family comparison；2025 在所有政策冻结前只能准备 X，不能读取 y。
+
+## 18. Schema 版本升级规则
+
+以下变化需要明确 schema / policy version bump：
+
+- 字段删除或重命名；
+- 特征名称 / 顺序 / dtype 改变；
+- missing semantics 改变；
+- canonical risk set 改变；
+- level mapping 改变；
+- target / return / session policy 改变；
+- trusted source boundary 改变。
+
+仅新增输入数据、在同一冻结规则下重新 materialize artifact，不自动要求 schema version bump，但必须产生新的 provenance / content hash。
+
+## 19. 当前 source of truth
+
+- 公共 Schema 实现：`src/ipo_risk/schemas/`
+- Document modeling：`src/ipo_risk/modeling/`
+- 风险注册表：`src/ipo_risk/domain/risk_codes.py`
+- 当前执行计划：`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
+- 架构边界：`ARCHITECTURE.md`
+
+本文不再保留“第一阶段只做 RuleBasedPredictor”等历史阶段表述。
