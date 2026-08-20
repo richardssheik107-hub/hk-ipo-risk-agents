@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
 from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
@@ -150,6 +151,70 @@ def test_case_selection_is_deterministic_and_rejects_outside_cohort(tmp_path: Pa
     )
     with pytest.raises(ValueError, match="outside official"):
         pr_a.select_metadata(metadata, case_ids=["ipo_2025_00700"])
+
+
+def test_clean_worktree_is_accepted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        pr_a.subprocess,
+        "run",
+        lambda *args, **kwargs: SimpleNamespace(
+            returncode=0, stdout="", stderr=""
+        ),
+    )
+    pr_a.require_clean_worktree(tmp_path)
+
+
+def test_dirty_worktree_is_rejected_before_production(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["run_v04_pr_a.py", "--repo-root", str(tmp_path)])
+    monkeypatch.setattr(
+        pr_a.subprocess,
+        "run",
+        lambda *args, **kwargs: SimpleNamespace(
+            returncode=0, stdout=" M scripts/run_v04_pr_a.py\n", stderr=""
+        ),
+    )
+    monkeypatch.setattr(
+        pr_a,
+        "load_official_metadata",
+        lambda *args, **kwargs: pytest.fail("production preflight was reached"),
+    )
+    with pytest.raises(RuntimeError, match="clean git working tree"):
+        pr_a.main()
+
+
+def test_offline_config_masks_and_restores_ambient_llm_environment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = tmp_path / "v03_offline.yaml"
+    config.write_text(
+        "runtime_mode: offline\nllm_provider: unavailable\n",
+        encoding="utf-8",
+    )
+    for name in pr_a.OFFLINE_PROVIDER_ENV_VARS:
+        monkeypatch.setenv(name, "sensitive-runtime-value")
+
+    with pr_a.offline_provider_boundary(config):
+        assert all(name not in pr_a.os.environ for name in pr_a.OFFLINE_PROVIDER_ENV_VARS)
+
+    assert all(
+        pr_a.os.environ[name] == "sensitive-runtime-value"
+        for name in pr_a.OFFLINE_PROVIDER_ENV_VARS
+    )
+
+
+def test_offline_config_rejects_network_llm_provider(tmp_path: Path) -> None:
+    config = tmp_path / "invalid_offline.yaml"
+    config.write_text(
+        "runtime_mode: offline\nllm_provider: openai\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="llm_provider: unavailable"):
+        with pr_a.offline_provider_boundary(config):
+            pytest.fail("invalid offline config entered runtime boundary")
 
 
 def test_execution_context_is_portable_hashed_and_reusable(tmp_path: Path) -> None:

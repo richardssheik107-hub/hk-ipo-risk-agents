@@ -40,7 +40,11 @@ def _sha(value: Any) -> str:
     return hashlib.sha256(_canonical(value).encode("utf-8")).hexdigest()
 
 def oracle_feature_names() -> tuple[str, ...]:
-    return tuple(f"{risk}__{field}" for risk in V03_ENABLED_RISK_CODES for field in _RISK_FIELDS) + _AGGREGATES
+    return tuple(
+        f"{risk}__{field}"
+        for risk in sorted(V03_ENABLED_RISK_CODES)
+        for field in _RISK_FIELDS
+    ) + _AGGREGATES
 
 ORACLE_DOCUMENT_FEATURE_MANIFEST = {
     "schema_version": ORACLE_DOCUMENT_FEATURE_SCHEMA_VERSION,

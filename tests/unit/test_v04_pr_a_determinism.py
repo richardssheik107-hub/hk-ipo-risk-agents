@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import csv
+import os
+import subprocess
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -43,3 +46,30 @@ def test_coverage_hash_is_stable_after_csv_roundtrip(tmp_path: Path) -> None:
 
     assert reread == normalized
     assert pr_a._content_hash(reread) == pr_a._content_hash(normalized)
+
+
+def test_oracle_manifest_hash_is_stable_across_hash_seeds() -> None:
+    command = (
+        "from ipo_risk.modeling.oracle_document import "
+        "ORACLE_DOCUMENT_FEATURE_MANIFEST_HASH; "
+        "print(ORACLE_DOCUMENT_FEATURE_MANIFEST_HASH)"
+    )
+    hashes = {
+        subprocess.check_output(
+            [sys.executable, "-c", command],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            text=True,
+        ).strip()
+        for seed in ("1", "2", "3")
+    }
+    assert len(hashes) == 1
+
+
+def test_conflict_safe_json_reuses_tuple_payload_after_roundtrip(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "artifact.json"
+    payload = {"feature_names": ("a", "b"), "feature_values": (1, 2)}
+
+    assert pr_a._write_json_conflict_safe(target, payload, resume=False) == "created"
+    assert pr_a._write_json_conflict_safe(target, payload, resume=True) == "reused"

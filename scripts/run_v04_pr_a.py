@@ -31,11 +31,16 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import platform
 import re
+import subprocess
+from contextlib import contextmanager
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Iterator
+
+import yaml
 
 from ipo_risk.evaluation.batch import code_revision, run_batch
 from ipo_risk.modeling.features import (
@@ -58,6 +63,59 @@ PR_A_VERSION = "v04_pr_a_v1"
 DOCUMENT_PIPELINE_VERSION = "v03_enhanced_v2"
 EXPECTED_FULL_COHORT_SIZE = 438
 _HEX_REVISION = re.compile(r"^[0-9a-f]{7,64}$")
+OFFLINE_PROVIDER_ENV_VARS = (
+    "IPO_RISK_LLM_PROVIDER",
+    "IPO_RISK_LLM_API_KEY",
+    "IPO_RISK_LLM_BASE_URL",
+    "IPO_RISK_LLM_MODEL",
+    "IPO_RISK_LLM_TIMEOUT_SECONDS",
+    "IPO_RISK_LLM_MAX_RETRIES",
+    "OPENAI_API_KEY",
+    "OPENAI_BASE_URL",
+    "OPENAI_MODEL",
+    "ARK_CODING_API_KEY",
+)
+
+
+def require_clean_worktree(repo_root: Path) -> None:
+    """Fail before materialization when source provenance is not committed."""
+
+    result = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=normal"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError("PR-A could not verify the git working tree")
+    if result.stdout.strip():
+        raise RuntimeError(
+            "PR-A requires a clean git working tree for reproducible materialization"
+        )
+
+
+@contextmanager
+def offline_provider_boundary(config_path: Path) -> Iterator[None]:
+    """Make an explicit offline config authoritative over ambient credentials."""
+
+    values = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    if values.get("runtime_mode") != "offline":
+        yield
+        return
+    if values.get("llm_provider") != "unavailable":
+        raise RuntimeError(
+            "PR-A offline config requires llm_provider: unavailable"
+        )
+    saved = {name: os.environ[name] for name in OFFLINE_PROVIDER_ENV_VARS if name in os.environ}
+    for name in OFFLINE_PROVIDER_ENV_VARS:
+        os.environ.pop(name, None)
+    try:
+        yield
+    finally:
+        for name in OFFLINE_PROVIDER_ENV_VARS:
+            os.environ.pop(name, None)
+        os.environ.update(saved)
 
 
 def _canonical_json(value: Any) -> str:
@@ -184,9 +242,10 @@ def _write_json_conflict_safe(
 
     del resume
     encoded = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    normalized_payload = json.loads(encoded)
     if path.exists():
         existing = json.loads(path.read_text(encoding="utf-8"))
-        if existing == payload:
+        if existing == normalized_payload:
             return "reused"
         raise ValueError(
             f"existing artifact differs; use a new output directory: {path.name}"
@@ -300,15 +359,16 @@ def run_production(
 ) -> dict[str, dict[str, Any]]:
     output_dir.mkdir(parents=True, exist_ok=True)
     analysis_dir = output_dir / "production_analysis"
-    report = run_batch(
-        catalog_dir=catalog_dir,
-        data_root=data_root,
-        output_dir=analysis_dir,
-        config_path=config_path,
-        case_ids=[item.case_id for item in selected],
-        overwrite=False,
-        include_blind_test=False,
-    )
+    with offline_provider_boundary(config_path):
+        report = run_batch(
+            catalog_dir=catalog_dir,
+            data_root=data_root,
+            output_dir=analysis_dir,
+            config_path=config_path,
+            case_ids=[item.case_id for item in selected],
+            overwrite=False,
+            include_blind_test=False,
+        )
     outcome_by_case = {item.case_id: item for item in report.outcomes}
     materializer = V04DocumentSnapshotMaterializer(
         output_dir / "production_document"
@@ -723,6 +783,7 @@ def main() -> int:
     args = parser.parse_args()
 
     repo_root = args.repo_root.resolve()
+    require_clean_worktree(repo_root)
     catalog_dir = (
         (repo_root / args.catalog_dir).resolve()
         if not args.catalog_dir.is_absolute()
