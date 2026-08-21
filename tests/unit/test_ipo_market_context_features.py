@@ -57,6 +57,29 @@ def test_context_zero_sample_keeps_null_rate() -> None:
     assert got["same_industry_recent_break_rate"] is None
 
 
+def test_missing_target_industry_marks_whole_industry_family_missing() -> None:
+    got = build_ipo_market_context(
+        listing_date=date(2022, 3, 1),
+        industry=None,
+        prior_ipos=[
+            {
+                "listing_date": date(2022, 2, 1),
+                "industry": "A",
+                "funds_raised": 10,
+                "target_1d": date(2022, 2, 2),
+                "return_1d": -0.1,
+                "target_5d": date(2022, 2, 8),
+                "return_5d": -0.2,
+            }
+        ],
+    )
+    assert got["same_industry_ipo_count_180d"] is None
+    assert got["same_industry_recent_break_rate"] is None
+    assert got["same_industry_recent_return_5d"] is None
+    assert got["same_industry_recent_1d_sample_count"] is None
+    assert got["same_industry_recent_5d_sample_count"] is None
+
+
 def test_context_vector_uses_adjacent_missing_indicators() -> None:
     values = build_ipo_market_context(
         listing_date=date(2022, 1, 1),
@@ -75,9 +98,13 @@ def test_context_vector_uses_adjacent_missing_indicators() -> None:
     )
     assert vector[0:4] == (0, 0, 0, 0)
 
-    missing_index = names.index("recent_ipo_break_rate")
-    assert vector[missing_index] is None
-    assert vector[missing_index + 1] == 1
+    recent_missing_index = names.index("recent_ipo_break_rate")
+    assert vector[recent_missing_index] is None
+    assert vector[recent_missing_index + 1] == 1
+
+    industry_missing_index = names.index("same_industry_ipo_count_180d")
+    assert vector[industry_missing_index] is None
+    assert vector[industry_missing_index + 1] == 1
 
 
 def test_context_manifest_hash_is_deterministic() -> None:
