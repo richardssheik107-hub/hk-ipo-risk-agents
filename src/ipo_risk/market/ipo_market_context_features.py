@@ -2,9 +2,9 @@
 
 This module deliberately uses only information that can be known before the
 *target* IPO listing date: prior IPO identities/offer facts and prior IPO
-outcomes whose target trading session has already occurred.  It does not use or
+outcomes whose target trading session has already occurred. It does not use or
 proxy HSI, industry-index history, or total-market turnover; those belong to the
-separate extended Market-X contract.
+separate Extended Market-X contract.
 """
 
 from __future__ import annotations
@@ -47,6 +47,8 @@ def _canonical_json(value: Any) -> str:
 
 
 def content_hash(value: Any) -> str:
+    """Return a deterministic SHA-256 for a JSON-compatible payload."""
+
     return hashlib.sha256(_canonical_json(value).encode("utf-8")).hexdigest()
 
 
@@ -88,12 +90,12 @@ def build_ipo_market_context(
 ) -> dict[str, float | int | None]:
     """Build deterministic context using only facts known before listing date."""
 
+    normalized_industry = industry.strip() if industry and industry.strip() else None
     prior = sorted(
         (
             item
             for item in prior_ipos
-            if item.get("listing_date")
-            and item["listing_date"] < listing_date
+            if item.get("listing_date") and item["listing_date"] < listing_date
         ),
         key=lambda item: item["listing_date"],
     )
@@ -146,19 +148,35 @@ def build_ipo_market_context(
     rows_30d = window(30)
     rows_60d = window(60)
     recent = rows_60d[-20:]
-    same_industry = [
-        item
-        for item in window(180)
-        if industry and item.get("industry") == industry
-    ]
-
     break_rate, return_5d, sample_1d, sample_5d = outcomes(recent)
-    (
-        same_break_rate,
-        same_return_5d,
-        same_sample_1d,
-        same_sample_5d,
-    ) = outcomes(same_industry)
+
+    if normalized_industry is None:
+        same_industry_values: dict[str, float | int | None] = {
+            "same_industry_ipo_count_180d": None,
+            "same_industry_recent_break_rate": None,
+            "same_industry_recent_return_5d": None,
+            "same_industry_recent_1d_sample_count": None,
+            "same_industry_recent_5d_sample_count": None,
+        }
+    else:
+        same_industry = [
+            item
+            for item in window(180)
+            if (item.get("industry") or "").strip() == normalized_industry
+        ]
+        (
+            same_break_rate,
+            same_return_5d,
+            same_sample_1d,
+            same_sample_5d,
+        ) = outcomes(same_industry)
+        same_industry_values = {
+            "same_industry_ipo_count_180d": len(same_industry),
+            "same_industry_recent_break_rate": same_break_rate,
+            "same_industry_recent_return_5d": same_return_5d,
+            "same_industry_recent_1d_sample_count": same_sample_1d,
+            "same_industry_recent_5d_sample_count": same_sample_5d,
+        }
 
     values: dict[str, float | int | None] = {
         "ipo_count_30d": len(rows_30d),
@@ -169,11 +187,7 @@ def build_ipo_market_context(
         "recent_ipo_return_5d": return_5d,
         "recent_ipo_1d_sample_count": sample_1d,
         "recent_ipo_5d_sample_count": sample_5d,
-        "same_industry_ipo_count_180d": len(same_industry),
-        "same_industry_recent_break_rate": same_break_rate,
-        "same_industry_recent_return_5d": same_return_5d,
-        "same_industry_recent_1d_sample_count": same_sample_1d,
-        "same_industry_recent_5d_sample_count": same_sample_5d,
+        **same_industry_values,
     }
     if tuple(values) != IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER:
         raise RuntimeError("IPO market-context feature order drifted")
