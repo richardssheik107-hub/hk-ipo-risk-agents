@@ -1,7 +1,7 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A COMPLETE / FROZEN; PR-B NOT STARTED / NEXT**  
-> Date: **2026-08-21**  
+> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED**
+> Date: **2026-08-21**
 > Strategy: **End-to-End Closed Loop First**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
 
@@ -34,8 +34,8 @@ Prospectus PDF
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            NEXT
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
@@ -130,7 +130,7 @@ cross-module contract checks
 - Market coverage / missingness；
 - 2025 blind data boundary。
 
-当前正式任务：**PR-B Owner**。
+PR-B Owner 任务已完成并冻结。PR-C 为下一正式里程碑，但尚未启动。
 
 ---
 
@@ -221,7 +221,7 @@ A6  full determinism                 DONE
 
 ---
 
-# 4. PR-B：Market-X Core + Governed EOD Store — NEXT
+# 4. PR-B：Market-X Core + Governed EOD Store — COMPLETE / FROZEN
 
 ## Owner
 
@@ -273,7 +273,7 @@ Market Coverage Report
 PIT Audit Report
 ```
 
-PR-B PASS 后才正式进入 PR-C。
+PR-B 已 PASS；PR-C 是下一正式里程碑，但仍为 **NOT STARTED**。
 
 ---
 
@@ -460,12 +460,12 @@ Final Risk Report
 
 正式 Gate 严格串行不等于五个人必须空等。
 
-当前 PR-B 正式进行时，其他成员可做：
+PR-B 已完成并处于发布审查阶段。PR-C 尚未正式启动；在获得独立任务授权前，只允许不冻结 policy 的准备性工作：
 
 ```text
-A  PR-B integration / schema / reproducibility preparation
+A  PR-B release / integration / reproducibility audit
 B  Document explanation / downstream interface QA
-C  PR-B formal implementation
+C  governed EOD / Market-X Core frozen-source support
 D  PR-C outcome methodology preparation（不冻结正式 policy）
 E  Product / Final Supervisor / UI skeleton preparation（不绑定未冻结模型）
 ```
@@ -514,16 +514,18 @@ E  Product / Final Supervisor / UI skeleton preparation（不绑定未冻结模�
 [x] CI green
 ```
 
-## Gate PR-B
+## Gate PR-B — COMPLETE / FROZEN
 
-必须得到：
+已完成：
 
 ```text
-Governed Market source record
-Market Feature Manifest
-Market-X coverage
-PIT audit
-No post-listing leakage
+[x] Governed Market source record
+[x] Market Feature Manifest
+[x] Market-X coverage 438 / 438
+[x] PIT audit PASS
+[x] No post-listing leakage
+[x] Determinism 438 checked / 0 mismatches
+[x] 2025 blind y not accessed
 ```
 
 ## Gate PR-C

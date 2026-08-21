@@ -236,20 +236,31 @@ def test_committed_v04_source_manifest_validates() -> None:
     serialized = manifest.canonical_json()
     assert "C:\\" not in serialized
     assert "D:\\" not in serialized
+
+    document = next(
+        entry for entry in manifest.entries if entry.logical_id == "document_result_pipeline"
+    )
+    assert document.availability is SourceAvailability.AVAILABLE
+    assert document.coverage["authoritative_snapshots_existing"] == 438
+    assert document.coverage["production_document_features_existing"] == 438
+    assert document.provenance["full_batch_executed"] is True
+    assert document.provenance["pr_a_status"] == "complete_frozen"
+
     security_master = next(
         entry for entry in manifest.entries if entry.logical_id == "security_master"
     )
     assert security_master.availability is SourceAvailability.NOT_REQUIRED
+
     assessment = manifest.model_readiness()
     assert assessment.status == "blocked"
     assert "SECURITY_MASTER_SOURCE_REQUIRED" not in assessment.blockers
     assert "SECURITY_MASTER_SOURCE_REQUIRED" not in serialized
+    assert "DOCUMENT_X_NOT_FULLY_MATERIALIZED" not in assessment.blockers
     assert set(assessment.blockers) >= {
         "HSI_SOURCE_REQUIRED",
         "INDUSTRY_INDEX_MAPPING_REQUIRED",
         "INDUSTRY_INDEX_SOURCE_REQUIRED",
         "MARKET_TURNOVER_SOURCE_REQUIRED",
-        "DOCUMENT_X_NOT_FULLY_MATERIALIZED",
         "FIVE_DAY_TARGET_NOT_MATERIALIZED",
         "TARGET_POLICY_OWNER_DECISION_PENDING_DATA",
     }

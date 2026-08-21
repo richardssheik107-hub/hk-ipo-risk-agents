@@ -1,72 +1,179 @@
 # Documentation Index
 
 > Status snapshot: **2026-08-21**
+> PR-A: **COMPLETE / FROZEN**
+> PR-B: **COMPLETE / FROZEN**
+> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
+> Freeze source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
 
-本目录只把**当前主线开发真正需要阅读的文档**作为活文档维护。历史 v0.2 / v0.3 审计、handoff、旧 Retriever pilot、旧 Evidence Intelligence 设计稿和一次性执行稿通过 Git history / release 保留，不继续堆在当前阅读路径。
+本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、handoff 与一次性实验文档通过 Git history / release 保留。
 
-## 当前主线
-
-项目当前执行策略为 **End-to-End Closed Loop First**：
+## 1. Current execution chain
 
 ```text
 Prospectus PDF
 → Document Intelligence
-→ Production Document Features
-→ Pre-IPO Market Features
+→ Production Document X
+→ Market-X Core + optional governed Extended Market-X
 → 5D Outcome
 → Model-ready Dataset
 → Baseline + Oracle Diagnostic
-→ LightGBM
+→ LightGBM + Explainability
 → Market Agent
 → Final Supervisor
 → Streamlit Full E2E
 ```
 
-当前里程碑状态：
+正式 Gate / mainline merge 顺序：
 
-> **PR-A — COMPLETE / FROZEN**
+```text
+PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
+→ PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
+→ PR-D Canonical Model-ready Dataset
+→ PR-E Baseline + Oracle Diagnostic
+→ PR-F LightGBM + Explainability
+→ PR-G Market Agent + Final Supervisor
+→ PR-H Streamlit Full E2E + Real-case Demo
+```
 
-> Next formal milestone: **PR-B — NOT STARTED**
+准备性工作允许并行，但不得把准备工作描述为后续 Gate 已通过，也不得越过正式顺序合并到 `main`。
 
-CL-1 Document Intelligence freeze 与 PR-A Document materialization 均已完成。当前不继续优化 Retriever、Prompt、LLM 或 Agent；下一正式工作是构建受 point-in-time 治理的 Market-X。
-
-## 文档优先级
+## 2. Read these first
 
 遇到口径冲突时，按以下顺序理解当前项目：
 
-1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — **唯一权威执行总计划**，包含正式 milestone / Gate 顺序；
-2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人执行与职责计划**，规定角色、准备性并行与正式 Gate 边界；
-3. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 的冻结结果、Coverage hash 生命周期与本地产物政策；
-4. [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — A / Pipeline Lead 的 PR-A 已冻结运行手册；
-5. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
-6. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
-7. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
-8. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
-9. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
+1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 唯一权威总计划与 Gate 顺序；
+2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人角色、并行准备和正式 Gate 边界；
+3. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — 当前 PR-B Core/Extended 边界、orchestration / PIT / coverage / provenance / determinism 验收契约；
+4. [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — Role A 已完成的仓库侧准备和 B/C/D/E 后续边界；
+5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — 已完成的 PR-B 本地执行 handoff，保留作审计记录；
+6. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果；
+7. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结结果；
+8. [`ROADMAP.md`](ROADMAP.md) — 阶段状态；
+9. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
+10. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
+11. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
 
-## v0.4 当前工作文档
+## 3. PR-A frozen facts
 
-- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A COMPLETE / FROZEN 的正式人类可读记录；
-- [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — PR-A 运行、Coverage、Reproducibility 的冻结操作手册；
-- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实 readiness：PR-A 已冻结，full model-ready gate 仍 blocked；
-- [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — 市场数据、标签、年度切分和 blind 治理基础；
-- [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — Production Document Risk → 模型特征契约；
-- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — 严格上市前 Market X 契约与当前真实数据可用性；
-- [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — evaluation-only 的专家 Gold 上限 / 错误归因路径。
+```text
+Official 2020–2024 cases       438
+Production analysis            438 / 438
+Authoritative snapshots        438 / 438
+Production Document-X          438 / 438
+Document feature schema        v04_document_features_v1
+Document feature dimension     100
+Production failures            0
+Silent drops                   0
+Oracle materialized            60
+No reviewed Gold               378
+Production ∩ Oracle            60
+A6 checked                     438
+A6 mismatches                  0
+2025 blind access              NO
+```
 
-## 冻结研究参考
+Frozen records:
 
-- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md)
+- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_a_document_materialization_manifest.json`](../reports/frozen/v04_pr_a_document_materialization_manifest.json)
 
-Retriever V3 / BM25 / Table / LambdaMART 等成果已进入主线并冻结。历史 Locked 10 已消费；未来若重启 Retriever，必须建立新的 unseen / external / temporal holdout。
+## 4. PR-B frozen result
 
-该文件**不是当前执行计划**，保留它只是因为其中的数据治理和未来重启条件仍有约束力。
+PR-B is now explicitly split into **Core** and **Extended**.
 
-## 当前两条 Document 路径
+### 4.1 Market-X Core — COMPLETE / FROZEN
 
-### Production
+Current Core contract:
+
+```text
+v04_ipo_market_context_features_v1
+ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
+```
+
+Core only uses information already governed and historically available before each target listing:
+
+```text
+authoritative IPO identity / listing date
+prior-IPO offer/context facts
+governed IPO EOD
+prior IPO 1D/5D outcomes only after their target sessions occurred before target listing
+```
+
+Implemented entry points:
+
+```text
+src/ipo_risk/market/ipo_market_context_features.py
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+```
+
+The governed EOD builder selects the cohort by authoritative `official_listed_date.year`, preserves `OBJECT_ID` provenance, and records that `S_DQ_AMOUNT` is per-security only.
+
+Measured freeze evidence:
+
+```text
+official coverage              438 / 438
+Core materialized              438 / 438
+failed / silent drops          0 / 0
+PIT failures                   0
+Development / Validation       368 / 70
+determinism                    438 checked / 0 mismatches / PASS
+full pytest                    1303 passed / 0 failed / 2 warnings
+2025 blind y accessed          NO
+```
+
+Frozen records:
+
+- [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)
+
+### 4.2 Market-X Extended — frozen contract, governed sources still missing
+
+Existing Extended contract remains unchanged:
+
+```text
+v04_prelisting_market_features_v1
+v04_market_features_v1
+10 raw + 10 missing indicators = 20 positions
+```
+
+Current real Extended source gaps:
+
+```text
+HSI daily history
+industry → benchmark authoritative mapping
+industry-index histories
+HK total-market turnover
+```
+
+These gaps remain explicit. They are not a PR-B Core failure and cannot be filled with ungoverned proxies, fake benchmark rows or neutral zero.
+
+Detailed contracts:
+
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
+- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
+- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
+
+## 5. Active v0.4 research / contract docs
+
+- [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — IPO metadata, EOD, labels, split/blind foundation；
+- [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — frozen 100-position Production Document contract and existing modeling joins；
+- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — frozen 20-position Extended PIT Market-X contract；
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — current PR-B Core/Extended implementation and Gate contract；
+- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — latest measured data/source readiness；
+- [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — Oracle evaluation-only path；
+- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — frozen Retriever research reference, not current execution plan.
+
+## 6. Production / Oracle separation
+
+Production:
 
 ```text
 Prospectus
@@ -77,120 +184,20 @@ Prospectus
 → Verifier
 → Document Supervisor
 → V03DocumentRiskSnapshot
-→ Production Document Features
+→ Production Document X
 ```
 
-Production 是最终产品路径，不依赖专家答案。
-
-### Oracle
+Oracle:
 
 ```text
 Reviewed Expert Gold
 → EffectiveRiskGoldView
-→ Oracle Document Features
+→ Oracle Document X
 ```
 
-Oracle 只用于研究上限和错误归因，不进入 production runtime，不读取 2025 blind y，也不能把专家答案泄漏进 Production X。
+Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold page/Evidence ID/manual answers into Production X, and cannot use 2025 blind y.
 
-## PR-A 已完成什么
-
-PR-A 已回答并冻结四个基础问题：
-
-```text
-1. official 2020–2024 的 438 个 IPO 是否都有 Production Document X？
-   → 438 / 438
-2. Production 是否存在失败或 silent drop？
-   → failure = 0, silent drop = 0
-3. Oracle Gold 实际可 materialize 多少？
-   → 60；no_reviewed_gold = 378
-4. Production 与 Oracle 的公平交集有多少？
-   → 60
-```
-
-冻结结果：
-
-- Production analysis：438 / 438；
-- authoritative snapshot：438 / 438；
-- Production Document-X：438 / 438；
-- feature schema：`v04_document_features_v1`，100 维；
-- Oracle：60；
-- Production failure / silent drop：0 / 0；
-- A6 determinism：438 checked，0 mismatches，PASS；
-- 2025 access：NO。
-
-统一执行入口：
-
-```text
-scripts/run_v04_pr_a.py
-```
-
-冻结记录：
-
-- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
-- [`../reports/frozen/v04_pr_a_document_materialization_manifest.json`](../reports/frozen/v04_pr_a_document_materialization_manifest.json)
-
-## 五人执行与正式 Gate
-
-完整角色与执行边界见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
-
-固定角色：
-
-```text
-A  Tech Lead / Pipeline
-B  Document / Agent
-C  Market Data / PIT
-D  Quant / ML Research
-E  Oracle / Product Integration
-```
-
-正式 milestone / Gate / mainline merge 顺序固定为：
-
-```text
-PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            NEXT
-→ PR-C 5D Outcome Policy Freeze
-→ PR-D Canonical Model-ready Dataset
-→ PR-E Baseline + Oracle Diagnostic
-→ PR-F LightGBM + Explainability
-→ PR-G Market Agent + Final Supervisor
-→ PR-H Streamlit Full E2E + Real-case Demo
-```
-
-团队可以并行做**准备性工作**，例如数据源调研、接口草案、测试夹具和 UI skeleton；但准备工作不能被标记为后续正式 Gate 已开始/已通过，也不能越过上述顺序合并到 `main`。
-
-## PR-A 的冻结顺序
-
-```text
-PR-A0  Freeze execution context and hashes       DONE
-PR-A1  Implement scripts/run_v04_pr_a.py + tests DONE
-PR-A2  Run small deterministic Development pilot DONE
-PR-A3  Run 2020–2024 Production materialization DONE
-PR-A4  Run Oracle materialization                DONE
-PR-A5  Build unified coverage table              DONE
-PR-A6  Rerun and verify deterministic hashes     DONE
-```
-
-当前工程状态：A0–A6 全部完成，PR-A 已冻结。下一正式里程碑是 PR-B Market-X Core；PR-B 尚未开始正式 Gate。
-
-## 当前真实 readiness
-
-当前数字以 [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) 为准：
-
-- official universe：438 / 438；
-- local prospectus：438 / 438；
-- IPO OHLCV：432 / 438；
-- authoritative snapshots：438 / 438；
-- Production Document-X features：438 / 438（100 维）；
-- Oracle Document-X：60；`no_reviewed_gold`：378；
-- Production failures / silent drops：0 / 0；
-- HSI / industry benchmark / total-market turnover：仍缺失；
-- PR-A Document materialization：**COMPLETE / FROZEN**；
-- PR-B Market-X Core：**NOT STARTED / NEXT**；
-- full Model-ready data gate：仍 blocked。
-
-这些数字只有在真实 materialization / source audit 后才允许更新。
-
-## 时间治理
+## 7. Time governance
 
 ```text
 2020–2023  Development / Training
@@ -198,21 +205,29 @@ PR-A6  Rerun and verify deterministic hashes     DONE
 2025       Blind Test
 ```
 
-2025 在 feature / target / model policy 冻结前不得用于选特征、阈值、模型或 Prompt / Retriever / LLM 调优。
+2025 may eventually contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened.
 
-## `docs/annotation/` 为什么还存在
+## 8. Current stop condition
 
-`docs/annotation/gpt_expert_v1_1/` 中保留的内容属于**机器测试 / frozen fixture 资产**，不是当前团队阅读文档。部分测试和 Retriever preflight 仍依赖这些文件，因此不能当作普通历史 Markdown 删除。
+Continue on the existing work branch; do not create another branch unless explicitly requested.
 
-不要把该目录重新扩展成历史 protocol / handoff 文档仓库。
+PR-B engineering and Gate review are complete. The next permitted milestone is PR-C, but it has not started:
 
-## 文档维护规则
+```text
+PR-A  COMPLETE / FROZEN
+→ PR-B COMPLETE / FROZEN
+→ STOP
+→ PR-C NEXT / NOT STARTED
+```
 
-- **长期契约 / 当前执行指引**：进入 `docs/`；
-- **运行时 / 测试 fixture**：只保留机器真正依赖的最小资产；
-- **阶段性实验结果**：进入可版本化 report / artifact；
-- **一次性 handoff / 临时计划**：完成后不长期保留为活文档；
-- **真实 readiness 数字**：只有真实运行后更新；
-- **已被新版本替代的说明或死链接**：从当前树 / 当前正文移除，由 Git history 保存。
+PR-C classification threshold and target policy must be frozen separately using Development data only; this PR-B freeze does not make that decision.
 
-目标是让新成员进入 `docs/` 后几分钟内就能回答：**现在做到哪里、下一步只做什么、谁负责什么、哪些准备可以并行、哪些正式 Gate 不能越过。**
+## 9. Documentation maintenance rule
+
+- Current contracts / execution guidance → `docs/`;
+- machine fixtures required by tests → keep only minimum needed;
+- runtime/full-run outputs → ignored artifact/report area unless a small freeze manifest is deliberately committed;
+- readiness numbers → update only after real runs;
+- superseded plans → Git history/release, not active source of truth.
+
+A new contributor should be able to answer within minutes: **where we are, what Gate is current, what is already implemented, what still requires local execution evidence, and what cannot be crossed early.**

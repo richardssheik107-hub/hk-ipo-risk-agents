@@ -1,0 +1,55 @@
+{
+  "pr_b_version": "v04_pr_b_core_v1",
+  "status": "complete_frozen",
+  "freeze_date": "2026-08-21",
+  "source_git_revision": "dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7",
+  "feature_schema_version": "v04_ipo_market_context_features_v1",
+  "feature_policy_version": "ipo_market_context_policy_v1",
+  "feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+  "raw_feature_count": 15,
+  "missing_indicator_count": 15,
+  "feature_position_count": 30,
+  "official_case_count": 438,
+  "coverage_row_count": 438,
+  "materialized_count": 438,
+  "failure_count": 0,
+  "silent_drop_count": 0,
+  "pit_failure_count": 0,
+  "development_count": 368,
+  "validation_count": 70,
+  "prior_ipo_history_start_date": "2020-02-14",
+  "coverage_content_hash": "768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e",
+  "governed_eod": {
+    "filter_schema_version": "v04_ipo_eod_filter_v2",
+    "row_count": 433776,
+    "distinct_target_securities": 432,
+    "provider_ohlcv_matched": 432,
+    "provider_ohlcv_missing": 6,
+    "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+    "official_bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198"
+  },
+  "determinism": {
+    "passed": true,
+    "checked_case_count": 438,
+    "mismatch_count": 0,
+    "coverage_hash_stable": true
+  },
+  "tests": {
+    "targeted_passed": 68,
+    "targeted_failed": 0,
+    "targeted_skipped": 0,
+    "full_pytest_passed": 1303,
+    "full_pytest_failed": 0,
+    "full_pytest_skipped": 0,
+    "full_pytest_warnings": 2
+  },
+  "extended_source_status": {
+    "hsi": "missing",
+    "industry_mapping": "missing",
+    "industry_index_history": "missing",
+    "total_market_turnover": "missing"
+  },
+  "blind_2025_y_accessed": false,
+  "pr_c_started": false,
+  "public_interface_changed": false
+}

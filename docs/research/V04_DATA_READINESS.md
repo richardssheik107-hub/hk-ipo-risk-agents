@@ -1,12 +1,14 @@
 # V04 Data Readiness — Current Reference Snapshot
 
-> Last real audit snapshot: **2026-08-21 PR-A A6 full determinism**  
+> Last real audit snapshot: **2026-08-21 PR-B full 438 materialization + determinism**
 > Documentation review: **2026-08-21**  
-> Status: **PR-A COMPLETE / FROZEN / FULL MODEL-READY GATE STILL BLOCKED**
+> Status: **PR-A COMPLETE / FROZEN; PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED; MODEL-READY GATE BLOCKED**
 
-本文件记录当前**真实数据 readiness 审计结果**。计划文档更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改这些统计。
+本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
 
-PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。完整 Market-X / model-ready gate 仍因 HSI、industry benchmark、total-market turnover 等 governed source 缺失而阻塞。
+PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证。
+
+Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
 
 ## 1. Official 2020–2024 modeling universe
 
@@ -46,7 +48,7 @@ security_type                                -> descriptive metadata
 - 不用于猜 issue price；
 - 不用于把 unknown security type 强行分类。
 
-## 4. Governed IPO OHLCV
+## 4. Governed IPO OHLCV — measured foundation
 
 `CompetitionCSVMarketDataProvider` 已能从受控 bridge + 本地 `hkshareeodprices.csv` 读取 official target securities，并保留 source/version/checksum provenance。
 
@@ -74,16 +76,78 @@ ipo_2022_07841
 
 它们是 eligible but outcome unavailable，不得改写成 security-ineligible。
 
-## 5. Reference-market inputs
+### 4.1 PR-B governed EOD builder — frozen measured result
 
-### Available / partially usable
+当前分支已将 `scripts/build_v04_ipo_eod_store.py` 修正为：
+
+```text
+official_match_status == matched
+AND official_listed_date.year in 2020–2024
+```
+
+不再使用 document `source_year` 选择 modeling cohort。
+
+过滤产物保留 `OBJECT_ID` source-record provenance；`S_DQ_AMOUNT` 明确保留为 per-security 原始列，不能解释为 HKEX total-market turnover。
+
+冻结 governed EOD 结果：
+
+```text
+target cases                  438
+row count                     433776
+distinct target securities    432
+provider OHLCV matched         432
+provider OHLCV missing         6
+raw EOD SHA256                 190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
+official bridge SHA256         751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198
+```
+
+## 5. Market-X Core vs Extended readiness
+
+### 5.1 Market-X Core — COMPLETE / FROZEN
+
+Current Core contract：
+
+```text
+v04_ipo_market_context_features_v1
+ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
+```
+
+Core 可使用当前已受治理/可严格 PIT 的输入：
 
 - authoritative IPO metadata；
 - 432 / 438 governed IPO EOD histories；
-- prior-IPO point-in-time context foundations；
-- IPO structure features。
+- prior-IPO point-in-time context；
+- prior IPO offer/funds-raised facts；
+- prior IPO 1D/5D outcomes only when their target session occurred strictly before the target listing date。
 
-### Still missing
+Measured freeze result：
+
+```text
+source revision                 dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7
+official coverage               438 / 438
+Core materialized               438 / 438
+failed / silent drops           0 / 0
+PIT failures                    0
+Development / Validation        368 / 70
+feature manifest hash           c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d
+coverage hash                   768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
+determinism                     438 checked / 0 mismatches / PASS
+full pytest                     1303 passed / 0 failed / 2 warnings
+2025 blind y accessed           NO
+```
+
+### 5.2 Market-X Extended — source gaps remain
+
+Available / partially usable：
+
+- authoritative IPO metadata；
+- governed IPO EOD；
+- prior-IPO context foundation。
+
+Still missing：
 
 - governed HSI daily close history：`HSI_SOURCE_REQUIRED`；
 - authoritative industry-to-index mapping：`INDUSTRY_INDEX_MAPPING_REQUIRED`；
@@ -94,9 +158,11 @@ ipo_2022_07841
 
 - Hang Seng Bank ≠ Hang Seng Index；
 - workbook industry name ≠ authoritative industry benchmark mapping；
-- 单只证券 `S_DQ_AMOUNT` ≠ HKEX total-market turnover。
+- 单只证券 `S_DQ_AMOUNT` ≠ HKEX total-market turnover；
+- 不得创建 fake benchmark row 只为让 Extended engine 产生 observation date；
+- missing source 不得填 market-neutral zero。
 
-这些数据不能用不等价代理静默替代。
+这些缺口不能用不等价代理静默替代，但它们本身不否定 PR-B Core 的可实现性。
 
 ## 6. Production Document readiness — COMPLETE / FROZEN
 
@@ -169,7 +235,7 @@ A6 canonical resumed-state coverage hash：
 3b8201ea69f31804a7b99096d8392d3e32ca1bc60557dbf90e8050671eda2201
 ```
 
-二者差异仅来自 resume 生命周期字段：`production_analysis_status: completed → skipped` 与 `production_snapshot_status: created → reused`；snapshot / Production feature / Oracle feature 等实质 hash 均未漂移。
+二者差异仅来自 resume 生命周期字段；snapshot / Production feature / Oracle feature 等实质 hash 均未漂移。
 
 ## 7. Oracle readiness — MATERIALIZED / EVALUATION-ONLY
 
@@ -197,74 +263,62 @@ Reviewed Expert Gold
 
 | Source | Required for | Status | Coverage / note |
 |---|---|---|---|
-| Official IPO metadata | identity | AVAILABLE | 438 / 438 |
-| Official IPO universe | eligibility | AVAILABLE | 438 / 438 eligible |
+| Official IPO metadata | identity / Core | AVAILABLE | 438 / 438 |
+| Official IPO universe | eligibility / Core | AVAILABLE | 438 / 438 eligible |
 | Security type | descriptive | OPTIONAL | unknown allowed |
-| IPO OHLCV | outcomes / prior-IPO context | AVAILABLE | 432 / 438 |
-| HSI closes | extended Market X | MISSING | 0 / 438 |
-| Industry mapping | extended Market X | MISSING | 0 / 438 mapped |
-| Industry-index closes | extended Market X | MISSING | not available |
-| Total-market turnover | extended Market X | MISSING | not available |
+| IPO OHLCV | outcomes / prior-IPO Core context | AVAILABLE | 432 / 438 |
+| HSI closes | Extended Market X | MISSING | 0 / 438 |
+| Industry mapping | Extended Market X | MISSING | 0 / 438 mapped |
+| Industry-index closes | Extended Market X | MISSING | not available |
+| Total-market turnover | Extended Market X | MISSING | not available |
 | V03 authoritative snapshots | Production Document X | COMPLETE / FROZEN | 438 / 438 |
 | Production Document-X | modeling input | COMPLETE / FROZEN | 438 / 438, 100 dimensions |
 | Oracle Document-X | evaluation-only | MATERIALIZED | 60; 378 no reviewed Gold |
 
-当前：
+Current Gate state：
 
 ```text
 PR-A_DOCUMENT_MATERIALIZATION_GATE = COMPLETE / FROZEN
-PR-B_MARKET_X_GATE                  = NOT STARTED / NEXT
+PR-B_CORE_CODE_READINESS            = COMPLETE / FROZEN
+PR-B_CORE_REAL_MATERIALIZATION      = 438 / 438
+PR-B_GATE                           = PASS / COMPLETE / FROZEN
+MARKET_X_EXTENDED_SOURCES           = INCOMPLETE
 MODEL_READY_DATA_GATE               = BLOCKED
 ```
 
-PR-A 已不再是 readiness blocker；当前 Model-ready blocker 来自后续 Market-X / Outcome / Dataset 里程碑。
+PR-A 与 PR-B 已不再是 readiness blocker。当前 Model-ready blocker 来自 PR-C target policy 与 PR-D canonical dataset；Extended source families 仍是后续可增强的 source limitation。
 
-## 9. PR-A completed changes
+## 9. PR-B frozen evidence
 
-PR-A 已把 Document capability 转换为可复用的正式数据资产：
+Canonical records：
 
-```text
-438 official cases
-→ Production analysis status
-→ 438 authoritative snapshots
-→ 438 Production feature vectors
-→ Oracle inventory / 60 Oracle features
-→ unified 438-row coverage
-→ A6 deterministic rerun
-```
+- `docs/V04_PR_B_COMPLETION_REPORT.md`
+- `reports/frozen/v04_pr_b_market_x_core_manifest.json`
+- `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
 
-正式冻结记录：
+## 10. External data still required for Market-X Extended
 
-- `docs/V04_PR_A_COMPLETION_REPORT.md`
-- `reports/frozen/v04_pr_a_document_materialization_manifest.json`
-
-批量 runtime artifacts 保持本地且不进入 Git；对外打包前需要对本机绝对路径做 sanitized copy，不得修改 canonical frozen artifact。
-
-## 10. External data still required for full Market-X
-
-完整 Market-X 仍需要：
+Full Extended reference-market enrichment still requires：
 
 1. HSI history：date、close、stable index ID、source、version；
 2. authoritative industry benchmark mapping：IPO industry → benchmark ID + effective dates + provenance；
 3. industry-index history：benchmark ID、date、close、source、version；
 4. HKEX total-market turnover：date、value、unit、market scope、source、version。
 
-这些是下一正式里程碑 PR-B 的输入，不是 PR-A blocker。
+These are not reasons to fabricate inputs or to reopen PR-A. If/when supplied, they enter the existing versioned Extended contract with provenance/tests.
 
-正式 milestone / Gate / mainline merge 顺序继续保持：
+Formal milestone / Gate / mainline merge order remains：
 
 ```text
 PR-A  COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze / NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E
 ```
-
-准备性研究可以提前进行，但不能越过正式 Gate 顺序合并。
 
 ## 11. Target governance
 

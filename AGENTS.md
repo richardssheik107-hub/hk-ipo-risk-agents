@@ -30,8 +30,9 @@ Retriever V3 等研究成果已冻结并归档，当前不作为 v0.4 前置条�
 4. 阅读 `docs/DATA_SCHEMA.md`；
 5. 阅读本 `AGENTS.md`；
 6. 涉及路线 / 数据 / 建模时，再读 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`、`docs/ROADMAP.md` 和对应 `docs/research/V04_*.md`；
-7. 检查仓库结构与现有测试；
-8. 说明准备修改的文件及是否影响公共接口。
+7. 若任务涉及已冻结 PR-B 的审计，再读 `docs/V04_PR_B_COMPLETION_REPORT.md`、`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`；Role A preparation / handoff 仅作为历史完成记录；
+8. 检查仓库结构与现有测试；
+9. 说明准备修改的文件及是否影响公共接口。
 
 面对较大任务，先给出实施计划，再开始编码。
 
@@ -172,7 +173,7 @@ pytest -q
 ## 13. Git 规则
 
 1. 不直接向 `main` 提交未经测试的代码；
-2. 每个功能使用独立分支；
+2. 每个功能使用独立分支；当前若用户明确要求“不要新增分支”，继续使用已指定的现有工作分支；
 3. Commit 信息说明真实修改内容；
 4. PR 说明测试结果与剩余限制；
 5. 公共 Schema 修改必须明确审核；
@@ -190,16 +191,87 @@ pytest -q
 
 ## 15. 当前优先级
 
-CL-1 已完成并冻结。当前唯一正式执行里程碑是：
+CL-1、PR-A 与 PR-B 均已完成并冻结。下一正式里程碑是：
 
-> **PR-A — Document + Oracle Materialization & Coverage**
+> **PR-C — 5D Outcome Policy Freeze / NEXT / NOT STARTED**
 
-执行顺序以 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` 为准。PR-A 首个代码 deliverable 是一个薄 orchestration CLI：
+PR-B 已完成 438-case materialization、PIT、missingness、resume 与 determinism Gate，并冻结在 `docs/V04_PR_B_COMPLETION_REPORT.md`。不要重新执行或重新设计 PR-B，也不要在没有独立任务授权时启动 PR-C。
+
+### 15.1 PR-B Market-X Core — COMPLETE / FROZEN
+
+当前 Core 契约：
 
 ```text
-scripts/run_v04_pr_a.py
+schema:  v04_ipo_market_context_features_v1
+policy:  ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
 ```
 
-它只串联已有 Production batch、authoritative snapshot materialization、Production feature vectorization、Oracle materialization 与 unified coverage，不复制 Parser / Retriever / Agent 业务逻辑，不修改受保护公共接口。
+当前实现入口：
 
-PR-A PASS 前，不把 Retriever 调参、LLM Reranker、Fine-tuning、市场模型训练或 UI 重构重新拉回主线。
+```text
+src/ipo_risk/market/ipo_market_context_features.py
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+```
+
+Core 使用当前已治理的 authoritative IPO metadata、prior-IPO offer/context facts、governed IPO EOD，以及在目标 IPO 上市前已经成为历史事实的 prior-IPO 1D/5D outcomes。
+
+硬规则：
+
+- EOD official cohort 按 `official_listed_date.year`，不得按 document `source_year`；
+- target IPO 自身上市日 / 上市后数据不得进入 target X；
+- prior outcome 的 target trading date 必须严格早于 target listing date；
+- 2025 blind y 不得访问；
+- `S_DQ_AMOUNT` 仅是单证券成交额，不是全市场 turnover；
+- resume 不得静默覆盖不同 provenance；
+- every official case 必须在 coverage 中有显式状态。
+
+### 15.2 Market-X Extended
+
+已有的 Extended 契约继续冻结，不被 PR-B Core 重写：
+
+```text
+v04_prelisting_market_features_v1
+v04_market_features_v1
+10 raw features + 10 missing indicators
+= 20 positions
+```
+
+当前真实 Extended 数据缺口仍包括：
+
+```text
+HSI history
+Authoritative industry benchmark mapping
+Industry-index history
+HKEX total-market turnover
+```
+
+这些缺口必须显式保留，但**不是 PR-B Core 必须伪造或用 proxy 补齐的输入**。禁止使用 Hang Seng Bank 代替 HSI、用公司/行业文本猜 benchmark、用 `S_DQ_AMOUNT` 代替 total-market turnover、或用 0 静默填补。
+
+### 15.3 当前 Codex / 本地执行边界
+
+当前状态：
+
+```text
+PR-A  COMPLETE / FROZEN
+PR-B  COMPLETE / FROZEN
+PR-C  NEXT / NOT STARTED
+```
+
+PR-B 的 targeted tests、full pytest、5-case pilot、438-case materialization 与 deterministic resume 均已完成。冻结证据：
+
+```text
+docs/V04_PR_B_COMPLETION_REPORT.md
+reports/frozen/v04_pr_b_market_x_core_manifest.json
+```
+
+当前不得自行选择 5D threshold、读取 2025 y、物化 PR-C label 或训练模型。PR-C 必须由独立任务与冻结 policy 正式启动。
+
+后续正式 Gate / merge 顺序仍为：
+
+```text
+PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
+```
