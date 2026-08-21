@@ -59,7 +59,7 @@ Prospectus
 
 当前优先完成完整闭环，再依据 PR-E 的 Oracle diagnostic 决定 v0.5 是否回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
 
-PR-A — Document + Oracle Materialization & Coverage 已 **COMPLETE / FROZEN**。当前正式里程碑为 **PR-B — Market-X Core + Governed EOD Store**；当前工作分支已经实现仓库侧 Core orchestration/tests，但尚未获得本地 full materialization + determinism + full-test Gate evidence，因此不能标记为 COMPLETE。
+PR-A — Document + Oracle Materialization & Coverage 已 **COMPLETE / FROZEN**。PR-B — Market-X Core + Governed EOD Store 已通过完整 Gate 并 **COMPLETE / FROZEN**：official 2020–2024 cohort 为 438，Core coverage 为 438/438，failed、PIT failures 与 determinism mismatch 均为 0，且未访问 2025 blind outcome。当前正式下一里程碑为 **PR-C — 5D Outcome Policy Freeze / NEXT / NOT STARTED**。
 
 ## 3. 输入
 
@@ -242,7 +242,7 @@ Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测�
 - HSI 历史源仍缺；
 - authoritative industry benchmark mapping / history 仍缺；
 - total-market turnover 源仍缺；
-- PR-B Core 仓库实现已准备，但真实 full-run coverage 尚未测量；
+- PR-B Core 已完成真实 full-run：438 / 438 materialized，0 failures，0 PIT failures，determinism 438 checked / 0 mismatches / PASS；
 - `MODEL_READY_DATA_GATE` 尚未打开。
 
 Document materialization source revision：
