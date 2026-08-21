@@ -227,7 +227,7 @@ def build_ipo_market_context(
             "same_industry_recent_5d_sample_count": same_sample_5d,
         }
 
-    values: dict[str, float | int | None] = {
+    computed: dict[str, float | int | None] = {
         "ipo_count_30d": len(rows_30d) if complete_30d else None,
         "ipo_count_60d": len(rows_60d) if complete_60d else None,
         **(aggregate(rows_30d, "30d") if complete_30d else missing_aggregate("30d")),
@@ -235,8 +235,11 @@ def build_ipo_market_context(
         **recent_values,
         **same_industry_values,
     }
-    if tuple(values) != IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER:
+    if set(computed) != set(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER):
         raise RuntimeError("IPO market-context feature order drifted")
+    values = {
+        name: computed[name] for name in IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER
+    }
     return values
 
 
