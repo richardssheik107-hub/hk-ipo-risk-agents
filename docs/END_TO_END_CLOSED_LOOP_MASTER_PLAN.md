@@ -1,9 +1,10 @@
 # HK IPO Risk Agents 后续闭环总计划
 
-> Status snapshot: **2026-08-19**  
+> Status snapshot: **2026-08-21**
 > Strategy: **End-to-End Closed Loop First**  
 > Active target: **v0.4-MVP**  
-> Current milestone: **PR-A — Document + Oracle Materialization & Coverage**  
+> Current milestone: **PR-A — COMPLETE / FROZEN**
+> Next formal milestone: **PR-B — NOT STARTED**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环，再依据实证结果决定是否重开 Retriever / LLM / Agent 优化。
 
 ---
@@ -17,7 +18,7 @@
 - Oracle Document Modeling foundations：**MERGED / EVALUATION-ONLY**；
 - CL-1 Freeze Current Document Intelligence：**COMPLETE / FROZEN**；
 - v0.4 End-to-End Closed Loop：**ACTIVE**；
-- 当前唯一执行里程碑：**PR-A**。
+- PR-A：**COMPLETE / FROZEN**；下一正式里程碑 PR-B：**NOT STARTED**。
 
 当前不再把 Retriever 指标提升、LLM Reranker、Fine-tuning 或 Prompt 优化作为 v0.4 的前置条件。
 
@@ -29,7 +30,10 @@
 - IPO OHLCV outcome coverage：432 / 438；
 - 438 个目标 case 均有本地招股书；
 - authoritative Document Snapshot pipeline：AVAILABLE；
-- authoritative snapshots：最后一次 readiness audit 时仍为 0 / 438；
+- authoritative snapshots：438 / 438；
+- Production Document-X features：438 / 438（`v04_document_features_v1`，100 维）；
+- Oracle Document-X：60；`no_reviewed_gold`：378；
+- Production failures / silent drops：0 / 0；
 - Production Document Feature manifest / vectorizer：AVAILABLE；
 - Oracle Document Feature builder：AVAILABLE；
 - Oracle Logistic baseline harness：AVAILABLE / WAITING DATASET；
@@ -40,7 +44,7 @@
 - total-market turnover：MISSING；
 - `MODEL_READY_DATA_GATE`：BLOCKED。
 
-注意：这里的 `0 / 438` 是最近一次真实 readiness audit 的 materialized artifact 状态，不代表 Document Intelligence 不能运行。PR-A 的目标正是把“pipeline available”变成“438-case coverage 已知、Production X 已 materialize”。
+PR-A 已把“pipeline available”升级为“438-case coverage 已知、Production X 已 materialize、A6 determinism 已验证”。`MODEL_READY_DATA_GATE` 仍需等待后续 Market-X 等里程碑，不因 PR-A 完成而自动开放。
 
 ### 0.2 近期严格主线
 
@@ -189,7 +193,7 @@ historical Locked 10 = consumed, not reusable as future blind
 
 # Phase CL-2 / PR-A — Document + Oracle Materialization & Coverage
 
-PR-A 是**当前第一步，也是现在唯一应该开始的实现任务**。
+PR-A 已于 source revision `13e0281f5e65a970caaf1255e56d08597e1ead70` 完成物化，并通过 A6 全量 determinism 验证。其冻结结论见 [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)。下一正式里程碑 PR-B 尚未启动。
 
 它不是训练模型，也不是优化 Agent。它的作用是把已经存在的 Document Intelligence 真正变成后续建模可以使用的一行一个 IPO 的数据资产，并把成功、失败和缺失全部审计清楚。
 
@@ -269,9 +273,9 @@ src/ipo_risk/modeling/oracle_document.py
 
 Oracle 必须保留 `evaluation_only = true` 和完整 pass1 / audit provenance。
 
-## 7. PR-A 当前真正缺少的东西
+## 7. PR-A 实施前缺口（已关闭）
 
-底层组件已经存在，但仓库目前没有一个面向 PR-A 的**单一、规范、可恢复、可审计的执行入口**，把下面这些动作完整串起来：
+PR-A 启动前，底层组件已经存在，但仓库缺少一个面向 PR-A 的**单一、规范、可恢复、可审计的执行入口**，把下面这些动作完整串起来：
 
 ```text
 Official 438-case universe
@@ -283,13 +287,13 @@ Official 438-case universe
 → deterministic rerun audit
 ```
 
-因此 PR-A 的**第一个代码 deliverable**固定为：
+该缺口已由以下薄 orchestration CLI 关闭：
 
 ```text
 scripts/run_v04_pr_a.py
 ```
 
-它应该是一个**薄 orchestration CLI**，不承载 Agent/Parser/Retriever 业务逻辑，只调用既有模块。
+它是一个**薄 orchestration CLI**，不承载 Agent/Parser/Retriever 业务逻辑，只调用既有模块。
 
 如果需要新增内部 helper，可放在 `src/ipo_risk/modeling/`，但不修改受保护公共接口。
 
@@ -512,17 +516,17 @@ pytest -q
 只有以下条件全部满足才进入 PR-B：
 
 ```text
-[ ] 438 official cases 全部出现在 coverage report
-[ ] 每个 case 都有 success / partial / failed / excluded 的明确状态
-[ ] 每个失败都有 stage + reason
-[ ] Production successful cases 均有 snapshot hash + feature hash
-[ ] Production feature manifest 固定
-[ ] Oracle eligible/materialized/failure 数量可审计
-[ ] Production ∩ Oracle intersection 被明确计算
-[ ] rerun hash 稳定
-[ ] 无 2025 y / post-listing 信息进入 Document X
-[ ] 没有把 missing 当成 safe zero
-[ ] 全量 CI 通过
+[x] 438 official cases 全部出现在 coverage report
+[x] 每个 case 都有 success / partial / failed / excluded 的明确状态
+[x] 每个失败都有 stage + reason（本轮 failure count = 0）
+[x] Production successful cases 均有 snapshot hash + feature hash
+[x] Production feature manifest 固定
+[x] Oracle eligible/materialized/failure 数量可审计
+[x] Production ∩ Oracle intersection 被明确计算
+[x] rerun hash 稳定
+[x] 无 2025 y / post-listing 信息进入 Document X
+[x] 没有把 missing 当成 safe zero
+[x] 全量 CI 通过
 ```
 
 **PR-A 不设置“必须 438/438 成功”的人为门槛。**真正的目标是先得到可信 coverage；如果有失败，先分类其是否为输入缺失、pipeline error、明确降级或真实不可用，再决定是否需要一个独立修复 PR。
