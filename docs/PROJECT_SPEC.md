@@ -1,6 +1,6 @@
 # HK IPO Risk Agents — Current Project Specification
 
-> Status snapshot: **2026-08-20**
+> Status snapshot: **2026-08-21**
 
 ## 1. 项目定位
 
@@ -57,6 +57,8 @@ Prospectus
 ```
 
 当前优先完成完整闭环，再依据 PR-E 的 Oracle diagnostic 决定 v0.5 是否回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
+
+PR-A — Document + Oracle Materialization & Coverage 已 **COMPLETE / FROZEN**；下一正式里程碑为 **PR-B — Market-X Core + Governed EOD Store（NOT STARTED）**。
 
 ## 3. 输入
 
@@ -174,20 +176,31 @@ Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测�
 
 ## 8. 当前真实数据状态
 
-以当前 v0.4 readiness audit 为基准：
+以 2026-08-21 已完成的 PR-A materialization / A6 determinism 与既有市场数据审计为基准：
 
 - 官方 2020–2024 IPO universe：438 cases；
+- 本地招股书：438 / 438；
 - IPO OHLCV：432 / 438 可用，6 个 outcome unavailable；
-- authoritative Document Risk Snapshot pipeline 已存在；
-- 全 438 case 的 authoritative document snapshot 尚未 materialize；
-- Production Document Feature manifest / vectorizer 已存在；
-- Oracle Document Feature builder 已存在；
+- authoritative Document Risk Snapshot：438 / 438 已 materialize；
+- Production Document-X：438 / 438；
+- Production Document Feature schema：`v04_document_features_v1`，100 维；
+- Production failures：0；silent drops：0；
+- Oracle Document-X：60；`no_reviewed_gold`：378；
+- Production ∩ Oracle：60；
+- A6 determinism：438 checked，0 mismatches，PASS；
+- 2025 blind access：NO；
 - HSI 历史源仍缺；
 - authoritative industry benchmark mapping / history 仍缺；
 - total-market turnover 源仍缺；
 - `MODEL_READY_DATA_GATE` 尚未打开。
 
-这些数字只来自最近一次真实 readiness audit，不能因为计划文档更新而擅自改变。详细口径见 `research/V04_DATA_READINESS.md`。
+Document materialization source revision：
+
+```text
+13e0281f5e65a970caaf1255e56d08597e1ead70
+```
+
+冻结记录见 `V04_PR_A_COMPLETION_REPORT.md` 与 `reports/frozen/v04_pr_a_document_materialization_manifest.json`。详细 readiness 口径见 `research/V04_DATA_READINESS.md`。
 
 ## 9. Production 与 Oracle 永久分离
 
@@ -273,24 +286,23 @@ v0.4 首先以**完整、可信、可重建**为成功标准：
 - provenance、version、failure state 可审计；
 - 2025 blind 未参与开发调优。
 
-## 13. 当前唯一任务
+## 13. 当前正式任务
 
-CL-1 已完成并冻结。当前正式进入：
+CL-1 与 PR-A 均已完成并冻结。下一正式里程碑是：
 
-> **PR-A — Document + Oracle Materialization & Coverage**
+> **PR-B — Market-X Core + Governed EOD Store**
 
-PR-A 要把已经存在的 Document Intelligence 批量转换为可审计的 Production Document X / Oracle X，并生成统一 coverage 与 determinism report。
-
-严格顺序：
+正式 milestone / Gate / mainline merge 顺序固定为：
 
 ```text
-PR-A0  Freeze execution context / hashes
-PR-A1  Implement thin scripts/run_v04_pr_a.py + tests
-PR-A2  Run deterministic Development pilot
-PR-A3  Run 2020–2024 Production materialization
-PR-A4  Run Oracle materialization
-PR-A5  Build unified coverage table
-PR-A6  Rerun and verify stable hashes
+PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
+PR-B  Market-X Core + Governed EOD Store             NEXT
+PR-C  5D Outcome Policy Freeze
+PR-D  Canonical Model-ready Dataset
+PR-E  Baseline + Oracle Diagnostic
+PR-F  LightGBM + Explainability
+PR-G  Market Agent + Final Supervisor
+PR-H  Streamlit Full E2E + Real-case Demo
 ```
 
-PR-A PASS 后才进入 PR-B Market-X Core。
+准备性研究可以提前并行，但不能被记为后续正式 Gate 已开始/已通过，也不能越过正式顺序合并到 `main`。
