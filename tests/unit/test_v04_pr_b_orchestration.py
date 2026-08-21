@@ -63,6 +63,14 @@ def test_select_metadata_rejects_blind_2025() -> None:
         pr_b.select_metadata([blind])
 
 
+def test_context_history_start_date_uses_earliest_official_listing() -> None:
+    metadata = (
+        _metadata("later", "0002.HK", date(2020, 2, 10)),
+        _metadata("earliest", "0001.HK", date(2020, 1, 2)),
+    )
+    assert pr_b._context_history_start_date(metadata) == date(2020, 1, 2)
+
+
 def test_core_artifact_ignores_future_ipo_and_future_outcome() -> None:
     target = _metadata("target", "0002.HK", date(2022, 3, 1))
     bridge = {"official_industry_name": "A"}
@@ -93,6 +101,7 @@ def test_core_artifact_ignores_future_ipo_and_future_outcome() -> None:
         metadata=target,
         bridge_row=bridge,
         prior_records=[known],
+        history_start_date=date(2020, 1, 2),
         bridge_sha256="a" * 64,
         eod_sha256="b" * 64,
     )
@@ -100,6 +109,7 @@ def test_core_artifact_ignores_future_ipo_and_future_outcome() -> None:
         metadata=target,
         bridge_row=bridge,
         prior_records=[known, future],
+        history_start_date=date(2020, 1, 2),
         bridge_sha256="a" * 64,
         eod_sha256="b" * 64,
     )
@@ -107,6 +117,40 @@ def test_core_artifact_ignores_future_ipo_and_future_outcome() -> None:
     assert first == second
     assert first["raw_values"]["recent_ipo_break_rate"] == 1
     assert first["raw_values"]["recent_ipo_return_5d"] == pytest.approx(-0.2)
+    assert first["source_provenance"]["prior_ipo_history_start_date"] == "2020-01-02"
+
+
+def test_core_artifact_marks_left_truncated_lookbacks_missing() -> None:
+    target = _metadata("target", "0002.HK", date(2020, 1, 10))
+    prior = {
+        "case_id": "prior",
+        "stock_code": "0001.HK",
+        "listing_date": date(2020, 1, 5),
+        "industry": "A",
+        "funds_raised": 10,
+        "target_1d": date(2020, 1, 6),
+        "return_1d": -0.1,
+        "target_5d": date(2020, 1, 9),
+        "return_5d": -0.2,
+    }
+
+    artifact = pr_b.build_core_feature_artifact(
+        metadata=target,
+        bridge_row={"official_industry_name": "A"},
+        prior_records=[prior],
+        history_start_date=date(2020, 1, 2),
+        bridge_sha256="a" * 64,
+        eod_sha256="b" * 64,
+    )
+
+    assert artifact["raw_values"]["ipo_count_30d"] is None
+    assert artifact["raw_values"]["recent_ipo_break_rate"] is None
+    assert artifact["raw_values"]["same_industry_ipo_count_180d"] is None
+    names = artifact["feature_names"]
+    values = artifact["feature_values"]
+    raw_index = names.index("ipo_count_30d")
+    assert values[raw_index] is None
+    assert values[raw_index + 1] == 1
 
 
 def test_json_resume_is_conflict_safe(tmp_path: Path) -> None:
@@ -208,6 +252,7 @@ def test_materialization_keeps_failed_case_in_coverage_and_resumes_stably(
     assert len(first_run["coverage"]) == 2
     assert first_run["summary"]["core_market_x_materialized_count"] == 1
     assert first_run["summary"]["failed_count"] == 1
+    assert first_run["summary"]["prior_ipo_history_start_date"] == "2022-01-10"
     failed = next(row for row in first_run["coverage"] if row["case_id"] == "case_b")
     assert failed["core_market_x_available"] is False
     assert failed["failure_stage"] == "core_feature_build"
