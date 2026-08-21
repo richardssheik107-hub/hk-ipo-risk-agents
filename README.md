@@ -14,7 +14,8 @@ Retriever V3 research                      = MERGED / FROZEN
 Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 v0.4 End-to-End Closed Loop                = ACTIVE
-PR-B Market-X Core                          = IMPLEMENTED ON BRANCH / LOCAL GATE EVIDENCE PENDING
+PR-B Market-X Core                          = COMPLETE / FROZEN
+PR-C 5D Outcome Policy Freeze               = NEXT / NOT STARTED
 ```
 
 当前策略是 **End-to-End Closed Loop First**：先完成可信、可重建、可解释的完整闭环，再依据实证结果决定是否回到 Retriever、LLM Reranker、Agent 与 Verifier 的研究优化。
@@ -23,8 +24,8 @@ PR-B Market-X Core                          = IMPLEMENTED ON BRANCH / LOCAL GATE
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            CURRENT
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
@@ -48,13 +49,16 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - Production ∩ Oracle：60；
 - A6 determinism：438 checked，0 mismatches，PASS；
 - IPO OHLCV：432 / 438；
+- Market-X Core：438 / 438 materialized，0 failed，0 silent drops；
+- PR-B PIT audit：438 / 438 PASS；
+- PR-B determinism：438 checked，0 mismatches，PASS；
 - HSI history：missing；
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
 - full model-ready gate：仍 blocked。
 
-详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。PR-B 的实际 Core coverage 只有在本地全量 materialization 后才能更新，当前不提前虚构数字。
+详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。PR-B 冻结证据见 [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)。
 
 ## Architecture
 
@@ -120,13 +124,13 @@ A6 mismatches                  0
 - [`docs/V04_PR_A_COMPLETION_REPORT.md`](docs/V04_PR_A_COMPLETION_REPORT.md)
 - [`reports/frozen/v04_pr_a_document_materialization_manifest.json`](reports/frozen/v04_pr_a_document_materialization_manifest.json)
 
-## Current PR-B Boundary
+## PR-B Frozen Result
 
 PR-B 现在明确分为 Core 与 Extended 两层。
 
 ### Market-X Core
 
-已在当前分支实现：
+已完成并冻结：
 
 ```text
 schema:  v04_ipo_market_context_features_v1
@@ -146,6 +150,16 @@ scripts/run_v04_pr_b.py
 ```
 
 EOD store 已改为按 `official_listed_date.year` 选择 2020–2024 official cohort，而不是使用 document `source_year`；并保留 `OBJECT_ID` source provenance。
+
+```text
+official coverage             438 / 438
+Core materialized             438 / 438
+failed / silent drops         0 / 0
+PIT failures                  0
+determinism                   438 checked / 0 mismatches / PASS
+coverage hash                 768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
+2025 blind y accessed         NO
+```
 
 ### Market-X Extended
 
@@ -171,7 +185,8 @@ HK total-market turnover
 PR-B Gate 详细标准：
 
 - [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
-- [`docs/V04_ROLE_A_CODEX_HANDOFF.md`](docs/V04_ROLE_A_CODEX_HANDOFF.md)
+- [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)
+- [`reports/frozen/v04_pr_b_market_x_core_manifest.json`](reports/frozen/v04_pr_b_market_x_core_manifest.json)
 
 ## Modeling Governance
 
@@ -250,7 +265,7 @@ python -m streamlit run app/streamlit_app.py
 - Financial / Legal / Business Agents: v0.3 frozen production baseline
 - Verifier / Document Supervisor: v0.3 frozen
 - Market Foundation: governed metadata/OHLCV/label contracts available
-- Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration implemented on current branch
+- Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration COMPLETE / FROZEN
 - Market-X Extended: frozen 20-position contract available; real HSI/industry/turnover sources still missing
 - Predictor: rule-based compatibility path; v0.4 statistical model pending
 - Oracle Document path: evaluation-only, materialized for 60 cases

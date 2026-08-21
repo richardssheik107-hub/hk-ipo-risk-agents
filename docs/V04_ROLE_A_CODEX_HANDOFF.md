@@ -1,8 +1,9 @@
 # v0.4 Role A → Codex Handoff
 
-> Status: **WEB/GITHUB-SIDE IMPLEMENTATION PREP COMPLETE / LOCAL EXECUTION EVIDENCE REQUIRED**  
+> Status: **HISTORICAL HANDOFF / EXECUTION COMPLETE**
 > Date: **2026-08-21**  
-> State: **PR-A COMPLETE / FROZEN; PR-B Core code prepared on this existing branch, Gate not yet passed**
+> State: **HISTORICAL EXECUTION HANDOFF — COMPLETED; PR-B COMPLETE / FROZEN**
+> Current result: [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
 
 ## 1. Read first
 

@@ -3,8 +3,9 @@
 > Status snapshot: **2026-08-21**
 > Strategy: **End-to-End Closed Loop First**  
 > Active target: **v0.4-MVP**  
-> Current milestone: **PR-A — COMPLETE / FROZEN**
-> Next formal milestone: **PR-B — NOT STARTED**
+> PR-A: **COMPLETE / FROZEN**
+> PR-B: **COMPLETE / FROZEN**
+> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环，再依据实证结果决定是否重开 Retriever / LLM / Agent 优化。
 
 ---
@@ -18,7 +19,9 @@
 - Oracle Document Modeling foundations：**MERGED / EVALUATION-ONLY**；
 - CL-1 Freeze Current Document Intelligence：**COMPLETE / FROZEN**；
 - v0.4 End-to-End Closed Loop：**ACTIVE**；
-- PR-A：**COMPLETE / FROZEN**；下一正式里程碑 PR-B：**NOT STARTED**。
+- PR-A：**COMPLETE / FROZEN**；
+- PR-B：**COMPLETE / FROZEN**；
+- 下一正式里程碑 PR-C：**NEXT / NOT STARTED**。
 
 当前不再把 Retriever 指标提升、LLM Reranker、Fine-tuning 或 Prompt 优化作为 v0.4 的前置条件。
 
@@ -39,12 +42,15 @@
 - Oracle Logistic baseline harness：AVAILABLE / WAITING DATASET；
 - IPO structure / point-in-time IPO context foundations：AVAILABLE；
 - governed IPO EOD filtered-store builder：AVAILABLE；
+- Market-X Core：438 / 438，`v04_ipo_market_context_features_v1`，30 positions；
+- PR-B determinism：438 checked / 0 mismatches / PASS；
+- PR-B 2025 blind y access：NO；
 - HSI history：MISSING；
 - authoritative industry benchmark mapping / history：MISSING；
 - total-market turnover：MISSING；
 - `MODEL_READY_DATA_GATE`：BLOCKED。
 
-PR-A 已把“pipeline available”升级为“438-case coverage 已知、Production X 已 materialize、A6 determinism 已验证”。`MODEL_READY_DATA_GATE` 仍需等待后续 Market-X 等里程碑，不因 PR-A 完成而自动开放。
+PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建的冻结数据资产。`MODEL_READY_DATA_GATE` 仍需等待 PR-C target policy 与 PR-D canonical dataset，不因 PR-B 完成而自动开放。
 
 ### 0.2 近期严格主线
 
@@ -193,7 +199,7 @@ historical Locked 10 = consumed, not reusable as future blind
 
 # Phase CL-2 / PR-A — Document + Oracle Materialization & Coverage
 
-PR-A 已于 source revision `13e0281f5e65a970caaf1255e56d08597e1ead70` 完成物化，并通过 A6 全量 determinism 验证。其冻结结论见 [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)。下一正式里程碑 PR-B 尚未启动。
+PR-A 已于 source revision `13e0281f5e65a970caaf1255e56d08597e1ead70` 完成物化，并通过 A6 全量 determinism 验证。其冻结结论见 [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)。PR-B 也已完成并冻结；下一正式里程碑为尚未启动的 PR-C。
 
 它不是训练模型，也不是优化 Agent。它的作用是把已经存在的 Document Intelligence 真正变成后续建模可以使用的一行一个 IPO 的数据资产，并把成功、失败和缺失全部审计清楚。
 
@@ -564,11 +570,15 @@ Prior IPO 的 1D / 5D outcome 只有在目标 IPO 上市前已经成为已知历
 
 ### PR-B Gate
 
-- Market-X Core manifest 冻结；
-- point-in-time tests 全绿；
-- coverage report 完整；
-- source/version/checksum 可追踪；
-- 单位与 missing semantics 已审计。
+- [x] Market-X Core manifest 冻结；
+- [x] point-in-time tests 全绿；
+- [x] coverage report 完整（438 / 438，0 silent drop）；
+- [x] source/version/checksum 可追踪；
+- [x] 单位与 missing semantics 已审计；
+- [x] deterministic resume：438 checked / 0 mismatches；
+- [x] 2025 blind y 未访问。
+
+冻结 source revision：`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。完整实测见 [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) 与 [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)。
 
 ---
 

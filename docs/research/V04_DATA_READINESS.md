@@ -1,12 +1,12 @@
 # V04 Data Readiness — Current Reference Snapshot
 
-> Last real audit snapshot: **2026-08-21 PR-A A6 full determinism + existing IPO EOD audit**  
+> Last real audit snapshot: **2026-08-21 PR-B full 438 materialization + determinism**
 > Documentation review: **2026-08-21**  
-> Status: **PR-A COMPLETE / FROZEN; PR-B CORE CODE PREPARED; PR-B REAL GATE EVIDENCE PENDING; MODEL-READY GATE BLOCKED**
+> Status: **PR-A COMPLETE / FROZEN; PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED; MODEL-READY GATE BLOCKED**
 
 本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
 
-PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。当前 PR-B Core 的仓库侧 orchestration/tests 已准备，但真实 438-case Core materialization 还没有在本地可执行环境中完成，因此这里不提前写入 Core coverage 数字。
+PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证。
 
 Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
 
@@ -76,7 +76,7 @@ ipo_2022_07841
 
 它们是 eligible but outcome unavailable，不得改写成 security-ineligible。
 
-### 4.1 PR-B governed EOD builder code readiness
+### 4.1 PR-B governed EOD builder — frozen measured result
 
 当前分支已将 `scripts/build_v04_ipo_eod_store.py` 修正为：
 
@@ -89,11 +89,21 @@ AND official_listed_date.year in 2020–2024
 
 过滤产物保留 `OBJECT_ID` source-record provenance；`S_DQ_AMOUNT` 明确保留为 per-security 原始列，不能解释为 HKEX total-market turnover。
 
-这属于**代码 readiness**；新的 full filtered-store row count / hash 只有在本地运行后才能进入 measured readiness。
+冻结 governed EOD 结果：
+
+```text
+target cases                  438
+row count                     433776
+distinct target securities    432
+provider OHLCV matched         432
+provider OHLCV missing         6
+raw EOD SHA256                 190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
+official bridge SHA256         751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198
+```
 
 ## 5. Market-X Core vs Extended readiness
 
-### 5.1 Market-X Core — code prepared, materialization not yet measured
+### 5.1 Market-X Core — COMPLETE / FROZEN
 
 Current Core contract：
 
@@ -113,20 +123,21 @@ Core 可使用当前已受治理/可严格 PIT 的输入：
 - prior IPO offer/funds-raised facts；
 - prior IPO 1D/5D outcomes only when their target session occurred strictly before the target listing date。
 
-Current code readiness：
+Measured freeze result：
 
 ```text
-src/ipo_risk/market/ipo_market_context_features.py       READY IN BRANCH
-scripts/build_v04_ipo_eod_store.py                       READY IN BRANCH
-scripts/run_v04_pr_b.py                                  READY IN BRANCH
-PR-B unit/integration tests                              ADDED IN BRANCH
-5-case real pilot                                       NOT YET RUN
-438-case Core materialization                           NOT YET RUN
-resume + determinism                                    NOT YET RUN
-full pytest after these changes                         NOT YET VERIFIED LOCALLY
+source revision                 dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7
+official coverage               438 / 438
+Core materialized               438 / 438
+failed / silent drops           0 / 0
+PIT failures                    0
+Development / Validation        368 / 70
+feature manifest hash           c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d
+coverage hash                   768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
+determinism                     438 checked / 0 mismatches / PASS
+full pytest                     1303 passed / 0 failed / 2 warnings
+2025 blind y accessed           NO
 ```
-
-因此本文件**不能**声称 Core = 438/438，直到真实执行产生该结果。
 
 ### 5.2 Market-X Extended — source gaps remain
 
@@ -268,34 +279,22 @@ Current Gate state：
 
 ```text
 PR-A_DOCUMENT_MATERIALIZATION_GATE = COMPLETE / FROZEN
-PR-B_CORE_CODE_READINESS            = IMPLEMENTED IN CURRENT BRANCH
-PR-B_CORE_REAL_MATERIALIZATION      = PENDING LOCAL EXECUTION
-PR-B_GATE                           = NOT YET PASSED
+PR-B_CORE_CODE_READINESS            = COMPLETE / FROZEN
+PR-B_CORE_REAL_MATERIALIZATION      = 438 / 438
+PR-B_GATE                           = PASS / COMPLETE / FROZEN
 MARKET_X_EXTENDED_SOURCES           = INCOMPLETE
 MODEL_READY_DATA_GATE               = BLOCKED
 ```
 
-PR-A 已不再是 readiness blocker。当前 Model-ready blocker 来自 PR-B Gate evidence、随后 PR-C target policy 与 PR-D canonical dataset；Extended source families 仍是后续可增强的 source limitation。
+PR-A 与 PR-B 已不再是 readiness blocker。当前 Model-ready blocker 来自 PR-C target policy 与 PR-D canonical dataset；Extended source families 仍是后续可增强的 source limitation。
 
-## 9. PR-B local evidence still required
+## 9. PR-B frozen evidence
 
-当前仓库侧能做的准备已完成。真正还需本地环境执行：
+Canonical records：
 
-```text
-1. targeted PR-B tests
-2. full pytest
-3. 5-case Development pilot
-4. full 438-case Core materialization
-5. --resume --verify-determinism
-6. actual coverage / failure / hash audit
-```
-
-Only after those pass may the measured section be updated with PR-B Core counts and a small completion/freeze manifest.
-
-Canonical instructions：
-
+- `docs/V04_PR_B_COMPLETION_REPORT.md`
+- `reports/frozen/v04_pr_b_market_x_core_manifest.json`
 - `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
-- `docs/V04_ROLE_A_CODEX_HANDOFF.md`
 
 ## 10. External data still required for Market-X Extended
 
@@ -312,8 +311,8 @@ Formal milestone / Gate / mainline merge order remains：
 
 ```text
 PR-A  COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze / NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability

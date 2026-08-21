@@ -2,8 +2,9 @@
 
 > Status snapshot: **2026-08-21**  
 > 当前唯一主线：**End-to-End Closed Loop First**。  
-> PR-A：**COMPLETE / FROZEN**；当前正式里程碑：**PR-B — Market-X Core + Governed EOD Store**。  
-> 当前工作分支：**Core implementation prepared / local Gate evidence pending**。
+> PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN**。
+> 下一正式里程碑：**PR-C — 5D Outcome Policy Freeze / NOT STARTED**。
+> PR-B freeze source revision：**`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**。
 
 ## 版本路线
 
@@ -69,7 +70,7 @@ Frozen records:
 
 ## 当前真实 readiness
 
-以下数字来自已完成的 PR-A materialization 与既有市场数据审计；PR-B full-run 数字尚未测量，不能提前填写。
+以下数字来自已完成的 PR-A 与 PR-B 正式 materialization / determinism 审计。
 
 | 项目 | 当前状态 |
 | --- | --- |
@@ -80,15 +81,15 @@ Frozen records:
 | Production Document-X | 438 / 438, 100 dimensions |
 | Oracle Document-X | 60 materialized; 378 no reviewed Gold |
 | Production failures / silent drops | 0 / 0 |
-| PR-B Core code/tests | IMPLEMENTED ON CURRENT BRANCH |
-| PR-B Core real 438-case coverage | NOT YET MEASURED |
+| PR-B Core code/tests | COMPLETE / FROZEN |
+| PR-B Core real coverage | 438 / 438 materialized; 0 failed; 0 silent drops |
 | HSI history | MISSING — Extended |
 | Industry benchmark mapping / history | MISSING — Extended |
 | Total-market turnover | MISSING — Extended |
-| PR-B Gate | LOCAL TEST/FULL-RUN/DETERMINISM EVIDENCE PENDING |
+| PR-B Gate | PASS / COMPLETE / FROZEN |
 | Full Model-ready data gate | BLOCKED |
 
-## PR-B current boundary
+## PR-B frozen boundary
 
 ### Market-X Core
 
@@ -102,7 +103,7 @@ ipo_market_context_policy_v1
 = 30 positions
 ```
 
-Repository-side implementation prepared:
+Frozen implementation:
 
 ```text
 src/ipo_risk/market/ipo_market_context_features.py
@@ -139,33 +140,32 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | --- | --- | --- | --- |
 | CL-1 | Freeze Current Document Intelligence | **COMPLETE / FROZEN** | 已完成 |
 | CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成 |
-| CL-3 / PR-B | Market-X Core + Governed EOD Store | **IMPLEMENTED / GATE EVIDENCE PENDING** | targeted + full tests; 5-case pilot; 438 coverage; determinism |
-| CL-4 / PR-C | Freeze 5D Outcome Policy | PENDING | Development-only target policy frozen after B PASS |
-| CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY B/C | versioned Core/Extended dataset contract + manifests |
+| CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN** | 已完成 |
+| CL-4 / PR-C | Freeze 5D Outcome Policy | **NEXT / NOT STARTED** | Development-only target policy decision |
+| CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY C | versioned Core/Extended dataset contract + manifests |
 | CL-6 / PR-E | Baseline + Oracle Diagnostic | NOT STARTED | M/P/O/PM/OM fair comparison |
 | CL-7 / PR-F | LightGBM + Explainability | NOT STARTED | baseline complete and reproducible |
 | CL-8/9 / PR-G | Market Agent + Final Supervisor | NOT STARTED | frozen model output contract |
 | CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | NOT STARTED | PDF → Final Report complete |
 
-## PR-B remaining Gate sequence
-
-Repository-side implementation preparation is done. Remaining work requires a local executable checkout with the governed market CSV:
+## PR-B completion evidence
 
 ```text
-B1  run targeted PR-B tests
-B2  run full pytest
-B3  run deterministic 5-case Development pilot
-B4  run full 438-case PR-B Core materialization
-B5  rerun with --resume --verify-determinism
-B6  fix real defects only; do not weaken PIT/no-leakage rules
-B7  if all Gate conditions pass, freeze measured completion evidence
-B8  STOP before PR-C until PR-B accepted/merged
+official coverage             438 / 438
+Core materialized             438 / 438
+failed / silent drops         0 / 0
+PIT failures                  0
+Development / Validation      368 / 70
+determinism                   438 checked / 0 mismatches / PASS
+coverage hash                 768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
+2025 blind y accessed         NO
 ```
 
 Canonical command and exact acceptance criteria:
 
 - [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
-- [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md)
+- [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)
 
 ## 后续严格顺序
 
@@ -173,8 +173,8 @@ Canonical command and exact acceptance criteria:
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-PR-B  Market-X Core + Governed EOD Store             CURRENT
-PR-C  5D Outcome Policy Freeze
+PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
+PR-C  5D Outcome Policy Freeze                       NEXT / NOT STARTED
 PR-D  Canonical Model-ready Dataset
 PR-E  Baseline + Oracle Diagnostic
 PR-F  LightGBM + Explainability

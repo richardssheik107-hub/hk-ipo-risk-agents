@@ -2,8 +2,9 @@
 
 > Status snapshot: **2026-08-21**  
 > PR-A: **COMPLETE / FROZEN**  
-> Current formal milestone: **PR-B — Market-X Core + Governed EOD Store**  
-> Branch status: **Core implementation prepared; local tests/materialization/Gate evidence pending**
+> PR-B: **COMPLETE / FROZEN**
+> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
+> Freeze source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
 
 本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、handoff 与一次性实验文档通过 Git history / release 保留。
 
@@ -27,8 +28,8 @@ Prospectus PDF
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            CURRENT
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
@@ -46,12 +47,13 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人角色、并行准备和正式 Gate 边界；
 3. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — 当前 PR-B Core/Extended 边界、orchestration / PIT / coverage / provenance / determinism 验收契约；
 4. [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — Role A 已完成的仓库侧准备和 B/C/D/E 后续边界；
-5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — Codex 现在只需执行的本地测试 / pilot / full run / determinism 队列；
+5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — 已完成的 PR-B 本地执行 handoff，保留作审计记录；
 6. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果；
-7. [`ROADMAP.md`](ROADMAP.md) — 阶段状态；
-8. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
-9. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
-10. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约。
+7. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结结果；
+8. [`ROADMAP.md`](ROADMAP.md) — 阶段状态；
+9. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
+10. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
+11. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
 
@@ -79,11 +81,11 @@ Frozen records:
 - [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
 - [`../reports/frozen/v04_pr_a_document_materialization_manifest.json`](../reports/frozen/v04_pr_a_document_materialization_manifest.json)
 
-## 4. Current PR-B reality
+## 4. PR-B frozen result
 
 PR-B is now explicitly split into **Core** and **Extended**.
 
-### 4.1 Market-X Core — repository implementation prepared
+### 4.1 Market-X Core — COMPLETE / FROZEN
 
 Current Core contract:
 
@@ -114,7 +116,23 @@ scripts/run_v04_pr_b.py
 
 The governed EOD builder selects the cohort by authoritative `official_listed_date.year`, preserves `OBJECT_ID` provenance, and records that `S_DQ_AMOUNT` is per-security only.
 
-Repository-side tests have been added, but **no active doc may claim PR-B PASS until the local test suite, real pilot, 438-case materialization and determinism audit actually run**.
+Measured freeze evidence:
+
+```text
+official coverage              438 / 438
+Core materialized              438 / 438
+failed / silent drops          0 / 0
+PIT failures                   0
+Development / Validation       368 / 70
+determinism                    438 checked / 0 mismatches / PASS
+full pytest                    1303 passed / 0 failed / 2 warnings
+2025 blind y accessed          NO
+```
+
+Frozen records:
+
+- [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)
 
 ### 4.2 Market-X Extended — frozen contract, governed sources still missing
 
@@ -189,23 +207,20 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 
 2025 may eventually contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened.
 
-## 8. Current Codex/local stop condition
+## 8. Current stop condition
 
 Continue on the existing work branch; do not create another branch unless explicitly requested.
 
-Required sequence:
+PR-B engineering and Gate review are complete. The next permitted milestone is PR-C, but it has not started:
 
 ```text
-PR-B targeted tests
-→ full pytest
-→ 5-case Development pilot
-→ full 438-case Core materialization
-→ --resume --verify-determinism
-→ freeze measured PR-B evidence if and only if Gate passes
-→ STOP before PR-C
+PR-A  COMPLETE / FROZEN
+→ PR-B COMPLETE / FROZEN
+→ STOP
+→ PR-C NEXT / NOT STARTED
 ```
 
-Exact commands: [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md).
+PR-C classification threshold and target policy must be frozen separately using Development data only; this PR-B freeze does not make that decision.
 
 ## 9. Documentation maintenance rule
 

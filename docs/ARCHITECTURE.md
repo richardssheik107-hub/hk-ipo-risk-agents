@@ -4,8 +4,8 @@
 > Stable document baseline: **v0.3.0 RELEASED / FROZEN**  
 > PR-A Document materialization: **COMPLETE / FROZEN**  
 > Active program: **v0.4 End-to-End Closed Loop**  
-> Current formal milestone: **PR-B — Market-X Core + Governed EOD Store**  
-> Current branch: **Core implementation prepared; local Gate evidence pending**
+> PR-B Market-X Core: **COMPLETE / FROZEN**
+> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
 
 本文件描述当前有效架构与仍有约束力的边界。历史 v0.2/v0.3 设计过程和已完成的一次性实验通过 Git history/release 追溯。
 

@@ -339,18 +339,18 @@ v0.4 首先以**完整、可信、可重建**为成功标准：
 
 ## 14. 当前正式任务
 
-CL-1 与 PR-A 均已完成并冻结。当前正式里程碑是：
+CL-1、PR-A 与 PR-B 均已完成并冻结。下一正式里程碑是：
 
-> **PR-B — Market-X Core + Governed EOD Store**
+> **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
 
-当前工作分支已完成可在仓库侧完成的 Core 代码与测试准备；下一步必须由可执行本地环境运行 targeted/full tests、5-case pilot、438-case materialization 与 deterministic rerun，得到真实 Gate evidence。
+PR-B 已完成真实 438-case Core materialization、PIT 审计与 deterministic resume，并冻结在 source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。PR-C 尚未启动，其 5D target policy 必须由 Development 数据单独冻结。
 
 正式 milestone / Gate / mainline merge 顺序固定为：
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-PR-B  Market-X Core + Governed EOD Store             CURRENT / GATE EVIDENCE PENDING
-PR-C  5D Outcome Policy Freeze
+PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
+PR-C  5D Outcome Policy Freeze                       NEXT / NOT STARTED
 PR-D  Canonical Model-ready Dataset
 PR-E  Baseline + Oracle Diagnostic
 PR-F  LightGBM + Explainability

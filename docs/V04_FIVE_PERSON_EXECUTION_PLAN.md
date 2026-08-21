@@ -1,6 +1,6 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A COMPLETE / FROZEN; PR-B NOT STARTED / NEXT**  
+> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED**
 > Date: **2026-08-21**  
 > Strategy: **End-to-End Closed Loop First**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
@@ -34,8 +34,8 @@ Prospectus PDF
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            NEXT
-→ PR-C 5D Outcome Policy Freeze
+→ PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
