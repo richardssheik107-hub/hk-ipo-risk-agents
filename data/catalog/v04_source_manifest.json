@@ -4,17 +4,20 @@
     {
       "source_name": "V03 enhanced offline document pipeline",
       "logical_id": "document_result_pipeline",
-      "dataset_version": "v03_enhanced_v2@96cb081c58b6c61b0cdfaae07e2f6ad899c0d6df",
+      "dataset_version": "v03_enhanced_v2@13e0281f5e65a970caaf1255e56d08597e1ead70",
       "sha256": "6c7ca910d08fe98a60c48c02f8817d6ff47f79c419caa29552b6d4a484f54868",
       "relative_path": "configs/v03_offline.yaml",
       "coverage": {
-        "authoritative_snapshots_existing": 0,
+        "authoritative_snapshots_existing": 438,
+        "production_document_features_existing": 438,
         "target_cases": 438
       },
       "availability": "available",
       "provenance": {
         "external_llm_calls_per_case": 0,
-        "full_batch_executed": false,
+        "full_batch_executed": true,
+        "pr_a_status": "complete_frozen",
+        "pr_a_source_revision": "13e0281f5e65a970caaf1255e56d08597e1ead70",
         "workflow": "enhanced_v2"
       }
     },
@@ -30,7 +33,8 @@
       },
       "availability": "missing",
       "provenance": {
-        "blocker": "HSI_SOURCE_REQUIRED"
+        "blocker": "HSI_SOURCE_REQUIRED",
+        "role": "market_x_extended"
       }
     },
     {
@@ -45,7 +49,8 @@
       },
       "availability": "missing",
       "provenance": {
-        "blocker": "INDUSTRY_INDEX_SOURCE_REQUIRED"
+        "blocker": "INDUSTRY_INDEX_SOURCE_REQUIRED",
+        "role": "market_x_extended"
       }
     },
     {
@@ -62,7 +67,8 @@
       "availability": "missing",
       "provenance": {
         "blocker": "INDUSTRY_INDEX_MAPPING_REQUIRED",
-        "note": "An industry name is not an authoritative benchmark mapping."
+        "note": "An industry name is not an authoritative benchmark mapping.",
+        "role": "market_x_extended"
       }
     },
     {
@@ -90,6 +96,7 @@
         "data_root": "configured competition data root",
         "invalid_row_policy": "exclude_and_report",
         "outcome_cohorts_indexed": "2020-2024",
+        "pr_b_core_role": "governed prior-IPO outcome/context foundation",
         "target_policy_status": "pending_owner_decision_after_development_labels"
       }
     },
@@ -117,6 +124,7 @@
         "catalog_bridge": "data/catalog/ipo_official_master_bridge.csv",
         "eligibility_policy_version": "v04_market_security_eligibility_v2",
         "eligibility_rule": "membership in authoritative 2020-2024 official IPO case universe",
+        "pr_b_core_role": "identity, listing date, industry description and prior-IPO offer/context facts",
         "security_type_warning": "ShareType H also occurs on explicit SPAC rows and is not normalized eligibility metadata."
       }
     },
@@ -133,7 +141,8 @@
       "availability": "missing",
       "provenance": {
         "blocker": "MARKET_TURNOVER_SOURCE_REQUIRED",
-        "note": "S_DQ_AMOUNT is per-security transaction amount, not total-market turnover."
+        "note": "S_DQ_AMOUNT is per-security transaction amount, not total-market turnover.",
+        "role": "market_x_extended"
       }
     },
     {
