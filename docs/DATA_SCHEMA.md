@@ -1,21 +1,25 @@
 # 公共数据 Schema 与 v0.4 建模契约
 
-> Status snapshot: **2026-08-20**
+> Status snapshot: **2026-08-21**
 
-本文件描述当前仍有效的跨模块数据边界。**代码中的 Pydantic Schema 是最终权威实现**；本文用于解释语义，不应替代源码做字段推断。
+本文件描述当前仍有效的跨模块数据边界。**代码中的 Pydantic Schema 是最终权威公共实现**；本文用于解释语义，不应替代源码做字段推断。
+
+PR-B 当前新增的 Market-X Core 仍是 materialization/research artifact boundary，尚未在 PR-D 中晋升为新的公共 modeling Pydantic record。PR-D 若将 Core 接入 canonical dataset，必须做显式版本化 Schema 决策，而不是静默修改现有 120-position join。
 
 ## 1. 设计原则
 
-所有跨模块数据必须通过明确、可版本化的 Pydantic 模型传递。
+所有正式跨模块公共数据必须通过明确、可版本化的 Pydantic 模型传递。
 
 原则：
 
 1. 字段含义与类型明确；
 2. 支持校验、序列化和版本管理；
 3. 新字段优先保持向后兼容；
-4. 不同模块不得自行创造含义相近但不兼容的 dict；
+4. 不同模块不得自行创造含义相近但不兼容的公共 dict；
 5. 缺失值必须有明确语义，不能自动当作“安全 / 0”；
 6. provenance、source version、feature version、model version 必须可追踪。
+
+内部/脚本级研究 artifact 可以在未进入公共模块契约前使用 deterministic JSON/dict，但一旦进入跨模块 runtime/modeling API，必须提升为 versioned Pydantic boundary。
 
 ## 2. DocumentChunk
 
@@ -125,7 +129,7 @@ v0.4 的 Logistic / Linear / LightGBM 市场模型在正式接入公共预测输
 
 ```text
 PR-A Document X
-→ PR-B Market X
+→ PR-B Market-X Core
 → PR-C target policy
 → PR-D canonical model-ready dataset
 → PR-E baseline diagnostic
@@ -135,15 +139,13 @@ PR-A Document X
 
 ## 9. MarketSnapshot：legacy runtime compatibility
 
-现有 `MarketSnapshot` 属于旧 runtime / compatibility 输入边界，不能与 v0.4 建模的 `PreListingMarketFeatureSnapshot` 混为一谈。
+现有 `MarketSnapshot` 属于旧 runtime / compatibility 输入边界，不能与 v0.4 建模的 Market-X Core artifact 或 `PreListingMarketFeatureSnapshot` 混为一谈。
 
 特别是：
 
-- legacy `sentiment_score` 不属于 `v04_market_features_v1`；
+- legacy `sentiment_score` 不属于 v0.4 Core/Extended feature manifests；
 - 单股成交额不能替代 total-market turnover；
 - legacy snapshot 缺失不允许被偷偷补成 market-neutral 0。
-
-v0.4 正式 Market X 以 `PreListingMarketFeatureSnapshot` + `MarketFeatureManifest` 为准。
 
 ## 10. IPOAnalysisRequest / IPOAnalysisResult
 
@@ -243,9 +245,58 @@ Market Foundation 提供 1D / 5D / 20D / 60D outcome contract。
 - benchmark / excess return 在 governed benchmark 不存在时保持 unavailable；
 - 2025 blind outcome 不允许进入 development / validation modeling record。
 
-## 15. PreListingMarketFeatureSnapshot
+Prior IPO 的历史 outcome 可以在更晚 IPO 的 Market-X Core 中作为 X，但只有当该 outcome 的 `target_trading_date` 已严格早于后续 target IPO 的 listing date。
 
-`PreListingMarketFeatureSnapshot` 记录严格早于目标上市日的 Market X。
+## 15. PR-B Market-X Core artifact contract
+
+当前 PR-B Core 使用独立、版本化的 materialization artifact：
+
+```text
+schema: v04_ipo_market_context_features_v1
+policy: ipo_market_context_policy_v1
+```
+
+其 raw order 固定为 15 个 prior-IPO context features，每个 raw value 后紧跟一个 `__missing` indicator，共 30 positions。
+
+实现位置：
+
+```text
+src/ipo_risk/market/ipo_market_context_features.py
+scripts/run_v04_pr_b.py
+```
+
+每个 per-case Core artifact 至少包含：
+
+```text
+case_id
+stock_code
+cohort_year
+dataset_split
+listing_date
+cutoff_semantics
+core_feature_schema_version
+core_feature_policy_version
+core_feature_manifest_hash
+feature_names
+feature_values
+raw_values
+source_provenance
+content_hash
+```
+
+PIT policy for target listing date `T`：
+
+```text
+prior_listing_date < T
+prior_1d_target_trading_date < T
+prior_5d_target_trading_date < T
+```
+
+Core artifact 当前是 **PR-B materialization boundary**，不是新的公共 Product Runtime schema。PR-D 将它接入 canonical modeling dataset 时必须新增/选择明确的 versioned Pydantic modeling contract，并补充契约测试。
+
+## 16. PreListingMarketFeatureSnapshot — Market-X Extended
+
+`PreListingMarketFeatureSnapshot` 保留为 reference-market **Extended** Pydantic contract。
 
 必须满足：
 
@@ -261,19 +312,42 @@ v04_market_features_v1
 
 其 10 个 raw feature 均带独立 `__missing` indicator，共 20 个有序位置。
 
-当前 contract 包括 HSI、industry、recent IPO、turnover、volatility 等 feature family；某数据源缺失时保留显式 missing reason，不允许用不等价代理静默替换。
+Extended contract 包括 HSI、industry benchmark、recent IPO、turnover、volatility 等 feature family；某数据源缺失时保留显式 missing reason，不允许用不等价代理静默替换。
 
-## 16. V04 Modeling Dataset
+当前 HSI / authoritative industry benchmark mapping/history / HKEX total-market turnover 仍缺，不能用假 benchmark row、公司文本推断或单证券 `S_DQ_AMOUNT` 补齐。
 
-`V04ModelingRecord` / `V04ModelingDataset` 只在 identity / cohort / listing date / split / eligibility / policy 全部一致后连接 Document X 与非-blind outcome。
+## 17. Governed IPO EOD artifact
 
-Market-augmented dataset 明确顺序：
+PR-B filtered EOD store 使用：
+
+```text
+filter schema: v04_ipo_eod_filter_v2
+```
+
+Official target cohort 由：
+
+```text
+official_match_status == matched
+AND official_listed_date.year in 2020–2024
+```
+
+决定，不使用 document `source_year`。
+
+Filtered store 保留 `OBJECT_ID` 作为 source-record provenance。`S_DQ_AMOUNT` 只保留原始 per-security 语义，永远不等价于 HKEX total-market turnover。
+
+## 18. V04 Modeling Dataset
+
+现有 `V04ModelingRecord` / `V04ModelingDataset` 只在 identity / cohort / listing date / split / eligibility / policy 全部一致后连接 Document X 与非-blind outcome。
+
+现有 Extended market-augmented dataset 顺序仍为：
 
 ```text
 [100 Production Document features]
 +
-[20 Market features]
+[20 Extended Market features]
 ```
+
+PR-B Core 的 30 positions **不会静默插入或替换这个老顺序**。PR-D 必须显式冻结新的 canonical feature-group contract，例如区分 Core 与 optional Extended，并给出新的 version/hash。
 
 Oracle comparison 使用独立 Oracle X，但必须与 Production comparison 保持相同：
 
@@ -287,7 +361,7 @@ model family
 
 2025 使用 feature-only blind export，不包含 outcome / target 字段。
 
-## 17. 时间治理
+## 19. 时间治理
 
 ```text
 2020–2023  Development / Training
@@ -297,7 +371,7 @@ model family
 
 Development 用于训练、CV、feature policy、threshold 和超参数；2024 用于冻结方案 validation / model-family comparison；2025 在所有政策冻结前只能准备 X，不能读取 y。
 
-## 18. Schema 版本升级规则
+## 20. Schema 版本升级规则
 
 以下变化需要明确 schema / policy version bump：
 
@@ -307,16 +381,18 @@ Development 用于训练、CV、feature policy、threshold 和超参数；2024 �
 - canonical risk set 改变；
 - level mapping 改变；
 - target / return / session policy 改变；
-- trusted source boundary 改变。
+- trusted source boundary 改变；
+- 把 Core/Extended feature group 合并成新的公共 modeling vector contract。
 
 仅新增输入数据、在同一冻结规则下重新 materialize artifact，不自动要求 schema version bump，但必须产生新的 provenance / content hash。
 
-## 19. 当前 source of truth
+## 21. 当前 source of truth
 
 - 公共 Schema 实现：`src/ipo_risk/schemas/`
 - Document modeling：`src/ipo_risk/modeling/`
+- Market Core materialization：`src/ipo_risk/market/ipo_market_context_features.py` + `scripts/run_v04_pr_b.py`
+- Market Extended public schema：`src/ipo_risk/schemas/market_features.py`
 - 风险注册表：`src/ipo_risk/domain/risk_codes.py`
 - 当前执行计划：`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
+- PR-B Gate：`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
 - 架构边界：`ARCHITECTURE.md`
-
-本文不再保留“第一阶段只做 RuleBasedPredictor”等历史阶段表述。
