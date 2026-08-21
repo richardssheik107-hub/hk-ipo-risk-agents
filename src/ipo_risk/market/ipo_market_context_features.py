@@ -5,6 +5,11 @@ This module deliberately uses only information that can be known before the
 outcomes whose target trading session has already occurred. It does not use or
 proxy HSI, industry-index history, or total-market turnover; those belong to the
 separate Extended Market-X contract.
+
+A bounded prior-IPO source universe must also expose its left boundary. When a
+30/60/180-day lookback extends earlier than that source boundary, the affected
+feature family is returned as missing rather than a misleading zero/partial
+history value.
 """
 
 from __future__ import annotations
@@ -87,8 +92,18 @@ def build_ipo_market_context(
     listing_date: date,
     industry: str | None,
     prior_ipos: list[dict[str, Any]],
+    history_start_date: date | None = None,
 ) -> dict[str, float | int | None]:
-    """Build deterministic context using only facts known before listing date."""
+    """Build deterministic context using only complete, pre-listing history.
+
+    ``history_start_date`` is the earliest date for which the supplied prior-IPO
+    universe is considered complete. It is provenance, not a feature. If a
+    requested lookback begins before it, that feature family is explicitly
+    missing.
+    """
+
+    if history_start_date is not None and history_start_date > listing_date:
+        raise ValueError("history_start_date cannot be after target listing_date")
 
     normalized_industry = industry.strip() if industry and industry.strip() else None
     prior = sorted(
@@ -99,6 +114,16 @@ def build_ipo_market_context(
         ),
         key=lambda item: item["listing_date"],
     )
+    if history_start_date is not None and any(
+        item["listing_date"] < history_start_date for item in prior
+    ):
+        raise ValueError("prior IPO row predates declared history_start_date")
+
+    def lookback_complete(days: int) -> bool:
+        return (
+            history_start_date is None
+            or history_start_date <= listing_date - timedelta(days=days)
+        )
 
     def window(days: int) -> list[dict[str, Any]]:
         start = listing_date - timedelta(days=days)
@@ -117,6 +142,12 @@ def build_ipo_market_context(
                 math.log1p(sum(amounts)) if amounts else None
             ),
             f"prior_ipo_funds_raised_{prefix}_sample_count": len(amounts),
+        }
+
+    def missing_aggregate(prefix: str) -> dict[str, float | int | None]:
+        return {
+            f"log_prior_ipo_funds_raised_{prefix}": None,
+            f"prior_ipo_funds_raised_{prefix}_sample_count": None,
         }
 
     def outcomes(
@@ -145,12 +176,30 @@ def build_ipo_market_context(
             len(five_day),
         )
 
-    rows_30d = window(30)
-    rows_60d = window(60)
-    recent = rows_60d[-20:]
-    break_rate, return_5d, sample_1d, sample_5d = outcomes(recent)
+    complete_30d = lookback_complete(30)
+    complete_60d = lookback_complete(60)
+    complete_180d = lookback_complete(180)
+    rows_30d = window(30) if complete_30d else []
+    rows_60d = window(60) if complete_60d else []
 
-    if normalized_industry is None:
+    if complete_60d:
+        recent = rows_60d[-20:]
+        break_rate, return_5d, sample_1d, sample_5d = outcomes(recent)
+        recent_values: dict[str, float | int | None] = {
+            "recent_ipo_break_rate": break_rate,
+            "recent_ipo_return_5d": return_5d,
+            "recent_ipo_1d_sample_count": sample_1d,
+            "recent_ipo_5d_sample_count": sample_5d,
+        }
+    else:
+        recent_values = {
+            "recent_ipo_break_rate": None,
+            "recent_ipo_return_5d": None,
+            "recent_ipo_1d_sample_count": None,
+            "recent_ipo_5d_sample_count": None,
+        }
+
+    if normalized_industry is None or not complete_180d:
         same_industry_values: dict[str, float | int | None] = {
             "same_industry_ipo_count_180d": None,
             "same_industry_recent_break_rate": None,
@@ -179,14 +228,11 @@ def build_ipo_market_context(
         }
 
     values: dict[str, float | int | None] = {
-        "ipo_count_30d": len(rows_30d),
-        "ipo_count_60d": len(rows_60d),
-        **aggregate(rows_30d, "30d"),
-        **aggregate(rows_60d, "60d"),
-        "recent_ipo_break_rate": break_rate,
-        "recent_ipo_return_5d": return_5d,
-        "recent_ipo_1d_sample_count": sample_1d,
-        "recent_ipo_5d_sample_count": sample_5d,
+        "ipo_count_30d": len(rows_30d) if complete_30d else None,
+        "ipo_count_60d": len(rows_60d) if complete_60d else None,
+        **(aggregate(rows_30d, "30d") if complete_30d else missing_aggregate("30d")),
+        **(aggregate(rows_60d, "60d") if complete_60d else missing_aggregate("60d")),
+        **recent_values,
         **same_industry_values,
     }
     if tuple(values) != IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER:
