@@ -1,8 +1,8 @@
 # Roadmap
 
-> Status snapshot: **2026-08-20**  
+> Status snapshot: **2026-08-21**  
 > 当前唯一主线：**End-to-End Closed Loop First**。  
-> 当前唯一执行里程碑：**PR-A — Document + Oracle Materialization & Coverage**。
+> PR-A：**COMPLETE / FROZEN**；下一正式里程碑：**PR-B — Market-X Core + Governed EOD Store（NOT STARTED）**。
 
 ## 版本路线
 
@@ -65,9 +65,37 @@ Oracle track 已合入主线，定位为**评测上限 / 错误归因工具**，
 
 Oracle 不能进入 Production runtime，也不能读取 2025 blind y。
 
+### PR-A Document + Oracle Materialization & Coverage
+
+PR-A 已完成并冻结。正式物化 source revision：
+
+```text
+13e0281f5e65a970caaf1255e56d08597e1ead70
+```
+
+冻结结果：
+
+- official 2020–2024 cohort：438 / 438；
+- Production analysis：438 / 438；
+- authoritative snapshots：438 / 438；
+- Production Document-X：438 / 438；
+- feature schema：`v04_document_features_v1`，100 维；
+- Production failures：0；
+- silent drops：0；
+- Oracle materialized：60；
+- `no_reviewed_gold`：378；
+- Production ∩ Oracle：60；
+- A6 determinism：438 checked，0 mismatches，PASS；
+- 2025 blind access：NO。
+
+冻结记录见：
+
+- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_a_document_materialization_manifest.json`](../reports/frozen/v04_pr_a_document_materialization_manifest.json)
+
 ## 当前真实 readiness
 
-以下数字沿用 `research/V04_DATA_READINESS.md` 最近一次真实审计，不因计划文档更新而虚构变化：
+以下数字来自已完成的 PR-A materialization 与既有市场数据审计：
 
 | 项目 | 当前状态 |
 | --- | --- |
@@ -75,47 +103,50 @@ Oracle 不能进入 Production runtime，也不能读取 2025 blind y。
 | Local prospectus coverage | 438 / 438 |
 | IPO OHLCV outcome coverage | 432 / 438 |
 | Authoritative Document Snapshot pipeline | AVAILABLE |
-| Existing authoritative snapshots | 0 / 438 at latest readiness audit |
-| Production Document Feature vectorizer | AVAILABLE |
-| Oracle Document Feature builder | AVAILABLE |
-| Oracle Logistic baseline harness | AVAILABLE / WAITING DATASET |
+| Authoritative snapshots | 438 / 438 |
+| Production Document-X | 438 / 438, 100 dimensions |
+| Oracle Document-X | 60 materialized; 378 no reviewed Gold |
+| Production failures / silent drops | 0 / 0 |
 | HSI history | MISSING |
 | Industry benchmark mapping / history | MISSING |
 | Total-market turnover | MISSING |
-| PR-A Document materialization gate | READY |
+| PR-A Document materialization gate | **COMPLETE / FROZEN** |
+| PR-B Market-X Core | **NOT STARTED / NEXT** |
 | Full Model-ready data gate | BLOCKED |
 
-`0 / 438` 表示最近一次 readiness audit 时尚未进行全量 authoritative materialization，不代表 pipeline 不可运行。
+PR-A 完成不等于 Model-ready data gate 已打开。完整闭环仍需要后续受治理的 Market-X、Outcome 与 Dataset。
 
 ## Closed Loop 执行状态
 
 | Phase / PR | 内容 | 状态 | 进入下一阶段的关键条件 |
 | --- | --- | --- | --- |
 | CL-1 | Freeze Current Document Intelligence | **COMPLETE / FROZEN** | 已完成 |
-| CL-2 / PR-A | Document + Oracle Materialization & Coverage | **ACTIVE / CURRENT** | 438 coverage + Production X + Oracle coverage + intersection + deterministic rerun |
-| CL-3 / PR-B | Market-X Core + Governed EOD Store | PARTIAL / NEXT | point-in-time Market-X Core manifest + coverage |
+| CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成：438 coverage + Production X + Oracle + A6 determinism |
+| CL-3 / PR-B | Market-X Core + Governed EOD Store | **NOT STARTED / NEXT** | point-in-time Market-X Core manifest + coverage |
 | CL-4 / PR-C | Freeze 5D Outcome Policy | PENDING | development-only target policy frozen |
-| CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY A/B/C | one rebuildable dataset + manifests |
+| CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY B/C | one rebuildable dataset + manifests |
 | CL-6 / PR-E | Baseline + Oracle Diagnostic | NOT STARTED | M/P/O/PM/OM fair comparison |
 | CL-7 / PR-F | LightGBM + Explainability | NOT STARTED | baseline complete and reproducible |
 | CL-8/9 / PR-G | Market Agent + Final Supervisor | NOT STARTED | frozen model output contract |
 | CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | NOT STARTED | PDF → Final Report complete |
 
-## PR-A 当前任务拆解
+## PR-A 已完成任务拆解
 
 ```text
-PR-A0  Freeze execution context / hashes
-PR-A1  Add thin canonical CLI: scripts/run_v04_pr_a.py
-PR-A2  Run deterministic Development pilot
-PR-A3  Materialize 2020–2024 Production snapshots/features
-PR-A4  Materialize Oracle inventory/features
-PR-A5  Build unified coverage table
-PR-A6  Rerun and verify stable hashes
+PR-A0  Freeze execution context / hashes                         DONE
+PR-A1  Add thin canonical CLI: scripts/run_v04_pr_a.py          DONE
+PR-A2  Run deterministic Development pilot                       DONE
+PR-A3  Materialize 2020–2024 Production snapshots/features      DONE
+PR-A4  Materialize Oracle inventory/features                     DONE
+PR-A5  Build unified coverage table                              DONE
+PR-A6  Rerun and verify stable hashes                            DONE
 ```
 
-PR-A 的目标不是要求 438 / 438 全部成功，而是让 438 个 case **全部有可审计状态**，并且所有失败都有明确 stage / reason。
+PR-A 的 Gate 目标是让 438 个 case **全部有可审计状态**，所有失败都有明确 stage / reason，并验证持久化 artifact 的确定性。实际冻结结果为 438 / 438 Production 成功、0 failure、0 silent drop。
 
-### PR-A 必须输出
+### PR-A 冻结输出
+
+Coverage 中保留：
 
 ```text
 case_id
@@ -147,9 +178,11 @@ Production ∩ Oracle intersection count
 
 ## 后续严格顺序
 
+正式 milestone / Gate / mainline merge 顺序固定为：
+
 ```text
-PR-A  Document + Oracle Materialization & Coverage
-PR-B  Market-X Core + Governed EOD Store
+PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
+PR-B  Market-X Core + Governed EOD Store             NEXT
 PR-C  5D Outcome Policy Freeze
 PR-D  Canonical Model-ready Dataset
 PR-E  Baseline + Oracle Diagnostic
@@ -159,14 +192,16 @@ PR-H  Streamlit Full E2E + Real-case Demo
 v0.4 Freeze
 ```
 
+准备性研究可以提前并行，但**不得把准备工作视为后续正式 Gate 已开始/已通过，也不得越过上述顺序合并到 main**。
+
 每个 PR 必须：
 
-- 从最新 `main` 创建；
+- 从最新 `main` 创建或同步；
 - 范围单一；
 - CI 全绿；
 - manifest / report 可重复；
 - 不把一次性实验垃圾堆入活文档；
-- merge 后再开启下一阶段。
+- 当前正式 Gate 合并后再推进下一正式 milestone。
 
 ## 正式建模比较
 
@@ -208,16 +243,16 @@ Production 与 Oracle 比较必须使用相同 cohort、split、target、preproc
 
 ## 文档治理状态
 
-2026-08-20 已重新审核当前活文档：
+2026-08-21 已将 PR-A 完成状态同步到活文档：
 
-- `ARCHITECTURE.md` 已移除 v0.2 当前基线、`competition_v3`、“第一阶段只实现 mvp_v1 / RuleBasedPredictor”、旧 v0.3.5 Evidence Intelligence 死链接等过时内容；
-- `PROJECT_SPEC.md` 已把旧 CL-1 / CL-2 下一步改为 PR-A；
-- `COMPETITION_DATA_OVERVIEW.md` 已明确 legacy document corpus split 与 v0.4 official modeling cohort 的区别；
-- `DATA_SCHEMA.md` 已明确 legacy `MarketSnapshot` 与 v0.4 `PreListingMarketFeatureSnapshot` 的区别；
-- `V04_PRELISTING_MARKET_FEATURES.md` 已修正 recent-IPO governed EOD foundation 的真实可用性；
-- Oracle 文档已改用当前 M / P / O / PM / OM diagnostic，而不是旧 Retriever-version comparison。
+- PR-A materialization / coverage / determinism：COMPLETE / FROZEN；
+- Document-X authoritative snapshots：438 / 438；
+- Production Document-X：438 / 438；
+- Oracle：60，`no_reviewed_gold`：378；
+- PR-B：NOT STARTED / NEXT；
+- full Model-ready gate：仍 BLOCKED。
 
-剩余 research 文档均仍有当前契约或冻结治理价值，不因“清理”而删除。
+剩余 research 文档仅保留仍有当前契约或冻结治理价值的内容。
 
 ## 当前文档入口
 
@@ -226,6 +261,7 @@ Production 与 Oracle 比较必须使用相同 cohort、split、target、preproc
 - 当前架构：[`ARCHITECTURE.md`](ARCHITECTURE.md)
 - Schema / modeling contracts：[`DATA_SCHEMA.md`](DATA_SCHEMA.md)
 - 数据 readiness：[`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
+- PR-A 冻结报告：[`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
 - Document / Market feature contract：[`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md)
 - Pre-listing Market X：[`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
 - Oracle：[`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md)
