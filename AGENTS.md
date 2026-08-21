@@ -173,7 +173,7 @@ pytest -q
 ## 13. Git 规则
 
 1. 不直接向 `main` 提交未经测试的代码；
-2. 每个功能使用独立分支；
+2. 每个功能使用独立分支；当前若用户明确要求“不要新增分支”，继续使用已指定的现有工作分支；
 3. Commit 信息说明真实修改内容；
 4. PR 说明测试结果与剩余限制；
 5. 公共 Schema 修改必须明确审核；
@@ -195,35 +195,82 @@ CL-1 与 PR-A 均已完成并冻结。当前正式执行里程碑是：
 
 > **PR-B — Market-X Core + Governed EOD Store**
 
-当前 Market-X feature semantics 已有冻结实现：
+当前分支已经完成可在仓库侧完成的 PR-B Core 实现，下一步是本地测试、真实数据 materialization 与 Gate evidence；不要重新实现同一套逻辑。
+
+### 15.1 PR-B Market-X Core
+
+当前 Core 契约：
+
+```text
+schema:  v04_ipo_market_context_features_v1
+policy:  ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
+```
+
+当前实现入口：
+
+```text
+src/ipo_risk/market/ipo_market_context_features.py
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+```
+
+Core 使用当前已治理的 authoritative IPO metadata、prior-IPO offer/context facts、governed IPO EOD，以及在目标 IPO 上市前已经成为历史事实的 prior-IPO 1D/5D outcomes。
+
+硬规则：
+
+- EOD official cohort 按 `official_listed_date.year`，不得按 document `source_year`；
+- target IPO 自身上市日 / 上市后数据不得进入 target X；
+- prior outcome 的 target trading date 必须严格早于 target listing date；
+- 2025 blind y 不得访问；
+- `S_DQ_AMOUNT` 仅是单证券成交额，不是全市场 turnover；
+- resume 不得静默覆盖不同 provenance；
+- every official case 必须在 coverage 中有显式状态。
+
+### 15.2 Market-X Extended
+
+已有的 Extended 契约继续冻结，不被 PR-B Core 重写：
 
 ```text
 v04_prelisting_market_features_v1
 v04_market_features_v1
 10 raw features + 10 missing indicators
+= 20 positions
 ```
 
-所以 PR-B 不重复实现 Market feature formulas，而是完成真实受治理来源、canonical orchestration、point-in-time audit、coverage、provenance、resume 与 determinism。
-
-当前需要复用：
+当前真实 Extended 数据缺口仍包括：
 
 ```text
-src/ipo_risk/schemas/market_features.py
-src/ipo_risk/market/features.py
-src/ipo_risk/providers/competition_market.py
-src/ipo_risk/providers/market_reference.py
-src/ipo_risk/modeling/market_dataset.py
-scripts/build_v04_ipo_eod_store.py
+HSI history
+Authoritative industry benchmark mapping
+Industry-index history
+HKEX total-market turnover
 ```
 
-当前真实数据缺口仍包括 HSI、authoritative industry benchmark mapping/history 和 HK total-market turnover。不得用不等价 proxy 静默替代。
+这些缺口必须显式保留，但**不是 PR-B Core 必须伪造或用 proxy 补齐的输入**。禁止使用 Hang Seng Bank 代替 HSI、用公司/行业文本猜 benchmark、用 `S_DQ_AMOUNT` 代替 total-market turnover、或用 0 静默填补。
 
-Role A / Codex 的实现入口与 Gate 见：
+### 15.3 当前 Codex / 本地唯一执行队列
+
+先读：
 
 ```text
-docs/V04_ROLE_A_CROSS_TEAM_PREP.md
 docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md
 docs/V04_ROLE_A_CODEX_HANDOFF.md
+```
+
+然后在当前现有分支上依次：
+
+```text
+1. 跑新增 PR-B targeted tests
+2. 跑 full pytest
+3. 跑 5-case Development pilot
+4. 跑 438-case PR-B Core full materialization
+5. --resume --verify-determinism
+6. 只修真实失败，不弱化 PIT/no-leakage 规则
+7. Gate 全通过后才更新 readiness / roadmap / master plan 为 PR-B COMPLETE
+8. 停在 PR-B Gate，不正式进入 PR-C
 ```
 
 正式 Gate / merge 顺序仍为：
@@ -232,4 +279,4 @@ docs/V04_ROLE_A_CODEX_HANDOFF.md
 PR-B → PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
 ```
 
-允许提前做不会越过当前 Gate 的准备工作，但在 PR-B PASS 前，不正式冻结/合并 PR-C target policy，不进入正式模型训练，不把 UI skeleton 当成 PR-H 完成，也不重开 Retriever / LLM 优化。
+在 PR-B PASS 前，不正式冻结 PR-C target policy，不进入正式模型训练，不把 UI skeleton 当成 PR-H 完成，也不重开 Retriever / LLM 优化。
