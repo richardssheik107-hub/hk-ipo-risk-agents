@@ -1,9 +1,10 @@
 # V04 PR-B Integration & Acceptance Contract
 
-> Status: **IMPLEMENTED IN REPO / LOCAL MATERIALIZATION + GATE EVIDENCE STILL REQUIRED**  
-> Date: **2026-08-21**  
-> Formal milestone: **PR-B — Market-X Core + Governed EOD Store**  
+> Status: **PR-B COMPLETE / FROZEN — GATE PASS**
+> Date: **2026-08-21**
+> Formal milestone: **PR-B — Market-X Core + Governed EOD Store / COMPLETE**
 > Owners: **C = Market/PIT domain owner; A = Pipeline/Integration/Gate**
+> Frozen evidence: [`../V04_PR_B_COMPLETION_REPORT.md`](../V04_PR_B_COMPLETION_REPORT.md) and [`../../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../../reports/frozen/v04_pr_b_market_x_core_manifest.json)
 
 ## 1. Objective
 
@@ -379,7 +380,7 @@ Repository tests now cover the implementation-level guards for:
 - one-case failure remaining visible in coverage;
 - deterministic rebuild behavior.
 
-The actual repository test suite still must be run in a real checkout before PR-B can be marked PASS:
+The repository test suite was run in a real checkout before PR-B was marked PASS. These commands remain the reproducibility entry point:
 
 ```bash
 python -m pip install -e '.[dev,retrieval-research]'
@@ -388,11 +389,11 @@ pytest -q
 
 No document may claim green tests merely because test code exists.
 
-## 12. Local run sequence still required
+## 12. Completed local run sequence
 
 ### B-Pilot
 
-Run a deterministic Development pilot:
+The deterministic Development pilot was run with:
 
 ```bash
 python scripts/run_v04_pr_b.py \
@@ -413,7 +414,7 @@ Inspect:
 
 ### B-Full
 
-Then run the full 438-case cohort:
+The full 438-case cohort was then run with:
 
 ```bash
 python scripts/run_v04_pr_b.py \
@@ -424,7 +425,7 @@ python scripts/run_v04_pr_b.py \
 
 ### B-Audit
 
-Rerun from unchanged inputs:
+The unchanged inputs were rerun with resume and determinism verification:
 
 ```bash
 python scripts/run_v04_pr_b.py \
@@ -435,26 +436,26 @@ python scripts/run_v04_pr_b.py \
   --verify-determinism
 ```
 
-Only measured local results may update actual PR-B coverage counts.
+Only those measured results were used to update the frozen PR-B coverage counts.
 
 ## 13. PR-B Core PASS Gate
 
 PR-B Core can be accepted only when all are true:
 
 ```text
-[ ] full official cohort resolves to 438 cases
-[ ] governed EOD store builds from official listing-year selection
-[ ] every 438 case appears exactly once in coverage
-[ ] every successful Core row has stable feature hash
-[ ] every failure has stage + reason
-[ ] Core manifest hash is frozen and recorded
-[ ] PIT tests pass
-[ ] no target post-listing data enters target X
-[ ] no 2025 blind outcome is read
-[ ] resume is conflict-safe
-[ ] deterministic rerun reports 0 mismatches
-[ ] full pytest is green
-[ ] local run summary is frozen in a completion report / small manifest
+[x] full official cohort resolves to 438 cases
+[x] governed EOD store builds from official listing-year selection
+[x] every 438 case appears exactly once in coverage
+[x] every successful Core row has stable feature hash
+[x] every failure has stage + reason
+[x] Core manifest hash is frozen and recorded
+[x] PIT tests pass
+[x] no target post-listing data enters target X
+[x] no 2025 blind outcome is read
+[x] resume is conflict-safe
+[x] deterministic rerun reports 0 mismatches
+[x] full pytest is green
+[x] local run summary is frozen in a completion report / small manifest
 ```
 
 The following are **not** Core PASS requirements, but must remain visible limitations until resolved:
@@ -481,9 +482,9 @@ PR-B must not:
 - access 2025 blind y;
 - start PR-C formally before PR-B Gate acceptance.
 
-## 15. Current repository status after preparation
+## 15. Frozen repository result
 
-The repository now contains the unblocked PR-B Core implementation and tests:
+The repository contains the completed PR-B Core implementation and tests:
 
 ```text
 scripts/build_v04_ipo_eod_store.py        cohort/governed-store hardening
@@ -496,4 +497,15 @@ tests/unit/test_ipo_market_context_features.py
                                          PIT / manifest / missingness tests
 ```
 
-What remains is execution evidence from a machine that actually has the governed market CSV plus the full test environment. Until that evidence exists, status is **implemented, not yet Gate-passed**.
+The required execution evidence has been completed and frozen:
+
+```text
+coverage / materialized        438 / 438
+failed / silent drops          0 / 0
+PIT failures                   0
+determinism                    438 checked / 0 mismatches / PASS
+full pytest                    1303 passed / 0 failed / 0 skipped
+2025 blind y accessed          NO
+```
+
+PR-C is the next formal milestone and remains **NOT STARTED**.

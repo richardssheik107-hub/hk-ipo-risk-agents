@@ -30,7 +30,7 @@ Retriever V3 等研究成果已冻结并归档，当前不作为 v0.4 前置条�
 4. 阅读 `docs/DATA_SCHEMA.md`；
 5. 阅读本 `AGENTS.md`；
 6. 涉及路线 / 数据 / 建模时，再读 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`、`docs/ROADMAP.md` 和对应 `docs/research/V04_*.md`；
-7. 若任务属于当前 PR-B / Role A handoff，再读 `docs/V04_ROLE_A_CROSS_TEAM_PREP.md`、`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`、`docs/V04_ROLE_A_CODEX_HANDOFF.md`；
+7. 若任务涉及已冻结 PR-B 的审计，再读 `docs/V04_PR_B_COMPLETION_REPORT.md`、`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`；Role A preparation / handoff 仅作为历史完成记录；
 8. 检查仓库结构与现有测试；
 9. 说明准备修改的文件及是否影响公共接口。
 
@@ -191,13 +191,13 @@ pytest -q
 
 ## 15. 当前优先级
 
-CL-1 与 PR-A 均已完成并冻结。当前正式执行里程碑是：
+CL-1、PR-A 与 PR-B 均已完成并冻结。下一正式里程碑是：
 
-> **PR-B — Market-X Core + Governed EOD Store**
+> **PR-C — 5D Outcome Policy Freeze / NEXT / NOT STARTED**
 
-当前分支已经完成可在仓库侧完成的 PR-B Core 实现，下一步是本地测试、真实数据 materialization 与 Gate evidence；不要重新实现同一套逻辑。
+PR-B 已完成 438-case materialization、PIT、missingness、resume 与 determinism Gate，并冻结在 `docs/V04_PR_B_COMPLETION_REPORT.md`。不要重新执行或重新设计 PR-B，也不要在没有独立任务授权时启动 PR-C。
 
-### 15.1 PR-B Market-X Core
+### 15.1 PR-B Market-X Core — COMPLETE / FROZEN
 
 当前 Core 契约：
 
@@ -251,32 +251,27 @@ HKEX total-market turnover
 
 这些缺口必须显式保留，但**不是 PR-B Core 必须伪造或用 proxy 补齐的输入**。禁止使用 Hang Seng Bank 代替 HSI、用公司/行业文本猜 benchmark、用 `S_DQ_AMOUNT` 代替 total-market turnover、或用 0 静默填补。
 
-### 15.3 当前 Codex / 本地唯一执行队列
+### 15.3 当前 Codex / 本地执行边界
 
-先读：
-
-```text
-docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md
-docs/V04_ROLE_A_CODEX_HANDOFF.md
-```
-
-然后在当前现有分支上依次：
+当前状态：
 
 ```text
-1. 跑新增 PR-B targeted tests
-2. 跑 full pytest
-3. 跑 5-case Development pilot
-4. 跑 438-case PR-B Core full materialization
-5. --resume --verify-determinism
-6. 只修真实失败，不弱化 PIT/no-leakage 规则
-7. Gate 全通过后才更新 readiness / roadmap / master plan 为 PR-B COMPLETE
-8. 停在 PR-B Gate，不正式进入 PR-C
+PR-A  COMPLETE / FROZEN
+PR-B  COMPLETE / FROZEN
+PR-C  NEXT / NOT STARTED
 ```
 
-正式 Gate / merge 顺序仍为：
+PR-B 的 targeted tests、full pytest、5-case pilot、438-case materialization 与 deterministic resume 均已完成。冻结证据：
 
 ```text
-PR-B → PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
+docs/V04_PR_B_COMPLETION_REPORT.md
+reports/frozen/v04_pr_b_market_x_core_manifest.json
 ```
 
-在 PR-B PASS 前，不正式冻结 PR-C target policy，不进入正式模型训练，不把 UI skeleton 当成 PR-H 完成，也不重开 Retriever / LLM 优化。
+当前不得自行选择 5D threshold、读取 2025 y、物化 PR-C label 或训练模型。PR-C 必须由独立任务与冻结 policy 正式启动。
+
+后续正式 Gate / merge 顺序仍为：
+
+```text
+PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
+```

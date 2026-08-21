@@ -2,8 +2,8 @@
 
 > Status: **HISTORICAL PREPARATION RECORD — PR-B SUBSEQUENTLY COMPLETE / FROZEN**
 > Current result: [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
-> Date: **2026-08-21**  
-> Formal milestone: **PR-B — Market-X Core + Governed EOD Store**  
+> Date: **2026-08-21**
+> Formal milestone: **PR-B — Market-X Core + Governed EOD Store**
 > Governance: formal Gate / mainline merge order remains PR-A → PR-B → PR-C → ...
 
 ## 1. Purpose

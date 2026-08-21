@@ -1,8 +1,8 @@
 # HK IPO Risk Agents — Current Architecture
 
-> Status snapshot: **2026-08-21**  
+> Status snapshot: **2026-08-21**
 > Stable document baseline: **v0.3.0 RELEASED / FROZEN**  
-> PR-A Document materialization: **COMPLETE / FROZEN**  
+> PR-A Document materialization: **COMPLETE / FROZEN**
 > Active program: **v0.4 End-to-End Closed Loop**  
 > PR-B Market-X Core: **COMPLETE / FROZEN**
 > Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
@@ -232,7 +232,7 @@ Official 438-case cohort
 
 The CLI does not expose a 2025 blind-outcome option.
 
-Current repository-side implementation is prepared, but PR-B is not Gate-passed until targeted/full tests plus real pilot/full materialization and determinism evidence actually run.
+PR-B has passed its Gate and is now a frozen 438-case Core asset. Targeted/full tests, the real pilot/full materialization and deterministic resume are recorded in `V04_PR_B_COMPLETION_REPORT.md`.
 
 ## 6. Market-X Extended — frozen optional source-dependent layer
 
@@ -409,7 +409,7 @@ src/ipo_risk/domain/risk_codes.py
 
 Any change must state compatibility impact and add contract tests.
 
-The current PR-B Core preparation does not alter these protected interfaces; it hardens existing market research/orchestration code and adds a new script-level materialization entry point.
+The frozen PR-B Core implementation does not alter these protected interfaces; it hardens existing market research/orchestration code and adds a script-level materialization entry point.
 
 ## 12. Evidence / Calculation / Verification
 
@@ -427,9 +427,10 @@ V04 Document feature contract
 V04 Extended Pre-listing Market feature contract
 Oracle modeling foundations
 PR-A 438-case Document + Oracle materialization
+PR-B 438-case Market-X Core + governed EOD materialization
 ```
 
-Current PR-B branch implementation prepared:
+PR-B frozen implementation:
 
 ```text
 Market-X Core manifest/vectorizer
@@ -438,16 +439,18 @@ Market-X Core manifest/vectorizer
 + PIT / resume / failure / determinism tests
 ```
 
-Still requiring executable local evidence:
+Frozen execution evidence:
 
 ```text
-targeted tests
-→ full pytest
-→ 5-case pilot
-→ 438-case full run
-→ resume + determinism
-→ Gate review
+targeted tests                  68 passed
+full pytest                    1303 passed
+5-case pilot                   5 / 5
+438-case full materialization  438 / 438
+resume + determinism           438 checked / 0 mismatches / PASS
+2025 blind y accessed          NO
 ```
+
+PR-C is the next formal milestone and remains **NOT STARTED**.
 
 Role A/Codex contract:
 

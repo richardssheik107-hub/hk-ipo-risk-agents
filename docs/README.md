@@ -1,7 +1,7 @@
 # Documentation Index
 
-> Status snapshot: **2026-08-21**  
-> PR-A: **COMPLETE / FROZEN**  
+> Status snapshot: **2026-08-21**
+> PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN**
 > Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
 > Freeze source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
