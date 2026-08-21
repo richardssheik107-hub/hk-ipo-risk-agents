@@ -6,7 +6,7 @@ EOD outcomes that were already historical facts before each target listing.
 Missing HSI / industry-index / total-market-turnover sources remain explicit
 Market-X Extended gaps; this command never fabricates proxies for them.
 
-The CLI is an orchestration layer.  Core feature formulas live in
+The CLI is an orchestration layer. Core feature formulas live in
 ``ipo_risk.market.ipo_market_context_features`` and outcome formulas live in
 ``MarketLabelGenerator``.
 """
@@ -241,13 +241,6 @@ def _write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) ->
             writer.writerow({name: row.get(name, "") for name in fieldnames})
 
 
-def _label_by_horizon(labels: Iterable[Any]) -> dict[MarketLabelHorizon, Any]:
-    result = {label.horizon: label for label in labels}
-    if len(result) != len(list(labels)):
-        raise ValueError("duplicate market label horizon")
-    return result
-
-
 def build_prior_ipo_records(
     *,
     all_metadata: tuple[IPOMarketMetadata, ...],
@@ -321,8 +314,9 @@ def build_core_feature_artifact(
         "case_id": metadata.case_id,
         "stock_code": metadata.stock_code,
         "cohort_year": metadata.cohort_year,
-        "dataset_split": metadata.provenance.metadata.get("dataset_split")
-        or ("development" if metadata.cohort_year <= 2023 else "validation"),
+        "dataset_split": "development"
+        if metadata.cohort_year <= 2023
+        else "validation",
         "listing_date": metadata.listing_date.isoformat(),
         "cutoff_semantics": "strictly_before_target_listing_date",
         "core_feature_schema_version": IPO_MARKET_CONTEXT_FEATURE_SCHEMA_VERSION,
@@ -349,7 +343,6 @@ def _coverage_row(
     *,
     metadata: IPOMarketMetadata,
     artifact: dict[str, Any] | None,
-    artifact_status: str,
     label_audit: dict[str, Any],
     extended_status: dict[str, str],
     failure_stage: str = "",
@@ -367,7 +360,9 @@ def _coverage_row(
         "listing_date": metadata.listing_date.isoformat()
         if metadata.listing_date
         else "",
-        "core_market_x_status": artifact_status,
+        # Lifecycle details such as created/reused are intentionally excluded so
+        # the semantic coverage artifact is stable across a resume rerun.
+        "core_market_x_status": "available" if artifact is not None else "failed",
         "core_market_x_available": artifact is not None,
         "available_raw_feature_count": available,
         "missing_raw_feature_count": len(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER)
@@ -501,7 +496,6 @@ def materialize_pr_b(
 
     for metadata in selected:
         artifact: dict[str, Any] | None = None
-        artifact_status = "failed"
         failure_stage = ""
         failure_reason = ""
         try:
@@ -516,7 +510,7 @@ def materialize_pr_b(
                 eod_sha256=raw_eod_hash,
             )
             artifact_path = feature_dir / f"{metadata.case_id}.json"
-            artifact_status = _write_json_conflict_safe(
+            _write_json_conflict_safe(
                 artifact_path,
                 artifact,
                 resume=resume,
@@ -546,7 +540,6 @@ def materialize_pr_b(
             _coverage_row(
                 metadata=metadata,
                 artifact=artifact if not failure_reason else None,
-                artifact_status=artifact_status,
                 label_audit=labels_by_case.get(metadata.case_id, {}),
                 extended_status=extended_status,
                 failure_stage=failure_stage,
