@@ -30,8 +30,9 @@ Retriever V3 等研究成果已冻结并归档，当前不作为 v0.4 前置条�
 4. 阅读 `docs/DATA_SCHEMA.md`；
 5. 阅读本 `AGENTS.md`；
 6. 涉及路线 / 数据 / 建模时，再读 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`、`docs/ROADMAP.md` 和对应 `docs/research/V04_*.md`；
-7. 检查仓库结构与现有测试；
-8. 说明准备修改的文件及是否影响公共接口。
+7. 若任务属于当前 PR-B / Role A handoff，再读 `docs/V04_ROLE_A_CROSS_TEAM_PREP.md`、`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`、`docs/V04_ROLE_A_CODEX_HANDOFF.md`；
+8. 检查仓库结构与现有测试；
+9. 说明准备修改的文件及是否影响公共接口。
 
 面对较大任务，先给出实施计划，再开始编码。
 
@@ -190,16 +191,45 @@ pytest -q
 
 ## 15. 当前优先级
 
-CL-1 已完成并冻结。当前唯一正式执行里程碑是：
+CL-1 与 PR-A 均已完成并冻结。当前正式执行里程碑是：
 
-> **PR-A — Document + Oracle Materialization & Coverage**
+> **PR-B — Market-X Core + Governed EOD Store**
 
-执行顺序以 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` 为准。PR-A 首个代码 deliverable 是一个薄 orchestration CLI：
+当前 Market-X feature semantics 已有冻结实现：
 
 ```text
-scripts/run_v04_pr_a.py
+v04_prelisting_market_features_v1
+v04_market_features_v1
+10 raw features + 10 missing indicators
 ```
 
-它只串联已有 Production batch、authoritative snapshot materialization、Production feature vectorization、Oracle materialization 与 unified coverage，不复制 Parser / Retriever / Agent 业务逻辑，不修改受保护公共接口。
+所以 PR-B 不重复实现 Market feature formulas，而是完成真实受治理来源、canonical orchestration、point-in-time audit、coverage、provenance、resume 与 determinism。
 
-PR-A PASS 前，不把 Retriever 调参、LLM Reranker、Fine-tuning、市场模型训练或 UI 重构重新拉回主线。
+当前需要复用：
+
+```text
+src/ipo_risk/schemas/market_features.py
+src/ipo_risk/market/features.py
+src/ipo_risk/providers/competition_market.py
+src/ipo_risk/providers/market_reference.py
+src/ipo_risk/modeling/market_dataset.py
+scripts/build_v04_ipo_eod_store.py
+```
+
+当前真实数据缺口仍包括 HSI、authoritative industry benchmark mapping/history 和 HK total-market turnover。不得用不等价 proxy 静默替代。
+
+Role A / Codex 的实现入口与 Gate 见：
+
+```text
+docs/V04_ROLE_A_CROSS_TEAM_PREP.md
+docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md
+docs/V04_ROLE_A_CODEX_HANDOFF.md
+```
+
+正式 Gate / merge 顺序仍为：
+
+```text
+PR-B → PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
+```
+
+允许提前做不会越过当前 Gate 的准备工作，但在 PR-B PASS 前，不正式冻结/合并 PR-C target policy，不进入正式模型训练，不把 UI skeleton 当成 PR-H 完成，也不重开 Retriever / LLM 优化。
