@@ -80,6 +80,50 @@ def test_missing_target_industry_marks_whole_industry_family_missing() -> None:
     assert got["same_industry_recent_5d_sample_count"] is None
 
 
+def test_left_boundary_marks_incomplete_lookbacks_missing() -> None:
+    target = date(2020, 3, 1)
+    got = build_ipo_market_context(
+        listing_date=target,
+        industry="A",
+        history_start_date=date(2020, 1, 15),
+        prior_ipos=[
+            {
+                "listing_date": date(2020, 2, 15),
+                "industry": "A",
+                "funds_raised": 10,
+                "target_1d": date(2020, 2, 16),
+                "return_1d": -0.1,
+                "target_5d": date(2020, 2, 21),
+                "return_5d": -0.2,
+            }
+        ],
+    )
+
+    # 30D reaches 2020-01-31 and is fully inside the declared source history.
+    assert got["ipo_count_30d"] == 1
+    assert got["prior_ipo_funds_raised_30d_sample_count"] == 1
+    # 60D/180D extend before the source universe and must not become partial zeros.
+    assert got["ipo_count_60d"] is None
+    assert got["recent_ipo_1d_sample_count"] is None
+    assert got["recent_ipo_break_rate"] is None
+    assert got["same_industry_ipo_count_180d"] is None
+
+
+def test_context_rejects_row_before_declared_history_start() -> None:
+    with pytest.raises(ValueError, match="predates declared history_start_date"):
+        build_ipo_market_context(
+            listing_date=date(2020, 3, 1),
+            industry="A",
+            history_start_date=date(2020, 1, 15),
+            prior_ipos=[
+                {
+                    "listing_date": date(2020, 1, 1),
+                    "industry": "A",
+                }
+            ],
+        )
+
+
 def test_context_vector_uses_adjacent_missing_indicators() -> None:
     values = build_ipo_market_context(
         listing_date=date(2022, 1, 1),
