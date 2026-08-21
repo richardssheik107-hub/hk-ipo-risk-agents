@@ -2,7 +2,8 @@
 
 > Status snapshot: **2026-08-21**  
 > PR-A: **COMPLETE / FROZEN**  
-> Current formal milestone: **PR-B — Market-X Core + Governed EOD Store**
+> Current formal milestone: **PR-B — Market-X Core + Governed EOD Store**  
+> Branch status: **Core implementation prepared; local tests/materialization/Gate evidence pending**
 
 本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、handoff 与一次性实验文档通过 Git history / release 保留。
 
@@ -12,7 +13,7 @@
 Prospectus PDF
 → Document Intelligence
 → Production Document X
-→ Pre-listing Market X
+→ Market-X Core + optional governed Extended Market-X
 → 5D Outcome
 → Model-ready Dataset
 → Baseline + Oracle Diagnostic
@@ -26,7 +27,7 @@ Prospectus PDF
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            CURRENT / NEXT
+→ PR-B Market-X Core + Governed EOD Store            CURRENT
 → PR-C 5D Outcome Policy Freeze
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
@@ -43,9 +44,9 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 唯一权威总计划与 Gate 顺序；
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人角色、并行准备和正式 Gate 边界；
-3. [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — A 在 PR-A 后如何提前帮助 B/C/D/E，以及哪些基础已经存在、不应重复实现；
-4. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B 的可执行 orchestration / PIT / coverage / provenance / determinism 验收契约；
-5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — 交给 Codex 的剩余实现队列与 stop condition；
+3. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — 当前 PR-B Core/Extended 边界、orchestration / PIT / coverage / provenance / determinism 验收契约；
+4. [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — Role A 已完成的仓库侧准备和 B/C/D/E 后续边界；
+5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — Codex 现在只需执行的本地测试 / pilot / full run / determinism 队列；
 6. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果；
 7. [`ROADMAP.md`](ROADMAP.md) — 阶段状态；
 8. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
@@ -80,19 +81,52 @@ Frozen records:
 
 ## 4. Current PR-B reality
 
-The Market feature contract itself already exists and is frozen:
+PR-B is now explicitly split into **Core** and **Extended**.
+
+### 4.1 Market-X Core — repository implementation prepared
+
+Current Core contract:
+
+```text
+v04_ipo_market_context_features_v1
+ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
+```
+
+Core only uses information already governed and historically available before each target listing:
+
+```text
+authoritative IPO identity / listing date
+prior-IPO offer/context facts
+governed IPO EOD
+prior IPO 1D/5D outcomes only after their target sessions occurred before target listing
+```
+
+Implemented entry points:
+
+```text
+src/ipo_risk/market/ipo_market_context_features.py
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+```
+
+The governed EOD builder selects the cohort by authoritative `official_listed_date.year`, preserves `OBJECT_ID` provenance, and records that `S_DQ_AMOUNT` is per-security only.
+
+Repository-side tests have been added, but **no active doc may claim PR-B PASS until the local test suite, real pilot, 438-case materialization and determinism audit actually run**.
+
+### 4.2 Market-X Extended — frozen contract, governed sources still missing
+
+Existing Extended contract remains unchanged:
 
 ```text
 v04_prelisting_market_features_v1
 v04_market_features_v1
-10 raw features + 10 missing indicators = 20 positions
+10 raw + 10 missing indicators = 20 positions
 ```
 
-Existing foundations include the Pydantic Market feature schemas, deterministic `PreListingMarketFeatureEngine`, in-memory reference provider for tests, governed IPO OHLCV foundation, Market augmented dataset joins and blind feature-only export.
-
-PR-B must now connect **real governed reference sources** and create canonical materialization/orchestration/audit around those foundations.
-
-Current real source gaps:
+Current real Extended source gaps:
 
 ```text
 HSI daily history
@@ -101,18 +135,21 @@ industry-index histories
 HK total-market turnover
 ```
 
-Detailed contract:
+These gaps remain explicit. They are not a PR-B Core failure and cannot be filled with ungoverned proxies, fake benchmark rows or neutral zero.
 
-- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
+Detailed contracts:
+
 - [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
+- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
 - [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
 
 ## 5. Active v0.4 research / contract docs
 
 - [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — IPO metadata, EOD, labels, split/blind foundation；
-- [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — frozen 100-position Production Document contract and modeling join；
-- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — frozen 20-position PIT Market-X contract；
-- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — latest real data/source readiness；
+- [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — frozen 100-position Production Document contract and existing modeling joins；
+- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — frozen 20-position Extended PIT Market-X contract；
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — current PR-B Core/Extended implementation and Gate contract；
+- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — latest measured data/source readiness；
 - [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — Oracle evaluation-only path；
 - [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — frozen Retriever research reference, not current execution plan.
 
@@ -150,9 +187,27 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 2025       Blind Test
 ```
 
-2025 in development may contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened.
+2025 may eventually contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened.
 
-## 8. Documentation maintenance rule
+## 8. Current Codex/local stop condition
+
+Continue on the existing work branch; do not create another branch unless explicitly requested.
+
+Required sequence:
+
+```text
+PR-B targeted tests
+→ full pytest
+→ 5-case Development pilot
+→ full 438-case Core materialization
+→ --resume --verify-determinism
+→ freeze measured PR-B evidence if and only if Gate passes
+→ STOP before PR-C
+```
+
+Exact commands: [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md).
+
+## 9. Documentation maintenance rule
 
 - Current contracts / execution guidance → `docs/`;
 - machine fixtures required by tests → keep only minimum needed;
@@ -160,4 +215,4 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 - readiness numbers → update only after real runs;
 - superseded plans → Git history/release, not active source of truth.
 
-A new contributor should be able to answer within minutes: **where we are, what Gate is current, what already exists, what Codex/team should do next, and what cannot be crossed early.**
+A new contributor should be able to answer within minutes: **where we are, what Gate is current, what is already implemented, what still requires local execution evidence, and what cannot be crossed early.**
