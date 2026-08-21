@@ -14,7 +14,7 @@ Retriever V3 research                      = MERGED / FROZEN
 Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 v0.4 End-to-End Closed Loop                = ACTIVE
-PR-B Market-X Core                          = NEXT
+PR-B Market-X Core                          = IMPLEMENTED ON BRANCH / LOCAL GATE EVIDENCE PENDING
 ```
 
 当前策略是 **End-to-End Closed Loop First**：先完成可信、可重建、可解释的完整闭环，再依据实证结果决定是否回到 Retriever、LLM Reranker、Agent 与 Verifier 的研究优化。
@@ -23,7 +23,7 @@ PR-B Market-X Core                          = NEXT
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
-→ PR-B Market-X Core + Governed EOD Store            NEXT
+→ PR-B Market-X Core + Governed EOD Store            CURRENT
 → PR-C 5D Outcome Policy Freeze
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
@@ -54,7 +54,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - 2025 blind outcome access：NO；
 - full model-ready gate：仍 blocked。
 
-详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
+详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。PR-B 的实际 Core coverage 只有在本地全量 materialization 后才能更新，当前不提前虚构数字。
 
 ## Architecture
 
@@ -69,7 +69,9 @@ Skills / Verifier / Document Supervisor
       ↓
 Production Document X (100)
       ↓
-Pre-listing Market X (20)
+Market-X Core (prior-IPO PIT context, 30 positions)
+      +
+Market-X Extended (HSI / industry / turnover contract, 20 positions when governed sources exist)
       ↓
 5D Outcome / Modeling Dataset
       ↓
@@ -120,15 +122,40 @@ A6 mismatches                  0
 
 ## Current PR-B Boundary
 
-Market-X semantics and schemas already exist and are frozen for v0.4:
+PR-B 现在明确分为 Core 与 Extended 两层。
+
+### Market-X Core
+
+已在当前分支实现：
+
+```text
+schema:  v04_ipo_market_context_features_v1
+policy:  ipo_market_context_policy_v1
+15 raw prior-IPO context features
++ 15 adjacent missing indicators
+= 30 positions
+```
+
+Core 只使用当前已治理的信息：authoritative IPO metadata、prior-IPO offer/context facts、governed IPO EOD，以及在目标 IPO 上市前已经成为历史事实的 prior IPO 1D/5D outcomes。
+
+Canonical entry points:
+
+```text
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+```
+
+EOD store 已改为按 `official_listed_date.year` 选择 2020–2024 official cohort，而不是使用 document `source_year`；并保留 `OBJECT_ID` source provenance。
+
+### Market-X Extended
+
+现有冻结 contract 保持不变：
 
 ```text
 v04_prelisting_market_features_v1
 v04_market_features_v1
-10 raw Market features + 10 missing indicators = 20 positions
+10 raw + 10 missing indicators = 20 positions
 ```
-
-PR-B 的重点不是重新设计 Market features，而是接入真实受治理来源并完成 438-case orchestration / PIT / coverage / provenance / determinism。
 
 当前真实来源缺口：
 
@@ -139,11 +166,10 @@ industry-index histories
 HK total-market turnover
 ```
 
-禁止用不等价 proxy 静默替代。
+这些是 Extended gaps，不是 Core 通过所必须伪造的输入。禁止使用不等价 proxy、假 benchmark row 或 neutral zero 补齐。
 
-Role A / Codex 当前交接文档：
+PR-B Gate 详细标准：
 
-- [`docs/V04_ROLE_A_CROSS_TEAM_PREP.md`](docs/V04_ROLE_A_CROSS_TEAM_PREP.md)
 - [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 - [`docs/V04_ROLE_A_CODEX_HANDOFF.md`](docs/V04_ROLE_A_CODEX_HANDOFF.md)
 
@@ -180,6 +206,12 @@ pytest -q
 python scripts/validate_project.py
 ```
 
+PR-B Core pilot：
+
+```powershell
+python scripts/run_v04_pr_b.py --catalog-dir data/catalog --data-root <LOCAL_MARKET_ROOT> --output-dir reports/v04_pr_b_pilot --limit 5
+```
+
 启动稳定 offline 文档产品：
 
 ```powershell
@@ -197,6 +229,14 @@ python scripts/validate_project.py
 ```
 
 ```bash
+python scripts/run_v04_pr_b.py \
+  --catalog-dir data/catalog \
+  --data-root <LOCAL_MARKET_ROOT> \
+  --output-dir reports/v04_pr_b_pilot \
+  --limit 5
+```
+
+```bash
 export IPO_RISK_CONFIG=configs/v03_offline.yaml
 python -m streamlit run app/streamlit_app.py
 ```
@@ -210,8 +250,8 @@ python -m streamlit run app/streamlit_app.py
 - Financial / Legal / Business Agents: v0.3 frozen production baseline
 - Verifier / Document Supervisor: v0.3 frozen
 - Market Foundation: governed metadata/OHLCV/label contracts available
-- Pre-listing Market Feature Engine: frozen v0.4 contract available
-- Market reference real-source providers: PR-B work remaining
+- Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration implemented on current branch
+- Market-X Extended: frozen 20-position contract available; real HSI/industry/turnover sources still missing
 - Predictor: rule-based compatibility path; v0.4 statistical model pending
 - Oracle Document path: evaluation-only, materialized for 60 cases
 - Streamlit: current Document product path available; full v0.4 E2E pending
