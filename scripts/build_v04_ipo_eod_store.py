@@ -133,6 +133,7 @@ def build_store(
     catalog_dir: Path,
     cache_dir: Path,
     rebuild: bool = False,
+    expected_case_count: int | None = EXPECTED_OFFICIAL_CASE_COUNT,
 ) -> dict[str, object]:
     bridge = catalog_dir / "ipo_official_master_bridge.csv"
     raw = data_root / "hkshareeodprices.csv"
@@ -146,7 +147,10 @@ def build_store(
 
     bridge_hash = sha256_file(bridge)
     raw_hash = sha256_file(raw)
-    target_codes, target_cases = load_official_target_codes(bridge)
+    target_codes, target_cases = load_official_target_codes(
+        bridge,
+        expected_case_count=expected_case_count,
+    )
 
     if manifest_path.exists() and output.exists() and not rebuild:
         existing = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -194,7 +198,7 @@ def build_store(
             "official_listed_date.year in 2020-2024"
         ),
         "official_listing_years": sorted(OFFICIAL_LISTING_YEARS),
-        "expected_official_case_count": EXPECTED_OFFICIAL_CASE_COUNT,
+        "expected_official_case_count": expected_case_count,
         "target_case_count": len(target_cases),
         "target_case_ids_sha256": hashlib.sha256(
             json.dumps(target_cases, separators=(",", ":")).encode("utf-8")
