@@ -8,7 +8,8 @@ Market-X Extended gaps; this command never fabricates proxies for them.
 
 The CLI is an orchestration layer. Core feature formulas live in
 ``ipo_risk.market.ipo_market_context_features`` and outcome formulas live in
-``MarketLabelGenerator``.
+``MarketLabelGenerator``. Governed EOD-store logic lives in
+``ipo_risk.market.eod_store`` rather than this script.
 """
 
 from __future__ import annotations
@@ -21,11 +22,18 @@ import platform
 import re
 import subprocess
 from collections import Counter
+from datetime import date
 from decimal import Decimal, InvalidOperation
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any, Iterable
 
+from ipo_risk.market.eod_store import (
+    EXPECTED_OFFICIAL_CASE_COUNT,
+    FILTER_SCHEMA_VERSION,
+    build_store,
+    sha256_file,
+)
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST,
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
@@ -43,12 +51,6 @@ from ipo_risk.schemas.market import (
     IPOMarketMetadata,
     MarketLabelAvailability,
     MarketLabelHorizon,
-)
-from scripts.build_v04_ipo_eod_store import (
-    EXPECTED_OFFICIAL_CASE_COUNT,
-    FILTER_SCHEMA_VERSION,
-    build_store,
-    sha256_file,
 )
 
 PR_B_VERSION = "v04_pr_b_core_v1"
@@ -206,6 +208,23 @@ def select_metadata(
     return ordered
 
 
+def _context_history_start_date(
+    metadata: Iterable[IPOMarketMetadata],
+) -> date:
+    """Return the declared left boundary of the complete prior-IPO universe."""
+
+    materialized = tuple(metadata)
+    missing = [item.case_id for item in materialized if item.listing_date is None]
+    if missing:
+        raise ValueError(
+            "official listing date missing; cannot declare prior-IPO history boundary: "
+            + ", ".join(sorted(missing))
+        )
+    if not materialized:
+        raise ValueError("official IPO universe is empty")
+    return min(item.listing_date for item in materialized if item.listing_date is not None)
+
+
 def _write_json_conflict_safe(
     path: Path,
     payload: Any,
@@ -296,6 +315,7 @@ def build_core_feature_artifact(
     metadata: IPOMarketMetadata,
     bridge_row: dict[str, str],
     prior_records: list[dict[str, Any]],
+    history_start_date: date,
     bridge_sha256: str,
     eod_sha256: str,
 ) -> dict[str, Any]:
@@ -308,6 +328,7 @@ def build_core_feature_artifact(
         listing_date=metadata.listing_date,
         industry=industry,
         prior_ipos=prior_records,
+        history_start_date=history_start_date,
     )
     names, vector = vectorize_ipo_market_context(values)
     body: dict[str, Any] = {
@@ -333,6 +354,8 @@ def build_core_feature_artifact(
         "source_provenance": {
             "official_bridge_sha256": bridge_sha256,
             "ipo_eod_sha256": eod_sha256,
+            "prior_ipo_history_start_date": history_start_date.isoformat(),
+            "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
         },
     }
     body["content_hash"] = content_hash(body)
@@ -400,6 +423,7 @@ def freeze_execution_context(
     eod_manifest: dict[str, Any],
     source_manifest_path: Path,
     extended_status: dict[str, str],
+    context_history_start_date: date,
     resume: bool,
 ) -> dict[str, Any]:
     bridge = catalog_dir / "ipo_official_master_bridge.csv"
@@ -418,6 +442,8 @@ def freeze_execution_context(
         "official_bridge_sha256": sha256_file(bridge),
         "source_manifest_sha256": sha256_file(source_manifest_path),
         "extended_source_status": extended_status,
+        "prior_ipo_history_start_date": context_history_start_date.isoformat(),
+        "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
         "selected_case_count": len(selected),
         "selected_case_ids": [item.case_id for item in selected],
         "selected_case_ids_hash": _hash([item.case_id for item in selected]),
@@ -450,6 +476,7 @@ def materialize_pr_b(
         require_clean_worktree(repo_root)
     revision = _git_revision(repo_root)
     all_metadata = load_official_metadata(catalog_dir)
+    context_history_start_date = _context_history_start_date(all_metadata)
     selected = select_metadata(all_metadata, case_ids=case_ids, limit=limit)
     bridge_rows = _read_bridge_rows(catalog_dir)
     source_manifest, source_manifest_path = _load_source_manifest(catalog_dir)
@@ -471,6 +498,7 @@ def materialize_pr_b(
         eod_manifest=eod_manifest,
         source_manifest_path=source_manifest_path,
         extended_status=extended_status,
+        context_history_start_date=context_history_start_date,
         resume=resume,
     )
 
@@ -506,6 +534,7 @@ def materialize_pr_b(
                 metadata=metadata,
                 bridge_row=bridge_row,
                 prior_records=prior_records,
+                history_start_date=context_history_start_date,
                 bridge_sha256=eod_manifest["bridge_sha256"],
                 eod_sha256=raw_eod_hash,
             )
@@ -520,6 +549,7 @@ def materialize_pr_b(
                     metadata=metadata,
                     bridge_row=bridge_row,
                     prior_records=prior_records,
+                    history_start_date=context_history_start_date,
                     bridge_sha256=eod_manifest["bridge_sha256"],
                     eod_sha256=raw_eod_hash,
                 )
@@ -561,6 +591,7 @@ def materialize_pr_b(
         ),
         "core_feature_manifest_hash": IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
         "coverage_content_hash": coverage_hash,
+        "prior_ipo_history_start_date": context_history_start_date.isoformat(),
         "governed_eod": {
             "target_case_count": eod_manifest.get("target_case_count"),
             "row_count": eod_manifest.get("row_count"),
