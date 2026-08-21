@@ -1,7 +1,7 @@
 # v0.4 五人并行执行计划
 
-> Status: **ACTIVE**  
-> Date: **2026-08-20**  
+> Status: **ACTIVE — PR-A COMPLETE / FROZEN; PR-B NOT STARTED**
+> Date: **2026-08-21**
 > Strategy: **End-to-End Closed Loop First**  
 > Target: **先完成可运行、可审计、可展示的 v0.4 完整闭环，再决定 v0.5+ 优化。**
 
@@ -224,6 +224,8 @@ E 同时承担 Oracle 和 Product Skeleton，因此从第一天开始就有独�
 
 # 4. PR-A：Document + Oracle Materialization & Coverage
 
+> Frozen result: Production analysis / snapshot / feature = 438 / 438 / 438，100 维 `v04_document_features_v1`，Production failures = 0，Oracle = 60，`no_reviewed_gold` = 378，A6 determinism = PASS。详见 [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)。
+
 ## 4.1 A：Pipeline Lead
 
 ### A0
@@ -343,15 +345,15 @@ Oracle 必须保留：
 PR-A 只有同时满足以下条件才能关闭：
 
 ```text
-[ ] 438 official case 都有明确 coverage status
-[ ] Production success / partial / failure 均有原因
-[ ] 2025 未被读取
-[ ] Production feature hash 可追溯
-[ ] Oracle coverage 可追溯
-[ ] Production ∩ Oracle intersection 可计算
-[ ] 第二次运行 hash / artifact deterministic
-[ ] CI 全绿
-[ ] 无公共 Schema 未经批准的变化
+[x] 438 official case 都有明确 coverage status
+[x] Production success / partial / failure 均有原因
+[x] 2025 未被读取
+[x] Production feature hash 可追溯
+[x] Oracle coverage 可追溯
+[x] Production ∩ Oracle intersection 可计算
+[x] 第二次运行 hash / artifact deterministic
+[x] CI 全绿
+[x] 无公共 Schema 未经批准的变化
 ```
 
 ---

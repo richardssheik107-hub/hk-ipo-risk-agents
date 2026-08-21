@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Status snapshot: **2026-08-20**
+> Status snapshot: **2026-08-21**
 
 本目录只把**当前主线开发真正需要阅读的文档**作为活文档维护。历史 v0.2 / v0.3 审计、handoff、旧 Retriever pilot、旧 Evidence Intelligence 设计稿和一次性执行稿通过 Git history / release 保留，不继续堆在当前阅读路径。
 
@@ -22,9 +22,11 @@ Prospectus PDF
 → Streamlit Full E2E
 ```
 
-当前唯一执行里程碑：
+当前里程碑状态：
 
-> **PR-A — Document + Oracle Materialization & Coverage**
+> **PR-A — COMPLETE / FROZEN**
+
+> Next formal milestone: **PR-B — NOT STARTED**
 
 CL-1 Document Intelligence freeze 已完成。当前不继续优化 Retriever、Prompt、LLM 或 Agent，而是先把现有系统在 2020–2024 official 438-case universe 上变成可审计、可重建的建模数据资产。
 
@@ -36,9 +38,10 @@ CL-1 Document Intelligence freeze 已完成。当前不继续优化 Retriever、
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人并行执行计划**，规定角色、并行关系、时间窗口、交付物与 Gate；
 3. [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — **A / Pipeline Lead 当前操作手册**，包含网页端实现、本地 Pilot、438 全量与 determinism 验收；
 4. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
-5. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
-6. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
-7. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
+5. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 的冻结结果、Coverage hash 生命周期与本地产物政策。
+6. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
+7. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
+8. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
 8. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
@@ -113,7 +116,7 @@ A 负责人统一执行入口目前已经在活动分支实现：
 scripts/run_v04_pr_a.py
 ```
 
-该 CLI 只串联既有模块，不复制 Parser / Retriever / Agent 业务逻辑。网页端已经具备 A0 execution-context freeze、official cohort selection、Production Snapshot / Feature 串联、Oracle 状态、A5 Coverage Builder 与 A6 determinism checker；**真实 5-case Pilot、438-case Production materialization 与基于真实 artifact 的第二次 determinism run 仍必须在有本地 PDF 的环境执行。**
+该 CLI 只串联既有模块，不复制 Parser / Retriever / Agent 业务逻辑。A0–A6 已全部完成：438 个 official cases 均已生成 Production analysis、authoritative snapshot 和 100 维 `v04_document_features_v1` 特征；Oracle materialized 60，`no_reviewed_gold` 378，Production failure 与 silent drop 均为 0；A6 对 438 个 case 的 determinism 检查通过。
 
 详细命令与 Gate 见 [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md)。
 
@@ -154,7 +157,7 @@ PR-A5  Build unified coverage table
 PR-A6  Rerun and verify deterministic hashes
 ```
 
-当前工程状态：A0/A1/A5/A6 的代码与测试已经进入活动分支；A2/A3 以及真实 artifact 上的 A6 尚待本地数据运行。只有 PR-A 最终 Gate PASS 后才进入 PR-B Market-X Core 的正式合流，但 PR-B / PR-C 的准备工作可以提前并行。
+当前工程状态：A0–A6 全部完成，PR-A 已冻结。下一正式里程碑是 PR-B Market-X Core；本轮未启动 PR-B。
 
 ## 当前真实 readiness
 
@@ -163,9 +166,13 @@ PR-A6  Rerun and verify deterministic hashes
 - official universe：438 / 438；
 - local prospectus：438 / 438；
 - IPO OHLCV：432 / 438；
-- authoritative snapshots：最近一次真实 audit 时 0 / 438；
+- authoritative snapshots：438 / 438；
+- Production Document-X features：438 / 438（100 维）；
+- Oracle Document-X：60；`no_reviewed_gold`：378；
+- Production failures / silent drops：0 / 0；
 - HSI / industry benchmark / total-market turnover：仍缺失；
-- PR-A Document materialization：可以开始；
+- PR-A Document materialization：**COMPLETE / FROZEN**；
+- PR-B Market-X Core：**NOT STARTED**；
 - full Model-ready data gate：仍 blocked。
 
 这些数字只有在真实 materialization / source audit 后才允许更新。

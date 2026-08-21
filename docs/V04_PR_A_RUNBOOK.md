@@ -1,10 +1,12 @@
 # v0.4 PR-A — Pipeline Lead Execution Runbook
 
 > Owner: **A — Tech Lead / Pipeline**  
-> Status: **WEB IMPLEMENTATION READY / LOCAL MATERIALIZATION PENDING**  
+> Status: **COMPLETE / FROZEN**
 > Scope: `PR-A — Document + Oracle Materialization & Coverage`
 
 本文件是 A 负责人执行 PR-A 的操作手册。它不替代 `END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`，而是把 PR-A 的工程步骤、命令、产物和验收条件固定下来。
+
+最终结果：438/438 Production analyses、438/438 authoritative snapshots、438/438 100 维 Production features，Production failures = 0，Oracle materialized = 60，`no_reviewed_gold` = 378，A6 full determinism = PASS。详见 [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)。
 
 ## 1. A 的目标
 
@@ -421,18 +423,18 @@ A 提供统一 coverage；E 对 Oracle 异常、最终产品集成负责进一�
 
 只有以下条件全部满足，A 才能建议进入 PR-B / PR-D 依赖链：
 
-- [ ] CI 全绿；
-- [ ] A0 execution context 已冻结；
-- [ ] 5-case Production pilot 已真实运行；
-- [ ] Pilot deterministic rerun PASS；
-- [ ] official full cohort = 438；
-- [ ] 438 cases 全部出现在 coverage；
-- [ ] 每个 Production failure 有 stage / reason；
-- [ ] Production feature manifest hash 一致；
-- [ ] Oracle missing / failed / materialized 状态明确；
-- [ ] Production ∩ Oracle intersection count 已冻结；
-- [ ] Full determinism report PASS；
-- [ ] 2025 blind outcome 未被读取或用于调优。
+- [x] CI 全绿；
+- [x] A0 execution context 已冻结；
+- [x] 5-case Production pilot 已真实运行；
+- [x] Pilot deterministic rerun PASS；
+- [x] official full cohort = 438；
+- [x] 438 cases 全部出现在 coverage；
+- [x] 每个 Production failure 有 stage / reason（本轮 failure count = 0）；
+- [x] Production feature manifest hash 一致；
+- [x] Oracle missing / failed / materialized 状态明确；
+- [x] Production ∩ Oracle intersection count 已冻结；
+- [x] Full determinism report PASS；
+- [x] 2025 blind outcome 未被读取或用于调优。
 
 ## 16. 网页端与本地端边界
 
@@ -455,4 +457,4 @@ A 提供统一 coverage；E 对 Oracle 异常、最终产品集成负责进一�
 - A6 基于真实生成 artifact 的第二次运行；
 - 对本地 PDF 缺失、性能、磁盘与运行时异常的实际排查。
 
-因此网页端代码完成不等于 PR-A 已 PASS。PR-A 的最终 Gate 必须等真实 PDF materialization 结果回来后才能关闭。
+上述本地阶段现已全部完成，PR-A Gate 已关闭并冻结。canonical bulk artifacts 继续保留在本地 ignored 目录；对外打包前必须清理 execution context 中的本地绝对路径，同时保留 hash 与 source revision provenance。
