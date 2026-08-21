@@ -1,173 +1,201 @@
 # v0.4 Role A → Codex Handoff
 
-> Status: **READY FOR IMPLEMENTATION**  
+> Status: **IMPLEMENTATION PREP DONE / LOCAL EXECUTION EVIDENCE REQUIRED**  
 > Date: **2026-08-21**  
-> State: **PR-A COMPLETE / FROZEN; PR-B NEXT**
+> State: **PR-A COMPLETE / FROZEN; PR-B Core implemented on this branch, Gate not yet passed**
 
 ## 1. Read first
 
-Before coding, read:
+Before changing code, read:
 
 1. `AGENTS.md`
 2. `docs/README.md`
 3. `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`
-4. `docs/V04_ROLE_A_CROSS_TEAM_PREP.md`
-5. `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
-6. `docs/research/V04_PRELISTING_MARKET_FEATURES.md`
-7. `docs/research/V04_DATA_READINESS.md`
+4. `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
+5. `docs/research/V04_DATA_READINESS.md`
+6. `docs/V04_ROLE_A_CROSS_TEAM_PREP.md`
 
-Inspect existing implementations/tests before editing. The Market schema, feature engine, dataset builders and blind guards already exist and should not be duplicated.
+The web-side preparation has already implemented the unblocked PR-B Core work. Do not rebuild the same orchestration or reopen frozen Document Intelligence.
 
-## 2. Hard boundaries
+## 2. What is already done on this branch
 
-Do not reopen v0.3 Document Intelligence, change the frozen 20-position Market vector without an explicit versioned decision, use target post-listing data as X, access 2025 blind outcomes, use single-stock `S_DQ_AMOUNT` as total-market turnover, infer industry benchmarks from company names, or jump to PR-C before PR-B passes.
-
-## 3. Immediate PR-B implementation queue
-
-### B1 — Audit real source availability
-
-Inspect the local data roots and `data/catalog/v04_source_manifest.json` for:
-
-- HSI daily close;
-- industry-to-index mapping;
-- industry-index history;
-- HK total-market turnover;
-- IPO EOD / prior-IPO history.
-
-For each available source record identity, path/upstream ID, format, coverage, version/checksum, unit/scope and PIT suitability. If a required source is absent, report it as a blocker instead of fabricating a substitute.
-
-### B2 — Audit/harden `scripts/build_v04_ipo_eod_store.py`
-
-The current script filters using document `source_year`. Confirm that target selection matches the authoritative official listing-year / official-universe cohort. If not, correct it and add regression tests for known source-year/listing-year mismatches. Preserve streaming behavior and source hashes.
-
-### B3 — Add real governed reference-market adapters
-
-`InMemoryMarketReferenceDataProvider` is test-only. For approved sources that really exist, implement deterministic adapters returning the existing `MarketReferenceBar` / `MarketActivityObservation` contracts.
-
-Adapters must validate rows, reject duplicate reference/date records, preserve source/version provenance, enforce exclusive pre-listing access and have contract tests.
-
-`src/ipo_risk/providers/` is protected: state compatibility impact and add tests before changing it.
-
-### B4 — Implement `scripts/run_v04_pr_b.py`
-
-Create a thin orchestration CLI. Reuse `PreListingMarketFeatureEngine`; do not copy its formulas.
-
-Required responsibilities:
+Implemented:
 
 ```text
-load official 2020–2024 cohort
-freeze execution/source provenance
-resolve governed market sources
-build one Market snapshot per case
-vectorize with frozen manifest
-write per-case status
-build coverage and failure reports
-run PIT audit
-support conflict-safe resume
-support deterministic verification
+scripts/build_v04_ipo_eod_store.py
+scripts/run_v04_pr_b.py
+src/ipo_risk/market/ipo_market_context_features.py
 ```
 
-Detailed behavior and artifact fields are frozen in `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`.
+Tests added/expanded:
 
-### B5 — Add PR-B integration tests
+```text
+tests/unit/test_v04_ipo_eod_store.py
+tests/unit/test_v04_pr_b_orchestration.py
+tests/unit/test_ipo_market_context_features.py
+```
 
-Cover at least:
+Governance corrections already made:
 
-- official cohort preflight;
-- strict `observation_date < listing_date`;
-- future target/reference rows cannot change X;
-- future prior-IPO labels excluded;
-- source provenance/checksum recorded;
-- missing source remains explicit;
-- no prohibited turnover proxy;
-- one case failure does not remove other coverage rows;
-- same-provenance resume reuses;
-- changed provenance fails closed;
-- deterministic snapshot/feature/coverage hashes;
-- 2025 blind outcomes are not accessed.
+- governed EOD cohort uses authoritative `official_listed_date.year`, not document `source_year`;
+- EOD store retains `OBJECT_ID` provenance;
+- `S_DQ_AMOUNT` is explicitly per-security only, never total-market turnover;
+- PR-B Core uses strictly pre-listing prior-IPO context;
+- prior 1D/5D outcomes enter X only after their target session occurred strictly before the target listing date;
+- 2025 blind outcomes remain inaccessible;
+- resume conflicts fail closed;
+- semantic coverage is stable across `created`/`reused` lifecycle changes;
+- HSI / industry benchmark / turnover remain Market-X Extended gaps and are not Core blockers.
 
-Reuse existing Market math tests rather than duplicating them.
+## 3. Immediate Codex task: run, verify, fix only real failures
 
-### B6 — Pilot, full run, determinism
+### Step 1 — sync this existing branch
 
-Run a small Development pilot first. Check artifact layout, PIT, missingness, hashes and resume behavior.
+Continue on the current branch. **Do not create another branch unless the user explicitly asks.**
 
-Then run the full governed 438-case 2020–2024 cohort, followed by resume + determinism verification. One case failure must not stop the batch.
+Confirm the files above are present before editing.
 
-Only real run results may update readiness counts.
-
-### B7 — Full validation and PR-B completion evidence
-
-Run:
+### Step 2 — install and run targeted tests
 
 ```bash
 python -m pip install -e '.[dev,retrieval-research]'
+pytest -q \
+  tests/unit/test_v04_ipo_eod_store.py \
+  tests/unit/test_ipo_market_context_features.py \
+  tests/unit/test_v04_pr_b_orchestration.py \
+  tests/unit/test_market_provider_and_labels.py \
+  tests/unit/test_market_governance_validation.py
+```
+
+If tests fail, fix the actual implementation defect. Do not weaken assertions or change the frozen PIT/no-leakage rules to make tests pass.
+
+### Step 3 — run full tests
+
+```bash
 pytest -q
 ```
 
-If PR-B actually passes, update `docs/research/V04_DATA_READINESS.md`, `docs/ROADMAP.md` and `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` from measured results, and add a concise PR-B completion report/freeze manifest. Do not claim green tests or coverage without running them.
+Record the exact pass/fail count. Do not claim green CI/tests unless they actually ran.
 
-## 4. Stop at the PR-B Gate
+### Step 4 — run PR-B pilot with the local governed market root
 
-After the acceptance checklist passes, stop and report:
+```bash
+python scripts/run_v04_pr_b.py \
+  --catalog-dir data/catalog \
+  --data-root <LOCAL_MARKET_ROOT> \
+  --output-dir reports/v04_pr_b_pilot \
+  --limit 5
+```
 
-- files changed;
-- protected/public interface impact;
-- actual source/Market-X coverage;
-- targeted/full test results;
-- remaining source limitations;
-- whether PR-B is ready to accept.
+Inspect:
 
-Do not formally advance to PR-C until PR-B is accepted.
+```text
+execution_context.json
+governed_eod/v04_ipo_eod.manifest.json
+governed_eod/v04_ipo_eod.csv
+core_features/*.json
+coverage.json
+coverage.csv
+failure_report.csv
+run_manifest.json
+```
 
-## 5. Work remaining after PR-B
+The pilot is engineering validation only. Do not tune feature rules from those five cases.
 
-### PR-C — D lead
+### Step 5 — full 438-case PR-B Core run
 
-Freeze the 5D weak-performance target and classification threshold using 2020–2023 Development only. Keep 2024 out of threshold selection and 2025 y closed. Produce outcome policy manifest and leakage tests.
+```bash
+python scripts/run_v04_pr_b.py \
+  --catalog-dir data/catalog \
+  --data-root <LOCAL_MARKET_ROOT> \
+  --output-dir reports/v04_pr_b
+```
 
-### PR-D — D lead + A integration
+Expected governance preflight:
 
-Reuse existing dataset builders to materialize canonical Document X + Market X + frozen Y assets. Audit identity joins, duplicates/orphans, missingness, M/P/O/PM/OM cohorts, provenance and feature-only blind export.
+```text
+official target cohort = 438
+2025 blind outcomes     = not accessed
+```
 
-### PR-E — D lead
+Do not assume actual Core materialization count before the run reports it.
 
-Run fair M/P/O/PM/OM baselines with the same cohort, target, split, preprocessing and model family. Use Oracle only as an evaluation ceiling/error-attribution path.
+### Step 6 — resume + determinism audit
 
-### PR-F — D lead
+```bash
+python scripts/run_v04_pr_b.py \
+  --catalog-dir data/catalog \
+  --data-root <LOCAL_MARKET_ROOT> \
+  --output-dir reports/v04_pr_b \
+  --resume \
+  --verify-determinism
+```
 
-After baseline diagnostics, implement LightGBM, time-aware Development CV, frozen 2024 validation, SHAP, calibration/error analysis and reproducible experiment manifests.
+Required result for Gate acceptance:
 
-### PR-G — E lead
+```text
+mismatch_count = 0
+coverage semantic hash unchanged
+```
 
-Implement Market Agent + Final Supervisor on frozen model outputs. Agents may explain, not alter model scores or invent evidence.
+### Step 7 — freeze measured PR-B results only if Gate passes
 
-### PR-H — E lead + A integration
+Only after targeted tests, full tests, full materialization and determinism all succeed:
 
-Complete Streamlit Full E2E for 3–5 real IPOs through the controlled service boundary.
+- update `docs/research/V04_DATA_READINESS.md` with measured numbers;
+- update `docs/ROADMAP.md` and `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` to PR-B COMPLETE / FROZEN;
+- add a concise PR-B completion report / small frozen manifest;
+- report actual failures/missingness rather than hiding them.
+
+Stop at the PR-B Gate. Do not formally start PR-C before acceptance.
+
+## 4. Core vs Extended: do not reopen this decision
+
+Authoritative master-plan interpretation for PR-B is now explicit:
+
+```text
+PR-B Core
+= governed IPO EOD + prior-IPO context already available today
+
+Market-X Extended
+= HSI + industry benchmark mapping/history + HKEX total-market turnover
+```
+
+The Extended sources are still absent in the committed source manifest. Their absence must remain explicit, but **does not justify fabricating a proxy and does not by itself fail PR-B Core**.
+
+Do not:
+
+- create fake HSI observations;
+- use Hang Seng Bank as HSI;
+- infer industry benchmark IDs from company/industry text;
+- use `S_DQ_AMOUNT` as total-market turnover;
+- fill missing Extended features with neutral zero.
+
+If the user later supplies/approves authoritative Extended sources, integrate them under the existing versioned Extended contract with provenance and tests.
+
+## 5. Remaining work after PR-B
+
+```text
+PR-C — 5D weak-performance target policy freeze
+PR-D — canonical model-ready dataset
+PR-E — M/P/O/PM/OM baseline + Oracle diagnostic
+PR-F — LightGBM + explainability
+PR-G — Market Agent + Final Supervisor
+PR-H — Streamlit Full E2E + 3–5 real IPO demo
+```
+
+PR-C threshold selection may use only 2020–2023 Development. 2024 is formal validation; 2025 y remains blind.
 
 ## 6. Remaining ownership
 
 | Role | Remaining work |
 |---|---|
-| A | PR-B orchestration/integration/Gate review; later cross-module integration |
-| B | frozen Document downstream QA / explanation traceability |
-| C | authoritative source acquisition/approval, real PIT adapters and Market-X domain QA |
+| A | PR-B local integration/Gate review; later cross-module integration |
+| B | frozen Document downstream QA / evidence-to-driver traceability |
+| C | PR-B domain QA; later authoritative Extended-source acquisition/approval |
 | D | PR-C target policy, PR-D dataset, PR-E/F modeling |
 | E | Oracle isolation QA, PR-G supervisor, PR-H product integration |
 
-## 7. Human/C decisions Codex must not guess
+## 7. Suggested Codex instruction
 
-Stop and ask if these are not already governed:
-
-- authoritative HSI source;
-- authoritative industry benchmark taxonomy/mapping;
-- authoritative industry-index histories;
-- authoritative HK total-market turnover source/scope/unit;
-- whether PR-B Core requires all extended source families real, or allows explicitly missing extended families under a narrower documented Core definition.
-
-No scope decision permits proxy substitution.
-
-## 8. Suggested Codex instruction
-
-> Read `AGENTS.md`, `docs/V04_ROLE_A_CODEX_HANDOFF.md` and `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`. Audit current PR-B foundations and real local source availability first. Do not duplicate the frozen Market feature engine/schema. Implement unblocked PR-B tasks in order, preserve PIT/no-leakage and 2025 blind-y boundaries, run tests, and stop at the PR-B Gate. Report missing authoritative sources as blockers rather than inventing them.
+> Continue on the existing branch. Read `AGENTS.md`, `docs/V04_ROLE_A_CODEX_HANDOFF.md` and `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`. The unblocked PR-B Core code and tests are already implemented. Run targeted tests, full pytest, a 5-case pilot, the full 438-case run, then `--resume --verify-determinism`. Fix only real failures without weakening PIT/no-leakage rules. If and only if all PR-B Gate evidence passes, freeze measured results in the readiness/roadmap/master-plan docs, then stop before PR-C.
