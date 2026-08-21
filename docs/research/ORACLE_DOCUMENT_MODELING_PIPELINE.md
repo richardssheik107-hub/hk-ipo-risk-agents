@@ -1,7 +1,7 @@
 # Oracle Document Modeling Pipeline
 
 > Status: **MERGED / EVALUATION-ONLY**  
-> Documentation review: **2026-08-20**
+> Documentation review: **2026-08-21**
 
 Oracle 是评测上限 / 错误归因旁路，永远不是 production runtime。
 
@@ -50,9 +50,9 @@ python scripts/build_oracle_document_features.py `
 
 每个 case 生成独立 feature artifact 和 failure report；`resume` 只允许复用完全一致的 content / provenance。发生 provenance conflict 时 fail closed，不覆盖。
 
-## 3. Current PR-A role
+## 3. Frozen PR-A result
 
-当前 PR-A 只完成：
+PR-A 已完成：
 
 ```text
 Oracle inventory
@@ -62,9 +62,9 @@ Oracle inventory
 → deterministic rerun
 ```
 
-Oracle 不要求覆盖全部 438 cases；它只覆盖真正具有 reviewed expert Gold 的 eligible case。
+冻结结果为 Oracle materialized 60、`no_reviewed_gold` 378、Production ∩ Oracle 60。Oracle 不要求覆盖全部 438 cases；它只覆盖真正具有 reviewed expert Gold 的 eligible case。
 
-PR-A 不训练 Oracle model。
+PR-A 没有训练 Oracle model，且已经 COMPLETE / FROZEN。当前正式下一阶段是尚未启动的 PR-C；Oracle 真正进入建模比较要等待 PR-D / PR-E。
 
 ## 4. Later modeling role
 

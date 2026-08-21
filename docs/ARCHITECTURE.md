@@ -4,7 +4,7 @@
 > Stable document baseline: **v0.3.0 RELEASED / FROZEN**  
 > PR-A Document materialization: **COMPLETE / FROZEN**
 > Active program: **v0.4 End-to-End Closed Loop**  
-> PR-B Market-X Core: **COMPLETE / FROZEN**
+> PR-B Market-X Core: **COMPLETE / FROZEN ON MAIN**
 > Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
 
 本文件描述当前有效架构与仍有约束力的边界。历史 v0.2/v0.3 设计过程和已完成的一次性实验通过 Git history/release 追溯。
@@ -144,9 +144,9 @@ Official IPO metadata
 
 当前 governed IPO OHLCV coverage = 432 / 438；6 个 case eligible but outcome unavailable。
 
-## 5. Market-X Core — current PR-B production/research boundary
+## 5. Market-X Core — frozen PR-B boundary
 
-PR-B Core 的目标不是依赖当前缺失的 HSI/industry/turnover 后才开始，而是先把**已经真实受治理且可严格 point-in-time 的市场上下文**稳定物化。
+PR-B Core 的目标不是依赖当前缺失的 HSI/industry/turnover 后才开始，而是先把**已经真实受治理且可严格 point-in-time 的市场上下文**稳定物化。该目标已经完成并冻结在 `main`。
 
 Canonical flow：
 
@@ -232,7 +232,7 @@ Official 438-case cohort
 
 The CLI does not expose a 2025 blind-outcome option.
 
-PR-B has passed its Gate and is now a frozen 438-case Core asset. Targeted/full tests, the real pilot/full materialization and deterministic resume are recorded in `V04_PR_B_COMPLETION_REPORT.md`.
+PR-B has passed its Gate and is now a frozen 438-case Core asset. Targeted/full tests, the real pilot/full materialization and deterministic resume are recorded in [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md).
 
 ## 6. Market-X Extended — frozen optional source-dependent layer
 
@@ -320,13 +320,13 @@ Its historical combined order is:
 
 PR-B Core introduces a distinct 30-position versioned artifact. PR-D must therefore make an explicit, versioned canonical-dataset decision about Core and optional Extended feature groups rather than silently mutating the old 120-position Extended join contract.
 
-Any PR-D join must exact-match identity/governance fields such as `case_id`, stock, listing date/cohort and split. Blind outcome cannot form a modeling record; 2025 remains feature-only until formally opened.
+Any PR-D join must exact-match identity/governance fields such as `case_id`, stock, listing date/cohort and split. Blind outcome cannot form a modeling record；2025 remains feature-only until formally opened.
 
 ## 8. Formal modeling sequence
 
 ```text
-PR-B Market-X Core
-→ PR-C 5D Outcome Policy Freeze
+PR-B Market-X Core                 COMPLETE / FROZEN
+→ PR-C 5D Outcome Policy Freeze    NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
@@ -409,7 +409,7 @@ src/ipo_risk/domain/risk_codes.py
 
 Any change must state compatibility impact and add contract tests.
 
-The frozen PR-B Core implementation does not alter these protected interfaces; it hardens existing market research/orchestration code and adds a script-level materialization entry point.
+The frozen PR-B Core implementation does not alter these protected interfaces；it hardens existing market research/orchestration code and adds a script-level materialization entry point.
 
 ## 12. Evidence / Calculation / Verification
 
@@ -417,7 +417,7 @@ Formal RiskItem must have Evidence. Numeric conclusions require auditable determ
 
 ## 13. Current execution state
 
-Completed/frozen:
+Completed/frozen：
 
 ```text
 v0.3 Document Intelligence
@@ -430,16 +430,7 @@ PR-A 438-case Document + Oracle materialization
 PR-B 438-case Market-X Core + governed EOD materialization
 ```
 
-PR-B frozen implementation:
-
-```text
-Market-X Core manifest/vectorizer
-+ governed EOD listing-year correction
-+ canonical run_v04_pr_b.py
-+ PIT / resume / failure / determinism tests
-```
-
-Frozen execution evidence:
+Frozen execution evidence：
 
 ```text
 targeted tests                  68 passed
@@ -452,11 +443,14 @@ resume + determinism           438 checked / 0 mismatches / PASS
 
 PR-C is the next formal milestone and remains **NOT STARTED**.
 
-Role A/Codex contract:
+Frozen PR-B evidence / historical audit records：
 
-- [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md)
-- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
-- [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md)
+- [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — authoritative measured completion report；
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — frozen acceptance / reproducibility contract；
+- [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — historical preparation record；
+- [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — historical execution handoff。
+
+The Role-A preparation/handoff files are no longer current execution instructions.
 
 ## 14. Retriever / LLM future position
 
@@ -464,10 +458,14 @@ Retriever/LLM optimization is deferred until PR-E. If Oracle is strong while Pro
 
 ## 15. Source of truth
 
+Current execution / governance source of truth：
+
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)
-3. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) for current PR-B implementation/Gate
-4. [`ROADMAP.md`](ROADMAP.md)
-5. [`PROJECT_SPEC.md`](PROJECT_SPEC.md)
-6. this architecture document
-7. [`DATA_SCHEMA.md`](DATA_SCHEMA.md)
+3. [`ROADMAP.md`](ROADMAP.md)
+4. [`PROJECT_SPEC.md`](PROJECT_SPEC.md)
+5. this architecture document
+6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md)
+7. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
+
+Frozen PR-B evidence is carried by [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md), [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json), and [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md).

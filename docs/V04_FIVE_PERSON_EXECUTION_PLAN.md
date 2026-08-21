@@ -1,6 +1,6 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED**
+> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN ON MAIN; PR-C NEXT / NOT STARTED**
 > Date: **2026-08-21**
 > Strategy: **End-to-End Closed Loop First**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
@@ -73,14 +73,14 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 
 主要负责：
 
-- PR-A 总负责人；
+- PR-A 历史总负责人；
 - orchestration / batch / resume / provenance；
 - coverage / reproducibility；
 - CI / integration；
 - 各正式 Gate 的接口与数据一致性检查；
-- 后续 PR-B～PR-H 的 pipeline / integration 支持。
+- 后续 PR-C～PR-H 的 pipeline / integration 支持。
 
-不负责：重新实现 Parser、Retriever、Agent 的业务逻辑。
+不负责：重新实现 Parser、Retriever、Agent 的业务逻辑，也不代替 D 决定 Outcome / threshold 等研究 policy。
 
 ### A 的核心交付
 
@@ -130,7 +130,7 @@ cross-module contract checks
 - Market coverage / missingness；
 - 2025 blind data boundary。
 
-PR-B Owner 任务已完成并冻结。PR-C 为下一正式里程碑，但尚未启动。
+PR-B Owner 任务已完成并冻结在 `main`。PR-C 为下一正式里程碑，但尚未启动。
 
 ---
 
@@ -150,7 +150,7 @@ PR-B Owner 任务已完成并冻结。PR-C 为下一正式里程碑，但尚未�
 - SHAP / calibration / ablation / error analysis；
 - 最终研究结论。
 
-PR-C 前可以做 preparation，但正式 Outcome policy 只有 PR-B Gate 后才进入正式冻结流程。
+PR-B Gate 已通过。当前 PR-C 尚未正式启动；D 可以做 outcome methodology preparation，但最终 5D policy / threshold 必须在独立 PR-C 任务中、只使用 Development 数据冻结。
 
 ---
 
@@ -221,7 +221,7 @@ A6  full determinism                 DONE
 
 ---
 
-# 4. PR-B：Market-X Core + Governed EOD Store — COMPLETE / FROZEN
+# 4. PR-B：Market-X Core + Governed EOD Store — COMPLETE / FROZEN ON MAIN
 
 ## Owner
 
@@ -229,24 +229,17 @@ A6  full determinism                 DONE
 
 ## 目标
 
-建立受 point-in-time 治理的：
-
-```text
-PreListingMarketFeatureBuilder
-```
-
-把 IPO 上市前真正可获得的信息转换为 Market X。
+建立受 point-in-time 治理的 Market-X Core，把 IPO 上市前真正可获得的信息转换为可重建的市场上下文 X。
 
 重点：
 
 - IPO structure；
 - listing / issue context；
 - prior-IPO historical context；
-- HSI / broad market；
-- authoritative industry benchmark；
-- total-market turnover；
 - feature missingness；
 - source / version / checksum / PIT provenance。
+
+HSI / authoritative industry benchmark / total-market turnover 属于独立 Market-X Extended source families，当前仍显式 missing，不是 PR-B Core 必须伪造的输入。
 
 ### 硬 Gate
 
@@ -273,7 +266,7 @@ Market Coverage Report
 PIT Audit Report
 ```
 
-PR-B 已 PASS；PR-C 是下一正式里程碑，但仍为 **NOT STARTED**。
+PR-B 已 PASS 并完成 mainline publication；PR-C 是下一正式里程碑，但仍为 **NOT STARTED**。
 
 ---
 
@@ -281,7 +274,7 @@ PR-B 已 PASS；PR-C 是下一正式里程碑，但仍为 **NOT STARTED**。
 
 ## Owner
 
-**D 主导，C 提供 governed EOD 数据，A 做 schema / reproducibility review。**
+**D 主导，C 提供 governed EOD 数据，A 做 schema / reproducibility / blind-Gate review。**
 
 定义并冻结：
 
@@ -318,20 +311,21 @@ PR-C PASS 后才正式进入 PR-D。
 
 ## Owner
 
-**D 主导，A 做数据工程支持，B/C/E 分别负责 Document / Market / Oracle QA。**
+**D 主导，A 做数据工程 / contract integration 支持，B/C/E 分别负责 Document / Market / Oracle QA。**
 
 输入：
 
 ```text
 Document X
-Market X
+Market-X Core
+optional Market-X Extended
 Outcome Y
 ```
 
 输出：
 
 ```text
-V04ModelingDataset
+versioned canonical V04 modeling dataset
 ```
 
 必须检查：
@@ -343,9 +337,12 @@ case_id 一一对应
 split 正确
 2025 blind policy 正确
 Document / Market feature schema 一致
+Core / Extended feature group order 显式版本化
 Outcome horizon 一致
 provenance 可重建
 ```
+
+不得静默把新的 30-position Core 插入现有历史 120-position Extended join。
 
 ---
 
@@ -401,7 +398,7 @@ Error analysis
 
 ## Owner
 
-**E 主导，B 负责 Document evidence，C 负责 Market explanation，D 提供模型解释。**
+**E 主导，A 负责 cross-module integration，B 负责 Document evidence，C 负责 Market explanation，D 提供模型解释。**
 
 统一：
 
@@ -460,15 +457,17 @@ Final Risk Report
 
 正式 Gate 严格串行不等于五个人必须空等。
 
-PR-B 已完成并处于发布审查阶段。PR-C 尚未正式启动；在获得独立任务授权前，只允许不冻结 policy 的准备性工作：
+PR-B 已完成、冻结并发布到 `main`。PR-C 尚未正式启动；在获得独立 PR-C 任务授权前，只允许不会冻结 PR-C policy 的准备性工作：
 
 ```text
-A  PR-B release / integration / reproducibility audit
+A  PR-C schema / blind / provenance / reproducibility Gate checklist 与后续 integration preparation
 B  Document explanation / downstream interface QA
-C  governed EOD / Market-X Core frozen-source support
-D  PR-C outcome methodology preparation（不冻结正式 policy）
+C  governed EOD / frozen Market-X Core source support；Extended authoritative-source research
+D  PR-C outcome methodology preparation（不冻结正式 policy / threshold）
 E  Product / Final Supervisor / UI skeleton preparation（不绑定未冻结模型）
 ```
+
+A 不需要继续做 PR-B release audit；PR-B 只有出现明确 leakage、冻结资产错误或不可复现问题时才允许申请重开。
 
 同理，未来每个阶段都允许做**不会越过当前 Gate**的准备。
 
@@ -526,6 +525,7 @@ E  Product / Final Supervisor / UI skeleton preparation（不绑定未冻结模�
 [x] No post-listing leakage
 [x] Determinism 438 checked / 0 mismatches
 [x] 2025 blind y not accessed
+[x] PR #80 / #81 mainline publication and documentation closure
 ```
 
 ## Gate PR-C
@@ -545,7 +545,8 @@ Leakage tests
 
 ```text
 Document X
-Market X
+Market-X Core
+optional Market-X Extended
 Outcome Y
 Canonical model-ready dataset
 Dataset provenance / rebuild path
@@ -577,7 +578,7 @@ Real prospectus
 
 # 14. 什么情况下暂停 / 解冻
 
-不要因为普通性能改进空间就重新打开冻结的 Document Intelligence。
+不要因为普通性能改进空间就重新打开冻结的 Document Intelligence 或 PR-B Market-X Core。
 
 只有出现以下情况才申请暂停当前主线或解冻边界：
 
@@ -587,6 +588,7 @@ Real prospectus
 - Production 结果不可复现；
 - 现有 Agent 语义错误真正阻断闭环；
 - Market-X 无法满足 point-in-time；
+- PR-B frozen artifact 与 source provenance 不一致；
 - 2025 blind 被意外读取。
 
 普通的：
@@ -595,8 +597,9 @@ Real prospectus
 - 某些风险召回率还能提高；
 - 某个 Agent prompt 可以更好；
 - LLM 可以 fine-tune；
+- Extended source 仍缺但 Core 已受治理；
 
-都不应阻断 v0.4 闭环，留给 PR-E diagnostic 后的 v0.5+ 决策。
+都不应阻断 v0.4 闭环，留给对应后续 milestone 或 PR-E diagnostic 后的 v0.5+ 决策。
 
 ---
 

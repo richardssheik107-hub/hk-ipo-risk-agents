@@ -38,7 +38,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 
 ## Current Data Readiness
 
-以 2026-08-21 PR-A A6 与最近市场数据审计为准：
+以 2026-08-21 PR-A A6 与 PR-B 冻结审计为准：
 
 - 官方 2020–2024 IPO universe：438 cases；
 - local prospectus：438 / 438；
@@ -56,7 +56,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
-- full model-ready gate：仍 blocked。
+- full model-ready gate：仍 blocked，等待 PR-C target policy 与 PR-D canonical dataset。
 
 详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。PR-B 冻结证据见 [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)。
 
@@ -149,7 +149,7 @@ scripts/build_v04_ipo_eod_store.py
 scripts/run_v04_pr_b.py
 ```
 
-EOD store 已改为按 `official_listed_date.year` 选择 2020–2024 official cohort，而不是使用 document `source_year`；并保留 `OBJECT_ID` source provenance。
+EOD store 按 `official_listed_date.year` 选择 2020–2024 official cohort，而不是使用 document `source_year`；并保留 `OBJECT_ID` source provenance。
 
 ```text
 official coverage             438 / 438
@@ -160,6 +160,8 @@ determinism                   438 checked / 0 mismatches / PASS
 coverage hash                 768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
 2025 blind y accessed         NO
 ```
+
+Materialization source revision：`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。PR-B 经 PR #80 发布到 `main`，并由 PR #81 完成 post-merge 文档一致性收口。
 
 ### Market-X Extended
 
@@ -182,11 +184,11 @@ HK total-market turnover
 
 这些是 Extended gaps，不是 Core 通过所必须伪造的输入。禁止使用不等价 proxy、假 benchmark row 或 neutral zero 补齐。
 
-PR-B Gate 详细标准：
+PR-B 冻结记录：
 
-- [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 - [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)
 - [`reports/frozen/v04_pr_b_market_x_core_manifest.json`](reports/frozen/v04_pr_b_market_x_core_manifest.json)
+- [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — frozen acceptance contract / audit reference
 
 ## Modeling Governance
 
@@ -221,12 +223,6 @@ pytest -q
 python scripts/validate_project.py
 ```
 
-PR-B Core pilot：
-
-```powershell
-python scripts/run_v04_pr_b.py --catalog-dir data/catalog --data-root <LOCAL_MARKET_ROOT> --output-dir reports/v04_pr_b_pilot --limit 5
-```
-
 启动稳定 offline 文档产品：
 
 ```powershell
@@ -244,17 +240,11 @@ python scripts/validate_project.py
 ```
 
 ```bash
-python scripts/run_v04_pr_b.py \
-  --catalog-dir data/catalog \
-  --data-root <LOCAL_MARKET_ROOT> \
-  --output-dir reports/v04_pr_b_pilot \
-  --limit 5
-```
-
-```bash
 export IPO_RISK_CONFIG=configs/v03_offline.yaml
 python -m streamlit run app/streamlit_app.py
 ```
+
+PR-B Core pilot / full-run commands 仅用于 frozen artifact 的复现与审计，不再是当前执行任务；命令和验收标准见 [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)。
 
 密钥只允许来自环境变量；不得提交 `.env`、Token、API Key 或本地绝对路径。
 
@@ -279,9 +269,11 @@ Read current guidance in this order:
 2. [`docs/README.md`](docs/README.md)
 3. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 4. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md)
-5. [`docs/V04_ROLE_A_CROSS_TEAM_PREP.md`](docs/V04_ROLE_A_CROSS_TEAM_PREP.md)
-6. [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
-7. [`docs/V04_ROLE_A_CODEX_HANDOFF.md`](docs/V04_ROLE_A_CODEX_HANDOFF.md)
-8. [`docs/ROADMAP.md`](docs/ROADMAP.md)
+5. [`docs/ROADMAP.md`](docs/ROADMAP.md)
+6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
+7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
+9. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
+10. [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md) — frozen PR-B evidence
 
-Historical stage documents remain in Git history/releases rather than the active reading path.
+`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md` 是冻结的 PR-B 验收契约；`docs/V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `docs/V04_ROLE_A_CODEX_HANDOFF.md` 是历史审计记录，不再属于当前执行入口。

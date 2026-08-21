@@ -4,8 +4,10 @@
 > Strategy: **End-to-End Closed Loop First**  
 > Active target: **v0.4-MVP**  
 > PR-A: **COMPLETE / FROZEN**
-> PR-B: **COMPLETE / FROZEN**
+> PR-B: **COMPLETE / FROZEN ON MAIN**
 > Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
+> PR-B materialization source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
+> PR-B mainline closure: **PR #80 + PR #81 / `2675646c359a0138080960c916e8ef526c085c88`**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环，再依据实证结果决定是否重开 Retriever / LLM / Agent 优化。
 
 ---
@@ -20,7 +22,7 @@
 - CL-1 Freeze Current Document Intelligence：**COMPLETE / FROZEN**；
 - v0.4 End-to-End Closed Loop：**ACTIVE**；
 - PR-A：**COMPLETE / FROZEN**；
-- PR-B：**COMPLETE / FROZEN**；
+- PR-B：**COMPLETE / FROZEN ON MAIN**；
 - 下一正式里程碑 PR-C：**NEXT / NOT STARTED**。
 
 当前不再把 Retriever 指标提升、LLM Reranker、Fine-tuning 或 Prompt 优化作为 v0.4 的前置条件。
@@ -48,18 +50,18 @@
 - HSI history：MISSING；
 - authoritative industry benchmark mapping / history：MISSING；
 - total-market turnover：MISSING；
-- `MODEL_READY_DATA_GATE`：BLOCKED。
+- `MODEL_READY_DATA_GATE`：BLOCKED BY PR-C / PR-D。
 
-PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建的冻结数据资产。`MODEL_READY_DATA_GATE` 仍需等待 PR-C target policy 与 PR-D canonical dataset，不因 PR-B 完成而自动开放。
+PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建并已发布到 `main` 的冻结数据资产。`MODEL_READY_DATA_GATE` 仍需等待 PR-C target policy 与 PR-D canonical dataset，不因 PR-B 完成而自动开放。
 
 ### 0.2 近期严格主线
 
 ```text
-PR-A  Document + Oracle Materialization & Coverage
+PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
   ↓
-PR-B  Market-X Core + Governed EOD Store
+PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
   ↓
-PR-C  5D Outcome Policy Freeze
+PR-C  5D Outcome Policy Freeze                       NEXT / NOT STARTED
   ↓
 PR-D  Canonical Model-ready Dataset
   ↓
@@ -212,15 +214,13 @@ PR-A 已于 source revision `13e0281f5e65a970caaf1255e56d08597e1ead70` 完成物
 4. Production 与 Oracle 的公平交集有多少 case？
 ```
 
-在这四个问题没有被一个冻结 manifest 回答之前，不进入 PR-B。
+在这四个问题没有被一个冻结 manifest 回答之前，不进入 PR-B。该 Gate 已在 PR-A 冻结时满足；本节保留为历史 Gate 定义。
 
 ## 6. 现有能力：不要重写
 
-PR-A 必须复用当前已有组件：
+PR-A 复用并冻结了当前已有组件：
 
 ### 6.1 Production analysis
-
-现有：
 
 ```text
 scripts/run_v03_batch_analysis.py
@@ -231,8 +231,6 @@ configs/v03_offline.yaml
 `v03_offline` 使用真实 PyMuPDF Parser、真实 Retriever、Financial / Legal / Business Agents，且不要求外部付费 LLM。LLM 不可用能力必须显式降级。
 
 ### 6.2 Authoritative snapshot boundary
-
-现有：
 
 ```text
 src/ipo_risk/modeling/materialization.py
@@ -257,8 +255,6 @@ cohort_year <= 2024
 
 ### 6.3 Production feature vector
 
-现有：
-
 ```text
 src/ipo_risk/modeling/features.py
 DOCUMENT_FEATURE_MANIFEST_V1
@@ -268,8 +264,6 @@ vectorize_document_snapshot(...)
 Feature schema 为 `v04_document_features_v1`。缺失值不会自动变成“安全的 0”。
 
 ### 6.4 Oracle
-
-现有：
 
 ```text
 scripts/index_oracle_gold.py
@@ -301,229 +295,53 @@ scripts/run_v04_pr_a.py
 
 它是一个**薄 orchestration CLI**，不承载 Agent/Parser/Retriever 业务逻辑，只调用既有模块。
 
-如果需要新增内部 helper，可放在 `src/ipo_risk/modeling/`，但不修改受保护公共接口。
-
-## 8. PR-A 执行步骤
+## 8. PR-A 执行步骤（历史冻结流程）
 
 ### PR-A0 — Freeze execution context
 
-从最新 `main` 创建 PR-A 分支，并记录：
+记录：base commit SHA、config hash、official manifest/bridge hash、Document/Oracle Feature Manifest hash、Python/dependency environment、output root，并禁止把本地绝对路径写进 artifact。
 
-- base commit SHA；
-- `v03_offline` config hash；
-- official 438-case manifest / bridge hash；
-- Document Feature Manifest hash；
-- Oracle Feature Manifest hash；
-- Python / dependency environment；
-- output root。
-
-禁止把本地绝对路径写进 artifact。
-
-### PR-A1 — 实现 canonical orchestration CLI
-
-新增：
+### PR-A1 — Canonical orchestration CLI
 
 ```text
 scripts/run_v04_pr_a.py
 ```
 
-建议参数：
+支持受控的 catalog/data/output/config/limit/case-ids/resume/production-only/oracle-only 参数，默认拒绝 2025 blind，resume 只复用一致 provenance，失败必须进入结构化 failure report。
 
-```text
---catalog-dir
---data-root
---output-dir
---config          # default configs/v03_offline.yaml
---limit           # pilot only
---case-ids        # diagnostic/pilot only
---resume
---production-only
---oracle-only
-```
+### PR-A2 — Development pilot
 
-硬规则：
-
-- 默认只允许 2020–2024；
-- 2025 blind 必须 fail closed；
-- 默认不覆盖不同 provenance 的既有 artifact；
-- `resume` 只复用 hash / provenance 一致的结果；
-- 失败必须进入结构化 failure report；
-- 不允许 silent skip。
-
-### PR-A2 — 先跑小规模 Development pilot
-
-不要第一行代码写完就直接跑 438 个。
-
-先在 2020–2023 Development 中选一个**确定性、小规模 pilot**，例如按 official manifest 的稳定顺序取前 5 个可用 case：
-
-```text
-python scripts/run_v04_pr_a.py \
-  --config configs/v03_offline.yaml \
-  --data-root <LOCAL_PROSPECTUS_ROOT> \
-  --output-dir reports/v04_pr_a_pilot \
-  --limit 5
-```
-
-Pilot 只检查工程正确性，不根据这 5 个 case 调风险规则。
-
-Pilot 必须验证：
-
-- analysis 可完成；
-- authoritative snapshot 可创建；
-- feature vector 可生成；
-- manifest hash 正确；
-- failure report 可读；
-- rerun 时成功 case 被 `reused`，而不是产生不同内容；
-- 任何 provenance 冲突会报错而不是覆盖。
+先在 Development 做小规模确定性 pilot，只检查工程正确性，不据此调整风险规则。
 
 ### PR-A3 — Production full materialization
 
-Pilot + tests 通过后，再运行 2020–2024 全部 438 case：
-
-```text
-python scripts/run_v04_pr_a.py \
-  --config configs/v03_offline.yaml \
-  --data-root <LOCAL_PROSPECTUS_ROOT> \
-  --output-dir reports/v04_pr_a \
-  --resume
-```
-
-现有单 case smoke 在旧审计机器上约 16 秒；438 case 的历史粗略顺序估计约两小时，但这只是容量参考，不能视为 SLA。
-
-全量运行期间：
-
-- 不因单 case 失败停止整个 batch；
-- 每个失败 case 记录异常类型和阶段；
-- 不自动修 Gold / feature / Agent 规则；
-- 不把 partial 结果偷偷标成 full success；
-- 不读取 2025。
+对 2020–2024 全部 438 case 运行；单 case 失败不终止 batch；失败进入结构化 report；不读取 2025。
 
 ### PR-A4 — Oracle materialization
 
-使用现有 Oracle 路径：
+Oracle 只覆盖存在 reviewed expert Gold 的 eligible case，并保留 annotation provenance。
 
-```text
-python scripts/index_oracle_gold.py \
-  --output-dir reports/v04_pr_a/oracle_index
+### PR-A5 — Unified coverage
 
-python scripts/build_oracle_document_features.py \
-  --all-eligible \
-  --output-dir reports/v04_pr_a/oracle_features \
-  --resume
-```
-
-Oracle 不要求覆盖 438。它只覆盖真正存在 reviewed expert Gold 的 case，并保留完整 annotation provenance。
-
-### PR-A5 — Build unified coverage table
-
-PR-A 必须生成一个 authoritative coverage artifact，字段至少包括：
-
-```text
-case_id
-stock_code
-source_year
-dataset_split
-
-production_analysis_status
-production_snapshot_status
-production_document_available
-production_failure_stage
-production_failure_reason
-production_snapshot_hash
-production_feature_hash
-production_feature_manifest_hash
-
-oracle_document_available
-oracle_failure_reason
-oracle_feature_hash
-oracle_feature_manifest_hash
-oracle_effective_annotation_hash
-```
-
-同时计算：
-
-```text
-Full Production Cohort count
-Oracle Eligible count
-Oracle Materialized count
-Production ∩ Oracle Intersection count
-Production failure count by stage/reason
-```
+覆盖 Production / Oracle 可用性、failure、snapshot/feature hash、manifest hash 与 intersection。
 
 ### PR-A6 — Determinism rerun
 
-在不修改输入的情况下第二次运行：
+Production snapshot/feature、Oracle feature 与 coverage 语义内容必须在相同输入下稳定。
 
-- Production successful snapshots 应 `reused`；
-- Production feature hash 不变；
-- Oracle content hash 不变；
-- coverage manifest 的语义内容不变；
-- 不允许第二次运行产生“悄悄不同”的结果。
+## 9. PR-A 冻结产物原则
 
-如果 hash 改变，PR-A 不通过，先定位 nondeterminism / provenance 问题。
-
-## 9. PR-A 建议产物
-
-本地 / CI artifact 建议统一在：
-
-```text
-reports/v04_pr_a/
-  run_manifest.json
-  coverage.csv
-  coverage.json
-  failure_report.csv
-  production/
-    analysis_results/
-    snapshots/
-    features/
-  oracle_index/
-  oracle_features/
-  reproducibility_report.json
-```
-
-大型运行结果、原始 PDF 和 cache 不提交 Git。仓库只提交：
-
-- orchestration code；
-- tests；
-- stable schema / manifest definitions（若必要）；
-- 小型、可审计的 summary report（若项目规则允许）。
+大型运行结果、原始 PDF 和 cache 不提交 Git。仓库只保留 orchestration code、tests、stable schema/manifest definitions，以及小型可审计 summary/frozen manifest。
 
 ## 10. PR-A 必测内容
 
-至少覆盖：
+包括 document materialization、feature manifest、Oracle、orchestration、2025 rejection、resume/provenance conflict、determinism、coverage completeness 等，并在冻结前运行完整测试。
 
-```text
-tests/unit/test_v04_document_materialization.py
-existing document feature manifest tests
-existing Oracle document tests
-new PR-A orchestration tests
-```
-
-新增 orchestration tests 至少验证：
-
-- 2025 被拒绝；
-- mock / mvp_v1 被拒绝；
-- bad component mode 被拒绝；
-- resume 只复用相同 provenance；
-- conflict fail closed；
-- feature order / manifest hash 稳定；
-- one case failure 不污染其他 case；
-- coverage table 始终包含 official universe 中的每个目标 case。
-
-提交前运行完整：
-
-```text
-pip install -e '.[dev,retrieval-research]'
-pytest -q
-```
-
-## 11. PR-A PASS Gate
-
-只有以下条件全部满足才进入 PR-B：
+## 11. PR-A PASS Gate — COMPLETE
 
 ```text
 [x] 438 official cases 全部出现在 coverage report
-[x] 每个 case 都有 success / partial / failed / excluded 的明确状态
+[x] 每个 case 都有明确状态
 [x] 每个失败都有 stage + reason（本轮 failure count = 0）
 [x] Production successful cases 均有 snapshot hash + feature hash
 [x] Production feature manifest 固定
@@ -535,30 +353,13 @@ pytest -q
 [x] 全量 CI 通过
 ```
 
-**PR-A 不设置“必须 438/438 成功”的人为门槛。**真正的目标是先得到可信 coverage；如果有失败，先分类其是否为输入缺失、pipeline error、明确降级或真实不可用，再决定是否需要一个独立修复 PR。
-
-## 12. PR-A 禁止事项
-
-在 PR-A 中不做：
-
-- Retriever 调参；
-- LLM Reranker；
-- Fine-tuning / LoRA；
-- Agent prompt 重写；
-- 新风险定义；
-- target threshold 选择；
-- 2024 validation 上的模型调参；
-- 2025 y；
-- LightGBM；
-- Streamlit 重构。
-
 ---
 
 # Phase CL-3 / PR-B — Market-X Core + Governed EOD Store
 
-## 13. 原则
+## 12. 原则与冻结结果
 
-PR-A 通过后，再建立高覆盖、严格 point-in-time、可复现的 `Market-X Core`。缺失的 HSI / industry benchmark / market turnover 进入 `Market-X Extended`，不通过错误 proxy 伪造。
+PR-B 已建立高覆盖、严格 point-in-time、可复现的 `Market-X Core`。缺失的 HSI / industry benchmark / market turnover 保持在 `Market-X Extended`，不通过错误 proxy 伪造。
 
 任何 Market X 必须满足：
 
@@ -568,7 +369,7 @@ information_timestamp < target IPO listing_timestamp
 
 Prior IPO 的 1D / 5D outcome 只有在目标 IPO 上市前已经成为已知历史事实时才允许进入 X。
 
-### PR-B Gate
+### PR-B Gate — COMPLETE / FROZEN
 
 - [x] Market-X Core manifest 冻结；
 - [x] point-in-time tests 全绿；
@@ -576,15 +377,16 @@ Prior IPO 的 1D / 5D outcome 只有在目标 IPO 上市前已经成为已知历
 - [x] source/version/checksum 可追踪；
 - [x] 单位与 missing semantics 已审计；
 - [x] deterministic resume：438 checked / 0 mismatches；
-- [x] 2025 blind y 未访问。
+- [x] 2025 blind y 未访问；
+- [x] mainline publication 与 post-merge docs closure 完成。
 
-冻结 source revision：`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。完整实测见 [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) 与 [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)。
+Materialization source revision：`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。完整实测见 [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) 与 [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)。
 
 ---
 
 # Phase CL-4 / PR-C — Freeze 5D Outcome Policy
 
-## 14. 主目标
+## 13. 主目标
 
 第一版核心研究对象为上市后 5 个交易日表现，同时保留连续目标：
 
@@ -603,11 +405,13 @@ Classification threshold 只能由 2020–2023 Development 决定。
 
 必须冻结 trading session、D1/D5 mapping、suspension/no-trade、missing price、benchmark、abnormal return、threshold、exclusion policy 和 target hash。
 
+当前状态：**NEXT / NOT STARTED**。D 主导 outcome methodology；A 负责 schema / provenance / reproducibility / blind Gate review。未获得独立 PR-C 任务授权前，不选择最终阈值、不物化正式 PR-C label、不读取 2025 y。
+
 ---
 
 # Phase CL-5 / PR-D — Canonical Model-ready Dataset
 
-## 15. 只允许一个 canonical builder
+## 14. 只允许一个 canonical builder
 
 标准记录至少包含：
 
@@ -642,11 +446,13 @@ PM  = Production Document + Market
 OM  = Oracle Document + Market
 ```
 
+PR-D 必须显式、versioned 地决定 30-position Core 与 optional 20-position Extended 的 canonical feature-group order；不能静默修改既有历史 120-position Extended join。
+
 ---
 
 # Phase CL-6 / PR-E — Baseline + Oracle Diagnostic
 
-## 16. 第一层模型
+## 15. 第一层模型
 
 Regression：Linear / Ridge。  
 Classification：Logistic Regression。
@@ -693,13 +499,13 @@ Pipeline Gap             ≈ OM - PM
 
 # Phase CL-8 / PR-G — Market Agent + Final Supervisor
 
-## 17. Market Agent
+## 16. Market Agent
 
 Market Agent 不是第二个预测器。它只把 frozen model output + market context + Production Document Risks + feature contributions 转成结构化解释。
 
 它不得修改底层模型预测，不得制造 Evidence，不得把未校准 score 表述成真实概率。
 
-## 18. Final Supervisor
+## 17. Final Supervisor
 
 ```text
 Financial / Legal / Business
@@ -717,7 +523,7 @@ Final Supervisor 合并信号、保留冲突、连接 Evidence / Calculation、�
 
 # Phase CL-10 / PR-H — Streamlit Full E2E + Real-case Demo
 
-## 19. 最小页面
+## 18. 最小页面
 
 1. IPO Overview；
 2. Document Risks；
@@ -784,6 +590,6 @@ Fine-tuning 仍不是近期主线；只有积累稳定的 `candidate → expert 
 
 # 当前执行口令
 
-从 2026-08-19 起，仓库的唯一近期执行口令是：
+从 2026-08-21 PR-B 完成 mainline freeze 起，仓库的唯一近期执行口令是：
 
-> **先完成 PR-A。先把 438-case Production Document coverage、Oracle coverage 和两者 intersection 做成可重建的数据资产；在 PR-A PASS 前，不训练市场模型、不重开 Retriever/LLM 优化。**
+> **PR-A 与 PR-B 已完成并冻结。当前停在 PR-C 入口；除非获得独立 PR-C 任务授权，不选择最终 5D threshold、不物化正式 PR-C label、不读取 2025 y、不训练正式模型。D 负责 Outcome 方法研究，A 负责 schema / blind / provenance / reproducibility Gate；PR-C PASS 后才进入 PR-D。**

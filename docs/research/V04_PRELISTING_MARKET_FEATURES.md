@@ -1,13 +1,13 @@
 # V04-3 Pre-listing Market Features
 
-> Contract status: **MERGED / FROZEN FOR v0.4**  
-> Documentation review: **2026-08-20**
+> Contract status: **MERGED / FROZEN FOR v0.4 — EXTENDED CONTRACT**  
+> Documentation review: **2026-08-21**
 
 ## 1. Scope
 
-V04-3 defines the deterministic, point-in-time Market-X contract used above V04-1 Market Foundation and V04-2 Document Feature Contract.
+V04-3 defines the deterministic, point-in-time **Market-X Extended** contract used above V04-1 Market Foundation and V04-2 Document Feature Contract.
 
-它不训练模型，也不改变 Document Risk 语义。
+它不训练模型，也不改变 Document Risk 语义。PR-B 后新增并冻结的 30-position Market-X Core 是独立的 versioned artifact，不由本文件的 20-position Extended contract 取代或吸收。
 
 所有 canonical Market-X 必须在目标 IPO 上市前可获得：
 
@@ -25,13 +25,16 @@ V03DocumentRiskSnapshot
 
 Governed pre-listing reference / prior IPO data
 → PreListingMarketFeatureEngine
-→ 20-position Market Vector
+→ 20-position Extended Market Vector
 
-Document X + Market X + non-blind Outcome
+Historical Extended-only join:
+Document X + Extended Market X + non-blind Outcome
 → V04MarketAugmentedModelingDataset
 ```
 
 `MarketReferenceDataProvider` 与 V04-1 per-security `MarketDataProvider` 分离。纯 feature engine 不依赖 network、clock、random、LLM、Retriever 或 Agent。
+
+PR-B Core 的 canonical implementation / materialization 位于 `src/ipo_risk/market/ipo_market_context_features.py` 与 `scripts/run_v04_pr_b.py`，不属于本 Extended engine 的 schema。
 
 ## 3. Observation cutoff
 
@@ -104,11 +107,12 @@ recent_ipo_5d_sample_count
 
 ```text
 Governed IPO OHLCV coverage = 432 / 438
+PR-B Market-X Core          = 438 / 438 materialized / COMPLETE / FROZEN
 ```
 
-因此 recent-IPO point-in-time context **已有真实 governed IPO EOD foundation**，可以在满足 availability cutoff 的前提下构造。
+因此 recent-IPO point-in-time context **已有真实 governed IPO EOD foundation**，并且 PR-B Core 已使用严格的可得性边界完成全量物化。
 
-当前真正仍缺的是：
+当前真正仍缺的是 Extended reference-market source：
 
 ```text
 HSI history
@@ -119,9 +123,10 @@ total-market turnover
 
 所以当前状态应理解为：
 
-- recent IPO context：**foundation available**；
-- HSI / industry / turnover families：**source incomplete / missing**；
-- full 20-position Market-X 在完整真实源层面尚未全覆盖。
+- PR-B Market-X Core：**COMPLETE / FROZEN**；
+- recent IPO context foundation：**available**；
+- 本文件定义的 HSI / industry / turnover Extended families：**source incomplete / missing**；
+- full 20-position Extended Market-X 在完整真实源层面尚未全覆盖。
 
 ## 8. Missing-data contract
 
@@ -163,27 +168,42 @@ Missing reason 区分：
 
 Manifest 有 deterministic SHA-256 hash；legacy `MarketSnapshot.sentiment_score` 不属于该 manifest。
 
-## 10. Combined modeling contract
+## 10. Historical Extended-only combined modeling contract
 
-组合顺序固定：
+现有 `V04MarketAugmentedModelingDataset` 的历史 Extended-only 组合顺序保持：
 
 ```text
 [100 Production Document features]
 +
-[20 Market features]
+[20 Extended Market features]
 =
 120 positions
 ```
 
-Development 只接受 2020–2023；Validation 只接受 2024。
+这个 120-position 顺序是**既有历史 contract**，不是 PR-D 即将冻结的 canonical model-ready dataset contract。
 
-2025 只允许 feature-only export：
+PR-B 已新增并冻结独立的：
 
 ```text
-Document X + pre-listing Market X
+Market-X Core
+15 raw + 15 missing indicators
+= 30 positions
 ```
 
-不得包含 outcome / target / label horizon。
+因此 PR-D 必须显式决定新的 versioned dataset contract 如何组合：
+
+```text
+Production Document X (100)
++ Market-X Core (30)
++ optional Market-X Extended (20)
++ PR-C frozen Outcome Y
+```
+
+不得把 30-position Core 静默插入、替换或重排现有 120-position historical join；任何新的 canonical feature-group order 都必须有明确 schema/version/hash 与契约测试。
+
+Development 只接受 2020–2023；Validation 只接受 2024。
+
+2025 只允许 feature-only export，不得包含 outcome / target / label horizon。
 
 ## 11. Current limitations
 
@@ -194,7 +214,7 @@ Document X + pre-listing Market X
 - exchange calendar 仍采用 supplied observed sessions，而非完整独立 HKEX calendar source；
 - sentiment 不属于当前 frozen Market-X contract。
 
-这些限制进入 PR-B，不应回头修改 PR-A 的 Document materialization 范围。
+这些限制在 PR-B 完成后继续作为 **Market-X Extended 的显式 source limitations** 保留；它们不重开 PR-B，也不允许用 proxy 填补。PR-D 只负责显式、versioned 地决定 Core 与 optional Extended 如何进入 canonical dataset。
 
 ## 12. Out of scope
 
@@ -204,6 +224,8 @@ V04-3 不实现：
 - Logistic / LightGBM training；
 - SHAP / calibration；
 - 2025 outcome evaluation；
-- Parser / Retriever / Agent / Verifier / Supervisor 调优。
+- Parser / Retriever / Agent / Verifier / Supervisor 调优；
+- PR-C outcome policy；
+- PR-D canonical Core/Extended dataset contract。
 
 当前执行顺序以 `../END_TO_END_CLOSED_LOOP_MASTER_PLAN.md` 为准。

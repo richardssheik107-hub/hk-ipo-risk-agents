@@ -2,11 +2,12 @@
 
 > Status snapshot: **2026-08-21**
 > PR-A: **COMPLETE / FROZEN**
-> PR-B: **COMPLETE / FROZEN**
+> PR-B: **COMPLETE / FROZEN ON MAIN**
 > Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
-> Freeze source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
+> PR-B materialization source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
+> PR-B mainline publication: **PR #80**, post-merge documentation closure: **PR #81 / `2675646c359a0138080960c916e8ef526c085c88`**
 
-本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、handoff 与一次性实验文档通过 Git history / release 保留。
+本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、Role-A handoff 与一次性实验文档通过 Git history / release 保留。
 
 ## 1. Current execution chain
 
@@ -45,17 +46,16 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 唯一权威总计划与 Gate 顺序；
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人角色、并行准备和正式 Gate 边界；
-3. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — 当前 PR-B Core/Extended 边界、orchestration / PIT / coverage / provenance / determinism 验收契约；
-4. [`V04_ROLE_A_CROSS_TEAM_PREP.md`](V04_ROLE_A_CROSS_TEAM_PREP.md) — Role A 已完成的仓库侧准备和 B/C/D/E 后续边界；
-5. [`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md) — 已完成的 PR-B 本地执行 handoff，保留作审计记录；
-6. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果；
-7. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结结果；
-8. [`ROADMAP.md`](ROADMAP.md) — 阶段状态；
-9. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
-10. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
-11. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约。
+3. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态与后续严格顺序；
+4. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
+5. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
+6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约；
+7. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实数据/source readiness；
+8. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
+9. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
+10. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
-开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
+开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 
 ## 3. PR-A frozen facts
 
@@ -165,10 +165,10 @@ Detailed contracts:
 
 - [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — IPO metadata, EOD, labels, split/blind foundation；
 - [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — frozen 100-position Production Document contract and existing modeling joins；
-- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — frozen 20-position Extended PIT Market-X contract；
-- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — current PR-B Core/Extended implementation and Gate contract；
+- [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — frozen 20-position **Extended** PIT Market-X contract；
 - [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — latest measured data/source readiness；
 - [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — Oracle evaluation-only path；
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — frozen PR-B Core/Extended acceptance and reproducibility contract；
 - [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — frozen Retriever research reference, not current execution plan.
 
 ## 6. Production / Oracle separation
@@ -209,25 +209,25 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 
 ## 8. Current stop condition
 
-Continue on the existing work branch; do not create another branch unless explicitly requested.
+PR-B 已经完成、冻结并发布到 `main`。当前不需要继续维护 PR-B 工作分支，也不需要重复 pilot / full-run / determinism；除非出现明确的数据泄漏、冻结资产错误或不可复现问题，PR-B 不再重开。
 
-PR-B engineering and Gate review are complete. The next permitted milestone is PR-C, but it has not started:
+下一允许进入的正式 milestone 是 PR-C，但它尚未启动：
 
 ```text
 PR-A  COMPLETE / FROZEN
-→ PR-B COMPLETE / FROZEN
+→ PR-B COMPLETE / FROZEN ON MAIN
 → STOP
 → PR-C NEXT / NOT STARTED
 ```
 
-PR-C classification threshold and target policy must be frozen separately using Development data only; this PR-B freeze does not make that decision.
+PR-C classification threshold 和 target policy 必须使用 Development 数据单独冻结；在获得独立 PR-C 任务授权前，不选择最终阈值、不读取 2025 y、不训练正式模型。
 
 ## 9. Documentation maintenance rule
 
-- Current contracts / execution guidance → `docs/`;
-- machine fixtures required by tests → keep only minimum needed;
-- runtime/full-run outputs → ignored artifact/report area unless a small freeze manifest is deliberately committed;
-- readiness numbers → update only after real runs;
-- superseded plans → Git history/release, not active source of truth.
+- Current contracts / execution guidance → `docs/`；
+- machine fixtures required by tests → keep only minimum needed；
+- runtime/full-run outputs → ignored artifact/report area unless a small freeze manifest is deliberately committed；
+- readiness numbers → update only after real runs；
+- superseded plans / handoffs → Git history/release 或明确标记 historical，不作为当前 source of truth。
 
-A new contributor should be able to answer within minutes: **where we are, what Gate is current, what is already implemented, what still requires local execution evidence, and what cannot be crossed early.**
+A new contributor should be able to answer within minutes: **where we are, what Gate is next, what is already frozen, what remains blocked by the next Gate, and what cannot be crossed early.**

@@ -2,9 +2,10 @@
 
 > Status snapshot: **2026-08-21**  
 > 当前唯一主线：**End-to-End Closed Loop First**。  
-> PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN**。
+> PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。
 > 下一正式里程碑：**PR-C — 5D Outcome Policy Freeze / NOT STARTED**。
-> PR-B freeze source revision：**`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**。
+> PR-B materialization source revision：**`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**。
+> PR-B mainline publication：PR #80；post-merge documentation closure：PR #81 / **`2675646c359a0138080960c916e8ef526c085c88`**。
 
 ## 版本路线
 
@@ -87,7 +88,7 @@ Frozen records:
 | Industry benchmark mapping / history | MISSING — Extended |
 | Total-market turnover | MISSING — Extended |
 | PR-B Gate | PASS / COMPLETE / FROZEN |
-| Full Model-ready data gate | BLOCKED |
+| Full Model-ready data gate | BLOCKED BY PR-C / PR-D |
 
 ## PR-B frozen boundary
 
@@ -111,17 +112,17 @@ scripts/build_v04_ipo_eod_store.py
 scripts/run_v04_pr_b.py
 ```
 
-Governance already implemented in code/tests:
+Governance already implemented and validated:
 
-- target cohort selected by authoritative `official_listed_date.year`, not `source_year`;
-- governed EOD filter retains `OBJECT_ID` provenance;
-- `S_DQ_AMOUNT` cannot become total-market turnover;
-- target IPO post-listing data cannot enter target X;
-- prior outcome is usable only after its target session occurred strictly before target listing;
-- 2025 blind y is rejected;
-- one-case failure remains visible in coverage;
-- resume is conflict-safe;
-- deterministic rebuild path exists.
+- target cohort selected by authoritative `official_listed_date.year`, not `source_year`；
+- governed EOD filter retains `OBJECT_ID` provenance；
+- `S_DQ_AMOUNT` cannot become total-market turnover；
+- target IPO post-listing data cannot enter target X；
+- prior outcome is usable only after its target session occurred strictly before target listing；
+- 2025 blind y is rejected；
+- one-case failure remains visible in coverage；
+- resume is conflict-safe；
+- deterministic rebuild passed 438 / 438 with 0 mismatches。
 
 ### Market-X Extended
 
@@ -132,7 +133,7 @@ v04_prelisting_market_features_v1
 v04_market_features_v1
 ```
 
-HSI / authoritative industry benchmark / HKEX total-market turnover are still missing. These are explicit Extended limitations, **not inputs that PR-B Core is allowed to fake**.
+HSI / authoritative industry benchmark / HKEX total-market turnover are still missing. These are explicit Extended limitations, **not inputs that PR-B Core is allowed to fake**。
 
 ## Closed Loop execution state
 
@@ -140,7 +141,7 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | --- | --- | --- | --- |
 | CL-1 | Freeze Current Document Intelligence | **COMPLETE / FROZEN** | 已完成 |
 | CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成 |
-| CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN** | 已完成 |
+| CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN ON MAIN** | 已完成 |
 | CL-4 / PR-C | Freeze 5D Outcome Policy | **NEXT / NOT STARTED** | Development-only target policy decision |
 | CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY C | versioned Core/Extended dataset contract + manifests |
 | CL-6 / PR-E | Baseline + Oracle Diagnostic | NOT STARTED | M/P/O/PM/OM fair comparison |
@@ -161,11 +162,11 @@ coverage hash                 768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd
 2025 blind y accessed         NO
 ```
 
-Canonical command and exact acceptance criteria:
+Frozen evidence and reproducibility references:
 
-- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 - [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
 - [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json)
+- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 
 ## 后续严格顺序
 
@@ -226,11 +227,13 @@ PR-D 必须显式决定如何把 30-position Market-X Core 和 optional 20-posit
 ## 当前文档入口
 
 - 总执行计划：[`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
-- PR-B Gate：[`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
-- Codex local handoff：[`V04_ROLE_A_CODEX_HANDOFF.md`](V04_ROLE_A_CODEX_HANDOFF.md)
+- 五人执行与角色边界：[`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)
 - 当前规格：[`PROJECT_SPEC.md`](PROJECT_SPEC.md)
 - 当前架构：[`ARCHITECTURE.md`](ARCHITECTURE.md)
 - Schema / modeling contracts：[`DATA_SCHEMA.md`](DATA_SCHEMA.md)
 - 数据 readiness：[`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
-- PR-A 冻结报告：[`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
+- PR-B 冻结报告：[`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
+- PR-B frozen acceptance / reproducibility：[`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 - Oracle：[`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md)
+
+`V04_ROLE_A_CODEX_HANDOFF.md` 与 `V04_ROLE_A_CROSS_TEAM_PREP.md` 为历史审计记录，不再是当前执行入口。

@@ -2,11 +2,11 @@
 
 > Last real audit snapshot: **2026-08-21 PR-B full 438 materialization + determinism**
 > Documentation review: **2026-08-21**  
-> Status: **PR-A COMPLETE / FROZEN; PR-B COMPLETE / FROZEN; PR-C NEXT / NOT STARTED; MODEL-READY GATE BLOCKED**
+> Status: **PR-A COMPLETE / FROZEN; PR-B COMPLETE / FROZEN ON MAIN; PR-C NEXT / NOT STARTED; MODEL-READY GATE BLOCKED**
 
 本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
 
-PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证。
+PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 materialization source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证，并已通过 PR #80 / #81 完成 mainline publication 与文档状态收口。
 
 Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
 
@@ -78,7 +78,7 @@ ipo_2022_07841
 
 ### 4.1 PR-B governed EOD builder — frozen measured result
 
-当前分支已将 `scripts/build_v04_ipo_eod_store.py` 修正为：
+`main` 上冻结的 `scripts/build_v04_ipo_eod_store.py` 使用：
 
 ```text
 official_match_status == matched
@@ -126,17 +126,17 @@ Core 可使用当前已受治理/可严格 PIT 的输入：
 Measured freeze result：
 
 ```text
-source revision                 dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7
-official coverage               438 / 438
-Core materialized               438 / 438
-failed / silent drops           0 / 0
-PIT failures                    0
-Development / Validation        368 / 70
-feature manifest hash           c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d
-coverage hash                   768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
-determinism                     438 checked / 0 mismatches / PASS
-full pytest                     1303 passed / 0 failed / 2 warnings
-2025 blind y accessed           NO
+materialization source revision  dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7
+official coverage                438 / 438
+Core materialized                438 / 438
+failed / silent drops            0 / 0
+PIT failures                     0
+Development / Validation         368 / 70
+feature manifest hash            c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d
+coverage hash                    768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
+determinism                      438 checked / 0 mismatches / PASS
+full pytest                      1303 passed / 0 failed / 2 warnings
+2025 blind y accessed            NO
 ```
 
 ### 5.2 Market-X Extended — source gaps remain
@@ -162,7 +162,7 @@ Still missing：
 - 不得创建 fake benchmark row 只为让 Extended engine 产生 observation date；
 - missing source 不得填 market-neutral zero。
 
-这些缺口不能用不等价代理静默替代，但它们本身不否定 PR-B Core 的可实现性。
+这些缺口不能用不等价代理静默替代，但它们本身不否定 PR-B Core 的可实现性，也不重开已经冻结的 PR-B。
 
 ## 6. Production Document readiness — COMPLETE / FROZEN
 
@@ -281,9 +281,9 @@ Current Gate state：
 PR-A_DOCUMENT_MATERIALIZATION_GATE = COMPLETE / FROZEN
 PR-B_CORE_CODE_READINESS            = COMPLETE / FROZEN
 PR-B_CORE_REAL_MATERIALIZATION      = 438 / 438
-PR-B_GATE                           = PASS / COMPLETE / FROZEN
+PR-B_GATE                           = PASS / COMPLETE / FROZEN ON MAIN
 MARKET_X_EXTENDED_SOURCES           = INCOMPLETE
-MODEL_READY_DATA_GATE               = BLOCKED
+MODEL_READY_DATA_GATE               = BLOCKED BY PR-C / PR-D
 ```
 
 PR-A 与 PR-B 已不再是 readiness blocker。当前 Model-ready blocker 来自 PR-C target policy 与 PR-D canonical dataset；Extended source families 仍是后续可增强的 source limitation。
@@ -296,6 +296,8 @@ Canonical records：
 - `reports/frozen/v04_pr_b_market_x_core_manifest.json`
 - `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
 
+这些记录用于复现/审计已经冻结的 PR-B，不再构成待执行任务。
+
 ## 10. External data still required for Market-X Extended
 
 Full Extended reference-market enrichment still requires：
@@ -305,13 +307,13 @@ Full Extended reference-market enrichment still requires：
 3. industry-index history：benchmark ID、date、close、source、version；
 4. HKEX total-market turnover：date、value、unit、market scope、source、version。
 
-These are not reasons to fabricate inputs or to reopen PR-A. If/when supplied, they enter the existing versioned Extended contract with provenance/tests.
+These are not reasons to fabricate inputs or to reopen PR-A / PR-B. If/when supplied, they enter the existing versioned Extended contract with provenance/tests.
 
 Formal milestone / Gate / mainline merge order remains：
 
 ```text
 PR-A  COMPLETE / FROZEN
-→ PR-B COMPLETE / FROZEN
+→ PR-B COMPLETE / FROZEN ON MAIN
 → PR-C 5D Outcome Policy Freeze / NEXT / NOT STARTED
 → PR-D Canonical Model-ready Dataset
 → PR-E Baseline + Oracle Diagnostic
@@ -326,4 +328,4 @@ PR-A  COMPLETE / FROZEN
 
 任何 -5% / -10% / -15% / -20% 等候选阈值比较只能使用 2020–2023 Development outcome；2024 Validation 与 2025 Blind 不允许参与阈值选择。
 
-在 PR-C 正式冻结 target policy 前，不把某个阈值写成最终标签定义。
+在 PR-C 正式冻结 target policy 前，不把某个阈值写成最终标签定义；当前仓库应停在 PR-C 入口，等待独立 PR-C 任务正式启动。
