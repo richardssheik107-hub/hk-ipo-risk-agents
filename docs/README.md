@@ -28,28 +28,29 @@ Prospectus PDF
 
 > Next formal milestone: **PR-B — NOT STARTED**
 
-CL-1 Document Intelligence freeze 已完成。当前不继续优化 Retriever、Prompt、LLM 或 Agent，而是先把现有系统在 2020–2024 official 438-case universe 上变成可审计、可重建的建模数据资产。
+CL-1 Document Intelligence freeze 与 PR-A Document materialization 均已完成。当前不继续优化 Retriever、Prompt、LLM 或 Agent；下一正式工作是构建受 point-in-time 治理的 Market-X。
 
 ## 文档优先级
 
 遇到口径冲突时，按以下顺序理解当前项目：
 
-1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — **唯一权威执行总计划**，包含 PR-A 的步骤与 Gate；
-2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人并行执行计划**，规定角色、并行关系、时间窗口、交付物与 Gate；
-3. [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — **A / Pipeline Lead 当前操作手册**，包含网页端实现、本地 Pilot、438 全量与 determinism 验收；
-4. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
-5. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 的冻结结果、Coverage hash 生命周期与本地产物政策。
+1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — **唯一权威执行总计划**，包含正式 milestone / Gate 顺序；
+2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — **五人执行与职责计划**，规定角色、准备性并行与正式 Gate 边界；
+3. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 的冻结结果、Coverage hash 生命周期与本地产物政策；
+4. [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — A / Pipeline Lead 的 PR-A 已冻结运行手册；
+5. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态、下一里程碑；
 6. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、范围、信任边界与成功标准；
 7. [`ARCHITECTURE.md`](ARCHITECTURE.md) — **当前架构**，旧 v0.2 / v0.3 设计历史已移除；
 8. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 当前公共 Schema 与 v0.4 建模契约说明；
-8. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
+9. [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) — 原始赛事语料与 v0.4 official modeling cohort 的区别。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。
 
 ## v0.4 当前工作文档
 
-- [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — A 负责人 PR-A 运行、Coverage、Reproducibility 的直接执行手册；
-- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最近一次真实 readiness 审计；PR-A ready 与 full model-ready blocked 的区别；
+- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A COMPLETE / FROZEN 的正式人类可读记录；
+- [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — PR-A 运行、Coverage、Reproducibility 的冻结操作手册；
+- [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实 readiness：PR-A 已冻结，full model-ready gate 仍 blocked；
 - [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md) — 市场数据、标签、年度切分和 blind 治理基础；
 - [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md) — Production Document Risk → 模型特征契约；
 - [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md) — 严格上市前 Market X 契约与当前真实数据可用性；
@@ -91,38 +92,46 @@ Reviewed Expert Gold
 
 Oracle 只用于研究上限和错误归因，不进入 production runtime，不读取 2025 blind y，也不能把专家答案泄漏进 Production X。
 
-## 当前 PR-A 要做什么
+## PR-A 已完成什么
 
-PR-A 不是“再优化一次 Agent”，而是回答四个基础问题：
+PR-A 已回答并冻结四个基础问题：
 
 ```text
-1. 438 个 official 2020–2024 IPO 中，Production Document X 成功多少？
-2. 哪些失败或降级？具体失败在哪一阶段、为什么？
+1. official 2020–2024 的 438 个 IPO 是否都有 Production Document X？
+   → 438 / 438
+2. Production 是否存在失败或 silent drop？
+   → failure = 0, silent drop = 0
 3. Oracle Gold 实际可 materialize 多少？
+   → 60；no_reviewed_gold = 378
 4. Production 与 Oracle 的公平交集有多少？
+   → 60
 ```
 
-底层能力已经存在：
+冻结结果：
 
-- `scripts/run_v03_batch_analysis.py` — Production batch analysis；
-- `src/ipo_risk/modeling/materialization.py` — authoritative snapshot boundary；
-- `src/ipo_risk/modeling/features.py` — frozen Production feature manifest / vectorizer；
-- `scripts/index_oracle_gold.py` — Oracle eligibility / provenance inventory；
-- `scripts/build_oracle_document_features.py` — Oracle feature materialization。
+- Production analysis：438 / 438；
+- authoritative snapshot：438 / 438；
+- Production Document-X：438 / 438；
+- feature schema：`v04_document_features_v1`，100 维；
+- Oracle：60；
+- Production failure / silent drop：0 / 0；
+- A6 determinism：438 checked，0 mismatches，PASS；
+- 2025 access：NO。
 
-A 负责人统一执行入口目前已经在活动分支实现：
+统一执行入口：
 
 ```text
 scripts/run_v04_pr_a.py
 ```
 
-该 CLI 只串联既有模块，不复制 Parser / Retriever / Agent 业务逻辑。A0–A6 已全部完成：438 个 official cases 均已生成 Production analysis、authoritative snapshot 和 100 维 `v04_document_features_v1` 特征；Oracle materialized 60，`no_reviewed_gold` 378，Production failure 与 silent drop 均为 0；A6 对 438 个 case 的 determinism 检查通过。
+冻结记录：
 
-详细命令与 Gate 见 [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md)。
+- [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
+- [`../reports/frozen/v04_pr_a_document_materialization_manifest.json`](../reports/frozen/v04_pr_a_document_materialization_manifest.json)
 
-## 五人并行执行
+## 五人执行与正式 Gate
 
-完整角色与时间安排见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
+完整角色与执行边界见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
 
 固定角色：
 
@@ -134,34 +143,38 @@ D  Quant / ML Research
 E  Oracle / Product Integration
 ```
 
-当前推荐的并行关系：
+正式 milestone / Gate / mainline merge 顺序固定为：
 
 ```text
-PR-A Production ─────┐
-PR-B Market-X ───────┼──→ PR-D Dataset → PR-E Diagnostic
-PR-C Outcome ────────┘                         ↓
-                                     PR-F / PR-G → PR-H
+PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
+→ PR-B Market-X Core + Governed EOD Store            NEXT
+→ PR-C 5D Outcome Policy Freeze
+→ PR-D Canonical Model-ready Dataset
+→ PR-E Baseline + Oracle Diagnostic
+→ PR-F LightGBM + Explainability
+→ PR-G Market Agent + Final Supervisor
+→ PR-H Streamlit Full E2E + Real-case Demo
 ```
 
-E 同时推进 Oracle 和 Streamlit skeleton；B 在 PR-A 跑批期间负责 Document failure / evidence QA；C、D 不需要等待 PR-A 才开始工作。
+团队可以并行做**准备性工作**，例如数据源调研、接口草案、测试夹具和 UI skeleton；但准备工作不能被标记为后续正式 Gate 已开始/已通过，也不能越过上述顺序合并到 `main`。
 
-## PR-A 的严格顺序
+## PR-A 的冻结顺序
 
 ```text
-PR-A0  Freeze execution context and hashes
-PR-A1  Implement scripts/run_v04_pr_a.py + tests
-PR-A2  Run small deterministic Development pilot
-PR-A3  Run 2020–2024 Production materialization
-PR-A4  Run Oracle materialization
-PR-A5  Build unified coverage table
-PR-A6  Rerun and verify deterministic hashes
+PR-A0  Freeze execution context and hashes       DONE
+PR-A1  Implement scripts/run_v04_pr_a.py + tests DONE
+PR-A2  Run small deterministic Development pilot DONE
+PR-A3  Run 2020–2024 Production materialization DONE
+PR-A4  Run Oracle materialization                DONE
+PR-A5  Build unified coverage table              DONE
+PR-A6  Rerun and verify deterministic hashes     DONE
 ```
 
-当前工程状态：A0–A6 全部完成，PR-A 已冻结。下一正式里程碑是 PR-B Market-X Core；本轮未启动 PR-B。
+当前工程状态：A0–A6 全部完成，PR-A 已冻结。下一正式里程碑是 PR-B Market-X Core；PR-B 尚未开始正式 Gate。
 
 ## 当前真实 readiness
 
-计划文档更新不等于数据已经重新跑过。当前数字继续以 `research/V04_DATA_READINESS.md` 为准：
+当前数字以 [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) 为准：
 
 - official universe：438 / 438；
 - local prospectus：438 / 438；
@@ -172,7 +185,7 @@ PR-A6  Rerun and verify deterministic hashes
 - Production failures / silent drops：0 / 0；
 - HSI / industry benchmark / total-market turnover：仍缺失；
 - PR-A Document materialization：**COMPLETE / FROZEN**；
-- PR-B Market-X Core：**NOT STARTED**；
+- PR-B Market-X Core：**NOT STARTED / NEXT**；
 - full Model-ready data gate：仍 blocked。
 
 这些数字只有在真实 materialization / source audit 后才允许更新。
@@ -189,7 +202,7 @@ PR-A6  Rerun and verify deterministic hashes
 
 ## `docs/annotation/` 为什么还存在
 
-`docs/annotation/gpt_expert_v1_1/` 中保留的内容属于**机器测试 / frozen fixture 资产**，不是当前团队阅读文档。上一轮清理已验证部分测试和 Retriever preflight 仍依赖这些文件，因此不能当作普通历史 Markdown 删除。
+`docs/annotation/gpt_expert_v1_1/` 中保留的内容属于**机器测试 / frozen fixture 资产**，不是当前团队阅读文档。部分测试和 Retriever preflight 仍依赖这些文件，因此不能当作普通历史 Markdown 删除。
 
 不要把该目录重新扩展成历史 protocol / handoff 文档仓库。
 
@@ -202,4 +215,4 @@ PR-A6  Rerun and verify deterministic hashes
 - **真实 readiness 数字**：只有真实运行后更新；
 - **已被新版本替代的说明或死链接**：从当前树 / 当前正文移除，由 Git history 保存。
 
-目标是让新成员进入 `docs/` 后几分钟内就能回答：**现在做到哪里、下一步只做什么、谁负责什么、哪些任务可以并行、哪些边界不能破坏。**
+目标是让新成员进入 `docs/` 后几分钟内就能回答：**现在做到哪里、下一步只做什么、谁负责什么、哪些准备可以并行、哪些正式 Gate 不能越过。**
