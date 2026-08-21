@@ -1,7 +1,7 @@
 """Build a governed filtered EOD store for the official 2020-2024 IPO cohort.
 
 The cohort is selected from the authoritative ``official_listed_date`` in the
-catalog bridge.  ``source_year`` is a document/prospectus attribute and must not
+catalog bridge. ``source_year`` is a document/prospectus attribute and must not
 be used as the modeling cohort because it can differ from the true listing year.
 
 This script is deliberately a streaming filter: it does not load the raw EOD
@@ -23,6 +23,7 @@ FILTER_SCHEMA_VERSION = "v04_ipo_eod_filter_v2"
 OFFICIAL_LISTING_YEARS = frozenset({2020, 2021, 2022, 2023, 2024})
 EXPECTED_OFFICIAL_CASE_COUNT = 438
 OUTPUT_COLUMNS = (
+    "OBJECT_ID",
     "S_INFO_WINDCODE",
     "TRADE_DT",
     "S_DQ_OPEN",
@@ -167,7 +168,7 @@ def build_store(
         "w", encoding="utf-8", newline=""
     ) as destination:
         reader = csv.DictReader(source)
-        required = {"S_INFO_WINDCODE", "TRADE_DT"}
+        required = {"OBJECT_ID", "S_INFO_WINDCODE", "TRADE_DT"}
         missing = required - set(reader.fieldnames or ())
         if missing:
             raise ValueError(
@@ -205,6 +206,7 @@ def build_store(
         "target_security_count": len(target_codes),
         "min_trading_date": min(dates) if dates else None,
         "max_trading_date": max(dates) if dates else None,
+        "source_record_id_column": "OBJECT_ID",
         "s_dq_amount_semantics": (
             "retained as per-security source column only; never total-market turnover"
         ),
