@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,15 @@ from ipo_risk.schemas.market import MarketDatasetSplit, MarketLabelAvailability
 
 
 PR_D_VERSION = "v04_pr_d_canonical_dataset_v1"
+PR_C_OFFICIAL_CASE_COUNT = 438
+PR_C_AVAILABLE_COUNT = 424
+PR_C_UNAVAILABLE_COUNT = 14
+PR_C_DEVELOPMENT_AVAILABLE_COUNT = 354
+PR_C_VALIDATION_AVAILABLE_COUNT = 70
+PR_C_UNAVAILABLE_REASON_COUNTS = {
+    "missing_base_price": 12,
+    "no_eligible_session": 2,
+}
 
 
 def _read_json(path: Path) -> Any:
@@ -71,9 +81,9 @@ def _validate_upstream_freezes(
         raise ValueError("PR-B freeze manifest is not eligible for PR-D")
     if not (
         pr_c.get("gate_passed") is True
-        and pr_c.get("official_case_count") == 438
-        and pr_c.get("available_count") == 432
-        and pr_c.get("unavailable_count") == 6
+        and pr_c.get("official_case_count") == PR_C_OFFICIAL_CASE_COUNT
+        and pr_c.get("available_count") == PR_C_AVAILABLE_COUNT
+        and pr_c.get("unavailable_count") == PR_C_UNAVAILABLE_COUNT
         and pr_c.get("failure_count") == 0
         and pr_c.get("determinism_mismatch_count") == 0
         and pr_c.get("validation_used_for_threshold") is False
@@ -105,8 +115,11 @@ def materialize_pr_d(
     )
 
     target_paths = sorted(target_dir.glob("*.json"))
-    if len(target_paths) != 438:
-        raise ValueError(f"PR-D expected 438 PR-C targets, found {len(target_paths)}")
+    if len(target_paths) != PR_C_OFFICIAL_CASE_COUNT:
+        raise ValueError(
+            f"PR-D expected {PR_C_OFFICIAL_CASE_COUNT} PR-C targets, "
+            f"found {len(target_paths)}"
+        )
     builder = V04CanonicalDatasetBuilder()
     records = []
     coverage: list[dict[str, Any]] = []
@@ -161,6 +174,42 @@ def materialize_pr_d(
     if next(iter(threshold_hashes)) != pr_c.get("threshold_hash"):
         raise ValueError("PR-D targets disagree with PR-C threshold manifest")
 
+    available_count = len(records)
+    development_available_count = sum(
+        row.dataset_split is MarketDatasetSplit.DEVELOPMENT for row in records
+    )
+    validation_available_count = sum(
+        row.dataset_split is MarketDatasetSplit.VALIDATION for row in records
+    )
+    unavailable_reason_counts = Counter(
+        row["exclusion_reason"].removeprefix("target_unavailable:")
+        for row in coverage
+        if row["target_available"] is False
+    )
+    if available_count != PR_C_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_AVAILABLE_COUNT} available, found {available_count}"
+        )
+    if development_available_count != PR_C_DEVELOPMENT_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D Development target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_DEVELOPMENT_AVAILABLE_COUNT}, "
+            f"found {development_available_count}"
+        )
+    if validation_available_count != PR_C_VALIDATION_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D Validation target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_VALIDATION_AVAILABLE_COUNT}, "
+            f"found {validation_available_count}"
+        )
+    if dict(unavailable_reason_counts) != PR_C_UNAVAILABLE_REASON_COUNTS:
+        raise ValueError(
+            "PR-D unavailable-reason coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_UNAVAILABLE_REASON_COUNTS}, "
+            f"found {dict(unavailable_reason_counts)}"
+        )
+
     datasets = {}
     matrices = {}
     oracle_split_status: dict[str, str] = {}
@@ -185,8 +234,6 @@ def materialize_pr_d(
             )
             datasets[(split.value, "oracle_intersection")] = oracle
             oracle_split_status[split.value] = "available"
-            # All five groups are projected on the exact same Oracle intersection
-            # so OM-M, PM-M and OM-PM are fair cohort comparisons.
             for group in V04ModelFeatureGroup:
                 matrices[(split.value, "oracle_intersection", group.value)] = (
                     project_model_matrix(oracle, group)
@@ -237,6 +284,7 @@ def materialize_pr_d(
         "target_unavailable_count": sum(
             row["target_available"] is False for row in coverage
         ),
+        "target_unavailable_reason_counts": dict(sorted(unavailable_reason_counts.items())),
         "oracle_intersection_model_ready_count": sum(
             row.oracle_document is not None for row in records
         ),
@@ -251,12 +299,8 @@ def materialize_pr_d(
             and row.dataset_split is MarketDatasetSplit.VALIDATION
             for row in records
         ),
-        "development_model_ready_count": sum(
-            row.dataset_split is MarketDatasetSplit.DEVELOPMENT for row in records
-        ),
-        "validation_model_ready_count": sum(
-            row.dataset_split is MarketDatasetSplit.VALIDATION for row in records
-        ),
+        "development_model_ready_count": development_available_count,
+        "validation_model_ready_count": validation_available_count,
         "market_core_feature_count": len(records[0].market_core.feature_names),
         "production_document_feature_count": len(
             records[0].production_document.feature_names
