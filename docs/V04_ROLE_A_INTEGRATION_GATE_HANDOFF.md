@@ -100,12 +100,28 @@ coverage audit must be rerun before any formal PR-E interpretation.
 ### A decision
 
 **Do not unfreeze or rewrite PR-A Production Document-X to repair Oracle-only
-identity metadata.** Production remains frozen.
+identity metadata.** Production remains frozen. **Do not silently rewrite frozen
+Oracle artifacts in memory either.**
 
-The allowed path is an **evaluation-only Oracle refresh / canonicalization** that
-uses the authoritative official IPO identity as the canonical identity and keeps
-old Oracle artifacts immutable for provenance. Any future normalized Oracle
-artifact must record at least:
+PR-D now separates the Production model-ready path from the evaluation-only
+Oracle intersection:
+
+- Production Document-X, Market-X Core and PR-C target identity mismatches remain
+  hard failures;
+- Oracle artifact integrity, schema, manifest and `evaluation_only` violations
+  remain hard failures;
+- if a valid frozen Oracle artifact differs only in `oracle.*` identity metadata,
+  the Production row remains model-ready but that Oracle artifact is explicitly
+  excluded from the Oracle intersection;
+- coverage records `oracle_source_present`, `oracle_document_available` and the
+  exact `oracle_exclusion_reason` so the exclusion cannot become a silent drop.
+
+This is an isolation policy, not canonicalization. The old Oracle payload remains
+immutable and its bad identity is never promoted into the canonical dataset.
+
+The preferred long-term path is an **evaluation-only Oracle refresh /
+canonicalization** using the authoritative official IPO identity. Any future
+refreshed Oracle artifact should record at least:
 
 ```text
 original artifact hash
@@ -117,12 +133,8 @@ normalization reason
 evaluation_only = true
 ```
 
-Until that explicit refresh exists, PR-D continues to fail closed on Oracle
-identity mismatches. Silent in-memory rewriting of a frozen Oracle artifact is
-not allowed.
-
-This decision avoids invalidating PR-A Production hashes while still giving D/E
-a governed path for a refreshed Oracle intersection.
+This keeps the Production closed loop moving without weakening Oracle provenance
+or invalidating PR-A Production hashes.
 
 ## 4. PR-G / Final Supervisor A-side contract review
 
@@ -175,9 +187,16 @@ rerun evidence and the small PR-C freeze manifest.
 - pinned `12 missing_base_price / 2 no_eligible_session` semantics;
 - added downstream self-checks so manifest totals alone are insufficient;
 - updated PR-D orchestration regression coverage;
+- isolated Oracle-only identity drift from the Production dataset while keeping
+  Oracle integrity/schema failures fail-closed and exclusions explicit;
 - froze the PR-D formal Gate checklist;
 - made the Oracle identity governance decision without unfreezing PR-A;
-- completed the A-side PR-G/Final-Supervisor contract review.
+- completed the A-side PR-G/Final-Supervisor contract review;
+- hardened the frozen Retriever ranking test so absence of the optional
+  `lightgbm` research dependency skips only the LightGBM-specific check instead
+  of crashing pytest collection;
+- aligned `docs/README.md` and `docs/ROADMAP.md` with the active PR-C Gate and
+  PR-D preparation state.
 
 The only Role-A Gate work that cannot be completed from the public repository is
 the final PR-C sign-off and the subsequent real PR-D materialization, because
