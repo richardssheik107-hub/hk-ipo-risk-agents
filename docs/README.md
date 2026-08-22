@@ -1,11 +1,11 @@
 # Documentation Index
 
-> Status snapshot: **2026-08-21**
+> Status snapshot: **2026-08-22**
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
-> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
-> PR-B materialization source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
-> PR-B mainline publication: **PR #80**, post-merge documentation closure: **PR #81 / `2675646c359a0138080960c916e8ef526c085c88`**
+> PR-C: **FORMAL EXECUTION ACTIVE — A STATIC AUDIT COMPLETE / GOVERNED MATERIALIZATION PENDING / NOT FROZEN**
+> PR-D: **ENGINEERING PREPARATION MERGED — FORMAL MATERIALIZATION BLOCKED BY PR-C**
+> Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
 本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、Role-A handoff 与一次性实验文档通过 Git history / release 保留。
 
@@ -30,8 +30,8 @@ Prospectus PDF
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
-→ PR-D Canonical Model-ready Dataset
+→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING / NOT FROZEN
+→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY PR-C
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
@@ -51,9 +51,11 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 5. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
 6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约；
 7. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实数据/source readiness；
-8. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
-9. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
-10. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
+8. [`V04_PR_C_A_GATE_AUDIT.md`](V04_PR_C_A_GATE_AUDIT.md) — PR-C 424/14 A-side Gate audit 与最后正式执行条件；
+9. [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md) — PR-D integration Gate、Oracle identity 决策和 PR-G contract review；
+10. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
+11. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
+12. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 
@@ -210,18 +212,22 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 
 ## 8. Current stop condition
 
-PR-B 已经完成、冻结并发布到 `main`。当前不需要继续维护 PR-B 工作分支，也不需要重复 pilot / full-run / determinism；除非出现明确的数据泄漏、冻结资产错误或不可复现问题，PR-B 不再重开。
-
-下一允许进入的正式 milestone 是 PR-C，但它尚未启动：
+PR-C 已经完成 implementation、policy/schema、A static audit 与 424/14 Gate correction，但正式 Gate 仍停在 governed materialization：
 
 ```text
 PR-A  COMPLETE / FROZEN
 → PR-B COMPLETE / FROZEN ON MAIN
-→ STOP
-→ PR-C NEXT / NOT STARTED
+→ PR-C ACTIVE
+     A static audit PASS
+     Gate expectation 424 / 14 corrected
+     governed full materialization PENDING
+     formal freeze NOT PASSED
+→ STOP before formal PR-D materialization
 ```
 
-PR-C classification threshold 和 target policy 必须使用 Development 数据单独冻结；在获得独立 PR-C 任务授权前，不选择最终阈值、不读取 2025 y、不训练正式模型。
+PR-C 必须在受治理数据机上生成真实 Development-only q25 threshold、438 target artifacts、424 available / 14 unavailable、438 determinism checks / 0 mismatch 和 small freeze manifest。完成后由 A 做 final sign-off。
+
+PR-D 的 canonical builder 已合入主线作为 engineering preparation；其正式 Gate 只接受新的 PR-C outcome contract：424 model-ready、14 explicit exclusions、354 Development、70 Validation。未获得 PR-C freeze manifest 前不得宣称 PR-D COMPLETE。
 
 ## 9. Documentation maintenance rule
 
