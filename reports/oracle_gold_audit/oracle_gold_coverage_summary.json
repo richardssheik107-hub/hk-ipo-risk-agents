@@ -1,0 +1,108 @@
+{
+  "annotation_opportunity": {
+    "by_official_split": {
+      "development": 19,
+      "validation": 19
+    },
+    "case_ids": [
+      "ipo_2023_00666",
+      "ipo_2023_01111",
+      "ipo_2023_01274",
+      "ipo_2023_01405",
+      "ipo_2023_01541",
+      "ipo_2023_01973",
+      "ipo_2023_02105",
+      "ipo_2023_02268",
+      "ipo_2023_02405",
+      "ipo_2023_02451",
+      "ipo_2023_02473",
+      "ipo_2023_02486",
+      "ipo_2023_02501",
+      "ipo_2023_02503",
+      "ipo_2023_02511",
+      "ipo_2023_02517",
+      "ipo_2023_02521",
+      "ipo_2023_06682",
+      "ipo_2023_09690",
+      "ipo_2023_09930",
+      "ipo_2024_00300",
+      "ipo_2024_00999",
+      "ipo_2024_01318",
+      "ipo_2024_01471",
+      "ipo_2024_02228",
+      "ipo_2024_02410",
+      "ipo_2024_02431",
+      "ipo_2024_02460",
+      "ipo_2024_02495",
+      "ipo_2024_02506",
+      "ipo_2024_02519",
+      "ipo_2024_02533",
+      "ipo_2024_02550",
+      "ipo_2024_02567",
+      "ipo_2024_02585",
+      "ipo_2024_06657",
+      "ipo_2024_06936",
+      "ipo_2024_09639"
+    ],
+    "official_packets_without_pass1": 38
+  },
+  "audit_version": "oracle_gold_coverage_audit_v1",
+  "blind_2025_accessed": false,
+  "blind_2025_rows_excluded": 0,
+  "build_failures": [
+    {
+      "case_id": "real_case_001",
+      "error": "ValueError: invalid gold annotation: SCHEMA_INVALID"
+    }
+  ],
+  "funnel": {
+    "audit_overlay_present": 58,
+    "case_packets": 101,
+    "case_packets_in_official_universe": 98,
+    "oracle_buildable": 60,
+    "oracle_buildable_in_official_universe": 60,
+    "pass1_present": 61,
+    "pass1_present_in_official_universe": 60
+  },
+  "no_reviewed_gold_count": 378,
+  "official_universe_count": 438,
+  "oracle_coverage_by_official_split": {
+    "development": 60
+  },
+  "oracle_coverage_by_official_year": {
+    "2020": 18,
+    "2021": 22,
+    "2022": 19,
+    "2023": 1
+  },
+  "oracle_identity_provenance": {
+    "annotation_split_vocabulary": {
+      "development": 80,
+      "development_exception": 1,
+      "validation": 17
+    },
+    "compared_fields": [
+      "cohort_year",
+      "dataset_split"
+    ],
+    "latent_mismatch_if_annotated": {
+      "ipo_2023_02503": "cohort_year,dataset_split",
+      "ipo_2024_02410": "dataset_split"
+    },
+    "materialized_mismatch_count": 3,
+    "materialized_mismatches": {
+      "ipo_2020_08489": "cohort_year",
+      "ipo_2020_09600": "cohort_year",
+      "ipo_2022_02450": "cohort_year"
+    }
+  },
+  "outside_official_universe": [
+    "ipo_2024_00805",
+    "ipo_2024_02613",
+    "real_case_001"
+  ],
+  "packet_coverage_by_official_split": {
+    "development": 79,
+    "validation": 19
+  }
+}
