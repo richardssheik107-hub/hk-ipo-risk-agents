@@ -411,7 +411,39 @@ src/ipo_risk/market/outcomes.py
 scripts/run_v04_pr_c.py
 ```
 
-## 22. 当前 source of truth
+## 22. PR-D Canonical Modeling Dataset
+
+PR-D adds a new contract without mutating the historical V1 joins:
+
+```text
+V04CanonicalFeatureBlock
+V04CanonicalModelingRecord
+V04CanonicalModelingDataset   v04_canonical_modeling_dataset_v1
+V04CanonicalModelMatrix       v04_canonical_model_matrix_v1
+```
+
+Market-X Core 30 is required and first in M/PM/OM. The separate 20-position
+Extended contract is optional and may be appended only when its governed sources
+exist. Production Document-X remains 100 positions. Oracle X remains
+evaluation-only and is accepted only in the Oracle intersection cohort.
+
+The formal projections are M/P/O/PM/OM. Component prefixes make feature order
+unambiguous, and the source dataset/feature manifests/target policy/threshold are
+all hashed. Only available PR-C targets may enter a modeling matrix; Blind is
+rejected by both target and canonical dataset schemas.
+
+Implementation source of truth:
+
+```text
+src/ipo_risk/schemas/canonical_modeling.py
+src/ipo_risk/modeling/canonical_dataset.py
+scripts/run_v04_pr_d.py
+```
+
+The code is engineering preparation until the formal PR-C freeze manifest is
+present and the real PR-D materialization is executed.
+
+## 23. 当前 source of truth
 
 - 公共 Schema 实现：`src/ipo_risk/schemas/`
 - Document modeling：`src/ipo_risk/modeling/`

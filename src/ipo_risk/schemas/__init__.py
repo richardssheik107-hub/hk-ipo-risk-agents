@@ -17,6 +17,17 @@ from ipo_risk.schemas.data_readiness import (
     V04SourceManifest,
     V04SourceManifestEntry,
 )
+from ipo_risk.schemas.canonical_modeling import (
+    V04_CANONICAL_MODELING_DATASET_VERSION,
+    V04_CANONICAL_MODEL_MATRIX_VERSION,
+    V04CanonicalCohort,
+    V04CanonicalFeatureBlock,
+    V04CanonicalModelingDataset,
+    V04CanonicalModelingRecord,
+    V04CanonicalModelMatrix,
+    V04FeatureComponent,
+    V04ModelFeatureGroup,
+)
 from ipo_risk.schemas.market import (
     IPOMarketMetadata,
     MARKET_SECURITY_ELIGIBILITY_POLICY_VERSION,
