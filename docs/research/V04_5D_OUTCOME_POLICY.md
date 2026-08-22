@@ -117,6 +117,19 @@ The data root must contain `hkshareeodprices.csv`. Large target/runtime artifact
 remain outside normal Git. Only a small reviewed freeze manifest and completion
 report should be committed after the real run.
 
+After both full runs, validate the formal Gate and generate the small candidate
+freeze manifest:
+
+```bash
+python scripts/validate_v04_pr_c_freeze.py \
+  --input-dir reports/v04_pr_c \
+  --output reports/frozen/v04_pr_c_5d_outcome_manifest.json
+```
+
+The validator fail-closes on cohort/coverage drift, unexpected unavailable case
+IDs, source checksum drift, threshold-population drift, Validation/Blind use,
+target tampering, abnormal-return policy drift, or incomplete determinism.
+
 ## 7. Artifacts
 
 ```text
