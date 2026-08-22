@@ -125,6 +125,7 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         for raw in IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER
         for name in (raw, f"{raw}__missing")
     )
+    oracle_identity_mismatch_case = None
     for index, (identity, raw_label) in enumerate(zip(identities, raw_labels, strict=True)):
         case_id, code, year = identity
         split = "development" if year <= 2023 else "validation"
@@ -167,8 +168,12 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
             target.model_dump(mode="json") | {"content_hash": target.content_hash()},
         )
         if 14 <= index < 17:  # governed Oracle is intentionally Development-only here
+            oracle_identity = dict(common)
+            if index == 14:
+                oracle_identity["cohort_year"] = year - 1
+                oracle_identity_mismatch_case = case_id
             oracle = _with_hash(
-                common
+                oracle_identity
                 | {
                     "document_id": f"doc-{case_id}",
                     "company_name": "Fixture",
@@ -250,11 +255,20 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
     }
     assert first["summary"]["development_model_ready_count"] == 354
     assert first["summary"]["validation_model_ready_count"] == 70
-    assert first["summary"]["oracle_intersection_model_ready_count"] == 3
+    assert first["summary"]["oracle_intersection_model_ready_count"] == 2
+    assert first["summary"]["oracle_identity_exclusion_count"] == 1
     assert first["summary"]["oracle_split_status"] == {
         "development": "available",
         "validation": "unavailable_no_reviewed_gold",
     }
+    oracle_exclusions = [
+        row for row in first["coverage"] if row["oracle_exclusion_reason"]
+    ]
+    assert len(oracle_exclusions) == 1
+    assert oracle_exclusions[0]["case_id"] == oracle_identity_mismatch_case
+    assert oracle_exclusions[0]["oracle_source_present"] is True
+    assert oracle_exclusions[0]["oracle_document_available"] is False
+    assert "oracle.cohort_year" in oracle_exclusions[0]["oracle_exclusion_reason"]
     assert (output / "matrices" / "full_production_PM_validation.json").is_file()
     assert (output / "matrices" / "oracle_intersection_OM_development.json").is_file()
     assert not (output / "matrices" / "oracle_intersection_OM_validation.json").exists()
