@@ -1,0 +1,101 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2023_01274",
+  "source_pass1": "expert_results/ipo_2023_01274/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "ad52b00e84f497ce454521e4aed4e9e2f5124ecc76cdc18eaa9ec90a90cf38b4",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "continuous_loss",
+      "source_phase1_status": "POLICY_AMBIGUITY",
+      "source_phase1_finding_code": "COMPARABILITY_AMBIGUITY_CONTINUOUS_LOSS",
+      "priority": null,
+      "evidence_refs": [
+        {
+          "page": 24,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "REVIEW_STATE",
+      "action": "SET_REVIEW_STATE",
+      "policy_code": "POLICY_EVIDENCE_LIMITED_FINAL_REVIEW_STATE",
+      "current_state": {
+        "applicable": true,
+        "expected_status": "verified",
+        "expected_level": "high"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "source_outcome": {
+        "re_audit_status": "POLICY_AMBIGUITY",
+        "finding_code": "COMPARABILITY_AMBIGUITY_CONTINUOUS_LOSS",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": {
+          "groups": {
+            "UNKNOWN": [
+              {
+                "period": "2020",
+                "loss": -53827.0,
+                "signature": "UNKNOWN"
+              },
+              {
+                "period": "2021",
+                "loss": -464199.0,
+                "signature": "UNKNOWN"
+              },
+              {
+                "period": "2022",
+                "loss": -342376.0,
+                "signature": "UNKNOWN"
+              }
+            ]
+          },
+          "unknown": [
+            {
+              "period": "2020",
+              "loss": -53827.0,
+              "signature": "UNKNOWN"
+            },
+            {
+              "period": "2021",
+              "loss": -464199.0,
+              "signature": "UNKNOWN"
+            },
+            {
+              "period": "2022",
+              "loss": -342376.0,
+              "signature": "UNKNOWN"
+            }
+          ]
+        },
+        "source_fields": [
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss",
+          "loss_periods",
+          "loss"
+        ],
+        "message": ""
+      },
+      "message": "The policy cannot derive a unique numeric label without inventing facts; v1.1.2 closes the audit item as an explicit needs_review state.",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

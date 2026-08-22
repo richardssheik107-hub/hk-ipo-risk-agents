@@ -1,0 +1,343 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_01274",
+  "stock_code": "1274.HK",
+  "company_name": "知行汽車科技",
+  "document_id": "ipo_2023_01274",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.99,
+      "reasoning": "Cash of 146687 divided by monthly operating cash burn of 13480.333333 gives 10.881556 months of runway.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "cash": 146687,
+        "monthly_cash_burn": 13480.333333333334,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "months": 10.88155584678915,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.98,
+      "reasoning": "The directly comparable periods contain 3 reported loss periods; the frozen threshold requires two for medium and three for high.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "2020",
+            "loss": -53827
+          },
+          {
+            "period": "2021",
+            "loss": -464199
+          },
+          {
+            "period": "2022",
+            "loss": -342376
+          }
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 3,
+        "threshold_triggered": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Comparable-period revenue changed from 359171 to 543212, a deterministic growth rate of 51.240495%.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_revenue": 359171,
+        "current_revenue": 543212
+      },
+      "calculation_result": {
+        "growth_pct": 51.24049547430054,
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-customer ratio is =95% and the top-five ratio is =99%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives high.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_customer_pct": 95.0,
+        "top_five_customer_pct": 99.0,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-supplier ratio is =90.3% and the top-five ratio is =95%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives high.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_supplier_pct": 90.3,
+        "top_five_supplier_pct": 95.0,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "redemption_rights",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "No effective or automatically restorable investor redemption right was identified in the reviewed pre-IPO investment disclosures; generic company-law redemption language was excluded.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The reviewed legal proceedings and compliance disclosures did not identify an unresolved material proceeding or non-compliance event meeting the protocol trigger; historical items were described as rectified, provided for, or non-material.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01274",
+      "stock_code": "1274.HK",
+      "company_name": "知行汽車科技",
+      "document_id": "ipo_2023_01274",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The issuer's core business already generated commercial revenue during the track record period, so the pre-commercial product trigger is rejected.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2023_01274",
+      "risk_code": "cash_runway",
+      "page": 28,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "年 ╱ 期末現金及現金等價物    16,912         32,042    365,745     67,655     146,687",
+      "evidence_reason": "Provides the latest cash and cash-equivalent balance used in the runway calculation.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "risk_code": "cash_runway",
+      "page": 28,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "經營活動所用現金淨額       (23,835)       (62,904)   (65,567)    (28,074)    (80,882)",
+      "evidence_reason": "Provides the latest-period operating cash outflow used in the runway calculation.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "risk_code": "continuous_loss",
+      "page": 24,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "年╱期內虧損     (53,827) (113.0)% (464,199) (260.4)%      (342,376) (25.8)% (300,432) (83.6)%         (99,748) (18.4)%",
+      "evidence_reason": "Shows the reported losses for the directly comparable periods.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "risk_code": "customer_concentration",
+      "page": 22,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "總收入的84.2%、92.1%、99.4%及99.0%，而自最大客戶所得收入則分別佔我們於有 關期間總收入的63.0%、53.0%、96.4%及95.0%。有關詳情，請參閱「業務 － 我們的客 戶」。",
+      "evidence_reason": "Provides the latest largest and top-five customer concentration ratios.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "risk_code": "supplier_concentration",
+      "page": 22,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "額的53.4%、78.9%、96.0%及95.0%，而於有關期間向我們最大供應商的採購額分別佔 我們總採購額的23.2%、54.6%、69.2%及90.3%。有關詳情，請參閱「業務 － 我們的供 應商」。",
+      "evidence_reason": "Provides the latest largest and top-five supplier concentration ratios.",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    },
+    "source_document_page_count": 676,
+    "source_document_sha256_expected": "592e77602c05f791ec91258863a15f1f3cce496ca90747a527a60924c1b9bcbd"
+  }
+}
