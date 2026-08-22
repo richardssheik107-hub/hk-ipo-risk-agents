@@ -32,8 +32,10 @@ jobs:
         run: git diff --exit-code -- 'expert_results/ipo_*/pass1/expert_annotation_v1.json'
       - name: Verify committed Case resolutions are reproducible
         run: git diff --exit-code -- 'expert_results/ipo_*/audit/financial_resolution_v1.json'
-      - name: Verify committed Phase-2c reports are reproducible
-        run: git diff --exit-code -- reports/annotation_audit/phase2c/phase2c_summary.json reports/annotation_audit/phase2c/phase2c_resolutions.csv reports/annotation_audit/phase2c/phase2c_remaining_unresolved.csv
+      - name: Verify committed Phase-2c summary is reproducible
+        # Cross-case detail stays local to the runner; per-case resolution JSON
+        # and the non-sensitive aggregate summary remain reproducible.
+        run: git diff --exit-code -- reports/annotation_audit/phase2c/phase2c_summary.json reports/annotation_audit/phase2c/phase2c_remaining_unresolved.csv
       - name: Byte-compile Phase-2c modules
         run: python -m py_compile src/ipo_risk/quality/annotation_phase2c.py scripts/run_expert_annotation_phase2c.py
       - name: Upload Phase-2c results
@@ -41,5 +43,5 @@ jobs:
         with:
           name: expert-annotation-phase2c
           path: |
-            reports/annotation_audit/phase2c/
-            expert_results/ipo_*/audit/financial_resolution_v1.json
+            reports/annotation_audit/phase2c/phase2c_summary.json
+            expert_results/ipo_2024_*/audit/financial_resolution_v1.json
