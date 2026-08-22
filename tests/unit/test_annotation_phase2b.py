@@ -72,7 +72,7 @@ def test_phase2b_targets_exactly_existing_p0_51_without_pass1_mutation(tmp_path)
     summary = run_phase2b(ROOT, tmp_path, write_backfills=False)
     assert summary["p0_records_targeted"] == 51
     assert summary["pass1_unchanged"] is True
-    assert summary["pass1_file_count"] == 60
+    assert summary["pass1_file_count"] == 100
     assert sum(summary["re_audit_status_counts"].values()) == 51
 
 

@@ -8,6 +8,9 @@ from pathlib import Path
 import pytest
 
 from ipo_risk.modeling.pr_c_freeze import (
+    EXPECTED_UNAVAILABLE_CASE_IDS,
+    EXPECTED_UNAVAILABLE_REASON_BY_CASE,
+    FORMAL_PR_C_EXPECTATIONS,
     PRCFreezeExpectations,
     audit_pr_c_freeze,
 )
@@ -122,8 +125,31 @@ def _materialize_fixture(tmp_path: Path):
         unavailable_case_ids=(metadata[1].case_id,),
         raw_eod_sha256="b" * 64,
         official_bridge_sha256="c" * 64,
+        unavailable_reason_by_case=(
+            (metadata[1].case_id, MarketLabelMissingReason.NO_ELIGIBLE_SESSION.value),
+        ),
     )
     return output, expectations
+
+
+def test_formal_expectations_match_governed_label_readiness() -> None:
+    assert FORMAL_PR_C_EXPECTATIONS.official_case_count == 438
+    assert FORMAL_PR_C_EXPECTATIONS.development_case_count == 368
+    assert FORMAL_PR_C_EXPECTATIONS.validation_case_count == 70
+    assert FORMAL_PR_C_EXPECTATIONS.available_count == 424
+    assert FORMAL_PR_C_EXPECTATIONS.development_available_count == 354
+    assert FORMAL_PR_C_EXPECTATIONS.validation_available_count == 70
+    assert len(EXPECTED_UNAVAILABLE_CASE_IDS) == 14
+    assert tuple(sorted(EXPECTED_UNAVAILABLE_CASE_IDS)) == tuple(
+        sorted(FORMAL_PR_C_EXPECTATIONS.unavailable_case_ids)
+    )
+
+    reasons = dict(EXPECTED_UNAVAILABLE_REASON_BY_CASE)
+    assert set(reasons) == set(EXPECTED_UNAVAILABLE_CASE_IDS)
+    assert sum(value == "missing_base_price" for value in reasons.values()) == 12
+    assert sum(value == "no_eligible_session" for value in reasons.values()) == 2
+    assert reasons["ipo_2020_06688"] == "no_eligible_session"
+    assert reasons["ipo_2022_07841"] == "no_eligible_session"
 
 
 def test_freeze_gate_accepts_complete_deterministic_materialization(
@@ -137,6 +163,7 @@ def test_freeze_gate_accepts_complete_deterministic_materialization(
     assert manifest["threshold_fit_split"] == "development"
     assert manifest["validation_used_for_threshold"] is False
     assert manifest["blind_2025_y_accessed"] is False
+    assert manifest["unavailable_reason_counts"] == {"no_eligible_session": 1}
     assert len(manifest["freeze_manifest_hash"]) == 64
 
 

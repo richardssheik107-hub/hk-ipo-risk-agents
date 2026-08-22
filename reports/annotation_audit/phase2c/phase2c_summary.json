@@ -1,11 +1,11 @@
 {
   "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
   "policy_version": "gpt_expert_policy_addendum_v1.1.2",
-  "cases_scanned": 60,
-  "phase1_policy_records": 33,
+  "cases_scanned": 100,
+  "phase1_policy_records": 46,
   "phase1_insufficient_records": 142,
-  "financial_issue_records_total": 175,
-  "financial_issue_records_closed": 175,
+  "financial_issue_records_total": 188,
+  "financial_issue_records_closed": 188,
   "remaining_unresolved": 0,
   "insufficient_priority_counts": {
     "P0_POSITIVE_OR_NEEDS_REVIEW": 51,
@@ -13,27 +13,27 @@
   },
   "resolution_action_counts": {
     "APPLY_AUDIT_OVERLAY_RELABEL": 10,
-    "CONFIRM_EXISTING": 122,
-    "SET_REVIEW_STATE": 43
+    "CONFIRM_EXISTING": 124,
+    "SET_REVIEW_STATE": 54
   },
   "resolution_class_counts": {
-    "DETERMINISTIC": 106,
+    "DETERMINISTIC": 108,
     "POLICY_RESOLVED": 24,
-    "REVIEW_STATE": 45
+    "REVIEW_STATE": 56
   },
   "policy_code_counts": {
-    "BOUND_INSUFFICIENT_FOR_UNIQUE_THRESHOLD_STATE": 2,
+    "BOUND_INSUFFICIENT_FOR_UNIQUE_THRESHOLD_STATE": 4,
     "CANONICAL_INPUTS_CONFIRM_LABEL": 80,
     "CANONICAL_INPUTS_DETERMINISTIC_RELABEL": 3,
     "EVIDENCE_LIMITED_FINAL_REVIEW_STATE": 42,
-    "FORMAL_BOUND_EXCLUDES_MEDIUM": 23,
+    "FORMAL_BOUND_EXCLUDES_MEDIUM": 25,
     "MAX_SEVERITY_ACROSS_VALID_COMPARABLE_PERIODS": 13,
     "MAX_SEVERITY_WITHIN_HOMOGENEOUS_DURATION_GROUP": 4,
-    "POLICY_EVIDENCE_LIMITED_FINAL_REVIEW_STATE": 1,
+    "POLICY_EVIDENCE_LIMITED_FINAL_REVIEW_STATE": 10,
     "ZERO_BASE_NONDECLINE_EXCLUDES_NEGATIVE_GROWTH": 1,
     "ZERO_REVENUE_DENOMINATOR_NOT_APPLICABLE": 6
   },
-  "resolution_case_count": 58,
+  "resolution_case_count": 70,
   "pass1_unchanged": true,
-  "pass1_file_count": 60
+  "pass1_file_count": 100
 }

@@ -21,10 +21,10 @@ def main() -> int:
     print(json.dumps(summary, indent=2, ensure_ascii=False))
     if summary["remaining_unresolved"] != 0:
         return 2
-    if summary["financial_issue_records_total"] != 175:
+    if summary["financial_issue_records_total"] != 188:
         raise RuntimeError(
-            "Phase 2c expected the frozen 175-record financial issue set "
-            f"(33 policy + 142 insufficient), got {summary['financial_issue_records_total']}"
+            "Phase 2c expected the frozen 188-record financial issue set "
+            f"(46 policy + 142 insufficient), got {summary['financial_issue_records_total']}"
         )
     return 0
 

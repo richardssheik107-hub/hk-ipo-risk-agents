@@ -77,14 +77,15 @@ def test_insufficient_positive_record_gets_p0_existing_evidence_backfill():
 def test_repository_phase2_counts_and_pass1_immutability(tmp_path: Path):
     summary = run_phase2(Path("."), tmp_path / "phase2", write_corrections=False)
 
-    assert summary["cases_scanned"] == 60
+    assert summary["cases_scanned"] == 100
     assert summary["hard_deterministic_corrections"] == 7
     assert summary["correction_case_count"] == 6
-    assert summary["policy_ambiguities_total"] == 33
+    assert summary["policy_ambiguities_total"] == 46
     # Conservative Phase 2 resolves only formal bounds that explicitly supply
-    # enough aggregate structure; one single-customer-only bound remains review.
-    assert summary["policy_deterministically_resolved"] == 23
-    assert summary["policy_review_remaining"] == 10
+    # enough aggregate structure; subsequent cases may add both resolvable
+    # formal bounds and review-only findings without mutating pass1.
+    assert summary["policy_deterministically_resolved"] == 25
+    assert summary["policy_review_remaining"] == 21
     assert summary["insufficient_input_total"] == 142
     assert summary["insufficient_priority_counts"] == {
         "P0_POSITIVE_OR_NEEDS_REVIEW": 51,

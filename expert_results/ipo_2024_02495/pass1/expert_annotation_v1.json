@@ -1,0 +1,356 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_02495",
+  "stock_code": "2495.HK",
+  "company_name": "聲通科技",
+  "document_id": "ipo_2024_02495",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "Cash of 46876 divided by monthly operating cash burn from 12-month operating cash flow -68069 gives 8.263850 months.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "cash": 46876,
+        "operating_cash_flow": -68069,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_cash_burn": 5672.416666666667,
+        "months": 8.263849916995989,
+        "assessment": "runway_calculated"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "The comparable full-year series contains 2 loss period(s); the frozen thresholds are two years for medium and three for high.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "loss_periods": [
+          "2022",
+          "2023"
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 2,
+        "threshold_triggered": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "Comparable-period revenue changed from 514992 to 813017, or 57.869831%.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_revenue": 514992,
+        "current_revenue": 813017
+      },
+      "calculation_result": {
+        "growth_pct": 57.86983098766583,
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The most adverse disclosed 客戶 concentration is largest=12.7% and top-five=43.0%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "most_adverse_disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_customer_pct": 12.7,
+        "top_five_customer_pct": 43.0,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "The most adverse disclosed 供應商 concentration is largest=39.7% and top-five=72.6%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives medium.",
+      "calculation_required": true,
+      "calculation_method": "most_adverse_disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_supplier_pct": 39.7,
+        "top_five_supplier_pct": 72.6,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.92,
+      "reasoning": "The prospectus discloses an effective, conditionally exercisable, or automatically restorable pre-IPO redemption/repurchase right. Legal operability remains a policy review item; provisional severity is medium.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The reviewed legal proceedings and compliance disclosures did not identify an unresolved material proceeding or non-compliance event meeting the frozen trigger; disclosed items were non-material, rectified, insured, or not expected to have a material adverse effect.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02495",
+      "stock_code": "2495.HK",
+      "company_name": "聲通科技",
+      "document_id": "ipo_2024_02495",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The issuer's core business generated commercial revenue during the track record period; no core-product pre-commercial trigger was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "cash_runway",
+      "page": 27,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "現金及現金等價物：46876；經營活動現金淨額：-68069。",
+      "evidence_reason": "Provides the latest comparable cash and operating cash-flow inputs.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "continuous_loss",
+      "page": 25,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "年內虧損：-85811, -29201。",
+      "evidence_reason": "Shows the full-year loss sequence used for the deterministic count.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "revenue_growth",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "收入：比較期 514992；本期 813017。",
+      "evidence_reason": "Provides directly comparable revenue values.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "customer_concentration",
+      "page": 21,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "最大客戶佔比：12.7%；五大客戶佔比：43.0%。",
+      "evidence_reason": "Supports the worst-period concentration threshold comparison.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "supplier_concentration",
+      "page": 84,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "最大供應商佔比：39.7%；五大供應商佔比：72.6%。",
+      "evidence_reason": "Supports the worst-period concentration threshold comparison.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "redemption_rights",
+      "page": 206,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "倘上市申請遭撤回、拒絕或失效，投資者特別權利將自動恢復。",
+      "evidence_reason": "Identifies the operative or restorable pre-IPO investor right.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02495",
+      "risk_code": "material_litigation_compliance",
+      "page": 723,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董事確認概無對本集團有重大不利影響的未決或威脅提出的訴訟、仲裁或行政程序。",
+      "evidence_reason": "Supports rejection of an unresolved material litigation/compliance trigger.",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    },
+    "source_pdf_page_count": 729,
+    "source_pdf_sha256": "3aec1fb56df0afd44e184e64bafa2b58ff1f85952a8cf95d309e7d7358878922",
+    "annotation_scope": "task_indices_81_100"
+  }
+}

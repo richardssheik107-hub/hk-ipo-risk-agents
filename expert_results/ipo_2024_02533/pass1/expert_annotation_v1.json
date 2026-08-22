@@ -1,0 +1,357 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2024_02533",
+  "stock_code": "2533.HK",
+  "company_name": "黑芝麻智能",
+  "document_id": "ipo_2024_02533",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "cash_runway",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "Cash of 1053511 divided by monthly operating cash burn from 3-month operating cash flow -281923 gives 11.210625 months.",
+      "calculation_required": true,
+      "calculation_method": "cash_divided_by_monthly_operating_cash_burn",
+      "calculation_inputs": {
+        "cash": 1053511,
+        "operating_cash_flow": -281923,
+        "period_months": 3
+      },
+      "calculation_result": {
+        "monthly_cash_burn": 93974.33333333333,
+        "months": 11.210624886937214,
+        "assessment": "runway_calculated"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.97,
+      "reasoning": "The comparable full-year series contains 3 loss period(s); the frozen thresholds are two years for medium and three for high.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "loss_periods": [
+          "2021",
+          "2022",
+          "2023"
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 3,
+        "threshold_triggered": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "revenue_growth",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "Comparable-period revenue changed from 29256 to 27473, or -6.094476%.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_revenue": 29256,
+        "current_revenue": 27473
+      },
+      "calculation_result": {
+        "growth_pct": -6.094476346732295,
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "customer_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.97,
+      "reasoning": "The most adverse disclosed 客戶 concentration is largest=47.7% and top-five=96.6%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives high.",
+      "calculation_required": true,
+      "calculation_method": "most_adverse_disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_customer_pct": 47.7,
+        "top_five_customer_pct": 96.6,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": true,
+        "level": "high"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "supplier_concentration",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "medium",
+      "confidence": 0.97,
+      "reasoning": "The most adverse disclosed 供應商 concentration is largest=28.7% and top-five=68.2%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives medium.",
+      "calculation_required": true,
+      "calculation_method": "most_adverse_disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_supplier_pct": 28.7,
+        "top_five_supplier_pct": 68.2,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": true,
+        "level": "medium"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.92,
+      "reasoning": "The prospectus discloses an effective, conditionally exercisable, or automatically restorable pre-IPO redemption/repurchase right. Legal operability remains a policy review item; provisional severity is medium.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The reviewed legal proceedings and compliance disclosures did not identify an unresolved material proceeding or non-compliance event meeting the frozen trigger; disclosed items were non-material, rectified, insured, or not expected to have a material adverse effect.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2024_02533",
+      "stock_code": "2533.HK",
+      "company_name": "黑芝麻智能",
+      "document_id": "ipo_2024_02533",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.97,
+      "reasoning": "The issuer's core business generated commercial revenue during the track record period; no core-product pre-commercial trigger was identified.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "cash_runway",
+      "page": 33,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "現金及現金等價物：1053511；經營活動現金淨額：-281923。",
+      "evidence_reason": "Provides the latest comparable cash and operating cash-flow inputs.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "continuous_loss",
+      "page": 27,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "年內虧損：-2356502, -2753936, -4855118。",
+      "evidence_reason": "Shows the full-year loss sequence used for the deterministic count.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "revenue_growth",
+      "page": 26,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "收入：比較期 29256；本期 27473。",
+      "evidence_reason": "Provides directly comparable revenue values.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "customer_concentration",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "最大客戶佔比：47.7%；五大客戶佔比：96.6%。",
+      "evidence_reason": "Supports the worst-period concentration threshold comparison.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "supplier_concentration",
+      "page": 23,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "business_section",
+      "exact_text": "最大供應商佔比：28.7%；五大供應商佔比：68.2%。",
+      "evidence_reason": "Supports the worst-period concentration threshold comparison.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "redemption_rights",
+      "page": 185,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "倘上市未能完成，投資者贖回權可予行使。",
+      "evidence_reason": "Identifies the operative or restorable pre-IPO investor right.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2024_02533",
+      "risk_code": "material_litigation_compliance",
+      "page": 304,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "legal_disclosure",
+      "exact_text": "董事確認概無對本集團有重大不利影響的未決或威脅提出的訴訟、仲裁或行政程序。",
+      "evidence_reason": "Supports rejection of an unresolved material litigation/compliance trigger.",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    },
+    "source_pdf_page_count": 650,
+    "source_pdf_sha256": "0dd34934bfcf6dcaea82e4bbe784a0339918adb9f121d47b6c53f6163d5e69b6",
+    "annotation_scope": "task_indices_81_100"
+  }
+}
