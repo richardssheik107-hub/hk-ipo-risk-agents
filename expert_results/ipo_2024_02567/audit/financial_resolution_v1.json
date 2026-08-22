@@ -1,0 +1,60 @@
+{
+  "artifact_version": "expert_annotation_financial_resolution_v1",
+  "phase2c_version": "expert_annotation_phase2c_policy_v1_1_2",
+  "policy_version": "gpt_expert_policy_addendum_v1.1.2",
+  "case_id": "ipo_2024_02567",
+  "source_pass1": "expert_results/ipo_2024_02567/pass1/expert_annotation_v1.json",
+  "source_pass1_sha256": "aa57abb2aee04a76269012cf21d627757a10b80a427def9febf18a8e88d48cee",
+  "entry_count": 1,
+  "entries": [
+    {
+      "risk_code": "cash_runway",
+      "source_phase1_status": "INSUFFICIENT_INPUT",
+      "source_phase1_finding_code": "CASH_RECOMPUTE_INPUTS_INSUFFICIENT",
+      "priority": "P1_REJECTED_LABEL_BACKFILL",
+      "evidence_refs": [
+        {
+          "page": 24,
+          "evidence_role": "primary",
+          "requirement": "required",
+          "source_authority": "financial_information"
+        }
+      ],
+      "closure_status": "CLOSED",
+      "resolution_class": "REVIEW_STATE",
+      "action": "SET_REVIEW_STATE",
+      "policy_code": "EVIDENCE_LIMITED_FINAL_REVIEW_STATE",
+      "current_state": {
+        "applicable": false,
+        "expected_status": "rejected",
+        "expected_level": "not_applicable"
+      },
+      "resolved_state": {
+        "applicable": true,
+        "expected_status": "needs_review",
+        "expected_level": null
+      },
+      "source_outcome": {
+        "re_audit_status": "INSUFFICIENT_INPUT",
+        "finding_code": "PHASE2B_CASH_CANONICAL_FACTS_INSUFFICIENT",
+        "recomputed_level": null,
+        "canonical_calculation_inputs": {},
+        "normalized_facts": null,
+        "source_fields": [
+          "cash",
+          "period_months"
+        ],
+        "message": ""
+      },
+      "message": "Existing cited evidence does not support a frozen numeric threshold proof. The correct closed state is needs_review, not an invented number.",
+      "pass1_modified": false
+    }
+  ],
+  "safety": {
+    "pass1_overwritten": false,
+    "evidence_text_modified": false,
+    "reasoning_text_modified": false,
+    "promoted_to_final": false,
+    "audit_overlay_only": true
+  }
+}

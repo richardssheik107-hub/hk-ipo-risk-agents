@@ -1,0 +1,8 @@
+{
+  "valid": true,
+  "issues": [],
+  "annotation_file": "expert_results/ipo_2024_00300/pass1/expert_annotation_v1.json",
+  "source_pdf_page_count": 741,
+  "source_pdf_sha256": "c9a4ad22a87cfa9f02bede2120a7e1b7a689f35a2908300341a4e8391f1d8707",
+  "validator": "validate_expert_annotation_payload"
+}

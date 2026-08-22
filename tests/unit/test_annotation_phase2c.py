@@ -82,11 +82,11 @@ def test_true_numeric_gap_closes_as_explicit_review_state():
 
 def test_full_repository_closes_frozen_financial_issue_set(tmp_path):
     summary = run_phase2c(ROOT, tmp_path, write_artifacts=False)
-    assert summary["cases_scanned"] == 80
-    assert summary["phase1_policy_records"] == 42
+    assert summary["cases_scanned"] == 100
+    assert summary["phase1_policy_records"] == 46
     assert summary["phase1_insufficient_records"] == 142
-    assert summary["financial_issue_records_total"] == 184
-    assert summary["financial_issue_records_closed"] == 184
+    assert summary["financial_issue_records_total"] == 188
+    assert summary["financial_issue_records_closed"] == 188
     assert summary["remaining_unresolved"] == 0
     assert summary["insufficient_priority_counts"] == {
         "P0_POSITIVE_OR_NEEDS_REVIEW": 51,
