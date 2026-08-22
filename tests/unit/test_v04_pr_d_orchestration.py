@@ -51,6 +51,7 @@ def _label(
 ) -> MarketOutcomeLabel:
     listing = date(year, 1, 2)
     value = Decimal((sum(ord(char) for char in case_id) % 61 - 30)) / Decimal("100")
+    has_base_price = available or missing_reason is not MarketLabelMissingReason.MISSING_BASE_PRICE
     return MarketOutcomeLabel(
         case_id=case_id,
         stock_code=code,
@@ -62,10 +63,8 @@ def _label(
         ),
         listing_date=listing,
         horizon=MarketLabelHorizon.FIVE_DAYS,
-        base_price=Decimal("10") if available else None,
-        base_price_source=(
-            MarketBasePriceSource.OFFICIAL_LISTING_PRICE if available else None
-        ),
+        base_price=Decimal("10") if has_base_price else None,
+        base_price_source=MarketBasePriceSource.OFFICIAL_LISTING_PRICE,
         target_trading_date=listing + timedelta(days=7) if available else None,
         target_close=Decimal("10") * (1 + value) if available else None,
         raw_return=value if available else None,
