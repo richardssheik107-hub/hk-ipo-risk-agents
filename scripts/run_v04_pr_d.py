@@ -13,6 +13,7 @@ from ipo_risk.modeling.canonical_dataset import (
     V04CanonicalDatasetBuilder,
     hash_source_manifests,
     load_target_artifact,
+    oracle_document_block,
     project_model_matrix,
 )
 from ipo_risk.schemas.canonical_modeling import (
@@ -92,6 +93,70 @@ def _validate_upstream_freezes(
         raise ValueError("PR-C formal Gate has not passed")
 
 
+def _oracle_identity_only(error: ValueError) -> bool:
+    prefix = "canonical artifact identity mismatch: "
+    message = str(error)
+    if not message.startswith(prefix):
+        return False
+    fields = [item.strip() for item in message[len(prefix) :].split(",")]
+    return bool(fields) and all(field.startswith("oracle.") for field in fields)
+
+
+def _join_with_optional_oracle(
+    *,
+    builder: V04CanonicalDatasetBuilder,
+    production: dict[str, Any],
+    market_core: dict[str, Any],
+    target_payload: dict[str, Any],
+    oracle: dict[str, Any] | None,
+    source_manifest_hash: str,
+):
+    """Keep Production model-ready when only evaluation-only Oracle identity drifts.
+
+    Oracle artifact integrity/schema still fail closed. Only an identity mismatch
+    confined to `oracle.*` is converted into an explicit Oracle-cohort exclusion.
+    The frozen Oracle payload is never rewritten in memory.
+    """
+
+    if oracle is None:
+        return (
+            builder.join_artifacts(
+                production=production,
+                market_core=market_core,
+                target_payload=target_payload,
+                oracle=None,
+                source_manifest_hash=source_manifest_hash,
+            ),
+            "",
+        )
+
+    # Validate the frozen Oracle artifact itself before deciding whether its
+    # identity metadata can enter the evaluation-only intersection.
+    oracle_document_block(oracle)
+    try:
+        return (
+            builder.join_artifacts(
+                production=production,
+                market_core=market_core,
+                target_payload=target_payload,
+                oracle=oracle,
+                source_manifest_hash=source_manifest_hash,
+            ),
+            "",
+        )
+    except ValueError as exc:
+        if not _oracle_identity_only(exc):
+            raise
+        record = builder.join_artifacts(
+            production=production,
+            market_core=market_core,
+            target_payload=target_payload,
+            oracle=None,
+            source_manifest_hash=source_manifest_hash,
+        )
+        return record, str(exc)
+
+
 def materialize_pr_d(
     *,
     production_dir: Path,
@@ -134,17 +199,23 @@ def materialize_pr_d(
         market_core_path = market_core_dir / f"{target.case_id}.json"
         if not production_path.is_file() or not market_core_path.is_file():
             raise ValueError(f"PR-D missing frozen X for {target.case_id}")
+        production = _read_json(production_path)
+        market_core = _read_json(market_core_path)
         oracle_path = oracle_dir / f"{target.case_id}.json" if oracle_dir else None
         oracle = _read_json(oracle_path) if oracle_path and oracle_path.is_file() else None
+        oracle_exclusion_reason = ""
+        oracle_model_ready = False
         if target.availability is MarketLabelAvailability.AVAILABLE:
-            record = builder.join_artifacts(
-                production=_read_json(production_path),
-                market_core=_read_json(market_core_path),
+            record, oracle_exclusion_reason = _join_with_optional_oracle(
+                builder=builder,
+                production=production,
+                market_core=market_core,
                 target_payload=target_payload,
                 oracle=oracle,
                 source_manifest_hash=source_manifest_hash,
             )
             records.append(record)
+            oracle_model_ready = record.oracle_document is not None
             status = "model_ready"
             exclusion_reason = ""
         else:
@@ -161,7 +232,9 @@ def materialize_pr_d(
                 "production_document_available": True,
                 "market_core_available": True,
                 "market_extended_status": "not_supplied_governed_optional",
-                "oracle_document_available": oracle is not None,
+                "oracle_source_present": oracle is not None,
+                "oracle_document_available": oracle_model_ready,
+                "oracle_exclusion_reason": oracle_exclusion_reason,
                 "target_available": (
                     target.availability is MarketLabelAvailability.AVAILABLE
                 ),
@@ -276,6 +349,9 @@ def materialize_pr_d(
             writer.writeheader()
             writer.writerows(rendered_rows)
 
+    oracle_identity_exclusion_count = sum(
+        bool(row["oracle_exclusion_reason"]) for row in coverage
+    )
     summary = {
         "pr_d_version": PR_D_VERSION,
         "source_manifest_hash": source_manifest_hash,
@@ -288,6 +364,7 @@ def materialize_pr_d(
         "oracle_intersection_model_ready_count": sum(
             row.oracle_document is not None for row in records
         ),
+        "oracle_identity_exclusion_count": oracle_identity_exclusion_count,
         "oracle_split_status": oracle_split_status,
         "oracle_development_model_ready_count": sum(
             row.oracle_document is not None
