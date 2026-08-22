@@ -41,7 +41,14 @@ def _with_hash(body):
     return body | {"content_hash": canonical_hash(body)}
 
 
-def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcomeLabel:
+def _label(
+    case_id: str,
+    code: str,
+    year: int,
+    available: bool,
+    *,
+    missing_reason: MarketLabelMissingReason = MarketLabelMissingReason.NO_ELIGIBLE_SESSION,
+) -> MarketOutcomeLabel:
     listing = date(year, 1, 2)
     value = Decimal((sum(ord(char) for char in case_id) % 61 - 30)) / Decimal("100")
     return MarketOutcomeLabel(
@@ -55,8 +62,10 @@ def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcome
         ),
         listing_date=listing,
         horizon=MarketLabelHorizon.FIVE_DAYS,
-        base_price=Decimal("10"),
-        base_price_source=MarketBasePriceSource.OFFICIAL_LISTING_PRICE,
+        base_price=Decimal("10") if available else None,
+        base_price_source=(
+            MarketBasePriceSource.OFFICIAL_LISTING_PRICE if available else None
+        ),
         target_trading_date=listing + timedelta(days=7) if available else None,
         target_close=Decimal("10") * (1 + value) if available else None,
         raw_return=value if available else None,
@@ -65,9 +74,7 @@ def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcome
             if available
             else MarketLabelAvailability.UNAVAILABLE
         ),
-        missing_reason=(
-            None if available else MarketLabelMissingReason.NO_ELIGIBLE_SESSION
-        ),
+        missing_reason=None if available else missing_reason,
         label_policy_version="v04_market_label_policy_v1",
         source="fixture",
         provenance=MarketDataProvenance(
@@ -87,10 +94,24 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         (f"ipo_{year}_{index:05d}", f"{index:05d}.HK", year)
         for index, year in enumerate(years, start=1)
     ]
-    unavailable = {case_id for case_id, _code, year in identities if year <= 2023}
-    unavailable = set(sorted(unavailable)[:6])
+    development_ids = sorted(
+        case_id for case_id, _code, year in identities if year <= 2023
+    )
+    missing_base_price = set(development_ids[:12])
+    no_eligible_session = set(development_ids[12:14])
+    unavailable = missing_base_price | no_eligible_session
     raw_labels = [
-        _label(case_id, code, year, case_id not in unavailable)
+        _label(
+            case_id,
+            code,
+            year,
+            case_id not in unavailable,
+            missing_reason=(
+                MarketLabelMissingReason.MISSING_BASE_PRICE
+                if case_id in missing_base_price
+                else MarketLabelMissingReason.NO_ELIGIBLE_SESSION
+            ),
+        )
         for case_id, code, year in identities
     ]
     outcome_builder = FiveDayOutcomeBuilder()
@@ -146,7 +167,7 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
             pr_c_dir / "targets" / f"{case_id}.json",
             target.model_dump(mode="json") | {"content_hash": target.content_hash()},
         )
-        if 6 <= index < 9:  # governed Oracle is intentionally Development-only here
+        if 14 <= index < 17:  # governed Oracle is intentionally Development-only here
             oracle = _with_hash(
                 common
                 | {
@@ -197,8 +218,8 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         {
             "gate_passed": True,
             "official_case_count": 438,
-            "available_count": 432,
-            "unavailable_count": 6,
+            "available_count": 424,
+            "unavailable_count": 14,
             "failure_count": 0,
             "determinism_mismatch_count": 0,
             "validation_used_for_threshold": False,
@@ -222,8 +243,13 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
     second = materialize_pr_d(**kwargs, resume=True)
     assert first["summary"] == second["summary"]
     assert first["summary"]["official_case_count"] == 438
-    assert first["summary"]["full_production_model_ready_count"] == 432
-    assert first["summary"]["development_model_ready_count"] == 362
+    assert first["summary"]["full_production_model_ready_count"] == 424
+    assert first["summary"]["target_unavailable_count"] == 14
+    assert first["summary"]["target_unavailable_reason_counts"] == {
+        "missing_base_price": 12,
+        "no_eligible_session": 2,
+    }
+    assert first["summary"]["development_model_ready_count"] == 354
     assert first["summary"]["validation_model_ready_count"] == 70
     assert first["summary"]["oracle_intersection_model_ready_count"] == 3
     assert first["summary"]["oracle_split_status"] == {
