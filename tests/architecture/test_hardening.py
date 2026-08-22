@@ -69,8 +69,11 @@ def test_verifier_and_supervisor_contracts():
     assert supervised.verified_risks and supervised.summary
 
 def test_ui_import_boundary_and_gitignore():
-    app = Path("app/streamlit_app.py").read_text(encoding="utf-8")
-    assert "IPOAnalysisService" in app
-    for forbidden in ("ipo_risk.agents", "ipo_risk.parsers", "ipo_risk.repositories", "ipo_risk.predictors", "ipo_risk.providers"): assert forbidden not in app
+    entry = Path("app/streamlit_app.py").read_text(encoding="utf-8")
+    assert "IPOAnalysisService" in entry
+    # Every UI module, not just the entry point, stays behind the service boundary.
+    for module in sorted(Path("app").glob("*.py")):
+        source = module.read_text(encoding="utf-8")
+        for forbidden in ("ipo_risk.agents", "ipo_risk.parsers", "ipo_risk.repositories", "ipo_risk.predictors", "ipo_risk.providers", "ipo_risk.market"): assert forbidden not in source, module
     ignored = Path(".gitignore").read_text(encoding="utf-8")
     for value in (".env", "data/results", "reports", "*.docx", "models", "*.pkl", "*.joblib", "*.onnx", "*.bin", "*.ckpt"): assert value in ignored
