@@ -81,6 +81,15 @@ from ipo_risk.schemas.modeling import (
     V04ModelingDataset,
     V04ModelingRecord,
 )
+from ipo_risk.schemas.outcomes import (
+    V04_FIVE_DAY_OUTCOME_POLICY_VERSION,
+    V04_FIVE_DAY_TARGET_SCHEMA_VERSION,
+    AbnormalReturnPolicy,
+    FiveDayOutcomePolicy,
+    FiveDayOutcomeTarget,
+    FiveDayThresholdMethod,
+    FrozenFiveDayThreshold,
+)
 
 
 def now() -> datetime:

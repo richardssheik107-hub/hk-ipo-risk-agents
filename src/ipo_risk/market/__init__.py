@@ -12,6 +12,7 @@ from ipo_risk.market.features import (
     vectorize_market_snapshot,
 )
 from ipo_risk.market.labels import MarketLabelGenerator
+from ipo_risk.market.outcomes import FiveDayOutcomeBuilder
 from ipo_risk.market.validation import MarketDataValidator
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     "MarketDatasetGuard",
     "MarketDatasetSplitPolicy",
     "MarketLabelGenerator",
+    "FiveDayOutcomeBuilder",
     "MarketSecurityEligibilityPolicy",
     "PreListingMarketFeatureEngine",
     "PreListingMarketFeatureError",
