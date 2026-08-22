@@ -1,11 +1,10 @@
 # Roadmap
 
-> Status snapshot: **2026-08-21**  
+> Status snapshot: **2026-08-22**  
 > 当前唯一主线：**End-to-End Closed Loop First**。  
-> PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。
-> 下一正式里程碑：**PR-C — 5D Outcome Policy Freeze / NOT STARTED**。
-> PR-B materialization source revision：**`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**。
-> PR-B mainline publication：PR #80；post-merge documentation closure：PR #81 / **`2675646c359a0138080960c916e8ef526c085c88`**。
+> PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。  
+> 当前正式 Gate：**PR-C — implementation / A static audit / 424-14 correction complete; governed materialization pending; NOT FROZEN**。  
+> PR-D：**engineering preparation merged; formal materialization blocked by PR-C**。
 
 ## 版本路线
 
@@ -71,16 +70,20 @@ Frozen records:
 
 ## 当前真实 readiness
 
-以下数字来自已完成的 PR-A 与 PR-B 正式 materialization / determinism 审计。
+以下数字区分 PR-B EOD/session coverage 与 PR-C 可执行 5D outcome coverage；两者不得混用。
 
 | 项目 | 当前状态 |
 | --- | --- |
 | Official 2020–2024 IPO universe | 438 / 438 available |
 | Local prospectus coverage | 438 / 438 |
-| IPO OHLCV outcome coverage | 432 / 438 |
+| PR-B EOD/session-ready coverage | 432 / 438 |
+| PR-C 5D outcome available | 424 / 438 |
+| PR-C 5D outcome unavailable | 14 / 438 = 12 missing_base_price + 2 no_eligible_session |
+| PR-C Development available | 354 / 368 |
+| PR-C Validation available | 70 / 70 |
 | Authoritative snapshots | 438 / 438 |
 | Production Document-X | 438 / 438, 100 dimensions |
-| Oracle Document-X | 60 materialized; 378 no reviewed Gold |
+| Oracle Document-X | frozen PR-A inventory 60; refreshed coverage must be re-audited after newer annotations |
 | Production failures / silent drops | 0 / 0 |
 | PR-B Core code/tests | COMPLETE / FROZEN |
 | PR-B Core real coverage | 438 / 438 materialized; 0 failed; 0 silent drops |
@@ -88,7 +91,8 @@ Frozen records:
 | Industry benchmark mapping / history | MISSING — Extended |
 | Total-market turnover | MISSING — Extended |
 | PR-B Gate | PASS / COMPLETE / FROZEN |
-| Full Model-ready data gate | BLOCKED BY PR-C / PR-D |
+| PR-C Gate | A STATIC AUDIT PASS; GOVERNED FULL MATERIALIZATION PENDING; NOT FROZEN |
+| Full Model-ready data gate | BLOCKED BY FORMAL PR-C FREEZE / PR-D MATERIALIZATION |
 
 ## PR-B frozen boundary
 
@@ -142,12 +146,12 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | CL-1 | Freeze Current Document Intelligence | **COMPLETE / FROZEN** | 已完成 |
 | CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成 |
 | CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN ON MAIN** | 已完成 |
-| CL-4 / PR-C | Freeze 5D Outcome Policy | **NEXT / NOT STARTED** | Development-only target policy decision |
-| CL-5 / PR-D | Canonical Model-ready Dataset | BLOCKED BY C | versioned Core/Extended dataset contract + manifests |
-| CL-6 / PR-E | Baseline + Oracle Diagnostic | NOT STARTED | M/P/O/PM/OM fair comparison |
-| CL-7 / PR-F | LightGBM + Explainability | NOT STARTED | baseline complete and reproducible |
-| CL-8/9 / PR-G | Market Agent + Final Supervisor | NOT STARTED | frozen model output contract |
-| CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | NOT STARTED | PDF → Final Report complete |
+| CL-4 / PR-C | Freeze 5D Outcome Policy | **ACTIVE / FORMAL MATERIALIZATION PENDING / NOT FROZEN** | governed full run + q25 + 438 targets + determinism + freeze manifest + A final sign-off |
+| CL-5 / PR-D | Canonical Model-ready Dataset | **ENGINEERING PREP MERGED / BLOCKED BY C** | PR-C freeze manifest; 424 model-ready / 14 explicit exclusions |
+| CL-6 / PR-E | Baseline + Oracle Diagnostic | PREPARATION ONLY | frozen PR-D + time-aware evaluation protocol + refreshed Oracle audit |
+| CL-7 / PR-F | LightGBM + Explainability | PREPARATION ONLY | PR-E formal baseline complete and reproducible |
+| CL-8/9 / PR-G | Market Agent + Final Supervisor | CONTRACT PREPARATION ONLY | frozen model output contract + protected-interface review |
+| CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | UI PREPARATION ONLY | PDF → Final Report complete |
 
 ## PR-B completion evidence
 
@@ -175,8 +179,8 @@ Frozen evidence and reproducibility references:
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
-PR-C  5D Outcome Policy Freeze                       NEXT / NOT STARTED
-PR-D  Canonical Model-ready Dataset
+PR-C  5D Outcome Policy Freeze                       ACTIVE / NOT FROZEN
+PR-D  Canonical Model-ready Dataset                  PREP MERGED / BLOCKED BY C
 PR-E  Baseline + Oracle Diagnostic
 PR-F  LightGBM + Explainability
 PR-G  Market Agent + Final Supervisor
@@ -200,7 +204,7 @@ OM  = Oracle Document + Market
 
 Production 与 Oracle 比较必须使用相同 cohort、split、target、preprocessing 和 model family。
 
-PR-D 必须显式决定如何把 30-position Market-X Core 和 optional 20-position Extended contract 纳入新的 canonical dataset version；不能静默修改现有历史 120-position Extended join。
+PR-D 的 Core-first canonical contract 已作为 engineering preparation 合入主线。正式 materialization 必须绑定新的 PR-C 424/14 contract；30-position Market-X Core 与 optional 20-position Extended contract 保持显式分离，不能静默修改历史 120-position Extended join。
 
 ## 时间切分
 
@@ -228,6 +232,8 @@ PR-D 必须显式决定如何把 30-position Market-X Core 和 optional 20-posit
 
 - 总执行计划：[`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 - 五人执行与角色边界：[`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)
+- PR-C A-side Gate audit：[`V04_PR_C_A_GATE_AUDIT.md`](V04_PR_C_A_GATE_AUDIT.md)
+- Role-A integration Gate handoff：[`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 - 当前规格：[`PROJECT_SPEC.md`](PROJECT_SPEC.md)
 - 当前架构：[`ARCHITECTURE.md`](ARCHITECTURE.md)
 - Schema / modeling contracts：[`DATA_SCHEMA.md`](DATA_SCHEMA.md)
