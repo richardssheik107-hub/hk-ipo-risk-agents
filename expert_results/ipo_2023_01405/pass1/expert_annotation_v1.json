@@ -1,0 +1,310 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_01405",
+  "stock_code": "1405.HK",
+  "company_name": "達勢股份",
+  "document_id": "ipo_2023_01405",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Latest-period operating cash flow is positive (298213); the protocol therefore treats the issuer as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "cash": 544247,
+        "net_operating_cash_flow": 298213,
+        "period_months": 12
+      },
+      "calculation_result": {
+        "monthly_cash_burn": null,
+        "months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.98,
+      "reasoning": "The directly comparable periods contain 3 reported loss periods; the frozen threshold requires two for medium and three for high.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "2020",
+            "loss": -274050
+          },
+          {
+            "period": "2021",
+            "loss": -471063
+          },
+          {
+            "period": "2022",
+            "loss": -222632
+          }
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 3,
+        "threshold_triggered": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Comparable-period revenue changed from 1.6113e+06 to 2.0208e+06, a deterministic growth rate of 25.414262%.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_revenue": 1611300,
+        "current_revenue": 2020800
+      },
+      "calculation_result": {
+        "growth_pct": 25.41426177620555,
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-customer ratio is <1% and the top-five ratio is <1%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_customer_pct": 1.0,
+        "top_five_customer_pct": 1.0,
+        "bound_operator": "<"
+      },
+      "calculation_result": {
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-supplier ratio is =8.1% and the top-five ratio is =28.3%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_supplier_pct": 8.1,
+        "top_five_supplier_pct": 28.3,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.92,
+      "reasoning": "The prospectus discloses an effective, conditionally exercisable, or automatically restorable pre-IPO redemption/repurchase right. The protocol requires review of its legal operability and uses provisional medium severity.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The reviewed legal proceedings and compliance disclosures did not identify an unresolved material proceeding or non-compliance event meeting the protocol trigger; historical items were described as rectified, provided for, or non-material.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_01405",
+      "stock_code": "1405.HK",
+      "company_name": "達勢股份",
+      "document_id": "ipo_2023_01405",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The issuer's core business already generated commercial revenue during the track record period, so the pre-commercial product trigger is rejected.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2023_01405",
+      "risk_code": "continuous_loss",
+      "page": 21,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "本公司擁有人應佔年內虧損   (274,050)      (24.8)      (471,063)      (29.2)   (222,632)      (11.0)",
+      "evidence_reason": "Shows the reported losses for the directly comparable periods.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_01405",
+      "risk_code": "redemption_rights",
+      "page": 40,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "「2021年優先普通股」     指   本公司每股面值1.00美元的可贖回及可換股2021",
+      "evidence_reason": "Identifies the operative or restorable pre-IPO redemption mechanism.",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    },
+    "source_document_page_count": 608,
+    "source_document_sha256_expected": "562669a9ef2e15b4ce9860717d92ac624e3af225065a635da040501d0781d0cf"
+  }
+}

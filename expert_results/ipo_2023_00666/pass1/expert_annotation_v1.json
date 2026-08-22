@@ -1,0 +1,310 @@
+{
+  "annotation_version": "gpt_expert_v1.1",
+  "case_id": "ipo_2023_00666",
+  "stock_code": "0666.HK",
+  "company_name": "瑞浦蘭鈞",
+  "document_id": "ipo_2023_00666",
+  "risks": [
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "cash_runway",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.99,
+      "reasoning": "Latest-period operating cash flow is positive (453500); the protocol therefore treats the issuer as having no operating cash burn.",
+      "calculation_required": true,
+      "calculation_method": "positive_operating_cash_flow_rule",
+      "calculation_inputs": {
+        "cash": 5748454,
+        "net_operating_cash_flow": 453500,
+        "period_months": 6
+      },
+      "calculation_result": {
+        "monthly_cash_burn": null,
+        "months": null,
+        "assessment": "no_operating_cash_burn"
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "continuous_loss",
+      "applicable": true,
+      "expected_status": "verified",
+      "expected_level": "high",
+      "confidence": 0.98,
+      "reasoning": "The directly comparable periods contain 3 reported loss periods; the frozen threshold requires two for medium and three for high.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_loss_count",
+      "calculation_inputs": {
+        "loss_periods": [
+          {
+            "period": "2020",
+            "loss": -53279
+          },
+          {
+            "period": "2021",
+            "loss": -804209
+          },
+          {
+            "period": "2022",
+            "loss": -450823
+          }
+        ]
+      },
+      "calculation_result": {
+        "loss_period_count": 3,
+        "threshold_triggered": true
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "revenue_growth",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "Comparable-period revenue changed from 4.01658e+06 to 6.59479e+06, a deterministic growth rate of 64.189490%.",
+      "calculation_required": true,
+      "calculation_method": "comparable_period_revenue_growth",
+      "calculation_inputs": {
+        "previous_revenue": 4016575,
+        "current_revenue": 6594794
+      },
+      "calculation_result": {
+        "growth_pct": 64.18948980163448,
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "customer_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-customer ratio is =12.7% and the top-five ratio is =37.6%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_customer_pct": 12.7,
+        "top_five_customer_pct": 37.6,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "supplier_concentration",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.98,
+      "reasoning": "The latest disclosed largest-supplier ratio is =14.5% and the top-five ratio is =52%; applying the frozen 30%/60% medium and 50%/80% high thresholds gives not_applicable.",
+      "calculation_required": true,
+      "calculation_method": "disclosed_concentration_threshold",
+      "calculation_inputs": {
+        "largest_supplier_pct": 14.5,
+        "top_five_supplier_pct": 52.0,
+        "bound_operator": "="
+      },
+      "calculation_result": {
+        "threshold_triggered": false,
+        "level": null
+      },
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "redemption_rights",
+      "applicable": true,
+      "expected_status": "needs_review",
+      "expected_level": "medium",
+      "confidence": 0.92,
+      "reasoning": "The prospectus discloses an effective, conditionally exercisable, or automatically restorable pre-IPO redemption/repurchase right. The protocol requires review of its legal operability and uses provisional medium severity.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "material_litigation_compliance",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The reviewed legal proceedings and compliance disclosures did not identify an unresolved material proceeding or non-compliance event meeting the protocol trigger; historical items were described as rectified, provided for, or non-material.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    },
+    {
+      "annotation_version": "gpt_expert_v1.1",
+      "case_id": "ipo_2023_00666",
+      "stock_code": "0666.HK",
+      "company_name": "瑞浦蘭鈞",
+      "document_id": "ipo_2023_00666",
+      "risk_code": "precommercial_product",
+      "applicable": false,
+      "expected_status": "rejected",
+      "expected_level": "not_applicable",
+      "confidence": 0.95,
+      "reasoning": "The issuer's core business already generated commercial revenue during the track record period, so the pre-commercial product trigger is rejected.",
+      "calculation_required": false,
+      "calculation_method": null,
+      "calculation_inputs": null,
+      "calculation_result": null,
+      "review_outcome": "expert_first_pass",
+      "annotator_type": "external_gpt_expert"
+    }
+  ],
+  "evidence": [
+    {
+      "case_id": "ipo_2023_00666",
+      "risk_code": "continuous_loss",
+      "page": 18,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "financial_information",
+      "exact_text": "年╱期內虧損 . . . . .                (53,279)     (5.9)%    (804,209)    (38.1)%     (450,823)      (3.1)%    (705,472)    (17.6)%    (919,734)     (13.9)%",
+      "evidence_reason": "Shows the reported losses for the directly comparable periods.",
+      "confidence": 0.97
+    },
+    {
+      "case_id": "ipo_2023_00666",
+      "risk_code": "redemption_rights",
+      "page": 155,
+      "evidence_role": "primary",
+      "requirement": "required",
+      "source_authority": "pre_ipo_investment",
+      "exact_text": "根據股東協議，各A輪投資者及B輪投資者獲授予贖回權，在發生指定贖回事件 時，可以要求本公司控股股東永青科技按指定購買價購買該投資者當時持有的股份。",
+      "evidence_reason": "Identifies the operative or restorable pre-IPO redemption mechanism.",
+      "confidence": 0.97
+    }
+  ],
+  "metadata": {
+    "blind_annotation": true,
+    "human_golden_visible_to_annotator": false,
+    "output_contract": "ExpertAnnotationBundle",
+    "prompt_contract_version": "gpt_expert_prompt_contract_v1.1.1",
+    "confidence_constraint": "risk and evidence confidence must be numbers in inclusive range 0.0 to 1.0",
+    "calculation_object_contract": {
+      "calculation_inputs": "JSON object or null; never a string",
+      "calculation_result": "JSON object or null; never a string",
+      "forbidden_encodings": [
+        "prose_string",
+        "markdown",
+        "comma_separated_text",
+        "equation_in_one_string"
+      ],
+      "positive_operating_cash_flow_example": {
+        "calculation_inputs": {
+          "period": "six months ended 30 September 2019",
+          "currency": "MYR",
+          "unit": "RM'000",
+          "cash_and_cash_equivalents": 39079,
+          "net_cash_from_operating_activities": 21817,
+          "period_months": 6
+        },
+        "calculation_result": {
+          "monthly_operating_cash_burn": null,
+          "cash_runway_months": null,
+          "assessment": "no_operating_cash_burn"
+        }
+      },
+      "concentration_bound_example": {
+        "calculation_method": "threshold_exclusion_bound",
+        "calculation_inputs": {
+          "single_customer_upper_bound_pct": 10,
+          "maximum_customers_considered": 5,
+          "bound_operator": "<"
+        },
+        "calculation_result": {
+          "largest_customer_bound": "<10%",
+          "top_five_customer_bound": "<50%",
+          "medium_threshold_excluded": true
+        }
+      }
+    },
+    "evidence_object_schema": {
+      "case_id": "non-empty string; must equal bundle case_id",
+      "risk_code": "one of the eight active risk codes assessed in risks[]",
+      "page": "integer >= 1; physical PDF page number",
+      "evidence_role": [
+        "primary",
+        "supporting",
+        "context",
+        "cross_check"
+      ],
+      "requirement": [
+        "required",
+        "alternative",
+        "supporting_only"
+      ],
+      "source_authority": [
+        "audited_financial_statement",
+        "accountants_report",
+        "financial_information",
+        "business_section",
+        "legal_disclosure",
+        "corporate_structure",
+        "pre_ipo_investment",
+        "summary",
+        "risk_factors",
+        "other"
+      ],
+      "exact_text": "non-empty verbatim text copied from the prospectus",
+      "evidence_reason": "non-empty explanation of how the text supports the risk assessment",
+      "confidence": "number from 0.0 to 1.0 inclusive"
+    },
+    "source_document_page_count": 759,
+    "source_document_sha256_expected": "cfe581dc78d7d2140f73d59253e1dc9be6d6b01ca716add268d93730afbb8508"
+  }
+}
