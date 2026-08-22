@@ -8,7 +8,7 @@ import pytest
 
 try:
     import lightgbm as lgb
-except ModuleNotFoundError:  # optional retrieval-research dependency
+except (ImportError, OSError):  # optional/unloadable retrieval-research dependency
     lgb = None
 
 from ipo_risk.ranking.ltr_v3 import (
@@ -82,7 +82,7 @@ def test_temporary_cleanup() -> None:
     assert not path.exists()
 
 
-@pytest.mark.skipif(lgb is None, reason="lightgbm optional retrieval-research dependency is absent")
+@pytest.mark.skipif(lgb is None, reason="lightgbm optional retrieval-research dependency is unavailable")
 def test_lightgbm_prediction_is_deterministic() -> None:
     assert lgb is not None
     x = np.asarray([[1.0], [2.0], [3.0], [4.0]], dtype=np.float32)
