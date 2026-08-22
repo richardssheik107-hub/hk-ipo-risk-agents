@@ -386,7 +386,32 @@ Development 用于训练、CV、feature policy、threshold 和超参数；2024 �
 
 仅新增输入数据、在同一冻结规则下重新 materialize artifact，不自动要求 schema version bump，但必须产生新的 provenance / content hash。
 
-## 21. 当前 source of truth
+## 21. PR-C Five-day Outcome Target
+
+PR-C adds an outcome-specific versioned boundary above the existing raw
+`MarketOutcomeLabel`:
+
+```text
+FiveDayOutcomePolicy       v04_5d_outcome_policy_v1
+FrozenFiveDayThreshold    Development-only threshold provenance
+FiveDayOutcomeTarget       v04_5d_outcome_target_v1
+```
+
+The raw return remains `D5 close / official listing price - 1`, where D5 is the
+fifth observed eligible session. The first binary policy uses the Development
+nearest-rank 25% quantile and applies the resulting numeric threshold to 2024
+without refitting. Benchmark/abnormal return stays explicitly unavailable until
+a governed benchmark source exists. The target schema rejects 2025 Blind rows.
+
+Implementation source of truth:
+
+```text
+src/ipo_risk/schemas/outcomes.py
+src/ipo_risk/market/outcomes.py
+scripts/run_v04_pr_c.py
+```
+
+## 22. 当前 source of truth
 
 - 公共 Schema 实现：`src/ipo_risk/schemas/`
 - Document modeling：`src/ipo_risk/modeling/`
