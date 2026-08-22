@@ -10,6 +10,11 @@ from ipo_risk.schemas import (
     SupervisionResult,
     VerificationResult,
 )
+from ipo_risk.schemas.final_supervision import (
+    FinalSupervisionInput,
+    FinalSupervisionResult,
+    MarketContextView,
+)
 
 class RiskAgent(Protocol):
     name: str
@@ -31,3 +36,17 @@ class RiskVerifier(Protocol):
 class RiskSupervisor(Protocol):
     name: str
     def supervise(self, risks: list[RiskItem]) -> SupervisionResult: ...
+
+
+class MarketContextProvider(Protocol):
+    """PR-G preparation: explanatory market channel, never a risk producer."""
+
+    name: str
+    def context(self, profile: IPOProfile) -> MarketContextView: ...
+
+
+class FinalSupervisor(Protocol):
+    """PR-G preparation: composes existing channels; creates no new signal."""
+
+    name: str
+    def finalize(self, inputs: FinalSupervisionInput) -> FinalSupervisionResult: ...

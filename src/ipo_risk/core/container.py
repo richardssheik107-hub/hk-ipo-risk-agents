@@ -12,10 +12,12 @@ from ipo_risk.agents.disabled import (
     DisabledLegalAgent,
     DisabledMarketAgent,
 )
+from ipo_risk.agents.final_supervisor import GatePendingFinalSupervisor
 from ipo_risk.agents.financial import CashRunwayFinancialAgent
 from ipo_risk.agents.financial_v03 import V03FinancialAgent
 from ipo_risk.agents.financial_verifier import V03FinancialVerifier
 from ipo_risk.agents.legal import LegalAgent
+from ipo_risk.agents.market_context import GatePendingMarketContextProvider
 from ipo_risk.agents.mock import (
     MockBusinessAgent,
     MockFinancialAgent,
@@ -96,6 +98,10 @@ def default_registry() -> ComponentRegistry:
         "market_data_provider": {"mock": MockMarketDataProvider, "unavailable": UnavailableMarketDataProvider},
         "ipo_data_provider": {"mock": MockIPODataProvider, "request": RequestIPODataProvider, "catalog": CatalogIPODataProvider},
         "report_generator": {"mock": MockReportGenerator, "v03": V03ReportGenerator},
+        # PR-G preparation: registered but inert. No Settings field and no config names
+        # these, so create_workflow cannot reach them until PR-G wires them deliberately.
+        "market_context": {"gate_pending": GatePendingMarketContextProvider},
+        "final_supervisor": {"gate_pending": GatePendingFinalSupervisor},
     }
     for kind, values in registrations.items():
         for name, factory in values.items():
