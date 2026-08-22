@@ -2,7 +2,7 @@
 
 Evidence-backed multi-agent risk analysis and market-risk modeling for Hong Kong IPO prospectuses.
 
-系统读取港股招股书 PDF，以共享 Evidence 为基础运行 Financial、Legal、Business 三个专业 Agent，由确定性 Skills、Specialized Verifier 与 Supervisor 生成可审计的 Document Risk；v0.4 主线进一步把这些风险转成 IPO-level features，并连接上市后市场结果。
+系统读取港股招股书 PDF，以共享 Evidence 为基础运行 Financial、Legal、Business 三个专业 Agent，由确定性 Skills、Specialized Verifier 与 Supervisor 生成可审计的 Document Risk；v0.4 主线进一步把这些风险转成 IPO-level features，并连接上市后市场结果。baseline E2E 跑通后，再在稳定架构上补齐竞赛要求的多时间窗验证、市场情绪 Agent、冲突查证、证据截图、人机复核和正式指标验收。
 
 > 输出中的规则分或未经校准的模型分数不是实际下跌概率，也不构成投资建议。
 
@@ -13,52 +13,58 @@ v0.3.0 Multi-Agent Document Intelligence  = RELEASED / FROZEN
 Retriever V3 research                      = MERGED / FROZEN
 Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
-v0.4 End-to-End Closed Loop                = ACTIVE
 PR-B Market-X Core                          = COMPLETE / FROZEN
-PR-C 5D Outcome Policy Freeze               = NEXT / NOT STARTED
+PR-C 5D Outcome Policy Freeze               = ACTIVE / FORMAL RUN PENDING / NOT FROZEN
+PR-D Canonical Dataset                      = ENGINEERING PREP MERGED / BLOCKED BY PR-C
+v0.4 End-to-End Closed Loop                = ACTIVE
+Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```
 
-当前策略是 **End-to-End Closed Loop First**：先完成可信、可重建、可解释的完整闭环，再依据实证结果决定是否回到 Retriever、LLM Reranker、Agent 与 Verifier 的研究优化。
+当前策略是 **End-to-End Closed Loop First, Competition Hardening Second**：先完成可信、可重建、可解释的完整闭环，再逐项补齐赛题专项能力与指标；更广泛的 Retriever、LLM Reranker、Agent 与 Verifier 研究优化由 Oracle diagnostic 或比赛指标暴露出的真实瓶颈决定。
 
 正式 Gate 顺序：
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
-→ PR-D Canonical Model-ready Dataset
+→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING
+→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY PR-C
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
-→ v0.4 Freeze
+→ v0.4.3 Baseline E2E Freeze
+→ CH-0..CH-6 Competition Hardening
+→ v0.4.5 COMPETITION_READY / Submission Freeze
 ```
 
-准备性工作可以并行，但正式 Gate / mainline merge 不越级。
+准备性工作可以并行，但正式 Gate / mainline merge 不越级。Competition Hardening 不是当前 PR-C 的前置条件。
 
 ## Current Data Readiness
 
-以 2026-08-21 PR-A A6 与 PR-B 冻结审计为准：
+以 2026-08-22 当前 mainline readiness 为准：
 
 - 官方 2020–2024 IPO universe：438 cases；
 - local prospectus：438 / 438；
 - authoritative Document snapshots：438 / 438；
 - Production Document-X：438 / 438，`v04_document_features_v1`，100 维；
 - Production failures / silent drops：0 / 0；
-- Oracle Document-X：60；`no_reviewed_gold`：378；
-- Production ∩ Oracle：60；
+- frozen PR-A Oracle inventory：60；更多 2024 annotations 合入后正式 PR-E 前需重新审计 Oracle coverage；
 - A6 determinism：438 checked，0 mismatches，PASS；
-- IPO OHLCV：432 / 438；
+- PR-B EOD/session-ready：432 / 438；
 - Market-X Core：438 / 438 materialized，0 failed，0 silent drops；
 - PR-B PIT audit：438 / 438 PASS；
 - PR-B determinism：438 checked，0 mismatches，PASS；
+- PR-C 5D outcome available：424 / 438；
+- PR-C unavailable：14 = 12 `missing_base_price` + 2 `no_eligible_session`；
+- PR-C Development available：354 / 368；Validation available：70 / 70；
 - HSI history：missing；
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
-- full model-ready gate：仍 blocked，等待 PR-C target policy 与 PR-D canonical dataset。
+- full model-ready gate：仍 blocked，等待正式 PR-C freeze 与 PR-D canonical materialization。
 
-详细真实 readiness 见 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。PR-B 冻结证据见 [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)。
+详细真实 readiness 见 [`docs/ROADMAP.md`](docs/ROADMAP.md) 与 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
 
 ## Architecture
 
@@ -100,6 +106,8 @@ Business：`precommercial_product`。
 
 所有正式风险必须可回查 Evidence；精确金融计算必须由 deterministic Python Skill 完成。
 
+Competition Hardening 会在 baseline E2E 之后专项评测并按需增强：现金消耗、对赌/赎回、关联交易、客户/供应商集中度、核心管线进度和“文本粉饰度”原文 diagnostic。
+
 ## PR-A Frozen Result
 
 PR-A 已把 Document capability 转成正式数据资产：
@@ -112,9 +120,7 @@ Production Document-X          438 / 438
 Document feature dimension     100
 Production failures            0
 Silent drops                   0
-Oracle materialized            60
-No reviewed Gold               378
-Production ∩ Oracle            60
+Frozen Oracle inventory        60
 A6 mismatches                  0
 2025 blind accessed            NO
 ```
@@ -126,7 +132,7 @@ A6 mismatches                  0
 
 ## PR-B Frozen Result
 
-PR-B 现在明确分为 Core 与 Extended 两层。
+PR-B 明确分为 Core 与 Extended 两层。
 
 ### Market-X Core
 
@@ -157,11 +163,8 @@ Core materialized             438 / 438
 failed / silent drops         0 / 0
 PIT failures                  0
 determinism                   438 checked / 0 mismatches / PASS
-coverage hash                 768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
 2025 blind y accessed         NO
 ```
-
-Materialization source revision：`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`。PR-B 经 PR #80 发布到 `main`，并由 PR #81 完成 post-merge 文档一致性收口。
 
 ### Market-X Extended
 
@@ -188,7 +191,7 @@ PR-B 冻结记录：
 
 - [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md)
 - [`reports/frozen/v04_pr_b_market_x_core_manifest.json`](reports/frozen/v04_pr_b_market_x_core_manifest.json)
-- [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — frozen acceptance contract / audit reference
+- [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 
 ## Modeling Governance
 
@@ -198,7 +201,7 @@ PR-B 冻结记录：
 2025       Blind Test
 ```
 
-2025 在 feature / target / model policy 冻结前只能准备 X，不得读取 y，也不得用于阈值、模型、Prompt、Retriever 或 LLM 调优。
+2025 在 feature / target / model policy 冻结前只能准备 X，不得读取 y，也不得用于阈值、模型、Prompt、Retriever 或 LLM 调优。Competition Hardening 不自动授权打开 2025 y。
 
 正式比较至少包含：
 
@@ -210,7 +213,27 @@ PM  Market + Production
 OM  Market + Oracle
 ```
 
-Oracle 只用于研究上限和错误归因。
+Oracle 只用于研究上限和错误归因。正式 Development evaluation 必须 time-aware。
+
+## Competition Hardening After Baseline E2E
+
+完整计划见 [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。最终比赛版本将补齐并验收：
+
+```text
+1D / 5D / 20D / 60D 真实表现验证（5D primary）
+法务合规 + 财务穿透 + 市场情绪 + 总控决策角色
+长文检索 + 同行估值 + 现金消耗 + 情绪热度 Skills
+Agent conflict detection → evidence re-check → verifier/arbitration
+关键风险抽取准确率 >= 80%
+关键 Evidence recall >= 85%
+Agent / Tool / Evidence traceability = 100%
+PDF page / paragraph / bbox screenshot
+human-in-the-loop review
+测试集 prediction table / trace logs / Evidence / case reports
+可运行 Streamlit / API / batch submission package
+```
+
+只有通过 Competition Submission Freeze Gate 才标记 `COMPETITION_READY`。
 
 ## Quick Start
 
@@ -244,8 +267,6 @@ export IPO_RISK_CONFIG=configs/v03_offline.yaml
 python -m streamlit run app/streamlit_app.py
 ```
 
-PR-B Core pilot / full-run commands 仅用于 frozen artifact 的复现与审计，不再是当前执行任务；命令和验收标准见 [`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)。
-
 密钥只允许来自环境变量；不得提交 `.env`、Token、API Key 或本地绝对路径。
 
 ## Current Components
@@ -257,9 +278,12 @@ PR-B Core pilot / full-run commands 仅用于 frozen artifact 的复现与审计
 - Market Foundation: governed metadata/OHLCV/label contracts available
 - Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration COMPLETE / FROZEN
 - Market-X Extended: frozen 20-position contract available; real HSI/industry/turnover sources still missing
-- Predictor: rule-based compatibility path; v0.4 statistical model pending
-- Oracle Document path: evaluation-only, materialized for 60 cases
+- PR-C Outcome: implementation/policy/audit ready; governed formal materialization pending
+- PR-D Canonical Dataset: engineering prep merged; formal materialization blocked by C
+- Predictor: rule-based compatibility path; v0.4 statistical model formal freeze pending
+- Oracle Document path: evaluation-only; frozen PR-A inventory available, refreshed audit pending
 - Streamlit: current Document product path available; full v0.4 E2E pending
+- Competition layer: planned after PR-H baseline E2E
 
 ## Documentation
 
@@ -270,10 +294,12 @@ Read current guidance in this order:
 3. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 4. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md)
 5. [`docs/ROADMAP.md`](docs/ROADMAP.md)
-6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
-7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
-9. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
-10. [`docs/V04_PR_B_COMPLETION_REPORT.md`](docs/V04_PR_B_COMPLETION_REPORT.md) — frozen PR-B evidence
+6. [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)
+7. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
+8. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+9. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
+10. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
+11. [`docs/V04_PR_C_A_GATE_AUDIT.md`](docs/V04_PR_C_A_GATE_AUDIT.md)
+12. [`docs/V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](docs/V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
 `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md` 是冻结的 PR-B 验收契约；`docs/V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `docs/V04_ROLE_A_CODEX_HANDOFF.md` 是历史审计记录，不再属于当前执行入口。

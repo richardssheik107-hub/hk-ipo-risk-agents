@@ -1,8 +1,8 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN ON MAIN; PR-C NEXT / NOT STARTED**
-> Date: **2026-08-21**
-> Strategy: **End-to-End Closed Loop First**  
+> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN; PR-C ACTIVE / GOVERNED MATERIALIZATION PENDING; PR-D PREP MERGED**
+> Date: **2026-08-22**
+> Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
 
 ---
@@ -11,7 +11,7 @@
 
 本计划把 v0.4 路线转换成适合 **5 人协作** 的执行方案，同时避免把“可以提前准备”误解成“正式 Gate 可以并行越过”。
 
-最终 v0.4 目标：
+最终 baseline E2E 目标：
 
 ```text
 Prospectus PDF
@@ -25,23 +25,38 @@ Prospectus PDF
 → Market Agent
 → Final Supervisor
 → Streamlit Full E2E
-→ v0.4 Freeze
+→ Baseline E2E Freeze
+```
+
+随后进入赛题专项强化：
+
+```text
+Competition Scope Lock
+→ 1D / 20D / 60D Outcome Extension（5D remains primary）
+→ Competition-specific Document Risk Hardening
+→ Market Sentiment + Competition Skills
+→ Multi-Agent Conflict Resolution / Traceability
+→ Evidence Screenshot / Human Review / Competition Report
+→ Competition Evaluation / Case Study
+→ Submission Freeze
 ```
 
 ### 正式治理原则
 
-正式 milestone / Gate / mainline merge 顺序固定为：
+当前正式 milestone / Gate / mainline merge 顺序固定为：
 
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
-→ PR-D Canonical Model-ready Dataset
+→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING
+→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY C
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
-→ v0.4 Freeze
+→ v0.4.3 Baseline E2E Freeze
+→ CH-0..CH-6 Competition Hardening
+→ v0.4.5 Competition Submission Freeze
 ```
 
 **允许并行的是准备性工作，不是正式 Gate。**
@@ -130,7 +145,7 @@ cross-module contract checks
 - Market coverage / missingness；
 - 2025 blind data boundary。
 
-PR-B Owner 任务已完成并冻结在 `main`。PR-C 为下一正式里程碑，但尚未启动。
+PR-B Owner 任务已完成并冻结在 `main`。当前支持 PR-C governed materialization / EOD provenance；Extended authoritative-source research 可并行，但不得用错误 proxy 阻断或污染 Core。
 
 ---
 
@@ -150,7 +165,7 @@ PR-B Owner 任务已完成并冻结在 `main`。PR-C 为下一正式里程碑，
 - SHAP / calibration / ablation / error analysis；
 - 最终研究结论。
 
-PR-B Gate 已通过。当前 PR-C 尚未正式启动；D 可以做 outcome methodology preparation，但最终 5D policy / threshold 必须在独立 PR-C 任务中、只使用 Development 数据冻结。
+PR-C policy / implementation 已具备；当前正式任务是完成 governed full materialization、Development-only q25、438 targets、determinism 和 freeze manifest。正式 PR-E 还必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
 
 ---
 
@@ -266,11 +281,11 @@ Market Coverage Report
 PIT Audit Report
 ```
 
-PR-B 已 PASS 并完成 mainline publication；PR-C 是下一正式里程碑，但仍为 **NOT STARTED**。
+PR-B 已 PASS 并完成 mainline publication；当前正式 Gate 已推进到 PR-C。
 
 ---
 
-# 5. PR-C：5D Outcome Policy Freeze
+# 5. PR-C：5D Outcome Policy Freeze — ACTIVE / FORMAL MATERIALIZATION PENDING
 
 ## Owner
 
@@ -294,16 +309,32 @@ poor_performer_5d
 
 分类阈值只能根据 Development 制定。
 
-### 交付
+当前已完成：policy / schema / implementation / A static audit / 424-14 Gate correction。正式 materialization 目标固定为：
 
 ```text
-Outcome Builder
+Official cases                 438
+5D target available            424
+5D target unavailable           14
+Development available          354
+Validation available             70
+missing_base_price              12
+no_eligible_session              2
+```
+
+### 正式 Gate 交付
+
+```text
+real Development-only q25
+438 target artifacts
+438 determinism checks / 0 mismatch
 Outcome Manifest
 Label QA
 Leakage Tests
+small freeze manifest
+A final sign-off
 ```
 
-PR-C PASS 后才正式进入 PR-D。
+PR-C PASS 后才正式进入 PR-D materialization。
 
 ---
 
@@ -342,6 +373,8 @@ Outcome horizon 一致
 provenance 可重建
 ```
 
+PR-D engineering prep 已在 `main`；正式 materialization 只接受新的 424 / 14 PR-C contract，预期 Full Production model-ready = 424、Development = 354、Validation = 70。
+
 不得静默把新的 30-position Core 插入现有历史 120-position Extended join。
 
 ---
@@ -370,7 +403,7 @@ OM  Market + Oracle
 
 > 如果 Oracle 有效而 Production 较弱，差距是否主要来自 Document Pipeline？
 
-PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。
+PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware；Oracle coverage 需在新增 annotations 后重新审计。
 
 ---
 
@@ -380,7 +413,7 @@ PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。
 
 **D 主导，B/C 提供 feature interpretation，A 负责 experiment reproducibility。**
 
-只有 PR-E 证明 signal 值得继续后，才正式进入复杂模型。
+只有 PR-E 完整、可复现后正式进入复杂模型。
 
 内容：
 
@@ -388,9 +421,12 @@ PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。
 LightGBM
 SHAP
 Feature importance
-Calibration
+Calibration assessment
+Ablation
 Error analysis
 ```
+
+模型输出在未完成校准前只能表述为 `score` / prediction，不得无依据称为真实概率。
 
 ---
 
@@ -420,6 +456,8 @@ Model prediction
 - Market context；
 - 模型驱动因素；
 - 不确定性与缺失状态。
+
+A-side contract 已冻结以下边界：MarketContext 不得冒充 RiskAgent；Final Supervisor 不得创造 Evidence / Risk；Model score 不得冒充 Evidence 或 calibrated probability。
 
 ---
 
@@ -451,25 +489,25 @@ Final Risk Report
 
 至少完成 3–5 个真实 IPO 的完整 E2E Demo。
 
+PR-H 的含义是先获得稳定 **baseline E2E**。赛题专项增强在其后进行，不要求在 PR-C～PR-H 期间提前完成全部比赛增强功能。
+
 ---
 
 # 11. 准备性并行规则
 
 正式 Gate 严格串行不等于五个人必须空等。
 
-PR-B 已完成、冻结并发布到 `main`。PR-C 尚未正式启动；在获得独立 PR-C 任务授权前，只允许不会冻结 PR-C policy 的准备性工作：
+当前状态：PR-A / PR-B frozen；PR-C active / governed materialization pending；PR-D engineering prep merged。当前允许的并行准备包括：
 
 ```text
-A  PR-C schema / blind / provenance / reproducibility Gate checklist 与后续 integration preparation
+A  PR-C final Gate readiness + PR-D / downstream integration preparation
 B  Document explanation / downstream interface QA
-C  governed EOD / frozen Market-X Core source support；Extended authoritative-source research
-D  PR-C outcome methodology preparation（不冻结正式 policy / threshold）
-E  Product / Final Supervisor / UI skeleton preparation（不绑定未冻结模型）
+C  governed PR-C EOD/source support + Extended authoritative-source research
+D  PR-C governed run preparation + PR-E/F method preparation（不越过正式 Gate）
+E  Oracle re-audit preparation + Final Supervisor / UI skeleton reconciliation
 ```
 
-A 不需要继续做 PR-B release audit；PR-B 只有出现明确 leakage、冻结资产错误或不可复现问题时才允许申请重开。
-
-同理，未来每个阶段都允许做**不会越过当前 Gate**的准备。
+赛题 CH-0..CH-6 的正式开发在 PR-H baseline E2E 后启动；当前只允许文档、benchmark 设计、数据源调研等不改变当前 Gate 的 preparation。
 
 判断标准：
 
@@ -515,8 +553,6 @@ A 不需要继续做 PR-B release audit；PR-B 只有出现明确 leakage、冻�
 
 ## Gate PR-B — COMPLETE / FROZEN
 
-已完成：
-
 ```text
 [x] Governed Market source record
 [x] Market Feature Manifest
@@ -528,15 +564,22 @@ A 不需要继续做 PR-B release audit；PR-B 只有出现明确 leakage、冻�
 [x] PR #80 / #81 mainline publication and documentation closure
 ```
 
-## Gate PR-C
+## Gate PR-C — ACTIVE / BLOCKED BY GOVERNED RUN
 
 必须得到：
 
 ```text
-Frozen 5D outcome policy
-Development-only threshold policy
-Label manifest
-Leakage tests
+438 coverage rows
+424 available / 14 unavailable
+354 Development / 70 Validation available
+12 missing_base_price / 2 no_eligible_session
+real Development-only q25
+Validation did not fit threshold
+438 target artifacts
+438 determinism / 0 mismatch
+no 2025 blind y
+freeze manifest
+A final sign-off
 ```
 
 ## Gate PR-D
@@ -548,7 +591,9 @@ Document X
 Market-X Core
 optional Market-X Extended
 Outcome Y
-Canonical model-ready dataset
+424 Canonical model-ready rows
+354 Development / 70 Validation
+14 explicit exclusions
 Dataset provenance / rebuild path
 ```
 
@@ -573,6 +618,8 @@ Real prospectus
 → evidence
 → final report
 ```
+
+并且至少 3–5 个真实 IPO E2E demo 通过。
 
 ---
 
@@ -599,11 +646,11 @@ Real prospectus
 - LLM 可以 fine-tune；
 - Extended source 仍缺但 Core 已受治理；
 
-都不应阻断 v0.4 闭环，留给对应后续 milestone 或 PR-E diagnostic 后的 v0.5+ 决策。
+都不应阻断 baseline E2E。PR-H 完成后，赛题明确要求的专项能力按 CH-0..CH-6 增量开发；更广泛的 Retriever / LLM / Agent 研究仍由 PR-E Oracle gap 或冻结比赛指标决定。
 
 ---
 
-# 15. v0.4 完成定义
+# 15. Baseline v0.4 完成定义
 
 当以下链路在真实 case 上完整运行：
 
@@ -631,6 +678,126 @@ Prospectus
 
 则：
 
-> **v0.4 End-to-End Closed Loop = COMPLETE / FROZEN**。
+> **v0.4.3 Baseline End-to-End Closed Loop = COMPLETE / FROZEN**。
 
-之后再依据 Oracle diagnostic 决定是否进入 v0.5 Retriever / LLM / Agent 优化。
+这不是比赛工作的终点；随后进入 Competition Hardening。
+
+---
+
+# 16. Competition Hardening — 五人后续执行计划
+
+完整 requirement → component → owner → metric → deliverable → Gate 见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。本节只冻结五人执行顺序。
+
+## CH-0 — Scope Lock / Acceptance Matrix
+
+**A 主导，全员确认。**
+
+逐项映射赛题全部任务、技术指标、交付物，不允许存在无人负责的 requirement。
+
+## CH-1 — 1D / 20D / 60D Outcome Extension
+
+**D 主导，C/A/E 支持。**
+
+在 frozen 5D primary target 之外增加 1D / 20D / 60D 真实表现验证；不得反向修改 5D threshold。
+
+## CH-2 — Competition-specific Document Risk Hardening
+
+**B 主导，D/A/E 支持。**
+
+专项覆盖：
+
+```text
+现金消耗
+对赌 / 赎回条款
+关联交易
+客户 / 供应商集中度
+核心管线进度
+文本粉饰度高的原文切片与可解释 diagnostic
+```
+
+先测当前能力，再只对不达标部分做最小范围 enhancement。
+
+## CH-3 — Market Sentiment + Competition Skills
+
+**C 主导数据/PIT，E 主导 Agent integration。**
+
+正式补齐：
+
+```text
+Market Sentiment Agent
+LongDocumentRetrievalSkill
+ComparableValuationSkill
+CashBurnSkill
+SentimentHeatSkill
+```
+
+可选 HSI / industry benchmark / total-market turnover 只有在 governed authoritative source 可得时才接入。
+
+## CH-4 — Multi-Agent Conflict Resolution / Traceability
+
+**E 主导，A 做 trace contract / integration。**
+
+实现：
+
+```text
+conflict detection
+→ targeted evidence re-check
+→ Skill / Verifier challenge
+→ arbitration
+→ resolved / needs_review
+```
+
+Agent 角色、推理步骤、工具调用、Evidence 来源追踪率目标 = 100%。
+
+## CH-5 — Evidence Screenshot / Human Review / Competition Report
+
+**E 主导，B/C/D/A 分别负责 Evidence / Market / Model / service。**
+
+利用现有 page+bbox 完成 PDF 页码、段落、表格高亮/截图，并形成《IPO 风险穿透预警报告》与 reviewer audit trail。
+
+## CH-6 — Competition Evaluation / Submission Freeze
+
+**A 负责最终 Gate，全员交付。**
+
+必须正式达到或记录：
+
+```text
+关键风险要素抽取准确率 >= 80%
+关键 Evidence 片段召回率 >= 85%
+Agent / Tool / Evidence traceability = 100%
+1D / 5D / 20D / 60D validation table
+5D primary risk warning + explanation
+可运行 Streamlit / API
+测试集预测结果表
+多智能体推理 / tool / verifier logs
+关键 Evidence
+典型案例报告
+环境配置 / run scripts
+3–5 real demos
+```
+
+只有 CH-6 PASS 才标记：
+
+> **v0.4.5 COMPETITION_READY / SUBMISSION FROZEN**。
+
+---
+
+# 17. Competition Hardening 后的研究优化
+
+赛题专项补齐不等于无边界重新做 AI 研究：
+
+```text
+Evidence recall < 85%
+→ 定向 Retriever / evidence targeting 修复
+
+Risk accuracy < 80% 且 Evidence 正确
+→ Agent / Verifier / Skill 语义修复
+
+Oracle strong / Production weak
+→ 有充分证据进入更大规模 Retriever / LLM / Agent 优化
+
+指标已达标
+→ 不为了技术炫技强行 Fine-tuning / LoRA
+```
+
+历史 Retriever Locked 10 已消费，任何新增调优必须使用新的受治理 evaluation / holdout。
