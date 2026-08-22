@@ -4,7 +4,12 @@ from pathlib import Path
 import tempfile
 
 import numpy as np
-import lightgbm as lgb
+import pytest
+
+try:
+    import lightgbm as lgb
+except (ImportError, OSError):  # optional/unloadable retrieval-research dependency
+    lgb = None
 
 from ipo_risk.ranking.ltr_v3 import (
     CandidateRow, FEATURE_VARIANTS, MISSING_RANK, audit_feature_names, build_feature_rows,
@@ -77,7 +82,9 @@ def test_temporary_cleanup() -> None:
     assert not path.exists()
 
 
+@pytest.mark.skipif(lgb is None, reason="lightgbm optional retrieval-research dependency is unavailable")
 def test_lightgbm_prediction_is_deterministic() -> None:
+    assert lgb is not None
     x = np.asarray([[1.0], [2.0], [3.0], [4.0]], dtype=np.float32)
     y = np.asarray([3, 0, 2, 0], dtype=np.int32)
     params = dict(objective="lambdarank", n_estimators=5, num_leaves=3, min_child_samples=1,

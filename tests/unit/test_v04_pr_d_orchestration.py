@@ -41,9 +41,17 @@ def _with_hash(body):
     return body | {"content_hash": canonical_hash(body)}
 
 
-def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcomeLabel:
+def _label(
+    case_id: str,
+    code: str,
+    year: int,
+    available: bool,
+    *,
+    missing_reason: MarketLabelMissingReason = MarketLabelMissingReason.NO_ELIGIBLE_SESSION,
+) -> MarketOutcomeLabel:
     listing = date(year, 1, 2)
     value = Decimal((sum(ord(char) for char in case_id) % 61 - 30)) / Decimal("100")
+    has_base_price = available or missing_reason is not MarketLabelMissingReason.MISSING_BASE_PRICE
     return MarketOutcomeLabel(
         case_id=case_id,
         stock_code=code,
@@ -55,7 +63,7 @@ def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcome
         ),
         listing_date=listing,
         horizon=MarketLabelHorizon.FIVE_DAYS,
-        base_price=Decimal("10"),
+        base_price=Decimal("10") if has_base_price else None,
         base_price_source=MarketBasePriceSource.OFFICIAL_LISTING_PRICE,
         target_trading_date=listing + timedelta(days=7) if available else None,
         target_close=Decimal("10") * (1 + value) if available else None,
@@ -65,9 +73,7 @@ def _label(case_id: str, code: str, year: int, available: bool) -> MarketOutcome
             if available
             else MarketLabelAvailability.UNAVAILABLE
         ),
-        missing_reason=(
-            None if available else MarketLabelMissingReason.NO_ELIGIBLE_SESSION
-        ),
+        missing_reason=None if available else missing_reason,
         label_policy_version="v04_market_label_policy_v1",
         source="fixture",
         provenance=MarketDataProvenance(
@@ -87,10 +93,24 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         (f"ipo_{year}_{index:05d}", f"{index:05d}.HK", year)
         for index, year in enumerate(years, start=1)
     ]
-    unavailable = {case_id for case_id, _code, year in identities if year <= 2023}
-    unavailable = set(sorted(unavailable)[:6])
+    development_ids = sorted(
+        case_id for case_id, _code, year in identities if year <= 2023
+    )
+    missing_base_price = set(development_ids[:12])
+    no_eligible_session = set(development_ids[12:14])
+    unavailable = missing_base_price | no_eligible_session
     raw_labels = [
-        _label(case_id, code, year, case_id not in unavailable)
+        _label(
+            case_id,
+            code,
+            year,
+            case_id not in unavailable,
+            missing_reason=(
+                MarketLabelMissingReason.MISSING_BASE_PRICE
+                if case_id in missing_base_price
+                else MarketLabelMissingReason.NO_ELIGIBLE_SESSION
+            ),
+        )
         for case_id, code, year in identities
     ]
     outcome_builder = FiveDayOutcomeBuilder()
@@ -105,6 +125,7 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         for raw in IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER
         for name in (raw, f"{raw}__missing")
     )
+    oracle_identity_mismatch_case = None
     for index, (identity, raw_label) in enumerate(zip(identities, raw_labels, strict=True)):
         case_id, code, year = identity
         split = "development" if year <= 2023 else "validation"
@@ -146,9 +167,13 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
             pr_c_dir / "targets" / f"{case_id}.json",
             target.model_dump(mode="json") | {"content_hash": target.content_hash()},
         )
-        if 6 <= index < 9:  # governed Oracle is intentionally Development-only here
+        if 14 <= index < 17:  # governed Oracle is intentionally Development-only here
+            oracle_identity = dict(common)
+            if index == 14:
+                oracle_identity["cohort_year"] = year - 1
+                oracle_identity_mismatch_case = case_id
             oracle = _with_hash(
-                common
+                oracle_identity
                 | {
                     "document_id": f"doc-{case_id}",
                     "company_name": "Fixture",
@@ -197,8 +222,8 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         {
             "gate_passed": True,
             "official_case_count": 438,
-            "available_count": 432,
-            "unavailable_count": 6,
+            "available_count": 424,
+            "unavailable_count": 14,
             "failure_count": 0,
             "determinism_mismatch_count": 0,
             "validation_used_for_threshold": False,
@@ -222,14 +247,28 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
     second = materialize_pr_d(**kwargs, resume=True)
     assert first["summary"] == second["summary"]
     assert first["summary"]["official_case_count"] == 438
-    assert first["summary"]["full_production_model_ready_count"] == 432
-    assert first["summary"]["development_model_ready_count"] == 362
+    assert first["summary"]["full_production_model_ready_count"] == 424
+    assert first["summary"]["target_unavailable_count"] == 14
+    assert first["summary"]["target_unavailable_reason_counts"] == {
+        "missing_base_price": 12,
+        "no_eligible_session": 2,
+    }
+    assert first["summary"]["development_model_ready_count"] == 354
     assert first["summary"]["validation_model_ready_count"] == 70
-    assert first["summary"]["oracle_intersection_model_ready_count"] == 3
+    assert first["summary"]["oracle_intersection_model_ready_count"] == 2
+    assert first["summary"]["oracle_identity_exclusion_count"] == 1
     assert first["summary"]["oracle_split_status"] == {
         "development": "available",
         "validation": "unavailable_no_reviewed_gold",
     }
+    oracle_exclusions = [
+        row for row in first["coverage"] if row["oracle_exclusion_reason"]
+    ]
+    assert len(oracle_exclusions) == 1
+    assert oracle_exclusions[0]["case_id"] == oracle_identity_mismatch_case
+    assert oracle_exclusions[0]["oracle_source_present"] is True
+    assert oracle_exclusions[0]["oracle_document_available"] is False
+    assert "oracle.cohort_year" in oracle_exclusions[0]["oracle_exclusion_reason"]
     assert (output / "matrices" / "full_production_PM_validation.json").is_file()
     assert (output / "matrices" / "oracle_intersection_OM_development.json").is_file()
     assert not (output / "matrices" / "oracle_intersection_OM_validation.json").exists()
