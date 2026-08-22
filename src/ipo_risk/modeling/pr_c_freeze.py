@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -28,13 +29,43 @@ EXPECTED_RAW_EOD_SHA256 = (
 EXPECTED_OFFICIAL_BRIDGE_SHA256 = (
     "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198"
 )
+
+# These are PR-C outcome-unavailable cases, not merely PR-B EOD-unavailable
+# cases.  The governed label-readiness audit established that a usable 5D
+# outcome also requires an authoritative official listing price.  Therefore
+# EOD/session coverage (432/438) is intentionally different from outcome
+# coverage (424/438).
 EXPECTED_UNAVAILABLE_CASE_IDS = (
     "ipo_2020_01248",
+    "ipo_2020_02115",
+    "ipo_2020_02117",
+    "ipo_2020_02148",
+    "ipo_2020_02599",
     "ipo_2020_06688",
     "ipo_2020_06813",
+    "ipo_2020_09977",
     "ipo_2021_01491",
+    "ipo_2021_02207",
+    "ipo_2021_02217",
+    "ipo_2022_03611",
     "ipo_2022_06678",
     "ipo_2022_07841",
+)
+EXPECTED_UNAVAILABLE_REASON_BY_CASE = (
+    ("ipo_2020_01248", "missing_base_price"),
+    ("ipo_2020_02115", "missing_base_price"),
+    ("ipo_2020_02117", "missing_base_price"),
+    ("ipo_2020_02148", "missing_base_price"),
+    ("ipo_2020_02599", "missing_base_price"),
+    ("ipo_2020_06688", "no_eligible_session"),
+    ("ipo_2020_06813", "missing_base_price"),
+    ("ipo_2020_09977", "missing_base_price"),
+    ("ipo_2021_01491", "missing_base_price"),
+    ("ipo_2021_02207", "missing_base_price"),
+    ("ipo_2021_02217", "missing_base_price"),
+    ("ipo_2022_03611", "missing_base_price"),
+    ("ipo_2022_06678", "missing_base_price"),
+    ("ipo_2022_07841", "no_eligible_session"),
 )
 
 
@@ -73,18 +104,20 @@ class PRCFreezeExpectations:
     unavailable_case_ids: tuple[str, ...]
     raw_eod_sha256: str
     official_bridge_sha256: str
+    unavailable_reason_by_case: tuple[tuple[str, str], ...] = ()
 
 
 FORMAL_PR_C_EXPECTATIONS = PRCFreezeExpectations(
     official_case_count=438,
     development_case_count=368,
     validation_case_count=70,
-    available_count=432,
-    development_available_count=362,
+    available_count=424,
+    development_available_count=354,
     validation_available_count=70,
     unavailable_case_ids=EXPECTED_UNAVAILABLE_CASE_IDS,
     raw_eod_sha256=EXPECTED_RAW_EOD_SHA256,
     official_bridge_sha256=EXPECTED_OFFICIAL_BRIDGE_SHA256,
+    unavailable_reason_by_case=EXPECTED_UNAVAILABLE_REASON_BY_CASE,
 )
 
 
@@ -144,21 +177,24 @@ def audit_pr_c_freeze(
         )
         for split in ("development", "validation")
     }
+    unavailable_records = [
+        row
+        for row in records
+        if row.get("target_status") == MarketLabelAvailability.UNAVAILABLE.value
+    ]
     unavailable_case_ids = tuple(
+        sorted(str(row["case_id"]) for row in unavailable_records)
+    )
+    unavailable_reason_by_case = tuple(
         sorted(
-            str(row["case_id"])
-            for row in records
-            if row.get("target_status") == MarketLabelAvailability.UNAVAILABLE.value
+            (str(row["case_id"]), str(row.get("missing_reason", "")))
+            for row in unavailable_records
         )
     )
     failed = [row for row in records if row.get("target_status") == "failed"]
     if failed or summary.get("failure_count") != 0:
         raise ValueError("PR-C formal freeze requires zero generation/build failures")
-    if any(
-        not row.get("missing_reason")
-        for row in records
-        if row.get("target_status") == MarketLabelAvailability.UNAVAILABLE.value
-    ):
+    if any(not row.get("missing_reason") for row in unavailable_records):
         raise ValueError("PR-C unavailable target is missing an explicit reason")
     if any(
         row.get("abnormal_return_status")
@@ -189,7 +225,15 @@ def audit_pr_c_freeze(
             f"actual={actual_counts}"
         )
     if unavailable_case_ids != tuple(sorted(expectations.unavailable_case_ids)):
-        raise ValueError("PR-C unavailable case IDs do not match the governed EOD audit")
+        raise ValueError(
+            "PR-C unavailable case IDs do not match the governed label-readiness audit"
+        )
+    if expectations.unavailable_reason_by_case and unavailable_reason_by_case != tuple(
+        sorted(expectations.unavailable_reason_by_case)
+    ):
+        raise ValueError(
+            "PR-C unavailable reasons do not match the governed label-readiness audit"
+        )
     if threshold.development_sample_count != expectations.development_available_count:
         raise ValueError("PR-C threshold population does not match available Development")
 
@@ -245,6 +289,7 @@ def audit_pr_c_freeze(
             raise ValueError("PR-C target directory contains a Blind row")
         target_hashes.append({"case_id": target.case_id, "content_hash": content_hash})
 
+    reason_counts = Counter(reason for _, reason in unavailable_reason_by_case)
     manifest = {
         "manifest_version": PR_C_FREEZE_MANIFEST_VERSION,
         "gate_passed": True,
@@ -263,6 +308,8 @@ def audit_pr_c_freeze(
         "development_available_count": actual_counts["development_available"],
         "validation_available_count": actual_counts["validation_available"],
         "unavailable_case_ids": unavailable_case_ids,
+        "unavailable_reason_counts": dict(sorted(reason_counts.items())),
+        "unavailable_reason_by_case": dict(unavailable_reason_by_case),
         "failure_count": 0,
         "coverage_content_hash": summary.get("coverage_content_hash"),
         "target_set_hash": _hash(target_hashes),
@@ -277,4 +324,3 @@ def audit_pr_c_freeze(
     }
     manifest["freeze_manifest_hash"] = _hash(manifest)
     return manifest
-
