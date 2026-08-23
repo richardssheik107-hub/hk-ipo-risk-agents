@@ -2,7 +2,7 @@
 
 > Status snapshot: **2026-08-23**  
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
-> Current formal Gate: **PR-E — Baseline + Oracle Diagnostic**
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 
 ## 1. Program objective
 
@@ -43,6 +43,7 @@ PR-B Market-X Core              COMPLETE / FROZEN
 PR-C 5D Outcome                 COMPLETE / FROZEN
 PR-D Canonical Dataset          COMPLETE / FROZEN
 Oracle v2                       COMPLETE / FROZEN / EVALUATION-ONLY
+PR-E Baseline + Oracle         COMPLETE / FROZEN
 ```
 
 Measured anchors：
@@ -134,8 +135,8 @@ Development 使用严格 forward chaining；2024 只作为正式 Validation，�
 | PR-B | Market-X Core + governed EOD | COMPLETE / FROZEN |
 | PR-C | Frozen 5D target | COMPLETE / FROZEN |
 | PR-D | Canonical model-ready dataset | COMPLETE / FROZEN |
-| PR-E | Linear/Ridge/Logistic + Oracle diagnostic | **CURRENT** |
-| PR-F | LightGBM + SHAP / importance / calibration / ablation | WAITING |
+| PR-E | Linear/Ridge/Logistic + Oracle diagnostic | COMPLETE / FROZEN |
+| PR-F | LightGBM + SHAP / importance / calibration / ablation | **CURRENT** |
 | PR-G | Market Agent + Final Supervisor | WAITING |
 | PR-H | Streamlit Full E2E + real-case demo | WAITING |
 | CH-0..CH-6 | Competition hardening | AFTER PR-H |
@@ -155,9 +156,9 @@ Development 使用严格 forward chaining；2024 只作为正式 Validation，�
 
 Market-X Core 已冻结。Market-X Extended 的 HSI / authoritative industry benchmark / HK total-market turnover source 仍可显式缺失；不得使用不等价 proxy、fake benchmark 或 neutral zero 为了“补齐”特征。
 
-## 8. Current PR-E completion criteria
+## 8. Frozen PR-E completion basis
 
-PR-E 只有在以下全部满足后才可标记 COMPLETE / FROZEN：
+PR-E 已在以下条件全部满足后标记 COMPLETE / FROZEN：
 
 1. 输入与 frozen PR-D / Oracle v2 manifest 严格绑定；
 2. M/P/PM full-production cohort 可复现；
@@ -170,8 +171,8 @@ PR-E 只有在以下全部满足后才可标记 COMPLETE / FROZEN：
 9. 2025 Blind y accessed = false；
 10. tests / validation / reproducibility / A final review PASS。
 
-## 9. After PR-E
+## 9. Current PR-F and later gates
 
-PR-F 才正式比较更复杂模型，PR-G 才把模型与 Market Agent / Final Supervisor 产品化，PR-H 才完成 PDF → Final Report 的稳定 E2E。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
+PR-F 当前正式比较更复杂模型；PR-G 才把模型与 Market Agent / Final Supervisor 产品化，PR-H 才完成 PDF → Final Report 的稳定 E2E。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
 
 Competition 细节见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。五人角色见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。

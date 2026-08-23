@@ -4,7 +4,8 @@
 > Document baseline: **v0.3 RELEASED / FROZEN**  
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
-> Current formal Gate: **PR-E — Baseline + Oracle Diagnostic**
+> PR-E: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 
 ## 1. Architecture form
 
@@ -167,7 +168,7 @@ production_consumable = false
 
 Oracle 不 import 到 Production runtime，不替代 Retriever / Agent 结论，不把 Expert Gold 反向泄漏进 Production X。
 
-## 8. PR-E modeling architecture
+## 8. Frozen PR-E modeling architecture
 
 Full Production cohort：
 
@@ -189,11 +190,11 @@ OM  Market + Oracle
 
 Development evaluation：expanding-year forward chaining。Validation：2020–2023 fit → untouched 2024 evaluation。
 
-PR-E output 是研究 / model artifact；在稳定 schema、score semantics、calibration status 冻结前，不直接暴露为产品“概率”。
+PR-E output 是已冻结的研究 / model artifact；在稳定 schema、score semantics、calibration status 冻结前，不直接暴露为产品“概率”。
 
 ## 9. PR-F / PR-G / PR-H architecture boundary
 
-PR-F：在 PR-E frozen inputs / cohorts 上增加 LightGBM、SHAP / importance、calibration assessment、ablation、error analysis。
+PR-F（当前 Gate）：在 PR-E frozen inputs / cohorts 上增加 LightGBM、SHAP / importance、calibration assessment、ablation、error analysis。
 
 PR-G：
 

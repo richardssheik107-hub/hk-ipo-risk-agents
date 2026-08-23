@@ -3,7 +3,8 @@
 > Status snapshot: **2026-08-23**  
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
-> Current formal Gate: **PR-E — Baseline + Oracle Diagnostic**
+> PR-E: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 
 ## 1. 总原则
 
@@ -39,9 +40,9 @@ A 不重新实现 Parser / Retriever / Agent，不替 D 决定 target/model poli
 ### 当前任务
 
 - 维护 PR-A-D / Oracle v2 frozen boundary；
-- 支持 PR-E 正式输入绑定、reproducibility 与 final Gate review；
+- 维护 PR-E frozen input / reproducibility boundary，支持 PR-F final Gate review；
 - 审核跨成员 runtime handoff 只传输已冻结、可校验的数据资产；
-- 不开始 PR-F / PR-G / PR-H 正式 Gate。
+- 不开始 PR-G / PR-H 正式 Gate。
 
 ## 3. B — Document / Agent
 
@@ -88,7 +89,7 @@ PR-C 5D Outcome                 COMPLETE / FROZEN
 PR-D Canonical Dataset          COMPLETE / FROZEN
 ```
 
-### 当前唯一正式任务：PR-E
+### 当前唯一正式任务：PR-F
 
 Production full cohort：
 
@@ -107,17 +108,14 @@ Oracle v2 fair intersection：
 M / P / O / PM / OM
 ```
 
-必须：
+PR-E 已冻结 Logistic / Linear / Ridge baseline、forward chaining 与 PM-M / OM-M / OM-PM。PR-F 必须：
 
-- Logistic classifier；
-- Linear / Ridge return baseline；
-- Development expanding-year forward chaining；
-- untouched 2024 Validation；
-- PM-M、OM-M、OM-PM；
-- uncertainty / bootstrap / power caveat where appropriate；
+- 在冻结 cohort / split / target / preprocessing policy 上运行 LightGBM；
+- 输出 SHAP / importance、calibration assessment、ablation 与 error analysis；
+- 保持 untouched 2024 Validation 与 uncertainty / power caveat；
 - no 2025 Blind y。
 
-PR-E 完成并冻结前，不正式进入 PR-F。
+PR-F 完成并冻结前，不正式进入 PR-G。
 
 ## 6. E — Oracle / Product Integration
 
@@ -137,7 +135,7 @@ production_consumable = false
 ### 当前任务
 
 - 保持 Oracle v2 与 Production 隔离；
-- 支持 PR-E Oracle diagnostic 解释；
+- 支持 frozen PR-E Oracle diagnostic 与 PR-F explainability 解释；
 - PR-G / PR-H 只做不越 Gate 的 contract / UI preparation；
 - 不把旧 preparation branch 当作正式主线直接 merge。
 
@@ -145,10 +143,10 @@ production_consumable = false
 
 | Member | Formal status now | Current useful work |
 | --- | --- | --- |
-| A | integration / Gate owner | PR-E input/reproducibility/final review |
+| A | integration / Gate owner | PR-E freeze boundary + PR-F reproducibility/final review |
 | B | supporting QA | frozen Document-X + Evidence provenance QA |
 | C | supporting QA | Market/PIT interpretation + Extended research |
-| D | **PR-E formal owner** | run and freeze baseline + Oracle diagnostic |
+| D | **PR-F formal owner** | run and freeze LightGBM + explainability |
 | E | supporting integration | Oracle interpretation + PR-G/H preparation |
 
 ## 8. 当前严禁混淆的三类工作
@@ -163,7 +161,7 @@ B 的 Document QA、C 的 Extended research、E 的 UI skeleton 可以并行，�
 
 ### Current formal Gate
 
-只有 PR-E 的正式 measured run / review / freeze 会推进当前主线状态。
+只有 PR-F 的正式 measured run / review / freeze 会推进当前主线状态。
 
 ## 9. PR-E 后续
 

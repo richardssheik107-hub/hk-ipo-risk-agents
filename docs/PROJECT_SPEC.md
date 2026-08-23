@@ -1,7 +1,7 @@
 # HK IPO Risk Agents — Current Project Specification
 
 > Status snapshot: **2026-08-23**  
-> Current formal Gate: **PR-E — Baseline + Oracle Diagnostic**
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 
 ## 1. Product definition
 
@@ -33,7 +33,8 @@ PR-B Market-X Core                  COMPLETE / FROZEN
 PR-C 5D Outcome                     COMPLETE / FROZEN
 PR-D Canonical Dataset              COMPLETE / FROZEN
 Oracle v2                           COMPLETE / FROZEN / EVALUATION-ONLY
-PR-E                                CURRENT FORMAL GATE
+PR-E                                COMPLETE / FROZEN
+PR-F                                CURRENT FORMAL GATE
 ```
 
 真实建模 cohort：
@@ -139,7 +140,7 @@ Oracle 只用于研究上限与错误归因。Gold page、Evidence ID、manual a
 
 ## 7. Modeling objective
 
-PR-E 正式比较：
+PR-E 已冻结以下正式比较：
 
 ```text
 M   Market only
@@ -156,6 +157,8 @@ PM - M   自动招股书信息的增量价值
 OM - M   招股书信号的专家上限
 OM - PM  自动 Document Pipeline 距离专家上限的差距
 ```
+
+2024 Validation 未显示稳健的分类增量（Production `PM-M ROC-AUC -0.0157`；Oracle `OM-M ROC-AUC -0.0571`）。Oracle Validation 仅 19 例，因此该结果用于约束 PR-F 的模型与不确定性分析，不能解释为已证明“没有 Document 信号”。
 
 ## 8. Time governance
 

@@ -1,7 +1,7 @@
 # V04 Data Readiness — Current Reference Snapshot
 
 > Audit snapshot: **2026-08-23**  
-> Status: **PR-A / PR-B / PR-C / PR-D COMPLETE / FROZEN; Oracle v2 COMPLETE / FROZEN; PR-E CURRENT**
+> Status: **PR-A / PR-B / PR-C / PR-D / PR-E COMPLETE / FROZEN; Oracle v2 COMPLETE / FROZEN; PR-F CURRENT**
 
 本文件只记录已经通过真实 materialization / audit 支持的数据事实。计划、分支或代码存在本身不能修改 measured readiness。
 
@@ -211,9 +211,9 @@ freeze manifest
 
 Oracle v2 保持 evaluation-only，不进入 Production X。
 
-## 9. Current PR-E readiness
+## 9. Frozen PR-E execution
 
-Formal PR-E 所需数据基础已经冻结：
+Formal PR-E 已使用以下冻结数据完成执行：
 
 ```text
 Full Production:
@@ -225,7 +225,7 @@ Oracle v2 fair intersection:
 M / P / O / PM / OM
 ```
 
-当前 Gate 不再被 PR-A-D 数据设计阻塞。正式 PR-E 必须：
+PR-E 已完成以下治理要求：
 
 - 验证 frozen PR-D / Oracle v2 input binding；
 - 使用 expanding-year Development forward chaining；
@@ -260,6 +260,7 @@ PR-B_MARKET_CORE_GATE     PASS / FROZEN
 PR-C_OUTCOME_GATE         PASS / FROZEN
 PR-D_MODEL_READY_GATE     PASS / FROZEN
 ORACLE_V2_GATE            PASS / FROZEN
-PR-E_BASELINE_GATE        CURRENT / NOT FROZEN
+PR-E_BASELINE_GATE        PASS / FROZEN
+PR-F_LIGHTGBM_GATE        CURRENT / NOT FROZEN
 2025_BLIND_Y              NOT ACCESSED
 ```

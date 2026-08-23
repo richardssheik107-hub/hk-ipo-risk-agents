@@ -1,7 +1,7 @@
 # Roadmap
 
 > Status snapshot: **2026-08-23**  
-> Current formal Gate: **PR-E — Baseline + Oracle Diagnostic**  
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**
 
 ## 1. Current state
@@ -14,8 +14,8 @@
 | PR-C 5D Outcome | COMPLETE / FROZEN | 424 available / 14 explicit unavailable |
 | PR-D Canonical Dataset | COMPLETE / FROZEN | 424 = 354 Development + 70 Validation |
 | Oracle v2 | COMPLETE / FROZEN | 98 materialized / 96 strict usable = 77 Dev + 19 Val |
-| PR-E Baseline + Oracle Diagnostic | **CURRENT FORMAL GATE** | formal measured run not frozen yet |
-| PR-F LightGBM + Explainability | WAITING | starts after PR-E |
+| PR-E Baseline + Oracle Diagnostic | COMPLETE / FROZEN | 48 formal results; reproducibility and Blind guard passed |
+| PR-F LightGBM + Explainability | **CURRENT FORMAL GATE** | consumes frozen PR-E cohorts and policy |
 | PR-G Market Agent + Final Supervisor | WAITING | starts after PR-F |
 | PR-H Streamlit Full E2E | WAITING | starts after PR-G |
 | CH-0..CH-6 Competition Hardening | PLANNED | starts after PR-H baseline E2E |
@@ -42,7 +42,7 @@ Oracle v2 Development / Validation     77 / 19
 
 Market-X Extended 仍缺 governed HSI、authoritative industry benchmark mapping/history、HK total-market turnover；这些是 Extended limitations，不重开 PR-B，也不阻塞当前 Core baseline。
 
-## 3. Current PR-E objective
+## 3. Frozen PR-E result
 
 PR-E 正式比较：
 
@@ -54,7 +54,7 @@ PM  Market + Production
 OM  Market + Oracle
 ```
 
-必须保证 Production / Oracle 比较使用相同 cohort、split、target、preprocessing、model family。
+Production / Oracle 比较已使用相同 cohort、split、target、preprocessing、model family。
 
 核心解释量：
 
@@ -64,7 +64,7 @@ Document Signal Ceiling  = OM - M
 Pipeline Gap              = OM - PM
 ```
 
-Development evaluation 必须 time-aware：
+Development evaluation 使用 time-aware protocol：
 
 ```text
 train 2020       → evaluate 2021
@@ -79,7 +79,7 @@ fit 2020–2023 Development
 → evaluate untouched 2024 Validation
 ```
 
-不得使用 random/shuffled time-mixing CV，不得访问 2025 Blind y。
+正式运行未使用 random/shuffled time-mixing CV，也未访问 2025 Blind y。2024 Validation 的分类增量为 `PM-M ROC-AUC -0.0157`、`OM-M ROC-AUC -0.0571`；Oracle Validation 仅 19 例，应解释为不稳定而不是“无信号”。
 
 ## 4. Strict formal sequence
 
@@ -88,8 +88,8 @@ PR-A  COMPLETE / FROZEN
 → PR-B COMPLETE / FROZEN
 → PR-C COMPLETE / FROZEN
 → PR-D COMPLETE / FROZEN
-→ PR-E CURRENT
-→ PR-F LightGBM + Explainability
+→ PR-E COMPLETE / FROZEN
+→ PR-F LightGBM + Explainability CURRENT
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + 3–5 real IPO demo
 → v0.4.3 Baseline E2E Freeze
