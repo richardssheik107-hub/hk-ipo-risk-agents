@@ -6,7 +6,7 @@
 
 ## 1. Program objective
 
-v0.4 的目标不是继续无限优化单个 Agent，而是先完成一条真实、可重建、可解释、可审计的端到端链路：
+v0.4 的目标不是继续无限优化单个 Agent，也不是用 2024 Validation 反复追逐一个更好看的 AUC，而是先完成一条真实、可重建、可解释、可审计的端到端链路：
 
 ```text
 Prospectus PDF
@@ -43,7 +43,8 @@ PR-B Market-X Core              COMPLETE / FROZEN
 PR-C 5D Outcome                 COMPLETE / FROZEN
 PR-D Canonical Dataset          COMPLETE / FROZEN
 Oracle v2                       COMPLETE / FROZEN / EVALUATION-ONLY
-PR-E Baseline + Oracle         COMPLETE / FROZEN
+PR-E Baseline + Oracle          COMPLETE / FROZEN
+PR-F LightGBM + Explainability  COMPLETE / FROZEN
 ```
 
 Measured anchors：
@@ -127,7 +128,30 @@ Pipeline Gap              = OM - PM
 
 Development 使用严格 forward chaining；2024 只作为正式 Validation，不参与 feature / threshold / preprocessing / coefficient 的拟合。
 
-## 5. Gate sequence
+## 5. Frozen PR-E / PR-F interpretation
+
+PR-E 在 2024 Validation 上没有验证出稳定 Document 增量。PR-F 的 frozen LightGBM 得到：
+
+```text
+Full Production 2024
+M   ROC-AUC 0.4246
+P   ROC-AUC 0.5000
+PM  ROC-AUC 0.4246
+```
+
+PM 与 M 在该 frozen tree policy 下预测完全等价，Production Document 100 维特征没有获得 split / gain / SHAP 使用。Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval `[-0.3171, 0.2917]`，样本仅 19 个 Validation case。
+
+正式解释边界：
+
+- 这是当前 5D target、样本规模、feature representation 与 frozen model policy 下的失败/不稳定结果；
+- 不是“招股书原始信息没有价值”的证明；
+- 也不是“Oracle 已证明存在很强专家上限”的证据；
+- 不允许因为 AUC `< 0.5` 在看过 2024 后反转分数方向并把它包装成正式提升；
+- 不允许继续用 2024 做模型、特征、Prompt、Retriever 或 LLM 调参后仍称其为 untouched Validation。
+
+因此 PR-F 的意义是冻结一个诚实基线，并把后续研发从“盲目调模型”转向“直接测风险识别能力 + 多 horizon + Market Sentiment + 产品级可追溯闭环”。
+
+## 6. Gate sequence
 
 | Gate | Deliverable | State |
 | --- | --- | --- |
@@ -143,7 +167,42 @@ Development 使用严格 forward chaining；2024 只作为正式 Validation，�
 
 正式 Gate 必须严格串行；准备性工作可并行，但不改变冻结状态、不读取后续不允许的数据、不越级进入 `main`。
 
-## 6. Evidence and calculation governance
+## 7. Post-PR-F two-track strategy
+
+后半程采用两个互补目标，而不是把所有项目价值押在 5D AUC 上。
+
+### Track A — Risk Intelligence / Auditability
+
+```text
+Document risk extraction
+→ Evidence / Calculation / page / bbox
+→ Verifier
+→ Agent conflict / re-check / arbitration
+→ human review
+→ auditable Final Supervisor output
+```
+
+Competition 直接硬目标：
+
+```text
+关键风险要素抽取准确率           >= 80%
+关键 Evidence recall            >= 85%
+Agent / Tool / Evidence trace   = 100%
+```
+
+### Track B — Market Warning / Predictive Validation
+
+```text
+Market context / sentiment
++ governed model score
++ SHAP / bootstrap uncertainty
++ 1D / 5D / 20D / 60D outcomes
+→ uncertainty-aware warning
+```
+
+5D 继续作为 frozen primary target，但不假设结构性 Document 风险必须在 5D 最强；CH-1 将验证 20D / 60D 是否更符合结构性风险的经济含义。短期 1D / 5D 的新增研发优先从 point-in-time IPO heat、近期破发/5D 表现、同行业历史 IPO context、liquidity/activity 和 authoritative market benchmark 补充中寻找增量。
+
+## 8. Evidence and calculation governance
 
 - 无真实 Evidence 的风险不得成为 verified formal conclusion；
 - 数值结论由 deterministic Skill / Calculation 完成；
@@ -152,27 +211,28 @@ Development 使用严格 forward chaining；2024 只作为正式 Validation，�
 - 失败必须结构化记录，不能 silent drop；
 - score 未经 calibration 不得表述为真实概率。
 
-## 7. Market governance
+## 9. Market governance
 
 Market-X Core 已冻结。Market-X Extended 的 HSI / authoritative industry benchmark / HK total-market turnover source 仍可显式缺失；不得使用不等价 proxy、fake benchmark 或 neutral zero 为了“补齐”特征。
 
-## 8. Frozen PR-E completion basis
+PR-G 只解释并消费已冻结 Market / Model 语义，不通过继续调参改变 PR-E / PR-F measured result。CH-3 才正式扩展 Market Sentiment 与 Competition Skills。
 
-PR-E 已在以下条件全部满足后标记 COMPLETE / FROZEN：
+## 10. Competition enhancement decision rules
 
-1. 输入与 frozen PR-D / Oracle v2 manifest 严格绑定；
-2. M/P/PM full-production cohort 可复现；
-3. M/P/O/PM/OM Oracle fair intersection 可复现；
-4. Development forward-chaining 无未来信息；
-5. 2024 Validation 未参与拟合或调参；
-6. 正式分类与回归 metrics 真实产生并保存；
-7. PM-M、OM-M、OM-PM 被明确报告；
-8. non-significance 不被解释为“没有效果”，小 Oracle Validation 样本必须带 uncertainty / power caveat；
-9. 2025 Blind y accessed = false；
-10. tests / validation / reproducibility / A final review PASS。
+Competition Hardening 不进行无目标重构：
 
-## 9. Current PR-G and later gates
+- CH-1：独立版本化 1D / 20D / 60D outcome，5D frozen policy 不回写；
+- CH-2：按风险类别直接测 Precision / Recall / F1 / Evidence Recall；达标类别不重写，不达标类别做最小增强；
+- 若 CH-2 error attribution 显示主要损失来自 retrieval，则优先 Hybrid Retrieval；若来自复杂语义/条件理解，再引入 LLM semantic extraction / reranking；
+- LLM 不替代 deterministic financial calculation、schema validation、feature vectorization、hash 或 provenance；
+- CH-3：短期市场预测重点补 Market Sentiment / IPO heat / liquidity / comparable context；
+- CH-4 / CH-5：冲突仲裁、全链 trace、Evidence screenshot 与 human audit trail 作为比赛产品能力；
+- CH-6：统一报告抽取指标、Evidence 指标、traceability、multi-horizon 预测结果和 3–5 个真实案例，不挑选单一最漂亮指标代替全套证据。
 
-PR-F 已冻结更复杂模型比较；PR-G 当前把 frozen model score、SHAP drivers 与 uncertainty 接入 Market Agent / Final Supervisor。PR-H 才完成 PDF → Final Report 的稳定 E2E。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
+## 11. Current PR-G and later gates
+
+PR-G 当前把 frozen model score、SHAP drivers 与 uncertainty 接入 Market Agent / Final Supervisor，并要求 Document explanation / Evidence provenance 能被受控消费。PR-H 才完成 PDF → Final Report 的稳定 E2E。PR-G / PR-H 的通过条件不是提高 frozen 5D AUC，而是正确、可追溯、可降级地消费现有结果并完成产品闭环。
+
+只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
 
 Competition 细节见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。五人角色见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
