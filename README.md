@@ -15,7 +15,8 @@ Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 PR-B Market-X Core                          = COMPLETE / FROZEN
 PR-C 5D Outcome Policy Freeze               = COMPLETE / FROZEN
-PR-D Canonical Dataset                      = READY / INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT
+PR-D Canonical Dataset                      = COMPLETE / FROZEN
+PR-E Baseline + Oracle Diagnostic            = READY / FORMAL BASELINE NEXT / NOT STARTED
 v0.4 End-to-End Closed Loop                = ACTIVE
 Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```
@@ -28,8 +29,8 @@ Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset                 COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic                  READY / FORMAL BASELINE NEXT / NOT STARTED
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
@@ -62,8 +63,8 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
-- PR-D input binding：已对 PR-A Production、PR-B Core、PR-C Outcome 的 438-case bulk contents 建立 additive aggregate binding；正式 materialization 仍未执行。
-- full model-ready gate：PR-C 已解除前置阻塞，等待 PR-D canonical materialization 独立通过。
+- PR-D canonical dataset：438 upstream → 424 model-ready + 14 explicit exclusions → 354 Development + 70 Validation；formal materialization、resume 与 freeze 已通过。
+- PR-E：已解除前置阻塞，但 formal baseline / Oracle diagnostic 尚未开始。
 
 详细真实 readiness 见 [`docs/ROADMAP.md`](docs/ROADMAP.md) 与 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
 
@@ -280,7 +281,8 @@ python -m streamlit run app/streamlit_app.py
 - Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration COMPLETE / FROZEN
 - Market-X Extended: frozen 20-position contract available; real HSI/industry/turnover sources still missing
 - PR-C Outcome: governed materialization complete / frozen
-- PR-D Canonical Dataset: engineering prep merged; formal materialization ready / next
+- PR-D Canonical Dataset: complete / frozen
+- PR-E Baseline + Oracle Diagnostic: ready / not started
 - Predictor: rule-based compatibility path; v0.4 statistical model formal freeze pending
 - Oracle Document path: evaluation-only; frozen PR-A inventory available, refreshed audit pending
 - Streamlit: current Document product path available; full v0.4 E2E pending

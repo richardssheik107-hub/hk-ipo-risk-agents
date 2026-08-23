@@ -378,15 +378,15 @@ v0.4.3 baseline E2E 首先以**完整、可信、可重建**为成功标准：
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
 PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
-PR-D  Canonical Model-ready Dataset                  ACTIVE / FORMAL MATERIALIZATION NEXT
-PR-E  Baseline + Oracle Diagnostic
+PR-D  Canonical Model-ready Dataset                  COMPLETE / FROZEN
+PR-E  Baseline + Oracle Diagnostic                   READY / FORMAL BASELINE NEXT / NOT STARTED
 PR-F  LightGBM + Explainability
 PR-G  Market Agent + Final Supervisor
 PR-H  Streamlit Full E2E + Real-case Demo
 v0.4.3 Baseline E2E Freeze
 ```
 
-PR-C 正式 Gate 已由真实 governed run 完成：438 targets、424 available / 14 unavailable、354 Development / 70 Validation、Development-only q25 `-0.1000`、438 determinism / 0 mismatch 和 freeze manifest。当前进入 PR-D 的独立 formal materialization Gate。
+PR-C 正式 Gate 已由真实 governed run 完成。PR-D 也已在冻结输入上完成 438 → 424 + 14、354 Development / 70 Validation 的正式 materialization、same-provenance resume 与 freeze。当前下一 Gate 为 PR-E formal baseline / Oracle diagnostic，但尚未开始。
 
 ## 15. Competition Hardening / Submission Success Criteria
 
