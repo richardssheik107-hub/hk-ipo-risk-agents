@@ -6,6 +6,7 @@
 > PR-C: **COMPLETE / FROZEN**
 > PR-D: **COMPLETE / FROZEN**
 > PR-E: **READY — FORMAL BASELINE NEXT / NOT STARTED**
+> Oracle v2: **FREEZE CANDIDATE — 98 MATERIALIZED / 96 STRICT USABLE / A SIGN-OFF PENDING**
 > Competition track: **PLANNED AFTER PR-H BASELINE E2E — full scope frozen in `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`**
 > Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
@@ -65,10 +66,11 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 11. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
 12. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
 13. [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md) — PR-C governed 438-case outcome materialization、threshold、determinism 与 freeze sign-off；
-14. [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md) — immutable PR-A Oracle v1、planned v2 refresh、annotation QA 与 PR-E 使用边界；
-15. [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md) — PR-D 三层 provenance binding、aggregate hash 算法与 P0 fail-closed Gate；
-16. [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md) — formal 438→424+14 materialization、354/70 split、resume 与 freeze sign-off；
-14. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
+14. [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md) — immutable PR-A Oracle v1、versioned v2 refresh、annotation QA 与 PR-E 使用边界；
+15. [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md) — Oracle v2 98-case materialization、96-case strict cohort、identity reconciliation、resume 与 freeze-candidate hashes；
+16. [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md) — PR-D 三层 provenance binding、aggregate hash 算法与 P0 fail-closed Gate；
+17. [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md) — formal 438→424+14 materialization、354/70 split、resume 与 freeze sign-off；
+18. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 

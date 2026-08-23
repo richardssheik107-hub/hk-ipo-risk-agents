@@ -403,7 +403,7 @@ OM  Market + Oracle
 
 > 如果 Oracle 有效而 Production 较弱，差距是否主要来自 Document Pipeline？
 
-PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware。PR-A Oracle v1 是 immutable historical snapshot（当前 eligible 55 Dev / 0 Val），不得作为当前 ceiling；正式 PR-E 前必须按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 冻结 Oracle v2。100-case annotation 目标已实质达到，当前优先 QA 与 identity reconciliation，不自动扩样。
+PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware。PR-A Oracle v1 是 immutable historical snapshot（eligible 55 Dev / 0 Val），不得作为当前 ceiling。Oracle v2 已完成版本化物化与确定性复现：98 materialized / 96 strict usable / 77 Dev / 19 Val；当前为待 A 最终签核的 freeze candidate，尚未开始 PR-E 训练。100-case annotation 目标已实质达到，不自动扩样。
 
 ---
 

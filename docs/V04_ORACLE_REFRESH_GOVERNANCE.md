@@ -1,6 +1,6 @@
 # v0.4 Oracle Refresh Governance
 
-> Status: **FROZEN GOVERNANCE / ORACLE v2 NOT YET FROZEN**
+> Status: **FROZEN GOVERNANCE / ORACLE v2 FREEZE CANDIDATE READY FOR A FINAL SIGN-OFF**
 > Date: 2026-08-23
 
 ## 1. Binding decision
@@ -13,11 +13,12 @@ decoupled from Oracle refresh and therefore is not blocked by Oracle drift.
 | Snapshot | State | Materialized | Currently outcome-eligible | Development | Validation |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Oracle v1 | historical PR-A frozen snapshot / immutable | 60 | 55 | 55 | 0 |
-| Oracle v2 | planned refresh / **not frozen** | about 100 buildable | 91 currently strict-usable | 74 | 17 |
+| Oracle v2 | materialized / reproducible / **freeze candidate** | 98 | 96 | 77 | 19 |
 
 The v1 `55 / 0` intersection is historical and must not be used as the current
-Oracle ceiling in formal PR-E diagnostics. Before formal PR-E, Oracle v2 must
-be materialized under a separately approved, versioned freeze.
+Oracle ceiling in formal PR-E diagnostics. Oracle v2 has now been materialized
+under a separate versioned contract and is ready for Role A final sign-off; it
+is not frozen on `main` until that review and merge complete.
 
 ## 2. Oracle v2 requirements
 
@@ -32,24 +33,32 @@ The refreshed snapshot must preserve `evaluation_only=true` and publish:
 It must not modify Production Document-X, rewrite PR-A historical hashes, use
 2025 blind outcomes, or leak expert answers into Production features.
 
-## 3. Current readiness findings
+## 3. Oracle v2 materialization findings
 
-These are audit findings for reconciliation, not an eternal frozen count:
+Production identity is authoritative. The refresh reconciled all 98 official
+materialized cases with zero unresolved identity records. Current explicit
+exceptions are:
 
 | Case | Current issue |
 | --- | --- |
-| `ipo_2020_08489` | cohort identity mismatch |
-| `ipo_2020_09600` | cohort identity mismatch |
-| `ipo_2022_02450` | cohort identity mismatch |
-| `ipo_2023_02503` | cohort and split mismatch |
-| `ipo_2024_02410` | split mismatch |
 | `ipo_2024_00805` | non-official case |
 | `ipo_2024_02613` | non-official case |
-| `ipo_2020_02599` | outcome unavailable |
-| `ipo_2020_06688` | outcome unavailable |
+| historical `real_case_001` | non-canonical legacy path; canonical `ipo_2024_02410` is retained separately |
+| `ipo_2020_02599` | outcome unavailable: `missing_base_price` |
+| `ipo_2020_06688` | outcome unavailable: `no_eligible_session` |
 
 Production identity is authoritative; it must not be changed to accommodate
 Oracle annotations.
+
+The current inventory contains 101 entries: 100 valid annotations and one
+invalid legacy entry. Of 87 audit overlays, 74 are stale relative to their
+current pass-1 source hash. Stale overlays remain auditable but are explicitly
+`stale_not_applied`; v2 never silently applies them.
+
+The candidate contract is `expert_oracle_document_features_v2` /
+`oracle_gold_policy_v2`, with 142 features, `evaluation_only=true` and
+`production_consumable=false`. See `V04_ORACLE_V2_COMPLETION_REPORT.md` and
+`reports/frozen/v04_oracle_v2_manifest.json` for the full counts and hashes.
 
 ## 4. Annotation quantity policy
 
