@@ -122,7 +122,7 @@ are not repository payload.
 
 ```text
 Oracle v2 targeted tests       22 passed
-full pytest                    pending clean CI after portability fix
+full pytest                    1376 passed, 2 warnings (GitHub CI)
 validate_project               PASS (Mock: completed, verified=3, pending=1)
 validate_competition_data      PASS
 compileall                     PASS
