@@ -1,7 +1,7 @@
 # V04 Data Readiness — Current Reference Snapshot
 
 > Audit snapshot: **2026-08-23**  
-> Status: **PR-A / PR-B / PR-C / PR-D / PR-E COMPLETE / FROZEN; Oracle v2 COMPLETE / FROZEN; PR-F CURRENT**
+> Status: **PR-A / PR-B / PR-C / PR-D / PR-E / PR-F COMPLETE / FROZEN; Oracle v2 COMPLETE / FROZEN; PR-G CURRENT**
 
 本文件只记录已经通过真实 materialization / audit 支持的数据事实。计划、分支或代码存在本身不能修改 measured readiness。
 
@@ -261,6 +261,7 @@ PR-C_OUTCOME_GATE         PASS / FROZEN
 PR-D_MODEL_READY_GATE     PASS / FROZEN
 ORACLE_V2_GATE            PASS / FROZEN
 PR-E_BASELINE_GATE        PASS / FROZEN
-PR-F_LIGHTGBM_GATE        CURRENT / NOT FROZEN
+PR-F_LIGHTGBM_GATE        PASS / FROZEN
+PR-G_SUPERVISOR_GATE      CURRENT / NOT FROZEN
 2025_BLIND_Y              NOT ACCESSED
 ```

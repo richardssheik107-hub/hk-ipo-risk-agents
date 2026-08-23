@@ -1,6 +1,6 @@
 # V04 PR-F — LightGBM and Explainability
 
-> Status: **ENGINEERING COMPLETE / WAITING FORMAL PR-E GATE**
+> Status: **COMPLETE / FROZEN**
 > Owner: **D — Quant / ML Research**
 
 ## Fixed model policy
@@ -67,3 +67,19 @@ python scripts/run_v04_pr_f.py \
 The generated model scores are not described as calibrated real-world
 probabilities. Formal conclusions require the local frozen bulk inputs plus the
 measured PR-E/PR-F reports. Missing or checksum-drifted matrices fail closed.
+
+## Formal result
+
+The governed run completed on 2026-08-23. On 70-case full Production
+Validation, PM and M produced identical predictions and metrics; every
+Production Document feature had zero split/gain/SHAP importance. On the
+19-case Oracle intersection, `OM-M ROC-AUC` was `-0.0143` with a wide paired
+bootstrap interval `[-0.3171, 0.2917]`. Calibration is assessment-only and all
+scores remain uncalibrated model scores, not probabilities.
+
+Formal evidence:
+
+```text
+docs/V04_PR_F_COMPLETION_REPORT.md
+reports/frozen/v04_pr_f_lightgbm_manifest.json
+```

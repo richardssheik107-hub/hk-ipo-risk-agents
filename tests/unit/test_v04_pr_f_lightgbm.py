@@ -15,7 +15,7 @@ from ipo_risk.schemas.canonical_modeling import (
     canonical_hash,
 )
 from ipo_risk.schemas.market import MarketDatasetSplit
-from scripts.run_v04_pr_f import run_pr_f
+from scripts.run_v04_pr_f import _load_governed_cohort_years, run_pr_f
 
 
 def _matrix(group, split, cohort, *, count=40):
@@ -249,6 +249,24 @@ def test_lightgbm_holdout_uses_governed_listing_year() -> None:
         cohort_year_by_case=years,
     )
     assert result.artifact["evaluation_years"] == [2024]
+
+
+def test_pr_f_rejects_2025_governed_cohort_year(tmp_path: Path) -> None:
+    catalog = tmp_path / "ipo_official_master_bridge.csv"
+    catalog.write_text(
+        "case_id,source_year,official_listed_date\n"
+        "ipo_2024_00001,2024,2025-01-02\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="outside 2020-2024"):
+        _load_governed_cohort_years(
+            catalog,
+            ["ipo_2024_00001"],
+            {
+                "policy_version": "v04_official_listing_year_bridge_v1",
+                "blind_2025_y_accessed": False,
+            },
+        )
 
 
 def test_pr_f_orchestration_requires_pr_e_and_writes_models(tmp_path: Path) -> None:
