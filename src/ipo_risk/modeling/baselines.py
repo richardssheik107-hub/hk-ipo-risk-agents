@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 from math import sqrt
 from typing import Any, Literal
@@ -115,11 +116,19 @@ def _xy(matrix: V04CanonicalModelMatrix, target: Literal["binary", "raw"]):
 _CASE_YEAR_PATTERN = re.compile(r"^ipo_(20\d{2})_")
 
 
-def _case_years(matrix: V04CanonicalModelMatrix) -> np.ndarray:
-    """Extract governed cohort years from canonical case IDs."""
+def _case_years(
+    matrix: V04CanonicalModelMatrix,
+    cohort_year_by_case: Mapping[str, int] | None = None,
+) -> np.ndarray:
+    """Resolve cohort years, preferring an authoritative listing-year map."""
 
     years: list[int] = []
     for case_id in matrix.case_ids:
+        if cohort_year_by_case is not None:
+            if case_id not in cohort_year_by_case:
+                raise ValueError(f"missing governed cohort year for {case_id}")
+            years.append(int(cohort_year_by_case[case_id]))
+            continue
         match = _CASE_YEAR_PATTERN.match(case_id)
         if match is None:
             raise ValueError(f"canonical case ID does not encode cohort year: {case_id}")
@@ -177,12 +186,18 @@ def _coefficients(pipe: Pipeline, names: tuple[str, ...]):
 def evaluate_holdout_baselines(
     development: V04CanonicalModelMatrix,
     validation: V04CanonicalModelMatrix,
+    *,
+    cohort_year_by_case: Mapping[str, int] | None = None,
 ) -> tuple[BaselineEvaluation, ...]:
     """Fit every preprocessing/model step on Development and evaluate 2024 once."""
 
     _validate_pair(development, validation)
-    development_years = tuple(sorted(set(_case_years(development).tolist())))
-    validation_years = tuple(sorted(set(_case_years(validation).tolist())))
+    development_years = tuple(
+        sorted(set(_case_years(development, cohort_year_by_case).tolist()))
+    )
+    validation_years = tuple(
+        sorted(set(_case_years(validation, cohort_year_by_case).tolist()))
+    )
     if development_years != (2020, 2021, 2022, 2023):
         raise ValueError(
             "formal baseline Development must contain cohort years 2020-2023"
@@ -268,13 +283,15 @@ def evaluate_holdout_baselines(
 
 def evaluate_development_forward_chaining_baselines(
     development: V04CanonicalModelMatrix,
+    *,
+    cohort_year_by_case: Mapping[str, int] | None = None,
 ) -> tuple[BaselineEvaluation, ...]:
     """Evaluate Development with expanding-year, strictly forward folds."""
 
     if development.dataset_split.value != "development":
         raise ValueError("forward-chaining evaluation accepts Development only")
     x, y = _xy(development, "binary")
-    years = _case_years(development)
+    years = _case_years(development, cohort_year_by_case)
     unique_years = tuple(sorted(set(years.tolist())))
     if unique_years != (2020, 2021, 2022, 2023):
         raise ValueError(

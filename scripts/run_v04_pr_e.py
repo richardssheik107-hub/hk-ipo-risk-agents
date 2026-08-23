@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -22,6 +24,7 @@ from ipo_risk.schemas.canonical_modeling import V04CanonicalModelMatrix, canonic
 
 PR_E_VERSION = "v04_pr_e_baseline_diagnostic_v1"
 PR_D_FREEZE_VERSION = "v04_pr_d_freeze_manifest_v1"
+PR_E_COHORT_YEAR_POLICY_VERSION = "v04_official_listing_year_bridge_v1"
 
 
 def _read_json(path: Path) -> Any:
@@ -39,6 +42,67 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _load_governed_cohort_years(
+    path: Path,
+    case_ids: Iterable[str],
+) -> tuple[dict[str, int], dict[str, Any]]:
+    """Load official listing years for the exact frozen modeling case set."""
+
+    if not path.is_file():
+        raise ValueError(f"missing governed cohort-year catalog: {path}")
+    expected = set(case_ids)
+    resolved: dict[str, int] = {}
+    source_years: dict[str, int] = {}
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            rows = csv.DictReader(handle)
+            required = {"case_id", "source_year", "official_listed_date"}
+            if rows.fieldnames is None or not required.issubset(rows.fieldnames):
+                raise ValueError("governed cohort-year catalog has incompatible columns")
+            for row in rows:
+                case_id = str(row.get("case_id") or "").strip()
+                if case_id not in expected:
+                    continue
+                if case_id in resolved:
+                    raise ValueError(f"duplicate governed cohort year for {case_id}")
+                listed_date = date.fromisoformat(
+                    str(row.get("official_listed_date") or "").strip()
+                )
+                source_year = int(str(row.get("source_year") or "").strip())
+                if listed_date.year not in range(2020, 2025):
+                    raise ValueError(f"governed cohort year is outside 2020-2024: {case_id}")
+                resolved[case_id] = listed_date.year
+                source_years[case_id] = source_year
+    except (OSError, csv.Error, TypeError, ValueError) as exc:
+        if isinstance(exc, ValueError) and str(exc).startswith(
+            ("governed ", "duplicate ")
+        ):
+            raise
+        raise ValueError(f"invalid governed cohort-year catalog: {path}") from exc
+    missing = sorted(expected - resolved.keys())
+    if missing:
+        preview = ", ".join(missing[:5])
+        raise ValueError(
+            f"governed cohort-year catalog is missing {len(missing)} cases: {preview}"
+        )
+    entries = [
+        {"case_id": case_id, "cohort_year": resolved[case_id]}
+        for case_id in sorted(resolved)
+    ]
+    provenance = {
+        "policy_version": PR_E_COHORT_YEAR_POLICY_VERSION,
+        "source_filename": path.name,
+        "source_sha256": _sha256_file(path),
+        "case_count": len(entries),
+        "mapping_hash": canonical_hash(entries),
+        "cross_year_case_count": sum(
+            source_years[case_id] != resolved[case_id] for case_id in resolved
+        ),
+        "blind_2025_y_accessed": False,
+    }
+    return resolved, provenance
 
 
 def _read_matrix(path: Path) -> V04CanonicalModelMatrix:
@@ -224,16 +288,25 @@ def _validate_row_counts(
 
 def _evaluate_pairs(
     pairs: dict[str, tuple[V04CanonicalModelMatrix, V04CanonicalModelMatrix]],
+    *,
+    cohort_year_by_case: dict[str, int],
 ) -> list[dict[str, Any]]:
     _validate_fair_comparison(pairs)
     results: list[dict[str, Any]] = []
     for development, validation in pairs.values():
         results.extend(
             item.as_dict()
-            for item in evaluate_development_forward_chaining_baselines(development)
+            for item in evaluate_development_forward_chaining_baselines(
+                development, cohort_year_by_case=cohort_year_by_case
+            )
         )
         results.extend(
-            item.as_dict() for item in evaluate_holdout_baselines(development, validation)
+            item.as_dict()
+            for item in evaluate_holdout_baselines(
+                development,
+                validation,
+                cohort_year_by_case=cohort_year_by_case,
+            )
         )
     return results
 
@@ -364,6 +437,9 @@ def run_pr_e(
     oracle_v2_matrix_dir: Path | None = None,
     oracle_v2_freeze_manifest_path: Path | None = None,
     oracle_v2_matrix_manifest_path: Path | None = None,
+    cohort_year_catalog_path: Path = Path(
+        "data/catalog/ipo_official_master_bridge.csv"
+    ),
     allow_production_only: bool = False,
     resume: bool = False,
 ):
@@ -385,7 +461,20 @@ def run_pr_e(
         expected_validation=pr_d_manifest["validation_model_ready_count"],
         label="PR-D",
     )
-    results = _evaluate_pairs(production_pairs)
+    production_case_ids = {
+        case_id
+        for pair in production_pairs.values()
+        for matrix in pair
+        for case_id in matrix.case_ids
+    }
+    cohort_year_by_case, cohort_year_provenance = _load_governed_cohort_years(
+        cohort_year_catalog_path,
+        production_case_ids,
+    )
+    results = _evaluate_pairs(
+        production_pairs,
+        cohort_year_by_case=cohort_year_by_case,
+    )
 
     oracle_ready = (
         oracle_v2_matrix_dir is not None
@@ -419,7 +508,12 @@ def run_pr_e(
             ],
             label="Oracle v2",
         )
-        results.extend(_evaluate_pairs(oracle_pairs))
+        results.extend(
+            _evaluate_pairs(
+                oracle_pairs,
+                cohort_year_by_case=cohort_year_by_case,
+            )
+        )
     elif not allow_production_only:
         raise ValueError(
             "formal PR-E requires frozen Oracle v2 matrices and manifest; "
@@ -461,6 +555,7 @@ def run_pr_e(
         "full_production_groups": list(production_groups),
         "oracle_groups": ["M", "P", "O", "PM", "OM"] if oracle_ready else [],
         "oracle_status": diagnostic["oracle_status"],
+        "cohort_year_source": cohort_year_provenance,
         "pr_d_freeze_manifest_sha256": _sha256_file(pr_d_freeze_manifest_path),
         "oracle_v2_freeze_manifest_sha256": (
             _sha256_file(oracle_v2_freeze_manifest_path)
@@ -496,6 +591,11 @@ def main() -> int:
     parser.add_argument("--oracle-v2-dir", type=Path)
     parser.add_argument("--oracle-v2-freeze-manifest", type=Path)
     parser.add_argument("--oracle-v2-matrix-manifest", type=Path)
+    parser.add_argument(
+        "--cohort-year-catalog",
+        type=Path,
+        default=Path("data/catalog/ipo_official_master_bridge.csv"),
+    )
     parser.add_argument("--allow-production-only", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("reports/v04_pr_e"))
     parser.add_argument("--resume", action="store_true")
@@ -517,6 +617,7 @@ def main() -> int:
                 else None
             )
         ),
+        cohort_year_catalog_path=args.cohort_year_catalog,
         allow_production_only=args.allow_production_only,
         resume=args.resume,
     )

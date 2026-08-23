@@ -74,6 +74,7 @@ def _write_matrices(
     *,
     development_count: int,
     validation_count: int,
+    case_ids_by_split: dict[MarketDatasetSplit, tuple[str, ...]] | None = None,
 ) -> None:
     matrix_dir.mkdir(parents=True, exist_ok=True)
     for group in groups:
@@ -82,9 +83,41 @@ def _write_matrices(
             (MarketDatasetSplit.VALIDATION, validation_count),
         ):
             matrix = _matrix(group, split, cohort, count=count)
+            if case_ids_by_split is not None:
+                case_ids = case_ids_by_split[split]
+                assert len(case_ids) == count
+                matrix = matrix.model_copy(update={"case_ids": case_ids})
             (matrix_dir / f"{cohort.value}_{group.value}_{split.value}.json").write_text(
                 matrix.model_dump_json(), encoding="utf-8"
             )
+
+
+def _write_cohort_year_catalog(
+    path: Path,
+    *,
+    development_count: int,
+    validation_count: int,
+) -> None:
+    entries: dict[str, int] = {}
+    for dev_count, val_count in ((development_count, validation_count),):
+        for split, count in (
+            (MarketDatasetSplit.DEVELOPMENT, dev_count),
+            (MarketDatasetSplit.VALIDATION, val_count),
+        ):
+            matrix = _matrix(
+                V04ModelFeatureGroup.M,
+                split,
+                V04CanonicalCohort.FULL_PRODUCTION,
+                count=count,
+            )
+            for case_id in matrix.case_ids:
+                entries[case_id] = int(case_id.split("_")[1])
+    rows = ["case_id,source_year,official_listed_date"]
+    rows.extend(
+        f"{case_id},{year},{year}-01-02"
+        for case_id, year in sorted(entries.items())
+    )
+    path.write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
 def _sha256(path: Path) -> str:
@@ -194,6 +227,37 @@ def test_holdout_baselines_are_deterministic_and_dev_fit_only() -> None:
     assert first[0].evaluation_years == (2024,)
 
 
+def test_holdout_uses_governed_listing_year_instead_of_case_id_year() -> None:
+    development = _matrix(
+        V04ModelFeatureGroup.PM,
+        MarketDatasetSplit.DEVELOPMENT,
+        V04CanonicalCohort.FULL_PRODUCTION,
+        count=20,
+    )
+    validation = _matrix(
+        V04ModelFeatureGroup.PM,
+        MarketDatasetSplit.VALIDATION,
+        V04CanonicalCohort.FULL_PRODUCTION,
+        count=8,
+    )
+    cross_year_case = validation.case_ids[0].replace("ipo_2024_", "ipo_2023_")
+    validation = validation.model_copy(
+        update={"case_ids": (cross_year_case, *validation.case_ids[1:])}
+    )
+    cohort_years = {
+        case_id: int(case_id.split("_")[1]) for case_id in development.case_ids
+    }
+    cohort_years.update({case_id: 2024 for case_id in validation.case_ids})
+
+    result = evaluate_holdout_baselines(
+        development,
+        validation,
+        cohort_year_by_case=cohort_years,
+    )
+
+    assert result[0].evaluation_years == (2024,)
+
+
 def test_development_evaluation_is_strictly_forward_chaining() -> None:
     development = _matrix(
         V04ModelFeatureGroup.OM,
@@ -271,17 +335,37 @@ def test_pr_e_orchestration_runs_frozen_production_and_oracle_v2(tmp_path: Path)
     _write_pr_d_manifest(pr_d_manifest, production_matrix_dir)
 
     oracle_matrix_dir = tmp_path / "oracle_v2" / "matrices"
+    production_development = json.loads(
+        (production_matrix_dir / "full_production_M_development.json").read_text()
+    )["case_ids"]
+    production_validation = json.loads(
+        (production_matrix_dir / "full_production_M_validation.json").read_text()
+    )["case_ids"]
+    oracle_case_ids = {
+        MarketDatasetSplit.DEVELOPMENT: tuple(
+            production_development[index * len(production_development) // 77]
+            for index in range(77)
+        ),
+        MarketDatasetSplit.VALIDATION: tuple(production_validation[:19]),
+    }
     _write_matrices(
         oracle_matrix_dir,
         V04CanonicalCohort.ORACLE_INTERSECTION,
         tuple(V04ModelFeatureGroup),
         development_count=77,
         validation_count=19,
+        case_ids_by_split=oracle_case_ids,
     )
     oracle_manifest = tmp_path / "oracle_v2_freeze.json"
     _write_oracle_v2_manifest(oracle_manifest)
     oracle_matrix_manifest = tmp_path / "oracle_v2_matrix_manifest.json"
     _write_oracle_v2_matrix_manifest(oracle_matrix_manifest, oracle_matrix_dir)
+    cohort_year_catalog = tmp_path / "ipo_official_master_bridge.csv"
+    _write_cohort_year_catalog(
+        cohort_year_catalog,
+        development_count=354,
+        validation_count=70,
+    )
 
     output = tmp_path / "out"
     first = run_pr_e(
@@ -291,6 +375,7 @@ def test_pr_e_orchestration_runs_frozen_production_and_oracle_v2(tmp_path: Path)
         oracle_v2_matrix_dir=oracle_matrix_dir,
         oracle_v2_freeze_manifest_path=oracle_manifest,
         oracle_v2_matrix_manifest_path=oracle_matrix_manifest,
+        cohort_year_catalog_path=cohort_year_catalog,
     )
     second = run_pr_e(
         production_matrix_dir,
@@ -299,12 +384,15 @@ def test_pr_e_orchestration_runs_frozen_production_and_oracle_v2(tmp_path: Path)
         oracle_v2_matrix_dir=oracle_matrix_dir,
         oracle_v2_freeze_manifest_path=oracle_manifest,
         oracle_v2_matrix_manifest_path=oracle_matrix_manifest,
+        cohort_year_catalog_path=cohort_year_catalog,
         resume=True,
     )
     assert first == second
     assert first["manifest"]["result_count"] == 48
     assert first["manifest"]["formal_gate_passed"] is True
     assert first["manifest"]["oracle_status"] == "frozen_v2_validation"
+    assert first["manifest"]["cohort_year_source"]["case_count"] == 424
+    assert first["manifest"]["cohort_year_source"]["cross_year_case_count"] == 0
     assert (
         first["diagnostic"]["full_production_validation"][
             "classification"
@@ -332,11 +420,18 @@ def test_pr_e_formal_run_rejects_missing_oracle_v2(tmp_path: Path) -> None:
     )
     manifest = tmp_path / "pr_d_freeze.json"
     _write_pr_d_manifest(manifest, matrix_dir)
+    cohort_year_catalog = tmp_path / "ipo_official_master_bridge.csv"
+    _write_cohort_year_catalog(
+        cohort_year_catalog,
+        development_count=354,
+        validation_count=70,
+    )
     with pytest.raises(ValueError, match="formal PR-E requires frozen Oracle v2"):
         run_pr_e(
             matrix_dir,
             tmp_path / "out",
             pr_d_freeze_manifest_path=manifest,
+            cohort_year_catalog_path=cohort_year_catalog,
         )
 
 
