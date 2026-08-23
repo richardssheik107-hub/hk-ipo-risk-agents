@@ -1,6 +1,6 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B/PR-C COMPLETE / FROZEN; PR-D INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT**
+> Status: **ACTIVE — PR-A/PR-B/PR-C/PR-D COMPLETE / FROZEN; PR-E FORMAL BASELINE NEXT / NOT STARTED**
 > Date: **2026-08-23**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
@@ -49,8 +49,8 @@ Competition Scope Lock
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset                 COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic                  READY / FORMAL BASELINE NEXT / NOT STARTED
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
@@ -165,7 +165,7 @@ PR-B Owner 任务已完成并冻结在 `main`。当前支持 PR-C governed mater
 - SHAP / calibration / ablation / error analysis；
 - 最终研究结论。
 
-PR-C governed full materialization、Development-only q25、438 targets、determinism、freeze manifest 与 A final sign-off 已完成。当前正式任务是 PR-D canonical materialization；正式 PR-E 仍必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
+PR-C governed full materialization、Development-only q25、438 targets、determinism、freeze manifest 与 A final sign-off 已完成。PR-D canonical materialization 也已完成并冻结；当前下一正式任务是 PR-E，但尚未开始。正式 PR-E 必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
 
 ---
 
@@ -373,7 +373,7 @@ Outcome horizon 一致
 provenance 可重建
 ```
 
-PR-D engineering prep 与 additive `v04_pr_d_input_binding_v1` 已完成；正式 materialization 必须对 frozen manifests、三路 438-case aggregate binding 和实际 bulk contents 做 fail-closed 校验，只接受 424 / 14 PR-C contract。预期 Full Production model-ready = 424、Development = 354、Validation = 70。PR-D 仍未完成。
+PR-D formal materialization 已完成并冻结：三路 438-case aggregate binding 与实际 bulk contents 全部匹配，Full Production model-ready = 424、explicit exclusions = 14、Development = 354、Validation = 70，same-provenance resume PASS。PR-E 已解锁但尚未开始。
 
 不得静默把新的 30-position Core 插入现有历史 120-position Extended join。
 
@@ -403,7 +403,7 @@ OM  Market + Oracle
 
 > 如果 Oracle 有效而 Production 较弱，差距是否主要来自 Document Pipeline？
 
-PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware。PR-A Oracle v1 是 immutable historical snapshot（当前 eligible 55 Dev / 0 Val），不得作为当前 ceiling；正式 PR-E 前必须按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 冻结 Oracle v2。100-case annotation 目标已实质达到，当前优先 QA 与 identity reconciliation，不自动扩样。
+PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware。PR-A Oracle v1 是 immutable historical snapshot（eligible 55 Dev / 0 Val），不得作为当前 ceiling。Oracle v2 已完成版本化物化、确定性复现与 438-case PR-A/PR-C 上游绑定：98 materialized / 96 strict usable / 77 Dev / 19 Val；A 最终签核已通过，状态为 COMPLETE / FROZEN，PR-E 训练尚未开始。100-case annotation 目标已实质达到，不自动扩样。
 
 ---
 

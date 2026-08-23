@@ -4,7 +4,9 @@
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
 > PR-C: **COMPLETE / FROZEN**
-> PR-D: **READY — INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
+> PR-D: **COMPLETE / FROZEN**
+> PR-E: **READY — FORMAL BASELINE NEXT / NOT STARTED**
+> Oracle v2: **COMPLETE / FROZEN — 98 MATERIALIZED / 96 STRICT USABLE / A SIGN-OFF PASSED**
 > Competition track: **PLANNED AFTER PR-H BASELINE E2E — full scope frozen in `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`**
 > Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
@@ -35,8 +37,8 @@ Prospectus PDF
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset                 COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic                  READY / FORMAL BASELINE NEXT / NOT STARTED
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
@@ -64,9 +66,11 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 11. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
 12. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
 13. [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md) — PR-C governed 438-case outcome materialization、threshold、determinism 与 freeze sign-off；
-14. [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md) — immutable PR-A Oracle v1、planned v2 refresh、annotation QA 与 PR-E 使用边界；
-15. [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md) — PR-D 三层 provenance binding、aggregate hash 算法与 P0 fail-closed Gate；
-14. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
+14. [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md) — immutable PR-A Oracle v1、versioned v2 refresh、annotation QA 与 PR-E 使用边界；
+15. [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md) — Oracle v2 98-case materialization、96-case strict cohort、438-case upstream binding、identity reconciliation、resume 与 frozen hashes；
+16. [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md) — PR-D 三层 provenance binding、aggregate hash 算法与 P0 fail-closed Gate；
+17. [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md) — formal 438→424+14 materialization、354/70 split、resume 与 freeze sign-off；
+18. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 
@@ -234,12 +238,12 @@ PR-A  COMPLETE / FROZEN
      424 available / 14 unavailable
      Development q25 = -0.1000
      438 determinism / 0 mismatch
-→ PR-D ACTIVE / FORMAL MATERIALIZATION NEXT
+→ PR-D COMPLETE / FROZEN
 ```
 
 PR-C 的真实 Development-only q25、438 target artifacts、424/14 coverage、438/0 determinism 与 small freeze manifest 已完成并冻结，详见 `V04_PR_C_COMPLETION_REPORT.md`。
 
-PR-D 的 canonical builder 已合入主线，并新增 additive bulk-input binding：正式入口必须同时核验 upstream freeze、438-case aggregate artifact binding 与实际内容。其正式 Gate消费 frozen PR-C contract：424 model-ready、14 explicit exclusions、354 Development、70 Validation。PR-D 仍未完成，必须独立 materialize 和验收。
+PR-D 已在 `main@a1385dba...` 上正式完成 materialization：438 upstream、424 model-ready、14 explicit exclusions、354 Development、70 Validation；三层 binding、same-provenance resume 和冻结清单均通过。PR-E formal baseline 已解锁但尚未开始。
 
 ## 9. Post-baseline Competition Hardening
 

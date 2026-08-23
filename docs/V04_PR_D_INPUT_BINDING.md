@@ -1,7 +1,7 @@
 # PR-D Frozen Bulk Input Binding
 
 > Contract: `v04_pr_d_input_binding_v1`
-> Status: **P0 RESOLVED / PR-D FORMAL MATERIALIZATION NOT STARTED**
+> Status: **P0 RESOLVED / CONSUMED BY FROZEN PR-D MATERIALIZATION**
 
 PR-D must validate three independent layers before writing any formal output:
 
