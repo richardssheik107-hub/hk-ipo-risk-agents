@@ -3,11 +3,11 @@
 > Status: **COMPLETE / FROZEN**
 > Freeze date: **2026-08-21**
 > Source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
-> Next milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
+> Historical-state note: downstream milestone statements describe the PR-B freeze time; current program status is tracked in `ROADMAP.md`.
 
 ## Scope
 
-PR-B freezes the governed IPO EOD store and the first versioned Market-X Core. It does not freeze the 5D outcome threshold, create a model-ready dataset, or start PR-C.
+PR-B freezes the governed IPO EOD store and the first versioned Market-X Core. It does not freeze the 5D outcome threshold, create a model-ready dataset, or start downstream modeling by itself.
 
 The frozen Core contract is:
 
@@ -101,9 +101,9 @@ These are optional Extended-source limitations, not PR-B Core failures. No ungov
 
 ## Downstream contract boundary
 
-PR-B freezes a 30-position Core contract. The repository also retains a separate historical 20-position Extended contract. PR-D must make an explicit versioned dataset-contract decision for Core and optional Extended inputs; this report does not silently modify the existing modeling dataset or public Schema.
+PR-B freezes a 30-position Core contract. The repository also retains a separate historical 20-position Extended contract. PR-D later made the explicit canonical dataset decision for Core and optional Extended inputs; this PR-B report does not retroactively redefine that later contract.
 
-## Gate verdict
+## Gate verdict at freeze time
 
 ```text
 PR_A_STATUS               = COMPLETE / FROZEN
@@ -113,5 +113,8 @@ PR_C_STATUS               = NEXT / NOT STARTED
 MODEL_READY_DATA_GATE     = BLOCKED BY PR-C AND PR-D
 2025_BLIND_Y_ACCESSED     = false
 ```
+
+PR-C and PR-D subsequently completed and froze under their own reports. The
+block above is intentionally preserved as the PR-B freeze-time handoff state.
 
 No complete runtime artifacts, raw market CSV, local absolute path, cache, secret or 2025 outcome are included in this freeze record.
