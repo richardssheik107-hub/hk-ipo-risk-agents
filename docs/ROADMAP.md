@@ -4,7 +4,8 @@
 > 当前唯一主线：**End-to-End Closed Loop First**。  
 > PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。  
 > PR-C：**COMPLETE / FROZEN**。
-> 当前正式 Gate：**PR-D — INPUT BINDING HARDENED / READY FOR FORMAL MATERIALIZATION / NOT COMPLETE**。
+> PR-D：**COMPLETE / FROZEN**。
+> 当前正式 Gate：**PR-E — READY / FORMAL BASELINE NEXT / NOT STARTED**。
 > Competition strategy：**先完成 PR-C → PR-H baseline E2E，再进入赛题专项强化；赛题要求不提前打断当前 Gate。**
 
 ## 版本路线
@@ -95,7 +96,7 @@ Frozen records:
 | Total-market turnover | MISSING — Extended |
 | PR-B Gate | PASS / COMPLETE / FROZEN |
 | PR-C Gate | PASS / COMPLETE / FROZEN |
-| Full Model-ready data gate | READY FOR PR-D MATERIALIZATION / NOT PASSED |
+| Full Model-ready data gate | PASS / 424 = 354 Development + 70 Validation |
 | Competition Hardening | PLANNED AFTER PR-H BASELINE E2E |
 
 ## PR-B frozen boundary
@@ -151,8 +152,8 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成 |
 | CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN ON MAIN** | 已完成 |
 | CL-4 / PR-C | Freeze 5D Outcome Policy | **COMPLETE / FROZEN** | governed full run + q25 + 438 targets + determinism + freeze manifest + A final sign-off complete |
-| CL-5 / PR-D | Canonical Model-ready Dataset | **READY / INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT** | verify frozen manifests + bound 438-case bulk contents; then consume 424 model-ready / 14 explicit exclusions |
-| CL-6 / PR-E | Baseline + Oracle Diagnostic | PREPARATION ONLY | frozen PR-D + time-aware evaluation protocol + refreshed Oracle audit |
+| CL-5 / PR-D | Canonical Model-ready Dataset | **COMPLETE / FROZEN** | 438 → 424 model-ready + 14 exclusions; 354 Dev / 70 Val; deterministic resume PASS |
+| CL-6 / PR-E | Baseline + Oracle Diagnostic | **READY / FORMAL BASELINE NEXT / NOT STARTED** | consume frozen PR-D + time-aware evaluation protocol + refreshed Oracle audit |
 | CL-7 / PR-F | LightGBM + Explainability | PREPARATION ONLY | PR-E formal baseline complete and reproducible |
 | CL-8/9 / PR-G | Market Agent + Final Supervisor | CONTRACT PREPARATION ONLY | frozen model output contract + protected-interface review |
 | CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | UI PREPARATION ONLY | PDF → Final Report complete |
@@ -185,8 +186,8 @@ Frozen evidence and reproducibility references:
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
 PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
-PR-D  Canonical Model-ready Dataset                  ACTIVE / FORMAL MATERIALIZATION NEXT
-PR-E  Baseline + Oracle Diagnostic
+PR-D  Canonical Model-ready Dataset                  COMPLETE / FROZEN
+PR-E  Baseline + Oracle Diagnostic                   READY / FORMAL BASELINE NEXT / NOT STARTED
 PR-F  LightGBM + Explainability
 PR-G  Market Agent + Final Supervisor
 PR-H  Streamlit Full E2E + Real-case Demo

@@ -1,6 +1,6 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B/PR-C COMPLETE / FROZEN; PR-D INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT**
+> Status: **ACTIVE — PR-A/PR-B/PR-C/PR-D COMPLETE / FROZEN; PR-E FORMAL BASELINE NEXT / NOT STARTED**
 > Date: **2026-08-23**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
@@ -49,8 +49,8 @@ Competition Scope Lock
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset                 COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic                  READY / FORMAL BASELINE NEXT / NOT STARTED
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
@@ -165,7 +165,7 @@ PR-B Owner 任务已完成并冻结在 `main`。当前支持 PR-C governed mater
 - SHAP / calibration / ablation / error analysis；
 - 最终研究结论。
 
-PR-C governed full materialization、Development-only q25、438 targets、determinism、freeze manifest 与 A final sign-off 已完成。当前正式任务是 PR-D canonical materialization；正式 PR-E 仍必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
+PR-C governed full materialization、Development-only q25、438 targets、determinism、freeze manifest 与 A final sign-off 已完成。PR-D canonical materialization 也已完成并冻结；当前下一正式任务是 PR-E，但尚未开始。正式 PR-E 必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
 
 ---
 
@@ -373,7 +373,7 @@ Outcome horizon 一致
 provenance 可重建
 ```
 
-PR-D engineering prep 与 additive `v04_pr_d_input_binding_v1` 已完成；正式 materialization 必须对 frozen manifests、三路 438-case aggregate binding 和实际 bulk contents 做 fail-closed 校验，只接受 424 / 14 PR-C contract。预期 Full Production model-ready = 424、Development = 354、Validation = 70。PR-D 仍未完成。
+PR-D formal materialization 已完成并冻结：三路 438-case aggregate binding 与实际 bulk contents 全部匹配，Full Production model-ready = 424、explicit exclusions = 14、Development = 354、Validation = 70，same-provenance resume PASS。PR-E 已解锁但尚未开始。
 
 不得静默把新的 30-position Core 插入现有历史 120-position Extended join。
 
