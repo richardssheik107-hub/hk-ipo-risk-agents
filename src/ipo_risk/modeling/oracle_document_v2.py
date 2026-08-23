@@ -36,7 +36,10 @@ def _read(path: Path) -> dict[str, Any]:
 
 
 def _file_hash(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # JSON provenance must be invariant to Git's LF/CRLF checkout policy.
+    # ``read_text`` performs universal-newline translation, so the resulting
+    # digest matches the canonical LF source used by annotation audit records.
+    return hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
 
 
 def _artifact_hash(payload: dict[str, Any]) -> str:
