@@ -1,8 +1,12 @@
 # V04 PR-D — Canonical Model-ready Dataset Contract
 
-> Status: **ENGINEERING PREPARATION / BLOCKED BY FORMAL PR-C FREEZE**  
+> Status: **READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
 > Owner: **D — Quant / ML Research**  
 > Review: **A — identity / provenance / reproducibility / Blind Gate**
+
+PR-C is now COMPLETE / FROZEN. Formal PR-D materialization is unblocked and
+must consume `reports/frozen/v04_pr_c_5d_outcome_manifest.json`; this document
+does not claim that PR-D itself has passed or completed.
 
 ## Scope
 

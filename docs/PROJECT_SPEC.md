@@ -1,7 +1,7 @@
 # HK IPO Risk Agents — Current Project Specification
 
-> Status snapshot: **2026-08-22**
-> Execution strategy: **Current PR-C → PR-H baseline E2E first; Competition Hardening second.**
+> Status snapshot: **2026-08-23**
+> Execution strategy: **Current PR-D → PR-H baseline E2E first; Competition Hardening second.**
 
 ## 1. 项目定位
 
@@ -60,7 +60,7 @@ Prospectus
 
 当前优先完成完整闭环，再依据 PR-E 的 Oracle diagnostic 与后续赛题 benchmark 决定是否回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
 
-PR-A — Document + Oracle Materialization & Coverage 已 **COMPLETE / FROZEN**。PR-B — Market-X Core + Governed EOD Store 已 **COMPLETE / FROZEN**。PR-C 已完成 policy/schema/implementation、A static audit 和 424/14 Gate correction，但正式 governed full materialization 仍未完成；PR-D engineering preparation 已合入，正式 materialization 被 PR-C freeze manifest 阻塞。
+PR-A — Document + Oracle Materialization & Coverage、PR-B — Market-X Core + Governed EOD Store 与 PR-C — 5D Outcome Policy Freeze 均已 **COMPLETE / FROZEN**。PR-D engineering preparation 已合入且正式 materialization 现已解除前置阻塞，但尚未完成或冻结。
 
 ### Post-baseline：Competition Hardening
 
@@ -260,7 +260,7 @@ Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测�
 
 ## 9. 当前真实数据状态
 
-以 2026-08-22 当前 mainline readiness 为准：
+以 2026-08-23 当前 readiness 为准：
 
 - 官方 2020–2024 IPO universe：438 cases；
 - 本地招股书：438 / 438；
@@ -279,7 +279,7 @@ Retriever 研究中的历史 Locked 10 已经消费，仅保留为历史评测�
 - authoritative industry benchmark mapping / history 仍缺；
 - total-market turnover 源仍缺；
 - PR-B Core：438 / 438 materialized，0 failures，0 PIT failures，438 determinism / 0 mismatches；
-- `MODEL_READY_DATA_GATE` 尚未打开，等待正式 PR-C freeze / PR-D materialization。
+- `MODEL_READY_DATA_GATE` 尚未通过；PR-C 已冻结，当前等待 PR-D canonical materialization。
 
 ## 10. Production 与 Oracle 永久分离
 
@@ -377,8 +377,8 @@ v0.4.3 baseline E2E 首先以**完整、可信、可重建**为成功标准：
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
-PR-C  5D Outcome Policy Freeze                       ACTIVE / FORMAL RUN PENDING
-PR-D  Canonical Model-ready Dataset                  PREP MERGED / BLOCKED BY C
+PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
+PR-D  Canonical Model-ready Dataset                  ACTIVE / FORMAL MATERIALIZATION NEXT
 PR-E  Baseline + Oracle Diagnostic
 PR-F  LightGBM + Explainability
 PR-G  Market Agent + Final Supervisor
@@ -386,7 +386,7 @@ PR-H  Streamlit Full E2E + Real-case Demo
 v0.4.3 Baseline E2E Freeze
 ```
 
-当前 PR-C 正式 Gate 需要真实 governed run 产生 438 targets、424 available / 14 unavailable、354 Development / 70 Validation、真实 Development-only q25、438 determinism / 0 mismatch 和 freeze manifest。
+PR-C 正式 Gate 已由真实 governed run 完成：438 targets、424 available / 14 unavailable、354 Development / 70 Validation、Development-only q25 `-0.1000`、438 determinism / 0 mismatch 和 freeze manifest。当前进入 PR-D 的独立 formal materialization Gate。
 
 ## 15. Competition Hardening / Submission Success Criteria
 

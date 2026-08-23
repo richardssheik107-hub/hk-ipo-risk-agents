@@ -1,9 +1,14 @@
 # v0.4 Role A — Integration Gate Handoff
 
-> Status: **A PREPARATION COMPLETE — WAITING FORMAL PR-C GOVERNED MATERIALIZATION**  
+> Status: **A PREPARATION COMPLETE — PR-C FROZEN / PR-D FORMAL MATERIALIZATION UNBLOCKED**
 > Owner: **A — Tech Lead / Pipeline**  
 > Date: **2026-08-22**  
 > Base main revision: **`1d441e6efb716f448b858e37e0d40954faf2a2da`**
+
+> Resolution (2026-08-23): the governed PR-C full run and final A sign-off are
+> complete. The 424/14 contract below is now backed by the reviewed freeze
+> manifest. PR-D is ready for its own formal materialization Gate but is not
+> complete. See [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md).
 
 This handoff records the Role-A tasks that can be completed before the governed
 PR-C full run. It does **not** claim PR-C or PR-D formal Gate completion.
@@ -167,18 +172,16 @@ PR-G remains a downstream formal milestone after PR-F.
 ```text
 PR-A  COMPLETE / FROZEN
 PR-B  COMPLETE / FROZEN
-PR-C  implementation + A static audit + Gate correction complete
-      FORMAL GOVERNED MATERIALIZATION PENDING
-      NOT FROZEN
+PR-C  COMPLETE / FROZEN
 PR-D  engineering preparation merged; 424/14 integration contract prepared
-      FORMAL MATERIALIZATION BLOCKED BY PR-C
+      READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE
 PR-E/F engineering preparation exists but formal results are downstream
 PR-G/H preparation exists but formal milestones are downstream
 ```
 
-The immediate external blocker is the governed PR-C full run that produces the
-numeric Development-only q25 threshold, 438 target artifacts, deterministic
-rerun evidence and the small PR-C freeze manifest.
+The former PR-C blocker is closed. The immediate next formal milestone is PR-D
+canonical materialization against the frozen PR-C threshold, 438 target
+coverage and small freeze manifest.
 
 ## 6. Role-A work completed in this branch
 

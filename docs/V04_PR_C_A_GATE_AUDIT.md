@@ -1,11 +1,18 @@
 # v0.4 PR-C A-side Gate Audit
 
-> Status: **A STATIC AUDIT COMPLETE — FORMAL FREEZE BLOCKED BY GOVERNED MATERIALIZATION**  
+> Status: **SUPERSEDED BY FORMAL GATE PASS — PR-C COMPLETE / FROZEN**
 > Owner: **A — Tech Lead / Pipeline**  
 > Audit date: **2026-08-22**  
 > Audited main revision: **`35d3fbcfe6f38b69842f3bb7c94d31a8d78a1d6c`**
 
-## 1. Decision
+> Resolution (2026-08-23): the required governed run and A final sign-off were
+> completed on source revision `a1e32a97bc4ffa87aec3560598265e0536b4e07d`.
+> Coverage is 438 / 424 / 14, the Development-only q25 threshold is `-0.1000`,
+> determinism is 438 checked / 0 mismatches, and 2025 Blind y was not accessed.
+> See [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md). The
+> remainder of this file is retained as the pre-materialization audit trail.
+
+## 1. Historical pre-materialization decision
 
 A-side review does **not** approve PR-C as COMPLETE / FROZEN yet.
 
