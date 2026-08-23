@@ -85,6 +85,24 @@ def _write_inputs(
     return production, targets
 
 
+def _verified_test_binding(case_count: int) -> dict:
+    return {
+        "upstream_binding_verified": True,
+        "upstream_binding_hash": "test-upstream-binding",
+        "binding_manifest_hash": "test-binding-manifest",
+        "pr_d_freeze_manifest_hash": "test-pr-d-freeze",
+        "pr_a_manifest_identity": {"filename": "pr_a.json", "sha256": "test"},
+        "pr_c_manifest_identity": {"filename": "pr_c.json", "sha256": "test"},
+        "pr_c_freeze_manifest_hash": "test-pr-c-freeze",
+        "official_case_count": case_count,
+        "production_artifact_set_hash": "test-production",
+        "outcome_artifact_set_hash": "test-outcome",
+        "pr_c_target_set_hash": "test-target-set",
+        "pr_c_policy_hash": "test-policy",
+        "pr_c_threshold_hash": "test-threshold",
+    }
+
+
 def test_oracle_v1_contract_is_unchanged() -> None:
     assert ORACLE_DOCUMENT_FEATURE_SCHEMA_VERSION == "expert_oracle_document_features_v1"
     assert ORACLE_DOCUMENT_FEATURE_POLICY_VERSION == "oracle_gold_policy_v1"
@@ -136,6 +154,7 @@ def test_non_official_and_outcome_unavailable_are_explicit(tmp_path: Path) -> No
         target_dir=targets,
         output_dir=tmp_path / "output",
         resume=False,
+        upstream_binding=_verified_test_binding(len(case_ids)),
     )
     statuses = {item["case_id"]: item for item in result["statuses"] if item["case_id"] != "ipo_2024_02410"}
     assert statuses["ipo_2024_00805"]["reason"] == "non_official_case"
@@ -227,10 +246,12 @@ def test_resume_same_passes_and_conflict_fails(tmp_path: Path) -> None:
     production, targets = _write_inputs(tmp_path, ("ipo_2020_00368",))
     output = tmp_path / "output"
     first = materialize_oracle_v2(
-        root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=False
+        root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=False,
+        upstream_binding=_verified_test_binding(1),
     )
     second = materialize_oracle_v2(
-        root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=True
+        root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=True,
+        upstream_binding=_verified_test_binding(1),
     )
     assert first == second
     path = output / "features/ipo_2020_00368.json"
@@ -239,17 +260,20 @@ def test_resume_same_passes_and_conflict_fails(tmp_path: Path) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="resume_provenance_conflict"):
         materialize_oracle_v2(
-            root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=True
+            root=ROOT, production_dir=production, target_dir=targets, output_dir=output, resume=True,
+            upstream_binding=_verified_test_binding(1),
         )
 
 
 def test_artifact_set_is_deterministic(tmp_path: Path) -> None:
     production, targets = _write_inputs(tmp_path, ("ipo_2020_00368", "ipo_2020_01942"))
     one = materialize_oracle_v2(
-        root=ROOT, production_dir=production, target_dir=targets, output_dir=tmp_path / "one", resume=False
+        root=ROOT, production_dir=production, target_dir=targets, output_dir=tmp_path / "one", resume=False,
+        upstream_binding=_verified_test_binding(2),
     )
     two = materialize_oracle_v2(
-        root=ROOT, production_dir=production, target_dir=targets, output_dir=tmp_path / "two", resume=False
+        root=ROOT, production_dir=production, target_dir=targets, output_dir=tmp_path / "two", resume=False,
+        upstream_binding=_verified_test_binding(2),
     )
     assert one["artifact_set_hash"] == two["artifact_set_hash"]
     assert one["status_set_hash"] == two["status_set_hash"]

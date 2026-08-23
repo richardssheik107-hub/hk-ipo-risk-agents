@@ -148,6 +148,143 @@ def _verify_pr_c_manifest(pr_c: Mapping[str, Any]) -> None:
         )
 
 
+def _verify_freeze_manifest(payload: Mapping[str, Any], *, label: str) -> None:
+    declared = payload.get("freeze_manifest_hash")
+    actual = canonical_hash(
+        {key: value for key, value in payload.items() if key != "freeze_manifest_hash"}
+    )
+    if declared != actual:
+        raise ValueError(
+            f"input_binding component={label} category=freeze_manifest_hash_mismatch "
+            f"expected={declared} actual={actual}"
+        )
+
+
+def verify_oracle_v2_upstream_binding(
+    *,
+    production_dir: Path,
+    target_dir: Path,
+    binding_manifest_path: Path,
+    pr_d_freeze_manifest_path: Path,
+    pr_a_manifest_path: Path,
+    pr_c_manifest_path: Path,
+) -> dict[str, Any]:
+    """Verify Oracle v2 inputs against the committed PR-D/PR-C freezes."""
+
+    binding = _read_json(binding_manifest_path)
+    binding_body = {
+        key: value for key, value in binding.items() if key != "binding_manifest_hash"
+    }
+    if binding.get("binding_manifest_hash") != canonical_hash(binding_body):
+        raise ValueError("oracle_v2_upstream category=binding_manifest_hash_mismatch")
+    if binding.get("binding_version") != PR_D_INPUT_BINDING_VERSION:
+        raise ValueError("oracle_v2_upstream category=binding_version_mismatch")
+
+    pr_d = _read_json(pr_d_freeze_manifest_path)
+    _verify_freeze_manifest(pr_d, label="pr_d_freeze")
+    if pr_d.get("input_binding_manifest_hash") != binding.get(
+        "binding_manifest_hash"
+    ):
+        raise ValueError("oracle_v2_upstream category=committed_binding_anchor_mismatch")
+
+    expected_upstream = binding.get("upstream_manifests") or {}
+    if expected_upstream.get("pr_a") != _manifest_identity(pr_a_manifest_path):
+        raise ValueError("oracle_v2_upstream component=pr_a category=manifest_identity_mismatch")
+    if expected_upstream.get("pr_c") != _manifest_identity(pr_c_manifest_path):
+        raise ValueError("oracle_v2_upstream component=pr_c category=manifest_identity_mismatch")
+
+    pr_c = _read_json(pr_c_manifest_path)
+    _verify_pr_c_manifest(pr_c)
+    if pr_c.get("freeze_manifest_hash") != binding.get("pr_c_freeze_manifest_hash"):
+        raise ValueError("oracle_v2_upstream component=pr_c category=freeze_identity_mismatch")
+
+    expected_components = binding.get("components") or {}
+    expected_production = expected_components.get("production_document") or {}
+    expected_outcome = expected_components.get("outcome_target") or {}
+    for field, expected in (
+        ("official_case_count", binding.get("official_case_count")),
+        ("production_artifact_set_hash", expected_production.get("artifact_set_hash")),
+        ("outcome_artifact_set_hash", expected_outcome.get("artifact_set_hash")),
+        ("pr_c_target_set_hash", binding.get("pr_c_target_set_hash")),
+    ):
+        if pr_d.get(field) != expected:
+            raise ValueError(
+                f"oracle_v2_upstream component=pr_d_freeze category={field}_mismatch"
+            )
+
+    production, production_ids = _component_identity(
+        production_dir, component="production_document"
+    )
+    outcome, outcome_ids = _component_identity(target_dir, component="outcome_target")
+    for name, actual, expected in (
+        ("production_document", production, expected_production),
+        ("outcome_target", outcome, expected_outcome),
+    ):
+        if actual != expected:
+            category = "artifact_set_hash_mismatch"
+            if actual.get("count") != expected.get("count"):
+                category = "count_mismatch"
+            elif actual.get("case_set_hash") != expected.get("case_set_hash"):
+                category = "case_set_mismatch"
+            elif actual.get("identity_set_hash") != expected.get("identity_set_hash"):
+                category = "identity_set_mismatch"
+            raise ValueError(f"oracle_v2_upstream component={name} category={category}")
+
+    if set(production_ids) != set(outcome_ids):
+        raise ValueError("oracle_v2_upstream component=outcome_target category=case_set_mismatch")
+    mismatched = [
+        case_id
+        for case_id in sorted(production_ids)
+        if production_ids[case_id] != outcome_ids[case_id]
+    ]
+    if mismatched:
+        raise ValueError(
+            "oracle_v2_upstream component=outcome_target category=identity_mismatch "
+            f"case_id={mismatched[0]}"
+        )
+
+    target_entries: list[dict[str, str]] = []
+    policy_hashes: set[str] = set()
+    threshold_hashes: set[str] = set()
+    for path in _case_files(target_dir, component="outcome_target"):
+        target = load_target_artifact(_read_json(path))
+        target_entries.append({"case_id": target.case_id, "content_hash": target.content_hash()})
+        policy_hashes.add(target.policy_hash)
+        threshold_hashes.add(target.threshold_hash)
+    target_set_hash = canonical_hash(sorted(target_entries, key=lambda item: item["case_id"]))
+    if target_set_hash != pr_c.get("target_set_hash") or target_set_hash != binding.get(
+        "pr_c_target_set_hash"
+    ):
+        raise ValueError("oracle_v2_upstream component=outcome_target category=target_set_hash_mismatch")
+    if policy_hashes != {pr_c.get("policy_hash")} or policy_hashes != {
+        binding.get("pr_c_policy_hash")
+    }:
+        raise ValueError("oracle_v2_upstream component=outcome_target category=policy_hash_drift")
+    if threshold_hashes != {pr_c.get("threshold_hash")} or threshold_hashes != {
+        binding.get("pr_c_threshold_hash")
+    }:
+        raise ValueError("oracle_v2_upstream component=outcome_target category=threshold_hash_drift")
+
+    result = {
+        "upstream_binding_verified": True,
+        "binding_version": binding["binding_version"],
+        "binding_manifest_hash": binding["binding_manifest_hash"],
+        "pr_d_freeze_manifest_hash": pr_d["freeze_manifest_hash"],
+        "pr_a_manifest_identity": expected_upstream["pr_a"],
+        "pr_c_manifest_identity": expected_upstream["pr_c"],
+        "pr_c_freeze_manifest_hash": pr_c["freeze_manifest_hash"],
+        "official_case_count": production["count"],
+        "official_case_set_hash": production["case_set_hash"],
+        "official_identity_set_hash": production["identity_set_hash"],
+        "production_artifact_set_hash": production["artifact_set_hash"],
+        "outcome_artifact_set_hash": outcome["artifact_set_hash"],
+        "pr_c_target_set_hash": target_set_hash,
+        "pr_c_policy_hash": next(iter(policy_hashes)),
+        "pr_c_threshold_hash": next(iter(threshold_hashes)),
+    }
+    return result | {"upstream_binding_hash": canonical_hash(result)}
+
+
 def build_pr_d_input_binding(
     *,
     production_dir: Path,

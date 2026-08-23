@@ -264,8 +264,16 @@ def validate_oracle_v2_artifact(payload: dict[str, Any]) -> None:
 
 
 def materialize_oracle_v2(
-    *, root: Path, production_dir: Path, target_dir: Path, output_dir: Path, resume: bool
+    *,
+    root: Path,
+    production_dir: Path,
+    target_dir: Path,
+    output_dir: Path,
+    resume: bool,
+    upstream_binding: dict[str, Any],
 ) -> dict[str, Any]:
+    if upstream_binding.get("upstream_binding_verified") is not True:
+        raise ValueError("oracle_v2_upstream_binding_not_verified")
     inventory = annotation_inventory(root)
     official = load_official_identities(production_dir)
     targets = {path.stem: _read(path) for path in sorted(target_dir.glob("*.json"))}
@@ -333,6 +341,19 @@ def materialize_oracle_v2(
         "production_consumable": False,
         "blind_2025_y_accessed": False,
         "oracle_v1_modified": False,
+        "upstream_binding_verified": True,
+        "upstream_binding_hash": upstream_binding["upstream_binding_hash"],
+        "upstream_binding_manifest_hash": upstream_binding["binding_manifest_hash"],
+        "pr_d_freeze_manifest_hash": upstream_binding["pr_d_freeze_manifest_hash"],
+        "pr_a_manifest_identity": upstream_binding["pr_a_manifest_identity"],
+        "pr_c_manifest_identity": upstream_binding["pr_c_manifest_identity"],
+        "pr_c_freeze_manifest_hash": upstream_binding["pr_c_freeze_manifest_hash"],
+        "official_case_count": upstream_binding["official_case_count"],
+        "production_artifact_set_hash": upstream_binding["production_artifact_set_hash"],
+        "outcome_artifact_set_hash": upstream_binding["outcome_artifact_set_hash"],
+        "pr_c_target_set_hash": upstream_binding["pr_c_target_set_hash"],
+        "pr_c_policy_hash": upstream_binding["pr_c_policy_hash"],
+        "pr_c_threshold_hash": upstream_binding["pr_c_threshold_hash"],
         "statuses": statuses,
     }
     body["run_manifest_hash"] = canonical_hash(body)
