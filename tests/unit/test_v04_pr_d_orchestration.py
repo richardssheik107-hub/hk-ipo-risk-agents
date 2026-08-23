@@ -5,6 +5,8 @@ from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
     IPO_MARKET_CONTEXT_FEATURE_POLICY_VERSION,
@@ -19,6 +21,7 @@ from ipo_risk.modeling.oracle_document import (
     ORACLE_DOCUMENT_FEATURE_SCHEMA_VERSION,
     oracle_feature_names,
 )
+from ipo_risk.modeling.pr_d_input_binding import build_pr_d_input_binding
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.market import (
     MarketBasePriceSource,
@@ -219,6 +222,7 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
     )
     _write(
         pr_c_manifest,
+        (lambda body: body | {"freeze_manifest_hash": canonical_hash(body)})(
         {
             "gate_passed": True,
             "official_case_count": 438,
@@ -230,8 +234,35 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
             "blind_2025_y_accessed": False,
             "policy_hash": outcome_builder.policy.content_hash(),
             "threshold_hash": threshold.content_hash(),
+            "target_set_hash": canonical_hash(
+                sorted(
+                    (
+                        {
+                            "case_id": target.case_id,
+                            "content_hash": target.content_hash(),
+                        }
+                        for target in (
+                            outcome_builder.build_target(label, threshold)
+                            for label in raw_labels
+                        )
+                    ),
+                    key=lambda item: item["case_id"],
+                )
+            ),
         },
+        ),
     )
+    binding_manifest = tmp_path / "v04_pr_d_binding.json"
+    binding = build_pr_d_input_binding(
+        production_dir=pr_a_dir / "production_features",
+        market_core_dir=pr_b_dir / "core_features",
+        target_dir=pr_c_dir / "targets",
+        oracle_dir=pr_a_dir / "oracle_features",
+        pr_a_manifest_path=pr_a_manifest,
+        pr_b_manifest_path=pr_b_manifest,
+        pr_c_manifest_path=pr_c_manifest,
+    )
+    _write(binding_manifest, binding)
     output = tmp_path / "out"
     kwargs = {
         "production_dir": pr_a_dir / "production_features",
@@ -241,6 +272,7 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
         "pr_a_manifest_path": pr_a_manifest,
         "pr_b_manifest_path": pr_b_manifest,
         "pr_c_manifest_path": pr_c_manifest,
+        "input_binding_manifest_path": binding_manifest,
         "output_dir": output,
     }
     first = materialize_pr_d(**kwargs)
@@ -272,3 +304,9 @@ def test_pr_d_full_orchestration_materializes_fair_cohorts_and_resumes(
     assert (output / "matrices" / "full_production_PM_validation.json").is_file()
     assert (output / "matrices" / "oracle_intersection_OM_development.json").is_file()
     assert not (output / "matrices" / "oracle_intersection_OM_validation.json").exists()
+    run_manifest = output / "run_manifest.json"
+    conflicting = json.loads(run_manifest.read_text(encoding="utf-8"))
+    conflicting["official_case_count"] = 999
+    _write(run_manifest, conflicting)
+    with pytest.raises(ValueError, match="provenance/content conflict"):
+        materialize_pr_d(**kwargs, resume=True)

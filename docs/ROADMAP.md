@@ -4,7 +4,7 @@
 > 当前唯一主线：**End-to-End Closed Loop First**。  
 > PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。  
 > PR-C：**COMPLETE / FROZEN**。
-> 当前正式 Gate：**PR-D — READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**。
+> 当前正式 Gate：**PR-D — INPUT BINDING HARDENED / READY FOR FORMAL MATERIALIZATION / NOT COMPLETE**。
 > Competition strategy：**先完成 PR-C → PR-H baseline E2E，再进入赛题专项强化；赛题要求不提前打断当前 Gate。**
 
 ## 版本路线
@@ -86,7 +86,7 @@ Frozen records:
 | PR-C Validation available | 70 / 70 |
 | Authoritative snapshots | 438 / 438 |
 | Production Document-X | 438 / 438, 100 dimensions |
-| Oracle Document-X | frozen PR-A inventory 60; refreshed coverage must be re-audited after newer annotations |
+| Oracle Document-X | immutable PR-A v1: 60 materialized / current eligible 55 Dev + 0 Val; v2 refresh required before formal PR-E |
 | Production failures / silent drops | 0 / 0 |
 | PR-B Core code/tests | COMPLETE / FROZEN |
 | PR-B Core real coverage | 438 / 438 materialized; 0 failed; 0 silent drops |
@@ -151,7 +151,7 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | CL-2 / PR-A | Document + Oracle Materialization & Coverage | **COMPLETE / FROZEN** | 已完成 |
 | CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN ON MAIN** | 已完成 |
 | CL-4 / PR-C | Freeze 5D Outcome Policy | **COMPLETE / FROZEN** | governed full run + q25 + 438 targets + determinism + freeze manifest + A final sign-off complete |
-| CL-5 / PR-D | Canonical Model-ready Dataset | **READY / FORMAL MATERIALIZATION NEXT** | consume frozen PR-C manifest; 424 model-ready / 14 explicit exclusions |
+| CL-5 / PR-D | Canonical Model-ready Dataset | **READY / INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT** | verify frozen manifests + bound 438-case bulk contents; then consume 424 model-ready / 14 explicit exclusions |
 | CL-6 / PR-E | Baseline + Oracle Diagnostic | PREPARATION ONLY | frozen PR-D + time-aware evaluation protocol + refreshed Oracle audit |
 | CL-7 / PR-F | LightGBM + Explainability | PREPARATION ONLY | PR-E formal baseline complete and reproducible |
 | CL-8/9 / PR-G | Market Agent + Final Supervisor | CONTRACT PREPARATION ONLY | frozen model output contract + protected-interface review |
@@ -222,7 +222,7 @@ OM  = Oracle Document + Market
 
 Production 与 Oracle 比较必须使用相同 cohort、split、target、preprocessing 和 model family。
 
-PR-D 的 Core-first canonical contract 已作为 engineering preparation 合入主线。正式 materialization 必须绑定新的 PR-C 424/14 contract；30-position Market-X Core 与 optional 20-position Extended contract 保持显式分离，不能静默修改历史 120-position Extended join。
+PR-D 的 Core-first canonical contract 已作为 engineering preparation 合入主线。正式 materialization 必须先通过 `v04_pr_d_input_binding_v1`，同时绑定 PR-A/PR-B/PR-C frozen manifest identity、三路 438-case bulk aggregate 和实际 artifact contents；30-position Market-X Core 与 optional 20-position Extended contract 保持显式分离。Oracle v1 仅为历史 snapshot，正式 PR-E 前按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 另行冻结 v2。
 
 ## 时间切分
 
