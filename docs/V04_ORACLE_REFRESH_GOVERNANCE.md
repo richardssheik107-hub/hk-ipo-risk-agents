@@ -51,8 +51,8 @@ Production identity is authoritative; it must not be changed to accommodate
 Oracle annotations.
 
 The current inventory contains 101 entries: 100 valid annotations and one
-invalid legacy entry. Of 87 audit overlays, 74 are stale relative to their
-current pass-1 source hash. Stale overlays remain auditable but are explicitly
+invalid legacy entry. Of 87 audit overlays, 17 are stale relative to their
+current pass-1 source hash after cross-platform newline normalization. Stale overlays remain auditable but are explicitly
 `stale_not_applied`; v2 never silently applies them.
 
 The candidate contract is `expert_oracle_document_features_v2` /

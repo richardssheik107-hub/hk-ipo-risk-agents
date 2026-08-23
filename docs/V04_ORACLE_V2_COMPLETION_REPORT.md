@@ -2,7 +2,7 @@
 
 > Status: **FREEZE CANDIDATE / READY FOR A FINAL SIGN-OFF**
 > Date: 2026-08-23
-> Source revision: `330d2c455f6f4cc339997973d1b946f1804068b5`
+> Source revision: `33ef2b9835e76f25dd5847d1eb9323869597905a`
 
 ## 1. Scope and decision
 
@@ -34,7 +34,7 @@ inventory entries       101
 valid annotations       100
 invalid legacy entry      1
 audit overlays           87
-stale audit overlays     74
+stale audit overlays     17
 ```
 
 The invalid entry is the historical non-canonical `real_case_001` path. Its
@@ -42,7 +42,9 @@ annotation declares `ipo_2024_02410`; the canonical case directory is present
 separately and is the only version eligible for v2 materialization.
 
 Audit overlays are applied only when their recorded source annotation hash
-matches the current pass-1 annotation. The 74 stale overlays are retained in
+matches the current pass-1 annotation after universal-newline normalization.
+This makes the provenance decision identical on LF and CRLF checkouts. The 17
+stale overlays are retained in
 the inventory and reported as `stale_not_applied`; they are never silently
 applied to changed annotations. This is a conservative provenance rule, not a
 new human judgment.
@@ -101,14 +103,14 @@ same-provenance resume   PASS
 Canonical hashes:
 
 ```text
-annotation inventory  c70badc2f61e8691ef8f1fceffa3284c46035a1fd09b008abc7af0d1003fcaaa
+annotation inventory  50ca1079fabcdff678e5fa23a769bdb6f47da08284498a9a5dd94388c8787eee
 official identity set 844b82179208d117e923262c64662f220dffd8abde66265c9614280daabd1af4
 case set              4b9f95dd534051f4e0175a29be1ee520e8deb1ec76f672bd03b7595da407f87d
 strict usable set     486a0c7d3977deacb5e3247e184064e96a684dbfdf8ef951b9df6cd32ce4da0f
 feature manifest      99eeb0366a50b11b94f6e92820b6f1ef8535d5979ca6266d2af4f78618b40c11
-artifact set          1d3f9e309da659aed4ba846dca225f9f488b54ced6bbfa9ab3f04fe8ff5ef991
+artifact set          e73dd7f478fd4c421f6794cfa0c7808403cfb5d57dd0678eae1146aaeeff09d6
 status set            83f4c0e84481b6a14ebe191663911dee473bd0c141f9bea2d8cf3568fa1cd7e2
-freeze candidate      a0c222164d393c9a4ca67a2c36a3f79f14a1dd50f2e9fe918a5ddf5415afd8ef
+freeze candidate      d56647ed7ddeeecefcee01b7af6c480576a928517b5e0befc914f7c7488186e3
 ```
 
 The committed freeze candidate is the small manifest at
@@ -119,15 +121,15 @@ are not repository payload.
 ## 7. Validation
 
 ```text
-Oracle v2 targeted tests       29 passed
-full pytest                    1373 passed, 2 warnings
+Oracle v2 targeted tests       22 passed
+full pytest                    pending clean CI after portability fix
 validate_project               PASS (Mock: completed, verified=3, pending=1)
 validate_competition_data      PASS
 compileall                     PASS
 git diff --check               PASS
 ```
 
-Tests cover immutable Oracle v1 regression, deterministic inventory,
+Tests cover immutable Oracle v1 contract regression, deterministic inventory,
 authoritative identity reconciliation, explicit exclusions, stale-audit
 handling, schema/content corruption, fail-closed blind and duplicate cases,
 same-provenance resume, provenance conflict and artifact-set determinism.
@@ -145,6 +147,13 @@ bulk runtime artifacts committed  false
 
 Oracle v2 remains a research sidecar. Production Agent, Retriever, Service,
 Workflow and model-ready PR-D inputs do not import or consume it.
+
+The first PR CI run exposed and rejected a non-portable test dependency on
+ignored local PR-A/PR-C bulk artifacts and CRLF-sensitive source hashing. The
+implementation now normalizes JSON line endings and the tests construct their
+own official identity/outcome inputs. The frozen candidate hashes above were
+regenerated from committed revision `33ef2b9...`; the original candidate
+artifacts were not reused.
 
 ## 9. Final verdict
 
