@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,7 @@ from ipo_risk.modeling.canonical_dataset import (
     V04CanonicalDatasetBuilder,
     hash_source_manifests,
     load_target_artifact,
+    oracle_document_block,
     project_model_matrix,
 )
 from ipo_risk.schemas.canonical_modeling import (
@@ -23,6 +25,15 @@ from ipo_risk.schemas.market import MarketDatasetSplit, MarketLabelAvailability
 
 
 PR_D_VERSION = "v04_pr_d_canonical_dataset_v1"
+PR_C_OFFICIAL_CASE_COUNT = 438
+PR_C_AVAILABLE_COUNT = 424
+PR_C_UNAVAILABLE_COUNT = 14
+PR_C_DEVELOPMENT_AVAILABLE_COUNT = 354
+PR_C_VALIDATION_AVAILABLE_COUNT = 70
+PR_C_UNAVAILABLE_REASON_COUNTS = {
+    "missing_base_price": 12,
+    "no_eligible_session": 2,
+}
 
 
 def _read_json(path: Path) -> Any:
@@ -71,15 +82,79 @@ def _validate_upstream_freezes(
         raise ValueError("PR-B freeze manifest is not eligible for PR-D")
     if not (
         pr_c.get("gate_passed") is True
-        and pr_c.get("official_case_count") == 438
-        and pr_c.get("available_count") == 432
-        and pr_c.get("unavailable_count") == 6
+        and pr_c.get("official_case_count") == PR_C_OFFICIAL_CASE_COUNT
+        and pr_c.get("available_count") == PR_C_AVAILABLE_COUNT
+        and pr_c.get("unavailable_count") == PR_C_UNAVAILABLE_COUNT
         and pr_c.get("failure_count") == 0
         and pr_c.get("determinism_mismatch_count") == 0
         and pr_c.get("validation_used_for_threshold") is False
         and pr_c.get("blind_2025_y_accessed") is False
     ):
         raise ValueError("PR-C formal Gate has not passed")
+
+
+def _oracle_identity_only(error: ValueError) -> bool:
+    prefix = "canonical artifact identity mismatch: "
+    message = str(error)
+    if not message.startswith(prefix):
+        return False
+    fields = [item.strip() for item in message[len(prefix) :].split(",")]
+    return bool(fields) and all(field.startswith("oracle.") for field in fields)
+
+
+def _join_with_optional_oracle(
+    *,
+    builder: V04CanonicalDatasetBuilder,
+    production: dict[str, Any],
+    market_core: dict[str, Any],
+    target_payload: dict[str, Any],
+    oracle: dict[str, Any] | None,
+    source_manifest_hash: str,
+):
+    """Keep Production model-ready when only evaluation-only Oracle identity drifts.
+
+    Oracle artifact integrity/schema still fail closed. Only an identity mismatch
+    confined to `oracle.*` is converted into an explicit Oracle-cohort exclusion.
+    The frozen Oracle payload is never rewritten in memory.
+    """
+
+    if oracle is None:
+        return (
+            builder.join_artifacts(
+                production=production,
+                market_core=market_core,
+                target_payload=target_payload,
+                oracle=None,
+                source_manifest_hash=source_manifest_hash,
+            ),
+            "",
+        )
+
+    # Validate the frozen Oracle artifact itself before deciding whether its
+    # identity metadata can enter the evaluation-only intersection.
+    oracle_document_block(oracle)
+    try:
+        return (
+            builder.join_artifacts(
+                production=production,
+                market_core=market_core,
+                target_payload=target_payload,
+                oracle=oracle,
+                source_manifest_hash=source_manifest_hash,
+            ),
+            "",
+        )
+    except ValueError as exc:
+        if not _oracle_identity_only(exc):
+            raise
+        record = builder.join_artifacts(
+            production=production,
+            market_core=market_core,
+            target_payload=target_payload,
+            oracle=None,
+            source_manifest_hash=source_manifest_hash,
+        )
+        return record, str(exc)
 
 
 def materialize_pr_d(
@@ -105,8 +180,11 @@ def materialize_pr_d(
     )
 
     target_paths = sorted(target_dir.glob("*.json"))
-    if len(target_paths) != 438:
-        raise ValueError(f"PR-D expected 438 PR-C targets, found {len(target_paths)}")
+    if len(target_paths) != PR_C_OFFICIAL_CASE_COUNT:
+        raise ValueError(
+            f"PR-D expected {PR_C_OFFICIAL_CASE_COUNT} PR-C targets, "
+            f"found {len(target_paths)}"
+        )
     builder = V04CanonicalDatasetBuilder()
     records = []
     coverage: list[dict[str, Any]] = []
@@ -121,17 +199,23 @@ def materialize_pr_d(
         market_core_path = market_core_dir / f"{target.case_id}.json"
         if not production_path.is_file() or not market_core_path.is_file():
             raise ValueError(f"PR-D missing frozen X for {target.case_id}")
+        production = _read_json(production_path)
+        market_core = _read_json(market_core_path)
         oracle_path = oracle_dir / f"{target.case_id}.json" if oracle_dir else None
         oracle = _read_json(oracle_path) if oracle_path and oracle_path.is_file() else None
+        oracle_exclusion_reason = ""
+        oracle_model_ready = False
         if target.availability is MarketLabelAvailability.AVAILABLE:
-            record = builder.join_artifacts(
-                production=_read_json(production_path),
-                market_core=_read_json(market_core_path),
+            record, oracle_exclusion_reason = _join_with_optional_oracle(
+                builder=builder,
+                production=production,
+                market_core=market_core,
                 target_payload=target_payload,
                 oracle=oracle,
                 source_manifest_hash=source_manifest_hash,
             )
             records.append(record)
+            oracle_model_ready = record.oracle_document is not None
             status = "model_ready"
             exclusion_reason = ""
         else:
@@ -148,7 +232,9 @@ def materialize_pr_d(
                 "production_document_available": True,
                 "market_core_available": True,
                 "market_extended_status": "not_supplied_governed_optional",
-                "oracle_document_available": oracle is not None,
+                "oracle_source_present": oracle is not None,
+                "oracle_document_available": oracle_model_ready,
+                "oracle_exclusion_reason": oracle_exclusion_reason,
                 "target_available": (
                     target.availability is MarketLabelAvailability.AVAILABLE
                 ),
@@ -160,6 +246,42 @@ def materialize_pr_d(
         raise ValueError("PR-D targets disagree with PR-C policy manifest")
     if next(iter(threshold_hashes)) != pr_c.get("threshold_hash"):
         raise ValueError("PR-D targets disagree with PR-C threshold manifest")
+
+    available_count = len(records)
+    development_available_count = sum(
+        row.dataset_split is MarketDatasetSplit.DEVELOPMENT for row in records
+    )
+    validation_available_count = sum(
+        row.dataset_split is MarketDatasetSplit.VALIDATION for row in records
+    )
+    unavailable_reason_counts = Counter(
+        row["exclusion_reason"].removeprefix("target_unavailable:")
+        for row in coverage
+        if row["target_available"] is False
+    )
+    if available_count != PR_C_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_AVAILABLE_COUNT} available, found {available_count}"
+        )
+    if development_available_count != PR_C_DEVELOPMENT_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D Development target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_DEVELOPMENT_AVAILABLE_COUNT}, "
+            f"found {development_available_count}"
+        )
+    if validation_available_count != PR_C_VALIDATION_AVAILABLE_COUNT:
+        raise ValueError(
+            "PR-D Validation target coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_VALIDATION_AVAILABLE_COUNT}, "
+            f"found {validation_available_count}"
+        )
+    if dict(unavailable_reason_counts) != PR_C_UNAVAILABLE_REASON_COUNTS:
+        raise ValueError(
+            "PR-D unavailable-reason coverage disagrees with frozen PR-C: "
+            f"expected {PR_C_UNAVAILABLE_REASON_COUNTS}, "
+            f"found {dict(unavailable_reason_counts)}"
+        )
 
     datasets = {}
     matrices = {}
@@ -185,8 +307,6 @@ def materialize_pr_d(
             )
             datasets[(split.value, "oracle_intersection")] = oracle
             oracle_split_status[split.value] = "available"
-            # All five groups are projected on the exact same Oracle intersection
-            # so OM-M, PM-M and OM-PM are fair cohort comparisons.
             for group in V04ModelFeatureGroup:
                 matrices[(split.value, "oracle_intersection", group.value)] = (
                     project_model_matrix(oracle, group)
@@ -229,6 +349,9 @@ def materialize_pr_d(
             writer.writeheader()
             writer.writerows(rendered_rows)
 
+    oracle_identity_exclusion_count = sum(
+        bool(row["oracle_exclusion_reason"]) for row in coverage
+    )
     summary = {
         "pr_d_version": PR_D_VERSION,
         "source_manifest_hash": source_manifest_hash,
@@ -237,9 +360,11 @@ def materialize_pr_d(
         "target_unavailable_count": sum(
             row["target_available"] is False for row in coverage
         ),
+        "target_unavailable_reason_counts": dict(sorted(unavailable_reason_counts.items())),
         "oracle_intersection_model_ready_count": sum(
             row.oracle_document is not None for row in records
         ),
+        "oracle_identity_exclusion_count": oracle_identity_exclusion_count,
         "oracle_split_status": oracle_split_status,
         "oracle_development_model_ready_count": sum(
             row.oracle_document is not None
@@ -251,12 +376,8 @@ def materialize_pr_d(
             and row.dataset_split is MarketDatasetSplit.VALIDATION
             for row in records
         ),
-        "development_model_ready_count": sum(
-            row.dataset_split is MarketDatasetSplit.DEVELOPMENT for row in records
-        ),
-        "validation_model_ready_count": sum(
-            row.dataset_split is MarketDatasetSplit.VALIDATION for row in records
-        ),
+        "development_model_ready_count": development_available_count,
+        "validation_model_ready_count": validation_available_count,
         "market_core_feature_count": len(records[0].market_core.feature_names),
         "production_document_feature_count": len(
             records[0].production_document.feature_names

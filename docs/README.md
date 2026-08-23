@@ -1,11 +1,12 @@
 # Documentation Index
 
-> Status snapshot: **2026-08-21**
+> Status snapshot: **2026-08-22**
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
-> Next formal milestone: **PR-C — 5D Outcome Policy Freeze / NOT STARTED**
-> PR-B materialization source revision: **`dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7`**
-> PR-B mainline publication: **PR #80**, post-merge documentation closure: **PR #81 / `2675646c359a0138080960c916e8ef526c085c88`**
+> PR-C: **FORMAL EXECUTION ACTIVE — A STATIC AUDIT COMPLETE / GOVERNED MATERIALIZATION PENDING / NOT FROZEN**
+> PR-D: **ENGINEERING PREPARATION MERGED — FORMAL MATERIALIZATION BLOCKED BY PR-C**
+> Competition track: **PLANNED AFTER PR-H BASELINE E2E — full scope frozen in `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`**
+> Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
 本目录只把当前主线真正需要阅读的文档作为活文档维护。历史 v0.2 / v0.3 audit、旧 Retriever pilot、Role-A handoff 与一次性实验文档通过 Git history / release 保留。
 
@@ -23,6 +24,9 @@ Prospectus PDF
 → Market Agent
 → Final Supervisor
 → Streamlit Full E2E
+→ Baseline E2E Freeze
+→ Competition Hardening
+→ Competition Submission Freeze
 ```
 
 正式 Gate / mainline merge 顺序：
@@ -30,15 +34,18 @@ Prospectus PDF
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      NEXT / NOT STARTED
-→ PR-D Canonical Model-ready Dataset
+→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING / NOT FROZEN
+→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY PR-C
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
+→ v0.4.3 Baseline E2E Freeze
+→ CH-0..CH-6 Competition Hardening
+→ v0.4.5 COMPETITION_READY
 ```
 
-准备性工作允许并行，但不得把准备工作描述为后续 Gate 已通过，也不得越过正式顺序合并到 `main`。
+准备性工作允许并行，但不得把准备工作描述为后续 Gate 已通过，也不得越过正式顺序合并到 `main`。赛题专项强化在 PR-H baseline E2E 跑通后正式启动，不是当前 PR-C Gate 的前置条件。
 
 ## 2. Read these first
 
@@ -47,13 +54,16 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — 唯一权威总计划与 Gate 顺序；
 2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人角色、并行准备和正式 Gate 边界；
 3. [`ROADMAP.md`](ROADMAP.md) — 当前阶段状态与后续严格顺序；
-4. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
-5. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
-6. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约；
-7. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实数据/source readiness；
-8. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
-9. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
-10. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
+4. [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) — PR-H baseline E2E 之后的赛题全量 requirement / owner / metric / deliverable / submission Gate；
+5. [`PROJECT_SPEC.md`](PROJECT_SPEC.md) — 产品目标、信任边界与成功标准；
+6. [`ARCHITECTURE.md`](ARCHITECTURE.md) — 当前模块与依赖边界；
+7. [`DATA_SCHEMA.md`](DATA_SCHEMA.md) — 公共 Schema / v0.4 建模契约；
+8. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — 最新真实数据/source readiness；
+9. [`V04_PR_C_A_GATE_AUDIT.md`](V04_PR_C_A_GATE_AUDIT.md) — PR-C 424/14 A-side Gate audit 与最后正式执行条件；
+10. [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md) — PR-D integration Gate、Oracle identity 决策和 PR-G contract review；
+11. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
+12. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
+13. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 
@@ -170,7 +180,8 @@ Detailed contracts:
 - [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) — latest measured data/source readiness；
 - [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md) — Oracle evaluation-only path；
 - [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — frozen PR-B Core/Extended acceptance and reproducibility contract；
-- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — frozen Retriever research reference, not current execution plan.
+- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — frozen Retriever research reference, not current execution plan；
+- [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) — baseline E2E 完成后的赛题专项增强与最终提交验收。
 
 ## 6. Production / Oracle separation
 
@@ -206,24 +217,48 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 2025       Blind Test
 ```
 
-2025 may eventually contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened.
+2025 may eventually contain governed feature-only X after policy permits, but no 2025 y is used for feature/threshold/model/Retriever/LLM tuning before the blind evaluation is formally opened。Competition Hardening 不自动授权打开 2025 y。
 
 ## 8. Current stop condition
 
-PR-B 已经完成、冻结并发布到 `main`。当前不需要继续维护 PR-B 工作分支，也不需要重复 pilot / full-run / determinism；除非出现明确的数据泄漏、冻结资产错误或不可复现问题，PR-B 不再重开。
-
-下一允许进入的正式 milestone 是 PR-C，但它尚未启动：
+PR-C 已经完成 implementation、policy/schema、A static audit 与 424/14 Gate correction，但正式 Gate 仍停在 governed materialization：
 
 ```text
 PR-A  COMPLETE / FROZEN
 → PR-B COMPLETE / FROZEN ON MAIN
-→ STOP
-→ PR-C NEXT / NOT STARTED
+→ PR-C ACTIVE
+     A static audit PASS
+     Gate expectation 424 / 14 corrected
+     governed full materialization PENDING
+     formal freeze NOT PASSED
+→ STOP before formal PR-D materialization
 ```
 
-PR-C classification threshold 和 target policy 必须使用 Development 数据单独冻结；在获得独立 PR-C 任务授权前，不选择最终阈值、不读取 2025 y、不训练正式模型。
+PR-C 必须在受治理数据机上生成真实 Development-only q25 threshold、438 target artifacts、424 available / 14 unavailable、438 determinism checks / 0 mismatch 和 small freeze manifest。完成后由 A 做 final sign-off。
 
-## 9. Documentation maintenance rule
+PR-D 的 canonical builder 已合入主线作为 engineering preparation；其正式 Gate 只接受新的 PR-C outcome contract：424 model-ready、14 explicit exclusions、354 Development、70 Validation。未获得 PR-C freeze manifest 前不得宣称 PR-D COMPLETE。
+
+## 9. Post-baseline Competition Hardening
+
+PR-H baseline E2E 通过以后，项目不立即做无边界的模型/Prompt优化，而是按 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) 逐项补齐赛题明确要求：
+
+```text
+1D / 5D / 20D / 60D outcome validation（5D primary）
+现金消耗 / 对赌赎回 / 关联交易 / 集中度 / 核心管线专项
+文本粉饰度原文 diagnostic
+市场情绪 Agent + 同行估值 / 情绪热度 Skills
+Agent conflict detection / re-check / arbitration
+关键风险抽取准确率 >= 80%
+Evidence recall >= 85%
+Agent / Tool / Evidence traceability = 100%
+PDF page / paragraph / bbox screenshot
+human review
+prediction table / reasoning logs / evidence / case report submission package
+```
+
+只有完成该计划的 Submission Freeze Gate 才标记 `COMPETITION_READY`。
+
+## 10. Documentation maintenance rule
 
 - Current contracts / execution guidance → `docs/`；
 - machine fixtures required by tests → keep only minimum needed；
@@ -231,4 +266,4 @@ PR-C classification threshold 和 target policy 必须使用 Development 数据�
 - readiness numbers → update only after real runs；
 - superseded plans / handoffs → Git history/release 或明确标记 historical，不作为当前 source of truth。
 
-A new contributor should be able to answer within minutes: **where we are, what Gate is next, what is already frozen, what remains blocked by the next Gate, and what cannot be crossed early.**
+A new contributor should be able to answer within minutes: **where we are, what Gate is next, what is already frozen, what remains blocked by the next Gate, what competition work comes after baseline E2E, and what cannot be crossed early.**
