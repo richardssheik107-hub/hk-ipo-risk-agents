@@ -6,7 +6,7 @@
 > PR-C: **COMPLETE / FROZEN**
 > PR-D: **COMPLETE / FROZEN**
 > PR-E: **READY — FORMAL BASELINE NEXT / NOT STARTED**
-> Oracle v2: **FREEZE CANDIDATE — 98 MATERIALIZED / 96 STRICT USABLE / A SIGN-OFF PENDING**
+> Oracle v2: **COMPLETE / FROZEN — 98 MATERIALIZED / 96 STRICT USABLE / A SIGN-OFF PASSED**
 > Competition track: **PLANNED AFTER PR-H BASELINE E2E — full scope frozen in `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`**
 > Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
@@ -67,7 +67,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 12. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
 13. [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md) — PR-C governed 438-case outcome materialization、threshold、determinism 与 freeze sign-off；
 14. [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md) — immutable PR-A Oracle v1、versioned v2 refresh、annotation QA 与 PR-E 使用边界；
-15. [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md) — Oracle v2 98-case materialization、96-case strict cohort、identity reconciliation、resume 与 freeze-candidate hashes；
+15. [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md) — Oracle v2 98-case materialization、96-case strict cohort、438-case upstream binding、identity reconciliation、resume 与 frozen hashes；
 16. [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md) — PR-D 三层 provenance binding、aggregate hash 算法与 P0 fail-closed Gate；
 17. [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md) — formal 438→424+14 materialization、354/70 split、resume 与 freeze sign-off；
 18. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。

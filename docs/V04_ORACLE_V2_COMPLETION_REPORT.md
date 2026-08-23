@@ -1,8 +1,8 @@
 # v0.4 Oracle v2 Refresh Completion Report
 
-> Status: **FREEZE CANDIDATE / READY FOR A FINAL SIGN-OFF**
+> Status: **COMPLETE / FROZEN / A FINAL SIGN-OFF PASSED**
 > Date: 2026-08-23
-> Source revision: `33ef2b9835e76f25dd5847d1eb9323869597905a`
+> Source revision: `7acbe3c6b3eb0a8939e09e8ae84306bcdfc5fb75`
 
 ## 1. Scope and decision
 
@@ -11,10 +11,12 @@ sidecar from the current Expert Annotation inventory. It does not overwrite
 the immutable PR-A Oracle v1 snapshot, modify Production Document-X, enter the
 product runtime, train a PR-E model, or access 2025 blind outcomes.
 
-The result is reproducibly materialized and is ready for Role A final review.
-It is not described as frozen on `main` until that review and merge complete.
+Role A has completed the final review. The result is reproducibly
+materialized, bound to the frozen PR-A Production and PR-C Outcome inputs, and
+approved as the Oracle v2 freeze carried by this PR. Formal PR-E training has
+not started.
 
-## 2. Frozen candidate contract
+## 2. Frozen contract
 
 ```text
 schema_version       expert_oracle_document_features_v2
@@ -70,6 +72,19 @@ All 98 official materialized annotations were rebound to the authoritative
 Production identity. This is expected because historical annotation metadata
 did not carry the complete official listing identity.
 
+The refresh now verifies the complete frozen upstream contract before any
+materialization. The verified binding covers all 438 official cases and the
+actual PR-A Production and PR-C Outcome bulk artifact contents, rather than
+trusting declared manifest strings alone.
+
+```text
+PR-D input-binding manifest  fca62fe4598f1f39adb9450c9b3e1bcecf45b0a968bc07cb46eaac3d8db1ab56
+PR-A Production artifact set 9197b0f4f90e6d43277586ac40160679d40f91e3b30223578d0853d9dc288bf3
+PR-C Outcome artifact set    1f0ab1f8314a322abcaf4c88feead02e6cd114b478234b36388c27e33dc7ad90
+official identity set        9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976
+verified upstream binding    962b6da0de504ed5b33a25f2e46e6b545326dfea188b6c0f099374a632850794
+```
+
 ## 5. Materialization and outcome eligibility
 
 ```text
@@ -110,10 +125,10 @@ strict usable set     486a0c7d3977deacb5e3247e184064e96a684dbfdf8ef951b9df6cd32c
 feature manifest      99eeb0366a50b11b94f6e92820b6f1ef8535d5979ca6266d2af4f78618b40c11
 artifact set          e73dd7f478fd4c421f6794cfa0c7808403cfb5d57dd0678eae1146aaeeff09d6
 status set            83f4c0e84481b6a14ebe191663911dee473bd0c141f9bea2d8cf3568fa1cd7e2
-freeze candidate      d56647ed7ddeeecefcee01b7af6c480576a928517b5e0befc914f7c7488186e3
+freeze manifest       ddb175f48b7e8134c90c674e44d6173337dc2ea10e9eece103f70ae902e80294
 ```
 
-The committed freeze candidate is the small manifest at
+The committed freeze manifest is the small manifest at
 `reports/frozen/v04_oracle_v2_manifest.json`. The 98 generated feature files
 and runtime output directories remain local, ignored and reproducible; they
 are not repository payload.
@@ -121,8 +136,8 @@ are not repository payload.
 ## 7. Validation
 
 ```text
-Oracle v2 targeted tests       22 passed
-full pytest                    1376 passed, 2 warnings (GitHub CI)
+Oracle v2 / binding tests      51 passed
+full pytest                    1390 passed, 2 warnings
 validate_project               PASS (Mock: completed, verified=3, pending=1)
 validate_competition_data      PASS
 compileall                     PASS
@@ -148,12 +163,14 @@ bulk runtime artifacts committed  false
 Oracle v2 remains a research sidecar. Production Agent, Retriever, Service,
 Workflow and model-ready PR-D inputs do not import or consume it.
 
-The first PR CI run exposed and rejected a non-portable test dependency on
+An earlier PR CI run exposed and rejected a non-portable test dependency on
 ignored local PR-A/PR-C bulk artifacts and CRLF-sensitive source hashing. The
 implementation now normalizes JSON line endings and the tests construct their
-own official identity/outcome inputs. The frozen candidate hashes above were
-regenerated from committed revision `33ef2b9...`; the original candidate
-artifacts were not reused.
+own official identity/outcome inputs. P0 hardening then added fail-closed
+binding to the frozen PR-A/PR-C bulk contents and PR-D governance anchors. The
+final hashes above were regenerated from committed revision `7acbe3c...`; the
+Oracle artifact-set hash remained unchanged, proving the hardening changed
+provenance enforcement rather than Oracle feature semantics.
 
 ## 9. Final verdict
 
@@ -161,11 +178,13 @@ artifacts were not reused.
 ORACLE_V2_REFRESH = COMPLETE
 ORACLE_V2_REPRODUCIBILITY = PASS
 ORACLE_V2_PRODUCTION_ISOLATION = PASS
-ORACLE_V2_FREEZE_STATUS = FREEZE_CANDIDATE_READY_FOR_A_FINAL_SIGN_OFF
+ORACLE_V2_UPSTREAM_BINDING = PASS
+ORACLE_V2_A_FINAL_SIGN_OFF = PASS
+ORACLE_V2_FREEZE_STATUS = COMPLETE_FROZEN
 PR_E_FORMAL_TRAINING = NOT_STARTED
 2025_BLIND_Y_ACCESSED = NO
 ```
 
-Next action: Role A reviews the implementation, frozen candidate manifest,
-stale-audit policy and CI. Only after approval and merge may Oracle v2 be
-called frozen on `main` and consumed by formal PR-E diagnostics.
+Next action: merge the reviewed Oracle v2 freeze to `main`, then begin PR-E
+only under a separately authorized formal baseline task. This report does not
+start PR-E training.

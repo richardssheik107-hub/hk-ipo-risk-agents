@@ -17,7 +17,7 @@ PR-B Market-X Core                          = COMPLETE / FROZEN
 PR-C 5D Outcome Policy Freeze               = COMPLETE / FROZEN
 PR-D Canonical Dataset                      = COMPLETE / FROZEN
 PR-E Baseline + Oracle Diagnostic            = READY / FORMAL BASELINE NEXT / NOT STARTED
-Oracle v2 refresh candidate                  = 98 MATERIALIZED / 96 STRICT USABLE / A SIGN-OFF PENDING
+Oracle v2 refresh                            = COMPLETE / FROZEN / 98 MATERIALIZED / 96 STRICT USABLE
 v0.4 End-to-End Closed Loop                = ACTIVE
 Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```
@@ -51,7 +51,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative Document snapshots：438 / 438；
 - Production Document-X：438 / 438，`v04_document_features_v1`，100 维；
 - Production failures / silent drops：0 / 0；
-- frozen PR-A Oracle v1：60 materialized，当前 Outcome eligibility 下 55 usable（55 Development / 0 Validation），仅为 immutable historical snapshot；Oracle v2 freeze candidate 已完成 98 materialized / 96 strict usable（77 Development / 19 Validation），待 A 最终签核后冻结；
+- frozen PR-A Oracle v1：60 materialized，当前 Outcome eligibility 下 55 usable（55 Development / 0 Validation），仅为 immutable historical snapshot；Oracle v2 已完成并冻结 98 materialized / 96 strict usable（77 Development / 19 Validation），并通过 438-case PR-A/PR-C 上游绑定与 A 最终签核；
 - A6 determinism：438 checked，0 mismatches，PASS；
 - PR-B EOD/session-ready：432 / 438；
 - Market-X Core：438 / 438 materialized，0 failed，0 silent drops；
@@ -285,7 +285,7 @@ python -m streamlit run app/streamlit_app.py
 - PR-D Canonical Dataset: complete / frozen
 - PR-E Baseline + Oracle Diagnostic: ready / not started
 - Predictor: rule-based compatibility path; v0.4 statistical model formal freeze pending
-- Oracle Document path: evaluation-only; immutable v1 preserved; versioned v2 freeze candidate reproducible and pending A final sign-off
+- Oracle Document path: evaluation-only; immutable v1 preserved; versioned v2 complete/frozen and reproducibly bound to frozen upstream inputs
 - Streamlit: current Document product path available; full v0.4 E2E pending
 - Competition layer: planned after PR-H baseline E2E
 

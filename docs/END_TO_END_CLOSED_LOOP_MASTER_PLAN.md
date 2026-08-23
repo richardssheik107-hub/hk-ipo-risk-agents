@@ -8,7 +8,7 @@
 > PR-C: **COMPLETE / FROZEN**
 > PR-D: **COMPLETE / FROZEN**
 > Current formal milestone: **PR-E — READY / FORMAL BASELINE NEXT / NOT STARTED**
-> Oracle v2: **FREEZE CANDIDATE / READY FOR A FINAL SIGN-OFF**
+> Oracle v2: **COMPLETE / FROZEN / A FINAL SIGN-OFF PASSED**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环；baseline E2E 跑通后再逐项补齐赛题专项能力和技术指标；广泛 Retriever / LLM / Agent 优化仍由实证瓶颈决定。
 
 ---
@@ -495,7 +495,7 @@ Pipeline Gap             ≈ OM - PM
 
 **Scenario D — Production 看似超过 Oracle**：先排查 cohort、leakage、coverage bias 和 preprocessing。
 
-更多 annotations 已合入，不能沿用旧 55 Development / 0 Validation snapshot 作为当前 ceiling。Versioned Oracle v2 已按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 完成物化与复现：98 materialized、96 strict usable（77 Dev / 19 Val）、98 checked / 0 mismatch。当前仍是待 A 最终签核的 freeze candidate；PR-E formal training 尚未开始。
+更多 annotations 已合入，不能沿用旧 55 Development / 0 Validation snapshot 作为当前 ceiling。Versioned Oracle v2 已按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 完成物化、复现与 438-case PR-A/PR-C 上游绑定：98 materialized、96 strict usable（77 Dev / 19 Val）、98 checked / 0 mismatch。A 最终签核已通过，状态为 COMPLETE / FROZEN；PR-E formal training 尚未开始。
 
 ---
 
