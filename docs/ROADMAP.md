@@ -1,7 +1,7 @@
 # Roadmap
 
 > Status snapshot: **2026-08-23**  
-> Current formal Gate: **PR-F — LightGBM + Explainability**
+> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**
 
 ## 1. Current state
@@ -15,8 +15,8 @@
 | PR-D Canonical Dataset | COMPLETE / FROZEN | 424 = 354 Development + 70 Validation |
 | Oracle v2 | COMPLETE / FROZEN | 98 materialized / 96 strict usable = 77 Dev + 19 Val |
 | PR-E Baseline + Oracle Diagnostic | COMPLETE / FROZEN | 48 formal results; reproducibility and Blind guard passed |
-| PR-F LightGBM + Explainability | **CURRENT FORMAL GATE** | consumes frozen PR-E cohorts and policy |
-| PR-G Market Agent + Final Supervisor | WAITING | starts after PR-F |
+| PR-F LightGBM + Explainability | COMPLETE / FROZEN | 8 results, 16 models, SHAP/calibration/ablation/error analysis |
+| PR-G Market Agent + Final Supervisor | **CURRENT FORMAL GATE** | consumes frozen model semantics and uncertainty |
 | PR-H Streamlit Full E2E | WAITING | starts after PR-G |
 | CH-0..CH-6 Competition Hardening | PLANNED | starts after PR-H baseline E2E |
 
@@ -89,8 +89,8 @@ PR-A  COMPLETE / FROZEN
 → PR-C COMPLETE / FROZEN
 → PR-D COMPLETE / FROZEN
 → PR-E COMPLETE / FROZEN
-→ PR-F LightGBM + Explainability CURRENT
-→ PR-G Market Agent + Final Supervisor
+→ PR-F LightGBM + Explainability COMPLETE / FROZEN
+→ PR-G Market Agent + Final Supervisor CURRENT
 → PR-H Streamlit Full E2E + 3–5 real IPO demo
 → v0.4.3 Baseline E2E Freeze
 → CH-0 Competition Scope Lock

@@ -2,7 +2,7 @@
 
 > Status snapshot: **2026-08-23**  
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
-> Current formal Gate: **PR-F — LightGBM + Explainability**
+> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
 
 ## 1. Program objective
 
@@ -136,8 +136,8 @@ Development 使用严格 forward chaining；2024 只作为正式 Validation，�
 | PR-C | Frozen 5D target | COMPLETE / FROZEN |
 | PR-D | Canonical model-ready dataset | COMPLETE / FROZEN |
 | PR-E | Linear/Ridge/Logistic + Oracle diagnostic | COMPLETE / FROZEN |
-| PR-F | LightGBM + SHAP / importance / calibration / ablation | **CURRENT** |
-| PR-G | Market Agent + Final Supervisor | WAITING |
+| PR-F | LightGBM + SHAP / importance / calibration / ablation | COMPLETE / FROZEN |
+| PR-G | Market Agent + Final Supervisor | **CURRENT** |
 | PR-H | Streamlit Full E2E + real-case demo | WAITING |
 | CH-0..CH-6 | Competition hardening | AFTER PR-H |
 
@@ -171,8 +171,8 @@ PR-E 已在以下条件全部满足后标记 COMPLETE / FROZEN：
 9. 2025 Blind y accessed = false；
 10. tests / validation / reproducibility / A final review PASS。
 
-## 9. Current PR-F and later gates
+## 9. Current PR-G and later gates
 
-PR-F 当前正式比较更复杂模型；PR-G 才把模型与 Market Agent / Final Supervisor 产品化，PR-H 才完成 PDF → Final Report 的稳定 E2E。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
+PR-F 已冻结更复杂模型比较；PR-G 当前把 frozen model score、SHAP drivers 与 uncertainty 接入 Market Agent / Final Supervisor。PR-H 才完成 PDF → Final Report 的稳定 E2E。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
 
 Competition 细节见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。五人角色见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。

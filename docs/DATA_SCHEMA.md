@@ -2,7 +2,8 @@
 
 > Status snapshot: **2026-08-23**  
 > PR-D canonical dataset: **COMPLETE / FROZEN**  
-> Current formal Gate: **PR-E**
+> PR-E / PR-F modeling outputs: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-G**
 
 代码中的 Pydantic Schema / validator 是最终权威实现；本文解释跨模块语义和当前 frozen modeling boundary。
 
@@ -228,7 +229,7 @@ Development evaluation 必须 time-aware；2024 Validation 不参与拟合。
 
 ## 12. Prediction / Final Supervisor boundary
 
-现有 RuleBasedPredictor 继续只做兼容/对照。v0.4 统计模型只有在 PR-E/PR-F 输出 contract 冻结后才能进入正式产品预测视图。
+现有 RuleBasedPredictor 继续只做兼容/对照。PR-E/PR-F 输出 contract 已冻结；PR-G 只能以 `uncalibrated_model_score` 语义接入产品预测视图，不得改称实际概率。
 
 Final Supervisor 必须消费受控：
 

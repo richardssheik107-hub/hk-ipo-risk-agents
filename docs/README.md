@@ -1,7 +1,7 @@
 # Documentation Index
 
 > Audit date: **2026-08-23**  
-> Current formal Gate: **PR-F — LightGBM + Explainability**
+> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**
 
@@ -41,6 +41,7 @@
 - [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md)
 - [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md)
 - [`V04_PR_E_COMPLETION_REPORT.md`](V04_PR_E_COMPLETION_REPORT.md)
+- [`V04_PR_F_COMPLETION_REPORT.md`](V04_PR_F_COMPLETION_REPORT.md)
 - [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md)
 - [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md)
 - [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md)
@@ -70,8 +71,8 @@ PR-A Document X                    COMPLETE / FROZEN
 → PR-C 5D Outcome Y                COMPLETE / FROZEN
 → PR-D Canonical Dataset           COMPLETE / FROZEN
 → PR-E Baseline + Oracle Diagnostic COMPLETE / FROZEN
-→ PR-F LightGBM + Explainability CURRENT FORMAL GATE
-→ PR-G Market Agent + Final Supervisor
+→ PR-F LightGBM + Explainability COMPLETE / FROZEN
+→ PR-G Market Agent + Final Supervisor CURRENT FORMAL GATE
 → PR-H Streamlit Full E2E
 → v0.4.3 Baseline E2E Freeze
 → CH-0..CH-6 Competition Hardening

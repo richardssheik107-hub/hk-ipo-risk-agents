@@ -5,7 +5,8 @@
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
 > PR-E: **COMPLETE / FROZEN**
-> Current formal Gate: **PR-F — LightGBM + Explainability**
+> PR-F: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
 
 ## 1. Architecture form
 
@@ -194,9 +195,9 @@ PR-E output 是已冻结的研究 / model artifact；在稳定 schema、score se
 
 ## 9. PR-F / PR-G / PR-H architecture boundary
 
-PR-F（当前 Gate）：在 PR-E frozen inputs / cohorts 上增加 LightGBM、SHAP / importance、calibration assessment、ablation、error analysis。
+PR-F（frozen）：在 PR-E frozen inputs / cohorts 上完成 LightGBM、SHAP / importance、calibration assessment、ablation、error analysis。输出是未校准模型分数，不是概率。
 
-PR-G：
+PR-G（当前 Gate）：
 
 ```text
 Document Supervisor

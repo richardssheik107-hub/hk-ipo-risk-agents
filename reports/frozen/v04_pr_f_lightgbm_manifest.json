@@ -1,0 +1,83 @@
+{
+  "manifest_version": "v04_pr_f_freeze_manifest_v1",
+  "pr_f_version": "v04_pr_f_lightgbm_explainability_v1",
+  "model_policy_version": "v04_pr_f_lightgbm_policy_v1",
+  "status": "complete_frozen",
+  "formal_gate_passed": true,
+  "execution_revision": "854294769cd8162bb989d019addf10d653e663e8",
+  "input_binding": {
+    "pr_e_manifest_sha256": "f60cc143d7710ae45978cfb07cb74968089ccffe687a673f2faa248c5d8508c4",
+    "pr_e_results_hash": "d9082d43c651615851dd2451a15f4c47a5253b0b83410a9ba747ad5236c9fbe3",
+    "pr_e_diagnostic_hash": "18b4f21ef691614705ae884a64c1791e749c9ecf9acb98efce518eb7dc3e3faa",
+    "cohort_year_mapping_hash": "4888c0630d46ed8db57613301d0c4a3b7a1c339bc882891a7bb6da4484edb781",
+    "cohort_year_source_sha256": "c0696f480d54397c169b43085ad77939edde538be3ee5ec3a2ae8ce8b2489a2d",
+    "cross_year_case_count": 31
+  },
+  "cohorts": {
+    "full_production": {
+      "development": 354,
+      "validation": 70,
+      "groups": ["M", "P", "PM"]
+    },
+    "oracle_intersection": {
+      "development": 77,
+      "validation": 19,
+      "groups": ["M", "P", "O", "PM", "OM"]
+    }
+  },
+  "evaluation_protocol": "fit_2020_2023_evaluate_2024_once",
+  "result_count": 8,
+  "model_count": 16,
+  "explainability_method": "lightgbm_native_pred_contrib_shap",
+  "calibration_status": "assessment_only_uncalibrated",
+  "ablation_policy": "paired_component_group_comparison_v1",
+  "uncertainty_method": "paired_nonparametric_bootstrap_2000",
+  "error_analysis": "deterministic_holdout_top_errors_v1",
+  "validation_classification": {
+    "full_production": {
+      "M": {"roc_auc": 0.4246, "pr_auc": 0.3364, "brier": 0.2613},
+      "P": {"roc_auc": 0.5, "pr_auc": 0.3286, "brier": 0.2261},
+      "PM": {"roc_auc": 0.4246, "pr_auc": 0.3364, "brier": 0.2613}
+    },
+    "oracle_intersection": {
+      "M": {"roc_auc": 0.4286, "pr_auc": 0.277, "brier": 0.2192},
+      "P": {"roc_auc": 0.5, "pr_auc": 0.2632, "brier": 0.1942},
+      "O": {"roc_auc": 0.3714, "pr_auc": 0.2373, "brier": 0.2358},
+      "PM": {"roc_auc": 0.4286, "pr_auc": 0.277, "brier": 0.2192},
+      "OM": {"roc_auc": 0.4143, "pr_auc": 0.2526, "brier": 0.2561}
+    }
+  },
+  "component_ablation": {
+    "production_pm_minus_m": {
+      "roc_auc_gain": 0.0,
+      "pr_auc_gain": 0.0,
+      "brier_reduction": 0.0,
+      "roc_auc_gain_95_interval": [0.0, 0.0]
+    },
+    "oracle_om_minus_m": {
+      "roc_auc_gain": -0.0143,
+      "pr_auc_gain": -0.0244,
+      "brier_reduction": -0.0369,
+      "roc_auc_gain_95_interval": [-0.3171, 0.2917],
+      "pr_auc_gain_95_interval": [-0.2948, 0.1238]
+    }
+  },
+  "formal_conclusion": {
+    "production_document_increment": "not_used_by_frozen_lightgbm",
+    "oracle_increment": "not_validated_on_small_2024_intersection",
+    "score_semantics": "uncalibrated_model_score_not_probability",
+    "next_gate": "PR-G"
+  },
+  "runtime_outputs": {
+    "run_manifest_sha256": "dcaa27ff64d3268e85f7f46fa16fac8621107a420297a6059d4824866e97c035",
+    "model_results_sha256": "d6b4cae7d4cb8b78430b6b9beb25a866d4709e19c41fc9b6c60b6a07a6e4f41f",
+    "model_comparison_sha256": "c033c4f8ed849255eb4369ecfe413a384ab9f1d8a20f4b6899f45683785efd27",
+    "model_set_hash": "3e39ba67e163a7a5e96ffb3c1df82d5a640abb8c286e85e431d463f6e16b1e2e"
+  },
+  "model_result_hash": "7d5a6747b39739ea57e90a00c7b364fd7e1c55cf44e916b1285c075c3a9e7bc3",
+  "comparison_hash": "3467671b81c135e03c01f4fca0c8513617ce1c9d73e39905f6dd89628e9689c7",
+  "resume_determinism": "passed_byte_identical",
+  "runtime_artifacts_committed": false,
+  "blind_2025_y_accessed": false,
+  "freeze_manifest_hash": "3e140da1269bd3a9762e62cc2c2c8507f614627391833afb5fc69539c3bce489"
+}

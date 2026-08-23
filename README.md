@@ -16,8 +16,8 @@ PR-C 5D Outcome                          COMPLETE / FROZEN
 PR-D Canonical model-ready dataset       COMPLETE / FROZEN
 Oracle v2                                COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E Baseline + Oracle Diagnostic        COMPLETE / FROZEN
-PR-F LightGBM + Explainability           CURRENT FORMAL GATE
-PR-G Market Agent + Final Supervisor     WAITING PR-F
+PR-F LightGBM + Explainability           COMPLETE / FROZEN
+PR-G Market Agent + Final Supervisor     CURRENT FORMAL GATE
 PR-H Streamlit Full E2E                  WAITING PR-G
 Competition Hardening                    STARTS AFTER PR-H BASELINE E2E
 ```
@@ -54,7 +54,7 @@ Oracle v2 strict usable                  96 = 77 Dev + 19 Val
 2025 Blind y accessed                    NO
 ```
 
-PR-D 已输出正式 M / P / PM matrices；Oracle v2 为独立 evaluation-only 专家上限旁路。PR-E 已冻结以下正式比较，当前进入 PR-F：
+PR-D 已输出正式 M / P / PM matrices；Oracle v2 为独立 evaluation-only 专家上限旁路。PR-E 与 PR-F 已冻结以下正式比较，当前进入 PR-G：
 
 ```text
 M   Market only
@@ -73,6 +73,8 @@ Pipeline Gap              = OM - PM
 ```
 
 PR-E 的 2024 Validation 结果没有显示 Document features 相对 Market-only 的稳健分类增量：Production `PM-M ROC-AUC = -0.0157`，Oracle `OM-M ROC-AUC = -0.0571`。Oracle Validation 仅 19 例，结论是信号不稳定而非证明“没有信号”。
+
+PR-F 的 frozen LightGBM 结果进一步显示 Production PM 与 M 完全相同，Document features 没有被树模型采用；Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval 为 `[-0.3171, 0.2917]`。所有输出仍是未校准模型分数，不是实际概率。
 
 ## Architecture
 
