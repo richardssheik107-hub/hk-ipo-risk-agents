@@ -9,6 +9,12 @@ rather than showing a greyed-out chart, a zero, or a placeholder value.
 
 PR-H is NOT STARTED.  This is preparation only; no stage here claims a gate has
 been started or passed.
+
+Scope note: these seven stages are the *baseline* E2E chain.  The competition
+report described in docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md section 12
+adds evidence screenshots, market sentiment, multi-horizon validation views and a
+reviewer audit trail on top.  That work (CH-0..CH-6) only starts after the PR-H
+baseline E2E is running, so no stage here promises it.
 """
 
 from __future__ import annotations
@@ -173,6 +179,7 @@ def _final_report(payload: dict[str, object]) -> StageView:
         what_appears_when_unblocked=(
             "prospectus page to evidence to risk to feature to model driver to conclusion",
             "3-5 real IPO end-to-end demo cases",
+            "reviewer audit trail and run provenance",
         ),
     )
 

@@ -89,3 +89,36 @@ registry 已注册两个新 kind：
 - Market 通道只由一个类型与一个状态枚举代表，**不读任何市场数据、不碰 EOD store**；
 - 不读 outcome label，不接触 2025 blind cohort；
 - 若 PR-B 落地了不同的 Market-X 形状，`MarketContextView` 到 PR-G 再修——这里没有任何东西被冻结。
+
+---
+
+## 7. 与赛题提交计划的对齐（2026-08-23 reconciliation）
+
+`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` 新增后，本契约的定位需要说明：**它是 baseline，不是赛题最终形态。**
+
+### 7.1 已经对齐的部分
+
+| 赛题要求（§12 报告链路） | 本契约的对应 |
+|---|---|
+| Model score + **calibrated-status semantics** | `ModelPredictionView.calibration_status` + `score_semantics`，且刻意无 `probability` 字段 |
+| Agent conflicts / **uncertainty** / missingness | `FinalSupervisionResult.uncertainty_statement` + `channel_states`（含 `PENDING_GATE` / `UNAVAILABLE_ERROR` / `DISABLED`） |
+| Final Supervisor synthesis | `finalize()`，纯组合，四条纯度不变量 |
+| Provenance / model / data / run versions | `MarketContextView.provenance`、`ModelPredictionView.model_name/model_version/calibration_provenance_id` |
+
+赛题 §11 要求「Agent 角色 / 推理 / 工具 / 证据来源可追踪率 = 100%」，本契约的 `referenced_risk_ids` / `referenced_evidence_ids` 子集断言是该目标的必要条件之一：**引用的每个 id 都可回溯到输入**，不存在凭空产生的引用。
+
+### 7.2 赛题会在此之上增加的部分（CH-3 / CH-4 / CH-5）
+
+本契约**刻意不覆盖**以下内容，它们属于 `CH-0..CH-6`，而计划明确规定这些**在 PR-H baseline E2E 跑通后才启动**：
+
+- **CH-3**（E 主导 Agent integration）：Market Sentiment Agent 及四个 Skill。届时 `MarketContextView` 需扩展以承载 sentiment 通道；
+- **CH-4**（E 主导）：显式 conflict workflow —— `conflict detection → targeted evidence re-check → Skill / Verifier challenge → arbitration → resolved / needs_review`。当前 `FinalSupervisionResult` 只**保留**冲突（沿用 `SupervisionResult.conflicts` 语义），不做仲裁；仲裁链路是 CH-4 的交付；
+- **CH-5**（E 主导）：page + bbox 证据截图、人机复核 reviewer action / notes / audit trail。
+
+### 7.3 一条需要注意的时序
+
+赛题 §10 要求报告同时呈现 **1D / 5D / 20D / 60D**，但计划同时规定：
+
+> 现有 PR-C 的正式主目标继续保持 5D；1D / 20D / 60D 在 baseline E2E 跑通后作为 competition outcome extension 独立版本化，**不反向篡改已经冻结的 5D policy**。
+
+因此 `ModelPredictionView` 现阶段**不引入 horizon 字段** —— 加了就等于提前承诺一个尚未版本化的 outcome extension。这是刻意的省略，不是遗漏。

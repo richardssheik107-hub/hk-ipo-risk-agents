@@ -2,8 +2,8 @@
 
 > Status: **FINDINGS / ADVISORY —— 不构成任何正式 Gate 的启动或通过**
 > Owner: **E — Oracle / Product Integration**
-> Date: **2026-08-22**
-> Base revision: `c638f00`（PR-B FROZEN / PR-C 已合并 / PR-D 已合并 / PR-E 分支在飞）
+> First issued: **2026-08-22** · **Revised: 2026-08-23**（2023/2024 盲标落地后 re-audit）
+> Base revision: `a1e32a9`（PR-A / PR-B frozen；PR-C active；PR-D engineering prep merged；PR-E 分支在飞）
 > 全部结论可由 `scripts/audit_oracle_gold_coverage.py` 与 `tests/unit/` 复现
 
 本文件汇总 E 在 Oracle 旁路审计过程中发现的、**需要其他成员决定或处理**的问题。按紧急度排序。
@@ -14,15 +14,18 @@
 
 ## 摘要
 
+> **2026-08-23 修订说明**：2023/2024 盲标已落地（pass1 61 → 101）。原问题 4「Oracle validation 覆盖为 0」**已解决**；原问题 2 的数字**已作废并重算**；原问题 3 **已从预警引爆为事实**；原问题 5 **不受影响，且证据更强**；原问题 6 **已由 A 修复**。新增问题 8。
+
 | # | 问题 | 归属 | 状态 |
 |---|---|---|---|
 | 1 | PR-E 的 development CV 是随机分折,不是时间感知 | **D** | 🔴 在飞分支上,建议合并前处理 |
-| 2 | Oracle 交集队列实际是 **56**,不是 60 | D | 🔴 活的阻塞,3 个 case 已被 PR-D 硬拒 |
-| 3 | Oracle artifact 身份字段取自标注 packet 而非权威 bridge | **A** / D | 🔴 问题 2 的成因,需解冻决策 |
-| 4 | Oracle 在 validation 上覆盖为 0 | D | 🟡 E 已给出协议方案 |
-| 5 | 统计功效不足,任何方案都可能测不出来 | D | 🟡 E 已实现功效指标 |
-| 6 | ROADMAP / README 的 Gate 状态与代码不符 | **A** | 🟡 文档失真 |
+| 2 | Oracle 真正可用队列是 **75 dev / 17 val**,不是 98 | D | 🔴 5 个 case 被 PR-D 硬拒 |
+| 3 | Oracle artifact 身份字段取自标注 packet 而非权威 bridge | **A** / D | 🔴 **已引爆**,吃掉 2/19 个 validation |
+| 8 | PR-A 冻结记录（Oracle 60）已与现实（98）不符 | **A** | 🔴 需决定是否重新物化 |
+| 5 | 统计功效不足,两种协议都测不出来 | D | 🟡 E 已实现功效指标 |
 | 7 | 缺依赖时测试是 collection 崩溃而非 skip | **A** | 🟢 非阻塞 |
+| ~~4~~ | ~~Oracle 在 validation 上覆盖为 0~~ | — | ✅ **已解决**（补标注） |
+| ~~6~~ | ~~ROADMAP / README 的 Gate 状态与代码不符~~ | — | ✅ **已解决**（A 已修） |
 
 ---
 
@@ -65,24 +68,22 @@ E 已实现一份可直接参考的版本:`src/ipo_risk/modeling/oracle_baseline
 
 ---
 
-## 2. 🔴 Oracle 交集队列实际是 56,不是 60
+## 2. 🔴 Oracle 真正可用队列是 75 dev / 17 val
 
 **归属:D(PR-D / PR-E 的队列口径)**
 
-PR-A 冻结记录的 `oracle_materialized_count = 60` 是正确的,但那 60 个里有 4 个进不了建模:
+补标注后 Oracle 在 official universe 内可构建 **98** 个,但「可构建」不等于「可建模」—— PR-C 与 PR-D 会各自拒绝一部分:
 
-```text
-Oracle 可构建                          60
-  − ipo_2020_06688   outcome 不可得    −1   ← PR-C 拒绝:
-                                             "unavailable PR-C target cannot enter PR-D modeling data"
-  − ipo_2020_08489  ┐
-  − ipo_2020_09600  ├ cohort_year 不符  −3   ← PR-D 抛:
-  − ipo_2022_02450  ┘                        "canonical artifact identity mismatch: oracle.cohort_year"
-  ─────────────────────────────────────
-  = 真正能进 Oracle intersection cohort  56
-```
+| split | Oracle 可构建 | − outcome 缺失<br>(PR-C 拒) | − 身份不符<br>(PR-D 拒) | **真正可用** |
+|---|---:|---:|---:|---:|
+| development | 79 | 1 | 3 | **75** |
+| validation | 19 | 0 | **2** | **17** |
+| **合计** | **98** | **1** | **5** | **92** |
 
-任何以 60 为前提的样本量估算、功效计算或队列声明都要改成 **56**。
+- PR-C 拒绝理由:`unavailable PR-C target cannot enter PR-D modeling data`
+- PR-D 拒绝理由:`canonical artifact identity mismatch: oracle.cohort_year`
+
+**任何以 98 为前提的样本量或功效估算都要改成 75 / 17。**
 
 复现:
 
@@ -92,9 +93,9 @@ Oracle 可构建                          60
 
 ---
 
-## 3. 🔴 Oracle artifact 的身份字段取自标注 packet,而非权威 bridge
+## 3. 🔴 身份缺陷已引爆,吃掉 2 个 validation
 
-**归属:A(是否解冻)/ D(消费侧规避)。这是问题 2 中那 3 个 case 的成因。**
+**归属:A(是否解冻)/ D(消费侧规避)。这是问题 2 中那 5 个 case 的成因。**
 
 `src/ipo_risk/modeling/oracle_document.py:158`:
 
@@ -102,94 +103,77 @@ Oracle 可构建                          60
 "cohort_year": int(meta["source_year"]),   # meta = 标注 case packet 的 metadata
 ```
 
-取的是**文档年份(source_year)**,不是**官方上市年份**。而 PR-D 的 `_identity_mismatches()` 以 Production-X 的身份为准逐字段比对,`join_artifacts()` 遇到不符即硬失败。
+取的是**文档年份**,不是**官方上市年份**。而 `join_oracle_outcome` 与 PR-D 的 `_identity_mismatches()` **都比较 `cohort_year` 与 `dataset_split`**,不符即硬失败。
 
-| 类别 | 数量 | case | 字段 |
-|---|---:|---|---|
-| 已物化且身份不符 | 3 | `ipo_2020_08489`、`ipo_2020_09600`、`ipo_2022_02450` | `cohort_year` |
-| 尚未标注、一旦标注即不符 | 2 | `ipo_2023_02503` | `cohort_year` + `dataset_split` |
-| | | `ipo_2024_02410` | `dataset_split` |
-
-`ipo_2023_02503` 官方上市日是 **2024-01-09**(official split = `validation`),但 packet 写 `development`;`ipo_2024_02410` 的 packet 写 `development_exception` —— **这个值根本不在 `MarketDatasetSplit` 枚举(development / validation / blind)里**。
-
-### 为什么 E 没有直接修
-
-从根修复要让 `oracle_document.py` 改查 official bridge,这会:
-
-1. 改变受影响 artifact 的 `content_hash`,**使 PR-A 已冻结的 Oracle hash 失效**;
-2. 给 evaluation-only 的 Oracle 模块引入对 providers 层的新依赖。
-
-两者都需要 A 的解冻决策,超出 E 的准备性工作边界。
-
-### 两条可选路径
-
-- **A 批准解冻** → 从根修 `oracle_document.py`,重新物化 Oracle,更新 PR-A 冻结记录;
-- **D 在消费侧规避** → canonical dataset builder 里 Oracle 侧身份一律以 official bridge 为准,不采信 artifact 自带的 `cohort_year` / `dataset_split`。
-
-无论走哪条,**都要在标注 2024 之前定** —— 否则新标注的 2024 case 会带着错误的 `dataset_split` 进库。
-
----
-
-## 4. 🟡 Oracle 在 validation 上覆盖为 0
-
-**归属:D(PR-E 范围)。E 已给出协议方案。**
-
-```text
-official split   Production-X   Oracle-X
-development           368            56   （2020–2023）
-validation             70             0   （2024）
-```
-
-`expert_results/ipo_2023_*/pass1/` 与 `expert_results/ipo_2024_*/pass1/` 是**空目录** —— 五年的 case packet 都已备好(各 20 个),但 2023/2024 的盲标从未进行。
-
-因此 O / OM 臂无法按 PR-E 既定的 fit-on-development / eval-on-validation 协议评估;而 `OM − PM` 必须在交集队列上算,该队列的 validation 同样为 0。
-
-### 已采纳的方案:development-only 时间感知 CV
-
-`OM − PM` 是一个**差值**。差值有效只需要两臂使用**完全相同的协议与完全相同的队列**,不需要那个队列是 2024。
-
-实现:`src/ipo_risk/modeling/oracle_baseline.py`
-
-| 函数 | 协议 | 用于 |
+| case | 不符字段 | 状态 |
 |---|---|---|
-| `train_holdout` | `holdout` | M / P / PM |
-| `train_time_aware_cv` | `development_only_time_aware_cv` | O / OM,以及与之相减的 PM |
-| `assert_comparable` | — | 相减前的前置校验 |
+| `ipo_2020_08489` | `cohort_year` | 首次审计即存在 |
+| `ipo_2020_09600` | `cohort_year` | 首次审计即存在 |
+| `ipo_2022_02450` | `cohort_year` | 首次审计即存在 |
+| **`ipo_2023_02503`** | **`cohort_year` + `dataset_split`** | **本次新增(validation)** |
+| **`ipo_2024_02410`** | **`dataset_split`** | **本次新增(validation)** |
 
-三条约束由类型强制,无法省略:
+首次审计(2026-08-22)把后两个标记为 *latent mismatch if annotated*,并写明:
 
-- `comparability_warning` 是**必带字段**,CV 数字不可能被当作 holdout 数字阅读;
-- `minimum_detectable_auc_difference` 随每个结果输出;
-- `assert_comparable()` 要求两臂的 `source_dataset_hash` / `cohort` / `dataset_split` / `target_policy_hash` / `target_threshold_hash` 与 `case_ids` **完全一致**,只允许 feature group 不同。
+> 「一旦团队按建议去标注 2024,这个缺陷就会精确地在那一刻引爆。」
 
-**明确不采纳:「从 development 里抠 10 个当 validation」** —— 那会得到随机 holdout 而非时间 holdout,与用真 2024 的 M / P / PM 不可比,需要修改冻结的 `expected_market_split()`,且功效为零(见下)。
+**标注落地,缺陷如期引爆,而且打在最稀缺的 validation 臂上 —— 19 个里损失 2 个。**
+
+细节:`ipo_2023_02503` 官方上市日为 **2024-01-09**(official split = `validation`),但 packet 写 `development`;`ipo_2024_02410` 的 packet 写 `development_exception` —— 该值**不在 `MarketDatasetSplit` 枚举(development / validation / blind)中**。
+
+### E 为什么仍不直接修
+
+从根修复要让 `oracle_document.py` 改查 official bridge,这会改变 artifact 的 `content_hash`,**使 PR-A 已冻结的 Oracle hash 失效**(而该记录本就已过时,见问题 8 —— 两件事应一并决定),并给 evaluation-only 模块引入对 providers 层的新依赖。都需要 A 的解冻决策。
+
+**可选路径**:A 批准解冻从根修并重新物化(建议与问题 8 合并处理);或 D 在消费侧规避,canonical dataset builder 中 Oracle 侧身份一律以 official bridge 为准。
 
 ---
 
-## 5. 🟡 统计功效不足:这个诊断在任何方案下都可能测不出来
+## 4. ✅ 已解决:Oracle 在 validation 上覆盖为 0
+
+首次审计时 `expert_results/ipo_2023_*/pass1/` 与 `ipo_2024_*/pass1/` 是空目录,Oracle 只覆盖 development,导致 O / OM 臂无法按 PR-E 的 fit-dev / eval-val 协议评估。
+
+**2023/2024 盲标已落地(pass1 61 → 101),该缺口关闭。** `train_holdout` 现在对 O / OM 可用。
+
+原先那条故意写成会失败的断言 `test_oracle_has_no_validation_coverage` 如期触发,已替换为 `test_oracle_now_has_validation_coverage`。**trip-wire 机制按设计工作。**
+
+但请注意:**这解决的是「协议不可执行」,没有解决「功效不足」** —— 见问题 5。
+
+---
+
+## 5. 🟡 统计功效不足:两种协议都测不出来
 
 **归属:D(PR-E 结论表述)**
 
-Hanley-McNeil,假设真实 AUC = 0.70、正样本率 30%,两臂比较的最小可检测差异:
+validation 恢复后有两种协议可用,但 **holdout 的功效反而更差**,因为 validation 只有 17 个而 development 有 75 个:
 
-| 评估集 n | 正 / 负 | SE(AUC) | **可区分的最小 AUC 差异** | 对应场景 |
-|---:|---:|---:|---:|---|
-| 10 | 3 / 7 | 0.198 | **0.550** | 从 dev 抠 10 个 |
-| 19 | 6 / 13 | 0.138 | **0.383** | 标注 2024 的 19 个 packet |
-| **56** | 17 / 39 | 0.080 | **0.222** | **真实 Oracle intersection 队列** |
-| 70 | 21 / 49 | 0.072 | **0.199** | 完整 2024 validation |
-| 368 | 110 / 258 | 0.031 | **0.087** | 完整 development |
+| 协议 | 评估集 n | **最小可检测 AUC 差异** | 诚实性 |
+|---|---:|---:|---|
+| `holdout`(fit development / eval 2024) | 17 | **0.417** | 真 out-of-sample,协议合规 |
+| `development_only_time_aware_cv` | 58 | **0.221** | 乐观(development 曝光),但两臂同偏差 |
 
-这类信号的实际量级通常在 **0.03–0.10**。因此:
+(CV 的 58 = 75 个可用 development 减去首年 2020 的 17 个 —— forward-chaining 下首年只训练不评估。)
 
-> 即使 Oracle 覆盖满整个 development(368 个),也刚好处在可检测边缘;在 56 个上做诊断,只有当 pipeline 差距大到 **0.222** 才能被统计上区分。
+完整功效表(Hanley-McNeil,假设 AUC = 0.70、正样本率 30%):
 
-### 对 PR-E 的两条要求
+| 评估集 n | 最小可检测差异 | 对应场景 |
+|---:|---:|---|
+| **17** | **0.417** | 真实 validation 臂 |
+| **58** | **0.221** | 真实 CV pooled 臂 |
+| 92 | 0.174 | 假设身份缺陷修复后的全部可用 Oracle |
+| 368 | 0.087 | 完整 development(Production 侧) |
 
-1. **预先声明** O / OM 结论为 directional,所有点估计配 bootstrap 置信区间;
-2. **不得**把「未发现显著差异」解读为「不存在差距」。
+这类信号的实际量级通常在 **0.03 – 0.10**。
 
-E 已把 `minimum_detectable_auc_difference()` 做成随每个结果一并输出的字段,使功效不足无法被当作 null finding 阅读。**D 的 `baselines.py` 目前没有这个指标**,建议补上。
+> **补标注没有把这个诊断变得可用。** validation 臂只有 17 个,比补标注前用来做 CV 的队列还小。
+
+### 对 PR-E 的三条要求
+
+1. **两种协议都跑、都报**,而不是二选一;两臂必须同队列同协议,否则差值不是 pipeline gap;
+2. **预先声明** O / OM 结论为 directional,所有点估计配 bootstrap 置信区间;
+3. **不得**把「未发现显著差异」解读为「不存在差距」。
+
+E 已把 `minimum_detectable_auc_difference()` 做成随每个结果一并输出的字段。**D 的 `baselines.py` 目前没有这个指标,建议补上。**
 
 ### 一个负面但有用的结论
 
@@ -197,22 +181,18 @@ E 已把 `minimum_detectable_auc_difference()` 做成随每个结果一并输出
 
 > **Oracle 诊断在当前样本量下功效不足,无法在统计上区分 OM 与 PM;因此 v0.5 是否重开 Retriever / LLM / Agent 优化不能依赖这个诊断,需要另找依据。**
 
-这个结论今天就能得出,不需要任何额外标注。
-
 ---
 
-## 6. 🟡 ROADMAP / README 的 Gate 状态与代码不符
+## 6. ✅ 已解决:ROADMAP / README 的 Gate 状态与代码不符
 
-**归属:A(文档治理)**
+首次审计时 `docs/ROADMAP.md` 与 `docs/README.md` 都写「PR-C — NEXT / NOT STARTED」,而 PR-C / PR-D 代码已合并。
 
-| 文件 | 写的是 | 实际 |
-|---|---|---|
-| `docs/ROADMAP.md:6` | PR-C — **NEXT / NOT STARTED** | PR-C 代码已合并(#82 `f792879`、#83 `b1dcc45`) |
-| `docs/README.md:6` | 同上 | PR-D canonical dataset 也已合并(#84 `413793a`) |
+**A 已修复。** 两份文档现在准确表述为:
 
-这两份是文档优先级第 1 和第 5 的活文档。`docs/README.md` 自己写着目标是让新成员「几分钟内回答现在做到哪里」,状态失真会直接误导。
-
-注:`V04_5D_OUTCOME_POLICY.md` 与 `V04_CANONICAL_MODELING_DATASET.md` 的表述是准确的(`IMPLEMENTED / AWAITING FREEZE`、`ENGINEERING PREPARATION / BLOCKED BY FORMAL PR-C FREEZE`)。需要同步的是顶层两份索引。
+```text
+PR-C  FORMAL EXECUTION ACTIVE / GOVERNED MATERIALIZATION PENDING / NOT FROZEN
+PR-D  ENGINEERING PREPARATION MERGED / FORMAL MATERIALIZATION BLOCKED BY PR-C
+```
 
 ---
 
@@ -232,6 +212,31 @@ E **没有擅自修改**,因为「缺依赖时 skip 还是 hard-fail」是治理
 
 ---
 
+## 8. 🔴 PR-A 冻结记录已与现实不符
+
+**归属:A(治理决策)**
+
+`reports/frozen/v04_pr_a_document_materialization_manifest.json` 仍记录:
+
+```text
+oracle_materialized_count            = 60
+no_reviewed_gold_count               = 378
+production_oracle_intersection_count = 60
+source_git_revision                  = 13e0281f...
+```
+
+现实为 **98 / 340**。
+
+**这不是任一方的缺陷** —— PR-A 在 `13e0281f` 时点正确冻结了当时存在的内容,2023/2024 的标注是之后才补的。但冻结记录现在会误导任何以它为准的下游。
+
+> **需要 A 决定:PR-A 的 Oracle 侧是否需要重新物化并重新冻结?**
+
+建议与问题 3 的解冻决策**合并处理** —— 若要重新物化,正好一并把身份字段改从 official bridge 取,一次解决两个问题。
+
+该分歧已由 `test_frozen_pr_a_record_no_longer_matches_reality` 固化为断言,避免被遗忘;若 PR-A 重新冻结,该测试需同步更新。
+
+---
+
 ## 附:E 已交付的内容
 
 | 交付 | 位置 |
@@ -241,6 +246,8 @@ E **没有擅自修改**,因为「缺依赖时 skip 还是 hard-fail」是治理
 | 评估协议(时间感知 CV + 功效) | `src/ipo_risk/modeling/oracle_baseline.py` |
 | Final Supervisor / Market context 契约(PR-G 准备,惰性未接线) | `docs/V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md` |
 | Streamlit 七阶段骨架(PR-H 准备) | `app/pipeline_stages.py` |
+
+本轮 re-audit 对应五人计划 §11 分配给 E 的 **`Oracle re-audit preparation + Final Supervisor / UI skeleton reconciliation`**。
 
 E 未触碰任何冻结模块:`features.py`、`snapshot.py`、`materialization.py`、`oracle_document.py`、`canonical_dataset.py`、`pr_c_freeze.py`、`schemas/market.py`、`market/`。
 
