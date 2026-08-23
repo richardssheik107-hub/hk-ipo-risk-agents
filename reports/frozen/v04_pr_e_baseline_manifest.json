@@ -4,7 +4,7 @@
   "baseline_policy_version": "v04_pr_e_baseline_policy_v1",
   "status": "complete_frozen",
   "formal_gate_passed": true,
-  "execution_revision": "01473c0b1c002751fc3a15832302747067cccc2a",
+  "execution_revision": "dddd517061e625b9920913885ca66e9585fbe01e",
   "evaluation_protocol": {
     "development": "expanding_year_forward_chaining_2020_to_2023",
     "validation": "fit_2020_2023_evaluate_2024_once"
@@ -147,5 +147,5 @@
   "diagnostic_hash": "18b4f21ef691614705ae884a64c1791e749c9ecf9acb98efce518eb7dc3e3faa",
   "resume_determinism": "passed_byte_identical",
   "blind_2025_y_accessed": false,
-  "freeze_manifest_hash": "a6c6568efa9750abd7528c6232743325af22d0100f420f665a86842b01585a86"
+  "freeze_manifest_hash": "c226d818f6c3215f3a324ad86a6d864ba958bfb4113beab25ad18f4b74e981e6"
 }

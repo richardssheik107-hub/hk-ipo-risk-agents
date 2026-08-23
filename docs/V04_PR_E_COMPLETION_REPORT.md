@@ -6,7 +6,7 @@
 >
 > Formal execution date: **2026-08-23**
 >
-> Formal execution revision: `01473c0b1c002751fc3a15832302747067cccc2a`
+> Formal execution revision: `dddd517061e625b9920913885ca66e9585fbe01e`
 
 ## 1. Gate result
 
