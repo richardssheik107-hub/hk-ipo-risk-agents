@@ -15,7 +15,7 @@ Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 PR-B Market-X Core                          = COMPLETE / FROZEN
 PR-C 5D Outcome Policy Freeze               = COMPLETE / FROZEN
-PR-D Canonical Dataset                      = READY / FORMAL MATERIALIZATION NEXT
+PR-D Canonical Dataset                      = READY / INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT
 v0.4 End-to-End Closed Loop                = ACTIVE
 Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```
@@ -49,7 +49,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative Document snapshots：438 / 438；
 - Production Document-X：438 / 438，`v04_document_features_v1`，100 维；
 - Production failures / silent drops：0 / 0；
-- frozen PR-A Oracle inventory：60；更多 2024 annotations 合入后正式 PR-E 前需重新审计 Oracle coverage；
+- frozen PR-A Oracle v1：60 materialized，当前 Outcome eligibility 下 55 usable（55 Development / 0 Validation），仅为 immutable historical snapshot；Oracle v2 refresh 在正式 PR-E 前另行冻结；
 - A6 determinism：438 checked，0 mismatches，PASS；
 - PR-B EOD/session-ready：432 / 438；
 - Market-X Core：438 / 438 materialized，0 failed，0 silent drops；
@@ -62,6 +62,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
+- PR-D input binding：已对 PR-A Production、PR-B Core、PR-C Outcome 的 438-case bulk contents 建立 additive aggregate binding；正式 materialization 仍未执行。
 - full model-ready gate：PR-C 已解除前置阻塞，等待 PR-D canonical materialization 独立通过。
 
 详细真实 readiness 见 [`docs/ROADMAP.md`](docs/ROADMAP.md) 与 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。

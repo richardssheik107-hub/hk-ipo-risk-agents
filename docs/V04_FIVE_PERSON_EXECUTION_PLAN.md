@@ -1,6 +1,6 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B/PR-C COMPLETE / FROZEN; PR-D FORMAL MATERIALIZATION NEXT**
+> Status: **ACTIVE — PR-A/PR-B/PR-C COMPLETE / FROZEN; PR-D INPUT BINDING HARDENED / FORMAL MATERIALIZATION NEXT**
 > Date: **2026-08-23**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
@@ -373,7 +373,7 @@ Outcome horizon 一致
 provenance 可重建
 ```
 
-PR-D engineering prep 已在 `main`；正式 materialization 只接受新的 424 / 14 PR-C contract，预期 Full Production model-ready = 424、Development = 354、Validation = 70。
+PR-D engineering prep 与 additive `v04_pr_d_input_binding_v1` 已完成；正式 materialization 必须对 frozen manifests、三路 438-case aggregate binding 和实际 bulk contents 做 fail-closed 校验，只接受 424 / 14 PR-C contract。预期 Full Production model-ready = 424、Development = 354、Validation = 70。PR-D 仍未完成。
 
 不得静默把新的 30-position Core 插入现有历史 120-position Extended join。
 
@@ -403,7 +403,7 @@ OM  Market + Oracle
 
 > 如果 Oracle 有效而 Production 较弱，差距是否主要来自 Document Pipeline？
 
-PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware；Oracle coverage 需在新增 annotations 后重新审计。
+PR-E 是是否重开 v0.5 Retriever / LLM / Agent 优化的重要研究 Gate。正式 Development evaluation 必须 time-aware。PR-A Oracle v1 是 immutable historical snapshot（当前 eligible 55 Dev / 0 Val），不得作为当前 ceiling；正式 PR-E 前必须按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 冻结 Oracle v2。100-case annotation 目标已实质达到，当前优先 QA 与 identity reconciliation，不自动扩样。
 
 ---
 

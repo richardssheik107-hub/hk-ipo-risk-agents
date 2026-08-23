@@ -6,7 +6,7 @@
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
 > PR-C: **COMPLETE / FROZEN**
-> Current formal milestone: **PR-D — READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
+> Current formal milestone: **PR-D — INPUT BINDING HARDENED / READY FOR FORMAL MATERIALIZATION / NOT COMPLETE**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环；baseline E2E 跑通后再逐项补齐赛题专项能力和技术指标；广泛 Retriever / LLM / Agent 优化仍由实证瓶颈决定。
 
 ---
@@ -36,7 +36,7 @@
 - 438 个目标 case 均有本地招股书；
 - authoritative snapshots：438 / 438；
 - Production Document-X features：438 / 438（`v04_document_features_v1`，100 维）；
-- frozen PR-A Oracle inventory：60；更多 2024 annotations 合入后正式 Oracle coverage 需重新审计；
+- frozen PR-A Oracle v1：60 materialized；按当前 outcome eligibility 为 55 Development / 0 Validation，仅作 immutable historical snapshot；
 - Production failures / silent drops：0 / 0；
 - Market-X Core：438 / 438（`v04_ipo_market_context_features_v1`，30 positions）；
 - PR-B EOD/session-ready：432 / 438；
@@ -49,7 +49,7 @@
 - HSI history：MISSING — Extended；
 - authoritative industry benchmark mapping / history：MISSING — Extended；
 - total-market turnover：MISSING — Extended；
-- `MODEL_READY_DATA_GATE`：等待 PR-D formal materialization；PR-C 前置 Gate 已解除。
+- `MODEL_READY_DATA_GATE`：P0 bulk provenance binding 已解除；等待 PR-D formal materialization，PR-C 前置 Gate 已解除。
 
 PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建的冻结数据资产；PR-C 已冻结 424 available / 14 unavailable 的 5D target。当前正式任务是 PR-D canonical materialization。
 
@@ -461,7 +461,7 @@ PM  = Production Document + Market
 OM  = Oracle Document + Market
 ```
 
-PR-D engineering prep 已合入 main。正式 Gate 只接受 PR-C 424/14 contract，并独立复核 354 Development / 70 Validation / 12+2 exclusions。Oracle-only identity drift 可显式隔离，Production identity mismatch 仍 fail closed。
+PR-D engineering prep 与 additive bulk-input binding 已完成。正式 Gate 必须同时验证 upstream freezes、PR-A/PR-B/PR-C 的 438-case aggregate identities 与实际 artifacts，只接受 PR-C 424/14 contract，并独立复核 354 Development / 70 Validation / 12+2 exclusions。Oracle-only identity drift 可显式隔离，Production identity mismatch 仍 fail closed。正式 PR-D 尚未运行。
 
 ---
 
@@ -492,7 +492,7 @@ Pipeline Gap             ≈ OM - PM
 
 **Scenario D — Production 看似超过 Oracle**：先排查 cohort、leakage、coverage bias 和 preprocessing。
 
-更多 2024 annotations 已合入，因此正式 PR-E 前必须重新审计 Oracle coverage，不能沿用旧“zero validation Oracle”结论。
+更多 annotations 已合入，因此正式 PR-E 前必须按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 生成 versioned Oracle v2，不能沿用旧 55 Development / 0 Validation snapshot 作为当前 ceiling。当前约 100 buildable、91 strict usable（74 Dev / 17 Val）只是 readiness audit，不是 frozen v2。
 
 ---
 
