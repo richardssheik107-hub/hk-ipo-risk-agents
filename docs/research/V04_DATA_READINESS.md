@@ -2,7 +2,7 @@
 
 > Last real audit snapshot: **2026-08-23 PR-C governed 438-case materialization + determinism**
 > Documentation review: **2026-08-23**
-> Status: **PR-A / PR-B / PR-C / PR-D COMPLETE / FROZEN; PR-E FORMAL BASELINE NEXT**
+> Status: **PR-A / PR-B / PR-C / PR-D / PR-E COMPLETE / FROZEN; PR-F FORMAL RUN NEXT**
 
 本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
 
@@ -15,6 +15,12 @@ PR-D 已完成正式 canonical materialization：438 upstream → 424 model-read
 resume、input binding 与 freeze manifest 均通过。冻结证据见
 `docs/V04_PR_D_COMPLETION_REPORT.md` 与
 `reports/frozen/v04_pr_d_canonical_dataset_manifest.json`。
+
+PR-E 已完成 formal baseline + Oracle v2 diagnostic：Full Production 354
+Development / 70 Validation、Oracle v2 intersection 77 / 19、48 个模型结果，
+且 `blind_2025_y_accessed=false`。冻结证据见
+`docs/V04_PR_E_COMPLETION_REPORT.md` 与
+`reports/frozen/v04_pr_e_baseline_manifest.json`。
 
 Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
 

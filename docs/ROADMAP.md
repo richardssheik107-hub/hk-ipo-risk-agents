@@ -5,7 +5,7 @@
 > PR-A：**COMPLETE / FROZEN**；PR-B：**COMPLETE / FROZEN ON MAIN**。  
 > PR-C：**COMPLETE / FROZEN**。
 > PR-D：**COMPLETE / FROZEN**。
-> 当前正式 Gate：**PR-E — READY / FORMAL BASELINE NEXT / NOT STARTED**。
+> PR-E：**COMPLETE / FROZEN**。当前正式 Gate：**PR-F — READY / FORMAL RUN NEXT**。
 > Oracle v2：**COMPLETE / FROZEN / A FINAL SIGN-OFF PASSED**；PR-E 训练仍未开始。
 > Competition strategy：**先完成 PR-C → PR-H baseline E2E，再进入赛题专项强化；赛题要求不提前打断当前 Gate。**
 
@@ -154,8 +154,8 @@ HSI / authoritative industry benchmark / HKEX total-market turnover are still mi
 | CL-3 / PR-B | Market-X Core + Governed EOD Store | **COMPLETE / FROZEN ON MAIN** | 已完成 |
 | CL-4 / PR-C | Freeze 5D Outcome Policy | **COMPLETE / FROZEN** | governed full run + q25 + 438 targets + determinism + freeze manifest + A final sign-off complete |
 | CL-5 / PR-D | Canonical Model-ready Dataset | **COMPLETE / FROZEN** | 438 → 424 model-ready + 14 exclusions; 354 Dev / 70 Val; deterministic resume PASS |
-| CL-6 / PR-E | Baseline + Oracle Diagnostic | **READY / FORMAL BASELINE NEXT / NOT STARTED** | consume frozen PR-D + frozen Oracle v2 + time-aware evaluation protocol |
-| CL-7 / PR-F | LightGBM + Explainability | PREPARATION ONLY | PR-E formal baseline complete and reproducible |
+| CL-6 / PR-E | Baseline + Oracle Diagnostic | **COMPLETE / FROZEN** | formal gate passed; freeze manifest and completion report committed |
+| CL-7 / PR-F | LightGBM + Explainability | **READY / FORMAL RUN NEXT** | consume frozen PR-E without 2024 retuning |
 | CL-8/9 / PR-G | Market Agent + Final Supervisor | CONTRACT PREPARATION ONLY | frozen model output contract + protected-interface review |
 | CL-10 / PR-H | Streamlit Full E2E + 3–5 Real IPO Demo | UI PREPARATION ONLY | PDF → Final Report complete |
 | CH-0..CH-6 | Competition Hardening + Submission Freeze | **PLANNED AFTER PR-H** | baseline E2E frozen；then complete every competition requirement and metric |
@@ -188,8 +188,8 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
 PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
 PR-D  Canonical Model-ready Dataset                  COMPLETE / FROZEN
-PR-E  Baseline + Oracle Diagnostic                   READY / FORMAL BASELINE NEXT / NOT STARTED
-PR-F  LightGBM + Explainability
+PR-E  Baseline + Oracle Diagnostic                   COMPLETE / FROZEN
+PR-F  LightGBM + Explainability                     READY / FORMAL RUN NEXT
 PR-G  Market Agent + Final Supervisor
 PR-H  Streamlit Full E2E + Real-case Demo
 ↓

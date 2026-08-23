@@ -16,7 +16,8 @@ PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 PR-B Market-X Core                          = COMPLETE / FROZEN
 PR-C 5D Outcome Policy Freeze               = COMPLETE / FROZEN
 PR-D Canonical Dataset                      = COMPLETE / FROZEN
-PR-E Baseline + Oracle Diagnostic            = READY / FORMAL BASELINE NEXT / NOT STARTED
+PR-E Baseline + Oracle Diagnostic            = COMPLETE / FROZEN
+PR-F LightGBM + Explainability               = READY / FORMAL RUN NEXT
 Oracle v2 refresh                            = COMPLETE / FROZEN / 98 MATERIALIZED / 96 STRICT USABLE
 v0.4 End-to-End Closed Loop                = ACTIVE
 Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
@@ -31,7 +32,8 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
 → PR-D Canonical Model-ready Dataset                 COMPLETE / FROZEN
-→ PR-E Baseline + Oracle Diagnostic                  READY / FORMAL BASELINE NEXT / NOT STARTED
+→ PR-E Baseline + Oracle Diagnostic                  COMPLETE / FROZEN
+→ PR-F LightGBM + Explainability                     READY / FORMAL RUN NEXT
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E + Real-case Demo
@@ -65,7 +67,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
 - PR-D canonical dataset：438 upstream → 424 model-ready + 14 explicit exclusions → 354 Development + 70 Validation；formal materialization、resume 与 freeze 已通过。
-- PR-E：已解除前置阻塞，但 formal baseline / Oracle diagnostic 尚未开始。
+- PR-E：formal baseline / Oracle diagnostic 已完成并冻结；下一正式 Gate 为 PR-F。
 
 详细真实 readiness 见 [`docs/ROADMAP.md`](docs/ROADMAP.md) 与 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
 

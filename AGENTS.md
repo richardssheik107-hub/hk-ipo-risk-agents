@@ -193,7 +193,7 @@ pytest -q
 
 CL-1、PR-A、PR-B、PR-C 与 PR-D 均已完成并冻结。下一正式里程碑是：
 
-> **PR-E — Baseline + Oracle Diagnostic / READY / FORMAL BASELINE NEXT / NOT STARTED**
+> **PR-F — LightGBM + Explainability / READY / FORMAL RUN NEXT**
 
 PR-C 已完成 governed 438-case coverage、Development-only q25 threshold、resume、determinism 与 Blind Gate，并冻结在 `docs/V04_PR_C_COMPLETION_REPORT.md` 和 `reports/frozen/v04_pr_c_5d_outcome_manifest.json`。不要重新执行或重新设计 PR-C，也不要在没有独立任务授权时启动 PR-D。
 
@@ -260,7 +260,8 @@ PR-A  COMPLETE / FROZEN
 PR-B  COMPLETE / FROZEN
 PR-C  COMPLETE / FROZEN
 PR-D  COMPLETE / FROZEN
-PR-E  READY / FORMAL BASELINE NEXT / NOT STARTED
+PR-E  COMPLETE / FROZEN
+PR-F  READY / FORMAL RUN NEXT
 ```
 
 PR-B 的 targeted tests、full pytest、5-case pilot、438-case materialization 与 deterministic resume 均已完成。冻结证据：

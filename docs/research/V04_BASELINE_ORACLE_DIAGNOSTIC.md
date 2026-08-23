@@ -1,6 +1,6 @@
 # V04 PR-E — Baseline and Oracle Diagnostic
 
-> Status: **ENGINEERING COMPLETE / FORMAL RUN PENDING LOCAL FROZEN BULK INPUTS**
+> Status: **COMPLETE / FROZEN**
 > Owner: **D — Quant / ML Research**
 
 ## Gate boundary
@@ -141,3 +141,28 @@ run.
 The repository intentionally does not commit the six PR-D bulk matrices or the
 98 Oracle v2 feature files. A checkout without those governed local artifacts
 must fail closed and cannot publish measured PR-E metrics.
+
+## Formal result
+
+The governed run completed on 2026-08-23. Full Production 2024 Validation did
+not show incremental classification value from Production Document features:
+
+~~~text
+M ROC-AUC / PR-AUC       0.5671 / 0.3624
+PM ROC-AUC / PR-AUC      0.5513 / 0.3554
+PM - M                   -0.0157 / -0.0070
+~~~
+
+On the 19-case Oracle v2 Validation intersection, `OM - M` was also negative
+(`ROC-AUC -0.0571`, `PR-AUC -0.0618`). Oracle was positive in Development
+forward chaining but did not remain positive in 2024 Validation. The current
+document classification signal is therefore not robustly validated under the
+frozen baseline; the small Oracle Validation cohort must not be repeatedly
+tuned against.
+
+The formal report and small freeze summary are:
+
+~~~text
+docs/V04_PR_E_COMPLETION_REPORT.md
+reports/frozen/v04_pr_e_baseline_manifest.json
+~~~

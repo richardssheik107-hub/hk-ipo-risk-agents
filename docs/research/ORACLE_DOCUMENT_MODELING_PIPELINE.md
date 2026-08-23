@@ -64,7 +64,8 @@ Oracle inventory
 
 冻结结果为 Oracle materialized 60、`no_reviewed_gold` 378、Production ∩ Oracle 60。Oracle 不要求覆盖全部 438 cases；它只覆盖真正具有 reviewed expert Gold 的 eligible case。
 
-PR-A 没有训练 Oracle model，且已经 COMPLETE / FROZEN。当前正式下一阶段是尚未启动的 PR-C；Oracle 真正进入建模比较要等待 PR-D / PR-E。
+PR-A 没有训练 Oracle model，且已经 COMPLETE / FROZEN。Oracle v2 已在
+PR-E 中完成正式 M/P/O/PM/OM 比较；当前下一阶段为 PR-F。
 
 ## 4. Later modeling role
 

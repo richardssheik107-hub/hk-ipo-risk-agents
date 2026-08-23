@@ -7,7 +7,7 @@
 > PR-B: **COMPLETE / FROZEN ON MAIN**
 > PR-C: **COMPLETE / FROZEN**
 > PR-D: **COMPLETE / FROZEN**
-> Current formal milestone: **PR-E — READY / FORMAL BASELINE NEXT / NOT STARTED**
+> PR-E: **COMPLETE / FROZEN**. Current formal milestone: **PR-F — READY / FORMAL RUN NEXT**
 > Oracle v2: **COMPLETE / FROZEN / A FINAL SIGN-OFF PASSED**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环；baseline E2E 跑通后再逐项补齐赛题专项能力和技术指标；广泛 Retriever / LLM / Agent 优化仍由实证瓶颈决定。
 
@@ -26,7 +26,8 @@
 - PR-B：**COMPLETE / FROZEN ON MAIN**；
 - PR-C：**COMPLETE / FROZEN**；
 - PR-D：**COMPLETE / FROZEN**；
-- PR-E：**READY / FORMAL BASELINE NEXT / NOT STARTED**；
+- PR-E：**COMPLETE / FROZEN**；
+- PR-F：**READY / FORMAL RUN NEXT**；
 - Competition Hardening：**PLANNED AFTER PR-H BASELINE E2E**。
 
 当前不再把 Retriever 指标提升、LLM Reranker、Fine-tuning 或 Prompt 优化作为 baseline E2E 的前置条件。
@@ -54,7 +55,7 @@
 - total-market turnover：MISSING — Extended；
 - `MODEL_READY_DATA_GATE`：PASS；438 upstream → 424 model-ready + 14 exclusions → 354 Development + 70 Validation。
 
-PR-A 已冻结 Document X，PR-B 已冻结 Market-X Core，PR-C 已冻结 Outcome Y；PR-D 已把三者正式合并为 424-row canonical model-ready dataset。当前正式任务推进到 PR-E baseline / Oracle diagnostic，但尚未开始训练。
+PR-A 已冻结 Document X，PR-B 已冻结 Market-X Core，PR-C 已冻结 Outcome Y；PR-D 已把三者正式合并为 424-row canonical model-ready dataset。PR-E baseline / Oracle diagnostic 已完成并冻结，当前正式任务推进到 PR-F LightGBM + Explainability。
 
 ### 0.2 近期严格主线
 
@@ -67,7 +68,7 @@ PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
   ↓
 PR-D  Canonical Model-ready Dataset                  COMPLETE / FROZEN
   ↓
-PR-E  Baseline + Oracle Diagnostic                   READY / FORMAL BASELINE NEXT / NOT STARTED
+PR-E  Baseline + Oracle Diagnostic                   COMPLETE / FROZEN
   ↓
 PR-F  LightGBM + Explainability
   ↓
@@ -495,7 +496,7 @@ Pipeline Gap             ≈ OM - PM
 
 **Scenario D — Production 看似超过 Oracle**：先排查 cohort、leakage、coverage bias 和 preprocessing。
 
-更多 annotations 已合入，不能沿用旧 55 Development / 0 Validation snapshot 作为当前 ceiling。Versioned Oracle v2 已按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 完成物化、复现与 438-case PR-A/PR-C 上游绑定：98 materialized、96 strict usable（77 Dev / 19 Val）、98 checked / 0 mismatch。A 最终签核已通过，状态为 COMPLETE / FROZEN；PR-E formal training 尚未开始。
+更多 annotations 已合入，不能沿用旧 55 Development / 0 Validation snapshot 作为当前 ceiling。Versioned Oracle v2 已按 `V04_ORACLE_REFRESH_GOVERNANCE.md` 完成物化、复现与 438-case PR-A/PR-C 上游绑定：98 materialized、96 strict usable（77 Dev / 19 Val）、98 checked / 0 mismatch。A 最终签核已通过；PR-E 已完成正式 baseline + Oracle diagnostic，并冻结在 `V04_PR_E_COMPLETION_REPORT.md` 与 `reports/frozen/v04_pr_e_baseline_manifest.json`。
 
 ---
 
