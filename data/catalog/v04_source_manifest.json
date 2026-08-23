@@ -22,19 +22,33 @@
       }
     },
     {
-      "source_name": "Hang Seng Index daily closes",
+      "source_name": "CSMAR Hang Seng Index daily closes",
       "logical_id": "hsi",
-      "dataset_version": "not_supplied",
-      "sha256": null,
+      "dataset_version": "csmar_hsi_daily_close_v1:bd6b29416f08:a974a93e0913",
+      "sha256": "a974a93e091307006f8461ca7be65132a1b3c588c1f23a3336615b6766a7db39",
       "relative_path": null,
       "coverage": {
+        "coverage_end": "2026-08-21",
+        "coverage_start": "2020-01-02",
+        "duplicate_count": 0,
+        "invalid_close_count": 0,
+        "row_count": 943,
         "target_cases": 438,
-        "usable_cases": 0
+        "usable_cases": 438
       },
-      "availability": "missing",
+      "availability": "available",
       "provenance": {
-        "blocker": "HSI_SOURCE_REQUIRED",
-        "role": "market_x_extended"
+        "dataset_name": "国际指数日行情文件",
+        "license_notice": "仅供西安交通大学使用；raw and normalized rows are local-only",
+        "normalized_schema_version": "csmar_hsi_daily_close_v1",
+        "reference_id": "HSI",
+        "role": "market_x_extended",
+        "series_name": "恒生指数",
+        "series_type_status": "SERIES_TYPE_REQUIRES_METADATA_CONFIRMATION",
+        "source_archive_name": "国际指数日行情文件140955620(仅供西安交通大学使用).zip",
+        "source_archive_sha256": "bd6b29416f087c525a515e5ce01265b4e124cf7de117684675b48b8f4b1602e6",
+        "source_file_name": "IDX_Gidxtrd.xls",
+        "source_file_sha256": "a974a93e091307006f8461ca7be65132a1b3c588c1f23a3336615b6766a7db39"
       }
     },
     {

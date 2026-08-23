@@ -40,7 +40,7 @@ Oracle v2 Development / Validation     77 / 19
 2025 Blind y accessed                 NO
 ```
 
-Market-X Extended 仍缺 governed HSI、authoritative industry benchmark mapping/history、HK total-market turnover；这些是 Extended limitations，不重开 PR-B，也不阻塞当前 Core baseline。
+Market-X Extended 已接入 governed CSMAR HSI daily close；438 / 438 官方 case 的两项 HSI return 与 20-session volatility 已通过 PIT readiness。authoritative industry benchmark mapping/history 与 HK total-market turnover 仍缺；这些是 Extended limitations，不重开 PR-B，也不阻塞当前 Core baseline。
 
 ## 3. Frozen PR-E / PR-F findings
 

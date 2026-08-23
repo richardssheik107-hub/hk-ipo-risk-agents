@@ -84,12 +84,21 @@ Determinism                    438 checked / 0 mismatch / PASS
 
 Market-X Core 使用目标上市前已经可得的 prior-IPO context；目标 IPO 的上市后事实不能进入该目标的 X。
 
-## 5. Market-X Extended — source gaps remain
+## 5. Market-X Extended — HSI integrated; other source gaps remain
+
+CSMAR HSI daily close 已作为受治理正式输入接入：
+
+```text
+HSI rows / coverage             943 / 2020-01-02 to 2026-08-21
+Official feature readiness      438 / 438
+Future-row poisoning            PASS
+Determinism                     PASS
+2025 Blind y accessed           NO
+```
 
 以下 source family 仍无受治理正式输入：
 
 ```text
-HSI daily history
 industry → benchmark authoritative mapping
 industry-index histories
 HK total-market turnover
@@ -248,7 +257,7 @@ PR-E 已完成以下治理要求：
 | Canonical Dataset | FROZEN 424 | model-ready |
 | Oracle v1 | HISTORICAL | historical reference only |
 | Oracle v2 | FROZEN 98 / 96 strict | O / OM research ceiling |
-| HSI | MISSING | optional Extended |
+| HSI | AVAILABLE 943 rows / 438 cases | optional Extended |
 | Industry benchmark | MISSING | optional Extended |
 | HK total-market turnover | MISSING | optional Extended |
 
