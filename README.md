@@ -2,7 +2,7 @@
 
 Evidence-backed multi-agent risk analysis and market-risk modeling for Hong Kong IPO prospectuses.
 
-系统以真实招股书 Evidence 为基础运行 Financial / Legal / Business Agents，由 deterministic Skills、Verifier 与 Supervisor 生成可审计 Document Risk；v0.4 再把 Document X 与受治理的 Market X、5D Outcome Y 连接到正式建模、解释和最终产品闭环。
+系统以真实招股书 Evidence 为基础运行 Financial / Legal / Business Agents，由 deterministic Skills、Verifier 与 Supervisor 生成可审计 Document Risk；v0.4 再把 Document X 与受治理的 Market X、Outcome Y 连接到正式建模、解释和最终产品闭环。
 
 > 规则分或未经校准的模型分数不是实际下跌概率，也不构成投资建议。
 
@@ -54,7 +54,7 @@ Oracle v2 strict usable                  96 = 77 Dev + 19 Val
 2025 Blind y accessed                    NO
 ```
 
-PR-D 已输出正式 M / P / PM matrices；Oracle v2 为独立 evaluation-only 专家上限旁路。PR-E 与 PR-F 已冻结以下正式比较，当前进入 PR-G：
+PR-D 已输出正式 M / P / PM matrices；Oracle v2 为独立 evaluation-only 专家旁路。PR-E 与 PR-F 已冻结以下正式比较：
 
 ```text
 M   Market only
@@ -72,9 +72,29 @@ Document Signal Ceiling  = OM - M
 Pipeline Gap              = OM - PM
 ```
 
-PR-E 的 2024 Validation 结果没有显示 Document features 相对 Market-only 的稳健分类增量：Production `PM-M ROC-AUC = -0.0157`，Oracle `OM-M ROC-AUC = -0.0571`。Oracle Validation 仅 19 例，结论是信号不稳定而非证明“没有信号”。
+PR-E 的 2024 Validation 没有显示 Document features 相对 Market-only 的稳健分类增量：Production `PM-M ROC-AUC = -0.0157`，Oracle `OM-M ROC-AUC = -0.0571`。Oracle Validation 仅 19 例，因此结论是信号不稳定，而不是证明“没有招股书信号”。
 
-PR-F 的 frozen LightGBM 结果进一步显示 Production PM 与 M 完全相同，Document features 没有被树模型采用；Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval 为 `[-0.3171, 0.2917]`。所有输出仍是未校准模型分数，不是实际概率。
+PR-F 的 frozen LightGBM 结果进一步显示：Full Production `M ROC-AUC = 0.4246`、`P = 0.5000`、`PM = 0.4246`；PM 与 M 预测完全等价，Production Document 100 维特征在该 frozen tree policy 下未被采用。Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval 为 `[-0.3171, 0.2917]`。这些结果是当前数据、特征、目标和固定模型条件下的正式失败/不稳定发现，不得通过反转预测方向、反复查看 2024 后调参或重写口径来“修漂亮”。所有输出仍是未校准模型分数，不是实际概率。
+
+## Post-PR-F strategy
+
+PR-F 的结果不改变 v0.4 的主线顺序。当前策略明确分成两条互补主线：
+
+```text
+A. Risk Intelligence / Auditability
+   Document risk extraction
+   → Evidence / Calculation / page / bbox
+   → Verifier / conflict / human review
+   → Final Supervisor
+
+B. Market Warning / Predictive Validation
+   Market context / sentiment
+   + governed model score
+   + multi-horizon 1D / 5D / 20D / 60D validation
+   → uncertainty-aware warning
+```
+
+PR-G / PR-H 先完成稳定产品闭环，不以“把 5D AUC 调高”为 Gate 条件。Competition Hardening 再用直接指标判断该增强哪里：关键风险要素抽取准确率目标 `>= 80%`、关键 Evidence recall 目标 `>= 85%`、Agent / Tool / Evidence traceability 目标 `= 100%`。Document Pipeline 是否需要 Hybrid Retrieval / LLM semantic layer，将由 CH-2 的逐风险 benchmark 和 error attribution 决定，而不是仅由当前 5D AUC 决定。短期 5D 预测的新增研发优先考虑受治理的 Market Sentiment / IPO heat / liquidity context；结构性 Document 风险同时在 20D / 60D 等更长 horizon 上验证。
 
 ## Architecture
 
@@ -87,7 +107,7 @@ Prospectus PDF
 → Verifier / Document Supervisor
 → Production Document X
 → Market-X Core (+ optional governed Extended)
-→ 5D Outcome / Canonical Dataset
+→ Outcome / Canonical Dataset
 → Baseline / LightGBM / Explainability
 → Market Agent / Final Supervisor
 → Streamlit / Final Report
@@ -103,7 +123,7 @@ Prospectus PDF
 2025       Blind Test
 ```
 
-Validation 不用于反复调参后继续宣称 untouched；2025 Blind y 在正式开放前不得用于 feature / threshold / model / prompt / Retriever / LLM 调优。
+Validation 不用于反复调参后继续宣称 untouched；不得因为 AUC `< 0.5` 而在看过 2024 后反转 score 方向并把结果作为正式提升。2025 Blind y 在正式开放前不得用于 feature / threshold / model / prompt / Retriever / LLM 调优。
 
 所有正式 RiskItem 必须有可追溯 Evidence；需要精确数字的结论必须通过 deterministic Calculation。Verifier / Supervisor 不得创造原始 Evidence。
 

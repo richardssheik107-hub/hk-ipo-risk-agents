@@ -139,7 +139,7 @@ Reviewed Expert Gold → Oracle feature builder → Oracle X
 
 Oracle 只用于研究上限与错误归因。Gold page、Evidence ID、manual answer 不得进入 Production X。
 
-## 7. Modeling objective
+## 7. Modeling objective and frozen findings
 
 PR-E 已冻结以下正式比较：
 
@@ -155,15 +155,59 @@ OM  Market + Oracle
 
 ```text
 PM - M   自动招股书信息的增量价值
-OM - M   招股书信号的专家上限
-OM - PM  自动 Document Pipeline 距离专家上限的差距
+OM - M   招股书信号的专家上限诊断
+OM - PM  自动 Document Pipeline 与 Oracle 的差距诊断
 ```
 
-2024 Validation 未显示稳健的分类增量（Production `PM-M ROC-AUC -0.0157`；Oracle `OM-M ROC-AUC -0.0571`）。Oracle Validation 仅 19 例，因此该结果用于约束 PR-F 的模型与不确定性分析，不能解释为已证明“没有 Document 信号”。
+2024 Validation 未显示稳健的分类增量（Production `PM-M ROC-AUC -0.0157`；Oracle `OM-M ROC-AUC -0.0571`）。Oracle Validation 仅 19 例，因此该结果不能解释为已证明“没有 Document 信号”，也不能解释为已验证“Oracle ceiling 很强”。
 
-PR-F LightGBM 也未验证增量：Production PM 与 M 完全相同；Oracle `OM-M ROC-AUC -0.0143`，paired-bootstrap interval 跨零。PR-G 必须保留这种不确定性，并把分数明确标记为未校准模型分数。
+PR-F frozen LightGBM 结果为：
 
-## 8. Time governance
+```text
+Full Production 2024
+M   ROC-AUC 0.4246
+P   ROC-AUC 0.5000
+PM  ROC-AUC 0.4246
+```
+
+PM 与 M 完全预测等价，Production Document 100 维特征在该 frozen tree policy 下未被模型采用。Oracle `OM-M ROC-AUC -0.0143`，paired-bootstrap interval 跨零。该结果是正式 baseline finding，不允许因为看过 2024 后反转分数方向、继续调参、挑选口径或重写特征再宣称 2024 仍是 untouched Validation。
+
+因此，模型在产品中定位为一个受治理的辅助 warning channel，而不是整个系统的唯一成败标准。PR-G 必须保留不确定性，并把分数明确标记为未校准模型分数。
+
+## 8. Product strategy after PR-F
+
+产品价值明确拆成两类：
+
+### Risk Intelligence / Auditability
+
+目标是回答：
+
+```text
+风险是什么？
+原文证据在哪里？
+计算过程是什么？
+哪个 Agent 产生了判断？
+Verifier 是否通过？
+是否存在冲突和人工复核？
+```
+
+Competition 直接目标：关键风险要素抽取准确率 `>= 80%`、关键 Evidence recall `>= 85%`、Agent / Tool / Evidence traceability `= 100%`。
+
+### Market Warning / Predictive Validation
+
+目标是回答：
+
+```text
+当前 IPO 市场环境如何？
+模型给出的风险 score 是什么？
+哪些特征驱动该 score？
+该 score 的 calibration / uncertainty 状态是什么？
+在 1D / 5D / 20D / 60D horizon 上是否存在稳定关系？
+```
+
+短期 1D / 5D 预测增强优先从 point-in-time Market Sentiment / IPO heat / liquidity / comparable context 寻找增量；结构性 Document 风险同时在 20D / 60D 上验证。
+
+## 9. Time governance
 
 ```text
 2020–2023  Development / Training
@@ -171,11 +215,11 @@ PR-F LightGBM 也未验证增量：Production PM 与 M 完全相同；Oracle `OM
 2025       Blind Test
 ```
 
-Development 使用 time-aware protocol；2024 不参与模型、预处理或阈值拟合；2025 y 正式开放前不可访问。
+Development 使用 time-aware protocol；2024 不参与模型、预处理或阈值拟合；2025 y 正式开放前不可访问。`ROC-AUC < 0.5` 不授权在查看 2024 后反转 score 并把结果作为正式提升。
 
-## 9. Product success criteria
+## 10. Baseline E2E success criteria
 
-Baseline E2E 至少满足：
+PR-G / PR-H 至少满足：
 
 1. 真实 PDF 可进入稳定分析链；
 2. 风险结论可追溯 Evidence / Calculation / page / bbox；
@@ -187,6 +231,20 @@ Baseline E2E 至少满足：
 8. UI 可展示 Document + Market + Prediction + Evidence + uncertainty；
 9. 3–5 个真实 IPO 可完成端到端 demo。
 
-## 10. Out of scope until evidence justifies reopening
+PR-G / PR-H 的通过条件不是重新提高 frozen 5D AUC，而是正确、可追溯、可降级地消费已有研究结果并完成闭环。
 
-当前不把 Retriever tuning、LLM Reranker、Fine-tuning、LoRA、大规模 Prompt 重写、新 Agent、深度市场模型设为 baseline 前置条件。只有 PR-E Oracle gap 或后续冻结比赛指标证明真实瓶颈时才重启。
+## 11. Competition hardening success criteria
+
+PR-H 后的 Competition Hardening 采用直接 benchmark 决定增强路线：
+
+- CH-1：独立 version 1D / 20D / 60D outcome，5D 保持 primary frozen policy；
+- CH-2：按风险类别测 Precision / Recall / F1 / Evidence Recall，达标类别不重写；
+- 若 CH-2 error attribution 指向 retrieval，优先 Hybrid Retrieval；若指向复杂语义/条件理解，再引入 LLM semantic extraction / reranking；
+- CH-3：增强 Market Sentiment 与 Competition Skills，所有输入必须 point-in-time；
+- CH-4：Agent conflict detection → re-check → challenge → arbitration，并保留 unresolved uncertainty；
+- CH-5：Evidence screenshot / highlight + reviewer audit trail；
+- CH-6：统一提交抽取、Evidence、traceability、multi-horizon 和真实案例结果，不用单一漂亮指标代替完整系统评价。
+
+## 12. Out of scope until direct evidence justifies reopening
+
+当前不把 Retriever tuning、LLM Reranker、Fine-tuning、LoRA、大规模 Prompt 重写、新 Agent、深度市场模型设为 PR-G / PR-H 前置条件。PR-E / PR-F 的 Oracle 结果本身不足以支持大规模 Document 重构；是否重启该研究由 CH-2 的直接 benchmark + error attribution 决定。
