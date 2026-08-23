@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 from math import sqrt
 from typing import Any
@@ -29,7 +29,7 @@ from ipo_risk.schemas.canonical_modeling import V04CanonicalModelMatrix
 PR_F_MODEL_POLICY_VERSION = "v04_pr_f_lightgbm_policy_v1"
 PR_F_RANDOM_SEED = 20260822
 PR_F_CLASSIFICATION_THRESHOLD = 0.5
-_CASE_YEAR_PATTERN = re.compile(r"^ipo_(20\d{2})_")
+PR_F_CALIBRATION_BINS = 10
 
 
 @dataclass(frozen=True)
@@ -83,13 +83,15 @@ def _xy(matrix: V04CanonicalModelMatrix):
     )
 
 
-def _case_years(matrix: V04CanonicalModelMatrix) -> tuple[int, ...]:
+def _case_years(
+    matrix: V04CanonicalModelMatrix,
+    cohort_year_by_case: Mapping[str, int],
+) -> tuple[int, ...]:
     years: list[int] = []
     for case_id in matrix.case_ids:
-        match = _CASE_YEAR_PATTERN.match(case_id)
-        if match is None:
-            raise ValueError(f"canonical case ID does not encode cohort year: {case_id}")
-        years.append(int(match.group(1)))
+        if case_id not in cohort_year_by_case:
+            raise ValueError(f"missing governed cohort year for {case_id}")
+        years.append(int(cohort_year_by_case[case_id]))
     return tuple(sorted(set(years)))
 
 
@@ -116,6 +118,106 @@ def _regression_metrics(y, prediction):
         "mae": float(mean_absolute_error(y, prediction)),
         "rmse": float(sqrt(mean_squared_error(y, prediction))),
         "r2": float(r2_score(y, prediction)) if len(y) >= 2 else None,
+    }
+
+
+def _calibration_assessment(y, probability) -> dict[str, Any]:
+    """Describe fixed-bin reliability without fitting a calibrator on Validation."""
+
+    bin_index = np.minimum(
+        (np.asarray(probability, dtype=float) * PR_F_CALIBRATION_BINS).astype(int),
+        PR_F_CALIBRATION_BINS - 1,
+    )
+    rows: list[dict[str, Any]] = []
+    weighted_gap = 0.0
+    max_gap = 0.0
+    for index in range(PR_F_CALIBRATION_BINS):
+        mask = bin_index == index
+        if not np.any(mask):
+            continue
+        mean_score = float(np.mean(probability[mask]))
+        observed_rate = float(np.mean(y[mask]))
+        gap = abs(mean_score - observed_rate)
+        count = int(np.sum(mask))
+        weighted_gap += count * gap
+        max_gap = max(max_gap, gap)
+        rows.append(
+            {
+                "lower": index / PR_F_CALIBRATION_BINS,
+                "upper": (index + 1) / PR_F_CALIBRATION_BINS,
+                "count": count,
+                "mean_score": mean_score,
+                "observed_rate": observed_rate,
+                "absolute_gap": gap,
+            }
+        )
+    return {
+        "status": "assessment_only_uncalibrated",
+        "score_semantics": "uncalibrated_model_score",
+        "method": "fixed_equal_width_reliability_bins",
+        "requested_bin_count": PR_F_CALIBRATION_BINS,
+        "nonempty_bin_count": len(rows),
+        "expected_calibration_error": weighted_gap / len(y),
+        "maximum_calibration_error": max_gap,
+        "reliability_bins": rows,
+    }
+
+
+def _error_analysis(
+    case_ids,
+    binary_actual,
+    probability,
+    raw_actual,
+    raw_prediction,
+) -> dict[str, Any]:
+    """Return deterministic holdout classification and return-error diagnostics."""
+
+    predicted = (probability >= PR_F_CLASSIFICATION_THRESHOLD).astype(int)
+    classification_rows = []
+    for case_id, actual, score, predicted_value in zip(
+        case_ids,
+        binary_actual,
+        probability,
+        predicted,
+        strict=True,
+    ):
+        if int(actual) == int(predicted_value):
+            continue
+        classification_rows.append(
+            {
+                "case_id": case_id,
+                "actual": bool(actual),
+                "predicted": bool(predicted_value),
+                "score": float(score),
+                "error_confidence": float(score if predicted_value else 1.0 - score),
+            }
+        )
+    classification_rows.sort(
+        key=lambda row: (-row["error_confidence"], row["case_id"])
+    )
+    regression_rows = [
+        {
+            "case_id": case_id,
+            "actual_return_5d": float(actual),
+            "predicted_return_5d": float(prediction),
+            "signed_error": float(prediction - actual),
+            "absolute_error": float(abs(prediction - actual)),
+        }
+        for case_id, actual, prediction in zip(
+            case_ids, raw_actual, raw_prediction, strict=True
+        )
+    ]
+    regression_rows.sort(key=lambda row: (-row["absolute_error"], row["case_id"]))
+    return {
+        "classification": {
+            "false_positive_count": int(np.sum((predicted == 1) & (binary_actual == 0))),
+            "false_negative_count": int(np.sum((predicted == 0) & (binary_actual == 1))),
+            "top_misclassifications": classification_rows[:10],
+        },
+        "regression": {
+            "mean_signed_error": float(np.mean(raw_prediction - raw_actual)),
+            "top_absolute_errors": regression_rows[:10],
+        },
     }
 
 
@@ -185,7 +287,7 @@ def _explain(
     }
 
 
-def _validate_holdout(development, validation):
+def _validate_holdout(development, validation, cohort_year_by_case):
     fields = (
         "feature_group",
         "cohort",
@@ -199,19 +301,21 @@ def _validate_holdout(development, validation):
         raise ValueError("LightGBM Development/Validation mismatch: " + ", ".join(mismatches))
     if development.dataset_split.value != "development" or validation.dataset_split.value != "validation":
         raise ValueError("LightGBM holdout requires Development then Validation")
-    if _case_years(development) != (2020, 2021, 2022, 2023):
+    if _case_years(development, cohort_year_by_case) != (2020, 2021, 2022, 2023):
         raise ValueError("formal LightGBM Development must contain 2020-2023")
-    if _case_years(validation) != (2024,):
+    if _case_years(validation, cohort_year_by_case) != (2024,):
         raise ValueError("formal LightGBM Validation must contain 2024 only")
 
 
 def train_lightgbm_holdout(
     development: V04CanonicalModelMatrix,
     validation: V04CanonicalModelMatrix,
+    *,
+    cohort_year_by_case: Mapping[str, int],
 ) -> LightGBMRun:
     """Train fixed-policy models on Development and evaluate/explain 2024."""
 
-    _validate_holdout(development, validation)
+    _validate_holdout(development, validation, cohort_year_by_case)
     train_x, train_y, train_raw = _xy(development)
     valid_x, valid_y, valid_raw = _xy(validation)
     if len(np.unique(train_y)) < 2:
@@ -243,6 +347,7 @@ def train_lightgbm_holdout(
         ],
         "feature_count": len(development.feature_names),
         "classification_metrics": _classification_metrics(valid_y, probability),
+        "calibration_assessment": _calibration_assessment(valid_y, probability),
         "regression_metrics": _regression_metrics(valid_raw, raw_prediction),
         "classifier_model_sha256": hashlib.sha256(classifier_text.encode()).hexdigest(),
         "regressor_model_sha256": hashlib.sha256(regressor_text.encode()).hexdigest(),
@@ -264,6 +369,13 @@ def train_lightgbm_holdout(
                 strict=True,
             )
         ],
+        "error_analysis": _error_analysis(
+            validation.case_ids,
+            valid_y,
+            probability,
+            valid_raw,
+            raw_prediction,
+        ),
         "blind_2025_y_accessed": False,
     }
     return LightGBMRun(artifact, classifier_text, regressor_text)

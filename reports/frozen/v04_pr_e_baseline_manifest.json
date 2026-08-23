@@ -1,0 +1,151 @@
+{
+  "manifest_version": "v04_pr_e_freeze_manifest_v1",
+  "pr_e_version": "v04_pr_e_baseline_diagnostic_v1",
+  "baseline_policy_version": "v04_pr_e_baseline_policy_v1",
+  "status": "complete_frozen",
+  "formal_gate_passed": true,
+  "execution_revision": "dddd517061e625b9920913885ca66e9585fbe01e",
+  "evaluation_protocol": {
+    "development": "expanding_year_forward_chaining_2020_to_2023",
+    "validation": "fit_2020_2023_evaluate_2024_once"
+  },
+  "cohort_year_source": {
+    "policy_version": "v04_official_listing_year_bridge_v1",
+    "source_filename": "ipo_official_master_bridge.csv",
+    "source_sha256": "c0696f480d54397c169b43085ad77939edde538be3ee5ec3a2ae8ce8b2489a2d",
+    "case_count": 424,
+    "cross_year_case_count": 31,
+    "mapping_hash": "4888c0630d46ed8db57613301d0c4a3b7a1c339bc882891a7bb6da4484edb781"
+  },
+  "input_binding": {
+    "pr_d_freeze_manifest_hash": "f6900c707187c23c5d01fa98fc8d9d21d040ce2c3ffa0a2a6340a0947f78e80d",
+    "pr_d_freeze_manifest_sha256": "4d14f9ae66d4eb51b7746ef6c8767e7683bcec7c23b7e9df6ac46a87049e4642",
+    "oracle_v2_freeze_manifest_hash": "ddb175f48b7e8134c90c674e44d6173337dc2ea10e9eece103f70ae902e80294",
+    "oracle_v2_freeze_manifest_sha256": "c972301a6fde337b21c3a70f83cca2648c8561afe14fd1c17bc4207040376464",
+    "oracle_v2_matrix_manifest_hash": "35f30224775fb31a8f20af8080225a7bf7608cc53b7e528196b1f556f282bd45",
+    "oracle_v2_matrix_manifest_sha256": "01770972fc7a0799978b4c954264b1de4e36899fb4ed826e9184be26e148c698",
+    "oracle_v2_matrix_set_hash": "cef14476f2312c8e10f7a5af3935ff3d5f5b776c2bf68f12a95983cf07768fcd"
+  },
+  "cohorts": {
+    "full_production": {
+      "development": 354,
+      "validation": 70,
+      "feature_groups": [
+        "M",
+        "P",
+        "PM"
+      ]
+    },
+    "oracle_intersection": {
+      "development": 77,
+      "validation": 19,
+      "feature_groups": [
+        "M",
+        "P",
+        "O",
+        "PM",
+        "OM"
+      ],
+      "evaluation_only": true,
+      "production_consumable": false
+    }
+  },
+  "validation_classification": {
+    "full_production": {
+      "M": {
+        "roc_auc": 0.567067530064755,
+        "pr_auc": 0.3624092655927288,
+        "brier_score": 0.23645870148897388
+      },
+      "P": {
+        "roc_auc": 0.4884366327474561,
+        "pr_auc": 0.32374862988673736,
+        "brier_score": 0.23056120883598902
+      },
+      "PM": {
+        "roc_auc": 0.5513413506012952,
+        "pr_auc": 0.3553883385374205,
+        "brier_score": 0.24203905823196534
+      },
+      "production_increment_pm_minus_m_roc_auc": -0.015726179463459777,
+      "production_increment_pm_minus_m_pr_auc": -0.007020927055308268,
+      "production_increment_m_minus_pm_brier": -0.005580356742991455
+    },
+    "oracle_intersection": {
+      "M": {
+        "roc_auc": 0.6571428571428571,
+        "pr_auc": 0.547156862745098,
+        "brier_score": 0.17890394976270638
+      },
+      "P": {
+        "roc_auc": 0.5357142857142857,
+        "pr_auc": 0.2777777777777778,
+        "brier_score": 0.19058664069673356
+      },
+      "O": {
+        "roc_auc": 0.4428571428571429,
+        "pr_auc": 0.2622835497835498,
+        "brier_score": 0.2567771499854457
+      },
+      "PM": {
+        "roc_auc": 0.6857142857142857,
+        "pr_auc": 0.5477124183006536,
+        "brier_score": 0.17522023790392063
+      },
+      "OM": {
+        "roc_auc": 0.6,
+        "pr_auc": 0.4853571428571429,
+        "brier_score": 0.27123057547311075
+      },
+      "document_signal_ceiling_om_minus_m_roc_auc": -0.05714285714285716,
+      "document_signal_ceiling_om_minus_m_pr_auc": -0.06179971988795513,
+      "pipeline_gap_om_minus_pm_roc_auc": -0.08571428571428574,
+      "pipeline_gap_om_minus_pm_pr_auc": -0.06235527544351077
+    }
+  },
+  "development_forward_classification": {
+    "full_production_pm_minus_m_roc_auc": 0.006284517234812381,
+    "full_production_pm_minus_m_pr_auc": 0.00024242247602287992,
+    "oracle_om_minus_m_roc_auc": 0.14589665653495443,
+    "oracle_om_minus_m_pr_auc": 0.12383577190569894,
+    "oracle_om_minus_pm_roc_auc": 0.1413373860182371,
+    "oracle_om_minus_pm_pr_auc": 0.12287163870019646
+  },
+  "full_production_validation_regression_increment": {
+    "linear_regression": {
+      "mae_reduction": 0.016515551160189712,
+      "rmse_reduction": 0.012344192775168406,
+      "r2_gain": 0.04220715885121007
+    },
+    "ridge_regression": {
+      "mae_reduction": 0.015966931888734992,
+      "rmse_reduction": 0.012576897949444055,
+      "r2_gain": 0.042995000475646084
+    }
+  },
+  "formal_conclusion": {
+    "production_document_validation_classification_lift": "not_observed",
+    "production_document_validation_regression_lift": "small_positive",
+    "oracle_validation_document_ceiling": "not_observed_on_19_case_intersection",
+    "oracle_development_forward_signal": "positive_but_not_stable_in_validation",
+    "interpretation": "The current document features do not provide robust incremental 2024 classification value over Market-only under the frozen baseline policy."
+  },
+  "runtime_artifacts_committed": false,
+  "runtime_outputs": {
+    "reports/v04_pr_e/run_manifest.json": {
+      "sha256": "f60cc143d7710ae45978cfb07cb74968089ccffe687a673f2faa248c5d8508c4"
+    },
+    "reports/v04_pr_e/baseline_results.json": {
+      "sha256": "4444ea914295ecd9544e8f2d2db126e541b6dc1da60e5b05e648c49a3f9f659e"
+    },
+    "reports/v04_pr_e/value_diagnostic.json": {
+      "sha256": "c0d1882773863d1fcd6fa6155a9a09f02001e39ad60a5c92f2a87d33c286b863"
+    }
+  },
+  "result_count": 48,
+  "results_hash": "d9082d43c651615851dd2451a15f4c47a5253b0b83410a9ba747ad5236c9fbe3",
+  "diagnostic_hash": "18b4f21ef691614705ae884a64c1791e749c9ecf9acb98efce518eb7dc3e3faa",
+  "resume_determinism": "passed_byte_identical",
+  "blind_2025_y_accessed": false,
+  "freeze_manifest_hash": "c226d818f6c3215f3a324ad86a6d864ba958bfb4113beab25ad18f4b74e981e6"
+}

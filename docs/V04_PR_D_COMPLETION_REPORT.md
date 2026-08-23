@@ -3,6 +3,7 @@
 > Status: **COMPLETE / FROZEN**
 > Formal run date: 2026-08-23
 > Source main: `a1385dba65c10654bdd2f452adee4e30c7f614a0`
+> Historical-state note: downstream status statements describe the PR-D freeze time; current program status is tracked in `ROADMAP.md`.
 
 ## 1. Formal materialization result
 
@@ -72,8 +73,13 @@ Bulk datasets and matrices remain local runtime artifacts and are not committed.
 Oracle v1 remains the immutable, evaluation-only PR-A historical snapshot: 60
 materialized, 55 currently outcome-eligible Development rows and no Validation
 rows. Three Oracle identity mismatches are explicitly excluded from the Oracle
-intersection without blocking the Production cohort. Oracle v2 remains planned
-and **NOT FROZEN**.
+v1 intersection without blocking the Production cohort.
+
+At the PR-D freeze time Oracle v2 was still planned and not yet frozen. It was
+subsequently materialized and frozen independently under
+`V04_ORACLE_V2_COMPLETION_REPORT.md`: 98 materialized / 96 strict usable =
+77 Development + 19 Validation. That later Oracle v2 result does not alter this
+PR-D frozen Production dataset.
 
 ## 5. Validation
 
@@ -88,6 +94,6 @@ and **NOT FROZEN**.
 
 ```text
 PR-D COMPLETE / FROZEN
-PR-E FORMAL BASELINE UNBLOCKED / NOT STARTED
+PR-E FORMAL BASELINE UNBLOCKED / NOT STARTED   # state at PR-D freeze time
 2025 BLIND Y ACCESSED = FALSE
 ```

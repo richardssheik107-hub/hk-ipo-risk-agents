@@ -3,6 +3,7 @@
 > Status: **PR-A = COMPLETE / FROZEN**
 > Materialization source revision: `13e0281f5e65a970caaf1255e56d08597e1ead70`
 > Frozen feature schema: `v04_document_features_v1`
+> Historical-state note: downstream milestone statements describe the PR-A freeze time; current program status is tracked in `ROADMAP.md`.
 
 ## 1. Objective and outcome
 
@@ -60,6 +61,8 @@ LOCAL_PATH_REDACTION_REQUIRED_BEFORE_EXTERNAL_ARTIFACT_PACKAGING = YES
 - source hash mismatches: `0`;
 - prior GitHub Actions checks on the materialization revision: green.
 
-## 5. Next milestone
+## 5. Next milestone at freeze time
 
-PR-A is frozen. The next formal milestone is **PR-B — Market-X Core + Governed EOD Store**, which is **NOT STARTED** by this freeze task.
+PR-A was frozen and released PR-B — Market-X Core + Governed EOD Store as the
+next formal milestone. PR-B subsequently completed and froze; this historical
+PR-A report does not attempt to restate later Gate outcomes.

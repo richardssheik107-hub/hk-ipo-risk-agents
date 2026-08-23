@@ -1,410 +1,49 @@
 # HK IPO Risk Agents — Current Architecture
 
-> Status snapshot: **2026-08-23**
-> Stable document baseline: **v0.3.0 RELEASED / FROZEN**  
-> PR-A Document materialization: **COMPLETE / FROZEN**
-> Active program: **v0.4 End-to-End Closed Loop**  
-> PR-B Market-X Core: **COMPLETE / FROZEN ON MAIN**
-> PR-C 5D Outcome Policy: **COMPLETE / FROZEN**
-> Current formal milestone: **PR-E — FORMAL BASELINE NEXT**
-> Post-baseline program: **Competition Hardening after PR-H**
-
-本文件描述当前有效架构与仍有约束力的边界。历史 v0.2/v0.3 设计过程和已完成的一次性实验通过 Git history/release 追溯。
+> Status snapshot: **2026-08-23**  
+> Document baseline: **v0.3 RELEASED / FROZEN**  
+> PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
+> Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
+> PR-E: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-F — LightGBM + Explainability**
 
 ## 1. Architecture form
 
-项目保持**模块化单体**：一个仓库、一个主要 Python 应用，以稳定 Pydantic Schema / Protocol 连接模块。
+项目保持模块化单体：一个仓库、一个主要 Python 应用，通过稳定 Pydantic Schema / Protocol 连接模块。
 
-当前不引入与闭环无关的微服务、Kafka、Redis queue、Neo4j 或 Kubernetes。
+当前不引入与闭环无关的 Kafka、Redis queue、Neo4j、Kubernetes 或微服务拆分。
 
 核心依赖方向：
 
 ```text
-Streamlit
-  ↓
+Streamlit / Report
+        ↓
 IPOAnalysisService / controlled upper service
-  ↓
+        ↓
 Document Workflow
-  ↓
+        ↓
 Parser / Retriever / Domain Agents / Skills / Verifier / Document Supervisor
-  ↓
+        ↓
 IPOAnalysisResult
-  ↓
-V04 Document Modeling Boundary
-  ↓
-Production Document X
-  ↓
-Market-X Core + optional governed Market-X Extended
-  ↓
+        ↓
+Document Snapshot / Production Document X
+        ↓
+Market-X Core (+ optional governed Extended)
+        ↓
 Outcome / Canonical Modeling Dataset
-  ↓
-Model / Explainability
-  ↓
+        ↓
+Baseline / Advanced Model / Explainability
+        ↓
 Market Agent / Final Supervisor
-  ↓
+        ↓
 Final Report / UI
 ```
 
-禁止反向依赖：Agent 不操作前端，Schema 不依赖具体实现，Parser 不依赖 Agent，产品层不直接读取内部 raw model/data files。
+禁止反向依赖：Agent 不操作前端；Schema 不依赖具体实现；Parser 不依赖 Agent；UI 不直接读取内部 raw model/data files。
 
-PR-H baseline E2E 完成后，Competition Hardening 只能在该依赖方向上增量扩展，不改变“Evidence-first / deterministic calculation / PIT / service boundary”原则。
+## 2. Protected interfaces
 
-## 2. Frozen Production Document Runtime
-
-v0.3 已冻结为 v0.4 第一版 Production Document Intelligence：
-
-```text
-Prospectus PDF
-    ↓
-DocumentParser
-    ↓
-DocumentChunk
-    ↓
-Stable Retriever / Evidence
-    ↓
-Financial Agent ─┐
-Legal Agent ─────┼→ Specialized Verifier → Document Supervisor
-Business Agent ──┘                         ↓
-                                      IPOAnalysisResult
-```
-
-当前真实主工作流为 `enhanced_v2`；`mvp_v1` 保留兼容/Mock/回归用途。
-
-Offline 配置可让外部 LLM 明确 unavailable，但真实 Parser/Retriever/Agents 仍可运行。LLM unavailable 不得被伪造成成功；数字计算由 deterministic Skill 完成；无 Evidence 不得形成正式 verified 风险。
-
-## 3. Frozen Document Modeling Boundary
-
-PR-A 已完成 438-case materialization：
-
-```text
-IPOAnalysisResult
-  ↓
-V04DocumentSnapshotMaterializer
-  ↓
-V03DocumentRiskSnapshot
-  ↓
-DOCUMENT_FEATURE_MANIFEST_V1
-  ↓
-Production Document X
-```
-
-冻结结果：
-
-```text
-438 / 438 authoritative snapshots
-438 / 438 Production Document-X
-v04_document_features_v1
-100 dimensions
-0 Production failures
-0 silent drops
-```
-
-该边界只消费最终结构化 Document result，不反向调用 Retriever、Agent 或 LLM。
-
-### 3.1 Production path
-
-```text
-PDF
-→ Parser
-→ Retriever
-→ Financial / Legal / Business Agents
-→ Skills
-→ Verifier
-→ Document Supervisor
-→ V03DocumentRiskSnapshot
-→ Production Document X
-```
-
-### 3.2 Oracle path
-
-Oracle 是 evaluation-only ceiling/error-attribution path：
-
-```text
-Reviewed Expert Gold
-→ EffectiveRiskGoldView
-→ Oracle Document X
-```
-
-frozen PR-A Oracle inventory = 60；更多 2024 annotations 合入后正式 PR-E 前需要重新审计 Oracle coverage。Oracle 不进入 Production runtime，不向 Production X 泄漏专家答案，不读取 2025 blind y。
-
-## 4. Market Foundation
-
-市场层与 Document Runtime 解耦：
-
-```text
-Official IPO metadata
-+ governed IPO daily bars
-→ MarketLabelGenerator
-→ MarketOutcomeLabel
-```
-
-已冻结基础规则：
-
-- official listing price 为 return base；
-- horizon 按 observed eligible trading sessions；
-- 缺 listing price/history 时显式 unavailable；
-- 2025 blind y 不进入 development/validation modeling record；
-- official listing year 决定 modeling cohort，不使用 document `source_year` 替代。
-
-PR-B EOD/session-ready coverage = 432 / 438；PR-C 进一步要求 official listing price，因此当前 5D outcome-ready = 424 / 438，14 unavailable = 12 `missing_base_price` + 2 `no_eligible_session`。
-
-## 5. Market-X Core — frozen PR-B boundary
-
-PR-B Core 的目标不是依赖当前缺失的 HSI/industry/turnover 后才开始，而是先把**已经真实受治理且可严格 point-in-time 的市场上下文**稳定物化。该目标已经完成并冻结在 `main`。
-
-Canonical flow：
-
-```text
-Official IPO metadata
-+ governed IPO EOD
-+ prior-IPO offer/context facts
-+ prior-IPO outcomes already known before target listing
-        ↓
-IPO Market Context Core
-        ↓
-v04_ipo_market_context_features_v1
-        ↓
-30-position Core vector
-        ↓
-coverage / provenance / failure / determinism audit
-```
-
-Core schema/policy：
-
-```text
-schema:  v04_ipo_market_context_features_v1
-policy:  ipo_market_context_policy_v1
-15 raw prior-IPO context features
-+ 15 adjacent __missing indicators
-= 30 ordered positions
-```
-
-Core features cover recent IPO counts, prior funds raised, recent IPO 1D break rate / 5D return and same-industry historical IPO context.
-
-### 5.1 Core PIT boundary
-
-For target listing date `T`:
-
-```text
-prior_ipo.listing_date < T
-prior_1d.target_trading_date < T
-prior_5d.target_trading_date < T
-```
-
-The target IPO's own listing-day/post-listing price never enters its X. If a prior IPO 5D outcome only becomes observable on `T`, it is not available strictly before the target listing and is excluded.
-
-The same-industry Core context may use the authoritative IPO metadata's industry description as a peer grouping label; it is **not** an industry-index benchmark mapping and must not be treated as one.
-
-### 5.2 Governed EOD store
-
-Canonical builder：
-
-```text
-scripts/build_v04_ipo_eod_store.py
-```
-
-Current filter schema：
-
-```text
-v04_ipo_eod_filter_v2
-```
-
-The cohort is selected by authoritative `official_listed_date.year in 2020–2024`, not by prospectus `source_year`.
-
-The filtered store retains `OBJECT_ID` for source-record provenance. `S_DQ_AMOUNT` remains a per-security source field and is never reinterpreted as total-market turnover.
-
-### 5.3 Core orchestration
-
-Canonical PR-B CLI：
-
-```text
-scripts/run_v04_pr_b.py
-```
-
-It orchestrates：
-
-```text
-Official 438-case cohort
-→ governed EOD store
-→ prior-IPO PIT context preparation
-→ per-case Core artifacts
-→ coverage / failure report
-→ provenance freeze
-→ conflict-safe resume
-→ deterministic rebuild audit
-```
-
-The CLI does not expose a 2025 blind-outcome option.
-
-PR-B has passed its Gate and is now a frozen 438-case Core asset. Targeted/full tests, the real pilot/full materialization and deterministic resume are recorded in [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md).
-
-## 6. Market-X Extended — frozen optional source-dependent layer
-
-The existing reference-market contract remains frozen and separate from Core：
-
-```text
-Governed HSI / industry benchmark / market activity
-+ prior IPO information
-→ PreListingMarketFeatureEngine
-→ PreListingMarketFeatureSnapshot
-→ MARKET_FEATURE_MANIFEST_V1
-→ Extended Market Feature Vector
-```
-
-Versions：
-
-```text
-v04_prelisting_market_features_v1
-v04_market_features_v1
-```
-
-Fixed 10 raw features：
-
-```text
-hsi_return_5d
-hsi_return_20d
-industry_return_5d
-industry_return_20d
-recent_ipo_break_rate
-recent_ipo_return_5d
-recent_ipo_1d_sample_count
-recent_ipo_5d_sample_count
-market_turnover_20d_mean
-market_volatility_20d
-```
-
-Each raw feature has an adjacent `__missing` indicator, giving 20 ordered positions.
-
-Current real Extended-source gaps：
-
-```text
-governed HSI daily history
-authoritative industry→benchmark mapping
-governed industry-index histories
-governed HKEX total-market turnover
-```
-
-Hard prohibitions：
-
-- Hang Seng Bank ≠ HSI；
-- workbook industry name ≠ authoritative industry benchmark mapping；
-- single-security `S_DQ_AMOUNT` ≠ total-market turnover；
-- missing reference source ≠ neutral zero；
-- no fake benchmark observation may be created merely to force an observation date.
-
-Extended source absence must remain explicit. It is not by itself a PR-B Core failure。
-
-## 7. Modeling dataset boundary
-
-### 7.1 Existing Document / Extended foundations
-
-Document-only foundation：
-
-```text
-V03DocumentRiskSnapshot + MarketOutcomeLabel
-→ V04ModelingDatasetBuilder
-```
-
-Existing Extended market-augmented foundation：
-
-```text
-V04ModelingRecord + PreListingMarketFeatureSnapshot
-→ V04MarketAugmentedDatasetBuilder
-```
-
-Its historical combined order is：
-
-```text
-100 Production Document features
-+
-20 Extended Market features
-```
-
-### 7.2 PR-D canonical boundary
-
-PR-D Core-first canonical builder engineering prep 已合入。正式 materialization 必须绑定 PR-C 424/14 outcome contract：
-
-```text
-official                     438
-model-ready                  424
-explicit exclusions           14
-Development model-ready      354
-Validation model-ready        70
-```
-
-PR-D 必须显式 version Core / optional Extended feature groups，不能静默修改历史 120-position join。Production identity mismatch 仍 fail closed；evaluation-only Oracle identity drift 只能显式排除，不允许污染 Production row。
-
-## 8. Formal modeling sequence
-
-```text
-PR-B Market-X Core                 COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze    COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset  COMPLETE / FROZEN
-→ PR-E Baseline + Oracle Diagnostic   FORMAL NEXT
-→ PR-F LightGBM + Explainability
-```
-
-Formal split：
-
-```text
-2020–2023  Development / Training
-2024       Validation
-2025       Blind Test
-```
-
-Development 用于 threshold/feature/model policy；2024 用于冻结方案 validation；2025 policy freeze 前只准备 X，不读取 y。
-
-Formal comparison framework：
-
-```text
-M   Market only
-P   Production Document only
-O   Oracle Document only
-PM  Market + Production
-OM  Market + Oracle
-```
-
-Only comparisons using the same cohort/target/split/preprocessing/model family can support Production-vs-Oracle attribution. Development CV 必须 time-aware；不得用未来年份预测过去年份的随机时间混合方案。
-
-## 9. Product boundary
-
-Later PR-G / PR-H：
-
-```text
-Document assessment
-+ Market context
-+ frozen model output
-+ explainability drivers
-+ Evidence / provenance
-+ missingness / conflicts
-→ Market Agent / Final Supervisor
-→ final report
-→ Streamlit
-```
-
-Market Agent can explain frozen model/context but cannot override model scores or manufacture market evidence.
-
-Streamlit only consumes `IPOAnalysisService` / a controlled upper service and cannot directly read raw Market CSVs, model binaries or Parser/Agent internals.
-
-## 10. Module responsibilities
-
-- `app/`: presentation only；
-- `src/ipo_risk/services/`: controlled product-facing business entry；
-- `src/ipo_risk/workflows/`: Document workflow/state/failure routing；
-- `src/ipo_risk/agents/`: Financial/Legal/Business；future Market Sentiment Agent / Final Supervisor integration after model freeze；
-- `src/ipo_risk/skills/`: deterministic calculations；future competition Skills must preserve deterministic/provenance rules；
-- `src/ipo_risk/parsers/`: PDF → `list[DocumentChunk]` including page/bbox；
-- `src/ipo_risk/retrieval/`: Evidence discovery/ranking; current research frozen；
-- `src/ipo_risk/providers/`: external source adapters; credentials from environment only；
-- `src/ipo_risk/market/`: market labels/Core/Extended features/governance/validation；
-- `src/ipo_risk/modeling/`: Document/Oracle/Market dataset/modeling boundary；
-- `src/ipo_risk/predictors/`: current rule-based compatibility, later frozen statistical model adapter；
-- `src/ipo_risk/evaluation/`: research/evaluation/regression/competition metrics；
-- `src/ipo_risk/reporting/`: structured reports and later final synthesis output。
-
-## 11. Protected interfaces
-
-The following are protected architecture/public boundaries：
+以下边界视为受保护接口，跨阶段修改必须单独审查：
 
 ```text
 src/ipo_risk/schemas/
@@ -419,142 +58,167 @@ src/ipo_risk/core/container.py
 src/ipo_risk/domain/risk_codes.py
 ```
 
-Any change must state compatibility impact and add contract tests。
+新增 real component 需要 contract test，并通过 ComponentRegistry / controlled wiring 注册；不允许绕过 service boundary 从 UI 直接调用内部模块。
 
-Competition Hardening 不允许因为增加 Market Sentiment / conflict / human-review 功能而绕过这些 protected interfaces。
-
-## 12. Evidence / Calculation / Verification
-
-Formal RiskItem must have Evidence. Numeric conclusions require auditable deterministic Calculation containing inputs/formula/result/unit/evidence IDs/success-error. Verifier/Supervisor cannot create original Evidence. Unsupported conclusions remain pending/needs_review/rejected/unavailable rather than being invented.
-
-Competition Hardening 的“文本粉饰度”、Market Sentiment、Comparable Valuation、conflict resolution 等新增能力仍服从同一规则：来源和语义必须可追踪，不能用自由文本黑箱替代 Evidence / Calculation / structured provenance。
-
-## 13. Current execution state
-
-Completed/frozen：
+## 3. Production Document runtime
 
 ```text
-v0.3 Document Intelligence
-Retriever V3 research
-V04 Market Foundation contracts
-V04 Document feature contract
-V04 Extended Pre-listing Market feature contract
-Oracle modeling foundations
-PR-A 438-case Document + Oracle materialization
-PR-B 438-case Market-X Core + governed EOD materialization
+Prospectus PDF
+→ DocumentParser
+→ DocumentChunk(page / bbox / text / metadata)
+→ Stable Retriever
+→ Evidence
+→ Financial / Legal / Business Agents
+→ Deterministic Skills / Calculation
+→ Specialized Verifier
+→ Document Supervisor
+→ IPOAnalysisResult
 ```
 
-Current formal state：
+原则：
+
+- 正式风险必须由 Evidence 支持；
+- 数值结论由 deterministic code 计算；
+- LLM unavailable 必须显式降级，不能伪造成成功；
+- Verifier / Supervisor 不创造原始 Evidence；
+- failure / pending / needs_review 不得 silent drop。
+
+## 4. Frozen Document modeling boundary
+
+PR-A 已冻结：
 
 ```text
-PR-C governed full materialization / determinism / A final sign-off complete
-PR-C COMPLETE / FROZEN
-PR-D formal materialization / resume / freeze complete
-PR-E formal baseline next; Oracle v2 refresh required
-PR-F preparation only
-PR-G/H preparation only
-Competition Hardening planned after PR-H baseline E2E
+IPOAnalysisResult
+→ V03DocumentRiskSnapshot
+→ v04_document_features_v1
+→ Production Document X
 ```
 
-## 14. Retriever / LLM future position
-
-Retriever/LLM optimization remains deferred until signal / metric evidence justifies it. After baseline E2E：
-
-- Evidence recall < 85% → targeted Retriever/evidence repair；
-- Risk accuracy < 80% with correct Evidence → Agent/Verifier/Skill repair；
-- Oracle strong / Production weak → larger Retriever/LLM/Agent research may reopen；
-- metrics already pass → no technology-for-technology's-sake Fine-tuning / LoRA。
-
-Historical Locked 10 is already consumed and cannot be reused as blind。
-
-## 15. Post-PR-H Competition Architecture Extension
-
-完整计划见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。新增架构层不取代 baseline，而是在其上增量组合：
+结果：
 
 ```text
-Baseline E2E
-    │
-    ├── Multi-horizon Outcome Extension
-    │     1D / 5D / 20D / 60D
-    │
-    ├── Competition Document Diagnostics
-    │     cash burn / redemption / related-party
-    │     concentration / pipeline / text embellishment
-    │
-    ├── Competition Skills
-    │     long-document retrieval
-    │     comparable valuation
-    │     cash burn
-    │     sentiment heat
-    │
-    ├── Market Sentiment Agent
-    │
-    ├── Conflict Workflow
-    │     detect → re-check → verifier challenge → arbitration
-    │
-    ├── Evidence Presentation
-    │     page + bbox → highlight / screenshot
-    │
-    └── Human Review / Competition Report / Submission Artifacts
+438 / 438 authoritative snapshots
+438 / 438 Production Document-X
+100 dimensions
+0 Production failures
+0 silent drops
 ```
 
-### 15.1 Conflict / trace boundary
+Production feature vector 是结构化模型输入，不等于 PDF 全文；Evidence / page provenance 通过 source analysis / risk chain 保留。
 
-Competition conflict workflow 必须记录结构化：
+## 5. Market architecture
+
+### Market-X Core — frozen
 
 ```text
-agent_name
-input_task
-plan_step
-tool_or_skill_call
-input_evidence_ids
-calculation_ids
-claim
-verifier_status
-conflict_id
-resolution_action
-final_status
+schema  v04_ipo_market_context_features_v1
+policy  ipo_market_context_policy_v1
+15 raw + 15 missing indicators = 30 positions
 ```
 
-该 trace 是可审计执行日志，不要求把内部不可验证自由文本思维链暴露给用户。
+Core 只消费 listing 前已知且受治理的信息，并通过 PIT validation 防止目标 IPO 的上市后数据进入 X。
 
-### 15.2 Evidence screenshot boundary
+### Market-X Extended — optional
 
-Evidence screenshot 是 presentation artifact：
+HSI、authoritative industry benchmark mapping/history、HK total-market turnover 等 source family 仍可显式 missing。缺失来源不能用不等价 proxy、fake benchmark 或 neutral zero 替代。
+
+## 6. Outcome and canonical dataset
+
+PR-C：
 
 ```text
-canonical Evidence
-→ document page
-→ bbox
-→ highlight / screenshot
+FiveDayOutcomeTarget
+424 available / 14 explicit unavailable
+Development threshold fitted only on 2020–2023
 ```
 
-截图不能成为新的事实来源，canonical Evidence ID / source / page 仍是审计边界。
-
-### 15.3 Competition metric boundary
-
-最终 architecture 必须支持正式计算：
+PR-D：
 
 ```text
-risk extraction accuracy >= 80%
-key evidence recall >= 85%
-agent/tool/evidence traceability = 100%
-1D / 5D / 20D / 60D business validation
+Document X + Market X + Outcome Y
+→ v04_canonical_modeling_dataset_v1
+→ 424 model-ready
+→ 354 Development + 70 Validation
 ```
 
-这些指标通过 `evaluation/` / governed review artifacts 计算，不由 UI 或 Agent 自报。
+Feature groups 显式版本化，identifier / document ID / Evidence ID / Gold page / target-derived value 不得进入 X。
 
-## 16. Source of truth
+## 7. Production / Oracle separation
 
-Current execution / governance source of truth：
+Production：最终产品路径。
 
-1. [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
-2. [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)
-3. [`ROADMAP.md`](ROADMAP.md)
-4. [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)
-5. [`PROJECT_SPEC.md`](PROJECT_SPEC.md)
-6. this architecture document
-7. [`DATA_SCHEMA.md`](DATA_SCHEMA.md)
-8. [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md)
+Oracle：研究旁路。
 
-Frozen PR-B evidence is carried by [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md), [`../reports/frozen/v04_pr_b_market_x_core_manifest.json`](../reports/frozen/v04_pr_b_market_x_core_manifest.json), and [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md).
+```text
+Reviewed Expert Gold
+→ Oracle v2 feature builder
+→ expert_oracle_document_features_v2
+```
+
+Oracle v2 frozen contract：
+
+```text
+98 materialized
+96 strict usable
+77 Development / 19 Validation
+142 features
+evaluation_only = true
+production_consumable = false
+```
+
+Oracle 不 import 到 Production runtime，不替代 Retriever / Agent 结论，不把 Expert Gold 反向泄漏进 Production X。
+
+## 8. Frozen PR-E modeling architecture
+
+Full Production cohort：
+
+```text
+M   Market only
+P   Production Document only
+PM  Market + Production
+```
+
+Oracle fair intersection：
+
+```text
+M   Market only
+P   Production Document only
+O   Oracle Document only
+PM  Market + Production
+OM  Market + Oracle
+```
+
+Development evaluation：expanding-year forward chaining。Validation：2020–2023 fit → untouched 2024 evaluation。
+
+PR-E output 是已冻结的研究 / model artifact；在稳定 schema、score semantics、calibration status 冻结前，不直接暴露为产品“概率”。
+
+## 9. PR-F / PR-G / PR-H architecture boundary
+
+PR-F（当前 Gate）：在 PR-E frozen inputs / cohorts 上增加 LightGBM、SHAP / importance、calibration assessment、ablation、error analysis。
+
+PR-G：
+
+```text
+Document Supervisor
++ Market Agent
++ Model prediction / explanation
+→ Final Supervisor
+```
+
+Final Supervisor 只能引用已有 risk / Evidence / market facts / model drivers，不能创造新 Evidence 或把 model score 当 Evidence。
+
+PR-H：Streamlit 通过受控 service 完成 PDF → Final Report，不在 UI 内复制模型、Retriever 或 Agent 逻辑。
+
+## 10. Reproducibility and runtime artifacts
+
+大型 generated runtime artifacts 默认不提交 Git；Git 保存代码、tests、frozen manifests、small reports 和 hashes。跨机器 handoff 必须验证 source revision / manifest / SHA，而不是把任意本地文件当 source of truth。
+
+## 11. Time and blind governance
+
+```text
+2020–2023  Development
+2024       Validation
+2025       Blind Test
+```
+
+2025 Blind y 在正式打开前禁止用于模型、阈值、feature、Retriever、Prompt、LLM 或 Oracle 调优。Competition Hardening 不自动授权读取 Blind y。

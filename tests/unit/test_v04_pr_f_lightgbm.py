@@ -59,6 +59,48 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _year_map(*matrices: V04CanonicalModelMatrix) -> dict[str, int]:
+    return {
+        case_id: int(case_id.split("_", 2)[1])
+        for matrix in matrices
+        for case_id in matrix.case_ids
+    }
+
+
+def _write_cohort_year_catalog(
+    path: Path,
+    *,
+    development_count: int,
+    validation_count: int,
+) -> dict[str, object]:
+    rows = ["case_id,source_year,official_listed_date"]
+    mapping = []
+    for split, count in (
+        (MarketDatasetSplit.DEVELOPMENT, development_count),
+        (MarketDatasetSplit.VALIDATION, validation_count),
+    ):
+        matrix = _matrix(
+            V04ModelFeatureGroup.M,
+            split,
+            V04CanonicalCohort.FULL_PRODUCTION,
+            count=count,
+        )
+        for case_id in matrix.case_ids:
+            year = int(case_id.split("_", 2)[1])
+            rows.append(f"{case_id},{year},{year}-01-01")
+            mapping.append({"case_id": case_id, "cohort_year": year})
+    path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    return {
+        "policy_version": "v04_official_listing_year_bridge_v1",
+        "source_filename": path.name,
+        "source_sha256": _sha256(path),
+        "case_count": len(mapping),
+        "mapping_hash": canonical_hash(sorted(mapping, key=lambda row: row["case_id"])),
+        "cross_year_case_count": 0,
+        "blind_2025_y_accessed": False,
+    }
+
+
 def _write_matrix_set(
     matrix_dir: Path,
     cohort: V04CanonicalCohort,
@@ -88,6 +130,7 @@ def _write_pr_e_manifest(
     oracle_hashes: dict[str, str],
     *,
     formal_gate_passed: bool = True,
+    cohort_year_source: dict[str, object] | None = None,
 ) -> None:
     results: list[object] = []
     diagnostic: dict[str, object] = {}
@@ -114,6 +157,11 @@ def _write_pr_e_manifest(
                 "diagnostic_hash": canonical_hash(diagnostic),
                 "production_matrix_hashes": production_hashes,
                 "oracle_matrix_hashes": oracle_hashes,
+                "cohort_year_source": cohort_year_source
+                or {
+                    "policy_version": "v04_official_listing_year_bridge_v1",
+                    "blind_2025_y_accessed": False,
+                },
             }
         ),
         encoding="utf-8",
@@ -132,14 +180,23 @@ def test_lightgbm_holdout_is_deterministic_and_explainable() -> None:
         V04CanonicalCohort.FULL_PRODUCTION,
         count=20,
     )
-    first = train_lightgbm_holdout(development, validation)
-    second = train_lightgbm_holdout(development, validation)
+    years = _year_map(development, validation)
+    first = train_lightgbm_holdout(
+        development, validation, cohort_year_by_case=years
+    )
+    second = train_lightgbm_holdout(
+        development, validation, cohort_year_by_case=years
+    )
     assert first.artifact == second.artifact
     assert first.classifier_model_text == second.classifier_model_text
     assert first.artifact["classification_metrics"]["roc_auc"] == 1.0
     assert first.artifact["development_years"] == [2020, 2021, 2022, 2023]
     assert first.artifact["evaluation_years"] == [2024]
     assert len(first.artifact["case_predictions"]) == 20
+    assert first.artifact["calibration_assessment"]["status"] == (
+        "assessment_only_uncalibrated"
+    )
+    assert "top_absolute_errors" in first.artifact["error_analysis"]["regression"]
     explain = first.artifact["explainability"]
     assert explain["contribution_method"] == "lightgbm_native_pred_contrib_shap"
     assert len(explain["single_ipo_drivers"]) == 20
@@ -163,8 +220,35 @@ def test_lightgbm_holdout_rejects_non_temporal_validation() -> None:
     ).model_copy(
         update={"case_ids": tuple(f"ipo_2023_{index:05d}" for index in range(20))}
     )
+    years = _year_map(development, validation)
     with pytest.raises(ValueError, match="2024 only"):
-        train_lightgbm_holdout(development, validation)
+        train_lightgbm_holdout(
+            development, validation, cohort_year_by_case=years
+        )
+
+
+def test_lightgbm_holdout_uses_governed_listing_year() -> None:
+    development = _matrix(
+        V04ModelFeatureGroup.M,
+        MarketDatasetSplit.DEVELOPMENT,
+        V04CanonicalCohort.FULL_PRODUCTION,
+    )
+    validation = _matrix(
+        V04ModelFeatureGroup.M,
+        MarketDatasetSplit.VALIDATION,
+        V04CanonicalCohort.FULL_PRODUCTION,
+        count=20,
+    ).model_copy(
+        update={"case_ids": tuple(f"ipo_2023_cross_{index:05d}" for index in range(20))}
+    )
+    years = _year_map(development)
+    years.update({case_id: 2024 for case_id in validation.case_ids})
+    result = train_lightgbm_holdout(
+        development,
+        validation,
+        cohort_year_by_case=years,
+    )
+    assert result.artifact["evaluation_years"] == [2024]
 
 
 def test_pr_f_orchestration_requires_pr_e_and_writes_models(tmp_path: Path) -> None:
@@ -189,25 +273,43 @@ def test_pr_f_orchestration_requires_pr_e_and_writes_models(tmp_path: Path) -> N
         validation_count=20,
     )
     pr_e_manifest = tmp_path / "pr_e_manifest.json"
-    _write_pr_e_manifest(pr_e_manifest, production_hashes, oracle_hashes)
+    cohort_year_catalog = tmp_path / "ipo_official_master_bridge.csv"
+    cohort_year_source = _write_cohort_year_catalog(
+        cohort_year_catalog,
+        development_count=40,
+        validation_count=20,
+    )
+    _write_pr_e_manifest(
+        pr_e_manifest,
+        production_hashes,
+        oracle_hashes,
+        cohort_year_source=cohort_year_source,
+    )
     output = tmp_path / "out"
     first = run_pr_f(
         production_dir,
         oracle_dir,
         output,
         pr_e_manifest_path=pr_e_manifest,
+        cohort_year_catalog_path=cohort_year_catalog,
     )
     second = run_pr_f(
         production_dir,
         oracle_dir,
         output,
         pr_e_manifest_path=pr_e_manifest,
+        cohort_year_catalog_path=cohort_year_catalog,
         resume=True,
     )
     assert first == second
     assert first["manifest"]["result_count"] == 8
     assert first["manifest"]["formal_gate_passed"] is True
     assert first["manifest"]["explainability_method"] == "lightgbm_native_pred_contrib_shap"
+    assert first["manifest"]["calibration_status"] == "assessment_only_uncalibrated"
+    assert "component_ablation" in first["comparison"]
+    assert first["comparison"]["component_ablation"][
+        "full_production_document_addition_pm_minus_m"
+    ]["classification_uncertainty"]["iterations"] == 2000
     assert (output / "models" / "full_production_PM_classifier.txt").is_file()
     assert (output / "models" / "oracle_intersection_OM_regressor.txt").is_file()
     assert first["comparison"]["oracle_intersection"][

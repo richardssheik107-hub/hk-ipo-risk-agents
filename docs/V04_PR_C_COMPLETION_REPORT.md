@@ -18,8 +18,9 @@ PR-D formal materialization READY / UNBLOCKED / NOT STARTED
 2025 Blind y accessed       NO
 ```
 
-PR-D is released to its own formal materialization Gate; this report does not
-claim that PR-D is complete, frozen or passed.
+The downstream-state lines above describe the state **at the PR-C freeze time**.
+PR-D subsequently completed and froze under its own completion report; this PR-C
+record does not retroactively claim that later Gate result.
 
 ## 2. Governed input identity
 
@@ -53,8 +54,10 @@ generation/runtime failures      0
 silent drops                     0
 ```
 
-The 14 unavailable rows remain explicit and are not imputed to zero. Their
-case IDs and reason mapping match `V04_PR_C_A_GATE_AUDIT.md` exactly.
+The 14 unavailable rows remain explicit and are not imputed to zero. Their case
+IDs and reason mapping are bound by the frozen target-set / coverage artifacts
+and the PR-C freeze manifest; the superseded pre-freeze A-side audit remains
+available in Git history.
 
 ## 4. Frozen threshold
 
@@ -135,5 +138,5 @@ determinism and Blind isolation.
 
 ```text
 PR-C COMPLETE / FROZEN
-PR-D FORMAL MATERIALIZATION UNBLOCKED
+PR-D FORMAL MATERIALIZATION UNBLOCKED   # historical state at PR-C freeze time
 ```
