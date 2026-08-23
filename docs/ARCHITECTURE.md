@@ -121,7 +121,7 @@ Core 只消费 listing 前已知且受治理的信息，并通过 PIT validation
 
 ### Market-X Extended — optional
 
-HSI、authoritative industry benchmark mapping/history、HK total-market turnover 等 source family 仍可显式 missing。缺失来源不能用不等价 proxy、fake benchmark 或 neutral zero 替代。
+CSMAR governed HSI daily close 已通过独立 authoritative-source integration 接入，438 / 438 官方 2020–2024 case 的 `hsi_return_5d`、`hsi_return_20d` 与 `market_volatility_20d` 均可严格 PIT 生成。authoritative industry benchmark mapping/history 与 HK total-market turnover 仍显式 missing；缺失来源不能用不等价 proxy、fake benchmark 或 neutral zero 替代。
 
 ## 6. Outcome and canonical dataset
 

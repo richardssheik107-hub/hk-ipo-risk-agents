@@ -1,0 +1,31 @@
+{
+  "manifest_version": "csmar_hsi_source_manifest_v1",
+  "source_name": "CSMAR",
+  "dataset_name": "国际指数日行情文件",
+  "reference_id": "HSI",
+  "series_name": "恒生指数",
+  "frequency": "daily",
+  "series_type": "unspecified_by_delivered_metadata",
+  "series_type_status": "SERIES_TYPE_REQUIRES_METADATA_CONFIRMATION",
+  "source_file_name": "IDX_Gidxtrd.xls",
+  "source_archive_name": "国际指数日行情文件140955620(仅供西安交通大学使用).zip",
+  "source_archive_sha256": "bd6b29416f087c525a515e5ce01265b4e124cf7de117684675b48b8f4b1602e6",
+  "source_file_sha256": "a974a93e091307006f8461ca7be65132a1b3c588c1f23a3336615b6766a7db39",
+  "normalized_schema_version": "csmar_hsi_daily_close_v1",
+  "normalized_file_sha256": "785f4d7c7769abb68f7f7e2841795cf797b80088ab78b74207dfe9113c0af6d2",
+  "row_count": 943,
+  "coverage_start": "2020-01-02",
+  "coverage_end": "2026-08-21",
+  "duplicate_count": 0,
+  "null_close_count": 0,
+  "invalid_close_count": 0,
+  "parse_error_count": 0,
+  "retrieval_metadata": {
+    "delivered_to_project_date": "2026-08-23",
+    "original_download_timestamp": "not_supplied",
+    "delivery_method": "user_supplied_csmar_export",
+    "workbook_open_mode": "read_only"
+  },
+  "license_notice": "仅供西安交通大学使用；原始与normalized数据不得提交公开仓库",
+  "project_generated_identity": true
+}
