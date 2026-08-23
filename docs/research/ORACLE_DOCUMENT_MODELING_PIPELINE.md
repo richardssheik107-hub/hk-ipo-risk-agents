@@ -1,129 +1,140 @@
 # Oracle Document Modeling Pipeline
 
-> Status: **MERGED / EVALUATION-ONLY**  
-> Documentation review: **2026-08-21**
+> Status: **ORACLE v1 HISTORICAL / ORACLE v2 COMPLETE / FROZEN / EVALUATION-ONLY**  
+> Documentation review: **2026-08-23**
 
-Oracle 是评测上限 / 错误归因旁路，永远不是 production runtime。
+Oracle 是评测上限 / 错误归因旁路，永远不是 Production runtime。
 
-```text
-current pass1
-+ explicit audit overrides
-→ EffectiveRiskGoldView
-→ expert_oracle_document_features_v1
-→ same Market X / same y / same split / same model family
-→ Oracle diagnostic
-```
+## 1. Two Oracle generations
 
-它不读取 PDF，不调用 Retriever、LLM、Agent、Verifier、Supervisor，也不调用 Production `v04_document_features_v1` builder。
+### Oracle v1 — immutable historical snapshot
 
-Oracle features 只包含结构化风险状态、置信度、Evidence count、Calculation availability 等受控字段；不包含 reasoning、Evidence text、公司文本、Gold page / Evidence ID、虚构 score 或上市后知识。
-
-## 1. Audit precedence
-
-Audit precedence 为 field-level：
-
-- current `pass1` 始终是 base；
-- 只有 self-contained、带 explicit `resolved_state` 的 audit entry 才覆盖对应 named risk；
-- stale audit 不能恢复历史 pass1；
-- artifact 保留 base hash、audit hash、applied risks 和 deterministic effective hash。
-
-## 2. Existing commands
-
-从仓库根目录运行。
-
-### Index
-
-```powershell
-python scripts/index_oracle_gold.py --output-dir reports/v04_pr_a/oracle_index
-```
-
-输出 Oracle inventory / provenance / failure artifacts，只读取 reviewed annotations。
-
-### Oracle X
-
-```powershell
-python scripts/build_oracle_document_features.py `
-  --all-eligible `
-  --output-dir reports/v04_pr_a/oracle_features `
-  --resume
-```
-
-每个 case 生成独立 feature artifact 和 failure report；`resume` 只允许复用完全一致的 content / provenance。发生 provenance conflict 时 fail closed，不覆盖。
-
-## 3. Frozen PR-A result
-
-PR-A 已完成：
+PR-A 冻结的 Oracle v1：
 
 ```text
-Oracle inventory
-→ Oracle feature materialization
-→ Oracle coverage
-→ Production ∩ Oracle intersection
-→ deterministic rerun
+materialized        60
+current eligible    55
+Development         55
+Validation           0
 ```
 
-冻结结果为 Oracle materialized 60、`no_reviewed_gold` 378、Production ∩ Oracle 60。Oracle 不要求覆盖全部 438 cases；它只覆盖真正具有 reviewed expert Gold 的 eligible case。
+它保留历史审计意义，但不再作为 formal PR-E 当前 Oracle ceiling。
 
-PR-A 没有训练 Oracle model，且已经 COMPLETE / FROZEN。当前正式下一阶段是尚未启动的 PR-C；Oracle 真正进入建模比较要等待 PR-D / PR-E。
-
-## 4. Later modeling role
-
-PR-D / PR-E 才把 Oracle X 放入 canonical modeling comparison。
-
-正式比较冻结为：
+### Oracle v2 — current formal research ceiling
 
 ```text
-M   = Market-only
-P   = Production Document-only
-O   = Oracle Document-only
-PM  = Production Document + Market
-OM  = Oracle Document + Market
+Reviewed Expert Gold
++ valid audit overlays
+→ authoritative Production identity reconciliation
+→ expert_oracle_document_features_v2
+→ frozen Oracle v2 features
 ```
 
-比较必须固定：
+Frozen result：
 
 ```text
-same cohort
-same chronological split
-same target
-same preprocessing
-same model family
+annotation inventory       101
+valid annotations          100
+materialized                98
+strict usable               96
+Development usable          77
+Validation usable           19
+feature count              142
+identity unresolved          0
+evaluation_only            true
+production_consumable      false
+2025 Blind y accessed      false
 ```
 
-目标不是让 Oracle 替代 Production，而是分解：
+## 2. Isolation rules
+
+Oracle v2：
+
+- 不读取 PDF；
+- 不调用 Production Retriever / Agents / Verifier / Supervisor；
+- 不调用 Production `v04_document_features_v1` builder；
+- 不把 Gold page / Evidence ID / free-text manual answer 放进 Production X；
+- 不进入产品 runtime；
+- 不读取 2025 Blind y。
+
+Production identity 对 `case_id / document_id / stock code / cohort year / listing date / split` 具有最终权威；annotation metadata 不能重定义 official cohort。
+
+## 3. Audit precedence
+
+Oracle v2 以 current pass1 为 base，只在 audit overlay 的 source hash 与当前 annotation 匹配时应用对应风险修订。stale overlay 记录为 `stale_not_applied`，不能静默恢复旧 annotation。
+
+跨平台换行差异通过规范化处理，provenance 决策必须 deterministic。
+
+## 4. Frozen v2 anchors
 
 ```text
-Document signal ceiling     ≈ OM - M
-Production captured signal  ≈ PM - M
-Pipeline information gap    ≈ OM - PM
+schema_version        expert_oracle_document_features_v2
+policy_version        oracle_gold_policy_v2
+artifact set          e73dd7f478fd4c421f6794cfa0c7808403cfb5d57dd0678eae1146aaeeff09d6
+strict usable set     486a0c7d3977deacb5e3247e184064e96a684dbfdf8ef951b9df6cd32ce4da0f
+feature manifest      99eeb0366a50b11b94f6e92820b6f1ef8535d5979ca6266d2af4f78618b40c11
+freeze manifest       ddb175f48b7e8134c90c674e44d6173337dc2ea10e9eece103f70ae902e80294
 ```
 
-这取代旧文档中的“Oracle vs pipeline V1 / V2 / V2+LLM”表述；Retriever 版本比较属于未来 v0.5 研究，不是当前 v0.4 Oracle 主任务。
+完整冻结事实见：
 
-## 5. Blind protection
+- `docs/V04_ORACLE_REFRESH_GOVERNANCE.md`
+- `docs/V04_ORACLE_V2_COMPLETION_REPORT.md`
+- `reports/frozen/v04_oracle_v2_manifest.json`
 
-2025 blind policy 对 Oracle 同样有效：
+## 5. PR-E integration
 
-- 可以准备 governed Oracle / Production X（若 cohort policy 允许）；
-- feature / target / model policy 冻结前不读取 2025 y；
-- 不用 2025 选择 Oracle feature、阈值或模型；
-- 一旦 2025 outcome 被打开，不能再把同一结果称为 future blind。
+formal PR-E 不直接把 98 个 Oracle features 当作和 full Production 一样的 cohort。它先与 frozen PR-D Production matrices 对齐成严格公平 intersection：
 
-## 6. Decision value
+```text
+96 strict usable
+77 Development
+19 Validation
+```
 
-PR-E 通过 Oracle diagnostic 决定 v0.5 优化方向：
+然后在相同 case set / split / target / preprocessing / model family 上比较：
+
+```text
+M   Market only
+P   Production Document only
+O   Oracle Document only
+PM  Market + Production
+OM  Market + Oracle
+```
+
+## 6. Diagnostic meaning
+
+```text
+Production Increment     = PM - M
+Document Signal Ceiling  = OM - M
+Pipeline Gap              = OM - PM
+```
+
+解释：
 
 ```text
 OM ≈ M
-→ 招股书风险信号本身可能较弱，先检查 target / sample / market regime
+→ 招股书风险信号在当前 target / sample 下可能较弱；优先检查 target、sample、regime 和 statistical power。
 
-OM >> M and PM ≈ M
-→ Document signal 存在，但 Production Pipeline 丢失信息
-→ v0.5 优先 Retriever / LLM / Agent / Verifier
+OM >> M 且 PM ≈ M
+→ 文档信号存在，但 Production Document Pipeline 丢失信息；未来才有理由重启 Retriever / LLM / Agent / Verifier 研究。
 
-PM > M and PM ≈ OM
-→ Production 已捕获大部分可提取文档信号
-→ 重点转向 model / Market Agent / productization
+PM > M 且 PM ≈ OM
+→ Production 已捕获大部分可提取文档信号；优先推进 model / explainability / productization。
 ```
 
-Oracle 的价值是**研究诊断**，不是产品捷径。
+小样本 non-significance 不能被解释成“没有信号”。Oracle 2024 Validation 只有 19 个 usable case，formal report 必须保留 uncertainty / power caveat。
+
+## 7. Time governance
+
+```text
+2020–2023  Development
+2024       Validation
+2025       Blind Test
+```
+
+Development 使用 time-aware evaluation；2024 不参与 feature / model / threshold tuning；2025 y 正式开放前禁止读取。
+
+## 8. Annotation quantity policy
+
+100-case Expert Annotation 目标已实质达到。当前不自动扩到 150 / 200。未来是否扩样由 PR-E power / uncertainty 结果或比赛正式指标决定，而不是因为“样本越多越好”无边界扩张。
