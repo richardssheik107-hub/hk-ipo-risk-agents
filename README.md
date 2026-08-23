@@ -14,8 +14,8 @@ Retriever V3 research                      = MERGED / FROZEN
 Oracle Document Modeling                   = MERGED / EVALUATION-ONLY
 PR-A Document + Oracle Materialization      = COMPLETE / FROZEN
 PR-B Market-X Core                          = COMPLETE / FROZEN
-PR-C 5D Outcome Policy Freeze               = ACTIVE / FORMAL RUN PENDING / NOT FROZEN
-PR-D Canonical Dataset                      = ENGINEERING PREP MERGED / BLOCKED BY PR-C
+PR-C 5D Outcome Policy Freeze               = COMPLETE / FROZEN
+PR-D Canonical Dataset                      = READY / FORMAL MATERIALIZATION NEXT
 v0.4 End-to-End Closed Loop                = ACTIVE
 Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```
@@ -27,8 +27,8 @@ Competition Hardening                      = PLANNED AFTER PR-H BASELINE E2E
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING
-→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY PR-C
+→ PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
+→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
@@ -42,7 +42,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 
 ## Current Data Readiness
 
-以 2026-08-22 当前 mainline readiness 为准：
+以 2026-08-23 当前 readiness 为准：
 
 - 官方 2020–2024 IPO universe：438 cases；
 - local prospectus：438 / 438；
@@ -62,7 +62,7 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 - authoritative industry benchmark mapping/history：missing；
 - total-market turnover：missing；
 - 2025 blind outcome access：NO；
-- full model-ready gate：仍 blocked，等待正式 PR-C freeze 与 PR-D canonical materialization。
+- full model-ready gate：PR-C 已解除前置阻塞，等待 PR-D canonical materialization 独立通过。
 
 详细真实 readiness 见 [`docs/ROADMAP.md`](docs/ROADMAP.md) 与 [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)。
 
@@ -278,8 +278,8 @@ python -m streamlit run app/streamlit_app.py
 - Market Foundation: governed metadata/OHLCV/label contracts available
 - Market-X Core: prior-IPO PIT context manifest/vectorization + PR-B orchestration COMPLETE / FROZEN
 - Market-X Extended: frozen 20-position contract available; real HSI/industry/turnover sources still missing
-- PR-C Outcome: implementation/policy/audit ready; governed formal materialization pending
-- PR-D Canonical Dataset: engineering prep merged; formal materialization blocked by C
+- PR-C Outcome: governed materialization complete / frozen
+- PR-D Canonical Dataset: engineering prep merged; formal materialization ready / next
 - Predictor: rule-based compatibility path; v0.4 statistical model formal freeze pending
 - Oracle Document path: evaluation-only; frozen PR-A inventory available, refreshed audit pending
 - Streamlit: current Document product path available; full v0.4 E2E pending

@@ -1,11 +1,12 @@
 # HK IPO Risk Agents — Current Architecture
 
-> Status snapshot: **2026-08-22**
+> Status snapshot: **2026-08-23**
 > Stable document baseline: **v0.3.0 RELEASED / FROZEN**  
 > PR-A Document materialization: **COMPLETE / FROZEN**
 > Active program: **v0.4 End-to-End Closed Loop**  
 > PR-B Market-X Core: **COMPLETE / FROZEN ON MAIN**
-> Current formal milestone: **PR-C — ACTIVE / GOVERNED MATERIALIZATION PENDING / NOT FROZEN**
+> PR-C 5D Outcome Policy: **COMPLETE / FROZEN**
+> Current formal milestone: **PR-D — READY / FORMAL MATERIALIZATION NEXT**
 > Post-baseline program: **Competition Hardening after PR-H**
 
 本文件描述当前有效架构与仍有约束力的边界。历史 v0.2/v0.3 设计过程和已完成的一次性实验通过 Git history/release 追溯。
@@ -337,8 +338,8 @@ PR-D 必须显式 version Core / optional Extended feature groups，不能静默
 
 ```text
 PR-B Market-X Core                 COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze    ACTIVE / FORMAL RUN PENDING
-→ PR-D Canonical Model-ready Dataset
+→ PR-C 5D Outcome Policy Freeze    COMPLETE / FROZEN
+→ PR-D Canonical Model-ready Dataset  ACTIVE / FORMAL MATERIALIZATION NEXT
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 ```
@@ -446,9 +447,9 @@ PR-B 438-case Market-X Core + governed EOD materialization
 Current formal state：
 
 ```text
-PR-C implementation / policy / A static audit / 424-14 correction complete
-PR-C governed full materialization pending / NOT FROZEN
-PR-D engineering preparation merged / formal materialization blocked by C
+PR-C governed full materialization / determinism / A final sign-off complete
+PR-C COMPLETE / FROZEN
+PR-D engineering preparation merged / formal materialization ready / next
 PR-E/F preparation only
 PR-G/H preparation only
 Competition Hardening planned after PR-H baseline E2E

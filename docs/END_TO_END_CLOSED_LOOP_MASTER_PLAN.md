@@ -1,12 +1,12 @@
 # HK IPO Risk Agents 后续闭环总计划
 
-> Status snapshot: **2026-08-22**
+> Status snapshot: **2026-08-23**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Active target: **v0.4-MVP → Baseline E2E Freeze → Competition Submission Freeze**  
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
-> Current formal milestone: **PR-C — implementation / A static audit / 424-14 correction complete; governed materialization pending; NOT FROZEN**
-> PR-D: **ENGINEERING PREPARATION MERGED / FORMAL MATERIALIZATION BLOCKED BY PR-C**
+> PR-C: **COMPLETE / FROZEN**
+> Current formal milestone: **PR-D — READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
 > 核心原则：先完成可重建、可解释、可审计的完整闭环；baseline E2E 跑通后再逐项补齐赛题专项能力和技术指标；广泛 Retriever / LLM / Agent 优化仍由实证瓶颈决定。
 
 ---
@@ -22,8 +22,8 @@
 - v0.4 End-to-End Closed Loop：**ACTIVE**；
 - PR-A：**COMPLETE / FROZEN**；
 - PR-B：**COMPLETE / FROZEN ON MAIN**；
-- PR-C：**ACTIVE / governed formal materialization pending / NOT FROZEN**；
-- PR-D：**engineering preparation merged / blocked by formal PR-C freeze**；
+- PR-C：**COMPLETE / FROZEN**；
+- PR-D：**engineering preparation merged / formal materialization ready / next**；
 - Competition Hardening：**PLANNED AFTER PR-H BASELINE E2E**。
 
 当前不再把 Retriever 指标提升、LLM Reranker、Fine-tuning 或 Prompt 优化作为 baseline E2E 的前置条件。
@@ -49,9 +49,9 @@
 - HSI history：MISSING — Extended；
 - authoritative industry benchmark mapping / history：MISSING — Extended；
 - total-market turnover：MISSING — Extended；
-- `MODEL_READY_DATA_GATE`：BLOCKED BY FORMAL PR-C FREEZE / PR-D MATERIALIZATION。
+- `MODEL_READY_DATA_GATE`：等待 PR-D formal materialization；PR-C 前置 Gate 已解除。
 
-PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建的冻结数据资产。当前核心阻塞是 PR-C governed full materialization，不是底层 Parser / Retriever / Agent 架构。
+PR-A 已把 Document pipeline 转成冻结数据资产；PR-B 已把 Market-X Core 转成 438-case、PIT-safe、可重建的冻结数据资产；PR-C 已冻结 424 available / 14 unavailable 的 5D target。当前正式任务是 PR-D canonical materialization。
 
 ### 0.2 近期严格主线
 
@@ -60,9 +60,9 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
   ↓
 PR-B  Market-X Core + Governed EOD Store             COMPLETE / FROZEN
   ↓
-PR-C  5D Outcome Policy Freeze                       ACTIVE / FORMAL RUN PENDING
+PR-C  5D Outcome Policy Freeze                       COMPLETE / FROZEN
   ↓
-PR-D  Canonical Model-ready Dataset                  PREP MERGED / BLOCKED BY C
+PR-D  Canonical Model-ready Dataset                  ACTIVE / FORMAL MATERIALIZATION NEXT
   ↓
 PR-E  Baseline + Oracle Diagnostic
   ↓
@@ -405,7 +405,7 @@ Classification threshold 只能由 2020–2023 Development 决定。
 
 必须冻结 trading session、D1/D5 mapping、suspension/no-trade、missing price、benchmark、abnormal return、threshold、exclusion policy 和 target hash。
 
-当前状态：**implementation + policy/schema + A static audit + 424/14 correction complete; formal governed materialization pending**。
+当前状态：**COMPLETE / FROZEN**。真实 governed materialization、Development-only q25、438 targets、determinism、freeze validator 与 A final sign-off 均已通过。
 
 正式 Gate：
 
@@ -744,6 +744,6 @@ Fine-tuning 仍不是默认主线；只有积累稳定的 `candidate → expert 
 
 # 当前执行口令
 
-从 2026-08-22 起，仓库唯一近期执行口令是：
+从 2026-08-23 起，仓库唯一近期执行口令是：
 
-> **PR-A / PR-B 已完成并冻结；PR-C implementation / policy / A static audit / 424-14 correction 已完成，但 formal governed materialization 尚未完成。当前先把 PR-C → PR-H baseline E2E 严格按 Gate 跑通；PR-H 后再按 Competition Hardening CH-0..CH-6 一次性补齐赛题全部要求。当前不因为赛题专项功能提前打断 PR-C Gate，也不读取 2025 y。**
+> **PR-A / PR-B / PR-C 已完成并冻结；当前从 PR-D formal materialization 继续严格跑通至 PR-H baseline E2E。PR-H 后再按 Competition Hardening CH-0..CH-6 补齐赛题全部要求。当前不因为赛题专项功能打断 PR-D Gate，也不读取 2025 y。**

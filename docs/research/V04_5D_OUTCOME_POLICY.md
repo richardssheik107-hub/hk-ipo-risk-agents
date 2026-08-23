@@ -1,8 +1,10 @@
 # V04 PR-C — 5D Outcome Policy
 
-> Status: **IMPLEMENTED / AWAITING GOVERNED FULL MATERIALIZATION AND FREEZE**  
+> Status: **COMPLETE / FROZEN**
 > Owner: **D — Quant / ML Research**  
 > Review: **A — schema / provenance / reproducibility / Blind Gate**
+
+Formal freeze evidence: [`../V04_PR_C_COMPLETION_REPORT.md`](../V04_PR_C_COMPLETION_REPORT.md) and [`../../reports/frozen/v04_pr_c_5d_outcome_manifest.json`](../../reports/frozen/v04_pr_c_5d_outcome_manifest.json).
 
 ## 1. Scope
 
@@ -149,22 +151,23 @@ semantic JSON and rejects provenance/content conflicts.
 
 ## 8. PASS Gate
 
-PR-C is not frozen merely because code/tests exist. The formal Gate requires a
+PR-C is not frozen merely because code/tests exist. The formal Gate required a
 real governed full run and review confirming:
 
 ```text
-[ ] all 438 official cases appear in coverage
-[ ] expected available/unavailable counts reconcile to the governed EOD audit
-[ ] every unavailable case has an explicit reason
-[ ] failure count and failure stages are explicit; no silent drop
-[ ] threshold fit used Development only
-[ ] Validation did not change the threshold
-[ ] abnormal return remained unavailable without a governed benchmark
-[ ] 2025 Blind y was not accessed
-[ ] deterministic rebuild passed with zero mismatches
-[ ] targeted and full pytest passed
-[ ] small freeze manifest and completion report reviewed
+[x] all 438 official cases appear in coverage
+[x] expected available/unavailable counts reconcile to the governed EOD audit
+[x] every unavailable case has an explicit reason
+[x] failure count and failure stages are explicit; no silent drop
+[x] threshold fit used Development only
+[x] Validation did not change the threshold
+[x] abnormal return remained unavailable without a governed benchmark
+[x] 2025 Blind y was not accessed
+[x] deterministic rebuild passed with zero mismatches
+[x] targeted and full pytest passed
+[x] small freeze manifest and completion report reviewed
 ```
 
-Only after this Gate may the repository mark PR-C complete and start the formal
-PR-D canonical modeling dataset.
+This Gate was satisfied on 2026-08-23. PR-C is therefore COMPLETE / FROZEN and
+formal PR-D canonical dataset materialization is unblocked, but PR-D is not yet
+complete.

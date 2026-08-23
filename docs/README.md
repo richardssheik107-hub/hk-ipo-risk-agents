@@ -1,10 +1,10 @@
 # Documentation Index
 
-> Status snapshot: **2026-08-22**
+> Status snapshot: **2026-08-23**
 > PR-A: **COMPLETE / FROZEN**
 > PR-B: **COMPLETE / FROZEN ON MAIN**
-> PR-C: **FORMAL EXECUTION ACTIVE — A STATIC AUDIT COMPLETE / GOVERNED MATERIALIZATION PENDING / NOT FROZEN**
-> PR-D: **ENGINEERING PREPARATION MERGED — FORMAL MATERIALIZATION BLOCKED BY PR-C**
+> PR-C: **COMPLETE / FROZEN**
+> PR-D: **READY — FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
 > Competition track: **PLANNED AFTER PR-H BASELINE E2E — full scope frozen in `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`**
 > Latest A integration handoff: [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md)
 
@@ -34,8 +34,8 @@ Prospectus PDF
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING / NOT FROZEN
-→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY PR-C
+→ PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
+→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
@@ -63,7 +63,8 @@ PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 10. [`V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md`](V04_ROLE_A_INTEGRATION_GATE_HANDOFF.md) — PR-D integration Gate、Oracle identity 决策和 PR-G contract review；
 11. [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md) — PR-B 冻结实测结果；
 12. [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md) — PR-B frozen acceptance contract / reproducibility reference；
-13. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
+13. [`V04_PR_C_COMPLETION_REPORT.md`](V04_PR_C_COMPLETION_REPORT.md) — PR-C governed 438-case outcome materialization、threshold、determinism 与 freeze sign-off；
+14. [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md) — PR-A 冻结结果。
 
 开发规则另见根目录 [`AGENTS.md`](../AGENTS.md)。`V04_ROLE_A_CROSS_TEAM_PREP.md` 与 `V04_ROLE_A_CODEX_HANDOFF.md` 仅保留为历史审计记录，不再作为当前执行入口。
 
@@ -221,22 +222,22 @@ Oracle is evaluation-only. It cannot enter Production runtime, cannot leak Gold 
 
 ## 8. Current stop condition
 
-PR-C 已经完成 implementation、policy/schema、A static audit 与 424/14 Gate correction，但正式 Gate 仍停在 governed materialization：
+PR-C 已完成 governed materialization、deterministic resume、freeze validator 与 A final sign-off：
 
 ```text
 PR-A  COMPLETE / FROZEN
 → PR-B COMPLETE / FROZEN ON MAIN
-→ PR-C ACTIVE
-     A static audit PASS
-     Gate expectation 424 / 14 corrected
-     governed full materialization PENDING
-     formal freeze NOT PASSED
-→ STOP before formal PR-D materialization
+→ PR-C COMPLETE / FROZEN
+     438 coverage
+     424 available / 14 unavailable
+     Development q25 = -0.1000
+     438 determinism / 0 mismatch
+→ PR-D ACTIVE / FORMAL MATERIALIZATION NEXT
 ```
 
-PR-C 必须在受治理数据机上生成真实 Development-only q25 threshold、438 target artifacts、424 available / 14 unavailable、438 determinism checks / 0 mismatch 和 small freeze manifest。完成后由 A 做 final sign-off。
+PR-C 的真实 Development-only q25、438 target artifacts、424/14 coverage、438/0 determinism 与 small freeze manifest 已完成并冻结，详见 `V04_PR_C_COMPLETION_REPORT.md`。
 
-PR-D 的 canonical builder 已合入主线作为 engineering preparation；其正式 Gate 只接受新的 PR-C outcome contract：424 model-ready、14 explicit exclusions、354 Development、70 Validation。未获得 PR-C freeze manifest 前不得宣称 PR-D COMPLETE。
+PR-D 的 canonical builder 已合入主线作为 engineering preparation；其正式 Gate 现在必须消费 frozen PR-C contract：424 model-ready、14 explicit exclusions、354 Development、70 Validation。PR-D 仍未完成，必须独立 materialize 和验收。
 
 ## 9. Post-baseline Competition Hardening
 

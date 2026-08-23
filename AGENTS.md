@@ -191,11 +191,11 @@ pytest -q
 
 ## 15. 当前优先级
 
-CL-1、PR-A 与 PR-B 均已完成并冻结。下一正式里程碑是：
+CL-1、PR-A、PR-B 与 PR-C 均已完成并冻结。下一正式里程碑是：
 
-> **PR-C — 5D Outcome Policy Freeze / NEXT / NOT STARTED**
+> **PR-D — Canonical Model-ready Dataset / READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE**
 
-PR-B 已完成 438-case materialization、PIT、missingness、resume 与 determinism Gate，并冻结在 `docs/V04_PR_B_COMPLETION_REPORT.md`。不要重新执行或重新设计 PR-B，也不要在没有独立任务授权时启动 PR-C。
+PR-C 已完成 governed 438-case coverage、Development-only q25 threshold、resume、determinism 与 Blind Gate，并冻结在 `docs/V04_PR_C_COMPLETION_REPORT.md` 和 `reports/frozen/v04_pr_c_5d_outcome_manifest.json`。不要重新执行或重新设计 PR-C，也不要在没有独立任务授权时启动 PR-D。
 
 ### 15.1 PR-B Market-X Core — COMPLETE / FROZEN
 
@@ -258,7 +258,8 @@ HKEX total-market turnover
 ```text
 PR-A  COMPLETE / FROZEN
 PR-B  COMPLETE / FROZEN
-PR-C  NEXT / NOT STARTED
+PR-C  COMPLETE / FROZEN
+PR-D  READY / FORMAL MATERIALIZATION NEXT / NOT COMPLETE
 ```
 
 PR-B 的 targeted tests、full pytest、5-case pilot、438-case materialization 与 deterministic resume 均已完成。冻结证据：
@@ -268,7 +269,7 @@ docs/V04_PR_B_COMPLETION_REPORT.md
 reports/frozen/v04_pr_b_market_x_core_manifest.json
 ```
 
-当前不得自行选择 5D threshold、读取 2025 y、物化 PR-C label 或训练模型。PR-C 必须由独立任务与冻结 policy 正式启动。
+当前不得重新选择 5D threshold、读取 2025 y、训练模型或启动 PR-E。PR-D 必须由独立任务消费冻结的 PR-C contract，完成 canonical model-ready dataset 的正式 materialization 与验收。
 
 后续正式 Gate / merge 顺序仍为：
 

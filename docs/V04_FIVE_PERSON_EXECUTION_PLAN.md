@@ -1,7 +1,7 @@
 # v0.4 五人执行计划
 
-> Status: **ACTIVE — PR-A/PR-B COMPLETE / FROZEN; PR-C ACTIVE / GOVERNED MATERIALIZATION PENDING; PR-D PREP MERGED**
-> Date: **2026-08-22**
+> Status: **ACTIVE — PR-A/PR-B/PR-C COMPLETE / FROZEN; PR-D FORMAL MATERIALIZATION NEXT**
+> Date: **2026-08-23**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
 > Governance: **正式 milestone / Gate / mainline merge 严格顺序推进；准备性工作允许并行。**
 
@@ -48,8 +48,8 @@ Competition Scope Lock
 ```text
 PR-A  Document + Oracle Materialization & Coverage   COMPLETE / FROZEN
 → PR-B Market-X Core + Governed EOD Store            COMPLETE / FROZEN
-→ PR-C 5D Outcome Policy Freeze                      ACTIVE / FORMAL RUN PENDING
-→ PR-D Canonical Model-ready Dataset                 PREP MERGED / BLOCKED BY C
+→ PR-C 5D Outcome Policy Freeze                      COMPLETE / FROZEN
+→ PR-D Canonical Model-ready Dataset                 ACTIVE / FORMAL MATERIALIZATION NEXT
 → PR-E Baseline + Oracle Diagnostic
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
@@ -165,7 +165,7 @@ PR-B Owner 任务已完成并冻结在 `main`。当前支持 PR-C governed mater
 - SHAP / calibration / ablation / error analysis；
 - 最终研究结论。
 
-PR-C policy / implementation 已具备；当前正式任务是完成 governed full materialization、Development-only q25、438 targets、determinism 和 freeze manifest。正式 PR-E 还必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
+PR-C governed full materialization、Development-only q25、438 targets、determinism、freeze manifest 与 A final sign-off 已完成。当前正式任务是 PR-D canonical materialization；正式 PR-E 仍必须采用 time-aware evaluation protocol，而不是随机时间混合 CV。
 
 ---
 
@@ -285,7 +285,7 @@ PR-B 已 PASS 并完成 mainline publication；当前正式 Gate 已推进到 PR
 
 ---
 
-# 5. PR-C：5D Outcome Policy Freeze — ACTIVE / FORMAL MATERIALIZATION PENDING
+# 5. PR-C：5D Outcome Policy Freeze — COMPLETE / FROZEN
 
 ## Owner
 
@@ -334,7 +334,7 @@ small freeze manifest
 A final sign-off
 ```
 
-PR-C PASS 后才正式进入 PR-D materialization。
+PR-C 已 PASS；PR-D formal materialization 现已解除前置阻塞并成为下一正式 Gate。
 
 ---
 
@@ -497,13 +497,13 @@ PR-H 的含义是先获得稳定 **baseline E2E**。赛题专项增强在其后�
 
 正式 Gate 严格串行不等于五个人必须空等。
 
-当前状态：PR-A / PR-B frozen；PR-C active / governed materialization pending；PR-D engineering prep merged。当前允许的并行准备包括：
+当前状态：PR-A / PR-B / PR-C frozen；PR-D formal materialization next。当前允许的并行准备包括：
 
 ```text
-A  PR-C final Gate readiness + PR-D / downstream integration preparation
+A  PR-D integration Gate + downstream provenance/reproducibility review
 B  Document explanation / downstream interface QA
-C  governed PR-C EOD/source support + Extended authoritative-source research
-D  PR-C governed run preparation + PR-E/F method preparation（不越过正式 Gate）
+C  PR-D governed source support + Extended authoritative-source research
+D  PR-D formal materialization + PR-E/F method preparation（不越过正式 Gate）
 E  Oracle re-audit preparation + Final Supervisor / UI skeleton reconciliation
 ```
 
@@ -564,7 +564,7 @@ E  Oracle re-audit preparation + Final Supervisor / UI skeleton reconciliation
 [x] PR #80 / #81 mainline publication and documentation closure
 ```
 
-## Gate PR-C — ACTIVE / BLOCKED BY GOVERNED RUN
+## Gate PR-C — COMPLETE / FROZEN
 
 必须得到：
 
