@@ -1,358 +1,266 @@
 # V04 Data Readiness — Current Reference Snapshot
 
-> Last real audit snapshot: **2026-08-23 PR-C governed 438-case materialization + determinism**
-> Documentation review: **2026-08-23**
-> Status: **PR-A / PR-B / PR-C / PR-D / PR-E COMPLETE / FROZEN; PR-F FORMAL RUN NEXT**
+> Audit snapshot: **2026-08-23**  
+> Status: **PR-A / PR-B / PR-C / PR-D / PR-E COMPLETE / FROZEN; Oracle v2 COMPLETE / FROZEN; PR-F CURRENT**
 
-本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
+本文件只记录已经通过真实 materialization / audit 支持的数据事实。计划、分支或代码存在本身不能修改 measured readiness。
 
-PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 materialization source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证，并已通过 PR #80 / #81 完成 mainline publication 与文档状态收口。
+## 1. Official modeling universe
 
-PR-C 已在 source revision `a1e32a97bc4ffa87aec3560598265e0536b4e07d` 完成 governed full materialization：438 个 official cases 全部进入 coverage，424 available、14 unavailable（12 `missing_base_price`、2 `no_eligible_session`），Development available 354、Validation available 70；Development-only q25 threshold 为 `-0.1000`，determinism 为 438 checked / 0 mismatches，且未访问 2025 Blind y。冻结证据见 `docs/V04_PR_C_COMPLETION_REPORT.md` 与 `reports/frozen/v04_pr_c_5d_outcome_manifest.json`。
-
-PR-D 已完成正式 canonical materialization：438 upstream → 424 model-ready +
-14 explicit exclusions → 354 Development + 70 Validation；same-provenance
-resume、input binding 与 freeze manifest 均通过。冻结证据见
-`docs/V04_PR_D_COMPLETION_REPORT.md` 与
-`reports/frozen/v04_pr_d_canonical_dataset_manifest.json`。
-
-PR-E 已完成 formal baseline + Oracle v2 diagnostic：Full Production 354
-Development / 70 Validation、Oracle v2 intersection 77 / 19、48 个模型结果，
-且 `blind_2025_y_accessed=false`。冻结证据见
-`docs/V04_PR_E_COMPLETION_REPORT.md` 与
-`reports/frozen/v04_pr_e_baseline_manifest.json`。
-
-Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
-
-## 1. Official 2020–2024 modeling universe
-
-已确认 official listing-year universe 为 **438 cases**：
-
-- 2020：125
-- 2021：97
-- 2022：78
-- 2023：68
-- 2024：70
-
-该 438-case universe 基于 authoritative official IPO metadata / listing year，不等于旧 565-document corpus 的 `source_year` 分组。
-
-## 2. Official IPO metadata
-
-`HK_Official_Merged_565_First_with_IPO.xlsx` 是 IPO identity、listing date、issue price、board、listing method、industry name 等 supplemental authoritative source。
-
-`data/catalog/ipo_official_master_bridge.csv` 连接赛事文档与官方 IPO 主数据，并保留受控 provenance / checksum。
-
-Security type 当前不是 eligibility gate：
+Official 2020–2024 listing-year universe：**438 cases**。
 
 ```text
-authoritative official IPO universe member -> eligible
-security_type                                -> descriptive metadata
+2020  125
+2021   97
+2022   78
+2023   68
+2024   70
 ```
 
-未知 security type 不自动转成 ordinary equity，也不使 official case 失去 eligibility。
+该 universe 以 authoritative official listing identity 为准，不使用旧 document corpus `source_year` 定义 modeling cohort。
 
-## 3. Quarantined Security Master
-
-现有 `hksharedescription.csv` 只覆盖较早历史记录，对 2020–2024 target universe 的多种 join route 均为 0 / 438。
-
-因此它继续处于隔离 / descriptive-only 状态：
-
-- 不决定 v0.4 eligibility；
-- 不用于猜 listing date；
-- 不用于猜 issue price；
-- 不用于把 unknown security type 强行分类。
-
-## 4. Governed IPO OHLCV — measured foundation
-
-`CompetitionCSVMarketDataProvider` 已能从受控 bridge + 本地 `hkshareeodprices.csv` 读取 official target securities，并保留 source/version/checksum provenance。
-
-最近一次真实市场数据审计：
-
-- target IPOs：438；
-- eligible：438；
-- matched：432；
-- missing：6；
-- duplicate stock/date rows：0；
-- conventionally invalid OHLCV rows：8,590；
-- valid date coverage：2020-01-02 至 2026-05-22；
-- valid 1D / 5D / 20D / 60D session coverage：432 cases。
-
-6 个 outcome unavailable case：
+## 2. Production Document readiness — COMPLETE / FROZEN
 
 ```text
-ipo_2020_01248
-ipo_2020_06688
-ipo_2020_06813
-ipo_2021_01491
-ipo_2022_06678
-ipo_2022_07841
+Official cases                 438
+Production analyses            438 / 438
+Authoritative snapshots        438 / 438
+Production Document-X          438 / 438
+Feature schema                 v04_document_features_v1
+Feature dimension              100
+Production failures            0
+Silent drops                   0
+A6 determinism                 438 checked / 0 mismatch / PASS
+2025 Blind access              NO
 ```
 
-它们是 eligible but outcome unavailable，不得改写成 security-ineligible。
-
-### 4.1 PR-B governed EOD builder — frozen measured result
-
-`main` 上冻结的 `scripts/build_v04_ipo_eod_store.py` 使用：
-
-```text
-official_match_status == matched
-AND official_listed_date.year in 2020–2024
-```
-
-不再使用 document `source_year` 选择 modeling cohort。
-
-过滤产物保留 `OBJECT_ID` source-record provenance；`S_DQ_AMOUNT` 明确保留为 per-security 原始列，不能解释为 HKEX total-market turnover。
-
-冻结 governed EOD 结果：
-
-```text
-target cases                  438
-row count                     433776
-distinct target securities    432
-provider OHLCV matched         432
-provider OHLCV missing         6
-raw EOD SHA256                 190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
-official bridge SHA256         751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198
-```
-
-## 5. Market-X Core vs Extended readiness
-
-### 5.1 Market-X Core — COMPLETE / FROZEN
-
-Current Core contract：
-
-```text
-v04_ipo_market_context_features_v1
-ipo_market_context_policy_v1
-15 raw prior-IPO context features
-+ 15 adjacent missing indicators
-= 30 positions
-```
-
-Core 可使用当前已受治理/可严格 PIT 的输入：
-
-- authoritative IPO metadata；
-- 432 / 438 governed IPO EOD histories；
-- prior-IPO point-in-time context；
-- prior IPO offer/funds-raised facts；
-- prior IPO 1D/5D outcomes only when their target session occurred strictly before the target listing date。
-
-Measured freeze result：
-
-```text
-materialization source revision  dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7
-official coverage                438 / 438
-Core materialized                438 / 438
-failed / silent drops            0 / 0
-PIT failures                     0
-Development / Validation         368 / 70
-feature manifest hash            c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d
-coverage hash                    768b027676453d02d0cb5db8599acffbc2d58d7f5dc6e373bd9f4ddb305c974e
-determinism                      438 checked / 0 mismatches / PASS
-full pytest                      1303 passed / 0 failed / 2 warnings
-2025 blind y accessed            NO
-```
-
-### 5.2 Market-X Extended — source gaps remain
-
-Available / partially usable：
-
-- authoritative IPO metadata；
-- governed IPO EOD；
-- prior-IPO context foundation。
-
-Still missing：
-
-- governed HSI daily close history：`HSI_SOURCE_REQUIRED`；
-- authoritative industry-to-index mapping：`INDUSTRY_INDEX_MAPPING_REQUIRED`；
-- governed industry-index history：`INDUSTRY_INDEX_SOURCE_REQUIRED`；
-- governed HKEX total-market turnover：`MARKET_TURNOVER_SOURCE_REQUIRED`。
-
-注意：
-
-- Hang Seng Bank ≠ Hang Seng Index；
-- workbook industry name ≠ authoritative industry benchmark mapping；
-- 单只证券 `S_DQ_AMOUNT` ≠ HKEX total-market turnover；
-- 不得创建 fake benchmark row 只为让 Extended engine 产生 observation date；
-- missing source 不得填 market-neutral zero。
-
-这些缺口不能用不等价代理静默替代，但它们本身不否定 PR-B Core 的可实现性，也不重开已经冻结的 PR-B。
-
-## 6. Production Document readiness — COMPLETE / FROZEN
-
-所有 438 target cases 均有本地 prospectus，并已完成正式 PR-A materialization。
-
-冻结 Production path：
-
-```text
-official case
-→ enhanced_v2 IPOAnalysisResult
-→ authoritative validation
-→ V03DocumentRiskSnapshot
-→ Production Document Feature Vector
-```
-
-`V04DocumentSnapshotMaterializer` 继续只接受 completed / partial `enhanced_v2` result，且要求：
-
-```text
-use_mock = false
-parser = real
-retriever = real
-financial_agent = real
-legal_agent = real
-business_agent = real
-cohort_year <= 2024
-```
-
-它拒绝 `mvp_v1`、Mock、未完成和 2025 blind result；不同 provenance / content 不允许静默覆盖。
-
-PR-A 冻结结果：
-
-```text
-official cases                 = 438
-Production analyses            = 438 / 438
-authoritative snapshots        = 438 / 438
-Production Document-X          = 438 / 438
-feature schema                 = v04_document_features_v1
-feature dimension              = 100
-Production failures            = 0
-silent drops                   = 0
-2025 blind access              = NO
-```
-
-Document materialization source revision：
+PR-A source revision：
 
 ```text
 13e0281f5e65a970caaf1255e56d08597e1ead70
 ```
 
-A6 对 438 个 case 完成 `--resume --verify-determinism`：
+Production artifact-set frozen hash：
 
 ```text
-checked_case_count             = 438
-passed                         = true
-mismatch_count                 = 0
-Production feature mismatch    = 0
-Oracle feature mismatch        = 0
-coverage_hash_ok               = true
+9197b0f4f90e6d43277586ac40160679d40f91e3b30223578d0853d9dc288bf3
 ```
 
-A3 first-run coverage hash：
+## 3. Governed IPO EOD foundation
+
+PR-B governed EOD store：
 
 ```text
-47a15689789640f7abdf465b124f64742d96d8f4cb2a86b0a9d92107bf82dc42
+rows                           433,776
+target securities matched      432 / 438
+missing EOD                       6
+raw EOD SHA256                  190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
+official bridge SHA256          751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198
 ```
 
-A6 canonical resumed-state coverage hash：
+EOD/session-ready coverage 与 target coverage 不能混用。某 case 即使存在 EOD，也可能因为缺官方 base price 而无法产生 5D target。
+
+## 4. Market-X Core — COMPLETE / FROZEN
+
+Frozen contract：
 
 ```text
-3b8201ea69f31804a7b99096d8392d3e32ca1bc60557dbf90e8050671eda2201
+schema   v04_ipo_market_context_features_v1
+policy   ipo_market_context_policy_v1
+15 raw + 15 missing indicators = 30 positions
 ```
 
-二者差异仅来自 resume 生命周期字段；snapshot / Production feature / Oracle feature 等实质 hash 均未漂移。
-
-## 7. Oracle readiness — v1 HISTORICAL / v2 REFRESH REQUIRED
-
-Oracle path：
+Measured result：
 
 ```text
-Reviewed Expert Gold
-→ EffectiveRiskGoldView
-→ Oracle Document Features
+Official coverage              438 / 438
+Core materialized              438 / 438
+Failures / silent drops        0 / 0
+PIT failures                   0
+Development / Validation       368 / 70
+Determinism                    438 checked / 0 mismatch / PASS
+2025 Blind y accessed          NO
 ```
 
-PR-A Oracle v1 历史冻结结果：
+Market-X Core 使用目标上市前已经可得的 prior-IPO context；目标 IPO 的上市后事实不能进入该目标的 X。
 
-- Oracle materialized：60；
-- `no_reviewed_gold`：378；
-- Production ∩ Oracle：60；
-- missing Gold 不解释为零风险或负样本；
-- Oracle 继续 `evaluation_only = true`；
-- Oracle 不进入 Production runtime；
-- Oracle 未读取 2025 blind y。
+## 5. Market-X Extended — source gaps remain
 
-Oracle v1 当前 outcome-eligible 交集为 55 Development / 0 Validation，不能
-作为正式 PR-E 的当前 ceiling。按 `V04_ORACLE_REFRESH_GOVERNANCE.md`，
-Oracle v2 在正式 PR-E 前必须独立物化、审计并冻结；当前约 100 buildable /
-91 strict-usable（74 Development / 17 Validation）仍是 readiness 估计，不是
-冻结数字。
-
-## 8. Current source manifest status
-
-`data/catalog/v04_source_manifest.json` 使用 `v04_source_manifest_v1`，记录逻辑 source ID、portable relative path、source version、checksum、coverage、availability 与 provenance。
-
-| Source | Required for | Status | Coverage / note |
-|---|---|---|---|
-| Official IPO metadata | identity / Core | AVAILABLE | 438 / 438 |
-| Official IPO universe | eligibility / Core | AVAILABLE | 438 / 438 eligible |
-| Security type | descriptive | OPTIONAL | unknown allowed |
-| IPO OHLCV | outcomes / prior-IPO Core context | AVAILABLE | 432 / 438 |
-| HSI closes | Extended Market X | MISSING | 0 / 438 |
-| Industry mapping | Extended Market X | MISSING | 0 / 438 mapped |
-| Industry-index closes | Extended Market X | MISSING | not available |
-| Total-market turnover | Extended Market X | MISSING | not available |
-| V03 authoritative snapshots | Production Document X | COMPLETE / FROZEN | 438 / 438 |
-| Production Document-X | modeling input | COMPLETE / FROZEN | 438 / 438, 100 dimensions |
-| Oracle Document-X | evaluation-only | v1 HISTORICAL / v2 REQUIRED | v1 60 materialized; v2 not frozen |
-
-Current Gate state：
+以下 source family 仍无受治理正式输入：
 
 ```text
-PR-A_DOCUMENT_MATERIALIZATION_GATE = COMPLETE / FROZEN
-PR-B_CORE_CODE_READINESS            = COMPLETE / FROZEN
-PR-B_CORE_REAL_MATERIALIZATION      = 438 / 438
-PR-B_GATE                           = PASS / COMPLETE / FROZEN ON MAIN
-PR-C_5D_OUTCOME_GATE                = PASS / COMPLETE / FROZEN
-MARKET_X_EXTENDED_SOURCES           = INCOMPLETE
-MODEL_READY_DATA_GATE               = PASS / PR-D COMPLETE / FROZEN
-PR_E_FORMAL_BASELINE                = READY / ORACLE V2 + RUNTIME MATRICES REQUIRED
+HSI daily history
+industry → benchmark authoritative mapping
+industry-index histories
+HK total-market turnover
 ```
 
-PR-A、PR-B、PR-C 与 PR-D 已不再是 readiness blocker。当前正式里程碑是
-PR-E；其 Production 输入已冻结，但正式 Oracle diagnostic 仍要求独立冻结的
-Oracle v2。Extended source families 仍是后续可增强的 source limitation。
+这些是 optional Extended limitations，不是 PR-B Core failure。
 
-## 9. PR-B frozen evidence
+禁止：
 
-Canonical records：
+- Hang Seng Bank 代替 HSI；
+- workbook industry name 直接冒充 authoritative benchmark mapping；
+- 单证券 `S_DQ_AMOUNT` 冒充 HK total-market turnover；
+- fake benchmark row；
+- missing source 填 neutral zero。
 
-- `docs/V04_PR_B_COMPLETION_REPORT.md`
-- `reports/frozen/v04_pr_b_market_x_core_manifest.json`
-- `docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`
-
-这些记录用于复现/审计已经冻结的 PR-B，不再构成待执行任务。
-
-## 10. External data still required for Market-X Extended
-
-Full Extended reference-market enrichment still requires：
-
-1. HSI history：date、close、stable index ID、source、version；
-2. authoritative industry benchmark mapping：IPO industry → benchmark ID + effective dates + provenance；
-3. industry-index history：benchmark ID、date、close、source、version；
-4. HKEX total-market turnover：date、value、unit、market scope、source、version。
-
-These are not reasons to fabricate inputs or to reopen PR-A / PR-B. If/when supplied, they enter the existing versioned Extended contract with provenance/tests.
-
-Formal milestone / Gate / mainline merge order remains：
+## 6. PR-C 5D Outcome — COMPLETE / FROZEN
 
 ```text
-PR-A  COMPLETE / FROZEN
-→ PR-B COMPLETE / FROZEN ON MAIN
-→ PR-C 5D Outcome Policy Freeze / COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset / COMPLETE / FROZEN
-→ PR-E Baseline + Oracle Diagnostic / FORMAL NEXT
-→ PR-F LightGBM + Explainability
-→ PR-G Market Agent + Final Supervisor
-→ PR-H Streamlit Full E2E
+Official coverage              438
+Outcome available              424
+Outcome unavailable             14
+Development available          354 / 368
+Validation available            70 / 70
+missing_base_price              12
+no_eligible_session              2
+Development q25 threshold      -0.1000
+Determinism                    438 checked / 0 mismatch / PASS
+2025 Blind y accessed          NO
 ```
 
-## 11. Target governance
+PR-C classification threshold 只使用 Development 拟合；Validation / Blind 不参与阈值定义。
 
-主研究对象仍是 5 trading-day weak-performance risk。PR-C 已冻结 Development-only q25 classification threshold `-0.1000`；该阈值不是概率，也不得使用 Validation 或 2025 Blind 调整。
+Frozen hashes：
 
-任何 -5% / -10% / -15% / -20% 等候选阈值比较只能使用 2020–2023 Development outcome；2024 Validation 与 2025 Blind 不允许参与阈值选择。
+```text
+policy       5f793de0df22679430bb0a7565ed2d9eabfe63f0153725babc7ebd121d369c67
+threshold    5aac9625209e65ccd7337d713e714ae1e9bd7e2d8f24db510e46131608a6ec05
+target set   5e0dedc8d207c8e73ca6439efb72f463c6b6f276c1c6c48e3ad7a989ad1533f4
+```
 
-PR-C 的 threshold、target artifacts、coverage、provenance 与 determinism 已
-正式冻结，PR-D 也已正式完成。当前仓库进入 PR-E，但不得读取 2025 y、不得
-使用后续结果回调 PR-C threshold，也不得用历史 Oracle v1 冒充当前正式
-Oracle ceiling。
+## 7. PR-D Canonical Model-ready Dataset — COMPLETE / FROZEN
+
+```text
+Upstream official cases        438
+Model-ready                     424
+Explicit exclusions              14
+Development                     354
+Validation                       70
+Schema                         v04_canonical_modeling_dataset_v1
+Generation failures              0
+Silent drops                     0
+Identity mismatch                0
+Feature-order drift              0
+Same-provenance resume          PASS
+2025 Blind y accessed           NO
+```
+
+PR-D binding independently verifies PR-A Production, PR-B Market Core and PR-C Outcome bulk contents before accepting canonical materialization。
+
+Frozen anchors：
+
+```text
+PR-D freeze manifest hash
+f6900c707187c23c5d01fa98fc8d9d21d040ce2c3ffa0a2a6340a0947f78e80d
+
+input binding manifest hash
+fca62fe4598f1f39adb9450c9b3e1bcecf45b0a968bc07cb46eaac3d8db1ab56
+```
+
+Full Production matrices exist for：
+
+```text
+M / P / PM
+Development 354
+Validation   70
+```
+
+## 8. Oracle readiness
+
+### Oracle v1 — historical immutable snapshot
+
+```text
+materialized        60
+current eligible    55
+Development         55
+Validation           0
+```
+
+Oracle v1 只保留历史冻结意义，不再作为 formal PR-E 当前 ceiling。
+
+### Oracle v2 — COMPLETE / FROZEN
+
+```text
+annotation inventory       101
+valid annotations          100
+materialized                98
+strict usable               96
+Development usable          77
+Validation usable           19
+identity unresolved          0
+feature count              142
+evaluation_only            true
+production_consumable      false
+2025 Blind y accessed      false
+```
+
+Frozen hashes：
+
+```text
+artifact set
+ e73dd7f478fd4c421f6794cfa0c7808403cfb5d57dd0678eae1146aaeeff09d6
+strict usable set
+ 486a0c7d3977deacb5e3247e184064e96a684dbfdf8ef951b9df6cd32ce4da0f
+feature manifest
+ 99eeb0366a50b11b94f6e92820b6f1ef8535d5979ca6266d2af4f78618b40c11
+freeze manifest
+ ddb175f48b7e8134c90c674e44d6173337dc2ea10e9eece103f70ae902e80294
+```
+
+Oracle v2 保持 evaluation-only，不进入 Production X。
+
+## 9. Frozen PR-E execution
+
+Formal PR-E 已使用以下冻结数据完成执行：
+
+```text
+Full Production:
+354 Dev / 70 Val
+M / P / PM
+
+Oracle v2 fair intersection:
+77 Dev / 19 Val
+M / P / O / PM / OM
+```
+
+PR-E 已完成以下治理要求：
+
+- 验证 frozen PR-D / Oracle v2 input binding；
+- 使用 expanding-year Development forward chaining；
+- 2024 Validation 不参与拟合；
+- 报告 M/P/PM 与 M/P/O/PM/OM；
+- 报告 PM-M / OM-M / OM-PM；
+- 不把小样本 non-significance 解释成“无信号”；
+- 2025 Blind y accessed = false。
+
+## 10. Current source status table
+
+| Source / artifact | Status | Use |
+| --- | --- | --- |
+| Official IPO identity | AVAILABLE 438/438 | identity / split |
+| Prospectus | AVAILABLE 438/438 | Production Document |
+| Production Document-X | FROZEN 438/438 | P / PM |
+| Governed IPO EOD | 432/438 securities | Core / outcomes |
+| Market-X Core | FROZEN 438/438 | M / PM |
+| 5D Outcome | FROZEN 424/438 | y |
+| Canonical Dataset | FROZEN 424 | model-ready |
+| Oracle v1 | HISTORICAL | historical reference only |
+| Oracle v2 | FROZEN 98 / 96 strict | O / OM research ceiling |
+| HSI | MISSING | optional Extended |
+| Industry benchmark | MISSING | optional Extended |
+| HK total-market turnover | MISSING | optional Extended |
+
+## 11. Gate state
+
+```text
+PR-A_DOCUMENT_GATE        PASS / FROZEN
+PR-B_MARKET_CORE_GATE     PASS / FROZEN
+PR-C_OUTCOME_GATE         PASS / FROZEN
+PR-D_MODEL_READY_GATE     PASS / FROZEN
+ORACLE_V2_GATE            PASS / FROZEN
+PR-E_BASELINE_GATE        PASS / FROZEN
+PR-F_LIGHTGBM_GATE        CURRENT / NOT FROZEN
+2025_BLIND_Y              NOT ACCESSED
+```

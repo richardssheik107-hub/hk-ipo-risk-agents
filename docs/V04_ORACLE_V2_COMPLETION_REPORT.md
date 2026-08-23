@@ -3,6 +3,7 @@
 > Status: **COMPLETE / FROZEN / A FINAL SIGN-OFF PASSED**
 > Date: 2026-08-23
 > Source revision: `7acbe3c6b3eb0a8939e09e8ae84306bcdfc5fb75`
+> Historical-state note: merge / next-action statements describe the completion-time handoff; current program status is tracked in `ROADMAP.md`.
 
 ## 1. Scope and decision
 
@@ -13,16 +14,16 @@ product runtime, train a PR-E model, or access 2025 blind outcomes.
 
 Role A has completed the final review. The result is reproducibly
 materialized, bound to the frozen PR-A Production and PR-C Outcome inputs, and
-approved as the Oracle v2 freeze carried by this PR. Formal PR-E training has
-not started.
+approved as the Oracle v2 freeze carried by this PR. Formal PR-E training had
+not started at this freeze point.
 
 ## 2. Frozen contract
 
 ```text
-schema_version       expert_oracle_document_features_v2
-policy_version       oracle_gold_policy_v2
-feature_count        142
-evaluation_only      true
+schema_version        expert_oracle_document_features_v2
+policy_version        oracle_gold_policy_v2
+feature_count         142
+evaluation_only       true
 production_consumable false
 ```
 
@@ -46,10 +47,9 @@ separately and is the only version eligible for v2 materialization.
 Audit overlays are applied only when their recorded source annotation hash
 matches the current pass-1 annotation after universal-newline normalization.
 This makes the provenance decision identical on LF and CRLF checkouts. The 17
-stale overlays are retained in
-the inventory and reported as `stale_not_applied`; they are never silently
-applied to changed annotations. This is a conservative provenance rule, not a
-new human judgment.
+stale overlays are retained in the inventory and reported as `stale_not_applied`;
+they are never silently applied to changed annotations. This is a conservative
+provenance rule, not a new human judgment.
 
 ## 4. Official identity reconciliation
 
@@ -72,7 +72,7 @@ All 98 official materialized annotations were rebound to the authoritative
 Production identity. This is expected because historical annotation metadata
 did not carry the complete official listing identity.
 
-The refresh now verifies the complete frozen upstream contract before any
+The refresh verifies the complete frozen upstream contract before any
 materialization. The verified binding covers all 438 official cases and the
 actual PR-A Production and PR-C Outcome bulk artifact contents, rather than
 trusting declared manifest strings alone.
@@ -101,8 +101,8 @@ are:
 - `ipo_2020_02599`: `missing_base_price`
 - `ipo_2020_06688`: `no_eligible_session`
 
-They are not treated as negative outcomes and are excluded from the strict
-PR-E usable cohort.
+They are not treated as negative outcomes and are excluded from the strict PR-E
+usable cohort.
 
 ## 6. Reproducibility
 
@@ -165,12 +165,12 @@ Workflow and model-ready PR-D inputs do not import or consume it.
 
 An earlier PR CI run exposed and rejected a non-portable test dependency on
 ignored local PR-A/PR-C bulk artifacts and CRLF-sensitive source hashing. The
-implementation now normalizes JSON line endings and the tests construct their
-own official identity/outcome inputs. P0 hardening then added fail-closed
-binding to the frozen PR-A/PR-C bulk contents and PR-D governance anchors. The
-final hashes above were regenerated from committed revision `7acbe3c...`; the
-Oracle artifact-set hash remained unchanged, proving the hardening changed
-provenance enforcement rather than Oracle feature semantics.
+implementation normalizes JSON line endings and the tests construct their own
+official identity/outcome inputs. P0 hardening then added fail-closed binding
+to the frozen PR-A/PR-C bulk contents and PR-D governance anchors. The final
+hashes above were regenerated from committed revision `7acbe3c...`; the Oracle
+artifact-set hash remained unchanged, proving the hardening changed provenance
+enforcement rather than Oracle feature semantics.
 
 ## 9. Final verdict
 
@@ -185,6 +185,7 @@ PR_E_FORMAL_TRAINING = NOT_STARTED
 2025_BLIND_Y_ACCESSED = NO
 ```
 
-Next action: merge the reviewed Oracle v2 freeze to `main`, then begin PR-E
-only under a separately authorized formal baseline task. This report does not
-start PR-E training.
+At completion time the next action was to merge the reviewed Oracle v2 freeze
+to `main`; that merge subsequently completed. The current formal Gate is PR-E,
+which consumes this frozen v2 sidecar under a separate baseline task. This
+completion report itself does not claim any PR-E measured result.
