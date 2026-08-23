@@ -2,13 +2,19 @@
 
 > Last real audit snapshot: **2026-08-23 PR-C governed 438-case materialization + determinism**
 > Documentation review: **2026-08-23**
-> Status: **PR-A / PR-B / PR-C COMPLETE / FROZEN; PR-D READY / FORMAL MATERIALIZATION NEXT; MODEL-READY GATE NOT YET PASSED**
+> Status: **PR-A / PR-B / PR-C / PR-D COMPLETE / FROZEN; PR-E FORMAL BASELINE NEXT**
 
 本文件记录当前**真实数据 readiness 审计结果**。计划/代码更新不会虚构新的 coverage 数字；只有真实 materialization / source audit 后才允许修改 measured statistics。
 
 PR-A 已完成 2020–2024 official 438-case Document materialization、Oracle coverage 与 A6 全量 determinism。PR-B 已在 materialization source revision `dd67a17a5d6cfb246f0cb956c43e94aaddbc58a7` 完成真实 438-case Core materialization、PIT 审计和 deterministic resume 验证，并已通过 PR #80 / #81 完成 mainline publication 与文档状态收口。
 
 PR-C 已在 source revision `a1e32a97bc4ffa87aec3560598265e0536b4e07d` 完成 governed full materialization：438 个 official cases 全部进入 coverage，424 available、14 unavailable（12 `missing_base_price`、2 `no_eligible_session`），Development available 354、Validation available 70；Development-only q25 threshold 为 `-0.1000`，determinism 为 438 checked / 0 mismatches，且未访问 2025 Blind y。冻结证据见 `docs/V04_PR_C_COMPLETION_REPORT.md` 与 `reports/frozen/v04_pr_c_5d_outcome_manifest.json`。
+
+PR-D 已完成正式 canonical materialization：438 upstream → 424 model-ready +
+14 explicit exclusions → 354 Development + 70 Validation；same-provenance
+resume、input binding 与 freeze manifest 均通过。冻结证据见
+`docs/V04_PR_D_COMPLETION_REPORT.md` 与
+`reports/frozen/v04_pr_d_canonical_dataset_manifest.json`。
 
 Market-X Extended 所需 HSI、industry benchmark、total-market turnover 等 governed source 仍缺失；这些是 Extended limitations，不是 PR-B Core 可以用 proxy 填补的数据。
 
@@ -239,7 +245,7 @@ A6 canonical resumed-state coverage hash：
 
 二者差异仅来自 resume 生命周期字段；snapshot / Production feature / Oracle feature 等实质 hash 均未漂移。
 
-## 7. Oracle readiness — MATERIALIZED / EVALUATION-ONLY
+## 7. Oracle readiness — v1 HISTORICAL / v2 REFRESH REQUIRED
 
 Oracle path：
 
@@ -249,7 +255,7 @@ Reviewed Expert Gold
 → Oracle Document Features
 ```
 
-冻结结果：
+PR-A Oracle v1 历史冻结结果：
 
 - Oracle materialized：60；
 - `no_reviewed_gold`：378；
@@ -258,6 +264,12 @@ Reviewed Expert Gold
 - Oracle 继续 `evaluation_only = true`；
 - Oracle 不进入 Production runtime；
 - Oracle 未读取 2025 blind y。
+
+Oracle v1 当前 outcome-eligible 交集为 55 Development / 0 Validation，不能
+作为正式 PR-E 的当前 ceiling。按 `V04_ORACLE_REFRESH_GOVERNANCE.md`，
+Oracle v2 在正式 PR-E 前必须独立物化、审计并冻结；当前约 100 buildable /
+91 strict-usable（74 Development / 17 Validation）仍是 readiness 估计，不是
+冻结数字。
 
 ## 8. Current source manifest status
 
@@ -275,7 +287,7 @@ Reviewed Expert Gold
 | Total-market turnover | Extended Market X | MISSING | not available |
 | V03 authoritative snapshots | Production Document X | COMPLETE / FROZEN | 438 / 438 |
 | Production Document-X | modeling input | COMPLETE / FROZEN | 438 / 438, 100 dimensions |
-| Oracle Document-X | evaluation-only | MATERIALIZED | 60; 378 no reviewed Gold |
+| Oracle Document-X | evaluation-only | v1 HISTORICAL / v2 REQUIRED | v1 60 materialized; v2 not frozen |
 
 Current Gate state：
 
@@ -286,10 +298,13 @@ PR-B_CORE_REAL_MATERIALIZATION      = 438 / 438
 PR-B_GATE                           = PASS / COMPLETE / FROZEN ON MAIN
 PR-C_5D_OUTCOME_GATE                = PASS / COMPLETE / FROZEN
 MARKET_X_EXTENDED_SOURCES           = INCOMPLETE
-MODEL_READY_DATA_GATE               = READY FOR PR-D MATERIALIZATION / NOT PASSED
+MODEL_READY_DATA_GATE               = PASS / PR-D COMPLETE / FROZEN
+PR_E_FORMAL_BASELINE                = READY / ORACLE V2 + RUNTIME MATRICES REQUIRED
 ```
 
-PR-A、PR-B 与 PR-C 已不再是 readiness blocker。当前尚未完成的是 PR-D canonical model-ready dataset 的正式 materialization 与验收；Extended source families 仍是后续可增强的 source limitation。
+PR-A、PR-B、PR-C 与 PR-D 已不再是 readiness blocker。当前正式里程碑是
+PR-E；其 Production 输入已冻结，但正式 Oracle diagnostic 仍要求独立冻结的
+Oracle v2。Extended source families 仍是后续可增强的 source limitation。
 
 ## 9. PR-B frozen evidence
 
@@ -318,8 +333,8 @@ Formal milestone / Gate / mainline merge order remains：
 PR-A  COMPLETE / FROZEN
 → PR-B COMPLETE / FROZEN ON MAIN
 → PR-C 5D Outcome Policy Freeze / COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset / READY / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset / COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic / FORMAL NEXT
 → PR-F LightGBM + Explainability
 → PR-G Market Agent + Final Supervisor
 → PR-H Streamlit Full E2E
@@ -331,4 +346,7 @@ PR-A  COMPLETE / FROZEN
 
 任何 -5% / -10% / -15% / -20% 等候选阈值比较只能使用 2020–2023 Development outcome；2024 Validation 与 2025 Blind 不允许参与阈值选择。
 
-PR-C 的 threshold、target artifacts、coverage、provenance 与 determinism 已正式冻结。当前仓库停在 PR-D 正式 materialization 入口；不得启动 PR-E、读取 2025 y，或使用后续结果回调 PR-C threshold。
+PR-C 的 threshold、target artifacts、coverage、provenance 与 determinism 已
+正式冻结，PR-D 也已正式完成。当前仓库进入 PR-E，但不得读取 2025 y、不得
+使用后续结果回调 PR-C threshold，也不得用历史 Oracle v1 冒充当前正式
+Oracle ceiling。

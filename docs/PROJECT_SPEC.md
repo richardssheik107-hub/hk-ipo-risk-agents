@@ -60,7 +60,10 @@ Prospectus
 
 当前优先完成完整闭环，再依据 PR-E 的 Oracle diagnostic 与后续赛题 benchmark 决定是否回到 Retriever、LLM Reranker、Agent VNext 等研究优化。
 
-PR-A — Document + Oracle Materialization & Coverage、PR-B — Market-X Core + Governed EOD Store 与 PR-C — 5D Outcome Policy Freeze 均已 **COMPLETE / FROZEN**。PR-D engineering preparation 已合入且正式 materialization 现已解除前置阻塞，但尚未完成或冻结。
+PR-A — Document + Oracle Materialization & Coverage、PR-B — Market-X Core +
+Governed EOD Store、PR-C — 5D Outcome Policy Freeze 与 PR-D — Canonical
+Model-ready Dataset 均已 **COMPLETE / FROZEN**。当前正式里程碑为 PR-E
+Baseline + Oracle Diagnostic；Production 输入已冻结，Oracle v2 仍需独立冻结。
 
 ### Post-baseline：Competition Hardening
 

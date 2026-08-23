@@ -1,6 +1,6 @@
 # 公共数据 Schema 与 v0.4 建模契约
 
-> Status snapshot: **2026-08-21**
+> Status snapshot: **2026-08-23**
 
 本文件描述当前仍有效的跨模块数据边界。**代码中的 Pydantic Schema 是最终权威公共实现**；本文用于解释语义，不应替代源码做字段推断。
 
@@ -440,8 +440,8 @@ src/ipo_risk/modeling/canonical_dataset.py
 scripts/run_v04_pr_d.py
 ```
 
-The code is engineering preparation until the formal PR-C freeze manifest is
-present and the real PR-D materialization is executed.
+The real PR-D materialization is complete and frozen: 424 model-ready rows,
+354 Development and 70 Validation, with 14 explicit target exclusions.
 
 ## 23. 当前 source of truth
 

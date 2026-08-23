@@ -6,7 +6,7 @@
 > Active program: **v0.4 End-to-End Closed Loop**  
 > PR-B Market-X Core: **COMPLETE / FROZEN ON MAIN**
 > PR-C 5D Outcome Policy: **COMPLETE / FROZEN**
-> Current formal milestone: **PR-D — READY / FORMAL MATERIALIZATION NEXT**
+> Current formal milestone: **PR-E — FORMAL BASELINE NEXT**
 > Post-baseline program: **Competition Hardening after PR-H**
 
 本文件描述当前有效架构与仍有约束力的边界。历史 v0.2/v0.3 设计过程和已完成的一次性实验通过 Git history/release 追溯。
@@ -339,8 +339,8 @@ PR-D 必须显式 version Core / optional Extended feature groups，不能静默
 ```text
 PR-B Market-X Core                 COMPLETE / FROZEN
 → PR-C 5D Outcome Policy Freeze    COMPLETE / FROZEN
-→ PR-D Canonical Model-ready Dataset  ACTIVE / FORMAL MATERIALIZATION NEXT
-→ PR-E Baseline + Oracle Diagnostic
+→ PR-D Canonical Model-ready Dataset  COMPLETE / FROZEN
+→ PR-E Baseline + Oracle Diagnostic   FORMAL NEXT
 → PR-F LightGBM + Explainability
 ```
 
@@ -449,8 +449,9 @@ Current formal state：
 ```text
 PR-C governed full materialization / determinism / A final sign-off complete
 PR-C COMPLETE / FROZEN
-PR-D engineering preparation merged / formal materialization ready / next
-PR-E/F preparation only
+PR-D formal materialization / resume / freeze complete
+PR-E formal baseline next; Oracle v2 refresh required
+PR-F preparation only
 PR-G/H preparation only
 Competition Hardening planned after PR-H baseline E2E
 ```
