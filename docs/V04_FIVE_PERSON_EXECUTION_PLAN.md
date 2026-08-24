@@ -4,8 +4,8 @@
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
 > PR-E / PR-F: **COMPLETE / FROZEN**
-> PR-G: **A GATE REVIEW PASS / LOCAL FREEZE MATERIALIZATION PENDING**
-> PR-H: **PREPARATION UNBLOCKED**
+> PR-G: **COMPLETE / FROZEN**
+> PR-H: **CURRENT FORMAL GATE**
 
 ## 1. 总原则
 
@@ -22,7 +22,7 @@ PR-A → PR-B → PR-C → PR-D → PR-E → PR-F
 
 允许并行的是准备性工作、QA、文档、测试夹具和不改变冻结边界的分析；准备工作不能被描述为后续 Gate 已通过。
 
-PR-F 已得到较弱/不稳定的 2024 预测结果，但这不授权回滚 Gate 顺序、反转模型分数或继续使用 2024 调参。PR-G 实现已经合入 main，A 审阅通过；当前只差必须依赖本地真实 runtime 的 PR-G freeze manifest。PR-H preparation 可以立即开始，formal PR-H 在该 manifest 提交后开始。
+PR-F 已得到较弱/不稳定的 2024 预测结果，但这不授权回滚 Gate 顺序、反转模型分数或继续使用 2024 调参。PR-G 实现、A 审阅及真实本地 freeze manifest 均已完成；PR-H 现为当前正式 Gate。
 
 ## 2. A — Tech Lead / Pipeline
 
@@ -43,8 +43,7 @@ A 不重新实现 Parser / Retriever / Agent，不替 D 决定 target/model poli
 
 ### 当前任务
 
-- PR-G A Gate Review 已完成，结论记录于 `V04_PR_G_A_GATE_REVIEW.md`；
-- 在本地真实 prospectus/runtime 上校验 E 生成的 PR-G draft manifest，提交最终 frozen manifest；
+- PR-G A Gate Review 与真实本地 freeze 已完成；
 - 审核 PR-H governed Market-X runtime 接线，禁止把 legacy `MarketSnapshot` 冒充 PR-B lineage；
 - 审核 PR-F 最小 runtime handoff 的 hash、内容边界和 no-label/no-Blind 约束；
 - 维护 PR-A–PR-F / Oracle v2 frozen boundary；

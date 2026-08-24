@@ -1,8 +1,8 @@
 # Documentation Index
 
 > Audit date: **2026-08-24**
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
-> PR-H preparation: **UNBLOCKED**
+> PR-G: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real IPO demo**
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2 / PR-E / PR-F: **COMPLETE / FROZEN**
 
@@ -18,7 +18,7 @@
 4. 当前活文档与正式 Gate review；
 5. 历史研究文档 / Git history。
 
-旧 planning / handoff 文档不能覆盖已经冻结的 manifest 或 completion report。PR-G 当前尚未产生最终 frozen manifest，因此 A Gate Review 明确区分“implementation review PASS”和“local freeze materialization pending”。
+旧 planning / handoff 文档不能覆盖已经冻结的 manifest 或 completion report。PR-G 的真实本地运行已通过 deterministic freezer，最终 machine-readable manifest 已进入 `reports/frozen/`。
 
 ## 2. Active documents — 当前维护
 
@@ -44,13 +44,13 @@
 - [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md)
 - [`V04_PR_E_COMPLETION_REPORT.md`](V04_PR_E_COMPLETION_REPORT.md)
 - [`V04_PR_F_COMPLETION_REPORT.md`](V04_PR_F_COMPLETION_REPORT.md)
-- [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md) — implementation complete / freeze pending
-- [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) — A review PASS / local freeze pending
+- [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md) — COMPLETE / FROZEN
+- [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) — A review provenance
 - [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md)
 - [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md)
 - [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md)
 
-已冻结阶段的 machine-readable truth 位于 `reports/frozen/`。PR-G 最终 manifest 只有在本地真实运行并经 A 校验后才进入该目录。
+已冻结阶段的 machine-readable truth 位于 `reports/frozen/`。PR-G 最终 manifest 已由本地真实运行和 A freezer 校验生成。
 
 ## 4. Stable technical / research references
 
@@ -76,10 +76,8 @@ PR-A Document X                     COMPLETE / FROZEN
 → PR-D Canonical Dataset            COMPLETE / FROZEN
 → PR-E Baseline + Oracle Diagnostic COMPLETE / FROZEN
 → PR-F LightGBM + Explainability    COMPLETE / FROZEN
-→ PR-G implementation               MERGED
-→ PR-G A review                     PASS
-→ PR-G local freeze manifest        REQUIRED LOCAL ACTION
-→ PR-H Streamlit Full E2E           PREPARATION UNBLOCKED
+→ PR-G Market Agent + Supervisor    COMPLETE / FROZEN
+→ PR-H Streamlit Full E2E           CURRENT FORMAL GATE
 → v0.4.3 Baseline E2E Freeze
 → CH-0..CH-6 Competition Hardening
 → v0.4.5 Competition Submission Freeze

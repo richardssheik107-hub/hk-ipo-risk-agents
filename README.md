@@ -17,8 +17,8 @@ PR-D Canonical model-ready dataset       COMPLETE / FROZEN
 Oracle v2                                COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E Baseline + Oracle Diagnostic        COMPLETE / FROZEN
 PR-F LightGBM + Explainability           COMPLETE / FROZEN
-PR-G Market Agent + Final Supervisor     A REVIEW PASS / LOCAL FREEZE PENDING
-PR-H Streamlit Full E2E                  PREPARATION UNBLOCKED
+PR-G Market Agent + Final Supervisor     COMPLETE / FROZEN
+PR-H Streamlit Full E2E                  CURRENT FORMAL GATE
 Competition Hardening                    STARTS AFTER PR-H BASELINE E2E
 ```
 
@@ -34,7 +34,7 @@ PR-A → PR-B → PR-C → PR-D → PR-E → PR-F
 → v0.4.5 Competition Freeze
 ```
 
-PR #104 已把 PR-G implementation 合入 main；A 的 Gate Review 已通过。剩余 PR-G 动作是必须依赖本地真实 prospectus/runtime 的 final freeze manifest，因此远程 GitHub 审阅不伪造本地 hash。PR-H preparation 已解除阻塞，formal PR-H 在该 manifest 提交后切换为当前 Gate。
+PR #104 已把 PR-G implementation 合入 main；A 的 Gate Review 已通过。随后以 2410.HK 真实 706 页 prospectus、官方上市日和冻结 PR-F identity 生成并校验 final freeze manifest。PR-G 现已 COMPLETE / FROZEN，PR-H 是当前正式 Gate。
 
 ## What is already real
 

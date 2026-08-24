@@ -1,10 +1,10 @@
 # v0.4 PR-G 完成报告 — Market Agent + Final Supervisor
 
-> Status: **IMPLEMENTATION COMPLETE / AWAITING A GATE REVIEW**
+> Status: **COMPLETE / FROZEN**
 > Owner: **E — Oracle / Product Integration**
 > Review: **A — cross-module contract / provenance / reproducibility**
 > Date: **2026-08-24**
-> 冻结 manifest 草案:`scripts/build_v04_pr_g_manifest.py`(**E 起草,A 冻结**)
+> Frozen manifest: `reports/frozen/v04_pr_g_final_supervision_manifest.json`
 
 ## 1. Gate 要求与达成情况
 
@@ -31,6 +31,8 @@
 | 13 节报告 | `src/ipo_risk/reporting/v04.py::V04ReportGenerator` |
 | 配置 | `configs/v04_offline.yaml`、`configs/v04_ai.yaml` |
 | 冻结 manifest 草案生成 | `scripts/build_v04_pr_g_manifest.py` |
+| Deterministic A freezer | `scripts/freeze_v04_pr_g_manifest.py` |
+| Frozen manifest | `reports/frozen/v04_pr_g_final_supervision_manifest.json` |
 
 ## 3. 真实闭环实测
 
@@ -95,7 +97,19 @@ configs/v04_offline.yaml 15 nodes   market_context=snapshot  final_supervisor=v0
 - **不原地改 `V03ReportGenerator`** —— 其十节形状被测试钉死,v0.4 用子类扩展;
 - **未触碰任何冻结模块或 `reports/frozen/`**。
 
-## 8. 验证
+## 8. Final local freeze
+
+The final A freeze used the authoritative 2410.HK catalog identity and listing date (`2024-08-20`) with the real 706-page prospectus. The run completed with 13 report sections and resolved all 2/2 referenced Evidence ids. It honestly retained `market=unavailable_error` and `model=disabled`; it did not fabricate data merely to make the manifest look complete.
+
+```text
+prospectus_sha256              6c8179a58ac265d5a729895ef30db910dc15cee0a53ce653e866d487d29655cb
+final_supervision_content_hash aed6b40ff10afe0e41f9aefcaedf8c6cb48626ac4dbdda8fc2fa2489055a7564
+freeze_manifest_hash           84b349fd912e56dbd5aa9768ea0fd462ce22da25e11dfe4cd581f40a0c1bcd97
+formal_gate_passed             true
+blind_2025_y_accessed          false
+```
+
+## 9. 验证
 
 ```bash
 .venv/bin/python -m pytest -q --ignore=tests/ranking
