@@ -13,14 +13,18 @@ supervisor: v03
 predictor: rule_based
 llm_provider: openai_compatible
 market_data_provider: unavailable
-ipo_data_provider: request
+ipo_data_provider: catalog
 repository: json
 report_generator: v04
 data_dir: data
 report_dir: reports
 log_level: INFO
 
-# PR-G channels. The market channel explains the snapshot the workflow already
-# loads; with market_data_provider: unavailable it reports an honest absence.
-market_context: snapshot
+# PR-H runtime channels. The governed market view reads only the frozen PR-B
+# product projection; the legacy market-data snapshot remains unavailable.
+market_context: governed_pr_b_core
+market_feature_dir: reports/v04_pr_b/core_features
+market_official_bridge: data/catalog/ipo_official_master_bridge.csv
 final_supervisor: v04
+# Set IPO_RISK_PR_F_RUN_DIR to a local sanitized handoff. It stays empty in Git.
+pr_f_run_dir: ""

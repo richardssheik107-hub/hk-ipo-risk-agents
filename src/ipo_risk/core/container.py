@@ -20,6 +20,7 @@ from ipo_risk.agents.financial_verifier import V03FinancialVerifier
 from ipo_risk.agents.legal import LegalAgent
 from ipo_risk.agents.market_context import (
     GatePendingMarketContextProvider,
+    GovernedPRBMarketContextProvider,
     SnapshotMarketContextProvider,
 )
 from ipo_risk.agents.mock import (
@@ -65,6 +66,7 @@ from ipo_risk.repositories.json_repository import JsonAnalysisRepository
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.mock import MockDocumentRetriever
 from ipo_risk.modeling.frozen_model_evidence import (
+    FrozenModelPredictionProvider,
     FrozenModelEvidenceError,
     load_frozen_cohort_evidence,
 )
@@ -115,6 +117,7 @@ def default_registry() -> ComponentRegistry:
         # one of these reaches them; every pre-v0.4 config builds nothing.
         "market_context": {
             "gate_pending": GatePendingMarketContextProvider,
+            "governed_pr_b_core": GovernedPRBMarketContextProvider,
             "snapshot": SnapshotMarketContextProvider,
         },
         "final_supervisor": {"gate_pending": GatePendingFinalSupervisor},
@@ -164,6 +167,7 @@ class DependencyContainer:
         # the historical nine positional arguments keep working unchanged.
         channels = {
             "market_context": self._create_channel("market_context", self.settings.market_context),
+            "model_prediction_provider": self._model_prediction_provider(),
             "final_supervisor": self._create_channel("final_supervisor", self.settings.final_supervisor),
         }
         if self.settings.workflow_version == "mvp_v1":
@@ -180,6 +184,13 @@ class DependencyContainer:
             return None
         if kind == "final_supervisor" and name == "v04":
             return V04FinalSupervisor(self._frozen_cohort_evidence())
+        if kind == "market_context" and name == "governed_pr_b_core":
+            return self.registry.create(
+                kind,
+                name,
+                feature_dir=self.settings.market_feature_dir,
+                official_bridge_path=self.settings.market_official_bridge,
+            )
         return self.registry.create(kind, name)
 
     def _frozen_cohort_evidence(self):
@@ -188,6 +199,15 @@ class DependencyContainer:
             return load_frozen_cohort_evidence(Path(self.settings.report_dir) / "frozen")
         except FrozenModelEvidenceError:
             return None
+
+    def _model_prediction_provider(self):
+        """Build the local-only frozen model channel only when explicitly configured."""
+        if not self.settings.pr_f_run_dir:
+            return None
+        return FrozenModelPredictionProvider(
+            run_dir=self.settings.pr_f_run_dir,
+            frozen_dir=Path(self.settings.report_dir) / "frozen",
+        )
 
     def _create_agent(self, kind: str, name: str, retriever, llm_provider):
         if name == "cash_runway":

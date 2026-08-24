@@ -34,6 +34,7 @@ class MVPWorkflow:
         ipo_provider,
         *,
         market_context=None,
+        model_prediction_provider=None,
         final_supervisor=None,
     ):
         self.parser, self.retriever, self.agents, self.verifier = (
@@ -44,7 +45,9 @@ class MVPWorkflow:
         )
         self.supervisor, self.predictor, self.reporter = supervisor, predictor, reporter
         self.market_provider, self.ipo_provider = market_provider, ipo_provider
-        self.market_context, self.final_supervisor = market_context, final_supervisor
+        self.market_context = market_context
+        self.model_prediction_provider = model_prediction_provider
+        self.final_supervisor = final_supervisor
         graph = StateGraph(WorkflowState)
         nodes = [
             ("load_ipo_profile", self.load_profile),
@@ -57,6 +60,7 @@ class MVPWorkflow:
             ("verifier", self.verify),
             ("supervisor", self.supervise),
             ("predictor", self.predict),
+            *([("model_prediction", self.load_model_prediction)] if self.model_prediction_provider else []),
             # Must follow the predictor: the rule prediction is one of its inputs.
             *([("final_supervisor", self.finalize)] if self.final_supervisor else []),
             ("report", self.report),
@@ -471,6 +475,25 @@ class MVPWorkflow:
                 },
             }
         return self._safe(state, "final_supervisor", "finalize", operation, {"final_supervision": None})
+
+    def load_model_prediction(self, state):
+        """Load a frozen per-case model projection; never score or train here."""
+        def operation():
+            view = self.model_prediction_provider.prediction(state["profile"])
+            return {
+                "model_prediction_view": view,
+                "component_diagnostics": {"model_prediction": view.model_dump(mode="json")},
+                "_summary": f"model prediction {view.status.value}",
+                "_log_metadata": {"status": view.status.value, "driver_count": len(view.drivers)},
+            }
+
+        return self._safe(
+            state,
+            "model_prediction",
+            "load_frozen_projection",
+            operation,
+            {"model_prediction_view": None},
+        )
 
     def report(self, state):
         context = ReportContext(

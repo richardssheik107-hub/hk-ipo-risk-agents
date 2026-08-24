@@ -1,6 +1,8 @@
 """PR-G channels must be invisible to every configuration that predates them."""
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from ipo_risk.core.config import load_settings
@@ -48,6 +50,15 @@ def test_v04_places_the_final_supervisor_after_the_predictor() -> None:
     assert successors["predictor"] == "final_supervisor"
     assert successors["final_supervisor"] == "report"
     assert successors["load_market_snapshot"] == "market_context"
+
+
+def test_local_pr_f_handoff_adds_a_model_node_before_final_supervision() -> None:
+    settings = replace(load_settings("configs/v04_offline.yaml"), pr_f_run_dir="local-handoff")
+    workflow = DependencyContainer(settings, default_registry()).create_workflow()
+    edges = [(edge.source, edge.target) for edge in workflow.graph.get_graph().edges]
+    successors = {source: target for source, target in edges}
+    assert successors["predictor"] == "model_prediction"
+    assert successors["model_prediction"] == "final_supervisor"
 
 
 def test_the_historical_nine_positional_arguments_still_construct_a_workflow() -> None:

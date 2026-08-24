@@ -17,6 +17,7 @@ sys.modules[_SPEC.name] = pipeline_stages
 _SPEC.loader.exec_module(pipeline_stages)
 
 StageStatus = pipeline_stages.StageStatus
+pending_notice = pipeline_stages.pending_notice
 resolve_stages = pipeline_stages.resolve_stages
 
 EXPECTED_CHAIN = (
@@ -142,6 +143,7 @@ def test_governed_market_context_makes_market_stage_available() -> None:
     assert stage.status is StageStatus.AVAILABLE
     assert stage.blocking_gate is None
     assert {metric.label: metric.value for metric in stage.metrics}["Observations available"] == "1 of 2"
+    assert pending_notice(stage) is None
 
 
 def test_hash_bound_model_projection_makes_prediction_and_explainability_available() -> None:

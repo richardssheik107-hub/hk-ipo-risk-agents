@@ -14,6 +14,7 @@ import argparse, hashlib, json
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
+from uuid import NAMESPACE_URL, uuid5
 
 from ipo_risk.core.config import load_settings
 from ipo_risk.modeling.frozen_model_evidence import FROZEN_MANIFEST_NAME, load_frozen_cohort_evidence
@@ -39,7 +40,15 @@ def build(
     data_dir: Path,
 ) -> dict:
     settings = replace(load_settings(config), data_dir=str(data_dir))
+    prospectus_sha256 = hashlib.sha256(prospectus.read_bytes()).hexdigest()
+    # Parser chunk/Evidence identities derive from request_id. Bind it to the
+    # governed case and actual bytes so repeated PR-H runs are deterministic.
+    request_id = str(uuid5(
+        NAMESPACE_URL,
+        f"v04-real-e2e:{stock_code}:{listing_date.isoformat()}:{prospectus_sha256}",
+    ))
     result = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
+        request_id=request_id,
         company_name=company,
         stock_code=stock_code,
         listing_date=listing_date,
@@ -70,7 +79,8 @@ def build(
             "report_generator": settings.report_generator,
         },
         "closed_loop": {
-            "prospectus_sha256": hashlib.sha256(prospectus.read_bytes()).hexdigest(),
+            "prospectus_sha256": prospectus_sha256,
+            "deterministic_request_id": request_id,
             "analysis_status": result.status.value,
             "report_section_count": len(result.report_sections),
             "verified_risk_count": len(result.verified_risks),

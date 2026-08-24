@@ -165,6 +165,20 @@ class LocalRunBindingError(ValueError):
     """A local PR-F run directory does not correspond to the frozen result."""
 
 
+class FrozenModelPredictionProvider:
+    """Read one governed per-case score from a sanitized or verified PR-F run."""
+
+    name = "frozen_pr_f"
+
+    def __init__(self, *, run_dir: str | Path, frozen_dir: str | Path) -> None:
+        self.run_dir = Path(run_dir)
+        self.frozen_dir = Path(frozen_dir)
+
+    def prediction(self, profile) -> ModelPredictionView:
+        case_id = profile.metadata.get("case_id") if profile is not None else None
+        return load_case_prediction(self.run_dir, self.frozen_dir, case_id)
+
+
 def _unavailable(reason: str, base: dict[str, Any]) -> ModelPredictionView:
     return ModelPredictionView(status=ChannelStatus.UNAVAILABLE_ERROR, reason=reason, **base)
 

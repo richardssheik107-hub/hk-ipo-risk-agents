@@ -7,7 +7,9 @@ That makes ``status is COMPLETED`` a single canary for serialization regressions
 from __future__ import annotations
 
 import json
+import hashlib
 import math
+from pathlib import Path
 from dataclasses import replace
 from datetime import date
 
@@ -30,8 +32,8 @@ def service(tmp_path) -> IPOAnalysisService:
 @pytest.fixture
 def result(service):
     return service.analyze(IPOAnalysisRequest(
-        company_name="Demo Biotech", stock_code="9999.HK",
-        listing_date=date(2024, 6, 1), use_mock=True))
+        company_name="同源康医药-B", stock_code="2410.HK",
+        listing_date=date(2024, 8, 20), use_mock=True))
 
 
 def test_the_analysis_round_trips_with_the_pr_g_channels_attached(result) -> None:
@@ -55,15 +57,13 @@ def test_every_referenced_id_resolves_to_something_in_the_result(result) -> None
     assert set(final["referenced_evidence_ids"]) <= evidence_ids
 
 
-def test_the_market_channel_passes_the_provider_reason_through(result) -> None:
-    """v04_offline runs market_data_provider: unavailable, so the channel says so."""
+def test_the_market_channel_uses_the_governed_pr_b_projection(result) -> None:
     market = result.metadata["market_context"]
-    assert market["status"] == "unavailable_error"
-    assert market["reason"] == "real_market_data_not_integrated_in_v0.2"
-    assert market["observations"] == []
-    # A snapshot-derived view never claims the PR-B Market-X lineage.
-    assert market["feature_manifest_hash"] is None
-    assert market["provenance"]["feature_pipeline"] == "legacy_market_snapshot_not_v04_market_x"
+    assert market["status"] == "available"
+    assert len(market["observations"]) == 15
+    assert market["feature_manifest_hash"] == "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d"
+    assert market["provenance"]["feature_pipeline"] == "governed_pr_b_core"
+    assert market["provenance"]["case_id"] == "ipo_2024_02410"
 
 
 def test_a_mock_market_provider_leaks_no_fixture_number(tmp_path) -> None:
@@ -71,7 +71,8 @@ def test_a_mock_market_provider_leaks_no_fixture_number(tmp_path) -> None:
     settings = replace(load_settings("configs/v04_offline.yaml"),
                        parser="mock", retriever="mock", financial_agent="mock",
                        legal_agent="mock", business_agent="mock", use_mock=True,
-                       market_data_provider="mock", data_dir=str(tmp_path / "repo"))
+                       market_data_provider="mock", market_context="snapshot",
+                       data_dir=str(tmp_path / "repo"))
     outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
         company_name="Demo Biotech", stock_code="9999.HK",
         listing_date=date(2024, 6, 1), use_mock=True))
@@ -114,5 +115,57 @@ def test_no_non_finite_number_reaches_the_persisted_metadata(result) -> None:
 
 def test_component_modes_expose_the_two_new_channels(result) -> None:
     modes = result.metadata["component_modes"]
-    assert modes["market_context"] == "snapshot"
+    assert modes["market_context"] == "governed_pr_b_core"
     assert modes["final_supervisor"] == "v04"
+
+
+def test_sanitized_model_handoff_reaches_the_final_supervisor(tmp_path) -> None:
+    handoff = tmp_path / "handoff"
+    handoff.mkdir()
+    signals = [{
+        "case_id": "ipo_2024_02410",
+        "score": 0.42,
+        "drivers": [{
+            "feature": "market_core__recent_ipo_break_rate",
+            "component": "market_core",
+            "feature_value": 0.6,
+            "shap_value": 0.1,
+        }],
+    }]
+    signal_path = handoff / "product_case_signals.json"
+    signal_path.write_text(json.dumps(signals), encoding="utf-8")
+    frozen = json.loads(Path("reports/frozen/v04_pr_f_lightgbm_manifest.json").read_text(encoding="utf-8"))
+    manifest = {
+        "manifest_version": "v04_pr_f_product_runtime_handoff_v1",
+        "source_model_result_hash": frozen["model_result_hash"],
+        "case_signal_file": signal_path.name,
+        "case_signal_sha256": hashlib.sha256(signal_path.read_bytes()).hexdigest(),
+        "case_count": 1,
+        "contains_target_labels": False,
+        "blind_2025_y_accessed": False,
+        "score_semantics": "uncalibrated_model_score",
+    }
+    (handoff / "product_runtime_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    settings = replace(
+        load_settings("configs/v04_offline.yaml"),
+        parser="mock", retriever="mock", financial_agent="mock",
+        legal_agent="mock", business_agent="mock", use_mock=True,
+        pr_f_run_dir=str(handoff), data_dir=str(tmp_path / "repo"),
+    )
+    outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
+        company_name="同源康医药-B", stock_code="2410.HK",
+        listing_date=date(2024, 8, 20), use_mock=True,
+    ))
+    model = outcome.metadata["model_prediction"]
+    assert model["status"] == "available"
+    assert model["score"] == pytest.approx(0.42)
+    assert model["score_semantics"] == "uncalibrated_model_score"
+    assert "probability" not in model
+    states = {
+        row["channel"]: row["status"]
+        for row in outcome.metadata["final_supervision"]["channel_states"]
+    }
+    assert states == {
+        "document": "available", "market": "available",
+        "model": "available", "rule": "available",
+    }

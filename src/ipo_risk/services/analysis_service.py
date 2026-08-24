@@ -31,6 +31,8 @@ class IPOAnalysisService:
         for channel in ("market_context", "final_supervisor"):
             if (mode := getattr(settings, channel)) != "none":
                 modes[channel] = mode
+        if settings.pr_f_run_dir:
+            modes["model_prediction"] = "frozen_pr_f_sanitized_or_verified"
         if settings.workflow_version == "enhanced_v2":
             llm_status = (
                 "offline_unavailable"
@@ -101,6 +103,8 @@ class IPOAnalysisService:
             metadata["final_supervision"] = final_supervision
         if (market_context := diagnostics.get("market_context")):
             metadata["market_context"] = market_context
+        if (model_prediction := diagnostics.get("model_prediction")):
+            metadata["model_prediction"] = model_prediction
         if self.settings.workflow_version == "enhanced_v2":
             metadata["supervision"] = diagnostics.get("supervisor", {})
             metadata["governance"] = {

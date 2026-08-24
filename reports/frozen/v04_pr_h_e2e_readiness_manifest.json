@@ -1,0 +1,43 @@
+{
+  "blind_2025_y_accessed": false,
+  "blockers": [
+    "frozen_pr_f_runtime_or_sanitized_handoff_not_present",
+    "minimum_three_real_prospectus_pdfs_not_present",
+    "all_four_channels_real_case_matrix_not_executable"
+  ],
+  "demo_cases": [
+    {
+      "analysis_status": "completed",
+      "case_id": "ipo_2024_02410",
+      "channel_states": {
+        "document": "available",
+        "market": "available",
+        "model": "disabled",
+        "rule": "available"
+      },
+      "determinism": {
+        "checked_run_count": 2,
+        "final_supervision_content_hash": "611b1bd59d5d686a41bc8d1fa513f8082f67461fecd4194ba168a15c93df9257",
+        "mismatch_count": 0,
+        "passed": true
+      },
+      "evidence_traceability_passed": true,
+      "listing_date": "2024-08-20",
+      "market_artifact_content_hash": "8bc00e3404f750582018e8b48a21062772d8ad8c31b558083bc160825baab1c5",
+      "market_feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+      "market_observation_count": 15,
+      "probability_claimed": false,
+      "report_section_count": 13,
+      "stock_code": "2410.HK"
+    }
+  ],
+  "formal_gate_passed": false,
+  "manifest_version": "v04_pr_h_e2e_readiness_v1",
+  "minimum_required_demo_cases": 3,
+  "pr_h_status": "blocked_missing_frozen_runtime_inputs",
+  "pr_h_version": "v04_pr_h_full_e2e_v1",
+  "real_demo_case_count": 1,
+  "source_main_revision": "e0ff1751f1da66f9b98249804e513808d9681133",
+  "upstream_pr_a_through_pr_f_rerun": false,
+  "v04_baseline_e2e_frozen": false
+}
