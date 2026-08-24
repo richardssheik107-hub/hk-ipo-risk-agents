@@ -1,0 +1,26 @@
+workflow_version: enhanced_v2
+runtime_mode: offline
+use_mock: false
+enable_verifier: true
+parser: pymupdf
+retriever: keyword
+financial_agent: v03
+legal_agent: v03
+business_agent: v03
+market_agent: disabled
+verifier: specialized_v03
+supervisor: v03
+predictor: rule_based
+llm_provider: unavailable
+market_data_provider: unavailable
+ipo_data_provider: request
+repository: json
+report_generator: v04
+data_dir: data
+report_dir: reports
+log_level: INFO
+
+# PR-G channels. The market channel explains the snapshot the workflow already
+# loads; with market_data_provider: unavailable it reports an honest absence.
+market_context: snapshot
+final_supervisor: v04
