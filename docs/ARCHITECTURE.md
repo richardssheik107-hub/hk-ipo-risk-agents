@@ -121,7 +121,7 @@ Core 只消费 listing 前已知且受治理的信息，并通过 PIT validation
 
 ### Market-X Extended — optional
 
-CSMAR governed HSI daily close 已通过独立 authoritative-source integration 接入，438 / 438 官方 2020–2024 case 的 `hsi_return_5d`、`hsi_return_20d` 与 `market_volatility_20d` 均可严格 PIT 生成。authoritative industry benchmark mapping/history 与 HK total-market turnover 仍显式 missing；缺失来源不能用不等价 proxy、fake benchmark 或 neutral zero 替代。
+CSMAR governed HSI daily close 已通过独立 authoritative-source integration 接入，438 / 438 官方 2020–2024 case 的 `hsi_return_5d`、`hsi_return_20d` 与 `market_volatility_20d` 均可严格 PIT 生成。HKEX Main Board + GEM 官方日成交额也已通过独立 governed loader 接入，`market_turnover_20d_mean` 为 438 / 438 可用。12 个 HSCI 官方价格指数源已验收，但 delivered official master 的行业分类是无历史生效日的静态 `Institution` 记录，因此 production industry mapping 保持 `PIT_BLOCKED`，不得用静态分类、fake benchmark 或 neutral zero 强行解锁。
 
 ## 6. Outcome and canonical dataset
 
