@@ -1,7 +1,8 @@
 # HK IPO Risk Agents — Current Project Specification
 
-> Status snapshot: **2026-08-23**  
-> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
+> Status snapshot: **2026-08-24**  
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**  
+> PR-H preparation: **UNBLOCKED**
 
 ## 1. Product definition
 
@@ -35,7 +36,9 @@ PR-D Canonical Dataset              COMPLETE / FROZEN
 Oracle v2                           COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E                                COMPLETE / FROZEN
 PR-F                                COMPLETE / FROZEN
-PR-G                                CURRENT FORMAL GATE
+PR-G implementation                 MERGED / A REVIEW PASS
+PR-G freeze manifest                REQUIRED LOCAL ACTION
+PR-H                                PREPARATION UNBLOCKED
 ```
 
 真实建模 cohort：
@@ -69,6 +72,8 @@ production_consumable = false
 - versioned configuration / source provenance。
 
 目标 IPO 上市后信息不得进入该 IPO 的输入 X。
+
+Runtime Market-X 以 governed `PreListingMarketFeatureSnapshot` 或其无损受控投影为 source-of-truth；legacy `MarketSnapshot` 只保留 v0.3 compatibility，不得反向声称 PR-B lineage。
 
 ## 4. Document risk scope
 
@@ -172,9 +177,56 @@ PM  ROC-AUC 0.4246
 
 PM 与 M 完全预测等价，Production Document 100 维特征在该 frozen tree policy 下未被模型采用。Oracle `OM-M ROC-AUC -0.0143`，paired-bootstrap interval 跨零。该结果是正式 baseline finding，不允许因为看过 2024 后反转分数方向、继续调参、挑选口径或重写特征再宣称 2024 仍是 untouched Validation。
 
-因此，模型在产品中定位为一个受治理的辅助 warning channel，而不是整个系统的唯一成败标准。PR-G 必须保留不确定性，并把分数明确标记为未校准模型分数。
+因此，模型在产品中定位为一个受治理的辅助 warning channel，而不是整个系统的唯一成败标准。PR-G / PR-H 必须保留不确定性，并把分数明确标记为未校准模型分数。
 
-## 8. Product strategy after PR-F
+## 8. PR-G product integration contract
+
+PR #104 已实现并合入：
+
+```text
+Frozen PR-F cohort evidence
++ optional hash-bound per-case score / SHAP runtime
++ Market Context
++ Document Supervisor result
++ rule score
+→ Final Supervisor
+→ v0.4 13-section report
+```
+
+A Gate Review 已通过。Final Supervisor：
+
+- 不创造 RiskItem / Evidence；
+- 引用 id 必须来自输入；
+- 未校准 score 不称概率；
+- conflicts 保留，不在 CH-4 前假仲裁；
+- mock market 数字不得作为真实 context；
+- 缺失通道必须显式降级。
+
+PR-G 最终 freeze manifest 仍必须在本地真实 prospectus/runtime 上生成和校验，因为其中包含不能由远程审阅猜测的真实文件与 content hash。
+
+## 9. PR-H runtime requirements
+
+PR-H 的 baseline 产品闭环必须使用：
+
+```text
+Document
+→ real Evidence / Calculation / page-bbox
+
+Market
+→ governed PreListingMarketFeatureSnapshot / lossless projection
+→ strict PIT + per-feature provenance + explicit missingness
+
+Model
+→ checksummed local PR-F runtime handoff
+→ frozen model_result_hash binding
+→ per-case uncalibrated score + SHAP drivers
+```
+
+PR-F 完整 model/runtime bulk 不因 UI 需要而提交 Git。最小 handoff 不得包含 2025 Blind y、target labels、raw licensed data、secrets、absolute paths 或无关模型资产。
+
+Market-X Extended 当前已接入 governed CSMAR HSI；industry benchmark / total-market turnover 仍显式缺失，不得 fake-fill。
+
+## 10. Product strategy after PR-F
 
 产品价值明确拆成两类：
 
@@ -207,7 +259,7 @@ Competition 直接目标：关键风险要素抽取准确率 `>= 80%`、关键 E
 
 短期 1D / 5D 预测增强优先从 point-in-time Market Sentiment / IPO heat / liquidity / comparable context 寻找增量；结构性 Document 风险同时在 20D / 60D 上验证。
 
-## 9. Time governance
+## 11. Time governance
 
 ```text
 2020–2023  Development / Training
@@ -217,9 +269,9 @@ Competition 直接目标：关键风险要素抽取准确率 `>= 80%`、关键 E
 
 Development 使用 time-aware protocol；2024 不参与模型、预处理或阈值拟合；2025 y 正式开放前不可访问。`ROC-AUC < 0.5` 不授权在查看 2024 后反转 score 并把结果作为正式提升。
 
-## 10. Baseline E2E success criteria
+## 12. Baseline E2E success criteria
 
-PR-G / PR-H 至少满足：
+PR-H 至少满足：
 
 1. 真实 PDF 可进入稳定分析链；
 2. 风险结论可追溯 Evidence / Calculation / page / bbox；
@@ -229,11 +281,12 @@ PR-G / PR-H 至少满足：
 6. model score semantics 明确，未校准不称概率；
 7. Final Supervisor 不创造事实；
 8. UI 可展示 Document + Market + Prediction + Evidence + uncertainty；
-9. 3–5 个真实 IPO 可完成端到端 demo。
+9. 3–5 个真实 IPO 可完成端到端 demo；
+10. demo 中 Market channel 与 Model channel 的可用状态来自真实 governed runtime，不由 fake/mock 代替。
 
-PR-G / PR-H 的通过条件不是重新提高 frozen 5D AUC，而是正确、可追溯、可降级地消费已有研究结果并完成闭环。
+PR-H 的通过条件不是重新提高 frozen 5D AUC，而是正确、可追溯、可降级地消费已有研究结果并完成闭环。
 
-## 11. Competition hardening success criteria
+## 13. Competition hardening success criteria
 
 PR-H 后的 Competition Hardening 采用直接 benchmark 决定增强路线：
 
@@ -245,6 +298,6 @@ PR-H 后的 Competition Hardening 采用直接 benchmark 决定增强路线：
 - CH-5：Evidence screenshot / highlight + reviewer audit trail；
 - CH-6：统一提交抽取、Evidence、traceability、multi-horizon 和真实案例结果，不用单一漂亮指标代替完整系统评价。
 
-## 12. Out of scope until direct evidence justifies reopening
+## 14. Out of scope until direct evidence justifies reopening
 
-当前不把 Retriever tuning、LLM Reranker、Fine-tuning、LoRA、大规模 Prompt 重写、新 Agent、深度市场模型设为 PR-G / PR-H 前置条件。PR-E / PR-F 的 Oracle 结果本身不足以支持大规模 Document 重构；是否重启该研究由 CH-2 的直接 benchmark + error attribution 决定。
+当前不把 Retriever tuning、LLM Reranker、Fine-tuning、LoRA、大规模 Prompt 重写、新 Agent、深度市场模型设为 PR-H 前置条件。PR-E / PR-F 的 Oracle 结果本身不足以支持大规模 Document 重构；是否重启该研究由 CH-2 的直接 benchmark + error attribution 决定。
