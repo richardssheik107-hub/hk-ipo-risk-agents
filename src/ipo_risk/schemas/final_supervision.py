@@ -6,8 +6,14 @@ their conflicts, and states plainly which channels were unavailable and which
 gate is blocking them.  It never invents a risk, never cites evidence that was
 not supplied, and never presents an uncalibrated score as a probability.
 
-PR-G is NOT STARTED.  These types are preparation only and are not wired into
-any workflow, ``Settings`` field or config.
+PR-G is the current formal gate and these types are its starting contract.  They
+are still not wired into any workflow, ``Settings`` field or config: the formal
+PR-G change adds that wiring deliberately, together with the guard test that
+currently forbids it.
+
+``score_semantics`` defaults to ``uncalibrated_model_score``, the term the frozen
+PR-F output already uses (``lightgbm_modeling.py``), so the Final Supervisor
+consumes the frozen score under the vocabulary that produced it.
 """
 
 from __future__ import annotations
@@ -81,7 +87,7 @@ class ModelPredictionView(BaseModel):
     model_name: str | None = None
     model_version: str | None = None
     score: float | None = None
-    score_semantics: str = "ordinal model score; not a calibrated probability"
+    score_semantics: str = "uncalibrated_model_score"
     calibration_status: CalibrationStatus = "uncalibrated"
     calibration_provenance_id: str | None = None
     drivers: tuple[str, ...] = ()

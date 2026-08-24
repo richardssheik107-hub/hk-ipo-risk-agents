@@ -3,10 +3,14 @@
 These tests run against the real repository annotation assets, so they pin the
 current Oracle reality rather than a fixture's idea of it.
 
-Revised 2026-08-23 after the 2023/2024 blind annotation landed (61 -> 101 pass1).
-The previous ``test_oracle_has_no_validation_coverage`` trip-wire fired exactly as
-its docstring promised and has been replaced by
-``test_oracle_now_has_validation_coverage``.
+Revised 2026-08-23 after the 2023/2024 blind annotation landed (61 -> 101 pass1);
+the previous ``test_oracle_has_no_validation_coverage`` trip-wire fired exactly as
+its docstring promised.
+
+Scope note (2026-08-24): Oracle v2 is now the authoritative ceiling, with 77
+Development and 19 Validation modelable rows.  This module measures the *v1*
+artifacts as an independent cross-check of the 98 buildable cases; it is not the
+modeling cohort.  Cite the frozen Oracle v2 manifest for cohort numbers.
 """
 from __future__ import annotations
 
@@ -90,12 +94,12 @@ def test_annotation_backlog_is_cleared(audit_result) -> None:
 
 
 def test_frozen_pr_a_record_no_longer_matches_reality(audit_result, frozen_manifest) -> None:
-    """PR-A's freeze predates the 2023/2024 annotation and is now stale.
+    """PR-A's freeze predates the 2023/2024 annotation; the divergence is intentional.
 
-    This is a governance finding, not a defect in either artifact: PR-A correctly
-    froze what existed at revision 13e0281f.  Whether the Oracle side of PR-A should
-    be re-materialized is A's decision.  The assertion records the divergence so it
-    cannot be forgotten, and will need updating if PR-A is re-frozen.
+    RESOLVED by policy: V04_BASELINE_ORACLE_DIAGNOSTIC.md keeps the PR-A Oracle v1
+    snapshot as a historical record and names Oracle v2 the current ceiling, so PR-A
+    is not re-materialized.  This assertion now pins that the two are *expected* to
+    differ, so nobody "fixes" the frozen manifest to match live data.
     """
     _, summary = audit_result
     frozen_count = frozen_manifest["oracle_materialized_count"]
@@ -117,15 +121,17 @@ def test_blind_cohort_is_never_read(audit_result) -> None:
 
 
 def test_identity_defect_fired_on_the_newly_annotated_cases(audit_result) -> None:
-    """Oracle artifacts stamp annotation ``source_year``, not official listing year.
+    """The v1 identity defect, retained as a regression record.
 
-    ``join_oracle_outcome`` and PR-D's ``_identity_mismatches`` both compare
-    ``cohort_year`` and ``dataset_split``, so every case here is a hard join failure.
+    Oracle v1 artifacts stamp the annotation ``source_year`` rather than the official
+    listing year.  Two of these five -- ipo_2023_02503 and ipo_2024_02410 -- were
+    reported as "latent mismatch if annotated" before the 2023/2024 annotation, and
+    firing on exactly those cases confirmed the prediction.
 
-    Three cases were already materialized before the 2023/2024 annotation.  The two
-    added since -- ipo_2023_02503 and ipo_2024_02410 -- were previously reported as
-    "latent mismatch if annotated"; annotating them fired the defect exactly as
-    predicted, and both land in the scarce validation split.
+    RESOLVED in Oracle v2: ``oracle_document_v2.load_official_identities`` rebinds
+    each artifact to the official identity carried by the Production feature file and
+    records ``reconciliation_status``.  This assertion keeps the v1 inventory pinned
+    so the v1 path cannot silently drift while it remains in the tree.
     """
     _, summary = audit_result
     identity = summary["oracle_identity_provenance"]
@@ -143,11 +149,12 @@ def test_identity_defect_fired_on_the_newly_annotated_cases(audit_result) -> Non
 
 
 def test_usable_cohort_after_pr_c_and_pr_d_rejection(audit_result) -> None:
-    """What PR-E actually receives, after both downstream gates refuse rows.
+    """The v1 cohort after both downstream gates refuse rows.
 
-    PR-C rejects cases whose 5D outcome is unavailable; PR-D rejects cases whose
-    Oracle identity disagrees with Production. The remainder is the real Oracle
-    intersection cohort, and it is smaller than the raw buildable count.
+    SUPERSEDED as a cohort statement: Oracle v2 recovers the identity-mismatched
+    rows by rebinding, and its frozen manifest reports 77 Development / 19
+    Validation.  This assertion is kept only to show what the *unrebound* v1 path
+    yields, which is why v2 was needed.
     """
     rows, _ = audit_result
     usable = {"development": 0, "validation": 0}

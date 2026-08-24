@@ -1,7 +1,7 @@
 """Gate-pending Final Supervisor: pure composition, explicit unavailability.
 
-PR-G is NOT STARTED.  This implementation exists so the contract has a concrete,
-tested reference: it composes whatever channels exist, and reports the rest as
+PR-G is the current formal gate.  This gate-pending implementation is its
+starting reference: it composes whatever channels exist, and reports the rest as
 blocked by a named gate rather than silently omitting them or filling them in.
 """
 
