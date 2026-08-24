@@ -37,7 +37,7 @@
   "pr_h_status": "blocked_missing_frozen_runtime_inputs",
   "pr_h_version": "v04_pr_h_full_e2e_v1",
   "real_demo_case_count": 1,
-  "source_main_revision": "e0ff1751f1da66f9b98249804e513808d9681133",
+  "source_main_revision": "169ca53fbdc430667c925484ef9e792eab0ab42e",
   "upstream_pr_a_through_pr_f_rerun": false,
   "v04_baseline_e2e_frozen": false
 }

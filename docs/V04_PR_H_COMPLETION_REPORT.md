@@ -17,7 +17,7 @@ them.
 
 ## Baseline
 
-- source main: `e0ff1751f1da66f9b98249804e513808d9681133`
+- source main: `169ca53fbdc430667c925484ef9e792eab0ab42e`
 - working branch: `feature/v04-pr-h-full-e2e`
 - PR-G frozen manifest:
   `reports/frozen/v04_pr_g_final_supervision_manifest.json`
@@ -37,10 +37,12 @@ legacy v0.2 `MarketSnapshot` as the formal market-context source. The provider:
 - preserves unavailable values with a missing reason and never zero-fills them;
 - never consumes mock market numbers as governed product data.
 
-The checked-in PR-B Core is the available governed source. The separately
-governed HSI Extended normalized cache is not present in this workspace, so this
-report does not claim HSI Extended runtime coverage. Authoritative industry
-benchmark and total-market-turnover inputs also remain unavailable.
+The checked-in PR-B Core is the available governed product source. Main also
+contains the v0.4 C source manifests and readiness audit proving 438/438 HSI and
+HKEX-turnover feature availability. Their ignored normalized files are not
+present in this workspace, so PR-H cannot yet consume or claim those Extended
+observations at runtime. Production industry returns remain intentionally
+unavailable because the static classification mapping is not PIT-safe.
 
 ### Frozen model runtime
 
