@@ -18,14 +18,18 @@ import pytest
 from ipo_risk.core.config import load_settings
 from ipo_risk.schemas import IPOAnalysisRequest, TaskStatus
 from ipo_risk.services.analysis_service import IPOAnalysisService
+from ..v04_market_context_fixture import write_governed_pr_b_fixture
 
 
 @pytest.fixture
 def service(tmp_path) -> IPOAnalysisService:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
     settings = replace(load_settings("configs/v04_offline.yaml"),
                        parser="mock", retriever="mock", financial_agent="mock",
                        legal_agent="mock", business_agent="mock", use_mock=True,
-                       data_dir=str(tmp_path / "repo"))
+                       llm_provider="mock", data_dir=str(tmp_path / "repo"),
+                       market_feature_dir=str(feature_dir),
+                       market_official_bridge=str(bridge_path))
     return IPOAnalysisService(settings=settings)
 
 
@@ -71,6 +75,7 @@ def test_a_mock_market_provider_leaks_no_fixture_number(tmp_path) -> None:
     settings = replace(load_settings("configs/v04_offline.yaml"),
                        parser="mock", retriever="mock", financial_agent="mock",
                        legal_agent="mock", business_agent="mock", use_mock=True,
+                       llm_provider="mock",
                        market_data_provider="mock", market_context="snapshot",
                        data_dir=str(tmp_path / "repo"))
     outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
@@ -146,11 +151,15 @@ def test_sanitized_model_handoff_reaches_the_final_supervisor(tmp_path) -> None:
         "score_semantics": "uncalibrated_model_score",
     }
     (handoff / "product_runtime_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
     settings = replace(
         load_settings("configs/v04_offline.yaml"),
         parser="mock", retriever="mock", financial_agent="mock",
         legal_agent="mock", business_agent="mock", use_mock=True,
+        llm_provider="mock",
         pr_f_run_dir=str(handoff), data_dir=str(tmp_path / "repo"),
+        market_feature_dir=str(feature_dir),
+        market_official_bridge=str(bridge_path),
     )
     outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
         company_name="同源康医药-B", stock_code="2410.HK",

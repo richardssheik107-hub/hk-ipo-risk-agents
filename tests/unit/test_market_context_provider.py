@@ -15,6 +15,7 @@ from ipo_risk.agents.market_context import (
 from ipo_risk.providers.mock import MockMarketDataProvider
 from ipo_risk.schemas import IPOProfile, MarketSnapshot
 from ipo_risk.schemas.final_supervision import ChannelStatus
+from ..v04_market_context_fixture import write_governed_pr_b_fixture
 
 PROVIDER = SnapshotMarketContextProvider()
 
@@ -91,10 +92,11 @@ def test_gate_pending_provider_no_longer_claims_a_blocking_gate() -> None:
     assert view.observations == ()
 
 
-def test_governed_pr_b_projection_is_available_and_hash_bound() -> None:
+def test_governed_pr_b_projection_is_available_and_hash_bound(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
     provider = GovernedPRBMarketContextProvider(
-        feature_dir="reports/v04_pr_b/core_features",
-        official_bridge_path="data/catalog/ipo_official_master_bridge.csv",
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
     )
     view = provider.context(IPOProfile(
         company_name="同源康医药-B",
@@ -109,10 +111,11 @@ def test_governed_pr_b_projection_is_available_and_hash_bound() -> None:
     assert all(item.source == "pr_b_market_x_core" for item in view.observations)
 
 
-def test_governed_pr_b_projection_fails_closed_for_unmatched_profile() -> None:
+def test_governed_pr_b_projection_fails_closed_for_unmatched_profile(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
     provider = GovernedPRBMarketContextProvider(
-        feature_dir="reports/v04_pr_b/core_features",
-        official_bridge_path="data/catalog/ipo_official_master_bridge.csv",
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
     )
     view = provider.context(_profile())
     assert view.status is ChannelStatus.UNAVAILABLE_ERROR
@@ -120,10 +123,11 @@ def test_governed_pr_b_projection_fails_closed_for_unmatched_profile() -> None:
     assert "exactly one official IPO case" in view.reason
 
 
-def test_governed_pr_b_projection_preserves_missing_values_without_zero_fill() -> None:
+def test_governed_pr_b_projection_preserves_missing_values_without_zero_fill(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
     provider = GovernedPRBMarketContextProvider(
-        feature_dir="reports/v04_pr_b/core_features",
-        official_bridge_path="data/catalog/ipo_official_master_bridge.csv",
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
     )
     view = provider.context(IPOProfile(
         company_name="德合集团", stock_code="0368.HK", listing_date=date(2020, 7, 17)))
@@ -135,15 +139,16 @@ def test_governed_pr_b_projection_preserves_missing_values_without_zero_fill() -
 
 
 def test_governed_pr_b_projection_rejects_tampered_artifact(tmp_path) -> None:
-    source = Path("reports/v04_pr_b/core_features/ipo_2024_02410.json")
-    feature_dir = tmp_path / "features"
+    source_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "source")
+    source = source_dir / "ipo_2024_02410.json"
+    feature_dir = tmp_path / "tampered"
     feature_dir.mkdir()
     payload = json.loads(source.read_text(encoding="utf-8"))
     payload["raw_values"]["recent_ipo_break_rate"] = 0.99
     (feature_dir / source.name).write_text(json.dumps(payload), encoding="utf-8")
     provider = GovernedPRBMarketContextProvider(
         feature_dir=feature_dir,
-        official_bridge_path="data/catalog/ipo_official_master_bridge.csv",
+        official_bridge_path=bridge_path,
     )
     view = provider.context(IPOProfile(
         company_name="同源康医药-B", stock_code="2410.HK", listing_date=date(2024, 8, 20)))
