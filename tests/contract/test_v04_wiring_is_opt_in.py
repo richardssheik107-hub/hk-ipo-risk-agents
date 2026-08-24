@@ -1,7 +1,7 @@
 """PR-G channels must be invisible to every configuration that predates them."""
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import fields, replace
 
 import pytest
 
@@ -11,7 +11,8 @@ from ipo_risk.core.container import NO_COMPONENT, DependencyContainer, default_r
 LEGACY_CONFIGS = ["configs/mock.yaml", "configs/default.yaml", "configs/real_pdf.yaml",
                   "configs/v03_offline.yaml", "configs/v03_offline_table.yaml",
                   "configs/v03_ai.yaml", "configs/v03_ai_table.yaml"]
-V04_CONFIGS = ["configs/v04_offline.yaml", "configs/v04_ai.yaml"]
+V04_CONFIGS = ["configs/v04_offline.yaml", "configs/v04_ai.yaml",
+               "configs/v04_offline_table.yaml", "configs/v04_ai_table.yaml"]
 
 
 def _nodes(config: str) -> set[str]:
@@ -68,3 +69,28 @@ def test_the_historical_nine_positional_arguments_still_construct_a_workflow() -
     workflow = EnhancedV2Workflow(None, None, [], None, None, None, None, None, None)
     assert workflow.market_context is None
     assert workflow.final_supervisor is None
+
+
+@pytest.mark.parametrize(
+    "plain, table",
+    [
+        ("configs/v04_offline.yaml", "configs/v04_offline_table.yaml"),
+        ("configs/v04_ai.yaml", "configs/v04_ai_table.yaml"),
+    ],
+)
+def test_v04_table_configs_differ_only_in_the_document_path(plain: str, table: str) -> None:
+    """v0.4 shipped on the flat-text parser, so the table work was invisible to it.
+
+    The table variants exist to close that gap without touching the frozen v0.4
+    configurations: same workflow, same channels, only the two
+    document-intelligence components swapped.
+    """
+    base, tables = load_settings(plain), load_settings(table)
+    assert (base.parser, base.financial_extractor) == ("pymupdf", "regex")
+    assert (tables.parser, tables.financial_extractor) == ("pymupdf_table", "table")
+    differing = {
+        field.name
+        for field in fields(base)
+        if getattr(base, field.name) != getattr(tables, field.name)
+    }
+    assert differing == {"parser", "financial_extractor"}

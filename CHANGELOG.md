@@ -1,5 +1,178 @@
 # Changelog
 
+## Unreleased — v0.3 opt-in table path: column geometry and mixed annual/interim statements
+
+Scoped strictly to the opt-in table path (`parser: pymupdf_table` +
+`financial_extractor: table`, i.e. the `*_table.yaml` configs). The default
+`pymupdf` parser, the `regex` financial extractor and the frozen 2410.HK
+cash-runway regression (2.76 months, evidence pages 563/562) are unchanged.
+
+Every rule and threshold below was derived from the 2020–2023 **development**
+cohort — the period-header work on 24 documents / 3,695 reconstructed blocks, the
+column-geometry work on all 320 development documents that reconstruct a grid at
+all (28,382 anchored pages). The 2025 blind cohort was used only to confirm the
+outcome, never to choose a feature or a parameter.
+
+### Fixed
+
+- **Blocks lost their period header.** A statement is split into several vertical
+  blocks whenever a subtotal rule opens a gap, but only the topmost block sits
+  under the caption — the rest scanned the *previous block's data rows* as their
+  header. Blocks now inherit the nearest preceding header (all blocks on a page
+  share one set of `value_anchors`, hence one column geometry) and the header
+  scan is floored at the previous block's last row. Development cohort: blocks
+  with no year header 1,457 → 381; blocks yielding no period at all 67.1% → 53.7%.
+- **Mixed annual/interim tables collapsed into one period series.** A track-record
+  table prints three full years beside two nine-month stubs, so `2024年` appears
+  twice and the column count never matched a uniform three-period series — the
+  real meaning of `value_period_count_mismatch` / `conflicting_values`. The parser
+  now emits `period_columns`, pairing each value column with its own year label
+  *and* the caption governing it, so the two `2024年` columns resolve to
+  `2024-12-31` (12 months) and `2024-09-30` (9 months). Columns are split by the
+  repeated-year cue where it fires and by caption geometry otherwise; on the
+  development cohort the two agree on 270/285 headers and geometry additionally
+  resolves 56/60 headers the repeat cue cannot split.
+- **Scale-before-currency units resolved to nothing.** `千美元` / `千港元` /
+  `百萬港元` put the scale in front of the currency, which the base grammar (a
+  trailing `元`) cannot read, stalling every fact on `missing_unit`. These forms
+  are 1,186 of the unit captions in the development cohort. Overridden in
+  `TableAwareV03FinancialFactExtractor` only.
+- **Right-aligned short cells were silently dropped.** `_assemble_row` snapped a
+  value token to a year anchor by comparing x-*centres* within a 16pt tolerance,
+  but statement columns are right-*aligned*: the offset between a token's centre
+  and the year label centred above it is a function of the token's length, so a
+  bare `–` overshoots its anchor while a seven-digit figure undershoots it. On the
+  2020–2023 development cohort (320 documents, 28,382 anchored pages) 22.2% of the
+  cells whose column is unambiguous — 553,488 cells on rows carrying exactly one
+  value per anchor — sat further than 16pt from their own anchor, and the ones
+  that overshot were dropped, leaving `""` in `cells` and surfacing downstream as
+  `invalid_numeric_value`. Tokens are now assigned to the column whose x-interval
+  contains them, the interval being the midpoints between adjacent anchors with
+  the two outer bounds mirrored, which removes the tolerance rather than retuning
+  it. Development cohort, forced-pairing rows reconstructed exactly: 68.8% → 93.3%
+  (right-edge snapping at the same tolerance reached only 79.2%, so the intervals,
+  not the anchor definition, are what buys the win); value tokens captured 64.1% →
+  78.4%; of 204,390 rows accepted before, 204,124 are still accepted and 50,150
+  new rows join them. The note-reference column stays out: of 14,768 tokens under
+  an explicit 附註/Note header, 80 fall inside the widened first column, fewer than
+  the 84 that already sat right of the label margin. `COL_SNAP` is renamed
+  `HEADER_SNAP`, its only remaining use being the year-header-to-column match in
+  `_period_columns` where both sides are year labels and the bias does not arise.
+
+- **Dot leaders hid table revenue rows.** The frozen revenue patterns anchor on
+  `(?:\s|$)` after the metric name, so a reconstructed label
+  (`收入.................`) never matched and every revenue row fell through to
+  the lower-confidence flattened-text path. Leader runs are now collapsed for
+  matching only.
+
+### Fixed (second pass: labels, units, duplicate readings)
+
+- **Wrapped row labels lost everything but their tail.** A statement prints a long
+  caption over several lines and the figures on the last one, so reading a single
+  visual row hands the extractor the caption's tail — and a tail can name a
+  different metric than the whole: 「年內利潤及全面」/「收入總額」 is *profit and total
+  comprehensive income*, but the value line reads as 收入總額, so the row's net
+  profit was extracted as the company's revenue. Lines directly above a data row
+  that carry no value and sit entirely left of the first value column are now
+  rejoined in reading order. Development cohort: 2,718 of 17,501 data rows wrap;
+  rejoining changes which metric 46 rows match and every change is a correction
+  (「出售物業、廠房及設備的收益」 — a disposal gain — stops reading as revenue, and 31
+  total-comprehensive-income rows start reading as the net result).
+- **The money unit was read from the whole page instead of the grid's caption.**
+  A summary page prints its table in 千元 while the prose beside it quotes 百萬元;
+  a whole-page scan sees two scales, resolves neither, and the page then disagrees
+  with the statement page about the unit of an identical figure, so the series is
+  discarded for conflicting values. The cash-runway table path already resolved
+  the caption first; the period-series path now does too.
+- **The flattened-text fallback could invent rows the grid does not have.** With
+  no coordinates it matches the metric name wherever it appears — in prose, in a
+  segment note, under 非香港財務報告準則計量, or as the tail of a wrapped caption
+  (「…金融資產的公允價值收益」 read as 收益). On a page the parser reconstructed, the
+  grid is now the authority: no matching grid row means the row is absent. On the
+  development cohort, text-only readings of a page that already has a grid
+  disagree with that grid's column count 79 times out of 126, and the ones that
+  agree are no more likely to be the metric.
+- **The same figure cited by three pages counted as three observations.** A
+  prospectus prints one figure in the summary, in MD&A and in the audited
+  statements. Left un-merged, the growth rule sorted by period end, took the
+  latest fact as "current" and its own duplicate as "previous", and the skill
+  rejected the pair as `period_order_invalid`. Exact agreement on period, value,
+  currency and unit now merges into one observation that keeps every citation;
+  any genuine disagreement still reports `conflicting_values_for_same_period`.
+- **One unreadable page discarded an otherwise clean series.** Retrieval returns
+  five pages and one is regularly a statement of changes in equity, whose columns
+  are share capital / premium / accumulated losses rather than periods. Its
+  readings arrive already marked defective, but a single issue anywhere forced
+  the whole series to review. A defective reading is evidence that a page could
+  not be read, not evidence about the value, so it no longer outvotes a clean
+  one; only observations carrying their own issues are dropped, conflicts are
+  recomputed over the survivors, and disagreement among clean readings still
+  blocks. Dropped pages are recorded in `unreadable_pages`.
+
+### Added
+
+- `configs/v04_offline_table.yaml` and `configs/v04_ai_table.yaml`. v0.4 shipped
+  on `parser: pymupdf` + `financial_extractor: regex`, so none of the table work
+  was reachable from the current workflow. These are the v0.4 workflow with the
+  two document-intelligence components swapped and nothing else changed; the
+  frozen `v04_offline.yaml` / `v04_ai.yaml` keep their behaviour, and a contract
+  test pins that the pairs differ in exactly those two fields.
+
+### Verified (second pass)
+
+- 1,570 tests pass, including the frozen 2410.HK E2E regression.
+- 經發物業 01354 (2024): per-risk diagnostics identical to the pre-change
+  baseline, and `revenue_growth` reproduces `21.99030582216588192683810214`
+  over 2022-12-31 → 2023-12-31 exactly.
+- MiniMax 00100 (2025, blind — confirmation only): first clean financial
+  extraction. `continuous_loss` now generates a pending risk (two consecutive
+  nine-month losses, 9M2024 −304,342 and 9M2025 −512,013 千美元) and
+  `revenue_growth` resolves to `not_applicable` at +174.68%, correctly pairing
+  9M2025 against 9M2024 rather than against FY2024.
+
+### Added
+
+- `period_columns`, `period_header_source`, `period_group_lines`,
+  `period_basis_mixed` and `local_header_lines` on reconstructed tables;
+- `period_axis`, `period_basis` (`annual` / `interim`) and `period_group_line` on
+  every fact produced by the table path, so a downstream rule can see whether it
+  holds a full year or a nine-month stub;
+- `period_column_unresolved`, recorded when a column carries a value the column
+  map cannot date (an empty spare column stays silent).
+
+### Verified
+
+- 1,558 tests pass, including the frozen 2410.HK E2E regression (2.76 months,
+  evidence pages 563/562).
+- 經發物業 01354 (2024): byte-identical per-risk diagnostics through the
+  mixed-period work above. The right-alignment fix **does** move this case, and
+  the move is a downstream consequence rather than a parser defect: physical
+  pages 26–27 (概要) now reconstruct their whole summary income statement instead
+  of a single row, the retriever's `structured_table_row` signal (+0.30) lifts
+  them into the top five, and `revenue_growth` turns from `not_applicable`
+  (growth 21.99%) into `conflicting_values`. Both causes are separate known
+  weaknesses, not new ones: page 27 prints 「年內利潤及全面／收入總額」 across two
+  lines, so the row label reconstructs as the tail `收入總額` and matches the
+  revenue metric, and the 概要 page carries no unit caption of its own
+  (`missing_unit`). The 593,660 / 706,816 / 862,247 revenue series itself is
+  unchanged and agrees across pages 26, 340 and 447.
+- Development cohort outcome (32 documents, 2020–2023, `v03_offline_table`):
+  543 → 538 diagnostic issue instances; `invalid_numeric_value` 12 → 5, while
+  `ambiguous_empty_value_symbol` rises 22 → 26 because a recovered dash is now
+  reported as the empty-value symbol it is instead of vanishing into a hole.
+- MiniMax 00100 (2025, blind — confirmation only): on physical page 542 the two
+  dashes and the `(3)` that the 16pt tolerance dropped are captured, and
+  `invalid_numeric_value` is eliminated from `revenue_growth` with the retrieved
+  evidence pages unchanged. `continuous_loss` keeps an `invalid_numeric_value`
+  from physical page 589, a statement of changes in equity whose columns are not
+  fiscal years — a different defect, untouched here.
+- MiniMax 00100 (2025, blind — confirmation only): `unit_missing_or_ambiguous`
+  and `missing_unit` eliminated on all five risk codes; `missing_period`
+  eliminated on `continuous_loss`; `value_period_count_mismatch` eliminated on
+  `revenue_growth`. The consolidated income statement now yields a clean
+  five-period mixed series and the growth rule pairs 9M2025 against 9M2024
+  rather than against FY2024.
+
 ## v0.3.0-multi-agent-risk-analysis — 2026-08-12
 
 Released as the frozen multi-Agent document-risk analysis product. Formal
