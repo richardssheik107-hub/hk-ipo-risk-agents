@@ -8,6 +8,12 @@ import json
 
 import streamlit as st
 
+from competition_ui import (
+    apply_competition_theme,
+    render_competition_roadmap,
+    render_executive_snapshot,
+    render_product_header,
+)
 from pipeline_stages import StageStatus, pending_notice, resolve_stages
 from presenters import (
     DOMAINS,
@@ -121,23 +127,30 @@ def _render_risk(risk: dict[str, object]) -> None:
 
 
 st.set_page_config(page_title="HK IPO Risk Agents", page_icon="📊", layout="wide")
-st.title("HK IPO Risk Agents")
-st.caption("港股 IPO 招股书证据驱动多智能体风险分析 · Evidence-driven multi-agent review")
+apply_competition_theme()
+render_product_header()
 
-scenario = st.sidebar.selectbox("Runtime scenario", list(SCENARIOS))
+scenario_names = list(SCENARIOS)
+default_scenario = scenario_names.index("v0.4 offline + Final Supervisor")
+scenario = st.sidebar.selectbox("Runtime scenario", scenario_names, index=default_scenario)
 config_path, needs_pdf = SCENARIOS[scenario]
 st.sidebar.markdown(f"**Configuration:** `{config_path}`")
 st.sidebar.info(
     "Offline mode makes no external model call. AI mode reads credentials only from "
     "environment variables and degrades safely when unavailable."
 )
+st.sidebar.caption("Competition roadmap slots are presentation-only until their governed CH-* implementations land.")
 
 with st.form("analysis"):
-    company = st.text_input("Company name", "Demo Biotech")
-    code = st.text_input("Stock code", "9999.HK")
-    listing = st.date_input("Listing date", date.today())
+    first, second, third = st.columns((1.4, 1, 1))
+    with first:
+        company = st.text_input("Company name", "Demo Biotech")
+    with second:
+        code = st.text_input("Stock code", "9999.HK")
+    with third:
+        listing = st.date_input("Listing date", date.today())
     uploaded = st.file_uploader("Prospectus PDF", type=["pdf"]) if needs_pdf else None
-    submitted = st.form_submit_button("Run analysis", type="primary")
+    submitted = st.form_submit_button("Run governed analysis", type="primary")
 
 if submitted:
     try:
@@ -182,6 +195,8 @@ if submitted:
         prediction = payload["prediction"] or {}
         counts = payload["risk_status_counts"]
 
+        render_executive_snapshot(payload)
+
         st.subheader("IPO Profile and runtime")
         profile_columns = st.columns(4)
         profile_columns[0].metric("Company", _display_value(profile.get("company_name")))
@@ -208,7 +223,7 @@ if submitted:
             use_container_width=True,
         )
 
-        st.subheader("Overall risk dashboard")
+        st.subheader("Risk review status")
         metrics = st.columns(6)
         metrics[0].metric("Overall rule score", _display_value(prediction.get("risk_score")))
         metrics[1].metric("Rule level", _display_value(prediction.get("risk_level")))
@@ -221,12 +236,14 @@ if submitted:
             "stock-return forecasts, or investment/legal advice."
         )
 
-
         stages = resolve_stages(payload)
         _render_pipeline_status(stages)
         by_id = {stage.stage_id: stage for stage in stages}
 
-        tabs = st.tabs([f"{stage.ordinal}. {stage.title}" for stage in stages] + ["Diagnostics"])
+        tabs = st.tabs(
+            [f"{stage.ordinal}. {stage.title}" for stage in stages]
+            + ["Competition Roadmap", "Diagnostics"]
+        )
         pages = dict(zip((stage.stage_id for stage in stages), tabs, strict=False))
 
         with pages["document_analysis"]:
@@ -262,10 +279,12 @@ if submitted:
             _render_stage_header(by_id["market_features"])
             market = payload.get("market_context") or {}
             if market:
-                st.markdown("**Pre-listing market context (PR-G channel)**")
+                st.markdown("**Pre-listing market context (governed runtime channel)**")
                 st.caption(f"status: {market.get('status')} · {market.get('reason')}")
-                observations = [item for item in market.get("observations", [])
-                                if item.get("availability") == "available"]
+                observations = [
+                    item for item in market.get("observations", [])
+                    if item.get("availability") == "available"
+                ]
                 if observations:
                     st.dataframe(observations, hide_index=True, use_container_width=True)
                 else:
@@ -302,7 +321,7 @@ if submitted:
                 st.markdown("**Channel availability**")
                 st.dataframe(final.get("channel_states", []), hide_index=True, use_container_width=True)
                 st.warning(final.get("uncertainty_statement", ""))
-                st.markdown("**Preserved conflicts** (arbitration is out of scope for v0.4)")
+                st.markdown("**Preserved conflicts** (arbitration is planned for CH-4)")
                 st.json(final.get("conflicts", []))
             supervision = payload["supervision"]
             if not supervision:
@@ -342,6 +361,9 @@ if submitted:
                 mime="application/json",
             )
             _render_pending(by_id["final_report"])
+
+        with tabs[-2]:
+            render_competition_roadmap()
 
         with tabs[-1]:
             st.subheader("Component modes and status")
