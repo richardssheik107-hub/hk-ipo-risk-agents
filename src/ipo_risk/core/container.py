@@ -199,6 +199,7 @@ class DependencyContainer:
                 name,
                 feature_dir=self.settings.market_feature_dir,
                 official_bridge_path=self.settings.market_official_bridge,
+                extended_readiness_path=self.settings.market_extended_readiness,
             )
         return self.registry.create(kind, name)
 

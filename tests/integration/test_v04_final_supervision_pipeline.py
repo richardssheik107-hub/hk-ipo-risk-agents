@@ -18,18 +18,23 @@ import pytest
 from ipo_risk.core.config import load_settings
 from ipo_risk.schemas import IPOAnalysisRequest, TaskStatus
 from ipo_risk.services.analysis_service import IPOAnalysisService
-from ..v04_market_context_fixture import write_governed_pr_b_fixture
+from ..v04_market_context_fixture import (
+    write_governed_extended_fixture,
+    write_governed_pr_b_fixture,
+)
 
 
 @pytest.fixture
 def service(tmp_path) -> IPOAnalysisService:
     feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
+    extended_path = write_governed_extended_fixture(tmp_path / "market")
     settings = replace(load_settings("configs/v04_offline.yaml"),
                        parser="mock", retriever="mock", financial_agent="mock",
                        legal_agent="mock", business_agent="mock", use_mock=True,
                        llm_provider="mock", data_dir=str(tmp_path / "repo"),
                        market_feature_dir=str(feature_dir),
-                       market_official_bridge=str(bridge_path))
+                       market_official_bridge=str(bridge_path),
+                       market_extended_readiness=str(extended_path))
     return IPOAnalysisService(settings=settings)
 
 
@@ -64,10 +69,14 @@ def test_every_referenced_id_resolves_to_something_in_the_result(result) -> None
 def test_the_market_channel_uses_the_governed_pr_b_projection(result) -> None:
     market = result.metadata["market_context"]
     assert market["status"] == "available"
-    assert len(market["observations"]) == 15
+    assert len(market["observations"]) == 21
     assert market["feature_manifest_hash"] == "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d"
     assert market["provenance"]["feature_pipeline"] == "governed_pr_b_core"
     assert market["provenance"]["case_id"] == "ipo_2024_02410"
+    by_name = {item["name"]: item for item in market["observations"]}
+    assert by_name["industry_return_5d"]["value"] is None
+    assert by_name["industry_return_5d"]["availability"] == "unavailable"
+    assert by_name["industry_return_5d"]["missing_reason"] == "INDUSTRY_MAPPING_PIT_BLOCKED"
 
 
 def test_market_report_names_the_governed_source_instead_of_none(result) -> None:

@@ -27,6 +27,8 @@ class Settings:
     # contain no licensed raw market data.
     market_feature_dir: str = "reports/v04_pr_b/core_features"
     market_official_bridge: str = "data/catalog/ipo_official_master_bridge.csv"
+    # Optional governed local C-lane projection; raw/large audit rows stay uncommitted.
+    market_extended_readiness: str = ""
     data_dir: str = "data"; report_dir: str = "reports"; log_level: str = "INFO"
 
 def _coerce(value: str, current):

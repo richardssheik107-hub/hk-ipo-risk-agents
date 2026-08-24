@@ -28,6 +28,8 @@ from ipo_risk.market.ipo_market_context_features import (
 )
 from ipo_risk.schemas import IPOProfile, MarketSnapshot
 from ipo_risk.schemas.final_supervision import ChannelStatus, MarketContextView, MarketObservation
+from ipo_risk.schemas.market import expected_market_split
+from ipo_risk.schemas.market_features import MARKET_RAW_FEATURE_ORDER
 
 # Retired in PR-G: PR-B is COMPLETE / FROZEN, so no gate blocks this channel any
 # more.  What is missing is a governed runtime adapter, which is a capability
@@ -67,6 +69,22 @@ _CORE_UNITS: dict[str, str] = {
     "same_industry_recent_5d_sample_count": "count",
 }
 
+_EXTENDED_ONLY_RAW_FEATURE_ORDER = tuple(
+    name for name in MARKET_RAW_FEATURE_ORDER if name not in _CORE_UNITS
+)
+_EXTENDED_UNITS: dict[str, str] = {
+    "hsi_return_5d": "ratio",
+    "hsi_return_20d": "ratio",
+    "industry_return_5d": "ratio",
+    "industry_return_20d": "ratio",
+    "market_turnover_20d_mean": "currency",
+    "market_volatility_20d": "ratio",
+}
+_INDUSTRY_MISSING_REASONS = {
+    "INDUSTRY_MAPPING_PIT_BLOCKED",
+    "MISSING_INDUSTRY_CLASSIFICATION",
+}
+
 
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -77,18 +95,29 @@ def _sha256_file(path: Path) -> str:
 
 
 class GovernedPRBMarketContextProvider:
-    """Load a hash-bound, point-in-time PR-B Core projection for one IPO.
+    """Load governed point-in-time Core and optional Extended projections.
 
     The provider does not calculate or impute features.  It validates and
     presents the already frozen 30-position PR-B artifact, keeping every
-    unavailable raw feature explicit instead of replacing it with zero.
+    unavailable raw feature explicit instead of replacing it with zero.  When
+    supplied, the local C-lane readiness audit adds only the six Extended names
+    not already represented in Core; it does not alter either frozen manifest.
     """
 
     name = "governed_pr_b_core"
 
-    def __init__(self, *, feature_dir: str | Path, official_bridge_path: str | Path) -> None:
+    def __init__(
+        self,
+        *,
+        feature_dir: str | Path,
+        official_bridge_path: str | Path,
+        extended_readiness_path: str | Path | None = None,
+    ) -> None:
         self.feature_dir = Path(feature_dir)
         self.official_bridge_path = Path(official_bridge_path)
+        self.extended_readiness_path = (
+            Path(extended_readiness_path) if extended_readiness_path else None
+        )
 
     def context(self, profile: IPOProfile, market: MarketSnapshot | None = None) -> MarketContextView:
         del market  # PR-B is the governed source; the legacy snapshot is not mixed in.
@@ -96,6 +125,10 @@ class GovernedPRBMarketContextProvider:
             row = self._official_row(profile)
             artifact = self._artifact(row)
             observations = self._observations(artifact)
+            extended_row = None
+            if self.extended_readiness_path is not None:
+                extended_row = self._extended_row(row)
+                observations += self._extended_observations(extended_row)
         except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
             detail = str(exc) if isinstance(exc, (ValueError, KeyError, TypeError)) else "artifact_io_or_json_error"
             return MarketContextView(
@@ -105,7 +138,11 @@ class GovernedPRBMarketContextProvider:
             )
         return MarketContextView(
             status=ChannelStatus.AVAILABLE,
-            reason="validated frozen PR-B Market-X Core projection",
+            reason=(
+                "validated frozen PR-B Market-X Core and governed Extended readiness projection"
+                if extended_row is not None
+                else "validated frozen PR-B Market-X Core projection"
+            ),
             observations=observations,
             feature_manifest_hash=IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
             provenance={
@@ -117,6 +154,11 @@ class GovernedPRBMarketContextProvider:
                 "artifact_content_hash": artifact["content_hash"],
                 "cutoff_semantics": artifact["cutoff_semantics"],
                 "source_provenance": artifact["source_provenance"],
+                "extended_readiness_sha256": (
+                    _sha256_file(self.extended_readiness_path)
+                    if self.extended_readiness_path is not None
+                    else None
+                ),
             },
         )
 
@@ -167,6 +209,68 @@ class GovernedPRBMarketContextProvider:
         if payload.get("feature_names") != list(names) or payload.get("feature_values") != list(values):
             raise ValueError("feature vector is not a lossless projection of raw_values")
         return payload
+
+    def _extended_row(self, official_row: dict[str, str]) -> dict[str, str]:
+        assert self.extended_readiness_path is not None
+        with self.extended_readiness_path.open(encoding="utf-8-sig", newline="") as handle:
+            rows = [
+                row for row in csv.DictReader(handle)
+                if row.get("case_id") == official_row["case_id"]
+            ]
+        if len(rows) != 1:
+            raise ValueError("case does not resolve to exactly one Extended readiness row")
+        row = rows[0]
+        expected = {
+            "stock_code": official_row["stock_code_wind"],
+            "listing_date": official_row["official_listed_date"],
+            "dataset_split": expected_market_split(
+                int(official_row["official_listed_date"][:4])
+            ).value,
+        }
+        for key, value in expected.items():
+            if row.get(key) != value:
+                raise ValueError(f"Extended readiness {key} does not match the official cohort")
+        return row
+
+    @staticmethod
+    def _extended_observations(row: dict[str, str]) -> tuple[MarketObservation, ...]:
+        observations: list[MarketObservation] = []
+        for name in _EXTENDED_ONLY_RAW_FEATURE_ORDER:
+            available = row.get(f"{name}__available")
+            missing = row.get(f"{name}__missing")
+            if available not in {"True", "False"} or missing not in {"True", "False"}:
+                raise ValueError(f"{name} Extended availability flags are invalid")
+            is_available = available == "True"
+            if is_available == (missing == "True"):
+                raise ValueError(f"{name} Extended availability flags are not complementary")
+            raw_value = row.get(name, "")
+            missing_reason = row.get(f"{name}__missing_reason", "")
+            if is_available:
+                if raw_value == "" or missing_reason:
+                    raise ValueError(f"{name} available Extended value is incomplete")
+                numeric = float(raw_value)
+                if not math.isfinite(numeric):
+                    raise ValueError(f"{name} Extended value is not finite")
+                observations.append(MarketObservation(
+                    name=name,
+                    value=numeric,
+                    unit=_EXTENDED_UNITS[name],
+                    availability="available",
+                    derivation="governed point-in-time Market-X Extended readiness feature",
+                    source="v04_c_extended_readiness",
+                ))
+                continue
+            if raw_value != "" or not missing_reason:
+                raise ValueError(f"{name} unavailable Extended value must remain null with a reason")
+            if name.startswith("industry_return_") and missing_reason not in _INDUSTRY_MISSING_REASONS:
+                raise ValueError(f"{name} does not use the governed PIT-blocked industry semantics")
+            observations.append(MarketObservation(
+                name=name,
+                availability="unavailable",
+                missing_reason=missing_reason,
+                source="v04_c_extended_readiness",
+            ))
+        return tuple(observations)
 
     @staticmethod
     def _observations(artifact: dict[str, object]) -> tuple[MarketObservation, ...]:
