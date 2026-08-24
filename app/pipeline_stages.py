@@ -3,18 +3,18 @@
 No Streamlit import lives here so the whole stage model stays testable headlessly;
 the Streamlit layer only renders what ``resolve_stages`` returns.
 
-The governing rule: a stage that is not AVAILABLE renders no number.  Un-frozen
-stages name the gate that blocks them and say what will appear once it lands,
-rather than showing a greyed-out chart, a zero, or a placeholder value.
+The governing rule: a stage that is not AVAILABLE renders no fabricated number.
+A missing runtime asset is described as a capability/runtime limitation; already
+frozen gates must never be reported as if they still block the chain.
 
-PR-G is delivered; PR-H is NOT STARTED.  This is preparation only; no stage here claims a gate has
-been started or passed.
+PR-G implementation is delivered and A review passed.  PR-H preparation is
+unblocked; formal PR-H starts after the local PR-G freeze manifest is committed.
 
 Scope note: these seven stages are the *baseline* E2E chain.  The competition
-report described in docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md section 12
-adds evidence screenshots, market sentiment, multi-horizon validation views and a
-reviewer audit trail on top.  That work (CH-0..CH-6) only starts after the PR-H
-baseline E2E is running, so no stage here promises it.
+report described in docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md adds
+evidence screenshots, market sentiment, multi-horizon validation views and a
+reviewer audit trail on top.  That work (CH-0..CH-6) starts after PR-H baseline
+E2E is frozen, so no stage here promises it.
 """
 
 from __future__ import annotations
@@ -22,9 +22,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import StrEnum
 
-# Gates that currently block parts of the chain, per docs/V04_FIVE_PERSON_EXECUTION_PLAN.md.
-GATE_MARKET = "PR-B"
-GATE_MODEL = "PR-F"
 GATE_E2E = "PR-H"
 
 
@@ -89,55 +86,80 @@ def _document_features(payload: dict[str, object]) -> StageView:
 
 
 def _market_features(payload: dict[str, object]) -> StageView:
+    market = payload.get("market_context") or {}
+    if market and market.get("status") == "available":
+        observations = market.get("observations") or []
+        available = sum(1 for item in observations if item.get("availability") == "available")
+        return StageView(
+            stage_id="market_features", ordinal=3, title="Market Features",
+            status=StageStatus.AVAILABLE,
+            summary="Governed point-in-time market context is available for this runtime scenario.",
+            metrics=(Metric("Observations available", f"{available} of {len(observations)}"),),
+        )
     return StageView(
         stage_id="market_features", ordinal=3, title="Market Features",
-        status=StageStatus.PENDING_GATE,
-        summary="Governed point-in-time pre-listing Market-X.",
-        blocking_gate=GATE_MARKET,
-        blocking_reason="Market-X Core and the governed EOD store have not been built yet",
+        status=StageStatus.PARTIAL,
+        summary="PR-B Market-X Core is frozen and governed HSI Extended data is available, but this runtime "
+                "scenario has not supplied a governed per-case Market-X snapshot to the product channel.",
+        blocking_reason="governed runtime Market-X projection/handoff is not configured; PR-B itself is not blocking",
         what_appears_when_unblocked=(
-            "IPO structure and listing context features",
-            "prior-IPO point-in-time history",
-            "HSI and industry benchmark context",
-            "per-feature missingness and point-in-time provenance",
+            "pre-listing HSI and prior-IPO context with point-in-time provenance",
+            "per-feature availability and missing reasons",
+            "industry/turnover only when authoritative sources exist",
         ),
     )
 
 
 def _prediction(payload: dict[str, object]) -> StageView:
     prediction = payload.get("prediction") or {}
-    metrics: tuple[Metric, ...] = ()
+    model = payload.get("model_prediction") or {}
+    metrics: list[Metric] = []
     if prediction:
-        metrics = (
+        metrics.extend((
             Metric("Rule score", str(prediction.get("risk_score", "Unavailable"))),
             Metric("Rule level", str(prediction.get("risk_level", "Unavailable"))),
+        ))
+    if model:
+        metrics.append(Metric("Model score", str(model.get("score", "Unavailable"))))
+        return StageView(
+            stage_id="prediction", ordinal=4, title="Prediction",
+            status=StageStatus.AVAILABLE,
+            summary="The frozen model score is available for this case. It remains an uncalibrated model score, not a probability.",
+            metrics=tuple(metrics),
         )
     return StageView(
         stage_id="prediction", ordinal=4, title="Prediction",
         status=StageStatus.PARTIAL,
-        summary="The deterministic rule score is available. It is a prioritization signal, never a probability. "
-                "No trained model prediction exists yet.",
-        blocking_gate=GATE_MODEL,
-        blocking_reason="no frozen, calibrated model has been trained yet",
+        summary="The deterministic rule score and frozen PR-F cohort evidence are available. A per-case frozen model "
+                "score appears only when a hash-bound PR-F runtime handoff is configured.",
+        blocking_reason="per-case PR-F runtime artifact is absent in this scenario; PR-F itself is COMPLETE / FROZEN",
         what_appears_when_unblocked=(
-            "the frozen model's score and its calibration provenance",
-            "model version and the dataset it was fit on",
+            "the frozen per-case model score with explicit score semantics",
+            "model version and frozen result identity",
         ),
-        metrics=metrics,
+        metrics=tuple(metrics),
     )
 
 
 def _explainability(payload: dict[str, object]) -> StageView:
+    model = payload.get("model_prediction") or {}
+    if model:
+        drivers = model.get("drivers") or []
+        return StageView(
+            stage_id="explainability", ordinal=5, title="Evidence / Explainability",
+            status=StageStatus.AVAILABLE,
+            summary="Document Evidence/Calculation provenance and frozen per-case model drivers are available.",
+            metrics=(Metric("Model drivers", str(len(drivers))),),
+        )
     return StageView(
         stage_id="explainability", ordinal=5, title="Evidence / Explainability",
         status=StageStatus.PARTIAL,
         summary="Evidence text, prospectus page provenance and deterministic calculations are available. "
-                "Model-driven explanations are not.",
-        blocking_gate=GATE_MODEL,
-        blocking_reason="SHAP and feature importance need a trained model",
+                "PR-F global explainability is frozen, but per-case SHAP drivers require the local hash-bound runtime handoff.",
+        blocking_reason="per-case model drivers are not present in this runtime; PR-F is not a blocking gate",
         what_appears_when_unblocked=(
-            "global and per-IPO feature importance",
-            "document-versus-market contribution split",
+            "per-IPO SHAP/top-driver records bound to the frozen model result",
+            "document-versus-market contribution context when supported by the frozen artifact",
         ),
     )
 
@@ -150,7 +172,7 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
         return StageView(
             stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
             status=StageStatus.AVAILABLE,
-            summary="Document, market, model and rule channels composed; conflicts are preserved, not resolved.",
+            summary="Document, market, model and rule channels are composed; conflicts are preserved, not resolved.",
             metrics=(
                 Metric("Channels available", f"{available} of {len(states)}"),
                 Metric("Unresolved conflicts", str(final.get("metadata", {}).get("unresolved_conflict_count", 0))),
@@ -168,25 +190,38 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
     return StageView(
         stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
         status=StageStatus.PARTIAL,
-        summary="Document-scope supervision is available. The cross-channel Final Supervisor is not "
-                "configured in this runtime scenario.",
+        summary="Document-scope supervision is available. The cross-channel Final Supervisor is not configured in this runtime scenario.",
         blocking_reason="the Final Supervisor channel is not enabled by the selected configuration",
         metrics=metrics,
     )
 
 
 def _final_report(payload: dict[str, object]) -> StageView:
+    final = payload.get("final_supervision") or {}
+    if final:
+        return StageView(
+            stage_id="final_report", ordinal=7, title="Final Risk Report",
+            status=StageStatus.PARTIAL,
+            summary="The v0.4 Final Supervisor report path is available. PR-H must prove the complete governed runtime "
+                    "Market-X + per-case model + Streamlit chain across 3–5 real IPO demo cases.",
+            blocking_gate=GATE_E2E,
+            blocking_reason="PR-H real-case E2E demo matrix and freeze are not complete",
+            what_appears_when_unblocked=(
+                "prospectus page to evidence to risk to market context to model driver to conclusion",
+                "3-5 real IPO end-to-end demo cases",
+                "run provenance and reproducible demo artifacts",
+            ),
+        )
     return StageView(
         stage_id="final_report", ordinal=7, title="Final Risk Report",
         status=StageStatus.PARTIAL,
-        summary="The document-scope Markdown and JSON report is available for download. The full end-to-end "
-                "report covering market context and model drivers is not.",
+        summary="The document-scope Markdown and JSON report is available. The v0.4 cross-channel report requires the Final Supervisor configuration.",
         blocking_gate=GATE_E2E,
-        blocking_reason="the full report needs the Final Supervisor and the end-to-end demo chain",
+        blocking_reason="PR-H requires a v0.4 Final Supervisor runtime and real-case demo chain",
         what_appears_when_unblocked=(
-            "prospectus page to evidence to risk to feature to model driver to conclusion",
+            "prospectus page to evidence to risk to market context to model driver to conclusion",
             "3-5 real IPO end-to-end demo cases",
-            "reviewer audit trail and run provenance",
+            "run provenance and reproducible demo artifacts",
         ),
     )
 
