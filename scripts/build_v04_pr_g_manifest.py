@@ -3,6 +3,10 @@
 E owns PR-G and produces this draft; **A performs the freeze**.  The script
 deliberately refuses to write into ``reports/frozen/`` so the gate-review action
 stays with the Tech Lead.
+
+The listing date is an explicit required input.  A freeze run must never use a
+placeholder date because the PR-H governed Market-X path is point-in-time and
+case identity/listing date are part of its provenance boundary.
 """
 from __future__ import annotations
 
@@ -26,11 +30,22 @@ def _sha(payload: object) -> str:
     ).hexdigest()
 
 
-def build(config: str, prospectus: Path, company: str, stock_code: str, data_dir: Path) -> dict:
+def build(
+    config: str,
+    prospectus: Path,
+    company: str,
+    stock_code: str,
+    listing_date: date,
+    data_dir: Path,
+) -> dict:
     settings = replace(load_settings(config), data_dir=str(data_dir))
     result = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
-        company_name=company, stock_code=stock_code, listing_date=date(2024, 1, 1),
-        prospectus_path=str(prospectus), use_mock=False))
+        company_name=company,
+        stock_code=stock_code,
+        listing_date=listing_date,
+        prospectus_path=str(prospectus),
+        use_mock=False,
+    ))
     final = result.metadata.get("final_supervision") or {}
     market = result.metadata.get("market_context") or {}
     evidence = load_frozen_cohort_evidence(Path(settings.report_dir) / FROZEN_DIR_NAME)
@@ -44,6 +59,11 @@ def build(config: str, prospectus: Path, company: str, stock_code: str, data_dir
         "status": "implementation_complete_awaiting_gate_review",
         "formal_gate_passed": False,  # only A may set this
         "config": config,
+        "case_identity": {
+            "company_name": company,
+            "stock_code": stock_code,
+            "listing_date": listing_date.isoformat(),
+        },
         "channels": {
             "market_context": settings.market_context,
             "final_supervisor": settings.final_supervisor,
@@ -87,13 +107,27 @@ def main() -> int:
     parser.add_argument("--prospectus", type=Path, required=True)
     parser.add_argument("--company", required=True)
     parser.add_argument("--stock-code", required=True)
+    parser.add_argument(
+        "--listing-date",
+        type=date.fromisoformat,
+        required=True,
+        metavar="YYYY-MM-DD",
+        help="authoritative listing date for this exact IPO case",
+    )
     parser.add_argument("--data-dir", type=Path, default=Path("reports/v04_pr_g/repo"))
     parser.add_argument("--output-dir", type=Path, default=Path("reports/v04_pr_g"))
     args = parser.parse_args()
     if args.output_dir.resolve().name == FROZEN_DIR_NAME:
         parser.error("E drafts this manifest; freezing it into reports/frozen/ is A's gate-review action")
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    manifest = build(args.config, args.prospectus, args.company, args.stock_code, args.data_dir)
+    manifest = build(
+        args.config,
+        args.prospectus,
+        args.company,
+        args.stock_code,
+        args.listing_date,
+        args.data_dir,
+    )
     target = args.output_dir / "v04_pr_g_manifest_draft.json"
     target.write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"status={manifest['closed_loop']['analysis_status']} "
