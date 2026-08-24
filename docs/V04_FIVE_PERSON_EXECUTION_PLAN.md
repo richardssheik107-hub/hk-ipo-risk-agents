@@ -1,26 +1,28 @@
 # v0.4 五人执行计划
 
-> Status snapshot: **2026-08-23**  
+> Status snapshot: **2026-08-24**  
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
-> PR-E / PR-F: **COMPLETE / FROZEN**
-> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
+> PR-E / PR-F: **COMPLETE / FROZEN**  
+> PR-G: **A GATE REVIEW PASS / LOCAL FREEZE MATERIALIZATION PENDING**  
+> PR-H: **PREPARATION UNBLOCKED**
 
 ## 1. 总原则
 
 正式 Gate / mainline merge 严格串行：
 
 ```text
-PR-A → PR-B → PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
-                                              ↓
-                                    Baseline E2E Freeze
-                                              ↓
-                                        CH-0..CH-6
+PR-A → PR-B → PR-C → PR-D → PR-E → PR-F
+→ PR-G implementation/review
+→ PR-G local freeze manifest
+→ PR-H
+→ Baseline E2E Freeze
+→ CH-0..CH-6
 ```
 
-允许并行的是准备性工作、QA、文档、测试夹具和不改变冻结边界的分析；准备工作不能被描述为后续 Gate 已开始或已通过。
+允许并行的是准备性工作、QA、文档、测试夹具和不改变冻结边界的分析；准备工作不能被描述为后续 Gate 已通过。
 
-PR-F 已得到较弱/不稳定的 2024 预测结果，但这不授权回滚 Gate 顺序、反转模型分数或继续使用 2024 调参。当前继续完成 PR-G / PR-H；Competition Hardening 再通过直接 benchmark 决定 Document / Market 哪一侧需要增强。
+PR-F 已得到较弱/不稳定的 2024 预测结果，但这不授权回滚 Gate 顺序、反转模型分数或继续使用 2024 调参。PR-G 实现已经合入 main，A 审阅通过；当前只差必须依赖本地真实 runtime 的 PR-G freeze manifest。PR-H preparation 可以立即开始，formal PR-H 在该 manifest 提交后开始。
 
 ## 2. A — Tech Lead / Pipeline
 
@@ -41,13 +43,13 @@ A 不重新实现 Parser / Retriever / Agent，不替 D 决定 target/model poli
 
 ### 当前任务
 
-- 维护 PR-A-D / Oracle v2 frozen boundary；
-- 维护 PR-E / PR-F frozen input / reproducibility boundary，支持 PR-G final Gate review；
+- PR-G A Gate Review 已完成，结论记录于 `V04_PR_G_A_GATE_REVIEW.md`；
+- 在本地真实 prospectus/runtime 上校验 E 生成的 PR-G draft manifest，提交最终 frozen manifest；
+- 审核 PR-H governed Market-X runtime 接线，禁止把 legacy `MarketSnapshot` 冒充 PR-B lineage；
+- 审核 PR-F 最小 runtime handoff 的 hash、内容边界和 no-label/no-Blind 约束；
+- 维护 PR-A–PR-F / Oracle v2 frozen boundary；
 - 阻止任何“看到 2024 结果后反转 score / 重调模型再当正式 Validation”的做法；
-- 审核跨成员 runtime handoff 只传输已冻结、可校验的数据资产；
-- 支持 B 获取最小 Evidence / analysis bulk 做 PR-G explanation QA；
-- 支持 E 获取最小 PR-F frozen runtime / score / SHAP / uncertainty 资产；
-- 不开始 PR-H 正式 Gate。
+- PR-H 完成后做 v0.4.3 Baseline E2E Gate review。
 
 ## 3. B — Document / Agent
 
@@ -55,13 +57,12 @@ A 不重新实现 Parser / Retriever / Agent，不替 D 决定 target/model poli
 
 ### 当前任务
 
-- frozen PR-A Production Document-X 下游 QA 已完成后，补 PR-G 所需的最小真实 Evidence / Explanation readiness QA；
-- 抽样验证 `case → analysis → RiskItem → Evidence → Calculation → page/bbox → Verifier` 链路；
-- 为 PR-G 的 Document explanation 接口准备最小受控投影，不修改冻结的 Production X；
-- 为 CH-2 预先定义逐风险 benchmark protocol：Precision / Recall / F1 / Evidence Recall；
+- 支持 PR-H 的 3–5 个真实 demo case，抽样验证 `case → analysis → RiskItem → Evidence → Calculation → page/bbox → Verifier`；
+- 对最终报告的 Evidence Index、页码/bbox、Calculation-to-Evidence 链进行 demo-case QA；
+- 为 CH-2 维护逐风险 benchmark protocol：Precision / Recall / F1 / Evidence Recall；
 - 不因为 5D AUC 低就无差别重写 Retriever / Agent / Prompt。
 
-B 的 QA 是支持性审计，不自动重开 PR-A。只有数据泄漏、公共 Schema 错误、不可复现或闭环阻断才申请 unfreeze。Competition 阶段只有直接 benchmark 未达标的风险类别才进入 targeted enhancement。
+B 的 QA 是支持性审计，不自动重开 PR-A。Competition 阶段只有直接 benchmark 未达标的风险类别才进入 targeted enhancement。
 
 ## 4. C — Market Data / PIT
 
@@ -77,12 +78,14 @@ PR-B Core 已完成并冻结：
 PIT audit PASS
 ```
 
+Market-X Extended 已接入 governed CSMAR HSI daily close；438/438 官方 case 的 HSI 5D、20D return 与 20-session volatility 已通过 PIT readiness。
+
 ### 当前任务
 
-- 支持 frozen PR-E / PR-F 对 Market feature 语义解释；
-- 保持 Core frozen；
-- Extended authoritative-source research 可并行，但 HSI / industry benchmark / total-market turnover 缺失不得用错误 proxy 填补；
-- 为 CH-3 预研 point-in-time IPO heat、近期 IPO 破发/5D 表现、同行业历史 IPO context、liquidity/activity 的正式数据定义与来源；
+- 与 A/E 一起完成 PR-H governed runtime market path；
+- runtime source-of-truth 使用 `PreListingMarketFeatureSnapshot` 或其无损受控投影，不把 legacy `MarketSnapshot` 反向升级为正式 Market-X；
+- HSI provenance 必须真实透传；industry benchmark / turnover 继续显式缺失，禁止 proxy/neutral zero；
+- 为 CH-3 预研 point-in-time IPO heat、近期 IPO 破发/5D 表现、同行业历史 IPO context、liquidity/activity；
 - 继续维护 PIT / Blind guard。
 
 短期 1D / 5D 预测若要增强，优先从有经济含义且可 point-in-time 验证的 Market Sentiment / IPO context 中找增量，而不是先把 Document 风险强行解释成短期价格预测。
@@ -111,32 +114,14 @@ PM  ROC-AUC 0.4246
 
 PM 与 M 完全预测等价；Oracle `OM-M ROC-AUC -0.0143` 且 bootstrap interval 跨零。正式解释为当前 target / sample / feature / model 条件下没有验证出稳定 Document 增量，而不是“招股书无信号”。
 
-### 当前任务：支持 PR-G
+### 当前任务：支持 PR-H
 
-Production full cohort：
-
-```text
-354 Development
-70 Validation
-M / P / PM
-```
-
-Oracle v2 fair intersection：
-
-```text
-96 strict usable
-77 Development
-19 Validation
-M / P / O / PM / OM
-```
-
-D 当前必须支持 PR-G 正确消费：
-
-- 输出只按 `uncalibrated_model_score` 解释；
-- 保留 SHAP / bootstrap uncertainty / error caveats；
-- 明确产品层使用哪个 frozen Production model / feature group，不允许随机切换；
-- 不根据 2024 Validation 继续调参，不做 post-hoc score inversion；
-- no 2025 Blind y。
+- 不重新调 PR-E/PR-F；
+- 为选定 3–5 demo case 从 frozen PR-F runtime 生成最小产品 handoff；
+- handoff 只包含产品需要的 per-case score / top SHAP drivers / run identity，不包含 target labels、2025 Blind y、raw licensed data、secrets 或无关模型 bulk；
+- handoff 必须带 `SHA256SUMS.txt`，并由 PR-G Tier-2 用 frozen `model_result_hash` fail-closed 绑定；
+- 输出仍只按 `uncalibrated_model_score` 解释；
+- 保留 SHAP / bootstrap uncertainty / error caveats。
 
 ### Competition preparation only
 
@@ -146,37 +131,30 @@ D 当前必须支持 PR-G 正确消费：
 
 定位：Oracle research sidecar、Final Supervisor、Market Agent integration、report、Streamlit / Demo。
 
-Oracle v2 已完成并冻结：
-
-```text
-98 materialized
-96 strict usable
-77 Dev / 19 Val
-142 features
-evaluation_only = true
-production_consumable = false
-```
+Oracle v2 已完成并冻结。PR-G implementation 已由 E 完成并合入 main；A 已接受其 protected-interface 设计。
 
 ### 当前任务
 
+- 配合 A 完成本地 PR-G freeze manifest materialization；
+- 基于最新 main 正式推进 PR-H 的 7-stage Streamlit / report E2E；
+- 接入 governed Market-X runtime path 与 PR-F local runtime handoff；
+- 清理 UI 中把已冻结 PR-B / PR-F 误写为 blocking gate 的旧文案；
+- 对 3–5 个真实 IPO 跑 PDF → Document → Market → Model → Final Supervisor → Report；
+- Final Supervisor 继续把模型分数作为辅助 warning channel，而不是事实或概率；
 - 保持 Oracle v2 与 Production 隔离；
-- 从最新 `main` 正式推进 PR-G Market Agent + Final Supervisor，不直接 merge 旧 preparation branch；
-- 正确展示 frozen PR-E / PR-F 的 score、SHAP、calibration status 与 uncertainty；
-- Final Supervisor 必须把模型分数作为辅助 warning channel，而不是事实或概率；
-- 接入 Document explanation 时只引用输入 Evidence / Risk / Calculation，不创造新事实；
-- PR-H 只做不越 Gate 的 contract / UI preparation。
+- 未解决 conflicts 继续显示 uncertainty，CH-4 前不做假仲裁。
 
-PR-G 的成功标准不是提升 AUC，而是把 Document + Market + Model + Evidence + uncertainty 正确组合成可审计结果。
+PR-H 的成功标准不是提升 AUC，而是把 Document + Market + Model + Evidence + uncertainty 真正跑成可演示、可审计、可复现的闭环。
 
 ## 7. 当前协作地图
 
 | Member | Formal status now | Current useful work |
 | --- | --- | --- |
-| A | integration / Gate owner | PR-G provenance、runtime handoff、freeze boundary、final review |
-| B | supporting QA | Evidence / Calculation / page/bbox explanation readiness + CH-2 benchmark prep |
-| C | supporting QA | Market/PIT interpretation + CH-3 authoritative sentiment/source research |
-| D | modeling support | frozen model/SHAP/uncertainty semantics + multi-horizon protocol prep |
-| E | **PR-G formal owner** | Market Agent + Final Supervisor integration |
+| A | PR-G gate owner / PR-H integration reviewer | local freeze manifest、runtime contract、v0.4.3 Gate |
+| B | PR-H supporting QA | 3–5 demo Evidence / Calculation / page-bbox QA |
+| C | PR-H market runtime owner | governed Market-X runtime + PIT provenance |
+| D | PR-H model runtime support | frozen per-case score/SHAP handoff |
+| E | **PR-H product owner after PR-G freeze** | Streamlit + Final Report + 3–5 real-case E2E |
 
 ## 8. 当前严禁混淆的四类工作
 
@@ -184,13 +162,13 @@ PR-G 的成功标准不是提升 AUC，而是把 Document + Market + Model + Evi
 
 PR-A / PR-B / PR-C / PR-D / Oracle v2 / PR-E / PR-F 不因为结果不漂亮、成员换机器或缺本地 runtime 就变回“未完成”。
 
-### Supporting QA
+### PR-G finalization
 
-B 的 Evidence QA、C 的 Extended research、D 的 multi-horizon protocol prep、E 的 UI skeleton 可以并行，但不改变 formal Gate。
+A Gate Review 已 PASS；剩余是本地 real-run manifest 的机械冻结，不允许伪造 prospectus hash 或 final-supervision content hash。
 
-### Current formal Gate
+### PR-H preparation / execution
 
-只有 PR-G 的正式 integration / review / freeze 会推进当前主线状态。
+Market-X runtime、PR-F runtime handoff、UI stage cleanup、3–5 case demo 是当前有效工作；其中 formal PR-H 状态在 PR-G frozen manifest 提交后切换。
 
 ### Competition optimization
 
@@ -199,7 +177,7 @@ Retriever / LLM / Prompt / Agent 大规模重构、Market Sentiment 正式扩展
 ## 9. Post-PR-F competition strategy
 
 ```text
-PR-G CURRENT
+PR-G local freeze FINALIZE
 → PR-H Streamlit Full E2E + 3–5 real IPO demo
 → v0.4.3 Baseline Freeze
 → CH-0 Scope / metrics lock
