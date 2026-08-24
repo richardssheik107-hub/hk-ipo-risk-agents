@@ -1,7 +1,7 @@
 """End-to-end guard for the PR-G channels through the real analysis service.
 
 The service persists every result and re-reads it with a strict equality check,
-so anything non-JSON-native in ``metadata`` silently demotes the run to partial.
+so anything non-JSON-native in ``metadata`` silently demotes a run to partial.
 That makes ``status is COMPLETED`` a single canary for serialization regressions.
 """
 from __future__ import annotations
@@ -68,6 +68,12 @@ def test_the_market_channel_uses_the_governed_pr_b_projection(result) -> None:
     assert market["feature_manifest_hash"] == "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d"
     assert market["provenance"]["feature_pipeline"] == "governed_pr_b_core"
     assert market["provenance"]["case_id"] == "ipo_2024_02410"
+
+
+def test_market_report_names_the_governed_source_instead_of_none(result) -> None:
+    market_section = next(section for section in result.report_sections if section.order == 7)
+    assert "governed PR-B Market-X Core" in market_section.summary
+    assert "from None" not in market_section.summary
 
 
 def test_a_mock_market_provider_leaks_no_fixture_number(tmp_path) -> None:

@@ -49,7 +49,11 @@ from ipo_risk.parsers.pymupdf_parser import (
 from ipo_risk.predictors.fault import FaultPredictor
 from ipo_risk.predictors.rule_based import RuleBasedPredictor
 from ipo_risk.providers.catalog import CatalogIPODataProvider
-from ipo_risk.providers.llm import OpenAICompatibleLLMProvider, UnavailableLLMProvider
+from ipo_risk.providers.llm import (
+    OpenAICompatibleLLMProvider,
+    OpenAIResponsesLLMProvider,
+    UnavailableLLMProvider,
+)
 from ipo_risk.providers.mock import (
     MockIPODataProvider,
     MockLLMProvider,
@@ -109,7 +113,12 @@ def default_registry() -> ComponentRegistry:
         "verifier": {"rule": RuleVerifier},
         "supervisor": {"rule": RuleSupervisor, "v03": V03Supervisor},
         "predictor": {"rule_based": RuleBasedPredictor, "fault": FaultPredictor},
-        "llm_provider": {"mock": MockLLMProvider, "openai_compatible": OpenAICompatibleLLMProvider, "unavailable": UnavailableLLMProvider},
+        "llm_provider": {
+            "mock": MockLLMProvider,
+            "openai_compatible": OpenAICompatibleLLMProvider,
+            "openai_responses": OpenAIResponsesLLMProvider,
+            "unavailable": UnavailableLLMProvider,
+        },
         "market_data_provider": {"mock": MockMarketDataProvider, "unavailable": UnavailableMarketDataProvider},
         "ipo_data_provider": {"mock": MockIPODataProvider, "request": RequestIPODataProvider, "catalog": CatalogIPODataProvider},
         "report_generator": {"mock": MockReportGenerator, "v03": V03ReportGenerator, "v04": V04ReportGenerator},
@@ -231,19 +240,24 @@ class DependencyContainer:
     def create_llm_provider(self):
         """Create one configured provider instance for all structured Agents."""
 
-        if self.settings.llm_provider != "openai_compatible":
+        remote_providers = {"openai_compatible", "openai_responses"}
+        if self.settings.llm_provider not in remote_providers:
             return self.registry.create("llm_provider", self.settings.llm_provider)
         if not all(
             (self.settings.llm_api_key, self.settings.llm_base_url, self.settings.llm_model)
         ):
+            provider_label = (
+                "Responses API" if self.settings.llm_provider == "openai_responses"
+                else "OpenAI-compatible LLM"
+            )
             return self.registry.create(
                 "llm_provider",
                 "unavailable",
-                reason="OpenAI-compatible LLM configuration is incomplete",
+                reason=f"{provider_label} configuration is incomplete",
             )
         return self.registry.create(
             "llm_provider",
-            "openai_compatible",
+            self.settings.llm_provider,
             api_key=self.settings.llm_api_key,
             base_url=self.settings.llm_base_url,
             model=self.settings.llm_model,

@@ -70,8 +70,16 @@ class V04ReportGenerator(V03ReportGenerator):
         if payload["status"] != "available":
             summary = f"Market context {payload['status']}: {payload['reason']}. No market observation is reported."
         else:
+            provenance = payload.get("provenance") or {}
+            source = provenance.get("source") or provenance.get("feature_pipeline")
+            if source == "governed_pr_b_core":
+                source_label = "governed PR-B Market-X Core"
+            elif source:
+                source_label = str(source)
+            else:
+                source_label = "governed market context"
             summary = (f"{len(available)} of {len(payload['observations'])} pre-listing market "
-                       f"observations available from {payload['provenance'].get('source')}.")
+                       f"observations available from {source_label}.")
         return (summary, payload)
 
     @staticmethod
