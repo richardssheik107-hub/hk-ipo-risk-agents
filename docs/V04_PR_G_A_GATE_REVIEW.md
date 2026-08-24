@@ -25,7 +25,9 @@ The following PR-G requirements are satisfied by merged code, tests, CI and the 
 
 Therefore **PR-G implementation review = PASS**.
 
-However, the existing `scripts/build_v04_pr_g_manifest.py` intentionally requires a local real prospectus/runtime and intentionally refuses to write into `reports/frozen/`. The remote GitHub-only review cannot honestly reconstruct the local prospectus hash or `final_supervision_content_hash`. Those values must not be invented.
+The freeze builder intentionally requires a local real prospectus/runtime and intentionally refuses to write into `reports/frozen/`. The remote GitHub-only review cannot honestly reconstruct the local prospectus hash or `final_supervision_content_hash`. Those values must not be invented.
+
+During A review, one additional provenance defect was found and fixed before freeze: the draft builder previously used a placeholder `date(2024, 1, 1)` for every real run. `scripts/build_v04_pr_g_manifest.py` now requires `--listing-date YYYY-MM-DD`, passes that authoritative date into `IPOAnalysisRequest`, and records the case identity in the draft. A PR-H/PR-G freeze run may not use a placeholder listing date because Market-X is point-in-time and listing date is a provenance boundary.
 
 Accordingly:
 
@@ -114,13 +116,27 @@ This is a **runtime handoff requirement for PR-H**, not a reason to reopen PR-F.
 
 Before PR-H can claim a full 3–5 case E2E demo, it must close these items:
 
-1. materialize and commit the final PR-G freeze manifest from a real local run;
+1. materialize and commit the final PR-G freeze manifest from a real local run using the **authoritative listing date**;
 2. wire governed `PreListingMarketFeatureSnapshot` into the runtime Market Context channel;
 3. provide the frozen PR-F per-case score/driver runtime handoff for the chosen demo cases;
 4. remove stale UI stage wording that still says PR-B/PR-F are blocking gates;
 5. keep `ReportSection.section_id` deterministic in the v0.4 generator; do not modify the frozen v0.3 contract merely for cosmetic uniformity;
 6. run the full CI suite and the 3–5 real-case E2E demo matrix;
-7. update README / ROADMAP / five-person plan only after the PR-G frozen manifest exists.
+7. update README / ROADMAP / five-person plan to formal PR-H only after the PR-G frozen manifest exists.
+
+Canonical local draft command after this review:
+
+```bash
+PYTHONPATH=src python scripts/build_v04_pr_g_manifest.py \
+  --prospectus <REAL_PROSPECTUS_PDF> \
+  --company <AUTHORITATIVE_COMPANY_NAME> \
+  --stock-code <AUTHORITATIVE_STOCK_CODE> \
+  --listing-date <YYYY-MM-DD> \
+  --data-dir <GOVERNED_LOCAL_DATA_DIR> \
+  --output-dir reports/v04_pr_g
+```
+
+The resulting `reports/v04_pr_g/v04_pr_g_manifest_draft.json` must be inspected and independently validated before any A freeze action. Do not copy it mechanically if `analysis_status != completed`, traceability fails, identity/date is wrong, or any blind/probability/fake-market invariant fails.
 
 The missing system `libomp` behavior is an environment/CI policy issue, not a PR-G gate blocker. CI must continue proving the LightGBM extra is actually installed rather than silently skipping model tests.
 
