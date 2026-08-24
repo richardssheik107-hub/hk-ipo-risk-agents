@@ -6,10 +6,9 @@ their conflicts, and states plainly which channels were unavailable and which
 gate is blocking them.  It never invents a risk, never cites evidence that was
 not supplied, and never presents an uncalibrated score as a probability.
 
-PR-G is the current formal gate and these types are its starting contract.  They
-are still not wired into any workflow, ``Settings`` field or config: the formal
-PR-G change adds that wiring deliberately, together with the guard test that
-currently forbids it.
+PR-G is COMPLETE / FROZEN and these types are its stable composition contract.
+PR-H consumes that contract through governed Market-X and frozen model-runtime
+projections without changing the public schema.
 
 ``score_semantics`` defaults to ``uncalibrated_model_score``, the term the frozen
 PR-F output already uses (``lightgbm_modeling.py``), so the Final Supervisor

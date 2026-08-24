@@ -7,8 +7,7 @@ The governing rule: a stage that is not AVAILABLE renders no fabricated number.
 A missing runtime asset is described as a capability/runtime limitation; already
 frozen gates must never be reported as if they still block the chain.
 
-PR-G implementation is delivered and A review passed.  PR-H preparation is
-unblocked; formal PR-H starts after the local PR-G freeze manifest is committed.
+PR-G is COMPLETE / FROZEN. PR-H is the current formal integration gate.
 
 Scope note: these seven stages are the *baseline* E2E chain.  The competition
 report described in docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md adds
@@ -56,6 +55,14 @@ class StageView:
         return self.status is StageStatus.AVAILABLE
 
 
+def pending_notice(stage: StageView) -> str | None:
+    """Return unavailable copy only for a genuinely unavailable/partial stage."""
+    if stage.status is StageStatus.AVAILABLE:
+        return None
+    gate = f"pending gate {stage.blocking_gate}" if stage.blocking_gate else "not available"
+    return f"**NOT AVAILABLE — {gate}**\n\n{stage.blocking_reason}"
+
+
 def _document_analysis(payload: dict[str, object]) -> StageView:
     counts = payload.get("risk_status_counts") or {}
     return StageView(
@@ -99,11 +106,12 @@ def _market_features(payload: dict[str, object]) -> StageView:
     return StageView(
         stage_id="market_features", ordinal=3, title="Market Features",
         status=StageStatus.PARTIAL,
-        summary="PR-B Market-X Core is frozen and governed HSI Extended data is available, but this runtime "
-                "scenario has not supplied a governed per-case Market-X snapshot to the product channel.",
+        summary="PR-B Market-X Core is frozen, but this runtime scenario has not supplied its governed "
+                "per-case product projection to the market channel.",
         blocking_reason="governed runtime Market-X projection/handoff is not configured; PR-B itself is not blocking",
         what_appears_when_unblocked=(
-            "pre-listing HSI and prior-IPO context with point-in-time provenance",
+            "prior-IPO context with point-in-time provenance",
+            "HSI Extended observations only when their governed local projection is present",
             "per-feature availability and missing reasons",
             "industry/turnover only when authoritative sources exist",
         ),

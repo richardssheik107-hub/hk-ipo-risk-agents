@@ -23,6 +23,10 @@ class Settings:
     market_context: str = "none"; final_supervisor: str = "none"
     # Local-only path to a PR-F run directory; never committed non-empty.
     pr_f_run_dir: str = ""
+    # Governed PR-B product projection. Relative defaults are portable and
+    # contain no licensed raw market data.
+    market_feature_dir: str = "reports/v04_pr_b/core_features"
+    market_official_bridge: str = "data/catalog/ipo_official_master_bridge.csv"
     data_dir: str = "data"; report_dir: str = "reports"; log_level: str = "INFO"
 
 def _coerce(value: str, current):

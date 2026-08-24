@@ -1,6 +1,6 @@
 """Final Supervisors: pure composition, explicit unavailability.
 
-PR-G is the current formal gate.  Both implementations here compose whatever
+PR-G is COMPLETE / FROZEN and PR-H is the current formal gate. Both implementations compose whatever
 channels exist and report the rest as unconfigured, rather than silently omitting
 them or filling them in.  Neither creates a risk, cites evidence it was not
 given, or presents an uncalibrated score as a probability.

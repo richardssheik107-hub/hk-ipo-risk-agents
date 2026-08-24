@@ -8,7 +8,7 @@ import json
 
 import streamlit as st
 
-from pipeline_stages import StageStatus, resolve_stages
+from pipeline_stages import StageStatus, pending_notice, resolve_stages
 from presenters import (
     DOMAINS,
     build_analysis_request,
@@ -59,8 +59,10 @@ def _render_stage_header(stage) -> None:
 
 def _render_pending(stage) -> None:
     """Render an un-frozen stage without inventing a single number for it."""
-    gate = f"pending gate {stage.blocking_gate}" if stage.blocking_gate else "not available"
-    st.info(f"**NOT AVAILABLE — {gate}**\n\n{stage.blocking_reason}")
+    notice = pending_notice(stage)
+    if notice is None:
+        return
+    st.info(notice)
     if stage.what_appears_when_unblocked:
         st.markdown("**What will appear here once it lands**")
         for item in stage.what_appears_when_unblocked:
@@ -80,7 +82,7 @@ def _render_pipeline_status(stages) -> None:
     for stage in stages:
         suffix = f" · {stage.blocking_gate}" if stage.blocking_gate else ""
         st.sidebar.caption(f"{_STAGE_BADGES[stage.status]} {stage.ordinal}. {stage.title}{suffix}")
-    st.sidebar.caption("Current formal gate: PR-B. Later stages are preparation only.")
+    st.sidebar.caption("Current formal gate: PR-H full governed end-to-end integration.")
 
 
 def _display_value(value: object) -> str:

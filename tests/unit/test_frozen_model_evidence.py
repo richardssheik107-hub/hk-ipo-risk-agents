@@ -10,6 +10,7 @@ import pytest
 
 from ipo_risk.modeling.frozen_model_evidence import (
     NOT_VALIDATED_PHRASE,
+    FrozenModelPredictionProvider,
     FrozenModelEvidenceError,
     load_case_prediction,
     load_frozen_cohort_evidence,
@@ -18,6 +19,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
 from ipo_risk.modeling.pr_f_product_handoff import write_product_handoff
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus
+from ipo_risk.schemas import IPOProfile
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FROZEN_DIR = REPO_ROOT / "reports" / "frozen"
@@ -86,6 +88,22 @@ def test_absent_case_id_is_named_not_guessed(tmp_path) -> None:
     assert view.reason == "ipo_identity_not_bound_to_the_governed_case_catalog"
     assert view.score is None and view.drivers == ()
     assert view.score_semantics == "uncalibrated_model_score"
+
+
+def test_runtime_provider_uses_only_the_catalog_case_identity(monkeypatch, tmp_path) -> None:
+    captured = {}
+
+    def fake_load(run_dir, frozen_dir, case_id):
+        captured.update(run_dir=run_dir, frozen_dir=frozen_dir, case_id=case_id)
+        return load_case_prediction(tmp_path, FROZEN_DIR, case_id=None)
+
+    monkeypatch.setattr(
+        "ipo_risk.modeling.frozen_model_evidence.load_case_prediction", fake_load
+    )
+    provider = FrozenModelPredictionProvider(run_dir=tmp_path / "handoff", frozen_dir=FROZEN_DIR)
+    profile = IPOProfile(company_name="Demo", metadata={"case_id": "ipo_2024_02410"})
+    provider.prediction(profile)
+    assert captured["case_id"] == "ipo_2024_02410"
 
 
 def test_absent_local_artifacts_are_named_not_guessed(tmp_path) -> None:

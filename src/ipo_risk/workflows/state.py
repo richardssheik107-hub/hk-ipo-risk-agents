@@ -21,6 +21,6 @@ class WorkflowState(TypedDict, total=False):
     prediction: Any; report_sections: list[Any]
     # PR-G replacement snapshots; the Final Supervisor composes them, so unlike
     # the risk lists these must overwrite rather than accumulate.
-    supervision_result: Any; market_context_view: Any; final_supervision: Any
+    supervision_result: Any; market_context_view: Any; model_prediction_view: Any; final_supervision: Any
     document_metadata: dict[str, Any]
     component_diagnostics: Annotated[dict[str, Any], merge_dicts]
