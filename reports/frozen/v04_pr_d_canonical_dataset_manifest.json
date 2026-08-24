@@ -1,0 +1,136 @@
+{
+  "blind_2025_y_accessed": false,
+  "bulk_runtime_artifacts_committed": false,
+  "coverage_hash": "a8e1c21b02b21b99bcbe91192744f8c88c174585cd79101d91b310637046d98b",
+  "datasets": {
+    "full_production_development.json": {
+      "cohort": "full_production",
+      "content_hash": "11ffc4c04facacd23e5c554d4154d3cc8bec8d62d65d6278e012ba698a9a356d",
+      "dataset_split": "development",
+      "row_count": 354
+    },
+    "full_production_validation.json": {
+      "cohort": "full_production",
+      "content_hash": "8842928b61fe13b8161009aea74a71850efecc327e295a6e6c3d151121bc83b4",
+      "dataset_split": "validation",
+      "row_count": 70
+    },
+    "oracle_intersection_development.json": {
+      "cohort": "oracle_intersection",
+      "content_hash": "356b8cb264db9ea0c5399bff59e9c2c4e9ad4060c2020a09f201df881eb6d95c",
+      "dataset_split": "development",
+      "row_count": 55
+    }
+  },
+  "determinism": {
+    "first_run_elapsed_seconds": 1.718,
+    "mismatch_count": 0,
+    "resume_elapsed_seconds": 2.005,
+    "same_provenance_resume_passed": true
+  },
+  "development_model_ready_count": 354,
+  "exclusion_reason_counts": {
+    "missing_base_price": 12,
+    "no_eligible_session": 2
+  },
+  "explicit_exclusion_count": 14,
+  "feature_order_drift_count": 0,
+  "freeze_manifest_hash": "f6900c707187c23c5d01fa98fc8d9d21d040ce2c3ffa0a2a6340a0947f78e80d",
+  "generation_failure_count": 0,
+  "identity_mismatch_count": 0,
+  "input_binding_drift_count": 0,
+  "input_binding_manifest_hash": "fca62fe4598f1f39adb9450c9b3e1bcecf45b0a968bc07cb46eaac3d8db1ab56",
+  "input_binding_version": "v04_pr_d_input_binding_v1",
+  "manifest_version": "v04_pr_d_freeze_manifest_v1",
+  "market_artifact_set_hash": "6803424877560945de61a6647863365c4e91b786bc9f12f1451da4a25c3b2eb6",
+  "market_core_feature_count": 30,
+  "market_extended_status": "not_supplied_governed_optional",
+  "model_ready_count": 424,
+  "official_case_count": 438,
+  "official_identity_set_hash": "9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976",
+  "oracle_development_model_ready_count": 55,
+  "oracle_identity_exclusion_count": 3,
+  "oracle_model_ready_count": 55,
+  "oracle_status": "historical_pr_a_frozen_snapshot",
+  "oracle_validation_model_ready_count": 0,
+  "outcome_artifact_set_hash": "1f0ab1f8314a322abcaf4c88feead02e6cd114b478234b36388c27e33dc7ad90",
+  "pr_c_target_set_hash": "5e0dedc8d207c8e73ca6439efb72f463c6b6f276c1c6c48e3ad7a989ad1533f4",
+  "pr_d_version": "v04_pr_d_canonical_dataset_v1",
+  "pr_e_started": false,
+  "production_artifact_set_hash": "9197b0f4f90e6d43277586ac40160679d40f91e3b30223578d0853d9dc288bf3",
+  "production_document_feature_count": 100,
+  "runtime_files": {
+    "coverage.csv": {
+      "bytes": 50212,
+      "sha256": "5fa77bf78089e93d3b37156699b9d160112ae8378967356c88c6580d597d9d46"
+    },
+    "datasets/full_production_development.json": {
+      "bytes": 4291005,
+      "sha256": "828f946ab12b68647f6dc2e755d396bdf60df51640b9dc64b5e91741182c6266"
+    },
+    "datasets/full_production_validation.json": {
+      "bytes": 744210,
+      "sha256": "ecc257084a5f6dbf79fd08d52cb19f71e134a80c2482c871ee1ff6fc4f3813ff"
+    },
+    "datasets/oracle_intersection_development.json": {
+      "bytes": 1111500,
+      "sha256": "c2ba3799a05cb88d99aa9ce2ac4273d9c0df40b1a8c51e0835461d337cc647cd"
+    },
+    "matrices/full_production_M_development.json": {
+      "bytes": 167020,
+      "sha256": "d2cd971283b3b06d9e591fdb3c6079e62bffb31a342d809cb4619a1f5b03b580"
+    },
+    "matrices/full_production_M_validation.json": {
+      "bytes": 34360,
+      "sha256": "efee7327541fa66b90840f1ba50ecf8236996c05f588517c93b0bc92d5fadd77"
+    },
+    "matrices/full_production_PM_development.json": {
+      "bytes": 554908,
+      "sha256": "7f17309d768241f0f98de4d2cd1eed0e19aa927a28c6046a694cbb05e00d4212"
+    },
+    "matrices/full_production_PM_validation.json": {
+      "bytes": 116103,
+      "sha256": "7be5580355721230f74ef4b02c272839a7d3351be676bc799ce7a32265a5eda0"
+    },
+    "matrices/full_production_P_development.json": {
+      "bytes": 418039,
+      "sha256": "f2533fd59bb58106b94ff2d0a36d29fc917d1778b0a6077843202616438ae8aa"
+    },
+    "matrices/full_production_P_validation.json": {
+      "bytes": 88262,
+      "sha256": "11decbc76c841d6c8ae96b02fd55affb55457ac26b8270ab6d812251b14eb8e1"
+    },
+    "matrices/oracle_intersection_M_development.json": {
+      "bytes": 28036,
+      "sha256": "8dadce47c64c1d941a69fd1d072cbc2bd8c1238f50591ebe4f5494bd7b31a80e"
+    },
+    "matrices/oracle_intersection_OM_development.json": {
+      "bytes": 116687,
+      "sha256": "d122add1d07c7df9d718915e7a93136da9d923ed3f06e724cd28b52b781424a7"
+    },
+    "matrices/oracle_intersection_O_development.json": {
+      "bytes": 93909,
+      "sha256": "520c505e24246f9745f1a7fecaaef4acd7c296f954d4ff31b9069ee7676d9929"
+    },
+    "matrices/oracle_intersection_PM_development.json": {
+      "bytes": 93612,
+      "sha256": "3541fb10648b3111e2aa1e1cf40f87d310d11bebb62f4ea4502dd3a4f2d4cf43"
+    },
+    "matrices/oracle_intersection_P_development.json": {
+      "bytes": 70834,
+      "sha256": "7bb865abd6646bc56f44186bedeec89f1c4d4c1f074e8558faf43a6362f1f464"
+    },
+    "run_manifest.json": {
+      "bytes": 1285,
+      "sha256": "cbfb1bfeccfd728d73f3f75e50f07032d3189c5034254f05a24fca7fd9a9763c"
+    }
+  },
+  "schema_drift_count": 0,
+  "silent_drop_count": 0,
+  "source_git_revision": "a1385dba65c10654bdd2f452adee4e30c7f614a0",
+  "source_manifest_hash": "f95858fb8a0cdcd34697bccee07dab6517446d75b77703c1e69d19de53b6b8a7",
+  "status": "complete_frozen",
+  "target_policy_hash": "5f793de0df22679430bb0a7565ed2d9eabfe63f0153725babc7ebd121d369c67",
+  "target_threshold_hash": "5aac9625209e65ccd7337d713e714ae1e9bd7e2d8f24db510e46131608a6ec05",
+  "validation_model_ready_count": 70
+}

@@ -16,6 +16,7 @@ from ipo_risk.modeling.canonical_dataset import (
     oracle_document_block,
     project_model_matrix,
 )
+from ipo_risk.modeling.pr_d_input_binding import verify_pr_d_input_binding
 from ipo_risk.schemas.canonical_modeling import (
     V04CanonicalCohort,
     V04ModelFeatureGroup,
@@ -166,6 +167,7 @@ def materialize_pr_d(
     pr_a_manifest_path: Path,
     pr_b_manifest_path: Path,
     pr_c_manifest_path: Path,
+    input_binding_manifest_path: Path,
     output_dir: Path,
     resume: bool = False,
 ) -> dict[str, Any]:
@@ -175,8 +177,24 @@ def materialize_pr_d(
     pr_b = _read_json(pr_b_manifest_path)
     pr_c = _read_json(pr_c_manifest_path)
     _validate_upstream_freezes(pr_a, pr_b, pr_c)
+    binding = _read_json(input_binding_manifest_path)
+    verify_pr_d_input_binding(
+        binding,
+        production_dir=production_dir,
+        market_core_dir=market_core_dir,
+        target_dir=target_dir,
+        oracle_dir=oracle_dir,
+        pr_a_manifest_path=pr_a_manifest_path,
+        pr_b_manifest_path=pr_b_manifest_path,
+        pr_c_manifest_path=pr_c_manifest_path,
+    )
     source_manifest_hash = hash_source_manifests(
-        (pr_a_manifest_path, pr_b_manifest_path, pr_c_manifest_path)
+        (
+            pr_a_manifest_path,
+            pr_b_manifest_path,
+            pr_c_manifest_path,
+            input_binding_manifest_path,
+        )
     )
 
     target_paths = sorted(target_dir.glob("*.json"))
@@ -401,6 +419,7 @@ def main() -> int:
     parser.add_argument("--pr-a-freeze-manifest", type=Path, required=True)
     parser.add_argument("--pr-b-freeze-manifest", type=Path, required=True)
     parser.add_argument("--pr-c-freeze-manifest", type=Path, required=True)
+    parser.add_argument("--input-binding-manifest", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, default=Path("reports/v04_pr_d"))
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
@@ -412,6 +431,7 @@ def main() -> int:
         pr_a_manifest_path=args.pr_a_freeze_manifest,
         pr_b_manifest_path=args.pr_b_freeze_manifest,
         pr_c_manifest_path=args.pr_c_freeze_manifest,
+        input_binding_manifest_path=args.input_binding_manifest,
         output_dir=args.output_dir,
         resume=args.resume,
     )

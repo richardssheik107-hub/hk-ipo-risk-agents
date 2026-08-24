@@ -1,0 +1,58 @@
+{
+  "binding_manifest_hash": "fca62fe4598f1f39adb9450c9b3e1bcecf45b0a968bc07cb46eaac3d8db1ab56",
+  "binding_version": "v04_pr_d_input_binding_v1",
+  "blind_2025_y_accessed": false,
+  "components": {
+    "market_core": {
+      "artifact_set_hash": "6803424877560945de61a6647863365c4e91b786bc9f12f1451da4a25c3b2eb6",
+      "case_set_hash": "f268fe544fc2607b8cacec7b7b51e9fe668b7fcd0e956202a66b7bef530ad90d",
+      "component": "market_core",
+      "count": 438,
+      "identity_set_hash": "9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976"
+    },
+    "outcome_target": {
+      "artifact_set_hash": "1f0ab1f8314a322abcaf4c88feead02e6cd114b478234b36388c27e33dc7ad90",
+      "case_set_hash": "f268fe544fc2607b8cacec7b7b51e9fe668b7fcd0e956202a66b7bef530ad90d",
+      "component": "outcome_target",
+      "count": 438,
+      "identity_set_hash": "9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976"
+    },
+    "production_document": {
+      "artifact_set_hash": "9197b0f4f90e6d43277586ac40160679d40f91e3b30223578d0853d9dc288bf3",
+      "case_set_hash": "f268fe544fc2607b8cacec7b7b51e9fe668b7fcd0e956202a66b7bef530ad90d",
+      "component": "production_document",
+      "count": 438,
+      "identity_set_hash": "9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976"
+    }
+  },
+  "market_extended_status": "not_supplied_governed_optional",
+  "official_case_count": 438,
+  "official_case_set_hash": "f268fe544fc2607b8cacec7b7b51e9fe668b7fcd0e956202a66b7bef530ad90d",
+  "official_identity_set_hash": "9b8e1e3e1677d1d613dade66931b00a9793b38636d8f7e7a0e86a76c47e30976",
+  "oracle": {
+    "artifact_set_hash": "0c24863aa483363019856439e435208a5aba5a711646b0b86677182d77c39dfb",
+    "case_set_hash": "47ceced7004765b61cbdb88957f81c467350706d4386f5db87ad5447baf01e59",
+    "component": "oracle_document",
+    "count": 60,
+    "identity_set_hash": "da6d14b21169b46af767f10c6656aae02d9d13ebf6b440cf2fda419b61abf829",
+    "status": "historical_pr_a_frozen_snapshot"
+  },
+  "pr_c_freeze_manifest_hash": "722110d4eba51f5a8fe1071e268b6b46df4eb03eea63a353ec468bc462df1730",
+  "pr_c_policy_hash": "5f793de0df22679430bb0a7565ed2d9eabfe63f0153725babc7ebd121d369c67",
+  "pr_c_target_set_hash": "5e0dedc8d207c8e73ca6439efb72f463c6b6f276c1c6c48e3ad7a989ad1533f4",
+  "pr_c_threshold_hash": "5aac9625209e65ccd7337d713e714ae1e9bd7e2d8f24db510e46131608a6ec05",
+  "upstream_manifests": {
+    "pr_a": {
+      "filename": "v04_pr_a_document_materialization_manifest.json",
+      "sha256": "1a3a1e07d886e8b38b6839fa060172dd0e1ef237cd62eff61334118a1ff93483"
+    },
+    "pr_b": {
+      "filename": "v04_pr_b_market_x_core_manifest.json",
+      "sha256": "640190d3126780e6dedfbb0999dc94e9f7e87ee477af398ebb9097e5d06f2521"
+    },
+    "pr_c": {
+      "filename": "v04_pr_c_5d_outcome_manifest.json",
+      "sha256": "d08f030697450953d0aa09ef945633ed6501d5644bd35fd70a5de4f8975768f1"
+    }
+  }
+}

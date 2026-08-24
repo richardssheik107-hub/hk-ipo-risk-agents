@@ -251,13 +251,19 @@ def test_committed_v04_source_manifest_validates() -> None:
     )
     assert security_master.availability is SourceAvailability.NOT_REQUIRED
 
+    hsi = next(entry for entry in manifest.entries if entry.logical_id == "hsi")
+    assert hsi.availability is SourceAvailability.AVAILABLE
+    assert hsi.coverage["usable_cases"] == 438
+    assert hsi.coverage["duplicate_count"] == 0
+    assert hsi.provenance["reference_id"] == "HSI"
+
     assessment = manifest.model_readiness()
     assert assessment.status == "blocked"
     assert "SECURITY_MASTER_SOURCE_REQUIRED" not in assessment.blockers
     assert "SECURITY_MASTER_SOURCE_REQUIRED" not in serialized
+    assert "HSI_SOURCE_REQUIRED" not in assessment.blockers
     assert "DOCUMENT_X_NOT_FULLY_MATERIALIZED" not in assessment.blockers
     assert set(assessment.blockers) >= {
-        "HSI_SOURCE_REQUIRED",
         "INDUSTRY_INDEX_MAPPING_REQUIRED",
         "INDUSTRY_INDEX_SOURCE_REQUIRED",
         "MARKET_TURNOVER_SOURCE_REQUIRED",

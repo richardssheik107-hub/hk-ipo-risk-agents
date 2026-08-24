@@ -112,10 +112,10 @@ PR-B Market-X Core          = 438 / 438 materialized / COMPLETE / FROZEN
 
 因此 recent-IPO point-in-time context **已有真实 governed IPO EOD foundation**，并且 PR-B Core 已使用严格的可得性边界完成全量物化。
 
-当前真正仍缺的是 Extended reference-market source：
+当前 Extended reference-market source 状态：
 
 ```text
-HSI history
+HSI history                         governed CSMAR source / AVAILABLE
 industry benchmark mapping
 industry-index history
 total-market turnover
@@ -125,7 +125,8 @@ total-market turnover
 
 - PR-B Market-X Core：**COMPLETE / FROZEN**；
 - recent IPO context foundation：**available**；
-- 本文件定义的 HSI / industry / turnover Extended families：**source incomplete / missing**；
+- HSI Extended family：**available，438 / 438 PIT readiness**；
+- industry / turnover Extended families：**source incomplete / missing**；
 - full 20-position Extended Market-X 在完整真实源层面尚未全覆盖。
 
 ## 8. Missing-data contract
@@ -207,7 +208,7 @@ Development 只接受 2020–2023；Validation 只接受 2024。
 
 ## 11. Current limitations
 
-- governed HSI series 尚未接入；
+- governed HSI series 已接入，但交付 metadata 未给出可冻结的官方 `series_type` 术语，因此保留 `SERIES_TYPE_REQUIRES_METADATA_CONFIRMATION`；
 - authoritative industry-to-index mapping / series 尚未接入；
 - governed total-market turnover 尚未接入；
 - recent IPO context 受 432 / 438 IPO EOD coverage 和 point-in-time outcome availability 限制；
