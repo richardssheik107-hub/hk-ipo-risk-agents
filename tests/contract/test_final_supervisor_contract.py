@@ -5,14 +5,12 @@ degradation path so a later implementation cannot quietly relax them.
 """
 from __future__ import annotations
 
-import dataclasses
 import re
 
 import pytest
 
 from ipo_risk.agents.final_supervisor import GatePendingFinalSupervisor
 from ipo_risk.agents.market_context import GatePendingMarketContextProvider
-from ipo_risk.core.config import Settings
 from ipo_risk.core.container import default_registry
 from ipo_risk.core.config import ComponentConfigurationError
 from ipo_risk.schemas import (
@@ -87,14 +85,21 @@ def test_uncalibrated_score_carries_its_disclaimer() -> None:
     assert result.metadata["probability_claimed"] is False
 
 
-def test_missing_channels_are_reported_as_pending_gates() -> None:
-    """Today's real state: no Market-X and no frozen model exist."""
+def test_missing_channels_are_reported_as_disabled_not_synthesised() -> None:
+    """PR-B and PR-F are both COMPLETE / FROZEN, so no gate blocks these channels.
+
+    An absent channel now means this runtime did not configure it. Reporting a
+    retired gate would be a factual error in a governance artifact.
+    """
     result = GatePendingFinalSupervisor().finalize(
         FinalSupervisionInput(document_supervision=_supervision(_risk("r-1"))))
-    pending = {state.channel: state.blocking_gate for state in result.channel_states
-               if state.status is ChannelStatus.PENDING_GATE}
-    assert pending == {SupervisionChannel.MARKET: "PR-B", SupervisionChannel.MODEL: "PR-F"}
-    assert result.metadata["blocking_gates"] == ["PR-B", "PR-F"]
+    states = {state.channel: state for state in result.channel_states}
+    for channel in (SupervisionChannel.MARKET, SupervisionChannel.MODEL):
+        assert states[channel].status is ChannelStatus.DISABLED, channel
+        assert states[channel].blocking_gate is None, channel
+        assert states[channel].reason
+    assert result.metadata["blocking_gates"] == []
+    assert not [state for state in result.channel_states if state.status is ChannelStatus.PENDING_GATE]
 
 
 def test_absent_channels_change_nothing_but_channel_state() -> None:
@@ -119,10 +124,10 @@ def test_finalize_is_deterministic() -> None:
     assert supervisor.finalize(inputs).content_hash() == supervisor.finalize(inputs).content_hash()
 
 
-def test_market_context_provider_reports_the_blocking_gate() -> None:
-    view = GatePendingMarketContextProvider().context(profile=None)
-    assert view.status is ChannelStatus.PENDING_GATE
-    assert view.blocking_gate == "PR-B"
+def test_market_context_provider_reports_an_unconfigured_channel() -> None:
+    view = GatePendingMarketContextProvider().context(profile=None, market=None)
+    assert view.status is ChannelStatus.DISABLED
+    assert view.blocking_gate is None
     assert view.observations == ()
 
 
@@ -132,14 +137,3 @@ def test_registry_exposes_the_contracts_but_nothing_wires_them() -> None:
     assert registry.create("market_context", "gate_pending").name == "gate_pending"
     with pytest.raises(ComponentConfigurationError):
         registry.create("final_supervisor", "v04")
-
-
-def test_settings_has_no_final_supervisor_field_before_pr_g() -> None:
-    """Guards against wiring PR-G ahead of its gate.
-
-    When PR-G formally starts, this test is deleted in the same change that adds
-    the Settings field and the create_workflow wiring.
-    """
-    names = {field.name for field in dataclasses.fields(Settings)}
-    assert "final_supervisor" not in names
-    assert "market_context" not in names

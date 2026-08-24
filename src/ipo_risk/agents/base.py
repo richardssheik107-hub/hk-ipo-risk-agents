@@ -39,14 +39,18 @@ class RiskSupervisor(Protocol):
 
 
 class MarketContextProvider(Protocol):
-    """PR-G preparation: explanatory market channel, never a risk producer."""
+    """Explanatory market channel, never a risk producer.
+
+    Takes the snapshot the workflow already loaded rather than fetching its own:
+    two different snapshots inside one analysis would be a provenance hazard.
+    """
 
     name: str
-    def context(self, profile: IPOProfile) -> MarketContextView: ...
+    def context(self, profile: IPOProfile, market: MarketSnapshot | None = None) -> MarketContextView: ...
 
 
 class FinalSupervisor(Protocol):
-    """PR-G preparation: composes existing channels; creates no new signal."""
+    """Composes existing channels; creates no new signal."""
 
     name: str
     def finalize(self, inputs: FinalSupervisionInput) -> FinalSupervisionResult: ...
