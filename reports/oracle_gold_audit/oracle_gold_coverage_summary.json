@@ -1,0 +1,67 @@
+{
+  "annotation_opportunity": {
+    "by_official_split": {},
+    "case_ids": [],
+    "official_packets_without_pass1": 0
+  },
+  "audit_version": "oracle_gold_coverage_audit_v1",
+  "blind_2025_accessed": false,
+  "blind_2025_rows_excluded": 0,
+  "build_failures": [
+    {
+      "case_id": "real_case_001",
+      "error": "ValueError: invalid gold annotation: SCHEMA_INVALID"
+    }
+  ],
+  "funnel": {
+    "audit_overlay_present": 87,
+    "case_packets": 101,
+    "case_packets_in_official_universe": 98,
+    "oracle_buildable": 100,
+    "oracle_buildable_in_official_universe": 98,
+    "pass1_present": 101,
+    "pass1_present_in_official_universe": 98
+  },
+  "no_reviewed_gold_count": 340,
+  "official_universe_count": 438,
+  "oracle_coverage_by_official_split": {
+    "development": 79,
+    "validation": 19
+  },
+  "oracle_coverage_by_official_year": {
+    "2020": 18,
+    "2021": 22,
+    "2022": 19,
+    "2023": 20,
+    "2024": 19
+  },
+  "oracle_identity_provenance": {
+    "annotation_split_vocabulary": {
+      "development": 80,
+      "development_exception": 1,
+      "validation": 17
+    },
+    "compared_fields": [
+      "cohort_year",
+      "dataset_split"
+    ],
+    "latent_mismatch_if_annotated": {},
+    "materialized_mismatch_count": 5,
+    "materialized_mismatches": {
+      "ipo_2020_08489": "cohort_year",
+      "ipo_2020_09600": "cohort_year",
+      "ipo_2022_02450": "cohort_year",
+      "ipo_2023_02503": "cohort_year,dataset_split",
+      "ipo_2024_02410": "dataset_split"
+    }
+  },
+  "outside_official_universe": [
+    "ipo_2024_00805",
+    "ipo_2024_02613",
+    "real_case_001"
+  ],
+  "packet_coverage_by_official_split": {
+    "development": 79,
+    "validation": 19
+  }
+}

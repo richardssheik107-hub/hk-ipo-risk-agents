@@ -24,6 +24,8 @@ reports/*
 !reports/llm_reranker_pilot/
 !reports/llm_reranker_pilot/**
 reports/llm_reranker_pilot/*.log
+!reports/oracle_gold_audit/
+!reports/oracle_gold_audit/**
 models/*
 !models/.gitkeep
 !models/retriever_v3/

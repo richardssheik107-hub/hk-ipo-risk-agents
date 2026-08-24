@@ -8,6 +8,7 @@ import json
 
 import streamlit as st
 
+from pipeline_stages import StageStatus, resolve_stages
 from presenters import (
     DOMAINS,
     build_analysis_request,
@@ -40,6 +41,44 @@ RISK_TITLES = {
     "material_litigation_compliance": "Material litigation and compliance / 重大诉讼与合规",
     "precommercial_product": "Pre-commercial product / 未商业化及核心产品依赖",
 }
+
+
+_STAGE_BADGES = {
+    StageStatus.AVAILABLE: "🟢 Available",
+    StageStatus.PARTIAL: "🟡 Partial",
+    StageStatus.PENDING_GATE: "⚪ Not available",
+}
+
+
+def _render_stage_header(stage) -> None:
+    st.subheader(f"{stage.ordinal}. {stage.title}")
+    st.caption(f"{_STAGE_BADGES[stage.status]} · {stage.summary}")
+
+
+def _render_pending(stage) -> None:
+    """Render an un-frozen stage without inventing a single number for it."""
+    gate = f"pending gate {stage.blocking_gate}" if stage.blocking_gate else "not available"
+    st.info(f"**NOT AVAILABLE — {gate}**\n\n{stage.blocking_reason}")
+    if stage.what_appears_when_unblocked:
+        st.markdown("**What will appear here once it lands**")
+        for item in stage.what_appears_when_unblocked:
+            st.markdown(f"- {item}")
+
+
+def _render_stage_metrics(stage) -> None:
+    if not stage.metrics:
+        return
+    columns = st.columns(len(stage.metrics))
+    for column, metric in zip(columns, stage.metrics, strict=True):
+        column.metric(metric.label, metric.value)
+
+
+def _render_pipeline_status(stages) -> None:
+    st.sidebar.markdown("### v0.4 pipeline status")
+    for stage in stages:
+        suffix = f" · {stage.blocking_gate}" if stage.blocking_gate else ""
+        st.sidebar.caption(f"{_STAGE_BADGES[stage.status]} {stage.ordinal}. {stage.title}{suffix}")
+    st.sidebar.caption("Current formal gate: PR-B. Later stages are preparation only.")
 
 
 def _display_value(value: object) -> str:
@@ -178,11 +217,87 @@ if submitted:
             "stock-return forecasts, or investment/legal advice."
         )
 
-        overview, financial, legal, business, supervisor, diagnostics = st.tabs(
-            ["Overview", "Financial", "Legal", "Business", "Supervisor", "Diagnostics"]
-        )
-        with overview:
-            st.subheader("Report sections")
+
+        stages = resolve_stages(payload)
+        _render_pipeline_status(stages)
+        by_id = {stage.stage_id: stage for stage in stages}
+
+        tabs = st.tabs([f"{stage.ordinal}. {stage.title}" for stage in stages] + ["Diagnostics"])
+        pages = dict(zip((stage.stage_id for stage in stages), tabs, strict=False))
+
+        with pages["document_analysis"]:
+            _render_stage_header(by_id["document_analysis"])
+            _render_stage_metrics(by_id["document_analysis"])
+            domain_tabs = dict(zip(DOMAINS, st.tabs([domain.title() for domain in DOMAINS]), strict=True))
+            for domain in DOMAINS:
+                with domain_tabs[domain]:
+                    domain_data = payload["domains"][domain]
+                    st.caption(
+                        f"Agent status: {domain_data['status']} · "
+                        f"risk count: {domain_data['risk_count']}"
+                    )
+                    domain_counts = domain_data["status_counts"]
+                    status_columns = st.columns(4)
+                    status_columns[0].metric("Verified", domain_counts.get("verified", 0))
+                    status_columns[1].metric("Needs review", domain_counts.get("needs_review", 0))
+                    status_columns[2].metric("Pending", domain_counts.get("pending", 0))
+                    status_columns[3].metric("Rejected", domain_counts.get("rejected", 0))
+                    if domain_data["diagnostics"]:
+                        with st.expander("Agent diagnostics"):
+                            st.json(domain_data["diagnostics"])
+                    if not domain_data["risks"]:
+                        st.info("No risk item was produced for this domain.")
+                    for risk in domain_data["risks"]:
+                        _render_risk(risk)
+
+        with pages["document_features"]:
+            _render_stage_header(by_id["document_features"])
+            _render_pending(by_id["document_features"])
+
+        with pages["market_features"]:
+            _render_stage_header(by_id["market_features"])
+            _render_pending(by_id["market_features"])
+
+        with pages["prediction"]:
+            _render_stage_header(by_id["prediction"])
+            _render_stage_metrics(by_id["prediction"])
+            st.warning(
+                "Rule scores are deterministic prioritization signals—not probabilities, "
+                "stock-return forecasts, or investment/legal advice."
+            )
+            _render_pending(by_id["prediction"])
+
+        with pages["explainability"]:
+            _render_stage_header(by_id["explainability"])
+            st.markdown("**Evidence and deterministic calculations**")
+            if not payload["verified_risks"]:
+                st.info("No verified risk carries evidence for this run.")
+            for risk in payload["verified_risks"]:
+                _render_risk(risk)
+            _render_pending(by_id["explainability"])
+
+        with pages["final_supervisor"]:
+            _render_stage_header(by_id["final_supervisor"])
+            supervision = payload["supervision"]
+            if not supervision:
+                st.info("Document supervision output is unavailable for this workflow.")
+            else:
+                _render_stage_metrics(by_id["final_supervisor"])
+                st.markdown("**Cross-domain synthesis**")
+                st.write(supervision.get("summary", "No summary"))
+                st.markdown("**Duplicate groups**")
+                st.json(supervision.get("duplicate_groups", []))
+                st.markdown("**Conflicts and semantic reconciliation**")
+                st.json(supervision.get("conflicts", []))
+                st.markdown("**Composite findings**")
+                st.json(supervision.get("composite_findings", []))
+                st.markdown("**Rule-score components**")
+                st.json(supervision.get("metadata", {}).get("rule_score_components", []))
+            _render_pending(by_id["final_supervisor"])
+
+        with pages["final_report"]:
+            _render_stage_header(by_id["final_report"])
+            st.markdown("**Document-scope report sections**")
             for section in payload["report_sections"]:
                 st.markdown(f"### {section['order']}. {section['title']}")
                 st.write(section["summary"])
@@ -200,46 +315,9 @@ if submitted:
                 file_name=f"{stem}-risk-result.json",
                 mime="application/json",
             )
+            _render_pending(by_id["final_report"])
 
-        domain_tabs = {"financial": financial, "legal": legal, "business": business}
-        for domain in DOMAINS:
-            with domain_tabs[domain]:
-                domain_data = payload["domains"][domain]
-                st.caption(
-                    f"Agent status: {domain_data['status']} · "
-                    f"risk count: {domain_data['risk_count']}"
-                )
-                domain_counts = domain_data["status_counts"]
-                status_columns = st.columns(4)
-                status_columns[0].metric("Verified", domain_counts.get("verified", 0))
-                status_columns[1].metric("Needs review", domain_counts.get("needs_review", 0))
-                status_columns[2].metric("Pending", domain_counts.get("pending", 0))
-                status_columns[3].metric("Rejected", domain_counts.get("rejected", 0))
-                if domain_data["diagnostics"]:
-                    with st.expander("Agent diagnostics"):
-                        st.json(domain_data["diagnostics"])
-                if not domain_data["risks"]:
-                    st.info("No risk item was produced for this domain.")
-                for risk in domain_data["risks"]:
-                    _render_risk(risk)
-
-        with supervisor:
-            supervision = payload["supervision"]
-            if not supervision:
-                st.info("Supervisor output is unavailable for this workflow.")
-            else:
-                st.subheader("Cross-domain synthesis")
-                st.write(supervision.get("summary", "No summary"))
-                st.markdown("**Duplicate groups**")
-                st.json(supervision.get("duplicate_groups", []))
-                st.markdown("**Conflicts and semantic reconciliation**")
-                st.json(supervision.get("conflicts", []))
-                st.markdown("**Composite findings**")
-                st.json(supervision.get("composite_findings", []))
-                st.markdown("**Rule-score components**")
-                st.json(supervision.get("metadata", {}).get("rule_score_components", []))
-
-        with diagnostics:
+        with tabs[-1]:
             st.subheader("Component modes and status")
             st.dataframe(payload["component_statuses"], hide_index=True, use_container_width=True)
             st.subheader("Configuration and governance")
