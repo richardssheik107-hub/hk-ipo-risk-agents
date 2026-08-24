@@ -16,6 +16,7 @@ from ipo_risk.schemas import (
     ReportContext,
     VerificationStatus,
 )
+from ipo_risk.schemas.final_supervision import FinalSupervisionInput
 from ipo_risk.workflows.state import WorkflowState
 
 
@@ -31,6 +32,9 @@ class MVPWorkflow:
         reporter,
         market_provider,
         ipo_provider,
+        *,
+        market_context=None,
+        final_supervisor=None,
     ):
         self.parser, self.retriever, self.agents, self.verifier = (
             parser,
@@ -40,15 +44,21 @@ class MVPWorkflow:
         )
         self.supervisor, self.predictor, self.reporter = supervisor, predictor, reporter
         self.market_provider, self.ipo_provider = market_provider, ipo_provider
+        self.market_context, self.final_supervisor = market_context, final_supervisor
         graph = StateGraph(WorkflowState)
         nodes = [
             ("load_ipo_profile", self.load_profile),
             ("load_market_snapshot", self.load_market),
+            # Explains the snapshot just loaded; isolated by _safe and logged in
+            # its own right, so an explanation failure never breaks the analysis.
+            *([("market_context", self.explain_market)] if self.market_context else []),
             ("document", self.document),
             *[(agent.name, self.agent_node(agent)) for agent in agents],
             ("verifier", self.verify),
             ("supervisor", self.supervise),
             ("predictor", self.predict),
+            # Must follow the predictor: the rule prediction is one of its inputs.
+            *([("final_supervisor", self.finalize)] if self.final_supervisor else []),
             ("report", self.report),
         ]
         for name, node in nodes:
@@ -426,6 +436,41 @@ class MVPWorkflow:
             },
             {"prediction": None},
         )
+
+    def explain_market(self, state):
+        """Turn the loaded snapshot into an explanation, or into a named absence."""
+        def operation():
+            view = self.market_context.context(state["profile"], state.get("market"))
+            return {
+                "market_context_view": view,
+                "component_diagnostics": {"market_context": view.model_dump(mode="json")},
+                "_summary": f"market context {view.status.value}",
+                "_log_metadata": {"status": view.status.value, "observation_count": len(view.observations)},
+            }
+        return self._safe(state, "market_context", "context", operation, {"market_context_view": None})
+
+    def finalize(self, state):
+        """Compose the document, market, model and rule channels."""
+        def operation():
+            inputs = FinalSupervisionInput(
+                document_supervision=state.get("supervision_result"),
+                market_context=state.get("market_context_view"),
+                model_prediction=state.get("model_prediction_view"),
+                rule_prediction=state.get("prediction"),
+            )
+            result = self.final_supervisor.finalize(inputs)
+            return {
+                "final_supervision": result,
+                "component_diagnostics": {"final_supervisor": result.model_dump(mode="json")},
+                "_summary": "final supervision composed",
+                "_log_metadata": {
+                    "channel_states": {
+                        state_.channel.value: state_.status.value for state_ in result.channel_states
+                    },
+                    "unresolved_conflict_count": result.metadata.get("unresolved_conflict_count", 0),
+                },
+            }
+        return self._safe(state, "final_supervisor", "finalize", operation, {"final_supervision": None})
 
     def report(self, state):
         context = ReportContext(

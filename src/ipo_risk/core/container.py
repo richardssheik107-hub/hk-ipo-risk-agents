@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 
 from ipo_risk.agents.business_v03 import V03BusinessAgent
 from ipo_risk.agents.business_verifier import V03BusinessVerifier
@@ -12,12 +13,15 @@ from ipo_risk.agents.disabled import (
     DisabledLegalAgent,
     DisabledMarketAgent,
 )
-from ipo_risk.agents.final_supervisor import GatePendingFinalSupervisor
+from ipo_risk.agents.final_supervisor import GatePendingFinalSupervisor, V04FinalSupervisor
 from ipo_risk.agents.financial import CashRunwayFinancialAgent
 from ipo_risk.agents.financial_v03 import V03FinancialAgent
 from ipo_risk.agents.financial_verifier import V03FinancialVerifier
 from ipo_risk.agents.legal import LegalAgent
-from ipo_risk.agents.market_context import GatePendingMarketContextProvider
+from ipo_risk.agents.market_context import (
+    GatePendingMarketContextProvider,
+    SnapshotMarketContextProvider,
+)
 from ipo_risk.agents.mock import (
     MockBusinessAgent,
     MockFinancialAgent,
@@ -56,9 +60,14 @@ from ipo_risk.providers.unavailable import (
 )
 from ipo_risk.reporting.mock import MockReportGenerator
 from ipo_risk.reporting.v03 import V03ReportGenerator
+from ipo_risk.reporting.v04 import V04ReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.mock import MockDocumentRetriever
+from ipo_risk.modeling.frozen_model_evidence import (
+    FrozenModelEvidenceError,
+    load_frozen_cohort_evidence,
+)
 from ipo_risk.workflows.enhanced_v2 import EnhancedV2Workflow
 from ipo_risk.workflows.mvp_v1 import MVPWorkflow
 
@@ -81,6 +90,10 @@ class ComponentRegistry:
             ) from exc
 
 
+# Settings sentinel: this component is not built at all for this configuration.
+NO_COMPONENT = "none"
+
+
 def default_registry() -> ComponentRegistry:
     registry = ComponentRegistry()
     registrations = {
@@ -97,10 +110,13 @@ def default_registry() -> ComponentRegistry:
         "llm_provider": {"mock": MockLLMProvider, "openai_compatible": OpenAICompatibleLLMProvider, "unavailable": UnavailableLLMProvider},
         "market_data_provider": {"mock": MockMarketDataProvider, "unavailable": UnavailableMarketDataProvider},
         "ipo_data_provider": {"mock": MockIPODataProvider, "request": RequestIPODataProvider, "catalog": CatalogIPODataProvider},
-        "report_generator": {"mock": MockReportGenerator, "v03": V03ReportGenerator},
-        # PR-G preparation: registered but inert. No Settings field and no config names
-        # these, so create_workflow cannot reach them until PR-G wires them deliberately.
-        "market_context": {"gate_pending": GatePendingMarketContextProvider},
+        "report_generator": {"mock": MockReportGenerator, "v03": V03ReportGenerator, "v04": V04ReportGenerator},
+        # PR-G channels. Settings default to "none", so only a config that names
+        # one of these reaches them; every pre-v0.4 config builds nothing.
+        "market_context": {
+            "gate_pending": GatePendingMarketContextProvider,
+            "snapshot": SnapshotMarketContextProvider,
+        },
         "final_supervisor": {"gate_pending": GatePendingFinalSupervisor},
     }
     for kind, values in registrations.items():
@@ -144,13 +160,34 @@ class DependencyContainer:
             self.registry.create("market_data_provider", self.settings.market_data_provider),
             self.registry.create("ipo_data_provider", self.settings.ipo_data_provider),
         )
+        # Keyword-only with None defaults: callers that construct a workflow with
+        # the historical nine positional arguments keep working unchanged.
+        channels = {
+            "market_context": self._create_channel("market_context", self.settings.market_context),
+            "final_supervisor": self._create_channel("final_supervisor", self.settings.final_supervisor),
+        }
         if self.settings.workflow_version == "mvp_v1":
-            return MVPWorkflow(*arguments)
+            return MVPWorkflow(*arguments, **channels)
         if self.settings.workflow_version == "enhanced_v2":
-            return EnhancedV2Workflow(*arguments)
+            return EnhancedV2Workflow(*arguments, **channels)
         raise ComponentConfigurationError(
             f"Unregistered workflow version: {self.settings.workflow_version!r}"
         )
+
+    def _create_channel(self, kind: str, name: str):
+        """Build an optional PR-G channel; "none" means build nothing at all."""
+        if name == NO_COMPONENT:
+            return None
+        if kind == "final_supervisor" and name == "v04":
+            return V04FinalSupervisor(self._frozen_cohort_evidence())
+        return self.registry.create(kind, name)
+
+    def _frozen_cohort_evidence(self):
+        """Tier-1 frozen PR-F evidence; absent manifest degrades, never crashes."""
+        try:
+            return load_frozen_cohort_evidence(Path(self.settings.report_dir) / "frozen")
+        except FrozenModelEvidenceError:
+            return None
 
     def _create_agent(self, kind: str, name: str, retriever, llm_provider):
         if name == "cash_runway":

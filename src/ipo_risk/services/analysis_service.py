@@ -27,6 +27,10 @@ class IPOAnalysisService:
             "ipo_data_provider": settings.ipo_data_provider if settings.ipo_data_provider in {"request", "catalog"} else "mock",
             "report_generator": "mock" if settings.report_generator == "mock" else settings.report_generator,
         }
+        # A channel that is not built adds no row, so pre-v0.4 mode tables are unchanged.
+        for channel in ("market_context", "final_supervisor"):
+            if (mode := getattr(settings, channel)) != "none":
+                modes[channel] = mode
         if settings.workflow_version == "enhanced_v2":
             llm_status = (
                 "offline_unavailable"
@@ -91,6 +95,12 @@ class IPOAnalysisService:
             },
             "component_diagnostics": diagnostics,
         }
+        # Surfaced by presence, not by workflow version: a channel that ran is
+        # reported, and one that did not simply adds no key.
+        if (final_supervision := diagnostics.get("final_supervisor")):
+            metadata["final_supervision"] = final_supervision
+        if (market_context := diagnostics.get("market_context")):
+            metadata["market_context"] = market_context
         if self.settings.workflow_version == "enhanced_v2":
             metadata["supervision"] = diagnostics.get("supervisor", {})
             metadata["governance"] = {

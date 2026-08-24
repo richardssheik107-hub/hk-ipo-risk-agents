@@ -188,6 +188,8 @@ def result_payload(result: IPOAnalysisResult) -> dict[str, object]:
         "workflow_version": result.workflow_version,
         "configuration": result.metadata.get("configuration", {}),
         "supervision": result.metadata.get("supervision", {}),
+        "market_context": result.metadata.get("market_context", {}),
+        "final_supervision": result.metadata.get("final_supervision", {}),
         "governance": result.metadata.get("governance", {}),
         "component_diagnostics": result.metadata.get("component_diagnostics", {}),
         "risk_status_counts": risk_status_counts(result),
@@ -230,7 +232,7 @@ def markdown_report(result: IPOAnalysisResult) -> str:
         lines.extend([f"## {section.order}. {section.title}", "", section.summary, ""])
         render_risks = (
             section.risks
-            if len(result.report_sections) != 10 or section.order in {3, 4, 5}
+            if len(result.report_sections) < 10 or section.order in {3, 4, 5}
             else []
         )
         for risk in render_risks:

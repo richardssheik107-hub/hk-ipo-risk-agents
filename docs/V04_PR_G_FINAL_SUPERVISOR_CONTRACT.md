@@ -1,9 +1,9 @@
 # v0.4 PR-G Final Supervisor / Market Agent 契约
 
-> Status: **PREPARATION / CONTRACT ONLY — PR-G 仍为 NOT STARTED**
+> Status: **IMPLEMENTED —— 见 [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md)**
 > Owner: **E — Oracle / Product Integration**
-> Date: **2026-08-21**
-> 当前正式 Gate 仍为 **PR-B Market-X Core（NOT STARTED / NEXT）**
+> Date: **2026-08-21** · 实现落地 **2026-08-24**
+> 当前正式 Gate:**PR-G**（实现完成,待 A 审阅冻结）
 > 代码：[`../src/ipo_risk/schemas/final_supervision.py`](../src/ipo_risk/schemas/final_supervision.py)、[`../src/ipo_risk/agents/final_supervisor.py`](../src/ipo_risk/agents/final_supervisor.py)、[`../src/ipo_risk/agents/market_context.py`](../src/ipo_risk/agents/market_context.py)
 
 本文件只落**接口与不变量**。它对现有任何 workflow **零行为变更**：`V03Supervisor`、`workflows/enhanced_v2.py`、`workflows/mvp_v1.py` 与所有 config 均逐字节未动。

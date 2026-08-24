@@ -31,6 +31,7 @@ def _populated_payload() -> dict[str, object]:
         "risk_status_counts": {"verified": 3, "needs_review": 1, "pending": 0, "rejected": 2},
         "prediction": {"risk_score": 61.5, "risk_level": "high"},
         "supervision": {"duplicate_groups": [{}], "conflicts": [], "composite_findings": [{}, {}]},
+        "final_supervision": {},
     }
 
 
@@ -44,7 +45,7 @@ def test_chain_matches_the_pr_h_page_order() -> None:
 
 def test_referenced_gates_match_the_execution_plan() -> None:
     """The plan document is the source of truth; if it changes, this fails."""
-    assert set(pipeline_stages.blocking_gates()) == {"PR-B", "PR-F", "PR-G", "PR-H"}
+    assert set(pipeline_stages.blocking_gates()) == {"PR-B", "PR-F", "PR-H"}
 
 
 def test_pending_gate_stages_render_nothing_numeric() -> None:
@@ -99,3 +100,28 @@ def test_prediction_stage_never_calls_the_rule_score_a_probability() -> None:
     stage = {item.stage_id: item for item in resolve_stages(_populated_payload())}["prediction"]
     assert "never a probability" in stage.summary
     assert not any("probab" in metric.label.lower() for metric in stage.metrics)
+
+
+def test_final_supervisor_becomes_available_once_pr_g_channels_run() -> None:
+    """PR-G is delivered, so the stage stops claiming a gate blocks it."""
+    payload = {**_populated_payload(), "final_supervision": {
+        "channel_states": [
+            {"channel": "document", "status": "available"},
+            {"channel": "market", "status": "unavailable_error"},
+            {"channel": "model", "status": "disabled"},
+            {"channel": "rule", "status": "available"},
+        ],
+        "referenced_risk_ids": ["r-1", "r-2"],
+        "metadata": {"unresolved_conflict_count": 1},
+    }}
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
+    assert stage.status is StageStatus.AVAILABLE
+    assert stage.blocking_gate is None
+    assert {metric.label: metric.value for metric in stage.metrics}["Channels available"] == "2 of 4"
+
+
+def test_final_supervisor_without_the_channel_names_no_retired_gate() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_populated_payload())}["final_supervisor"]
+    assert stage.status is StageStatus.PARTIAL
+    assert stage.blocking_gate is None
+    assert stage.blocking_reason

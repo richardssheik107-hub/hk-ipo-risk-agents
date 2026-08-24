@@ -19,5 +19,8 @@ class WorkflowState(TypedDict, total=False):
     agent_logs: Annotated[list[AgentLog], append]
     errors: Annotated[list[AnalysisError], append]
     prediction: Any; report_sections: list[Any]
+    # PR-G replacement snapshots; the Final Supervisor composes them, so unlike
+    # the risk lists these must overwrite rather than accumulate.
+    supervision_result: Any; market_context_view: Any; final_supervision: Any
     document_metadata: dict[str, Any]
     component_diagnostics: Annotated[dict[str, Any], merge_dicts]

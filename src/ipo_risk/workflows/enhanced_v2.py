@@ -106,6 +106,8 @@ class EnhancedV2Workflow(MVPWorkflow):
             serialized = result.model_dump(mode="json")
             return {
                 "supervised_verified_risks": result.verified_risks,
+                # The Final Supervisor needs the object, not its JSON shadow.
+                "supervision_result": result,
                 "component_diagnostics": {"supervisor": serialized},
                 "_summary": result.summary,
                 "_log_metadata": result.metadata,
@@ -159,6 +161,8 @@ class EnhancedV2Workflow(MVPWorkflow):
                     "supervisor", {}
                 ),
                 "component_diagnostics": state.get("component_diagnostics", {}),
+                "final_supervision": state.get("final_supervision"),
+                "market_context": state.get("market_context_view"),
                 "runtime": {
                     "status": "partial" if state.get("errors") else "completed",
                     "event_count": len(state.get("agent_logs", [])),

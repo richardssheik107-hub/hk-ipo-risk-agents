@@ -29,6 +29,8 @@ SCENARIOS = {
     "v0.3 enhanced offline + tables": ("configs/v03_offline_table.yaml", True),
     "v0.3 enhanced AI": ("configs/v03_ai.yaml", True),
     "v0.3 enhanced AI + tables": ("configs/v03_ai_table.yaml", True),
+    "v0.4 offline + Final Supervisor": ("configs/v04_offline.yaml", True),
+    "v0.4 AI + Final Supervisor": ("configs/v04_ai.yaml", True),
     "Predictor failure degradation": ("configs/mock.yaml", False),
 }
 RISK_TITLES = {
@@ -256,6 +258,18 @@ if submitted:
 
         with pages["market_features"]:
             _render_stage_header(by_id["market_features"])
+            market = payload.get("market_context") or {}
+            if market:
+                st.markdown("**Pre-listing market context (PR-G channel)**")
+                st.caption(f"status: {market.get('status')} · {market.get('reason')}")
+                observations = [item for item in market.get("observations", [])
+                                if item.get("availability") == "available"]
+                if observations:
+                    st.dataframe(observations, hide_index=True, use_container_width=True)
+                else:
+                    st.info("No market observation is reported for this run.")
+                with st.expander("Channel provenance"):
+                    st.json(market.get("provenance", {}))
             _render_pending(by_id["market_features"])
 
         with pages["prediction"]:
@@ -278,6 +292,16 @@ if submitted:
 
         with pages["final_supervisor"]:
             _render_stage_header(by_id["final_supervisor"])
+            final = payload.get("final_supervision") or {}
+            if final:
+                _render_stage_metrics(by_id["final_supervisor"])
+                st.markdown("**Cross-channel synthesis**")
+                st.write(final.get("summary", ""))
+                st.markdown("**Channel availability**")
+                st.dataframe(final.get("channel_states", []), hide_index=True, use_container_width=True)
+                st.warning(final.get("uncertainty_statement", ""))
+                st.markdown("**Preserved conflicts** (arbitration is out of scope for v0.4)")
+                st.json(final.get("conflicts", []))
             supervision = payload["supervision"]
             if not supervision:
                 st.info("Document supervision output is unavailable for this workflow.")

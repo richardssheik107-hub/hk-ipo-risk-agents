@@ -19,6 +19,10 @@ class Settings:
     llm_base_url: str = ""; llm_model: str = ""
     llm_timeout_seconds: int = 60; llm_max_retries: int = 2
     repository: str = "json"; report_generator: str = "mock"
+    # PR-G channels. "none" builds nothing, so every pre-v0.4 config is unchanged.
+    market_context: str = "none"; final_supervisor: str = "none"
+    # Local-only path to a PR-F run directory; never committed non-empty.
+    pr_f_run_dir: str = ""
     data_dir: str = "data"; report_dir: str = "reports"; log_level: str = "INFO"
 
 def _coerce(value: str, current):

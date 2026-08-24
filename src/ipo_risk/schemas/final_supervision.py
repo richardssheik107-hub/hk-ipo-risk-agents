@@ -23,9 +23,9 @@ import json
 from enum import StrEnum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from ipo_risk.schemas import CompositeFinding, PredictionResult, SupervisionResult
+from ipo_risk.schemas import CompositeFinding, PredictionResult, RiskConflict, SupervisionResult
 
 
 class SupervisionChannel(StrEnum):
@@ -56,6 +56,59 @@ class ChannelState(BaseModel):
 
 
 CalibrationStatus = Literal["uncalibrated", "calibrated"]
+ObservationAvailability = Literal["available", "unavailable"]
+
+
+class MarketObservation(BaseModel):
+    """One market fact, carrying its own derivation and its own absence reason.
+
+    ``value`` and ``missing_reason`` are mutually exclusive by validator: a stated
+    number must say how it was derived, and an absent one must say why.  Prose
+    cannot express that, which is why observations are structured rather than
+    formatted strings.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    name: str = Field(min_length=1)
+    value: float | None = None
+    unit: str = ""
+    availability: ObservationAvailability
+    missing_reason: str | None = None
+    derivation: str = ""
+    source: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_availability(self) -> "MarketObservation":
+        if self.availability == "available":
+            if self.value is None:
+                raise ValueError("an available observation must carry a value")
+            if not self.derivation:
+                raise ValueError("an available observation must state its derivation")
+        elif self.value is not None:
+            raise ValueError("an unavailable observation cannot carry a value")
+        elif not self.missing_reason:
+            raise ValueError("an unavailable observation must state a missing reason")
+        return self
+
+
+class ModelDriver(BaseModel):
+    """One SHAP contribution behind a frozen model score."""
+
+    model_config = ConfigDict(frozen=True)
+
+    feature: str = Field(min_length=1)
+    component: str = Field(min_length=1)
+    feature_value: float | None = None
+    shap_value: float
+    direction: Literal["increases", "decreases"]
+
+    @model_validator(mode="after")
+    def validate_direction(self) -> "ModelDriver":
+        expected = "increases" if self.shap_value >= 0 else "decreases"
+        if self.direction != expected:
+            raise ValueError("driver direction must agree with the sign of its SHAP value")
+        return self
 
 
 class MarketContextView(BaseModel):
@@ -66,7 +119,7 @@ class MarketContextView(BaseModel):
     status: ChannelStatus
     reason: str = Field(min_length=1)
     blocking_gate: str | None = None
-    observations: tuple[str, ...] = ()
+    observations: tuple[MarketObservation, ...] = ()
     feature_manifest_hash: str | None = None
     provenance: dict[str, Any] = Field(default_factory=dict)
 
@@ -90,7 +143,7 @@ class ModelPredictionView(BaseModel):
     score_semantics: str = "uncalibrated_model_score"
     calibration_status: CalibrationStatus = "uncalibrated"
     calibration_provenance_id: str | None = None
-    drivers: tuple[str, ...] = ()
+    drivers: tuple[ModelDriver, ...] = ()
 
 
 class FinalSupervisionInput(BaseModel):
@@ -114,6 +167,10 @@ class FinalSupervisionResult(BaseModel):
     referenced_risk_ids: tuple[str, ...] = ()
     referenced_evidence_ids: tuple[str, ...] = ()
     composite_findings: tuple[CompositeFinding, ...] = ()
+    # Conflicts are preserved, never resolved.  Arbitration is CH-4, after PR-H.
+    conflicts: tuple[RiskConflict, ...] = ()
+    market_context: MarketContextView | None = None
+    model_prediction: ModelPredictionView | None = None
     uncertainty_statement: str = Field(min_length=1)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
