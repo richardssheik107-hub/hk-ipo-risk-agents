@@ -1,8 +1,8 @@
 # HK IPO Risk Agents — End-to-End Closed Loop Master Plan
 
-> Status snapshot: **2026-08-24**  
+> Status snapshot: **2026-08-24**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**  
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
 > PR-H preparation: **UNBLOCKED**
 
 ## 1. Program objective

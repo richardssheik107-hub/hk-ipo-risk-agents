@@ -27,6 +27,10 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipo_risk.modeling.statistical_power import assess_comparison
+from ipo_risk.modeling.pr_f_product_handoff import (
+    ProductRuntimeHandoffError,
+    read_product_case_signal,
+)
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus, ModelDriver, ModelPredictionView
 
@@ -200,6 +204,25 @@ def load_case_prediction(
         return _unavailable("ipo_identity_not_bound_to_the_governed_case_catalog", base)
 
     run_path = Path(run_dir)
+    expected_hash = frozen_manifest_result_hash(frozen_dir)
+    try:
+        product_signal = read_product_case_signal(
+            run_path,
+            expected_source_model_result_hash=expected_hash,
+            case_id=case_id,
+        )
+    except ProductRuntimeHandoffError:
+        return _unavailable("sanitized_pr_f_product_handoff_failed_validation", base)
+    if product_signal is not None:
+        score, drivers = product_signal
+        return ModelPredictionView(
+            status=ChannelStatus.AVAILABLE,
+            reason="per-case score read from the content-verified sanitized PR-F handoff",
+            score=score,
+            drivers=drivers,
+            **base,
+        )
+
     manifest_path, results_path = run_path / "run_manifest.json", run_path / "model_results.json"
     if not manifest_path.is_file() or not results_path.is_file():
         return _unavailable("frozen_pr_f_runtime_artifacts_are_not_present_locally", base)
@@ -209,7 +232,6 @@ def load_case_prediction(
     if not isinstance(local_manifest, dict) or not isinstance(results_payload, list):
         return _unavailable("frozen_pr_f_runtime_artifacts_are_invalid_json", base)
 
-    expected_hash = frozen_manifest_result_hash(frozen_dir)
     if local_manifest.get("model_result_hash") != expected_hash:
         return _unavailable("local_pr_f_artifacts_do_not_match_the_frozen_hash", base)
     if canonical_hash(results_payload) != expected_hash:

@@ -1,8 +1,8 @@
 # Roadmap
 
-> Status snapshot: **2026-08-24**  
-> Current formal Gate: **PR-G — A review passed; local freeze materialization pending**  
-> Next Gate preparation: **PR-H — Streamlit Full E2E + 3–5 real IPO demo — UNBLOCKED**  
+> Status snapshot: **2026-08-24**
+> Current formal Gate: **PR-G — A review passed; local freeze materialization pending**
+> Next Gate preparation: **PR-H — Streamlit Full E2E + 3–5 real IPO demo — UNBLOCKED**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**
 
 ## 1. Current state

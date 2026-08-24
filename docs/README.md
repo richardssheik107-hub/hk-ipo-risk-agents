@@ -1,8 +1,8 @@
 # Documentation Index
 
-> Audit date: **2026-08-24**  
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**  
-> PR-H preparation: **UNBLOCKED**  
+> Audit date: **2026-08-24**
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
+> PR-H preparation: **UNBLOCKED**
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2 / PR-E / PR-F: **COMPLETE / FROZEN**
 

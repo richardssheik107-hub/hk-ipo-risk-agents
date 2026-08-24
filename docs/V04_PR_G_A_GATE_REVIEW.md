@@ -1,9 +1,9 @@
 # v0.4 PR-G — A Gate Review
 
-> Review date: **2026-08-24**  
-> Reviewer: **A — Tech Lead / Pipeline**  
-> Reviewed main revision: `1b2260b9081ad4af71ba49d33710828a24dcbeac`  
-> PR-G implementation PR: **#104**  
+> Review date: **2026-08-24**
+> Reviewer: **A — Tech Lead / Pipeline**
+> Reviewed main revision: `1b2260b9081ad4af71ba49d33710828a24dcbeac`
+> PR-G implementation PR: **#104**
 > Decision: **GATE REVIEW PASS — local freeze materialization still required**
 
 ## 1. Decision

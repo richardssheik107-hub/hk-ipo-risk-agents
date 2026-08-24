@@ -1,7 +1,7 @@
 # HK IPO Risk Agents — Current Project Specification
 
-> Status snapshot: **2026-08-24**  
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**  
+> Status snapshot: **2026-08-24**
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
 > PR-H preparation: **UNBLOCKED**
 
 ## 1. Product definition

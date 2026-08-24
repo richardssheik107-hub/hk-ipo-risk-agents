@@ -15,6 +15,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
     load_frozen_cohort_evidence,
     power_statement,
 )
+from ipo_risk.modeling.pr_f_product_handoff import write_product_handoff
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus
 
@@ -176,6 +177,41 @@ def test_bound_artifacts_yield_the_per_case_score_and_drivers(tmp_path) -> None:
     assert [d.direction for d in view.drivers] == ["increases", "decreases"]
     assert view.drivers[1].feature_value is None
     assert view.calibration_status == "uncalibrated"
+
+
+def test_sanitized_handoff_is_preferred_without_full_runtime_files(tmp_path) -> None:
+    drivers = [{"case_id": "ipo_2024_00000", "top_drivers": [{
+        "feature": "market_core__hsi_return_5d", "component": "market_core",
+        "feature_value": -0.02, "shap_value": 0.11,
+    }]}]
+    payload = _result_payload(_rows(), drivers)
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    source, _ = _run_dir(
+        tmp_path, result_hash=canonical_hash(payload), rows=_rows(), drivers=drivers
+    )
+    handoff = tmp_path / "handoff"
+    write_product_handoff(
+        source, handoff, expected_source_model_result_hash=canonical_hash(payload),
+        case_ids=["ipo_2024_00000"],
+    )
+
+    view = load_case_prediction(handoff, frozen, case_id="ipo_2024_00000")
+
+    assert view.status is ChannelStatus.AVAILABLE
+    assert view.score == 0.0
+    assert "sanitized" in view.reason
+
+
+def test_invalid_sanitized_handoff_never_falls_back_to_full_runtime(tmp_path) -> None:
+    payload = _result_payload(_rows())
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    run, _ = _run_dir(tmp_path, result_hash=canonical_hash(payload), rows=_rows())
+    (run / "product_runtime_manifest.json").write_text("{}", encoding="utf-8")
+
+    view = load_case_prediction(run, frozen, case_id="ipo_2024_00000")
+
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.reason == "sanitized_pr_f_product_handoff_failed_validation"
 
 
 def test_case_outside_the_frozen_validation_cohort_is_named(tmp_path) -> None:
