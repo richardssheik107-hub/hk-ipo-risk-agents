@@ -1,8 +1,8 @@
 # HK IPO Risk Agents — Current Project Specification
 
 > Status snapshot: **2026-08-24**
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
-> PR-H preparation: **UNBLOCKED**
+> PR-G: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real IPO demo**
 
 ## 1. Product definition
 
@@ -36,9 +36,8 @@ PR-D Canonical Dataset              COMPLETE / FROZEN
 Oracle v2                           COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E                                COMPLETE / FROZEN
 PR-F                                COMPLETE / FROZEN
-PR-G implementation                 MERGED / A REVIEW PASS
-PR-G freeze manifest                REQUIRED LOCAL ACTION
-PR-H                                PREPARATION UNBLOCKED
+PR-G                                COMPLETE / FROZEN
+PR-H                                CURRENT FORMAL GATE
 ```
 
 真实建模 cohort：

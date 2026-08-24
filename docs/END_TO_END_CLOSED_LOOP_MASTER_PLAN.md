@@ -2,8 +2,8 @@
 
 > Status snapshot: **2026-08-24**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
-> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
-> PR-H preparation: **UNBLOCKED**
+> PR-G: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real IPO demo**
 
 ## 1. Program objective
 
@@ -46,7 +46,7 @@ PR-D Canonical Dataset          COMPLETE / FROZEN
 Oracle v2                       COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E Baseline + Oracle          COMPLETE / FROZEN
 PR-F LightGBM + Explainability  COMPLETE / FROZEN
-PR-G implementation             MERGED / A REVIEW PASS
+PR-G Market Agent + Supervisor  COMPLETE / FROZEN
 ```
 
 Measured anchors：
@@ -161,11 +161,11 @@ PR #104 已将 frozen model evidence adapter、Market Context、Final Supervisor
 
 ```text
 PR-G implementation / contract review     PASS
-PR-G local freeze manifest materialization REQUIRED_LOCAL_ACTION
-PR-H preparation                           UNBLOCKED
+PR-G local freeze manifest materialization PASS / FROZEN
+PR-H                                      CURRENT FORMAL GATE
 ```
 
-PR-G 不能在纯远程审阅中直接标记 COMPLETE/FROZEN，因为最终 manifest 需要真实本地 prospectus/runtime 生成 prospectus hash 与 Final Supervisor content hash。不得猜测这些值。
+PR-G 已在真实本地 prospectus/runtime 上完成 freezer 校验；其 prospectus hash 与 Final Supervisor content hash 来自实际 2410.HK 运行而非远程猜测。
 
 A 已冻结两个 PR-H runtime 方向：
 
@@ -189,11 +189,11 @@ Frozen model runtime
 | PR-D | Canonical model-ready dataset | COMPLETE / FROZEN |
 | PR-E | Linear/Ridge/Logistic + Oracle diagnostic | COMPLETE / FROZEN |
 | PR-F | LightGBM + SHAP / importance / calibration / ablation | COMPLETE / FROZEN |
-| PR-G | Market Agent + Final Supervisor | **A REVIEW PASS / LOCAL FREEZE PENDING** |
-| PR-H | Streamlit Full E2E + real-case demo | **PREPARATION UNBLOCKED** |
+| PR-G | Market Agent + Final Supervisor | **COMPLETE / FROZEN** |
+| PR-H | Streamlit Full E2E + real-case demo | **CURRENT FORMAL GATE** |
 | CH-0..CH-6 | Competition hardening | AFTER PR-H |
 
-Formal PR-H starts after the final PR-G frozen manifest is committed. PR-H then proves the full governed runtime across 3–5 real IPO cases.
+Formal PR-H is now active and must prove the full governed runtime across 3–5 real IPO cases.
 
 ## 8. Post-PR-F two-track strategy
 

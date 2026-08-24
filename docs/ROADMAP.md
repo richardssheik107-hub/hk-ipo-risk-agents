@@ -1,8 +1,8 @@
 # Roadmap
 
 > Status snapshot: **2026-08-24**
-> Current formal Gate: **PR-G — A review passed; local freeze materialization pending**
-> Next Gate preparation: **PR-H — Streamlit Full E2E + 3–5 real IPO demo — UNBLOCKED**
+> PR-G: **COMPLETE / FROZEN**
+> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real IPO demo**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**
 
 ## 1. Current state
@@ -17,8 +17,8 @@
 | Oracle v2 | COMPLETE / FROZEN | 98 materialized / 96 strict usable = 77 Dev + 19 Val |
 | PR-E Baseline + Oracle Diagnostic | COMPLETE / FROZEN | 48 formal results; reproducibility and Blind guard passed |
 | PR-F LightGBM + Explainability | COMPLETE / FROZEN | 8 results, 16 models, SHAP/calibration/ablation/error analysis |
-| PR-G Market Agent + Final Supervisor | **A GATE REVIEW PASS / FREEZE PENDING** | implementation merged; real PDF 13-section path attested; local freeze manifest still required |
-| PR-H Streamlit Full E2E | **PREPARATION UNBLOCKED** | runtime Market-X + PR-F case-score handoff are preflight items |
+| PR-G Market Agent + Final Supervisor | **COMPLETE / FROZEN** | 2410.HK real PDF, 13 sections, traceability and deterministic freeze passed |
+| PR-H Streamlit Full E2E | **CURRENT FORMAL GATE** | governed Market-X + sanitized PR-F case-score runtime + 3–5 real-case E2E |
 | CH-0..CH-6 Competition Hardening | PLANNED | starts after PR-H baseline E2E |
 
 ## 2. Current measured data anchors
@@ -101,8 +101,8 @@ A 的正式审阅结论见 [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.
 
 ```text
 PR-G implementation / contract review     PASS
-PR-G local freeze manifest materialization REQUIRED_LOCAL_ACTION
-PR-H preparation                           UNBLOCKED
+PR-G local freeze manifest materialization PASS / FROZEN
+PR-H                                      CURRENT FORMAL GATE
 ```
 
 A 同时裁定：
@@ -112,7 +112,7 @@ A 同时裁定：
 - PR-G 引入的结构化 `MarketObservation` / `ModelDriver` protected-interface 变更接受；
 - stale PR-B/PR-F UI blocking-gate wording 归 PR-H 清理。
 
-PR-G 仍差一个必须在本地完成的机械冻结动作：用真实 prospectus/runtime 运行 `scripts/build_v04_pr_g_manifest.py`，由 A 校验并提交最终 `reports/frozen` manifest。远程审阅不得猜测本地 prospectus hash 或 final-supervision content hash。
+PR-G 的本地机械冻结已完成：2410.HK 真实 prospectus、官方 identity/listing date、PR-F identity、Evidence traceability 与 Final Supervisor content hash 均通过 `freeze_v04_pr_g_manifest.py` fail-closed 校验，最终 manifest 位于 `reports/frozen/v04_pr_g_final_supervision_manifest.json`。
 
 ## 5. Post-PR-F strategic decision
 
