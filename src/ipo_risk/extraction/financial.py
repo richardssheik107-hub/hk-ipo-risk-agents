@@ -1498,6 +1498,126 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
     def _metric_labels(self, metric_name: str) -> tuple:
         return self._EXTENDED_METRIC_LABELS.get(metric_name, _LABELS.get(metric_name, ()))
 
+    # --- Currency/unit forms the frozen base grammar does not cover -----------
+    # The base grammar reads the scale from a bare ``元`` suffix (``人民幣千元``),
+    # but a large share of the development cohort (2020-2023) writes the scale
+    # *in front of* the currency instead — ``千港元`` / ``千美元`` / ``百萬港元`` —
+    # which resolves to no unit at all and stalls every fact on ``missing_unit``.
+    # Overridden here (opt-in table path) so the frozen regex extractor and the
+    # frozen 2410.HK cash-runway slice keep their exact current behaviour.
+    _CURRENCY_WORD = r"(?:人民幣|人民币|港元|港幣|港币|美元|新加坡元)"
+    _SCALED_CURRENCY_UNITS = (
+        (re.compile(rf"(?:百萬|百万)\s*{_CURRENCY_WORD}"), "million"),
+        (re.compile(rf"(?<!百)(?:萬|万)\s*{_CURRENCY_WORD}"), "ten_thousand"),
+        (re.compile(rf"(?:千|仟)\s*{_CURRENCY_WORD}"), "thousand"),
+    )
+
+    @classmethod
+    def _currency_unit_candidates(cls, text: str) -> tuple[set[str], set[str]]:
+        currencies, units = super()._currency_unit_candidates(text)
+        for pattern, unit in cls._SCALED_CURRENCY_UNITS:
+            if pattern.search(text):
+                units.add(unit)
+                # ``千港元`` is a scaled unit, not a bare ``元``; the base grammar
+                # cannot see that, so drop the spurious "unit" it inferred.
+                units.discard("unit")
+        return currencies, units
+
+    # A reconstructed row label keeps the statement's dot leaders glued to the
+    # metric name ("收入................."), because the leaders are real glyphs at
+    # real coordinates.  The frozen revenue patterns anchor on ``(?:\s|$)`` after
+    # the metric name, so the leaders — pure typographic filler — would hide every
+    # revenue row on the table path.  Collapse leader runs to a single space for
+    # matching only; the flattened-text path is untouched (PyMuPDF already renders
+    # the leaders there as spaced dots).
+    _DOT_LEADER_RE = re.compile(r"[.．\u2024·・…]{2,}")
+
+    @classmethod
+    def _table_row_label(cls, row: Mapping[str, object]) -> str:
+        return cls._DOT_LEADER_RE.sub(" ", str(row.get("label", "")))
+
+    @staticmethod
+    def _period_basis(months: int | None) -> str | None:
+        """Name the reporting basis so a rule never compares a year to a stub."""
+        if months is None:
+            return None
+        return "annual" if months == 12 else "interim"
+
+    @classmethod
+    def _periods_from_columns(cls, table: Mapping[str, object]) -> list[_Period | None] | None:
+        """Resolve one period per value column from the parser's column map.
+
+        ``period_columns`` pairs every value column with its own year label and
+        the period-group caption governing it, so a mixed annual/interim table
+        yields ``2024-12-31`` (12 months) and ``2024-09-30`` (9 months) as two
+        distinct periods instead of one duplicated ``2024年``.  The result stays
+        index-aligned with ``row["cells"]`` — which is what makes
+        ``value_period_count_mismatch`` structurally impossible on this path —
+        with ``None`` for any column whose period cannot be resolved.
+        """
+        columns = table.get("period_columns") or []
+        if not columns:
+            return None
+        periods: list[_Period | None] = []
+        for column in columns:
+            year_label = column.get("year_label")
+            group_line = column.get("group_line")
+            year_match = _YEAR_RE.fullmatch(str(year_label).strip()) if year_label else None
+            month_day = cls._month_day(str(group_line)) if group_line else None
+            if year_match is None or month_day is None:
+                periods.append(None)
+                continue
+            month, day = month_day
+            try:
+                end = date(int(year_match.group(1)), month, day)
+            except ValueError:
+                periods.append(None)
+                continue
+            periods.append(_Period(end, cls._period_months(str(group_line))))
+        return periods if any(period is not None for period in periods) else None
+
+    def _table_currency_unit(
+        self,
+        header_lines: Sequence[str],
+        target: DocumentChunk,
+        context: Sequence[DocumentChunk],
+    ) -> _CurrencyUnitResolution:
+        """Read the money units off the grid's own caption before the page text.
+
+        A summary page prints the table in 千元 while the prose beside it quotes
+        百萬元, so a whole-page scan sees two scales and resolves neither — the
+        same page then disagrees with the statement page about the unit of an
+        identical figure and the series is thrown out for conflicting values.
+        The cash-runway table path already resolves the caption first; this gives
+        the period-series path the same rule.
+        """
+        currency, unit = self._detect_currency_unit("\n".join(header_lines))
+        if currency is not None and unit is not None:
+            return _CurrencyUnitResolution(currency, unit, target, target, [], [])
+        return self._find_currency_unit(target, context)
+
+    def _resolve_table_periods(
+        self,
+        table: Mapping[str, object] | None,
+        raw_values: Sequence[str],
+        header_lines: Sequence[str],
+        target: DocumentChunk,
+        context: Sequence[DocumentChunk],
+    ) -> tuple[list[_Period | None], DocumentChunk | None, list[str], str]:
+        """Prefer the parser's per-column period map over scanning the header.
+
+        The header scan flattens the caption into a bag of year strings and has
+        to re-infer where one period basis ends and the next begins; the column
+        map already knows, because the parser kept each column's own caption.
+        Falls back to the header scan whenever the map is absent (a page the
+        parser could not resolve) or does not cover this row's value columns.
+        """
+        columns = self._periods_from_columns(table) if table else None
+        if columns is not None and len(columns) == len(raw_values):
+            return columns, target, [], "period_column_map"
+        periods, source, issues = self._best_v03_periods(header_lines, target, context)
+        return list(periods), source, issues, "header_scan"
+
     def _extract_candidate(
         self,
         metric_name: str,
@@ -1522,14 +1642,15 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         row = self._find_metric_table_row(metric_name, chunk)
         if row is None:
             return super()._extract_candidate(metric_name, evidence, chunks_by_id)
-        raw_label, raw_values, header_lines = row
+        raw_label, raw_values, header_lines, table = row
         return self._metric_value_from_table(
-            metric_name, evidence, chunk, chunks_by_id, raw_label, raw_values, header_lines
+            metric_name, evidence, chunk, chunks_by_id, raw_label, raw_values,
+            header_lines, table,
         )
 
     def _find_metric_table_row(
         self, metric_name: str, chunk: DocumentChunk
-    ) -> tuple[str, list[str], list[str]] | None:
+    ) -> tuple[str, list[str], list[str], dict] | None:
         for table in self._structured_tables(chunk) or []:
             if not isinstance(table, dict):
                 continue
@@ -1539,14 +1660,14 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
                 if str(line).strip()
             ]
             for row in table.get("rows") or []:
-                label = str(row.get("label", ""))
+                label = self._table_row_label(row)
                 for pattern in self._metric_labels(metric_name):
                     match = pattern.search(label)
                     if not match:
                         continue
                     cells = [str(cell).strip() for cell in (row.get("cells") or [])]
                     if any(cells):
-                        return match.group(0), cells, header_lines
+                        return match.group(0), cells, header_lines, table
         return None
 
     def _metric_value_from_table(
@@ -1558,6 +1679,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         raw_label: str,
         raw_values: list[str],
         header_lines: list[str],
+        table: Mapping[str, object] | None = None,
     ) -> FinancialMetricValue:
         """Mirror the base metric assembly, sourcing values/periods from a table."""
         issues: list[str] = []
@@ -1588,8 +1710,8 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         if unit is None:
             issues.append("unit_missing_or_ambiguous")
 
-        periods, period_source, period_issues = self._find_periods(
-            header_lines, chunk, context_chunks
+        periods, period_source, period_issues, period_axis = self._resolve_table_periods(
+            table, raw_values, header_lines, chunk, context_chunks
         )
         issues.extend(period_issues)
         if period_source:
@@ -1610,13 +1732,13 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             complete = [
                 (period, raw, value)
                 for period, (raw, value) in zip(periods, numeric_values, strict=True)
-                if value is not None
+                if value is not None and period is not None
             ]
             if complete:
                 selected_period, selected_raw, selected_value = max(
                     complete, key=lambda item: item[0].end
                 )
-        elif len(valid_values) == 1 and len(periods) == 1:
+        elif len(valid_values) == 1 and len(periods) == 1 and periods[0] is not None:
             selected_period = periods[0]
             selected_raw, selected_value = valid_values[0]
 
@@ -1666,12 +1788,124 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             metadata={
                 "field_sources": field_sources,
                 "row_values": raw_values,
+                "period_axis": period_axis,
+                "period_basis": self._period_basis(
+                    selected_period.months if selected_period else None
+                ),
                 "period_candidates": [
-                    {"period_end": item.end.isoformat(), "period_months": item.months}
+                    {
+                        "period_end": item.end.isoformat(),
+                        "period_months": item.months,
+                        "period_basis": self._period_basis(item.months),
+                    }
                     for item in periods
+                    if item is not None
                 ],
                 "query_intent": evidence.metadata.get("query_intent"),
             },
+        )
+
+    @staticmethod
+    def _collapse_agreeing_observations(
+        result: FinancialPeriodSeriesResult,
+    ) -> FinancialPeriodSeriesResult:
+        """Merge observations that are the same fact cited from several pages.
+
+        A prospectus prints the same figure in the summary, in MD&A and in the
+        audited statements, and the retriever hands back all three.  Identical
+        readings of one period are one observation with three citations, not
+        three observations — left un-merged, the growth rule sorts by period end,
+        picks the latest fact as "current" and its duplicate as "previous", and
+        the skill rejects the pair as ``period_order_invalid``.
+
+        Only exact agreement on value, currency, unit and period is merged, so a
+        genuine disagreement still reaches ``_period_fact_conflicts`` and is still
+        reported as ``conflicting_values_for_same_period``.  Series-level issues
+        were aggregated by the base implementation before this runs, so nothing
+        is masked; the citations of every merged page are preserved.
+        """
+        if len(result.observations) < 2:
+            return result
+        groups: dict[tuple, list[FinancialPeriodFact]] = {}
+        for fact in result.observations:
+            key = (
+                fact.period_end,
+                fact.period_months,
+                fact.normalized_value,
+                fact.currency,
+                fact.unit,
+            )
+            groups.setdefault(key, []).append(fact)
+        if len(groups) == len(result.observations):
+            return result
+        merged: list[FinancialPeriodFact] = []
+        merged_away_issues: list[str] = []
+        for duplicates in groups.values():
+            canonical = next(
+                (
+                    item
+                    for item in duplicates
+                    if item.status == ExtractionStatus.EXTRACTED and not item.issues
+                ),
+                duplicates[0],
+            )
+            if len(duplicates) > 1:
+                # Keep the issues of the readings being merged away attributable,
+                # so the series verdict can still account for every one of them.
+                merged_away_issues.extend(
+                    issue
+                    for item in duplicates
+                    if item is not canonical
+                    for issue in item.issues
+                )
+                canonical = canonical.model_copy(
+                    update={
+                        "evidence_ids": V03FinancialFactExtractor._dedupe_strings(
+                            [eid for item in duplicates for eid in item.evidence_ids]
+                        ),
+                        "context_chunk_ids": V03FinancialFactExtractor._dedupe_strings(
+                            [
+                                chunk_id
+                                for item in duplicates
+                                for chunk_id in (*item.context_chunk_ids, item.chunk_id)
+                                if chunk_id
+                            ]
+                        ),
+                        "context_pages": V03FinancialFactExtractor._dedupe_ints(
+                            sorted(
+                                {
+                                    page
+                                    for item in duplicates
+                                    for page in (*item.context_pages, item.page)
+                                    if page
+                                }
+                            )
+                        ),
+                    }
+                )
+            merged.append(canonical)
+        merged.sort(
+            key=lambda item: (
+                item.period_end is None,
+                item.period_end or date.min,
+                item.page or 0,
+                item.chunk_id or "",
+            )
+        )
+        return result.model_copy(
+            update={
+                "observations": merged,
+                "evidence_ids": V03FinancialFactExtractor._dedupe_strings(
+                    [eid for item in merged for eid in item.evidence_ids]
+                ),
+                "metadata": {
+                    **result.metadata,
+                    "observation_count": len(merged),
+                    "merged_away_issues": V03FinancialFactExtractor._dedupe_strings(
+                        merged_away_issues
+                    ),
+                },
+            }
         )
 
     def _extract_period_series(
@@ -1683,6 +1917,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         result = super()._extract_period_series(
             metric_name, evidence_candidates, chunks_by_id
         )
+        result = self._collapse_agreeing_observations(result)
         if result.status != ExtractionStatus.NEEDS_REVIEW or not result.observations:
             return result
         residual = [i for i in result.issues if i not in self._LOCATION_ONLY_ISSUES]
@@ -1696,7 +1931,72 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             return result.model_copy(
                 update={"status": ExtractionStatus.EXTRACTED, "issues": []}
             )
-        return result
+        return self._keep_clean_subset(result)
+
+    # Conflicts are recomputed over the surviving observations, so the verdict
+    # the base drew over the full set must not be carried across.
+    _CONFLICT_ISSUES = frozenset(
+        {"conflicting_values_for_same_period", "summary_primary_statement_conflict"}
+    )
+
+    def _keep_clean_subset(
+        self, result: FinancialPeriodSeriesResult
+    ) -> FinancialPeriodSeriesResult:
+        """Let a complete, clean, self-consistent series survive an unreadable page.
+
+        Retrieval returns the five best pages, and one of them is regularly a
+        page whose columns are not periods at all — a statement of changes in
+        equity, whose columns are share capital / premium / accumulated losses.
+        Its readings arrive already marked defective, but a single issue anywhere
+        forces the whole series to review, so a perfect five-period series from
+        the income statement is discarded along with it.
+
+        A defective reading is evidence that a page could not be read, not
+        evidence about the value, so it cannot outvote a clean one.  Only
+        observations carrying their own issues are dropped; a clean observation
+        that merely disagrees is kept, conflicts are recomputed over the
+        survivors, and any disagreement among them still blocks the series.
+        """
+        clean = [
+            item
+            for item in result.observations
+            if item.status == ExtractionStatus.EXTRACTED and not item.issues
+        ]
+        # Both series rules compare two periods, so a lone survivor decides nothing.
+        if len(clean) < 2 or len(clean) == len(result.observations):
+            return result
+        if self._period_fact_conflicts(clean):
+            return result
+        dropped = [item for item in result.observations if item not in clean]
+        dropped_issues = {issue for item in dropped for issue in item.issues}
+        dropped_issues.update(result.metadata.get("merged_away_issues") or [])
+        residual = [
+            issue
+            for issue in result.issues
+            if issue not in self._LOCATION_ONLY_ISSUES
+            and issue not in dropped_issues
+            and issue not in self._CONFLICT_ISSUES
+        ]
+        if residual:
+            return result
+        return result.model_copy(
+            update={
+                "observations": clean,
+                "status": ExtractionStatus.EXTRACTED,
+                "issues": [],
+                "evidence_ids": self._dedupe_strings(
+                    [eid for item in clean for eid in item.evidence_ids]
+                ),
+                "metadata": {
+                    **result.metadata,
+                    "observation_count": len(clean),
+                    "unreadable_pages": self._dedupe_ints(
+                        sorted({item.page for item in dropped if item.page})
+                    ),
+                    "unreadable_page_issues": sorted(dropped_issues),
+                },
+            }
+        )
 
     def _period_facts_from_evidence(
         self,
@@ -1715,6 +2015,17 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             )
             if structured is not None:
                 return structured
+            # The grid is the authority on which rows this page has.  Re-reading
+            # the flattened text would only re-introduce what the grid exists to
+            # remove: with no coordinates it matches the metric name wherever it
+            # appears — in prose, in a segment note, under 非香港財務報告準則計量,
+            # or as the tail of a wrapped caption (「…金融資產的公允價值收益」 read
+            # as 收益).  On the 2020-2023 development cohort, text-only readings of
+            # a page that already has a grid disagree with that grid's column count
+            # 79 times out of 126, and inspecting the rest shows agreeing on the
+            # count does not make them the metric either.  Report the row as
+            # absent — a location-only issue the series verdict already forgives.
+            return [], ["metric_label_not_found"]
         return super()._period_facts_from_evidence(metric_name, evidence, chunks_by_id)
 
     @staticmethod
@@ -1740,7 +2051,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
                 if str(line).strip()
             ]
             for row in table.get("rows") or []:
-                label = str(row.get("label", ""))
+                label = self._table_row_label(row)
                 index, raw_label = self._find_v03_label([label], metric_name)
                 if index is None:
                     continue
@@ -1749,7 +2060,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
                     continue
                 return self._assemble_period_facts(
                     metric_name, evidence, target, chunks_by_id,
-                    raw_label, raw_values, header_lines,
+                    raw_label, raw_values, header_lines, table,
                 )
         return None
 
@@ -1762,12 +2073,13 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         raw_label: str,
         raw_values: Sequence[str],
         header_lines: Sequence[str],
+        table: Mapping[str, object] | None = None,
     ) -> tuple[list[FinancialPeriodFact], list[str]]:
         """Mirror the parent's fact construction, sourcing periods from the
         reconstructed table header instead of the flattened page lines."""
         context = self._context_chunks(target, chunks_by_id)
-        periods, period_source, period_issues = self._best_v03_periods(
-            header_lines, target, context
+        periods, period_source, period_issues, period_axis = self._resolve_table_periods(
+            table, raw_values, header_lines, target, context
         )
         issues = list(period_issues)
         if self._review_only_context(evidence, target):
@@ -1776,8 +2088,16 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             issues.append("missing_period")
         if periods and len(periods) != len(raw_values):
             issues.append("value_period_count_mismatch")
+        # A column the map could not date is only a defect when it carries a
+        # value; an empty spare column is just table furniture.
+        if period_axis == "period_column_map":
+            issues.extend(
+                "period_column_unresolved"
+                for period, raw_value in zip(periods, raw_values, strict=True)
+                if period is None and raw_value.strip()
+            )
 
-        resolution = self._find_currency_unit(target, context)
+        resolution = self._table_currency_unit(header_lines, target, context)
         issues.extend(resolution.issues)
         if resolution.currency is None:
             issues.append("missing_currency")
@@ -1799,6 +2119,10 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         facts: list[FinancialPeriodFact] = []
         for value_index, raw_value in enumerate(raw_values):
             period = periods[value_index] if value_index < len(periods) else None
+            if period is None and period_axis == "period_column_map":
+                # Already accounted for above; emitting a dateless observation
+                # here would only pollute the series with an unusable fact.
+                continue
             value, value_issues, normalization = self._normalize_period_value(
                 metric_name, raw_label, raw_value, evidence, target
             )
@@ -1837,6 +2161,18 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
                         "value_index": value_index,
                         "normalization": normalization,
                         "extraction_method": "structured_table_v03",
+                        "period_axis": period_axis,
+                        "period_basis": self._period_basis(
+                            period.months if period else None
+                        ),
+                        "period_group_line": (
+                            (table.get("period_columns") or [])[value_index].get("group_line")
+                            if table and period_axis == "period_column_map"
+                            else None
+                        ),
+                        "period_basis_mixed": bool(table.get("period_basis_mixed"))
+                        if table
+                        else False,
                         "source_context": evidence.metadata.get("source_context"),
                         "period_source_chunk_id": period_source.chunk_id if period_source else None,
                         "currency_source_chunk_id": (
