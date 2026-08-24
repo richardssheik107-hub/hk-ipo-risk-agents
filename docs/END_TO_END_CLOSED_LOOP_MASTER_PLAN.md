@@ -1,8 +1,9 @@
 # HK IPO Risk Agents — End-to-End Closed Loop Master Plan
 
-> Status snapshot: **2026-08-23**  
+> Status snapshot: **2026-08-24**  
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**  
-> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**  
+> PR-H preparation: **UNBLOCKED**
 
 ## 1. Program objective
 
@@ -45,6 +46,7 @@ PR-D Canonical Dataset          COMPLETE / FROZEN
 Oracle v2                       COMPLETE / FROZEN / EVALUATION-ONLY
 PR-E Baseline + Oracle          COMPLETE / FROZEN
 PR-F LightGBM + Explainability  COMPLETE / FROZEN
+PR-G implementation             MERGED / A REVIEW PASS
 ```
 
 Measured anchors：
@@ -60,6 +62,8 @@ Oracle v2                       98 materialized / 96 strict usable
 Oracle v2 split                 77 Dev / 19 Val
 2025 Blind y accessed           false
 ```
+
+Market-X Extended 已接入 governed CSMAR HSI daily close，438/438 官方 case 的 HSI 5D、20D return 与 20-session volatility 已通过 PIT readiness；authoritative industry benchmark 与 HK total-market turnover 仍显式缺失。
 
 ## 3. Production and Oracle remain permanently separate
 
@@ -151,7 +155,31 @@ PM 与 M 在该 frozen tree policy 下预测完全等价，Production Document 1
 
 因此 PR-F 的意义是冻结一个诚实基线，并把后续研发从“盲目调模型”转向“直接测风险识别能力 + 多 horizon + Market Sentiment + 产品级可追溯闭环”。
 
-## 6. Gate sequence
+## 6. PR-G review and transition to PR-H
+
+PR #104 已将 frozen model evidence adapter、Market Context、Final Supervisor、opt-in workflow、v0.4 13-section report 和 UI surface 合入 main。A 已完成 protected-interface / provenance / gate 审阅，结论见 [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md)：
+
+```text
+PR-G implementation / contract review     PASS
+PR-G local freeze manifest materialization REQUIRED_LOCAL_ACTION
+PR-H preparation                           UNBLOCKED
+```
+
+PR-G 不能在纯远程审阅中直接标记 COMPLETE/FROZEN，因为最终 manifest 需要真实本地 prospectus/runtime 生成 prospectus hash 与 Final Supervisor content hash。不得猜测这些值。
+
+A 已冻结两个 PR-H runtime 方向：
+
+```text
+Governed Market runtime
+→ consume PreListingMarketFeatureSnapshot or a lossless governed projection
+→ do not promote legacy MarketSnapshot to PR-B source-of-truth
+
+Frozen model runtime
+→ keep full PR-F runtime outside Git
+→ consume a checksum + model_result_hash bound local handoff via pr_f_run_dir
+```
+
+## 7. Gate sequence
 
 | Gate | Deliverable | State |
 | --- | --- | --- |
@@ -161,13 +189,13 @@ PM 与 M 在该 frozen tree policy 下预测完全等价，Production Document 1
 | PR-D | Canonical model-ready dataset | COMPLETE / FROZEN |
 | PR-E | Linear/Ridge/Logistic + Oracle diagnostic | COMPLETE / FROZEN |
 | PR-F | LightGBM + SHAP / importance / calibration / ablation | COMPLETE / FROZEN |
-| PR-G | Market Agent + Final Supervisor | **CURRENT** |
-| PR-H | Streamlit Full E2E + real-case demo | WAITING |
+| PR-G | Market Agent + Final Supervisor | **A REVIEW PASS / LOCAL FREEZE PENDING** |
+| PR-H | Streamlit Full E2E + real-case demo | **PREPARATION UNBLOCKED** |
 | CH-0..CH-6 | Competition hardening | AFTER PR-H |
 
-正式 Gate 必须严格串行；准备性工作可并行，但不改变冻结状态、不读取后续不允许的数据、不越级进入 `main`。
+Formal PR-H starts after the final PR-G frozen manifest is committed. PR-H then proves the full governed runtime across 3–5 real IPO cases.
 
-## 7. Post-PR-F two-track strategy
+## 8. Post-PR-F two-track strategy
 
 后半程采用两个互补目标，而不是把所有项目价值押在 5D AUC 上。
 
@@ -202,7 +230,7 @@ Market context / sentiment
 
 5D 继续作为 frozen primary target，但不假设结构性 Document 风险必须在 5D 最强；CH-1 将验证 20D / 60D 是否更符合结构性风险的经济含义。短期 1D / 5D 的新增研发优先从 point-in-time IPO heat、近期破发/5D 表现、同行业历史 IPO context、liquidity/activity 和 authoritative market benchmark 补充中寻找增量。
 
-## 8. Evidence and calculation governance
+## 9. Evidence and calculation governance
 
 - 无真实 Evidence 的风险不得成为 verified formal conclusion；
 - 数值结论由 deterministic Skill / Calculation 完成；
@@ -211,13 +239,13 @@ Market context / sentiment
 - 失败必须结构化记录，不能 silent drop；
 - score 未经 calibration 不得表述为真实概率。
 
-## 9. Market governance
+## 10. Market governance
 
-Market-X Core 已冻结。Market-X Extended 的 HSI / authoritative industry benchmark / HK total-market turnover source 仍可显式缺失；不得使用不等价 proxy、fake benchmark 或 neutral zero 为了“补齐”特征。
+Market-X Core 已冻结。HSI Extended 已有 governed source；industry benchmark / HK total-market turnover 仍可显式缺失。不得使用不等价 proxy、fake benchmark 或 neutral zero 为了“补齐”特征。
 
-PR-G 只解释并消费已冻结 Market / Model 语义，不通过继续调参改变 PR-E / PR-F measured result。CH-3 才正式扩展 Market Sentiment 与 Competition Skills。
+PR-H runtime 必须保留 `PreListingMarketFeatureSnapshot` 的 case identity、strictly-pre-listing cutoff、feature schema/policy、per-feature provenance 和 missing semantics。legacy `MarketSnapshot` 只保留 v0.3 compatibility。
 
-## 10. Competition enhancement decision rules
+## 11. Competition enhancement decision rules
 
 Competition Hardening 不进行无目标重构：
 
@@ -229,10 +257,20 @@ Competition Hardening 不进行无目标重构：
 - CH-4 / CH-5：冲突仲裁、全链 trace、Evidence screenshot 与 human audit trail 作为比赛产品能力；
 - CH-6：统一报告抽取指标、Evidence 指标、traceability、multi-horizon 预测结果和 3–5 个真实案例，不挑选单一最漂亮指标代替全套证据。
 
-## 11. Current PR-G and later gates
+## 12. Current PR-H objective
 
-PR-G 当前把 frozen model score、SHAP drivers 与 uncertainty 接入 Market Agent / Final Supervisor，并要求 Document explanation / Evidence provenance 能被受控消费。PR-H 才完成 PDF → Final Report 的稳定 E2E。PR-G / PR-H 的通过条件不是提高 frozen 5D AUC，而是正确、可追溯、可降级地消费现有结果并完成产品闭环。
+PR-H 必须完成：
 
-只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
+```text
+3–5 real IPOs
+PDF
+→ Document Evidence / Calculation
+→ governed Market-X runtime
+→ frozen per-case model score + SHAP drivers
+→ Final Supervisor
+→ Streamlit / 13-section Final Report
+```
+
+每个 demo case 均需验证 Evidence references resolve、market provenance 合法、model runtime 与 frozen hash 一致、score 不被表述为 probability、2025 Blind y 未访问。只有 PR-H 跑通并冻结后，CH-0..CH-6 才成为正式主线。
 
 Competition 细节见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。五人角色见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
