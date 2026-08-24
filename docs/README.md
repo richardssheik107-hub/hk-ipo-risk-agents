@@ -1,7 +1,8 @@
 # Documentation Index
 
-> Audit date: **2026-08-23**  
-> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
+> Audit date: **2026-08-24**
+> Current formal Gate: **PR-G — A review passed; local freeze manifest pending**
+> PR-H preparation: **UNBLOCKED**
 > PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
 > Oracle v2 / PR-E / PR-F: **COMPLETE / FROZEN**
 
@@ -14,16 +15,17 @@
 1. 代码中的 Pydantic / Protocol / validator；
 2. `reports/frozen/*.json` 冻结 manifest；
 3. 对应阶段的 `*_COMPLETION_REPORT.md`；
-4. 当前活文档；
+4. 当前活文档与正式 Gate review；
 5. 历史研究文档 / Git history。
 
-旧 planning / handoff 文档不能覆盖已经冻结的 manifest 或 completion report。
+旧 planning / handoff 文档不能覆盖已经冻结的 manifest 或 completion report。PR-G 当前尚未产生最终 frozen manifest，因此 A Gate Review 明确区分“implementation review PASS”和“local freeze materialization pending”。
 
 ## 2. Active documents — 当前维护
 
 | 文档 | 作用 |
 | --- | --- |
 | [`ROADMAP.md`](ROADMAP.md) | 当前进度、唯一下一 Gate、后续顺序 |
+| [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) | PR-G A 审核、protected-interface 裁定、PR-H runtime 决策 |
 | [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) | v0.4 baseline E2E 总计划与 post-PR-F 战略 |
 | [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) | A/B/C/D/E 角色边界与当前任务 |
 | [`PROJECT_SPEC.md`](PROJECT_SPEC.md) | 产品目标、信任边界、成功标准 |
@@ -32,9 +34,9 @@
 | [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) | 最新真实数据 readiness |
 | [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) | PR-H baseline E2E 后的 CH-0..CH-6 |
 
-## 3. Frozen completion records — 只记录已完成事实
+## 3. Completion / gate records
 
-这些文档不作为“当前待办”，而是冻结阶段的审计证据：
+这些文档记录已完成事实或正式 Gate 审阅，不作为任意改写的 planning 文档：
 
 - [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
 - [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
@@ -42,11 +44,13 @@
 - [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md)
 - [`V04_PR_E_COMPLETION_REPORT.md`](V04_PR_E_COMPLETION_REPORT.md)
 - [`V04_PR_F_COMPLETION_REPORT.md`](V04_PR_F_COMPLETION_REPORT.md)
+- [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md) — implementation complete / freeze pending
+- [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) — A review PASS / local freeze pending
 - [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md)
 - [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md)
 - [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md)
 
-对应 frozen manifests 位于 `reports/frozen/`。
+已冻结阶段的 machine-readable truth 位于 `reports/frozen/`。PR-G 最终 manifest 只有在本地真实运行并经 A 校验后才进入该目录。
 
 ## 4. Stable technical / research references
 
@@ -72,8 +76,10 @@ PR-A Document X                     COMPLETE / FROZEN
 → PR-D Canonical Dataset            COMPLETE / FROZEN
 → PR-E Baseline + Oracle Diagnostic COMPLETE / FROZEN
 → PR-F LightGBM + Explainability    COMPLETE / FROZEN
-→ PR-G Market Agent + Final Supervisor CURRENT FORMAL GATE
-→ PR-H Streamlit Full E2E
+→ PR-G implementation               MERGED
+→ PR-G A review                     PASS
+→ PR-G local freeze manifest        REQUIRED LOCAL ACTION
+→ PR-H Streamlit Full E2E           PREPARATION UNBLOCKED
 → v0.4.3 Baseline E2E Freeze
 → CH-0..CH-6 Competition Hardening
 → v0.4.5 Competition Submission Freeze
@@ -93,26 +99,25 @@ Oracle v2 split                    77 Dev / 19 Val
 2025 Blind y accessed              NO
 ```
 
+Market-X Extended 已接入 governed CSMAR HSI daily close；438/438 官方 case 的 HSI 5D、20D 与 20-session volatility 已通过 PIT readiness。industry benchmark / total-market turnover 仍显式缺失。
+
 PR-F frozen 2024 Full Production classification：`M ROC-AUC 0.4246`、`P 0.5000`、`PM 0.4246`。该结果保留为诚实 baseline；不能通过查看 2024 后反转 score、继续调参或重写口径来制造更高正式结果。
 
 ## 7. Current strategic interpretation
 
 PR-E / PR-F 没有验证出稳定 Document 增量，也没有验证出稳定 Oracle ceiling。因此当前既不宣布“招股书无信号”，也不直接启动大规模 LLM 重构。
 
-现行策略：
+当前先完成产品闭环：
 
 ```text
-PR-G / PR-H
-→ 先完成 Document + Market + Model + Evidence + uncertainty 产品闭环
-
-PR-H freeze 后
-→ CH-1 multi-horizon
-→ CH-2 direct risk / Evidence benchmark
-→ CH-3 Market Sentiment
-→ CH-4 trace / conflict
-→ CH-5 screenshot / human review
-→ CH-6 formal competition evaluation
+PR-G local freeze
+→ PR-H governed Market-X runtime
+→ PR-H hash-bound PR-F per-case runtime
+→ 3–5 real-case E2E
+→ v0.4.3 baseline freeze
 ```
+
+PR-H freeze 后再进入 CH-1 multi-horizon、CH-2 direct risk/Evidence benchmark、CH-3 Market Sentiment、CH-4 conflict/trace、CH-5 screenshot/human review、CH-6 competition evaluation。
 
 Document enhancement 由 CH-2 的 Precision / Recall / F1 / Evidence Recall 与 error attribution 触发；短期 1D / 5D 预测增强优先在 CH-3 研究 point-in-time Market Sentiment / IPO context。Competition 目标不能简化成单一 5D AUC。
 

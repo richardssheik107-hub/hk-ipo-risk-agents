@@ -1,7 +1,8 @@
 # Roadmap
 
-> Status snapshot: **2026-08-23**  
-> Current formal Gate: **PR-G — Market Agent + Final Supervisor**
+> Status snapshot: **2026-08-24**
+> Current formal Gate: **PR-G — A review passed; local freeze materialization pending**
+> Next Gate preparation: **PR-H — Streamlit Full E2E + 3–5 real IPO demo — UNBLOCKED**
 > Strategy: **End-to-End Closed Loop First, Competition Hardening Second**
 
 ## 1. Current state
@@ -16,8 +17,8 @@
 | Oracle v2 | COMPLETE / FROZEN | 98 materialized / 96 strict usable = 77 Dev + 19 Val |
 | PR-E Baseline + Oracle Diagnostic | COMPLETE / FROZEN | 48 formal results; reproducibility and Blind guard passed |
 | PR-F LightGBM + Explainability | COMPLETE / FROZEN | 8 results, 16 models, SHAP/calibration/ablation/error analysis |
-| PR-G Market Agent + Final Supervisor | **CURRENT FORMAL GATE** | consumes frozen model semantics and uncertainty |
-| PR-H Streamlit Full E2E | WAITING | starts after PR-G |
+| PR-G Market Agent + Final Supervisor | **A GATE REVIEW PASS / FREEZE PENDING** | implementation merged; real PDF 13-section path attested; local freeze manifest still required |
+| PR-H Streamlit Full E2E | **PREPARATION UNBLOCKED** | runtime Market-X + PR-F case-score handoff are preflight items |
 | CH-0..CH-6 Competition Hardening | PLANNED | starts after PR-H baseline E2E |
 
 ## 2. Current measured data anchors
@@ -92,7 +93,28 @@ PM  ROC-AUC 0.4246
 
 PM 与 M 在 frozen tree policy 下预测完全等价，Production Document 100 维特征未获得 split / gain / SHAP 使用。Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval `[-0.3171, 0.2917]`。这是当前 target / feature / sample / model 条件下的正式失败与不稳定发现，不是“招股书本身无价值”的证明，也不能通过查看 2024 后反转分数、反复调参或重写口径来修饰。
 
-## 4. Post-PR-F strategic decision
+## 4. PR-G A review decision
+
+PR #104 已将 Market Context、frozen PR-F evidence adapter、Final Supervisor、v0.4 13-section report 与 opt-in wiring 合入 main。PR #104 head 的 `tests` 与 `expert-annotation-phase2` CI 均成功，完成报告记录了一份 706 页真实招股书的 `status=completed` 闭环与 Evidence 引用解析。
+
+A 的正式审阅结论见 [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md)：
+
+```text
+PR-G implementation / contract review     PASS
+PR-G local freeze manifest materialization REQUIRED_LOCAL_ACTION
+PR-H preparation                           UNBLOCKED
+```
+
+A 同时裁定：
+
+- runtime market 不把受控 `PreListingMarketFeatureSnapshot` 有损降级成 v0.2 `MarketSnapshot` 并冒充 PR-B lineage；PR-H 应建立 governed runtime path；
+- PR-F 完整 runtime/model bulk 继续不进 Git；PR-H 通过 `pr_f_run_dir` 消费 checksum + frozen hash 绑定的最小本地 handoff；
+- PR-G 引入的结构化 `MarketObservation` / `ModelDriver` protected-interface 变更接受；
+- stale PR-B/PR-F UI blocking-gate wording 归 PR-H 清理。
+
+PR-G 仍差一个必须在本地完成的机械冻结动作：用真实 prospectus/runtime 运行 `scripts/build_v04_pr_g_manifest.py`，由 A 校验并提交最终 `reports/frozen` manifest。远程审阅不得猜测本地 prospectus hash 或 final-supervision content hash。
+
+## 5. Post-PR-F strategic decision
 
 PR-F 结果不触发主线回滚。v0.4 继续严格完成 PR-G / PR-H，把研究组件变成稳定产品闭环；Competition Hardening 再按直接 benchmark 定向增强。
 
@@ -112,7 +134,7 @@ Market Warning / Predictive Validation
 
 PR-G / PR-H 的 Gate 不要求把 5D AUC 调高。它们要求：正确消费 frozen score、保持 `uncalibrated_model_score` 语义、可追溯 Evidence、明确 uncertainty，并完成真实 PDF → Final Report 闭环。
 
-## 5. Strict formal sequence
+## 6. Strict formal sequence
 
 ```text
 PR-A  COMPLETE / FROZEN
@@ -121,7 +143,8 @@ PR-A  COMPLETE / FROZEN
 → PR-D COMPLETE / FROZEN
 → PR-E COMPLETE / FROZEN
 → PR-F LightGBM + Explainability COMPLETE / FROZEN
-→ PR-G Market Agent + Final Supervisor CURRENT
+→ PR-G implementation REVIEW PASS
+→ PR-G local freeze manifest FINALIZE
 → PR-H Streamlit Full E2E + 3–5 real IPO demo
 → v0.4.3 Baseline E2E Freeze
 → CH-0 Competition Scope Lock
@@ -134,7 +157,7 @@ PR-A  COMPLETE / FROZEN
 → v0.4.5 COMPETITION_READY
 ```
 
-## 6. Competition improvement logic
+## 7. Competition improvement logic
 
 Competition Hardening 的直接硬目标是：
 
@@ -152,7 +175,7 @@ Agent / Tool / Evidence trace   = 100%
 - CH-3：短期 1D / 5D 预测提升优先研究 point-in-time IPO heat、近期破发表现、同行业 IPO context、liquidity/activity，以及取得 authoritative source 后的 HSI / industry / turnover；
 - CH-4 / CH-5：把多 Agent 冲突、Evidence trace、截图和人工复核做成可展示、可审计能力。
 
-## 7. What is intentionally not reopened now
+## 8. What is intentionally not reopened now
 
 当前 PR-E / PR-F 没有验证出稳定 Oracle ceiling，因此既不能据此宣布“Document 无信号”，也不能据此直接启动大规模 LLM 重构。以下工作不作为 PR-G / PR-H 前置条件：
 
@@ -167,7 +190,7 @@ Agent / Tool / Evidence trace   = 100%
 
 Document Pipeline 是否重开研究，由 CH-2 的直接风险抽取 benchmark + error attribution 决定；Market 侧增强由 CH-3 的 point-in-time 数据可得性和多 horizon 结果决定。
 
-## 8. Version targets
+## 9. Version targets
 
 ```text
 v0.4.3  Baseline E2E Freeze
