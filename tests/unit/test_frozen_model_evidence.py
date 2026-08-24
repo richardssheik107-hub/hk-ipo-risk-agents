@@ -15,6 +15,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
     load_frozen_cohort_evidence,
     power_statement,
 )
+from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -93,17 +94,32 @@ def test_absent_local_artifacts_are_named_not_guessed(tmp_path) -> None:
     assert view.reason == "frozen_pr_f_runtime_artifacts_are_not_present_locally"
 
 
-def _run_dir(tmp_path: Path, *, result_hash: str, rows: list[dict], drivers: list[dict] | None = None) -> Path:
-    run = tmp_path / "pr_f"
-    run.mkdir()
-    (run / "run_manifest.json").write_text(json.dumps({"model_result_hash": result_hash}), encoding="utf-8")
-    (run / "model_results.json").write_text(json.dumps([{
+def _result_payload(rows: list[dict], drivers: list[dict] | None = None) -> list[dict]:
+    return [{
         "cohort": "full_production", "feature_group": "PM",
         "classification_metrics": {"roc_auc": 0.4246},
         "case_predictions": rows,
         "explainability": {"single_ipo_drivers": drivers or []},
-    }]), encoding="utf-8")
-    return run
+    }]
+
+
+def _run_dir(
+    tmp_path: Path,
+    *,
+    result_hash: str,
+    rows: list[dict],
+    drivers: list[dict] | None = None,
+    blind_2025_y_accessed: bool = False,
+) -> tuple[Path, list[dict]]:
+    run = tmp_path / "pr_f"
+    run.mkdir()
+    payload = _result_payload(rows, drivers)
+    (run / "run_manifest.json").write_text(json.dumps({
+        "model_result_hash": result_hash,
+        "blind_2025_y_accessed": blind_2025_y_accessed,
+    }), encoding="utf-8")
+    (run / "model_results.json").write_text(json.dumps(payload), encoding="utf-8")
+    return run, payload
 
 
 def _rows(n: int = 8) -> list[dict]:
@@ -112,17 +128,35 @@ def _rows(n: int = 8) -> list[dict]:
              "raw_return_5d_prediction": -0.02 * i} for i in range(n)]
 
 
+def _frozen_hash() -> str:
+    return json.loads(MANIFEST.read_text(encoding="utf-8"))["model_result_hash"]
+
+
+def _frozen_dir_for_payload(tmp_path: Path, payload: list[dict]) -> Path:
+    frozen = tmp_path / "frozen"
+    frozen.mkdir()
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    manifest["model_result_hash"] = canonical_hash(payload)
+    (frozen / MANIFEST.name).write_text(json.dumps(manifest), encoding="utf-8")
+    return frozen
+
+
 def test_unbound_local_artifacts_are_refused_entirely(tmp_path) -> None:
-    """A stale run is never partially consumed; the hash gate comes first."""
-    run = _run_dir(tmp_path, result_hash="0" * 64, rows=_rows())
+    """A stale run is never partially consumed; the manifest hash gate comes first."""
+    run, _ = _run_dir(tmp_path, result_hash="0" * 64, rows=_rows())
     view = load_case_prediction(run, FROZEN_DIR, case_id="ipo_2024_00000")
     assert view.status is ChannelStatus.UNAVAILABLE_ERROR
     assert view.reason == "local_pr_f_artifacts_do_not_match_the_frozen_hash"
     assert view.score is None
 
 
-def _frozen_hash() -> str:
-    return json.loads(MANIFEST.read_text(encoding="utf-8"))["model_result_hash"]
+def test_copying_the_frozen_hash_does_not_bind_tampered_result_content(tmp_path) -> None:
+    """The actual model_results payload is hashed; the run manifest is not trusted by itself."""
+    run, _ = _run_dir(tmp_path, result_hash=_frozen_hash(), rows=_rows())
+    view = load_case_prediction(run, FROZEN_DIR, case_id="ipo_2024_00000")
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.reason == "local_pr_f_model_results_do_not_match_the_frozen_hash"
+    assert view.score is None
 
 
 def test_bound_artifacts_yield_the_per_case_score_and_drivers(tmp_path) -> None:
@@ -132,8 +166,11 @@ def test_bound_artifacts_yield_the_per_case_score_and_drivers(tmp_path) -> None:
         {"feature": "production_document__cash_runway__score", "component": "production_document",
          "feature_value": None, "shap_value": -0.07},
     ]}]
-    run = _run_dir(tmp_path, result_hash=_frozen_hash(), rows=_rows(), drivers=drivers)
-    view = load_case_prediction(run, FROZEN_DIR, case_id="ipo_2024_00000")
+    payload = _result_payload(_rows(), drivers)
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    run, written = _run_dir(tmp_path, result_hash=canonical_hash(payload), rows=_rows(), drivers=drivers)
+    assert written == payload
+    view = load_case_prediction(run, frozen, case_id="ipo_2024_00000")
     assert view.status is ChannelStatus.AVAILABLE
     assert view.score == 0.0
     assert [d.direction for d in view.drivers] == ["increases", "decreases"]
@@ -142,16 +179,42 @@ def test_bound_artifacts_yield_the_per_case_score_and_drivers(tmp_path) -> None:
 
 
 def test_case_outside_the_frozen_validation_cohort_is_named(tmp_path) -> None:
-    run = _run_dir(tmp_path, result_hash=_frozen_hash(), rows=_rows())
-    view = load_case_prediction(run, FROZEN_DIR, case_id="ipo_2024_99999")
+    payload = _result_payload(_rows())
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    run, _ = _run_dir(tmp_path, result_hash=canonical_hash(payload), rows=_rows())
+    view = load_case_prediction(run, frozen, case_id="ipo_2024_99999")
     assert view.status is ChannelStatus.UNAVAILABLE_ERROR
     assert view.reason == "case_is_not_in_the_frozen_2024_validation_cohort"
 
 
+def test_local_manifest_reporting_blind_access_is_refused(tmp_path) -> None:
+    payload = _result_payload(_rows())
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    run, _ = _run_dir(
+        tmp_path,
+        result_hash=canonical_hash(payload),
+        rows=_rows(),
+        blind_2025_y_accessed=True,
+    )
+    view = load_case_prediction(run, frozen, case_id="ipo_2024_00000")
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.reason == "local_pr_f_runtime_manifest_reports_blind_2025_access"
+
+
+def test_invalid_local_json_is_refused_without_leaking_an_exception(tmp_path) -> None:
+    run = tmp_path / "pr_f"
+    run.mkdir()
+    (run / "run_manifest.json").write_text("{broken", encoding="utf-8")
+    (run / "model_results.json").write_text("[]", encoding="utf-8")
+    view = load_case_prediction(run, FROZEN_DIR, case_id="ipo_2024_00000")
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.reason == "frozen_pr_f_runtime_artifacts_are_invalid_json"
+
+
 def test_power_counts_come_from_labels_never_from_pr_auc(tmp_path) -> None:
     """The 25/45 and 7/12 splits in the audit doc are inferred; these are measured."""
-    artifact = json.loads((_run_dir(tmp_path, result_hash=_frozen_hash(), rows=_rows(10))
-                           / "model_results.json").read_text(encoding="utf-8"))[0]
+    run, _ = _run_dir(tmp_path, result_hash="unused", rows=_rows(10))
+    artifact = json.loads((run / "model_results.json").read_text(encoding="utf-8"))[0]
     evidence = load_frozen_cohort_evidence(FROZEN_DIR)
     statement = power_statement(artifact, evidence.production_gain)
     assert statement is not None
@@ -162,8 +225,8 @@ def test_degenerate_cohort_yields_no_statement_rather_than_infinity(tmp_path) ->
     """math.inf in metadata would break the analysis-result JSON round trip."""
     rows = [{"case_id": "ipo_2024_00000", "poor_performer_5d": False, "poor_performer_score": 0.1,
              "raw_return_5d": 0.0, "raw_return_5d_prediction": 0.0}]
-    artifact = json.loads((_run_dir(tmp_path, result_hash=_frozen_hash(), rows=rows)
-                           / "model_results.json").read_text(encoding="utf-8"))[0]
+    run, _ = _run_dir(tmp_path, result_hash="unused", rows=rows)
+    artifact = json.loads((run / "model_results.json").read_text(encoding="utf-8"))[0]
     evidence = load_frozen_cohort_evidence(FROZEN_DIR)
     assert power_statement(artifact, evidence.production_gain) is None
 
