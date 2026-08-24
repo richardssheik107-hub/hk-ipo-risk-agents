@@ -9,7 +9,9 @@ manifest: model identity, calibration status, the two ablation gains and their
 bootstrap intervals.  It describes the frozen *cohort*, never the case in hand.
 
 ``Tier 2`` — per-case score and SHAP drivers, only when a local PR-F run
-directory is configured and its ``model_result_hash`` matches the freeze.
+directory is configured.  Both the local run manifest and the actual
+``model_results.json`` content are bound to the frozen ``model_result_hash``
+before any per-case number is consumed.
 
 Nothing here trains, scores or re-runs anything.  A number that is not already
 inside the frozen artifacts is not produced.
@@ -25,6 +27,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from ipo_risk.modeling.statistical_power import assess_comparison
+from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus, ModelDriver, ModelPredictionView
 
 FROZEN_MANIFEST_NAME = "v04_pr_f_lightgbm_manifest.json"
@@ -158,6 +161,17 @@ class LocalRunBindingError(ValueError):
     """A local PR-F run directory does not correspond to the frozen result."""
 
 
+def _unavailable(reason: str, base: dict[str, Any]) -> ModelPredictionView:
+    return ModelPredictionView(status=ChannelStatus.UNAVAILABLE_ERROR, reason=reason, **base)
+
+
+def _read_json_if_valid(path: Path) -> Any | None:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return None
+
+
 def load_case_prediction(
     run_dir: Path,
     frozen_dir: Path,
@@ -165,8 +179,15 @@ def load_case_prediction(
 ) -> ModelPredictionView:
     """Tier 2: the per-case score, or an explicit reason it is unavailable.
 
-    The local artifacts are bound to the freeze by hash before a single number is
-    read, so a stale or unrelated run can never be partially consumed.
+    Binding is two-step and fail-closed:
+
+    1. the local ``run_manifest.json`` must claim the exact frozen
+       ``model_result_hash``;
+    2. the canonical hash of the *actual* ``model_results.json`` payload must
+       equal the same frozen hash.
+
+    This prevents a stale/tampered results file from being accepted merely
+    because somebody copied a trusted hash into the local run manifest.
     """
     evidence = load_frozen_cohort_evidence(frozen_dir)
     base = {
@@ -176,38 +197,37 @@ def load_case_prediction(
         "calibration_status": "uncalibrated",
     }
     if not case_id:
-        return ModelPredictionView(
-            status=ChannelStatus.UNAVAILABLE_ERROR,
-            reason="ipo_identity_not_bound_to_the_governed_case_catalog", **base)
+        return _unavailable("ipo_identity_not_bound_to_the_governed_case_catalog", base)
 
     run_path = Path(run_dir)
     manifest_path, results_path = run_path / "run_manifest.json", run_path / "model_results.json"
     if not manifest_path.is_file() or not results_path.is_file():
-        return ModelPredictionView(
-            status=ChannelStatus.UNAVAILABLE_ERROR,
-            reason="frozen_pr_f_runtime_artifacts_are_not_present_locally", **base)
+        return _unavailable("frozen_pr_f_runtime_artifacts_are_not_present_locally", base)
 
-    local_hash = json.loads(manifest_path.read_text(encoding="utf-8")).get("model_result_hash")
-    if local_hash != frozen_manifest_result_hash(frozen_dir):
-        return ModelPredictionView(
-            status=ChannelStatus.UNAVAILABLE_ERROR,
-            reason="local_pr_f_artifacts_do_not_match_the_frozen_hash", **base)
+    local_manifest = _read_json_if_valid(manifest_path)
+    results_payload = _read_json_if_valid(results_path)
+    if not isinstance(local_manifest, dict) or not isinstance(results_payload, list):
+        return _unavailable("frozen_pr_f_runtime_artifacts_are_invalid_json", base)
 
-    artifact = _production_artifact(json.loads(results_path.read_text(encoding="utf-8")))
+    expected_hash = frozen_manifest_result_hash(frozen_dir)
+    if local_manifest.get("model_result_hash") != expected_hash:
+        return _unavailable("local_pr_f_artifacts_do_not_match_the_frozen_hash", base)
+    if canonical_hash(results_payload) != expected_hash:
+        return _unavailable("local_pr_f_model_results_do_not_match_the_frozen_hash", base)
+    if local_manifest.get("blind_2025_y_accessed") not in (False, None):
+        return _unavailable("local_pr_f_runtime_manifest_reports_blind_2025_access", base)
+
+    artifact = _production_artifact(results_payload)
     if artifact is None:
-        return ModelPredictionView(
-            status=ChannelStatus.UNAVAILABLE_ERROR,
-            reason="frozen_pr_f_results_carry_no_production_artifact", **base)
+        return _unavailable("frozen_pr_f_results_carry_no_production_artifact", base)
 
     row = next((item for item in artifact.get("case_predictions", []) if item.get("case_id") == case_id), None)
     if row is None:
-        return ModelPredictionView(
-            status=ChannelStatus.UNAVAILABLE_ERROR,
-            reason="case_is_not_in_the_frozen_2024_validation_cohort", **base)
+        return _unavailable("case_is_not_in_the_frozen_2024_validation_cohort", base)
 
     return ModelPredictionView(
         status=ChannelStatus.AVAILABLE,
-        reason="per-case score read from the hash-bound frozen PR-F result",
+        reason="per-case score read from the content-verified frozen PR-F result",
         score=float(row["poor_performer_score"]),
         drivers=_drivers(artifact, case_id),
         **base,
