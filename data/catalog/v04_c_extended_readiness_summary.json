@@ -1,0 +1,172 @@
+{
+  "audit_version": "v04_c_extended_readiness_v1",
+  "blind_2025_y_accessed": false,
+  "conditional_industry_20d_missing_reason_counts": {
+    "BENCHMARK_HISTORY_NOT_YET_STARTED": 187,
+    "BENCHMARK_SOURCE_ERROR": 0,
+    "INSUFFICIENT_20D_HISTORY": 3,
+    "INSUFFICIENT_5D_HISTORY": 0,
+    "MISSING_INDUSTRY_CLASSIFICATION": 6,
+    "MISSING_INDUSTRY_MAPPING": 0
+  },
+  "conditional_industry_5d_missing_reason_counts": {
+    "BENCHMARK_HISTORY_NOT_YET_STARTED": 187,
+    "BENCHMARK_SOURCE_ERROR": 0,
+    "INSUFFICIENT_20D_HISTORY": 0,
+    "INSUFFICIENT_5D_HISTORY": 2,
+    "MISSING_INDUSTRY_CLASSIFICATION": 6,
+    "MISSING_INDUSTRY_MAPPING": 0
+  },
+  "conditional_static_mapping_20d_available": 242,
+  "conditional_static_mapping_5d_available": 243,
+  "coverage_content_hash": "3ec75ecb1a0aeb87d211caff6a22b2395fe6aa70ec973ae96ff63d9b5ebecec1",
+  "determinism": "PASS",
+  "extended_position_count": 20,
+  "extended_raw_feature_count": 10,
+  "full_10_raw_available": 0,
+  "future_row_poisoning": "PASS",
+  "generated_by": "scripts/run_v04_c_extended_readiness.py",
+  "hsci_history_backfill_decision": {
+    "affected_cases": 190,
+    "affected_years": [
+      2020,
+      2021
+    ],
+    "development_set_impact": 190,
+    "percent_of_438": 43.379,
+    "purchase_recommended": "NO",
+    "rationale": "The paid history would repair conditional early-year source coverage, but cannot make the delivered static industry classifications PIT-safe. Resolve a listing-time/historically effective classification source first.",
+    "temporal_missingness_risk": "HIGH",
+    "validation_set_impact": 0,
+    "years_2022_2024_history_fully_covered": true
+  },
+  "hsci_production_20d_available": 0,
+  "hsci_production_5d_available": 0,
+  "hsci_series_accepted": 12,
+  "hsci_source_status": "ACCEPT_PARTIAL_COVERAGE",
+  "industry_coverage_by_listing_year": {
+    "2020": {
+      "cases": 125,
+      "conditional_20d_available": 0,
+      "conditional_5d_available": 0,
+      "missing_because_classification_missing": 3,
+      "missing_because_history_starts_2021_08_19_20d": 122,
+      "missing_because_history_starts_2021_08_19_5d": 122,
+      "production_mapping_available": 0,
+      "static_mapping_available": 122
+    },
+    "2021": {
+      "cases": 97,
+      "conditional_20d_available": 27,
+      "conditional_5d_available": 28,
+      "missing_because_classification_missing": 2,
+      "missing_because_history_starts_2021_08_19_20d": 68,
+      "missing_because_history_starts_2021_08_19_5d": 67,
+      "production_mapping_available": 0,
+      "static_mapping_available": 95
+    },
+    "2022": {
+      "cases": 78,
+      "conditional_20d_available": 77,
+      "conditional_5d_available": 77,
+      "missing_because_classification_missing": 1,
+      "missing_because_history_starts_2021_08_19_20d": 0,
+      "missing_because_history_starts_2021_08_19_5d": 0,
+      "production_mapping_available": 0,
+      "static_mapping_available": 77
+    },
+    "2023": {
+      "cases": 68,
+      "conditional_20d_available": 68,
+      "conditional_5d_available": 68,
+      "missing_because_classification_missing": 0,
+      "missing_because_history_starts_2021_08_19_20d": 0,
+      "missing_because_history_starts_2021_08_19_5d": 0,
+      "production_mapping_available": 0,
+      "static_mapping_available": 68
+    },
+    "2024": {
+      "cases": 70,
+      "conditional_20d_available": 70,
+      "conditional_5d_available": 70,
+      "missing_because_classification_missing": 0,
+      "missing_because_history_starts_2021_08_19_20d": 0,
+      "missing_because_history_starts_2021_08_19_5d": 0,
+      "production_mapping_available": 0,
+      "static_mapping_available": 70
+    }
+  },
+  "industry_mapping_pit_blocked": true,
+  "industry_mapping_pit_status": "INDUSTRY_MAPPING_PIT_BLOCKED",
+  "industry_mapping_status": "EVIDENCE_BACKED_DRAFT",
+  "industry_taxonomy_status": "ACCEPT",
+  "mapping_acceptance": {
+    "FIELD_SOURCE_SEMANTICS": "Institution static merged record",
+    "NAME_MATCH": "PASS",
+    "PIT_SAFE": false,
+    "TAXONOMY_MATCH": "PASS",
+    "TEMPORAL_SEMANTICS": "NO_CLASSIFICATION_EFFECTIVE_DATE_OR_LISTING_TIME_SNAPSHOT_ASSERTION",
+    "TOP_LEVEL_CODE_MATCH": "PASS"
+  },
+  "missing_reason_counts": {
+    "industry_return_20d:INDUSTRY_MAPPING_PIT_BLOCKED": 432,
+    "industry_return_20d:MISSING_INDUSTRY_CLASSIFICATION": 6,
+    "industry_return_5d:INDUSTRY_MAPPING_PIT_BLOCKED": 432,
+    "industry_return_5d:MISSING_INDUSTRY_CLASSIFICATION": 6,
+    "recent_ipo_break_rate:no_recent_ipo_sample": 194,
+    "recent_ipo_return_5d:no_recent_ipo_sample": 195
+  },
+  "official_cases": 438,
+  "partial_available": 438,
+  "pit": "PASS",
+  "pit_detail": "HSI/HSCI/HKEX are strict-before; unsafe industry mapping is blocked",
+  "raw_feature_availability": {
+    "hsi_return_20d": 438,
+    "hsi_return_5d": 438,
+    "industry_return_20d": 0,
+    "industry_return_5d": 0,
+    "market_turnover_20d_mean": 438,
+    "market_volatility_20d": 438,
+    "recent_ipo_1d_sample_count": 438,
+    "recent_ipo_5d_sample_count": 438,
+    "recent_ipo_break_rate": 244,
+    "recent_ipo_return_5d": 243
+  },
+  "recent_ipo_features": {
+    "recent_ipo_1d_sample_count": 438,
+    "recent_ipo_5d_sample_count": 438,
+    "recent_ipo_break_rate": 244,
+    "recent_ipo_return_5d": 243
+  },
+  "silent_drops": 0,
+  "supported_industry_missing_reasons": [
+    "MISSING_INDUSTRY_CLASSIFICATION",
+    "MISSING_INDUSTRY_MAPPING",
+    "BENCHMARK_HISTORY_NOT_YET_STARTED",
+    "INSUFFICIENT_5D_HISTORY",
+    "INSUFFICIENT_20D_HISTORY",
+    "BENCHMARK_SOURCE_ERROR"
+  ],
+  "temporal_audit": {
+    "declare_date_after_listing_count": 398,
+    "declare_date_before_listing_count": 37,
+    "declare_date_unparsed_count": 3,
+    "field_source_semantics": "Institution static merged record",
+    "industry_code2_prefix_mismatch_count": 0,
+    "industry_field_sources": {
+      "INDUSTRYNAME": "Institution",
+      "IndustryCode": "Institution",
+      "IndustryCode2": "Institution",
+      "IndustryName2": "Institution"
+    },
+    "missing_classification_count": 6,
+    "pit_safe": false,
+    "production_status": "INDUSTRY_MAPPING_PIT_BLOCKED",
+    "temporal_semantics": "NO_CLASSIFICATION_EFFECTIVE_DATE_OR_LISTING_TIME_SNAPSHOT_ASSERTION",
+    "workbook_created": "2026-08-05T07:10:11",
+    "workbook_sha256": "2cc214e1f027f44de582eddb02b13dfc2f43f57cc8c530250431ad36ed222e25"
+  },
+  "turnover_20d_available": 438,
+  "turnover_earliest_observation_date": "2019-01-02",
+  "turnover_source_status": "ACCEPT"
+}

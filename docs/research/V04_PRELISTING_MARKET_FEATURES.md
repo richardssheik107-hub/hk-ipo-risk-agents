@@ -116,9 +116,9 @@ PR-B Market-X Core          = 438 / 438 materialized / COMPLETE / FROZEN
 
 ```text
 HSI history                         governed CSMAR source / AVAILABLE
-industry benchmark mapping
-industry-index history
-total-market turnover
+industry benchmark mapping         EVIDENCE_BACKED_DRAFT / PIT_BLOCKED
+industry-index history              official 12/12 HSCI source / AVAILABLE_PARTIAL_HISTORY
+total-market turnover               governed HKEX Main Board + GEM / AVAILABLE
 ```
 
 所以当前状态应理解为：
@@ -126,7 +126,8 @@ total-market turnover
 - PR-B Market-X Core：**COMPLETE / FROZEN**；
 - recent IPO context foundation：**available**；
 - HSI Extended family：**available，438 / 438 PIT readiness**；
-- industry / turnover Extended families：**source incomplete / missing**；
+- HKEX turnover Extended family：**available，438 / 438 PIT readiness**；
+- HSCI price source：**12 / 12 accepted**，但 production industry-return 因历史分类 mapping 无 PIT 证据而显式 blocked；
 - full 20-position Extended Market-X 在完整真实源层面尚未全覆盖。
 
 ## 8. Missing-data contract
