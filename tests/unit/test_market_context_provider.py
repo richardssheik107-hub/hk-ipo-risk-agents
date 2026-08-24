@@ -1,6 +1,7 @@
 """Guards for the market channel: availability by source, never by non-null fields."""
 from __future__ import annotations
 
+import csv
 import json
 from datetime import date
 from pathlib import Path
@@ -15,7 +16,10 @@ from ipo_risk.agents.market_context import (
 from ipo_risk.providers.mock import MockMarketDataProvider
 from ipo_risk.schemas import IPOProfile, MarketSnapshot
 from ipo_risk.schemas.final_supervision import ChannelStatus
-from ..v04_market_context_fixture import write_governed_pr_b_fixture
+from ..v04_market_context_fixture import (
+    write_governed_extended_fixture,
+    write_governed_pr_b_fixture,
+)
 
 PROVIDER = SnapshotMarketContextProvider()
 
@@ -154,3 +158,46 @@ def test_governed_pr_b_projection_rejects_tampered_artifact(tmp_path) -> None:
         company_name="同源康医药-B", stock_code="2410.HK", listing_date=date(2024, 8, 20)))
     assert view.status is ChannelStatus.UNAVAILABLE_ERROR
     assert "content_hash" in view.reason
+
+
+def test_governed_extended_projection_preserves_pit_blocked_industry_missingness(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
+    extended_path = write_governed_extended_fixture(tmp_path)
+    provider = GovernedPRBMarketContextProvider(
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
+        extended_readiness_path=extended_path,
+    )
+    view = provider.context(IPOProfile(
+        company_name="同源康医药-B", stock_code="2410.HK", listing_date=date(2024, 8, 20)))
+    assert view.status is ChannelStatus.AVAILABLE
+    assert len(view.observations) == 21
+    assert len({item.name for item in view.observations}) == 21
+    by_name = {item.name: item for item in view.observations}
+    for name in ("industry_return_5d", "industry_return_20d"):
+        assert by_name[name].availability == "unavailable"
+        assert by_name[name].value is None
+        assert by_name[name].missing_reason == "INDUSTRY_MAPPING_PIT_BLOCKED"
+    assert by_name["market_turnover_20d_mean"].value == pytest.approx(1_000_000)
+    assert view.provenance["extended_readiness_sha256"]
+
+
+def test_governed_extended_projection_rejects_zero_filled_missing_industry(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
+    extended_path = write_governed_extended_fixture(tmp_path)
+    rows = list(csv.DictReader(extended_path.open(encoding="utf-8", newline="")))
+    rows[1]["industry_return_5d"] = "0"
+    with extended_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=tuple(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    provider = GovernedPRBMarketContextProvider(
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
+        extended_readiness_path=extended_path,
+    )
+    view = provider.context(IPOProfile(
+        company_name="同源康医药-B", stock_code="2410.HK", listing_date=date(2024, 8, 20)))
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.observations == ()
+    assert "must remain null" in view.reason

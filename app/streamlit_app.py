@@ -281,10 +281,7 @@ if submitted:
             if market:
                 st.markdown("**Pre-listing market context (governed runtime channel)**")
                 st.caption(f"status: {market.get('status')} · {market.get('reason')}")
-                observations = [
-                    item for item in market.get("observations", [])
-                    if item.get("availability") == "available"
-                ]
+                observations = market.get("observations", [])
                 if observations:
                     st.dataframe(observations, hide_index=True, use_container_width=True)
                 else:
