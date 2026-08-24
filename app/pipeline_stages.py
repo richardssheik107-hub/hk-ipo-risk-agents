@@ -131,7 +131,7 @@ def _prediction(payload: dict[str, object]) -> StageView:
         stage_id="prediction", ordinal=4, title="Prediction",
         status=StageStatus.PARTIAL,
         summary="The deterministic rule score and frozen PR-F cohort evidence are available. A per-case frozen model "
-                "score appears only when a hash-bound PR-F runtime handoff is configured.",
+                "score appears only when a hash-bound PR-F runtime handoff is configured; neither score is a probability.",
         blocking_reason="per-case PR-F runtime artifact is absent in this scenario; PR-F itself is COMPLETE / FROZEN",
         what_appears_when_unblocked=(
             "the frozen per-case model score with explicit score semantics",
