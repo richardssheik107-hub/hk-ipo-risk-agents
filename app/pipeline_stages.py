@@ -7,7 +7,7 @@ The governing rule: a stage that is not AVAILABLE renders no number.  Un-frozen
 stages name the gate that blocks them and say what will appear once it lands,
 rather than showing a greyed-out chart, a zero, or a placeholder value.
 
-PR-H is NOT STARTED.  This is preparation only; no stage here claims a gate has
+PR-G is delivered; PR-H is NOT STARTED.  This is preparation only; no stage here claims a gate has
 been started or passed.
 
 Scope note: these seven stages are the *baseline* E2E chain.  The competition
@@ -25,7 +25,6 @@ from enum import StrEnum
 # Gates that currently block parts of the chain, per docs/V04_FIVE_PERSON_EXECUTION_PLAN.md.
 GATE_MARKET = "PR-B"
 GATE_MODEL = "PR-F"
-GATE_FINAL_SUPERVISOR = "PR-G"
 GATE_E2E = "PR-H"
 
 
@@ -144,6 +143,20 @@ def _explainability(payload: dict[str, object]) -> StageView:
 
 
 def _final_supervisor(payload: dict[str, object]) -> StageView:
+    final = payload.get("final_supervision") or {}
+    if final:
+        states = final.get("channel_states", [])
+        available = sum(1 for state in states if state.get("status") == "available")
+        return StageView(
+            stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
+            status=StageStatus.AVAILABLE,
+            summary="Document, market, model and rule channels composed; conflicts are preserved, not resolved.",
+            metrics=(
+                Metric("Channels available", f"{available} of {len(states)}"),
+                Metric("Unresolved conflicts", str(final.get("metadata", {}).get("unresolved_conflict_count", 0))),
+                Metric("Referenced risks", str(len(final.get("referenced_risk_ids", [])))),
+            ),
+        )
     supervision = payload.get("supervision") or {}
     metrics: tuple[Metric, ...] = ()
     if supervision:
@@ -155,15 +168,9 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
     return StageView(
         stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
         status=StageStatus.PARTIAL,
-        summary="Document-scope supervision is available. The cross-channel Final Supervisor, which reconciles "
-                "document, market and model signals, is a contract only.",
-        blocking_gate=GATE_FINAL_SUPERVISOR,
-        blocking_reason="the Final Supervisor and Market Agent are contracts, not yet wired into any workflow",
-        what_appears_when_unblocked=(
-            "reconciled document, market and model conclusions",
-            "preserved cross-channel conflicts",
-            "per-channel availability and uncertainty statement",
-        ),
+        summary="Document-scope supervision is available. The cross-channel Final Supervisor is not "
+                "configured in this runtime scenario.",
+        blocking_reason="the Final Supervisor channel is not enabled by the selected configuration",
         metrics=metrics,
     )
 
