@@ -19,6 +19,7 @@ from competition_ui import (
     render_case_header,
     render_channel_grid,
     render_empty_state,
+    executive_supervisor_view,
     render_executive_snapshot,
     render_pipeline_strip,
     render_product_header,
@@ -377,20 +378,26 @@ def _render_supervisor_and_report(payload: dict[str, object], result, stages_by_
 
     final = payload.get("final_supervision") or {}
     if final:
+        view = executive_supervisor_view(payload)
         with st.container(border=True):
-            st.markdown("#### Final Supervisor 综合结论")
-            st.write(final.get("summary") or "本次运行未生成综合结论。")
-            render_channel_grid(payload)
+            st.markdown(f"#### {view['title']}")
+            st.write(view["body"])
             uncertainty = final.get("uncertainty_statement")
             if uncertainty:
                 st.warning(uncertainty)
 
+            # These are the Document Supervisor's own retained conflicts (PR-G
+            # semantics).  The cross-agent Competition conflict layer is a
+            # different, larger set and is not summarised by this count.
             conflicts = final.get("conflicts") or []
             if conflicts:
-                with st.expander(f"保留的跨通道冲突 · {len(conflicts)}", expanded=False):
+                with st.expander(f"Document Supervisor 保留冲突 · {len(conflicts)}", expanded=False):
                     st.json(conflicts)
             else:
-                st.caption("本次运行没有记录需要保留的跨通道冲突。")
+                st.caption(
+                    "Document Supervisor 未保留文档内冲突；跨 Agent 的 Competition Conflict "
+                    "见「Agent 协作轨迹」工作区。"
+                )
     else:
         st.info("当前工作流没有可用的 Final Supervisor 输出。")
 
@@ -505,10 +512,7 @@ def _render_supervisor_judgement(payload: dict[str, object]) -> None:
             return
         floor = synthesis.get("deterministic_severity_floor")
         if verdict is None:
-            st.warning(
-                f"LLM 综合判断不可用：{synthesis.get('reason', '未说明原因')}。"
-                "确定性 Final Supervisor 汇总结论完整保留，未做任何替代或补写。"
-            )
+            st.warning(f"LLM 综合判断不可用：{synthesis.get('reason', '未说明原因')}")
             if floor:
                 st.caption(
                     f"确定性风险下限仍为 **{risk_level_label(floor)}**，"
@@ -565,20 +569,13 @@ def _render_command_center(payload: dict[str, object], stages) -> None:
     st.caption("一屏看清：通道状态、综合判断、风险清单与本次运行链路。")
     _render_supervisor_judgement(payload)
 
-    final = payload.get("final_supervision") or {}
-    if final:
-        with st.container(border=True):
-            st.markdown("#### 确定性 Final Supervisor 汇总")
-            st.write(final.get("summary") or "本次运行未生成综合结论。")
-            uncertainty = final.get("uncertainty_statement")
-            if uncertainty:
-                st.warning(uncertainty)
-
     counts = conflict_status_counts(payload)
     if counts:
+        st.markdown("#### Competition Conflict 状态")
         chips = st.columns(len(counts))
         for column, (status, count) in zip(chips, sorted(counts.items()), strict=True):
-            column.metric(f"冲突 · {RESOLUTION_LABELS.get(status, status)}", count)
+            column.metric(RESOLUTION_LABELS.get(status, status), count)
+        st.caption("冲突明细与定向复核结论见「Agent 协作轨迹」工作区。")
 
     _render_overview(payload, stages)
 
