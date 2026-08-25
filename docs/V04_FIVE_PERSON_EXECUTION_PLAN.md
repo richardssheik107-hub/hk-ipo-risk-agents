@@ -1,203 +1,344 @@
-# v0.4 五人执行计划
+# v0.4 → Competition Submission 五人执行计划
 
-> Status snapshot: **2026-08-24**
-> PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
-> Oracle v2: **COMPLETE / FROZEN / EVALUATION-ONLY**  
-> PR-E / PR-F: **COMPLETE / FROZEN**
-> PR-G: **COMPLETE / FROZEN**
-> PR-H: **CURRENT FORMAL GATE**
+> Status snapshot: **2026-08-25**  
+> PR-A–PR-G: **COMPLETE / FROZEN**  
+> PR-H: **PARTIAL / BLOCKED — CURRENT FORMAL GATE**  
+> End state: **v0.4.5 COMPETITION_READY + reproducible submission package**
 
-## 1. 总原则
+本文件只回答“谁负责什么、何时交付、依赖谁”。比赛阶段详细技术范围见 [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)。
 
-正式 Gate / mainline merge 严格串行：
+## 1. 固定角色
 
-```text
-PR-A → PR-B → PR-C → PR-D → PR-E → PR-F
-→ PR-G implementation/review
-→ PR-G local freeze manifest
-→ PR-H
-→ Baseline E2E Freeze
-→ CH-0..CH-6
-```
+| Role | Position | Owns | Does not own |
+| --- | --- | --- | --- |
+| A | Tech Lead / Integration | architecture boundary、GitHub、CI、Gate、release、submission | 不替 B/C/D 重做领域算法 |
+| B | Document Intelligence | risk extraction、Retriever、Evidence、Calculation、Document benchmark | 不因 AUC 低直接重写全部 Agent |
+| C | Market Intelligence / Data | Market-X、PIT、IPO Heat、market/outcome data | 不使用未来数据或无治理 proxy |
+| D | Quant / ML | multi-horizon、feature audit、model、SHAP、ablation、statistics | 不用 2024 反复调参，不重建 frozen PR-F 解阻 UI |
+| E | Multi-Agent / Product | Final Supervisor、conflict、trace、Evidence Viewer、competition UI/demo | 不在展示层创造事实或模型结果 |
 
-允许并行的是准备性工作、QA、文档、测试夹具和不改变冻结边界的分析；准备工作不能被描述为后续 Gate 已通过。
+## 2. 协同模型
 
-PR-F 已得到较弱/不稳定的 2024 预测结果，但这不授权回滚 Gate 顺序、反转模型分数或继续使用 2024 调参。PR-G 实现、A 审阅及真实本地 freeze manifest 均已完成；PR-H 现为当前正式 Gate。
-
-## 2. A — Tech Lead / Pipeline
-
-定位：系统集成、运行编排、provenance、coverage、reproducibility、CI、Gate review。
-
-长期职责：
+五个人不串行排队，而是四条 lane 并行、A 负责合流：
 
 ```text
-canonical orchestration
-run manifest / provenance
-coverage / reproducibility
-cross-module contract checks
-CI / integration
-formal Gate review
+B  Document Benchmark / Evidence ──────┐
+C  Market / Outcome / PIT ─────────────┼→ D Quant Evaluation ─┐
+B  Targeted Document fixes ────────────┘                     ├→ E Supervisor / Product
+C  Market interpretation ────────────────────────────────────┘
+
+A = interface + branch/PR + CI + integration + release
 ```
 
-A 不重新实现 Parser / Retriever / Agent，不替 D 决定 target/model policy，不用 ungoverned proxy 填数据，也不打开 2025 Blind y。
-
-### 当前任务
-
-- PR-G A Gate Review 与真实本地 freeze 已完成；
-- 审核 PR-H governed Market-X runtime 接线，禁止把 legacy `MarketSnapshot` 冒充 PR-B lineage；
-- 审核 PR-F 最小 runtime handoff 的 hash、内容边界和 no-label/no-Blind 约束；
-- 维护 PR-A–PR-F / Oracle v2 frozen boundary；
-- 阻止任何“看到 2024 结果后反转 score / 重调模型再当正式 Validation”的做法；
-- PR-H 完成后做 v0.4.3 Baseline E2E Gate review。
-
-## 3. B — Document / Agent
-
-定位：Production Document Intelligence 质量、Evidence / Calculation / page provenance、Document explanation。
-
-### 当前任务
-
-- 支持 PR-H 的 3–5 个真实 demo case，抽样验证 `case → analysis → RiskItem → Evidence → Calculation → page/bbox → Verifier`；
-- 对最终报告的 Evidence Index、页码/bbox、Calculation-to-Evidence 链进行 demo-case QA；
-- 为 CH-2 维护逐风险 benchmark protocol：Precision / Recall / F1 / Evidence Recall；
-- 不因为 5D AUC 低就无差别重写 Retriever / Agent / Prompt。
-
-B 的 QA 是支持性审计，不自动重开 PR-A。Competition 阶段只有直接 benchmark 未达标的风险类别才进入 targeted enhancement。
-
-## 4. C — Market Data / PIT
-
-定位：Pre-IPO Market X、数据源、point-in-time 和 2025 Blind 边界。
-
-PR-B Core 已完成并冻结：
+每 2–3 天统一一次：
 
 ```text
-438 / 438 materialized
-30 positions
-0 failed
-0 silent drops
-PIT audit PASS
+merge latest main
+→ full tests
+→ governed real-case smoke
+→ schema/provenance check
+→ internal checkpoint
 ```
 
-Market-X Extended 已接入 governed CSMAR HSI daily close；438/438 官方 case 的 HSI 5D、20D return 与 20-session volatility 已通过 PIT readiness。
-
-### 当前任务
-
-- 与 A/E 一起完成 PR-H governed runtime market path；
-- runtime source-of-truth 使用 `PreListingMarketFeatureSnapshot` 或其无损受控投影，不把 legacy `MarketSnapshot` 反向升级为正式 Market-X；
-- HSI provenance 必须真实透传；industry benchmark / turnover 继续显式缺失，禁止 proxy/neutral zero；
-- 为 CH-3 预研 point-in-time IPO heat、近期 IPO 破发/5D 表现、同行业历史 IPO context、liquidity/activity；
-- 继续维护 PIT / Blind guard。
-
-短期 1D / 5D 预测若要增强，优先从有经济含义且可 point-in-time 验证的 Market Sentiment / IPO context 中找增量，而不是先把 Document 风险强行解释成短期价格预测。
-
-## 5. D — Quant / ML Research
-
-定位：Outcome、canonical dataset、baseline、LightGBM、explainability、实证结论。
-
-已完成：
+每日同步只回答：
 
 ```text
-PR-C 5D Outcome                 COMPLETE / FROZEN
-PR-D Canonical Dataset          COMPLETE / FROZEN
-PR-E Baseline + Oracle          COMPLETE / FROZEN
-PR-F LightGBM + Explainability  COMPLETE / FROZEN
+昨天完成什么？
+今天交付什么？
+需要谁的输入？
+是否阻塞 main / Gate？
 ```
 
-PR-F frozen finding：
+## 3. Phase 0 — v0.4.3 收尾（Day 1–3）
+
+### A — Gate owner
+
+- 锁定 PR-H acceptance matrix；
+- 审核 runtime Market / Model contracts；
+- 汇总 B/C/D/E 的 3–5 case 输入；
+- full CI、determinism、provenance、Blind audit；
+- PR-H PASS 后发布 v0.4.3 baseline freeze。
+
+**交付：** PR-H Gate record、3–5 case matrix、v0.4.3 release evidence。
+
+### B — Real Document QA
+
+- 选至少 3、目标 3–5 个真实 2024 IPO；
+- 检查 PDF、RiskItem、Evidence、Calculation、page、bbox、Verifier；
+- 为 E 提供每 case 的关键风险与已知限制。
+
+**交付：** `case_id → prospectus → risk/evidence QA` 清单。
+
+### C — Governed Market QA
+
+- 验证 demo cases 的 Market-X Core；
+- 接入可用 HSI / HKEX turnover Extended；
+- 检查 PIT cutoff、provenance、missing semantics；
+- industry mapping 继续 `PIT_BLOCKED`。
+
+**交付：** per-case Market readiness + provenance。
+
+### D — Frozen PR-F Runtime Support
+
+- 恢复原 frozen runtime 或已生成 sanitized handoff；
+- 为选定 cases 输出 per-case score、signed top SHAP、run/model identity、checksum；
+- 不 retrain / reconstruct / retune。
+
+**交付：** hash-bound minimal product handoff。
+
+### E — E2E owner
+
+- 运行 `PDF → Document → Market → Model → Rule → Final Supervisor → Report → Streamlit`；
+- 记录失败 stage；
+- 验证 Evidence 引用、score semantics、uncertainty、report consistency。
+
+**交付：** 3–5 case runnable demo matrix。
+
+## 4. CH-0 — Scorecard Lock（Day 3–4）
+
+**A 主导，全员签字式确认。**
+
+- B 锁定 Document benchmark risk set / metrics；
+- C 锁定 Market/Outcome source policy；
+- D 锁定 multi-horizon evaluation protocol；
+- E 锁定 conflict/trace/demo acceptance；
+- A 将所有 requirement → owner → metric → evidence artifact 映射完整。
+
+之后没有 Scorecard 对应项的“大功能”默认不进入主线。
+
+## 5. CH-1 / CH-2 / CH-3 并行（Day 4–12）
+
+### B — CH-2 Document Benchmark
+
+第一轮：
 
 ```text
-Full Production 2024
-M   ROC-AUC 0.4246
-P   ROC-AUC 0.5000
-PM  ROC-AUC 0.4246
+Precision / Recall / F1
+Evidence Recall / Evidence Precision
+by risk_code
 ```
 
-PM 与 M 完全预测等价；Oracle `OM-M ROC-AUC -0.0143` 且 bootstrap interval 跨零。正式解释为当前 target / sample / feature / model 条件下没有验证出稳定 Document 增量，而不是“招股书无信号”。
-
-### 当前任务：支持 PR-H
-
-- 不重新调 PR-E/PR-F；
-- 为选定 3–5 demo case 从 frozen PR-F runtime 生成最小产品 handoff；
-- handoff 只包含产品需要的 per-case score / top SHAP drivers / run identity，不包含 target labels、2025 Blind y、raw licensed data、secrets 或无关模型 bulk；
-- handoff 必须带 `SHA256SUMS.txt`，并由 PR-G Tier-2 用 frozen `model_result_hash` fail-closed 绑定；
-- 输出仍只按 `uncalibrated_model_score` 解释；
-- 保留 SHAP / bootstrap uncertainty / error caveats。
-
-### Competition preparation only
-
-在不启动 formal CH-1 的前提下，D 可准备 1D / 20D / 60D outcome versioning 与 evaluation protocol 草案；PR-H baseline freeze 后才正式执行。多 horizon 的目的不是挑一个最漂亮结果，而是验证结构性 Document 风险与不同时间尺度之间的关系。
-
-## 6. E — Oracle / Product Integration
-
-定位：Oracle research sidecar、Final Supervisor、Market Agent integration、report、Streamlit / Demo。
-
-Oracle v2 已完成并冻结。PR-G implementation 已由 E 完成并合入 main；A 已接受其 protected-interface 设计。
-
-### 当前任务
-
-- 配合 A 完成本地 PR-G freeze manifest materialization；
-- 基于最新 main 正式推进 PR-H 的 7-stage Streamlit / report E2E；
-- 接入 governed Market-X runtime path 与 PR-F local runtime handoff；
-- 清理 UI 中把已冻结 PR-B / PR-F 误写为 blocking gate 的旧文案；
-- 对 3–5 个真实 IPO 跑 PDF → Document → Market → Model → Final Supervisor → Report；
-- Final Supervisor 继续把模型分数作为辅助 warning channel，而不是事实或概率；
-- 保持 Oracle v2 与 Production 隔离；
-- 未解决 conflicts 继续显示 uncertainty，CH-4 前不做假仲裁。
-
-PR-H 的成功标准不是提升 AUC，而是把 Document + Market + Model + Evidence + uncertainty 真正跑成可演示、可审计、可复现的闭环。
-
-## 7. 当前协作地图
-
-| Member | Formal status now | Current useful work |
-| --- | --- | --- |
-| A | PR-G gate owner / PR-H integration reviewer | local freeze manifest、runtime contract、v0.4.3 Gate |
-| B | PR-H supporting QA | 3–5 demo Evidence / Calculation / page-bbox QA |
-| C | PR-H market runtime owner | governed Market-X runtime + PIT provenance |
-| D | PR-H model runtime support | frozen per-case score/SHAP handoff |
-| E | **PR-H product owner after PR-G freeze** | Streamlit + Final Report + 3–5 real-case E2E |
-
-## 8. 当前严禁混淆的四类工作
-
-### 已冻结主线
-
-PR-A / PR-B / PR-C / PR-D / Oracle v2 / PR-E / PR-F 不因为结果不漂亮、成员换机器或缺本地 runtime 就变回“未完成”。
-
-### PR-G finalization
-
-A Gate Review 已 PASS；剩余是本地 real-run manifest 的机械冻结，不允许伪造 prospectus hash 或 final-supervision content hash。
-
-### PR-H preparation / execution
-
-Market-X runtime、PR-F runtime handoff、UI stage cleanup、3–5 case demo 是当前有效工作；其中 formal PR-H 状态在 PR-G frozen manifest 提交后切换。
-
-### Competition optimization
-
-Retriever / LLM / Prompt / Agent 大规模重构、Market Sentiment 正式扩展、1D/20D/60D 正式 outcome 都属于 PR-H 之后的 CH 阶段。不能用当前 2024 AUC 作为越级理由。
-
-## 9. Post-PR-F competition strategy
+第二轮：error attribution：
 
 ```text
-PR-G local freeze FINALIZE
-→ PR-H Streamlit Full E2E + 3–5 real IPO demo
-→ v0.4.3 Baseline Freeze
-→ CH-0 Scope / metrics lock
-→ CH-1 1D / 20D / 60D outcomes
-→ CH-2 risk extraction + Evidence benchmark
-→ CH-3 Market Sentiment + Competition Skills
-→ CH-4 conflict resolution + traceability
-→ CH-5 Evidence screenshot + human review
-→ CH-6 formal evaluation + submission
+retrieval / parser-table / semantic / calculation / rule / gold
 ```
 
-Competition 直接硬目标：
+第三轮：只修最差 2–3 类，并提供 Before/After。
+
+**依赖 D：** 每轮修复后检查 downstream representation / prediction 是否变化。  
+**依赖 E：** 把代表错例做成可展示 case。
+
+### C — CH-1 data + CH-3 Market
+
+并行建立：
 
 ```text
-关键风险要素抽取准确率           >= 80%
-关键 Evidence recall            >= 85%
-Agent / Tool / Evidence trace   = 100%
+1D / 20D / 60D outcome extensions
+market-adjusted returns
+20D / 60D drawdown / volatility
+IPO Heat
+recent IPO break/performance
+HSI / turnover / activity
+PIT-safe comparable context
 ```
 
-CH-2 benchmark 未达标后才做 targeted Document enhancement；只有 error attribution 指向语义理解时才引入 LLM semantic layer。短期预测增强优先由 C/D 在 CH-3 从 point-in-time Market Sentiment / IPO context 中寻找。
+输出必须同时有 numeric value + source/provenance + availability/missing reason。
 
-## 10. Documentation rule
+**依赖 D：** 判断新增 Market features 是否有稳定增量。  
+**依赖 E：** 转换成 Market Environment，而不是只显示 DataFrame。
 
-成员交接不再新增长期 `HANDOFF_FINAL` / `PREP_V2` 类文档。临时交接应进入 PR body、issue/comment 或本地 package README；正式事实只进入 active docs、completion report 和 frozen manifest。
+### D — Feature / Horizon / Model Diagnosis
+
+先做 Production Document-X audit：
+
+```text
+missing / zero / variance / prevalence / redundancy / year drift
+```
+
+按预先业务定义构造 compact `P-Core`，不能看 2024 后选 feature。
+
+随后固定跑：
+
+```text
+M / P / P-Core / PM / O / OM
+× 1D / 5D / 20D / 60D
+```
+
+输出 metrics + bootstrap CI + ablation + error analysis。
+
+**目的：** 定位信号是死在 Document extraction、feature representation、5D horizon、Market data，还是任务本身。
+
+### E — Case Diagnosis / Product Skeleton
+
+这一阶段不无边界美化 UI，先建立：
+
+- correct / FP / FN / Document-strong / Market-strong / conflict cases；
+- `PDF → Evidence → Risk → Feature → Market → Model → Supervisor` case trace；
+- Evidence Viewer / Agent Trace 所需接口骨架。
+
+## 6. CH-4 — Multi-Agent Conflict（Day 10–14）
+
+### E 主导
+
+实现：
+
+```text
+Conflict Detection
+→ Evidence Re-check
+→ targeted retrieval / Skill
+→ Verifier Challenge
+→ Supervisor Arbitration
+```
+
+至少 3 个真实 conflict case。
+
+### B
+
+负责 Document-side re-check / Evidence。
+
+### C
+
+负责 Market-side evidence / provenance。
+
+### A
+
+冻结 trace / conflict interface，并审核 unresolved uncertainty 不被静默抹平。
+
+### D
+
+只在 conflict 涉及 model signal 时提供 score semantics / SHAP / uncertainty，不让模型替代事实。
+
+## 7. CH-5 — Competition Product（Day 10–16）
+
+### E 主导五个最终工作区
+
+```text
+Risk Command Center
+Risk Map
+Evidence Viewer
+Market & Model
+Agent Trace
+```
+
+### B → E
+
+`Risk / Evidence / page / bbox / Calculation / benchmark status`
+
+### C → E
+
+`Market Environment / reason / provenance / missingness`
+
+### D → E
+
+`score semantics / SHAP / multi-horizon / uncertainty`
+
+### A → E
+
+`runtime state / trace / provenance / release identity`
+
+UI 只展示受控真实结果，不通过 presentation layer 伪造 unavailable channel。
+
+## 8. Competition Beta（Day 15–18）
+
+A 组织 Beta Gate，五人必须同时交付：
+
+| Role | Beta deliverable |
+| --- | --- |
+| A | integration + CI + reproducibility checkpoint |
+| B | Document benchmark v1 + targeted fixes |
+| C | Competition Market v1 + PIT audit |
+| D | multi-horizon result v1 + ablation/SHAP |
+| E | Evidence Viewer + Agent Trace + 3–5 demo cases |
+
+Beta 后进入 feature freeze 倒计时，只允许修明确 bug、关键 benchmark 缺口和 demo blockers。
+
+## 9. CH-6 — Competition Freeze（Day 18–21）
+
+### A
+
+- 全量 test / integration / real-case regression；
+- determinism / provenance / secret/path/raw-data scan；
+- release manifest / tag；
+- 最终 acceptance matrix。
+
+### B
+
+冻结 Document Benchmark、per-risk metrics、Evidence metrics、error attribution。
+
+### C
+
+冻结 Competition Market feature set 与 PIT/missingness audit。
+
+### D
+
+冻结 1D/5D/20D/60D result、ablation、SHAP、bootstrap、error analysis、limitations。
+
+### E
+
+冻结 Final Supervisor、real conflicts、Evidence Viewer、Agent Trace、Competition UI。
+
+PASS：`v0.4.5 COMPETITION_READY`。
+
+## 10. Submission 分工
+
+### A — Submission Owner
+
+```text
+submission/
+├── README
+├── source
+├── configs
+├── demo
+├── evaluation
+├── reports
+├── screenshots
+└── runbook
+```
+
+保证 `clone → install → run` 可复现，并负责最终提交版本身份。
+
+### B
+
+Document benchmark、Risk/Evidence examples、Before/After case material。
+
+### C
+
+Market methodology、PIT explanation、Market feature/case material。
+
+### D
+
+Model/multi-horizon tables、ablation、SHAP、error analysis、limitations。
+
+### E
+
+Final Streamlit、screenshots、3–5 star cases、demo flow、presentation script。
+
+## 11. 答辩 ownership
+
+```text
+A  系统架构 / 治理 / E2E / reproducibility
+B  Document Intelligence / Evidence / benchmark
+C  Market Intelligence / PIT / IPO Heat
+D  Model / multi-horizon / empirical results
+E  Multi-Agent / conflict / Supervisor / live demo
+```
+
+## 12. 三类明星案例
+
+1. **Document Case** — Risk → Evidence → Calculation → PDF bbox（B + E）；
+2. **Conflict Case** — Agent disagreement → re-check → Verifier → Supervisor（E 主导）；
+3. **Market / Prediction Case** — Market Environment → SHAP → multi-horizon（C + D）。
+
+A 负责三套案例的稳定复现。
+
+## 13. 协作与停止规则
+
+- 已冻结 PR-A–PR-F 不因结果不好或换机器而变回未完成；
+- 所有新增工作从最新 `main` 建短分支，单 PR 单主题；
+- owner 不得在别人 lane 中用临时 hack 绕过 protected contract；
+- 2025 Blind y 不得提前访问；
+- 2024 Validation 不得被重新当 tuning set；
+- 每个实验必须有 hypothesis / protocol / result / route decision；
+- 不进行无限模型调参或无 benchmark 的全量 Agent 重写；
+- 大型 runtime / licensed raw data / secrets 不进入 Git。

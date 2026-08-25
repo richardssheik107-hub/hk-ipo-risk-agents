@@ -1,105 +1,62 @@
-# 公共数据 Schema 与 v0.4 建模契约
+# 公共数据 Schema 与 v0.4 / Competition 建模契约
 
-> Status snapshot: **2026-08-23**  
-> PR-D canonical dataset: **COMPLETE / FROZEN**  
-> PR-E / PR-F modeling outputs: **COMPLETE / FROZEN**
-> Current formal Gate: **PR-G**
+> Status snapshot: **2026-08-25**  
+> Frozen baseline through PR-G: **COMPLETE**  
+> Current Gate: **PR-H PARTIAL / BLOCKED**
 
-代码中的 Pydantic Schema / validator 是最终权威实现；本文解释跨模块语义和当前 frozen modeling boundary。
+代码中的 Pydantic Schema / validator 是最终权威实现；本文只解释跨模块语义、frozen baseline 和比赛阶段允许新增的 versioned contracts。
 
 ## 1. General rules
 
-1. 跨模块正式数据使用明确、可版本化的 Pydantic / Protocol；
-2. 缺失值有显式语义，不能自动解释为 `0 / safe / negative`；
-3. provenance、source version、feature version、policy/model version 可追踪；
-4. identifier、document ID、Evidence ID、Gold page、target-derived value 只能做 provenance，不能进入 X；
-5. 失败必须结构化记录，不能 silent drop；
-6. 公共 schema 变更必须有 contract tests。
+1. 跨模块正式数据必须 versioned；
+2. missing 必须有显式语义，不能自动变成 `0 / safe / negative`；
+3. identity / provenance / source / policy / feature/model version 可追踪；
+4. document ID、Evidence ID、Gold page、target-derived value 只能作为 provenance，不能泄漏进入 X；
+5. failure 必须结构化记录，不能 silent drop；
+6. public schema change 必须有 contract tests；
+7. frozen contract 不被 competition work 原地改写，新能力使用新 version/sidecar。
 
-## 2. DocumentChunk
+## 2. DocumentChunk / Evidence / Calculation
 
-Parser 返回：
-
-```text
-list[DocumentChunk]
-```
-
-核心语义：
+`DocumentChunk` 核心：
 
 ```text
-document_id
-chunk_id
-page
-section
-text
-block_type
-bbox
-metadata
+document_id / chunk_id / page / section / text / block_type / bbox / metadata
 ```
 
-`page` 对应真实 PDF 物理页；`bbox` 可选。
+Evidence 至少保留 document/chunk/page/source/text，可选 bbox。不得虚构页码、文本或来源。
 
-## 3. Evidence
-
-Evidence 支持正式风险结论，至少保留 document / chunk / page / source / text 等 provenance，可选 bbox。
-
-不得虚构页码、文本或来源。无足够 Evidence 的结论进入 pending / needs_review，而不是伪造 verified。
-
-## 4. Calculation
-
-正式数值计算必须可审计：
+Calculation 至少保留：
 
 ```text
 skill_name / skill_version
-inputs
-formula
-result
-unit
+inputs / formula / result / unit
 evidence_ids
 success / error
 ```
 
-LLM 自然语言计算不能替代 deterministic Calculation。
+## 3. RiskItem
 
-## 5. RiskItem
-
-Domain Agent 统一输出：
+Domain Agent 统一输出 `list[RiskItem]`。核心语义：
 
 ```text
-list[RiskItem]
-```
-
-核心语义包含：
-
-```text
-risk_id
-risk_code
-category / risk_type
-level / score
-conclusion
-evidence
-calculation
+risk_id / risk_code / category
+level / score / conclusion
+evidence / calculation
 agent_name
-confidence
-verification_status
-verification_notes
+verification_status / notes
 metadata
 ```
 
-正式 verification 状态包括：
+正式状态：
 
 ```text
-verified
-pending
-rejected
-needs_review
+verified / pending / rejected / needs_review
 ```
 
-Verifier / Supervisor 不得创造原始 Evidence。
+Verifier / Supervisor 不创造原始 Evidence。
 
-## 6. IPOAnalysisResult and Document snapshot
-
-Production 文档链：
+## 4. Production Document-X — frozen
 
 ```text
 IPOAnalysisResult
@@ -107,51 +64,71 @@ IPOAnalysisResult
 → v04_document_features_v1
 ```
 
-PR-A frozen：
+Frozen:
 
 ```text
-438 / 438 snapshots
-438 / 438 Production Document-X
+438 / 438
 100 ordered positions
 ```
 
-Document feature artifact 必须绑定 case identity、snapshot/source hash、feature manifest / order。
+Competition CH-2 可创建独立 benchmark representation / compact `P-Core` version，但不能覆盖 `v04_document_features_v1`，且 feature choice 必须在不使用 2024 tuning 的前提下预先定义。
 
-## 7. Market-X Core
+## 5. Market-X
 
-Frozen contract：
+### Core — frozen
 
 ```text
 schema  v04_ipo_market_context_features_v1
 policy  ipo_market_context_policy_v1
 15 raw + 15 adjacent missing indicators = 30 positions
+438 / 438
 ```
 
-Market-X Core 通过 PIT 规则保证目标 IPO 上市后数据不进入 X。
+### Extended — governed optional
 
-Market-X Extended 保持独立可选 contract，不允许静默插入 Core 历史顺序。
+当前可用：
 
-## 8. FiveDayOutcomeTarget
+```text
+hsi_return_5d / hsi_return_20d / market_volatility_20d  438 / 438
+market_turnover_20d_mean                                438 / 438
+```
 
-PR-C frozen contracts：
+当前不可用：
+
+```text
+industry_return_5d / industry_return_20d                 0 / 438
+```
+
+Industry missing reason 必须保留 `INDUSTRY_MAPPING_PIT_BLOCKED` 或正式支持的缺失语义。
+
+CH-3 Competition Market features 必须独立 version，并同时记录：
+
+```text
+value
+availability / missing_reason
+as_of / cutoff semantics
+source / provenance
+feature version
+```
+
+## 6. Outcome baseline — frozen
+
+PR-C:
 
 ```text
 policy  v04_5d_outcome_policy_v1
 target  v04_5d_outcome_target_v1
 ```
 
-核心字段语义：
-
 ```text
 raw_return_5d
 poor_performer_5d
 availability / missing_reason
-policy_hash
-threshold_hash
-case identity / split / provenance
+policy_hash / threshold_hash
+identity / split / provenance
 ```
 
-正式 frozen coverage：
+Coverage:
 
 ```text
 424 available
@@ -160,51 +137,56 @@ case identity / split / provenance
 70 Validation
 ```
 
-Unavailable target 不能 zero-impute。
+## 7. Competition multi-horizon outcomes — planned versioned sidecar
 
-## 9. Canonical modeling dataset — PR-D frozen
+CH-1 must **not** mutate the frozen PR-C target. New contracts should separately version:
 
-版本：
+```text
+raw_return_1d
+raw_return_20d
+raw_return_60d
+market_adjusted_return_1d / 5d / 20d / 60d
+max_drawdown_20d / 60d
+volatility_20d / 60d
+severe_break_flag
+```
+
+Required semantics:
+
+```text
+case identity
+listing/session policy
+base/terminal price provenance
+availability / missing_reason
+horizon
+split
+policy_version
+content hash
+```
+
+## 8. Canonical modeling dataset — frozen baseline
 
 ```text
 v04_canonical_modeling_dataset_v1
 v04_canonical_model_matrix_v1
 ```
 
-PR-D 把 Production Document X、Market-X Core、Outcome Y 通过 identity / schema / manifest / hash validation 连接成 424-row model-ready cohort。
+Frozen cohort: `424 = 354 Development + 70 Validation`.
 
-正式 feature blocks：
+Feature blocks:
 
 ```text
 Market Core          30 required
-Market Extended      optional, separately versioned
+Market Extended      optional / versioned
 Production Document 100 required
-Oracle Document     evaluation-only intersection only
+Oracle Document      evaluation-only intersection
 ```
 
-Full Production matrices：
+Frozen arms: `M / P / PM` and Oracle intersection `M / P / O / PM / OM`.
 
-```text
-M
-P
-PM
-```
+Competition matrices must use a new version when adding outcome horizon, P-Core or Competition Market features. They cannot silently change frozen matrices.
 
-Oracle fair-intersection matrices：
-
-```text
-M
-P
-O
-PM
-OM
-```
-
-Component feature names 必须显式 prefix，feature order deterministic。
-
-## 10. Oracle v2
-
-Frozen contract：
+## 9. Oracle v2
 
 ```text
 schema_version        expert_oracle_document_features_v2
@@ -217,32 +199,77 @@ evaluation_only       true
 production_consumable false
 ```
 
-Oracle v1 保持 immutable historical snapshot；formal PR-E ceiling 使用 Oracle v2。
+Oracle is diagnostic only; Gold cannot become Production input.
 
-## 11. PR-E result semantics
+## 10. Model output semantics
 
-PR-E baseline 输出是 governed research/model artifact。分类模型至少记录 ROC-AUC、PR-AUC、Brier、accuracy、precision、recall、F1；回归记录 MAE、RMSE、R2，并保留 cohort、protocol、feature group、year/fold audit、coefficients/intercept 等审计信息。
-
-Development evaluation 必须 time-aware；2024 Validation 不参与拟合。
-
-未经 calibration 的分数只能称 `score` / model output，不能称真实概率。
-
-## 12. Prediction / Final Supervisor boundary
-
-现有 RuleBasedPredictor 继续只做兼容/对照。PR-E/PR-F 输出 contract 已冻结；PR-G 只能以 `uncalibrated_model_score` 语义接入产品预测视图，不得改称实际概率。
-
-Final Supervisor 必须消费受控：
+Every model output consumed by product must carry at least:
 
 ```text
-verified document risks
-market context
-model score + score semantics + calibration status
-model drivers / uncertainty
+model/run identity
+case identity
+score
+score_semantics
+calibration_status
+feature/model version
+optional signed drivers / SHAP
+uncertainty / caveat metadata
 ```
 
-它不能创造 Evidence、RiskItem 或市场事实。
+Current frozen product semantics: `uncalibrated_model_score`.
 
-## 13. Blind governance
+## 11. Final Supervisor input boundary
+
+Final Supervisor may consume only governed:
+
+```text
+verified/pending document risks
+Evidence / Calculation references
+Market Context
+model score + semantics + calibration
+model drivers / uncertainty
+rule signal
+conflicts / trace where available
+```
+
+It may synthesize and prioritize but cannot create raw Evidence, new source market facts or a new model score.
+
+## 12. Competition trace / conflict contract — CH-4 planned
+
+Versioned trace should minimally support:
+
+```text
+agent_name
+input_task
+plan_step
+tool_or_skill_call
+input_evidence_ids
+calculation_ids
+claim
+verifier_status
+conflict_id
+resolution_action
+final_status
+```
+
+`resolved` and `unresolved` are distinct; unresolved uncertainty is not dropped.
+
+## 13. Human review / Evidence Viewer — CH-5 planned
+
+Reviewer sidecar must keep machine result and human intervention separate:
+
+```text
+original_claim
+page / bbox / evidence_id
+reviewer_decision
+reviewer_note
+review_timestamp / review identity
+post_review_status
+```
+
+UI annotations do not mutate source PDF/Evidence identity.
+
+## 14. Time / Blind governance
 
 ```text
 2020–2023  Development
@@ -250,4 +277,4 @@ model drivers / uncertainty
 2025       Blind Test
 ```
 
-所有 target / canonical / matrix / model contracts 都必须 fail closed 地拒绝未经授权的 2025 Blind y。
+All new target/matrix/model contracts must fail closed on unauthorized 2025 y. Competition work does not turn 2024 into a tuning set.

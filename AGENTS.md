@@ -4,53 +4,62 @@
 
 本项目构建一个**证据驱动、多智能体协同、可审计**的港股 IPO 招股书解析与上市后风险预警系统。
 
-当前稳定基线是 `v0.3.0-multi-agent-risk-analysis`；当前开发主线是 **v0.4 End-to-End Closed Loop**：
+当前状态：
 
 ```text
-Document Intelligence
-→ IPO-level Document Features
-→ Pre-IPO Market Features
-→ Outcome
-→ Model-ready Dataset
-→ Baseline / LightGBM
-→ Market Agent
-→ Final Supervisor
-→ Full E2E Demo
+v0.3 Document Intelligence          COMPLETE / FROZEN
+PR-A–PR-G                           COMPLETE / FROZEN
+PR-H Full E2E                       PARTIAL / BLOCKED — CURRENT GATE
+v0.4.3 Baseline E2E Freeze          NOT CREATED
+Competition Hardening               PLANNED
+v0.4.5 COMPETITION_READY            TARGET
 ```
 
-Retriever V3 等研究成果已冻结并归档，当前不作为 v0.4 前置条件。历史 Retriever Locked 10 已消费，不得继续用其调参后重新描述为 blind。
+正式路线：
+
+```text
+PR-H completion
+→ v0.4.3 Baseline E2E Freeze
+→ CH-0 Scope / Metrics Lock
+→ CH-1 Multi-Horizon
+→ CH-2 Document Benchmark / Targeted Hardening
+→ CH-3 Market Intelligence
+→ CH-4 Multi-Agent Conflict / Trace
+→ CH-5 Evidence Viewer / Competition Product
+→ CH-6 Formal Evaluation / Freeze
+→ v0.4.5 COMPETITION_READY
+→ Submission
+```
+
+Retriever V3 等研究成果保持历史/冻结状态。只有 CH-2 direct benchmark + error attribution 证明 retrieval/semantic understanding 是瓶颈时，才重启 targeted Retriever/LLM research。
 
 ## 2. 开始任务前
 
-执行代码任务前必须先：
+代码任务至少阅读：
 
-1. 阅读 `docs/README.md`；
-2. 阅读 `docs/PROJECT_SPEC.md`；
-3. 阅读 `docs/ARCHITECTURE.md`；
-4. 阅读 `docs/DATA_SCHEMA.md`；
-5. 阅读本 `AGENTS.md`；
-6. 涉及路线 / 数据 / 建模时，再读 `docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`、`docs/ROADMAP.md` 和对应 `docs/research/V04_*.md`；
-7. 若任务涉及已冻结 PR-B 的审计，再读 `docs/V04_PR_B_COMPLETION_REPORT.md`、`docs/research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`；Role A preparation / handoff 仅作为历史完成记录；
-8. 检查仓库结构与现有测试；
-9. 说明准备修改的文件及是否影响公共接口。
+1. `docs/README.md`；
+2. `docs/ROADMAP.md`；
+3. `docs/PROJECT_SPEC.md`；
+4. `docs/ARCHITECTURE.md`；
+5. `docs/DATA_SCHEMA.md`；
+6. 本 `AGENTS.md`；
+7. 涉及比赛计划/分工时读 `docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` 与 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`；
+8. 涉及数据/模型时读 `docs/research/V04_DATA_READINESS.md` 与对应 frozen completion/policy；
+9. 检查实现、测试与当前 `main`，说明修改范围和公共接口影响。
 
-面对较大任务，先给出实施计划，再开始编码。
+历史 handoff / one-off readiness 文档不能覆盖 active docs、completion report 或 frozen manifest。
 
 ## 3. 架构规则
 
-1. 保持模块化单体架构；
-2. 当前阶段不引入与闭环无关的微服务、Kafka、Redis 队列、Neo4j、Kubernetes；
-3. 业务逻辑不得集中在 `streamlit_app.py`；
-4. Streamlit 只能通过 `IPOAnalysisService` 访问业务能力；
-5. Agent 不直接操作前端或 Repository；
-6. Parser 不依赖 Agent；
-7. Skill 不依赖 Agent；
-8. Schema 不依赖具体业务实现；
-9. Mock 与真实实现必须可配置替换。
+1. 保持模块化单体；
+2. 不为比赛展示引入无必要微服务/Kafka/Redis/Neo4j/Kubernetes；
+3. 业务逻辑不得堆在 `streamlit_app.py`；
+4. UI 只能通过 `IPOAnalysisService` / 受控上层 service；
+5. Agent 不直接操作前端；Parser 不依赖 Agent；Schema 不依赖具体实现；
+6. Mock / unavailable / real implementation 必须可配置替换；
+7. Competition UI 是 governed output consumer，不能创造 Risk/Evidence/Market/Model fact。
 
-## 4. 受保护公共接口
-
-以下路径属于公共接口 / 核心架构边界，修改前必须明确说明影响并补充测试：
+## 4. 受保护接口
 
 ```text
 src/ipo_risk/schemas/
@@ -65,34 +74,21 @@ src/ipo_risk/core/container.py
 src/ipo_risk/domain/risk_codes.py
 ```
 
-未经明确任务要求，不得随意重命名 / 删除公共字段、改变字段含义、改变统一返回类型或破坏兼容工作流。
+跨边界修改必须说明影响、版本化语义并补 contract tests。禁止用临时 hack 绕过 service / registry / provenance。
 
-## 5. Schema / Agent / Skill 规则
+## 5. Evidence / Agent / Skill 规则
 
-- 跨模块公共数据使用 Pydantic 模型；
-- Parser 返回 `list[DocumentChunk]`；
-- Retriever 返回稳定 Evidence / DocumentChunk 契约；
-- 专业 Agent 返回 `list[RiskItem]`；
-- Predictor 返回 `PredictionResult`；
-- AnalysisService 返回 `IPOAnalysisResult`；
-- Skill 返回明确的 Pydantic / versioned 结果；
-- 精确金融计算必须由 deterministic Skill 完成，不能交给 LLM；
-- Agent 不得自行创建公共 Schema；
-- 新 Agent / Skill / Provider 必须增加契约或单元测试。
+- Parser 返回稳定 `DocumentChunk`；
+- Agent 返回 `list[RiskItem]`；
+- formal RiskItem 必须有真实 Evidence；
+- exact numeric claim 必须有 deterministic Calculation；
+- Calculation 记录 inputs / formula / result / unit / evidence IDs；
+- 无法核验进入 `pending / needs_review`；
+- Verifier / Supervisor 不创造原始 Evidence；
+- LLM 做 semantic extraction/interpretation，不做 authoritative exact math；
+- 新 Agent / Skill / Provider 必须有测试与受控注册。
 
-## 6. Evidence 与 Verification 规则
-
-1. 所有正式风险必须有 Evidence；
-2. Evidence 必须保留真实页码和原文；
-3. 含具体数字的结论必须有 Calculation；
-4. Calculation 必须记录 inputs、formula、result、unit、evidence IDs；
-5. 无法核验的风险进入 `pending` / `needs_review`；
-6. 不得虚构页码、原文、市场数据或模型输入；
-7. LLM 不得绕过 Specialized Verifier / Supervisor 直接制造 `verified` 结论。
-
-## 7. v0.4 数据与建模规则
-
-当前 v0.4 必须严格遵守 point-in-time 与 no-leakage：
+## 6. 数据 / PIT / Blind 规则
 
 ```text
 2020–2023  Development / Training
@@ -100,182 +96,179 @@ src/ipo_risk/domain/risk_codes.py
 2025       Blind Test
 ```
 
-- 所有 X 特征必须在上市前可获得；
-- 2025 不得用于选特征、阈值、规则或超参数；
-- classification threshold 只能由 Development 数据决定；
-- 数据缺失必须显式记录，不得猜测或静默填补；
-- provenance、source version、feature version、model version 必须可追踪；
-- Market-only / Document-only / Combined 必须使用相同切分公平比较；
-- 未经校准的 score 不得表述为真实概率。
+- X 只使用 listing 前可得事实；
+- 2025 y 不得用于 feature / threshold / rule / prompt / model / retrieval tuning；
+- 2024 不得在看过结果后重新当 tuning set；
+- AUC `< 0.5` 不授权事后反转 score direction；
+- missing 必须显式，不得 fake proxy / neutral zero；
+- provenance / source / feature / model / policy version 必须可追踪；
+- 未校准 score 只能称 `uncalibrated_model_score` / score，不得称真实概率。
 
-Retriever 历史 Locked 10 只保留为历史评测，未来优化 Retriever 必须建立新的 unseen holdout。
+## 7. Frozen boundary
 
-## 8. 前端规则
+PR-A–PR-G 的 frozen contracts / manifests 不因比赛优化而原地重写。
 
-Streamlit 只能：
+Competition additions 使用新 version / sidecar：
 
-1. 构造请求；
-2. 调用 `IPOAnalysisService` / 受控上层 service；
-3. 展示结构化结果；
-4. 展示错误和 provenance。
+```text
+CH-1 new outcome horizons
+CH-2 benchmark / optional P-Core
+CH-3 Competition Market features
+CH-4 trace / conflict
+CH-5 human-review / presentation sidecars
+```
 
-Streamlit 不得直接调用 LLM、Agent、Parser、Repository 或执行金融计算。
+需要改变 frozen boundary 时必须显式提出新 Gate，而不是 silently overwrite。
 
-## 9. 配置与敏感信息
+## 8. 当前 PR-H 规则
 
-- API Key / Token / 密码只从环境变量读取；
-- 不提交 `.env`；
-- 不提交本地绝对路径；
-- 模型名和 Provider 通过配置管理；
-- Mock / real / unavailable 实现通过注册与配置切换；
-- 日志不得泄漏凭证或敏感内容。
+PR-H 当前 formal blockers：
 
-## 10. 代码质量
+```text
+original frozen PR-F runtime or pre-existing hash-bound handoff missing
+formal governed real 2024 prospectus count < 3
+3–5 all-channel case matrix not executed
+```
 
-- 使用类型标注；
-- 公共函数有简短 docstring；
-- 避免循环依赖；
-- 文件 / 模型 / 网络调用必须有明确异常处理；
-- 不得通过宽泛异常静默吞错；
-- 避免导入阶段执行耗时逻辑；
-- 保持函数和模块职责单一。
+禁止为了 PR-H：
 
-## 11. 测试要求
+- retrain/reconstruct PR-F；
+- 根据 2024 重调模型；
+- 提交 target labels / Blind y / raw licensed data 到 product handoff；
+- 用 mock Market/Model 伪装正式 available。
 
-提交前运行相关测试；能运行完整 CI 时优先运行完整测试。
+PR-H PASS 才能创建 v0.4.3 baseline freeze。
 
-完整测试环境：
+## 9. Competition Experiment 规则
+
+每个实验必须写清：
+
+```text
+hypothesis
+input/version
+Development protocol
+Validation protocol
+metrics
+result
+route decision
+```
+
+不允许无限调参。CH-1/2/3 的目的先是定位 signal loss：
+
+```text
+Document extraction quality
+Document representation
+horizon alignment
+Market/IPO context
+model family
+```
+
+只有 evidence 指向具体瓶颈时才做 targeted enhancement。
+
+## 10. CH-2 Document Benchmark 规则
+
+核心 formal risks 至少逐类报告：
+
+```text
+Precision
+Recall
+F1
+Evidence Recall
+Evidence Precision / page correctness
+```
+
+Error attribution 统一为：
+
+```text
+retrieval_miss
+parser_or_table_error
+semantic_agent_error
+calculation_error
+risk_rule_error
+gold_uncertainty
+```
+
+只优先修最差 2–3 类；达标类别不无差别重写。
+
+## 11. CH-3 Market 规则
+
+Competition Market 优先 PIT-safe：
+
+```text
+recent IPO count
+recent IPO break rate
+recent IPO 1D/5D performance
+HSI
+HKEX turnover/activity
+PIT-safe comparable context
+```
+
+Current industry return remains PIT-blocked until historical company classification mapping is valid. HSCI price history alone does not solve classification PIT.
+
+## 12. CH-4 / CH-5 产品规则
+
+Conflict path：
+
+```text
+Agent claim
+→ Conflict Detector
+→ Evidence re-check / targeted retrieval
+→ Skill
+→ Verifier challenge
+→ Final Supervisor arbitration
+```
+
+Unresolved conflict must remain unresolved + uncertainty.
+
+Competition UI target workspaces：
+
+```text
+Risk Command Center
+Risk Map
+Evidence Viewer
+Market & Model
+Agent Trace
+```
+
+Evidence Viewer / Agent Trace 不改变 source identity，不通过 UI 修正后端事实。
+
+## 13. 代码质量与测试
+
+- 类型标注；
+- 公共函数简短 docstring；
+- 明确异常处理，不宽泛吞错；
+- 不在 import 时执行耗时逻辑；
+- 不删除有效测试、不弱化断言迁就错误；
+- 新功能必须补 regression / contract tests。
+
+完整环境：
 
 ```bash
 pip install -e '.[dev,retrieval-research]'
 pytest -q
+python scripts/validate_project.py
 ```
 
-不得：
+CI 绿不等于用户本地资产存在；runtime asset availability 必须单独验证。
 
-- 删除有效测试；
-- 弱化断言以掩盖问题；
-- 修改期望结果迁就错误实现；
-- 未运行测试却声称测试通过。
+## 14. Git / 协作规则
 
-新功能不得破坏 Mock E2E、v0.2 现金跑道回归、v0.3 Multi-Agent 回归及当前数据治理检查。
+1. 不直接把未经测试的开发提交推到 `main`；
+2. 从最新 `main` 建短分支，单 PR 单主题；
+3. PR body 写 scope、tests、governance、remaining blockers；
+4. A / integration owner 每 2–3 天做一次合流 checkpoint；
+5. 不提交大型 PDF、licensed raw data、model bulk、cache、credential、local absolute path；
+6. push / PR / merge 仅在明确授权时执行；
+7. 临时 handoff 优先放 PR/issue/comment，不再新增长期 `HANDOFF_FINAL` / `PREP_V2` 文档。
 
-## 12. 标准任务流程
-
-1. 阅读当前活文档；
-2. 检查实现与测试；
-3. 列出修改范围 / 公共接口影响；
-4. 实现最小必要修改；
-5. 增加或更新测试；
-6. 运行测试并修复失败；
-7. 汇报变更、测试、限制和下一步。
-
-## 13. Git 规则
-
-1. 不直接向 `main` 提交未经测试的代码；
-2. 每个功能使用独立分支；当前若用户明确要求“不要新增分支”，继续使用已指定的现有工作分支；
-3. Commit 信息说明真实修改内容；
-4. PR 说明测试结果与剩余限制；
-5. 公共 Schema 修改必须明确审核；
-6. 不提交大型原始 PDF、模型缓存、临时文件或敏感数据；
-7. 只有用户明确要求时才执行 push / PR / merge 等写操作。
-
-## 14. 组件替换规则
-
-- 新真实实现先通过现有公共接口契约测试；
-- 不删除仍承担降级 / 测试职责的 Mock；
-- Service 不硬编码真实实现；
-- 新组件注册到 ComponentRegistry；
-- 真实模块失败时返回结构化错误；
-- 替换某个模块不能要求无关模块一起重构。
-
-## 15. 当前优先级
-
-CL-1、PR-A、PR-B、PR-C、PR-D、PR-E 与 PR-F 均已完成并冻结。下一正式里程碑是：
-
-> **PR-G — Market Agent + Final Supervisor / CURRENT FORMAL GATE**
-
-PR-C 已完成 governed 438-case coverage、Development-only q25 threshold、resume、determinism 与 Blind Gate，并冻结在 `docs/V04_PR_C_COMPLETION_REPORT.md` 和 `reports/frozen/v04_pr_c_5d_outcome_manifest.json`。不要重新执行或重新设计 PR-C，也不要在没有独立任务授权时启动 PR-D。
-
-### 15.1 PR-B Market-X Core — COMPLETE / FROZEN
-
-当前 Core 契约：
+## 15. 当前五人优先级
 
 ```text
-schema:  v04_ipo_market_context_features_v1
-policy:  ipo_market_context_policy_v1
-15 raw prior-IPO context features
-+ 15 adjacent missing indicators
-= 30 positions
+A  PR-H integration / Gate / v0.4.3 / later release & submission
+B  real-case Evidence QA → CH-2 Document Benchmark
+C  PR-H Market QA → CH-1 outcome data + CH-3 Market Intelligence
+D  frozen PR-F handoff → feature/multi-horizon/model diagnosis
+E  PR-H E2E → CH-4 conflict + CH-5 Evidence Viewer / Competition UI
 ```
 
-当前实现入口：
-
-```text
-src/ipo_risk/market/ipo_market_context_features.py
-scripts/build_v04_ipo_eod_store.py
-scripts/run_v04_pr_b.py
-```
-
-Core 使用当前已治理的 authoritative IPO metadata、prior-IPO offer/context facts、governed IPO EOD，以及在目标 IPO 上市前已经成为历史事实的 prior-IPO 1D/5D outcomes。
-
-硬规则：
-
-- EOD official cohort 按 `official_listed_date.year`，不得按 document `source_year`；
-- target IPO 自身上市日 / 上市后数据不得进入 target X；
-- prior outcome 的 target trading date 必须严格早于 target listing date；
-- 2025 blind y 不得访问；
-- `S_DQ_AMOUNT` 仅是单证券成交额，不是全市场 turnover；
-- resume 不得静默覆盖不同 provenance；
-- every official case 必须在 coverage 中有显式状态。
-
-### 15.2 Market-X Extended
-
-已有的 Extended 契约继续冻结，不被 PR-B Core 重写：
-
-```text
-v04_prelisting_market_features_v1
-v04_market_features_v1
-10 raw features + 10 missing indicators
-= 20 positions
-```
-
-当前真实 Extended 数据缺口仍包括：
-
-```text
-HSI history
-Authoritative industry benchmark mapping
-Industry-index history
-HKEX total-market turnover
-```
-
-这些缺口必须显式保留，但**不是 PR-B Core 必须伪造或用 proxy 补齐的输入**。禁止使用 Hang Seng Bank 代替 HSI、用公司/行业文本猜 benchmark、用 `S_DQ_AMOUNT` 代替 total-market turnover、或用 0 静默填补。
-
-### 15.3 当前 Codex / 本地执行边界
-
-当前状态：
-
-```text
-PR-A  COMPLETE / FROZEN
-PR-B  COMPLETE / FROZEN
-PR-C  COMPLETE / FROZEN
-PR-D  COMPLETE / FROZEN
-PR-E  COMPLETE / FROZEN
-PR-F  COMPLETE / FROZEN
-PR-G  CURRENT FORMAL GATE
-```
-
-PR-B 的 targeted tests、full pytest、5-case pilot、438-case materialization 与 deterministic resume 均已完成。冻结证据：
-
-```text
-docs/V04_PR_B_COMPLETION_REPORT.md
-reports/frozen/v04_pr_b_market_x_core_manifest.json
-```
-
-当前不得重新选择 5D threshold、读取 2025 y，或反复使用 2024 Validation 调参。PR-G 只能消费冻结的 PR-E/PR-F outputs，并保持 `uncalibrated_model_score` 语义。
-
-后续正式 Gate / merge 顺序仍为：
-
-```text
-PR-C → PR-D → PR-E → PR-F → PR-G → PR-H
-```
+完整排期以 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md` 为准。

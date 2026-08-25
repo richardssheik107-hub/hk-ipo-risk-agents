@@ -1,263 +1,361 @@
 # 港股 IPO 风险预警赛题强化与提交总计划
 
-> Status: **PLANNED — START ONLY AFTER PR-H BASELINE E2E FREEZE**  
-> Audit date: **2026-08-23**  
-> Current baseline Gate: **PR-G — Market Agent + Final Supervisor**  
-> Competition: **第五届中国研究生金融科技创新大赛 — 东吴证券“基于多智能体协同的港股 IPO 招股书解析与上市后风险预警探索”**
+> Status snapshot: **2026-08-25**  
+> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real 2024 IPO demo**  
+> Target sequence: **v0.4.3 Baseline Freeze → Competition Beta → v0.4.5 COMPETITION_READY → Submission**
 
-## 1. Why competition hardening comes later
+## 1. 当前基线与问题判断
 
-PR-A / PR-B / PR-C / PR-D / Oracle v2 / PR-E / PR-F 已冻结，当前正式主线为：
-
-```text
-PR-G Market Agent + Final Supervisor
-→ PR-H Streamlit Full E2E + real-case demo
-→ v0.4.3 Baseline E2E Freeze
-→ CH-0..CH-6 Competition Hardening
-→ v0.4.5 Competition Submission Freeze
-```
-
-赛题强化是稳定 baseline 的增量层，不重写已经冻结的 PR-A-F provenance，不破坏 2025 Blind 治理，也不为了补功能提前跳过当前 Gate。
-
-PR-F 的 2024 预测结果较弱：Full Production `M ROC-AUC = 0.4246`、`P = 0.5000`、`PM = 0.4246`，且 PM 与 M 在 frozen LightGBM 下预测等价；Oracle 19-case Validation 的 `OM-M ROC-AUC = -0.0143` 且 95% bootstrap interval 跨零。该结果必须作为诚实 baseline 保存，不允许通过看过 2024 后反转 score、反复调参或挑选口径来“修漂亮”。Competition Hardening 的任务不是掩盖这个结果，而是通过直接风险 benchmark、多 horizon、Market Sentiment、冲突治理和产品审计能力把系统真正做强。
-
-## 2. Competition strategy after PR-F
-
-比赛版本采用“两条腿”策略：
-
-### A. Risk Intelligence / Auditability
+v0.4 的工程闭环已经基本建立：
 
 ```text
-Prospectus
-→ risk extraction
-→ Evidence / Calculation / page / bbox
-→ Verifier
-→ conflict handling
-→ human review
-→ auditable Final Supervisor output
+Prospectus PDF
+→ Document Intelligence
+→ Evidence / Calculation / Verifier
+→ Production Document-X
+→ Market-X
+→ Outcome / Canonical Dataset
+→ Baseline / LightGBM / Explainability
+→ Market Agent / Final Supervisor
+→ Streamlit / Final Report
 ```
 
-这条线直接对应赛题的长文档、多智能体、风险穿透、证据链和可解释要求，不依赖 5D AUC 才成立。
+PR-A–PR-G 已 COMPLETE / FROZEN；PR-H 仍为 `PARTIAL / BLOCKED`。当前缺口不是重新开发 PR-A–PR-F，而是恢复原 frozen PR-F runtime/handoff、补足 3–5 个真实 2024 招股书并完成全通道 E2E 验收。
 
-### B. Market Warning / Predictive Validation
+当前 5D 预测结果必须诚实保留：
 
 ```text
-Market context / sentiment
-+ governed model score
-+ SHAP / uncertainty
-+ 1D / 5D / 20D / 60D outcomes
-→ explainable warning
+PR-F Full Production 2024
+M   ROC-AUC 0.4246
+P   ROC-AUC 0.5000
+PM  ROC-AUC 0.4246
 ```
 
-5D 继续保留为 frozen primary target，但不预设结构性 Document 风险必须在 5D 最强。CH-1 将正式检验更长 horizon；CH-3 将把短期预测增强重点放在 point-in-time IPO heat、近期破发/5D 表现、同行业 IPO context、liquidity/activity 和 authoritative market benchmark 上。
+PM 与 M 完全预测等价，Production Document 100 维在 frozen LightGBM 下未获得 split/gain/SHAP 使用；Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap `[-0.3171, 0.2917]`。这说明当前 **5D target + feature representation + sample + frozen model** 没有验证出稳定 Document 增量，不等于招股书信息本身无价值。
 
-## 3. Competition acceptance scope
-
-最终版本必须逐项覆盖：
-
-### Document risk / anti-hallucination
-
-- 数百页港股招股书 PDF；
-- 标准财务指标；
-- 现金消耗 / cash runway；
-- 对赌 / 赎回；
-- 关联交易；
-- 客户 / 供应商集中度；
-- 核心管线进度；
-- 文本粉饰度 / disclosure softening diagnostic；
-- 每个正式风险绑定真实 Evidence / page / bbox；
-- 数值结论通过 deterministic Skill。
-
-### Multi-agent collaboration
-
-正式角色语义至少覆盖：
+因此比赛强化不以“把 5D AUC 调漂亮”为唯一目标，而同时推进：
 
 ```text
-Financial / 财务穿透
-Legal / 法务合规
-Business
-Market Sentiment
-Final Supervisor / 总控决策
+Track A  Risk Intelligence / Auditability
+Track B  Market Warning / Predictive Validation
+Track C  Multi-Agent Collaboration / Product Experience
 ```
 
-Agent 冲突不能被静默抹平，需要：
+## 2. 五人固定角色
+
+| Role | 固定负责人方向 | 最终责任 |
+| --- | --- | --- |
+| A — Tech Lead / Integration | 总计划、接口、GitHub、CI、Gate、release | 所有模块最终能合、能跑、能复现、能提交 |
+| B — Document Intelligence | Risk / Retriever / Evidence / Calculation / Benchmark | 招股书风险读得准、Evidence 找得准 |
+| C — Market Intelligence / Data | Market-X / IPO Heat / PIT / Outcome data | 市场数据真实、PIT-safe、具有金融含义 |
+| D — Quant / ML | 1D/5D/20D/60D、模型、SHAP、Ablation、统计评估 | 所有效果结论有严谨实验证据 |
+| E — Multi-Agent / Product | Final Supervisor、冲突仲裁、Evidence Viewer、Agent Trace、UI | Agent 真协同，评委能直观看懂结果 |
+
+协作关系：
 
 ```text
-conflict detection
-→ evidence re-check
-→ targeted retrieval / Skill check
-→ verifier challenge
-→ supervisor arbitration
-→ resolved / unresolved
+B Document ───────┐
+C Market ─────────┼→ D evaluation/model ─┐
+B Evidence ───────┘                      ├→ E Supervisor/Product
+C Market interpretation ────────────────┘
+
+A 横跨全部 lane：interface / merge / CI / Gate / release
 ```
 
-### Explainable warning report
+## 3. Phase 0 — v0.4.3 Baseline E2E Freeze（Day 1–3）
 
-最终系统应支持：
+比赛强化正式开始前，先把当前 baseline 收干净。
 
-- 单家 / 批量 IPO 风险穿透报告；
-- Document Evidence 精确页码与 bbox；
-- 市场环境；
-- 模型分数、score semantics、calibration status；
-- 模型驱动因素；
-- Evidence screenshot / highlight；
-- human-in-the-loop reviewer notes / audit trail；
-- Streamlit / API / batch 运行路径。
+### A
 
-## 4. Formal competition metrics
+- 确认最新 `main`、PR/branch 和 frozen boundaries；
+- 审核 PR-H governed runtime；
+- 组织 3–5 case matrix；
+- full CI、determinism、provenance、Blind checks；
+- PR-H PASS 后生成 v0.4.3 freeze/release evidence。
 
-最终必须真实测量：
+### B
+
+准备至少 3 个、目标 3–5 个真实 **2024 Validation IPO**：
 
 ```text
-关键风险要素抽取准确率           >= 80%
-关键 Evidence recall            >= 85%
-Agent / Tool / Evidence trace   = 100%
-逻辑解释有效性                  expert or governed review protocol
+case_id / stock_code / prospectus
+RiskItem / Evidence / Calculation
+page / bbox / Verifier status
+known limitation
 ```
 
-业务验证至少覆盖：
+### C
+
+对 demo cases 验证：
 
 ```text
-1D
-5D   ← primary frozen baseline
-20D
-60D
+Market-X Core
+HSI / turnover Extended where governed
+PIT cutoff / provenance / missing reason
 ```
 
-5D frozen PR-C policy 不因新增 horizon 被反向修改；1D / 20D / 60D 独立 versioned。
+Industry return 继续保持 `INDUSTRY_MAPPING_PIT_BLOCKED`，禁止静态分类、proxy 或 neutral zero 强行补齐。
 
-预测结果需要完整报告 ROC-AUC / PR-AUC / Brier / regression metrics / uncertainty，但本计划不人为规定一个事后选择的 5D AUC 门槛。任何新增模型选择和阈值规则必须只使用允许的 Development protocol；2024 frozen Validation 不重新变成调参集。
+### D
 
-## 5. CH-0 — Competition Scope Lock
-
-建立 machine-readable + human-readable acceptance matrix：
+恢复原 frozen PR-F runtime 或已经生成的 hash-bound sanitized handoff：
 
 ```text
-requirement_id
-requirement
-current_component
-owner
-status
-metric_or_gate
-evidence_artifact
-blocking_issue
+selected case score
+signed top SHAP drivers
+run/model identity
+SHA256SUMS
 ```
 
-额外冻结 improvement protocol：
+禁止 retrain / reconstruct / retune / score inversion。
+
+### E
+
+执行真实：
 
 ```text
-Document improvement 由 CH-2 direct benchmark 触发
-Market improvement   由 CH-1/CH-3 multi-horizon + PIT metrics 触发
-2024 frozen result   不作为新的 tuning target
-2025 Blind y         仍不可访问
+PDF
+→ Document
+→ Evidence
+→ Market
+→ Model
+→ Rule
+→ Final Supervisor
+→ 13-section Report
+→ Streamlit
 ```
 
-PASS：任务 1/2/3 全映射、所有 metric 有计算/评审协议、所有 deliverable 有 owner、无无人负责项。
-
-## 6. CH-1 — Multi-horizon Outcome Extension
-
-新增并版本化：
+### Phase 0 PASS
 
 ```text
-raw_return_1d
-raw_return_20d
-raw_return_60d
+3–5 real 2024 cases
+Document / Market / Model / Rule all governed
+Evidence refs resolve
+model hash matches frozen PR-F
+repeat run deterministic
+2025 Blind y accessed = false
+→ v0.4.3 BASELINE E2E FREEZE
 ```
 
-规则：
+## 4. CH-0 — Competition Scope / Metrics Lock（Day 3–4）
 
-- 5D remain primary；
-- session / suspension / missing-price semantics 与 PR-C 一致或显式版本化；
-- Development / Validation / Blind 治理不变；
-- 不提前使用 2025 y；
-- 最终报告同时展示 1D / 5D / 20D / 60D；
-- 不以“挑出最漂亮 horizon”为目的，而是检验不同风险信号的时间尺度。
+A 主导，全员一次性冻结 Competition Scorecard。后续工作必须能对应一个指标、失败原因或核心 demo 能力。
 
-重点研究问题：
+### Document scorecard
 
 ```text
-结构性 Document 风险是否在 20D / 60D 比 5D 更稳定？
-Market Sentiment 是否主要解释 1D / 5D？
-Document + Market 是否在不同 horizon 具有互补性？
+Precision / Recall / F1 by risk
+Evidence Recall
+Evidence Precision / page correctness
 ```
 
-Owner：D 主导；C market/session QA；A reproducibility；E report。
-
-## 7. CH-2 — Competition-specific Document Risk Hardening
-
-专项评测：
+硬目标：
 
 ```text
-cash burn / cash runway
-redemption / repurchase / VAM
-related-party transactions
-customer concentration
-supplier concentration
-core pipeline progress
-text embellishment / disclosure softening
+关键风险要素抽取准确率 / core quality target >= 80%
+关键 Evidence Recall                     >= 85%
 ```
 
-每个风险类别至少独立报告：
+### Predictive scorecard
+
+```text
+1D / 5D / 20D / 60D
+M / P / PM / O / OM fair comparisons
+ROC-AUC / PR-AUC / Brier
+MAE / RMSE where applicable
+bootstrap uncertainty
+```
+
+不设置“必须事后达到某个 AUC”的人为门槛。
+
+### Multi-Agent / Auditability scorecard
+
+```text
+Agent / Tool / Evidence traceability = 100%
+real conflict cases                  >= 3
+unresolved uncertainty preserved     = 100%
+```
+
+## 5. CH-1 — Multi-Horizon Outcome & Predictive Diagnosis（Day 4–8）
+
+**D 主导，C + A 协作，E 消费结果。**
+
+### C：Outcome v2 数据层
+
+在 frozen 5D 之外独立版本化：
+
+```text
+raw_return_1d / 20d / 60d
+market_adjusted_return_1d / 5d / 20d / 60d
+max_drawdown_20d / 60d
+volatility_20d / 60d
+severe_break_flag
+```
+
+session / suspension / missing-price 规则必须版本化并 fail closed；不得回写 PR-C frozen 5D。
+
+### D：核心实验矩阵
+
+```text
+        1D    5D    20D    60D
+M       ...   ...   ...    ...
+P       ...   ...   ...    ...
+P-Core  ...   ...   ...    ...
+PM      ...   ...   ...    ...
+O       ...   ...   ...    ...
+OM      ...   ...   ...    ...
+```
+
+目的不是挑最好看的 horizon，而是回答：
+
+1. Document 风险是否更适合 20D / 60D；
+2. Market / IPO Sentiment 是否更适合 1D / 5D；
+3. Production 与 Oracle 的差距究竟来自自动抽取，还是 target 本身信号弱。
+
+### A：治理
+
+```text
+2020–2023 Development
+2024 Validation
+2025 Blind y forbidden
+```
+
+不允许针对不同 horizon 反复看 2024 后调参。
+
+## 6. CH-2 — Document Benchmark + Targeted Hardening（Day 4–12）
+
+**B 主导，D + E 协作。**
+
+首先 benchmark，不先重写 Prompt。
+
+### 正式风险集合
+
+```text
+cash_runway
+continuous_loss
+revenue_growth
+customer_concentration
+supplier_concentration
+redemption_rights
+material_litigation_compliance
+precommercial_product
+```
+
+### 每类独立测量
 
 ```text
 Precision
 Recall
 F1
 Evidence Recall
-Evidence page correctness / sample audit
-failure attribution
+Evidence Precision / page correctness
 ```
 
-先 benchmark 当前能力，达标只补测试 / UI；不达标才最小范围增强。任何新增 RiskItem 继续满足 Evidence / Verifier boundary。
+### 错误归因
 
-增强决策必须基于 error attribution：
+每个失败至少归到：
 
 ```text
-retrieval miss
-→ Hybrid / semantic retrieval enhancement
-
-Evidence found but condition/context misunderstood
-→ LLM semantic extraction / reranking
-
-structured fact correct but feature lost
-→ schema / representation adjustment
-
-Verifier rejected correct evidence
-→ verifier policy correction
+retrieval_miss
+parser_or_table_error
+semantic_agent_error
+calculation_error
+risk_rule_error
+gold_uncertainty
 ```
 
-不得因为 PR-F 的 5D AUC 低就默认“全部 438 PDF 必须重新用 LLM 跑一遍”。LLM 只在直接 benchmark 证明语义理解是主要瓶颈时进入正式 Production enhancement；deterministic financial calculations、schema、hash、feature vectorization、provenance 仍由代码负责。
-
-Owner：B 主导；D evaluation；A contract regression；E UI。
-
-## 8. CH-3 — Market Sentiment + Reusable Skills
-
-把 PR-G Market Agent 扩成受治理的 Market Sentiment interpretation，而不是第二个黑箱预测模型。
-
-优先解释短期 1D / 5D 的 point-in-time 信号：
-
-- 发行期 IPO 冷暖；
-- 近期 IPO 破发 / 5D 表现；
-- 同行业历史 IPO context；
-- liquidity / activity；
-- 如取得 authoritative source，再接 governed HSI / industry / turnover Extended。
-
-Competition Skills：
+只针对最差 2–3 类做最小增强：
 
 ```text
-LongDocumentRetrievalSkill
-CashBurnSkill
-ComparableValuationSkill
-SentimentHeatSkill
+Retriever 问题   → BM25 + dense + section-aware / targeted retrieval
+Table 问题       → table parser
+语义理解问题     → constrained LLM semantic extraction / reranking
+Calculation 问题 → deterministic Skill
+规则问题         → versioned rule correction + regression tests
 ```
 
-Comparable / sentiment 输入必须 point-in-time。不得用未来 IPO 表现、target listing 后信息或 fake benchmark 补齐缺失特征。
+D 在每轮后检查 downstream signal 是否变化；E 制作真实 Before/After case。达标类别不无差别重写。
 
-CH-3 的评估必须与 CH-1 multi-horizon 配套，重点判断新增 Market Sentiment 对 1D / 5D 是否提供稳定增量，而不是继续把结构性 Document 风险强行映射为极短期涨跌。
+### CH-2 交付
 
-## 9. CH-4 — Conflict Resolution + Full Traceability
+```text
+Document Benchmark Report
+Risk × Metrics matrix
+Error Attribution
+Before / After cases
+Targeted fix regression tests
+```
 
-统一记录：
+## 7. CH-3 — Market Intelligence / IPO Context（Day 4–12）
+
+**C 主导，D + E 协作。**
+
+重点不是继续堆 raw features，而是形成四组可解释的 point-in-time 市场信号。
+
+### IPO Heat
+
+```text
+recent IPO count
+recent IPO break rate
+recent IPO 1D / 5D performance
+```
+
+### Broad Market
+
+```text
+HSI trend / return
+market volatility
+HKEX turnover / activity
+```
+
+### Comparable IPO
+
+只在 PIT-safe source 下构建：
+
+```text
+industry / comparable historical IPO context
+similar issuance characteristics
+prior IPO performance
+```
+
+### Liquidity / Activity
+
+```text
+market activity
+issuance crowding
+liquidity context
+```
+
+C 同时输出原始 provenance 和结构化解释，例如：
+
+```text
+Market Environment = WEAK
+Reasons:
+- recent IPO break rate elevated
+- HSI 20D negative
+- recent IPO performance weak
+```
+
+D 比较 Core vs Competition Market features；E 将其产品化。行业分类没有 PIT-safe 历史映射前，industry-return feature 继续 unavailable。
+
+## 8. CH-4 — Multi-Agent Conflict Resolution + Trace（Day 10–14）
+
+**E 主导，B + C + A 协作。**
+
+目标从“多 Agent 平行输出”升级为“可观察的协作与复核”。
+
+```text
+Agent claim
+→ Conflict Detector
+→ Evidence re-check / targeted retrieval
+→ deterministic Skill if needed
+→ Verifier challenge
+→ Final Supervisor arbitration
+→ resolved / unresolved + uncertainty
+```
+
+统一 trace 至少记录：
 
 ```text
 agent_name
@@ -273,75 +371,199 @@ resolution_action
 final_status
 ```
 
-Verifier / Supervisor 不创造原始 Evidence；unresolved conflict 必须保留并展示 uncertainty。
+必须准备 3–5 个真实 conflict cases，不以 mock 作为比赛主证据。
 
-Competition target：Agent / Tool / Evidence traceability `= 100%`。
+B 提供 Document Evidence；C 提供 Market Evidence；A 冻结 conflict/trace contract；E 完成 orchestration 与展示。
 
-## 10. CH-5 — Evidence Screenshot + Human Review
+## 9. CH-5 — Competition Product / Evidence Viewer（Day 10–16）
 
-要求：
+**E 主导，全员提供受控数据。**
 
-- page / bbox 定位；
-- screenshot / highlight；
-- reviewer decision / note；
-- 原结论与人工调整分开记录；
-- reviewer audit trail 可追踪。
+这一阶段才重新启动大规模 UI 打磨。最终产品优先固定五个工作区：
 
-这一阶段同时完成 3–5 个代表性真实 IPO 的人工可读案例材料，为最终展示准备“风险结论 → 原文证据 → Agent/Skill → 模型/市场 → Final Supervisor”的完整链路。
+1. **Risk Command Center** — Overall Risk / Top Risks / Evidence Coverage / Market Environment / Model Signal；
+2. **Risk Map** — Financial / Legal / Business / Market 的结构化风险视图；
+3. **Evidence Viewer** — 左侧 PDF page + bbox highlight，右侧 Risk / Evidence / Calculation / Verifier / Agent；
+4. **Market & Model** — IPO Heat / Broad Market / Comparable / score semantics / SHAP / multi-horizon；
+5. **Agent Trace** — Parser → Retriever → Agent → Skill → Verifier → Market Agent → Conflict → Final Supervisor。
 
-## 11. CH-6 — Formal Evaluation + Submission Package
-
-最终正式报告至少分四类结果，而不是只展示单一 AUC：
+输入责任：
 
 ```text
-A. Risk extraction
-   accuracy / precision / recall / F1 by risk category
-
-B. Evidence / governance
-   Evidence recall / page correctness / traceability / human review
-
-C. Predictive validation
-   1D / 5D / 20D / 60D
-   M / P / PM where applicable
-   ROC-AUC / PR-AUC / Brier / regression metrics / uncertainty
-
-D. Product E2E
-   3–5 real IPO cases
-   multi-agent trace
-   Evidence screenshot
-   Final Supervisor report
+B → Risk / Evidence / page / bbox / Calculation
+C → Market interpretation / provenance
+D → model score / SHAP / horizon result / uncertainty
+A → runtime / provenance / trace contracts
+E → product integration
 ```
 
-最终提交包至少包括：
+## 10. Competition Beta Gate（Day 15–18）
+
+A 组织一次完整 Beta Gate：
+
+- full repository tests；
+- Document benchmark v1；
+- multi-horizon experiment v1；
+- Market Intelligence v1；
+- 3+ real conflict traces；
+- 3–5 stable demo cases；
+- Evidence Viewer / Agent Trace 可运行；
+- no Blind leak / no fake market / no probability overclaim。
+
+Beta 后原则上只允许修明确 bug、失败 benchmark、关键 demo usability，不再无边界增加功能。
+
+## 11. CH-6 — Formal Competition Evaluation & Freeze（Day 18–21）
+
+**A + D 主导，全员冻结各自 lane。**
+
+### B freeze
 
 ```text
-source code
-reproducible environment / scripts
-prediction tables
-multi-agent trace / tool logs
-Evidence artifacts
-metric reports
-3–5 representative real-case reports
-Streamlit / API / batch demo
-submission README
+Document Benchmark
+per-risk metrics
+Evidence metrics
+error attribution
 ```
 
-只有所有 acceptance matrix 项有证据并通过冻结审核，才允许标记：
+### C freeze
+
+```text
+Competition Market feature set
+PIT / missingness / provenance audit
+```
+
+### D freeze
+
+```text
+1D / 5D / 20D / 60D result matrix
+ablation
+SHAP
+bootstrap uncertainty
+error analysis
+limitations
+```
+
+### E freeze
+
+```text
+Final Supervisor
+real conflict cases
+Evidence Viewer
+Agent Trace
+Competition UI
+```
+
+### A final Gate
+
+```text
+full tests
+integration / golden / real-case regression
+determinism / provenance
+secret / path / raw-data leakage scan
+reproducibility runbook
+release manifest
+```
+
+PASS 后标记：
 
 ```text
 v0.4.5 COMPETITION_READY
 ```
 
-## 12. Non-goals
+## 12. Final Submission Package
 
-Competition Hardening 不自动授权：
+A 是 Submission Owner，提交目录目标：
+
+```text
+submission/
+├── README
+├── source
+├── configs
+├── demo
+├── evaluation
+├── reports
+├── screenshots
+└── runbook
+```
+
+### A
+
+- 最终目录、安装与运行说明；
+- source revision / release / reproducibility；
+- 保证 `clone → install → run` 可复现。
+
+### B
+
+- Document benchmark；
+- Risk / Evidence examples；
+- targeted enhancement Before/After。
+
+### C
+
+- Market methodology；
+- PIT 说明；
+- Market feature / case examples。
+
+### D
+
+- model / multi-horizon tables；
+- ablation / SHAP / error analysis / limitations。
+
+### E
+
+- final Streamlit；
+- screenshots；
+- 3–5 star demo cases；
+- demo flow / presentation script。
+
+## 13. Three Star Demo Patterns
+
+最终至少选三类，不随机展示十几个 IPO：
+
+### Case A — Document / Evidence
+
+突出 `Risk → Evidence → Calculation → PDF page/bbox`，B + E 负责。
+
+### Case B — Multi-Agent Conflict
+
+突出 `conflict → re-check → Skill/Verifier → Supervisor`，E 主负责。
+
+### Case C — Market / Prediction
+
+突出 `Market Environment → model drivers / SHAP → multi-horizon`，C + D 负责。
+
+A 保证三套 demo 均可重复运行。
+
+## 14. Presentation Ownership
+
+```text
+A  architecture / governance / E2E / reproducibility
+B  Document Intelligence / Evidence / benchmark
+C  Market Intelligence / PIT / IPO Heat
+D  model / multi-horizon / experiments / limitations
+E  Multi-Agent / conflict / Supervisor / live demo
+```
+
+## 15. Non-goals / Stop Rules
+
+禁止：
 
 - 打开 2025 Blind y；
-- 回滚 PR-A-F frozen contracts；
-- 使用 fake market proxy；
-- 根据 2024 frozen Validation 反转 score 或继续调参；
-- 无 direct benchmark 地大规模重写 Retriever / LLM / Prompt / Agent；
-- 把 model score 包装成真实概率；
-- 只挑一个最漂亮 horizon / metric 代表整个系统能力。
+- 回写 PR-A–PR-F frozen contract；
+- 看过 2024 后反转 score 或事后挑 direction；
+- fake market / proxy / neutral-zero missing fill；
+- 把 `uncalibrated_model_score` 称为真实概率；
+- 无 benchmark 地整体重写 Retriever / LLM / Prompt / Agent；
+- 为了比赛展示伪造 conflict、Evidence、Market 或模型结果；
+- 只挑最漂亮 horizon / metric 代表系统整体能力。
 
-若 CH-2 direct benchmark 显示 Document Pipeline 是真实瓶颈，再按 error attribution 启动 targeted Retriever / LLM / Agent enhancement；若 CH-1/CH-3 显示短期预测主要由 Market Sentiment 驱动，则把 1D / 5D 的预测优化重点放在受治理的 Market side，同时保留 Document side 的结构性风险解释价值。
+每个优化方向最多进行有限轮、有明确假设的实验：
+
+```text
+hypothesis
+→ governed experiment
+→ accept result
+→ route decision
+```
+
+不进入无限调参循环。

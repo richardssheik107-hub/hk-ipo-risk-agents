@@ -1,42 +1,59 @@
 # Documentation Index
 
-> Audit date: **2026-08-24**
-> PR-G: **COMPLETE / FROZEN**
-> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real IPO demo**
-> PR-A / PR-B / PR-C / PR-D: **COMPLETE / FROZEN**  
-> Oracle v2 / PR-E / PR-F: **COMPLETE / FROZEN**
+> Audit date: **2026-08-25**  
+> PR-A–PR-G: **COMPLETE / FROZEN**  
+> Current formal Gate: **PR-H PARTIAL / BLOCKED**  
+> Next release: **v0.4.3 Baseline E2E Freeze**
 
-本目录采用“**少量活文档 + 冻结完成记录 + 技术契约**”的维护方式，避免阶段推进后旧 handoff / readiness / preparation 文档继续制造口径冲突。
+本目录采用“**少量活文档 + 冻结完成记录 + 稳定技术/研究参考**”的维护方式。阶段性 handoff、临时 readiness、过期 runbook 在其事实已进入 completion report / frozen manifest / active plan 后删除，历史保留在 Git history。
 
 ## 1. Source-of-truth hierarchy
 
-发生口径冲突时，按以下优先级判断：
+发生冲突时，按以下优先级判断：
 
 1. 代码中的 Pydantic / Protocol / validator；
-2. `reports/frozen/*.json` 冻结 manifest；
-3. 对应阶段的 `*_COMPLETION_REPORT.md`；
-4. 当前活文档与正式 Gate review；
-5. 历史研究文档 / Git history。
+2. `reports/frozen/*.json`；
+3. 对应 `*_COMPLETION_REPORT.md` / formal Gate review；
+4. 当前 active docs；
+5. research reference / Git history。
 
-旧 planning / handoff 文档不能覆盖已经冻结的 manifest 或 completion report。PR-G 的真实本地运行已通过 deterministic freezer，最终 machine-readable manifest 已进入 `reports/frozen/`。
+Active planning 不改写 frozen historical facts；historical completion report 也不决定“当前下一 Gate”。
 
-## 2. Active documents — 当前维护
+## 2. Active documents
 
-| 文档 | 作用 |
+| Document | Purpose |
 | --- | --- |
-| [`ROADMAP.md`](ROADMAP.md) | 当前进度、唯一下一 Gate、后续顺序 |
-| [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) | PR-G A 审核、protected-interface 裁定、PR-H runtime 决策 |
-| [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) | v0.4 baseline E2E 总计划与 post-PR-F 战略 |
-| [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) | A/B/C/D/E 角色边界与当前任务 |
-| [`PROJECT_SPEC.md`](PROJECT_SPEC.md) | 产品目标、信任边界、成功标准 |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 模块、依赖、Production / Oracle 隔离 |
-| [`DATA_SCHEMA.md`](DATA_SCHEMA.md) | 公共数据与 v0.4 modeling contracts |
-| [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) | 最新真实数据 readiness |
-| [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) | PR-H baseline E2E 后的 CH-0..CH-6 |
+| [`ROADMAP.md`](ROADMAP.md) | 当前 Gate、里程碑、压缩时间线 |
+| [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) | baseline → competition 的总策略 |
+| [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) | A/B/C/D/E 从现在到提交的协同分工 |
+| [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) | CH-0..CH-6、Beta、submission 完整验收计划 |
+| [`PROJECT_SPEC.md`](PROJECT_SPEC.md) | 产品目标、范围、信任边界、Definition of Done |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | 运行时、数据、模型、Competition layers 的依赖边界 |
+| [`DATA_SCHEMA.md`](DATA_SCHEMA.md) | frozen baseline 与 planned versioned competition contracts |
+| [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) | 原始赛事数据宇宙与数据治理 |
+| [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) | 当前 measured readiness |
+| [`UI_DESIGN_REFERENCE_2026-08-24.md`](UI_DESIGN_REFERENCE_2026-08-24.md) | CH-5 产品设计参考，不作为当前 Gate |
 
-## 3. Completion / gate records
+## 3. Current execution chain
 
-这些文档记录已完成事实或正式 Gate 审阅，不作为任意改写的 planning 文档：
+```text
+PR-A Document-X                     COMPLETE / FROZEN
+→ PR-B Market-X Core                COMPLETE / FROZEN
+→ PR-C 5D Outcome                   COMPLETE / FROZEN
+→ PR-D Canonical Dataset            COMPLETE / FROZEN
+→ Oracle v2                         COMPLETE / FROZEN / EVALUATION-ONLY
+→ PR-E Baseline + Oracle            COMPLETE / FROZEN
+→ PR-F LightGBM + Explainability    COMPLETE / FROZEN
+→ PR-G Market Agent + Supervisor    COMPLETE / FROZEN
+→ PR-H Full E2E                     PARTIAL / BLOCKED
+→ v0.4.3 Baseline Freeze
+→ CH-0..CH-6 Competition Hardening
+→ Competition Beta
+→ v0.4.5 COMPETITION_READY
+→ Submission
+```
+
+## 4. Completion / Gate records — keep immutable as historical evidence
 
 - [`V04_PR_A_COMPLETION_REPORT.md`](V04_PR_A_COMPLETION_REPORT.md)
 - [`V04_PR_B_COMPLETION_REPORT.md`](V04_PR_B_COMPLETION_REPORT.md)
@@ -44,85 +61,68 @@
 - [`V04_PR_D_COMPLETION_REPORT.md`](V04_PR_D_COMPLETION_REPORT.md)
 - [`V04_PR_E_COMPLETION_REPORT.md`](V04_PR_E_COMPLETION_REPORT.md)
 - [`V04_PR_F_COMPLETION_REPORT.md`](V04_PR_F_COMPLETION_REPORT.md)
-- [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md) — COMPLETE / FROZEN
-- [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md) — A review provenance
+- [`V04_PR_G_COMPLETION_REPORT.md`](V04_PR_G_COMPLETION_REPORT.md)
+- [`V04_PR_G_A_GATE_REVIEW.md`](V04_PR_G_A_GATE_REVIEW.md)
+- [`V04_PR_H_COMPLETION_REPORT.md`](V04_PR_H_COMPLETION_REPORT.md) — current formal blocker record
 - [`V04_ORACLE_V2_COMPLETION_REPORT.md`](V04_ORACLE_V2_COMPLETION_REPORT.md)
+
+## 5. Stable governance / technical references
+
+Keep because they contain durable contracts or evidence not duplicated by the active plan:
+
 - [`V04_PR_D_INPUT_BINDING.md`](V04_PR_D_INPUT_BINDING.md)
+- [`V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md`](V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md)
 - [`V04_ORACLE_REFRESH_GOVERNANCE.md`](V04_ORACLE_REFRESH_GOVERNANCE.md)
-
-已冻结阶段的 machine-readable truth 位于 `reports/frozen/`。PR-G 最终 manifest 已由本地真实运行和 A freezer 校验生成。
-
-## 4. Stable technical / research references
-
-以下文档仍有长期技术价值，但不是当前执行入口：
-
-- [`V04_PR_A_RUNBOOK.md`](V04_PR_A_RUNBOOK.md) — PR-A frozen reproducibility reference
-- [`research/V04_5D_OUTCOME_POLICY.md`](research/V04_5D_OUTCOME_POLICY.md) — frozen PR-C policy
-- [`research/V04_CANONICAL_MODELING_DATASET.md`](research/V04_CANONICAL_MODELING_DATASET.md) — frozen PR-D canonical contract
+- [`V04_ORACLE_GOLD_COVERAGE_AUDIT.md`](V04_ORACLE_GOLD_COVERAGE_AUDIT.md)
+- [`V04_C_HSI_SOURCE_INTEGRATION_REPORT.md`](V04_C_HSI_SOURCE_INTEGRATION_REPORT.md)
+- [`research/V04_5D_OUTCOME_POLICY.md`](research/V04_5D_OUTCOME_POLICY.md)
+- [`research/V04_CANONICAL_MODELING_DATASET.md`](research/V04_CANONICAL_MODELING_DATASET.md)
 - [`research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md`](research/V04_DOCUMENT_MARKET_FEATURE_CONTRACT.md)
 - [`research/V04_MARKET_FOUNDATION.md`](research/V04_MARKET_FOUNDATION.md)
 - [`research/V04_PRELISTING_MARKET_FEATURES.md`](research/V04_PRELISTING_MARKET_FEATURES.md)
-- [`research/V04_PR_B_INTEGRATION_ACCEPTANCE.md`](research/V04_PR_B_INTEGRATION_ACCEPTANCE.md)
 - [`research/ORACLE_DOCUMENT_MODELING_PIPELINE.md`](research/ORACLE_DOCUMENT_MODELING_PIPELINE.md)
-- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — targeted restart constraints only
-- [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md)
-
-## 5. Current execution chain
-
-```text
-PR-A Document X                     COMPLETE / FROZEN
-→ PR-B Market-X Core                COMPLETE / FROZEN
-→ PR-C 5D Outcome Y                 COMPLETE / FROZEN
-→ PR-D Canonical Dataset            COMPLETE / FROZEN
-→ PR-E Baseline + Oracle Diagnostic COMPLETE / FROZEN
-→ PR-F LightGBM + Explainability    COMPLETE / FROZEN
-→ PR-G Market Agent + Supervisor    COMPLETE / FROZEN
-→ PR-H Streamlit Full E2E           CURRENT FORMAL GATE
-→ v0.4.3 Baseline E2E Freeze
-→ CH-0..CH-6 Competition Hardening
-→ v0.4.5 Competition Submission Freeze
-```
+- [`research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md`](research/RETRIEVER_V3_PREFLIGHT_AND_RERANKER_V11_DECISIONS.md) — only if CH-2 justifies reopening retrieval research
 
 ## 6. Current measured facts
 
 ```text
-Official 2020–2024 cases           438
-Production Document-X              438 / 438, 100 dims
-Market-X Core                      438 / 438, 30 positions
-5D outcome available               424 / 438
-Canonical model-ready              424 = 354 Dev + 70 Val
-Oracle v1                          historical immutable: 60 materialized
-Oracle v2                          98 materialized / 96 strict usable
-Oracle v2 split                    77 Dev / 19 Val
-2025 Blind y accessed              NO
+Official cases                        438
+Production Document-X                 438 / 438, 100 dims
+Market-X Core                         438 / 438, 30 positions
+5D outcome                            424 / 438
+Canonical                             424 = 354 Dev + 70 Val
+Oracle v2 strict                      96 = 77 Dev + 19 Val
+HSI Extended readiness                438 / 438
+HKEX turnover 20D readiness           438 / 438
+production industry return              0 / 438, PIT_BLOCKED
+2025 Blind y accessed                 NO
 ```
 
-Market-X Extended 已接入 governed CSMAR HSI daily close；438/438 官方 case 的 HSI 5D、20D 与 20-session volatility 已通过 PIT readiness。industry benchmark / total-market turnover 仍显式缺失。
+## 7. Current interpretation
 
-PR-F frozen 2024 Full Production classification：`M ROC-AUC 0.4246`、`P 0.5000`、`PM 0.4246`。该结果保留为诚实 baseline；不能通过查看 2024 后反转 score、继续调参或重写口径来制造更高正式结果。
+PR-F Full Production 2024: `M 0.4246 / P 0.5000 / PM 0.4246 ROC-AUC`; Production PM=M under the frozen LightGBM policy. This is a weak predictive baseline, not an engineering failure and not proof that prospectus information has no value.
 
-## 7. Current strategic interpretation
-
-PR-E / PR-F 没有验证出稳定 Document 增量，也没有验证出稳定 Oracle ceiling。因此当前既不宣布“招股书无信号”，也不直接启动大规模 LLM 重构。
-
-当前先完成产品闭环：
+Next research order is deliberate:
 
 ```text
-PR-G local freeze
-→ PR-H governed Market-X runtime
-→ PR-H hash-bound PR-F per-case runtime
-→ 3–5 real-case E2E
-→ v0.4.3 baseline freeze
+Document benchmark
+→ feature representation audit
+→ 1D/5D/20D/60D diagnosis
+→ IPO-specific Market Intelligence
+→ only then decide whether Retriever / LLM / model family must change
 ```
-
-PR-H freeze 后再进入 CH-1 multi-horizon、CH-2 direct risk/Evidence benchmark、CH-3 Market Sentiment、CH-4 conflict/trace、CH-5 screenshot/human review、CH-6 competition evaluation。
-
-Document enhancement 由 CH-2 的 Precision / Recall / F1 / Evidence Recall 与 error attribution 触发；短期 1D / 5D 预测增强优先在 CH-3 研究 point-in-time Market Sentiment / IPO context。Competition 目标不能简化成单一 5D AUC。
 
 ## 8. Documentation lifecycle rule
 
-阶段性 handoff、preflight、temporary readiness 和 one-off audit 文档在对应正式 Gate 冻结后应删除，历史通过 Git history 保留；只有仍约束未来决策的研究结论保留在 `docs/research/`。
+Delete a document when all are true:
 
-`docs/annotation/gpt_expert_v1_1/` 属于 governed annotation asset，不按普通叙述性文档清理，也不在本次文档去重中改写。
+1. it is a one-off handoff / preflight / execution note;
+2. its stage is complete or its findings are superseded;
+3. durable facts already exist in code, frozen manifest, completion report or active plan;
+4. no unique future governance constraint would be lost.
 
-完整前一轮清理记录见 [`DOCUMENTATION_AUDIT_2026-08-23.md`](DOCUMENTATION_AUDIT_2026-08-23.md)。
+Do **not** bulk-delete completion reports, frozen governance records, annotation assets or research references solely because their stage is old.
+
+Current cleanup decisions are recorded in [`DOCUMENTATION_AUDIT_2026-08-25.md`](DOCUMENTATION_AUDIT_2026-08-25.md).
+
+`docs/annotation/gpt_expert_v1_1/` is governed annotation data and is not treated as narrative documentation cleanup scope.
