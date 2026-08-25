@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased — v0.4 table scenarios reachable from the UI
+
+The v0.4 table configs shipped without a scenario entry, so the table document
+path was unreachable for anyone driving the product through Streamlit. Selecting
+"v0.4 AI 模式 + Final Supervisor" kept `parser: pymupdf` + `financial_extractor:
+regex`, and the whole table path stayed invisible to the v0.4 workflow. Confirmed
+on 0501.HK (豪威集成電路): the flat-text path produced **zero** financial risks —
+`revenue_growth` failed `metric_label_not_found`, `continuous_loss` failed
+`unsupported_layout` — while the same document on the table path extracts
+`revenue_growth` (+15.13%, 9M2024 → 9M2025, CNY thousand) and generates a
+`continuous_loss` pending risk.
+
+### Fixed
+
+- **`configs/v04_offline_table.yaml` and `configs/v04_ai_table.yaml` had no UI
+  scenario.** Both are now wired into `SCENARIOS` next to their flat-text
+  counterparts. No config file, workflow, agent or extractor changed; the two
+  legacy v0.4 scenarios keep their exact wiring, and the default scenario is
+  still `v0.4 离线模式 + Final Supervisor`.
+
+### Added
+
+- `tests/contract/test_ui_exposes_every_runtime_config.py` — a shipped runtime
+  config with no scenario entry now fails the build. The test parses
+  `SCENARIOS` with `ast` rather than importing `streamlit_app.py`, which renders
+  at import time, and pins each v0.4 label to the document path it promises.
+
 ## Unreleased — v0.3 opt-in table path: column geometry and mixed annual/interim statements
 
 Scoped strictly to the opt-in table path (`parser: pymupdf_table` +

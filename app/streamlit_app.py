@@ -49,6 +49,8 @@ from ipo_risk.services.analysis_service import IPOAnalysisService
 
 SCENARIO_PREDICTOR_FAILURE = "预测器故障降级演示"
 SCENARIO_V04_OFFLINE = "v0.4 离线模式 + Final Supervisor"
+SCENARIO_V04_OFFLINE_TABLE = "v0.4 离线模式（表格）+ Final Supervisor"
+SCENARIO_V04_AI_TABLE = "v0.4 AI 模式（表格）+ Final Supervisor"
 
 SCENARIOS = {
     "Mock 架构演示": ("configs/mock.yaml", False),
@@ -58,7 +60,9 @@ SCENARIOS = {
     "v0.3 增强版（AI）": ("configs/v03_ai.yaml", True),
     "v0.3 增强版（AI + 表格）": ("configs/v03_ai_table.yaml", True),
     SCENARIO_V04_OFFLINE: ("configs/v04_offline.yaml", True),
+    SCENARIO_V04_OFFLINE_TABLE: ("configs/v04_offline_table.yaml", True),
     "v0.4 AI 模式 + Final Supervisor": ("configs/v04_ai.yaml", True),
+    SCENARIO_V04_AI_TABLE: ("configs/v04_ai_table.yaml", True),
     SCENARIO_PREDICTOR_FAILURE: ("configs/mock.yaml", False),
 }
 
