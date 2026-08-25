@@ -34,16 +34,17 @@ class IPOAnalysisService:
         if settings.pr_f_run_dir:
             modes["model_prediction"] = "frozen_pr_f_sanitized_or_verified"
         if settings.workflow_version == "enhanced_v2":
-            llm_status = (
-                "offline_unavailable"
-                if settings.llm_provider == "unavailable"
-                else "available"
-                if settings.llm_provider == "openai_compatible"
-                and all((settings.llm_api_key, settings.llm_base_url, settings.llm_model))
-                else "credentials_unavailable"
-                if settings.llm_provider == "openai_compatible"
-                else settings.llm_provider
-            )
+            remote_llm_providers = {"openai_compatible", "openai_responses"}
+            if settings.llm_provider == "unavailable":
+                llm_status = "offline_unavailable"
+            elif settings.llm_provider in remote_llm_providers:
+                llm_status = (
+                    "available"
+                    if all((settings.llm_api_key, settings.llm_base_url, settings.llm_model))
+                    else "credentials_unavailable"
+                )
+            else:
+                llm_status = settings.llm_provider
             modes.update(
                 {
                     "workflow": "enhanced_v2",
