@@ -1,19 +1,20 @@
 # 赛事数据概览
 
-> Audit snapshot: **2026-08-23**  
-> Purpose: 描述原始赛事数据宇宙与来源治理；当前建模 readiness 以 `research/V04_DATA_READINESS.md` 为准。
+> Audit snapshot: **2026-08-25**  
+> Purpose: 描述原始赛事数据宇宙、v0.4 official cohort 与 competition-stage 数据治理。  
+> Measured readiness 以 [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) 为准。
 
 ## 1. Raw competition data universe
 
 | 数据 | 规模 | 说明 |
 | --- | ---: | --- |
-| 招股书 | 565 份 | PDF corpus |
-| 公司资料 | 4501 行 / 25 列 | GB18030 CSV |
-| 证券资料 | 803 行 / 30 列 | 已隔离，不作为 v0.4 eligibility gate |
-| 日行情 | 4,117,539 行 / 22 列 | GB18030 CSV |
+| 招股书 | 565 份 | historical PDF corpus |
+| 公司资料 | 4501 行 / 25 列 | supplemental company data |
+| 证券资料 | 803 行 / 30 列 | isolated, not v0.4 eligibility authority |
+| 日行情 | 4,117,539 行 / 22 列 | governed EOD source |
 | 行情代码 | 3756 | `S_INFO_WINDCODE` |
 
-历史 document corpus 年度分布不等于 v0.4 modeling split。`source_year` 只描述文档来源目录，不是 authoritative listing year。
+Historical document `source_year` is not the modeling split authority.
 
 ## 2. Historical document corpus
 
@@ -26,21 +27,19 @@
 2025  116
 ```
 
-历史 v0.2/v0.3 的 2410.HK development exception 只用于旧文档链路回归，不进入 v0.4 market/model split policy。
+The frozen v0.3 2410.HK development exception remains a document-chain regression detail and does not redefine v0.4 market/model cohorts.
 
-## 3. v0.4 official modeling cohort
+## 3. v0.4 official cohort
 
-v0.4 使用 authoritative official listing identity / listing date：
+Authoritative split uses official listing date:
 
 ```text
-2020–2023 official listing year  → Development / Training
-2024 official listing year       → Validation
-2025 official listing year       → Blind Test
+2020–2023 official listing year → Development / Training
+2024 official listing year      → Validation
+2025 official listing year      → Blind Test
 ```
 
-2020–2024 official modeling universe：**438 cases**。
-
-年度：
+Official 2020–2024 universe: **438 cases**.
 
 ```text
 2020  125
@@ -50,90 +49,144 @@ v0.4 使用 authoritative official listing identity / listing date：
 2024   70
 ```
 
-因此旧 565-document corpus 数量不能直接推导 438-case modeling cohort，也不能用 `source_year` 代替 `official_listed_date.year`。
+## 4. Official identity bridge
 
-## 4. Official metadata bridge
-
-`HK_Official_Merged_565_First_with_IPO.xlsx` 是只读 authoritative supplemental source；受控 bridge：
+Controlled bridge:
 
 ```text
 data/catalog/ipo_official_master_bridge.csv
 ```
 
-它提供 / 连接：
+It binds:
 
 ```text
 case identity
 stock code
 listing date
-issue price
-board / listing method
+issue/base price where authoritative
+board / listing metadata
 industry metadata
 source provenance
 ```
 
-`disclosure_date` 不是 listing date。隔离的 Security Master / description 不能用来猜测缺失 listing date、issue price 或 eligibility。
+`disclosure_date` is not listing date. Static supplemental fields do not automatically become PIT-safe features.
 
-## 5. EOD coverage vs outcome coverage
-
-这是最容易混淆的两个口径：
+## 5. Document / Market / Outcome baseline coverage
 
 ```text
-Governed EOD securities matched     432 / 438
-5D outcome available                424 / 438
-5D outcome unavailable               14
+Production Document-X        438 / 438
+Market-X Core                438 / 438
+Governed EOD match            432 / 438 securities
+5D Outcome                    424 / 438
+Canonical model-ready         424 = 354 Dev + 70 Val
 ```
 
-6 个 EOD-unmatched case 不等于只有 6 个 outcome-unavailable case。5D target 还要求 authoritative base price；最终 PR-C unavailable 为：
+Outcome missing reasons:
 
 ```text
 missing_base_price      12
 no_eligible_session      2
 ```
 
-所以所有后续 modeling / coverage 文档必须使用 PR-C frozen 424/14 target contract，而不是 PR-B 432/6 EOD coverage。
+EOD match coverage and Outcome coverage are distinct and must never be substituted for one another.
 
-## 6. Current frozen data chain
+## 6. Market reference readiness
 
-```text
-Prospectus / official identity
-→ PR-A Production Document-X       438 / 438
+### Core
 
-Governed metadata / IPO EOD
-→ PR-B Market-X Core               438 / 438
+`Market-X Core` is frozen at 438/438 with strict PIT audit.
 
-Official issue price + sessions
-→ PR-C 5D Outcome                  424 / 438
-
-Document + Market + Outcome
-→ PR-D Canonical Dataset           424 = 354 Dev + 70 Val
-```
-
-Oracle v2 是独立 evaluation-only research sidecar：
+### Extended accepted inputs
 
 ```text
-98 materialized
-96 strict usable
-77 Dev / 19 Val
+HSI return / volatility readiness       438 / 438
+HKEX Main Board + GEM turnover 20D      438 / 438
+HSCI official price series              12 accepted series
 ```
 
-## 7. Source governance rules
+### Industry limitation
 
-- official universe membership 决定 v0.4 eligibility；
-- `official_listed_date.year` 决定 modeling cohort；
-- target IPO 上市后数据不能进入该 IPO 的 X；
-- prior IPO outcomes 只有在对应 target session 已发生且早于目标 listing 时才能进入 prior-IPO context；
-- missing HSI / industry benchmark / total-market turnover 不允许用 fake proxy 或 neutral zero 填补；
-- 2025 Blind y 在正式开放前禁止访问。
+```text
+production industry_return_5d             0 / 438
+production industry_return_20d            0 / 438
+```
 
-## 8. Source-of-truth order
+Reason: the available company classification is a static Institution-source record without historical effective/listing-time semantics. HSCI index history cannot repair an unsafe company-to-industry temporal mapping.
 
-数据口径冲突时：
+Allowed behavior: explicit `INDUSTRY_MAPPING_PIT_BLOCKED` / `MISSING_INDUSTRY_CLASSIFICATION`.
 
-1. frozen manifests / validators；
-2. completion reports；
-3. `research/V04_DATA_READINESS.md`；
-4. `research/V04_MARKET_FOUNDATION.md`；
-5. 本文件提供原始 corpus 背景。
+Forbidden behavior:
 
-本文件不决定“当前下一 Gate”；当前进度见 `ROADMAP.md`。
+```text
+static current classification → pretend historical PIT mapping
+single-security amount → pretend total-market turnover
+fake benchmark
+neutral zero fill
+future IPO outcomes in target IPO features
+```
+
+## 7. Oracle research sidecar
+
+```text
+Oracle v2 materialized      98
+strict usable               96
+Development / Validation    77 / 19
+feature count              142
+evaluation_only            true
+production_consumable      false
+```
+
+Oracle is not a production data source.
+
+## 8. Competition-stage data extensions
+
+After v0.4.3, new data work must be independently versioned.
+
+### CH-1 Outcome sidecar
+
+Planned:
+
+```text
+1D / 20D / 60D absolute returns
+market-adjusted returns
+20D / 60D maximum drawdown
+20D / 60D volatility
+severe-break flag
+```
+
+Frozen 5D PR-C artifacts are not rewritten.
+
+### CH-3 Market Intelligence
+
+Priority PIT-safe data families:
+
+```text
+recent IPO count
+recent IPO break rate
+recent IPO 1D / 5D performance
+HSI trend / volatility
+HKEX turnover / market activity
+PIT-safe comparable IPO context
+```
+
+Any new feature must state `as_of`, source, cutoff semantics, availability/missing reason and version.
+
+## 9. Source governance
+
+- official membership controls eligibility;
+- official listing year controls split;
+- target IPO post-listing data cannot enter that IPO's X;
+- prior IPO outcome may enter context only after that outcome was actually observable and before target listing cutoff;
+- missing source remains missing;
+- 2025 Blind y remains closed until formally authorized.
+
+## 10. Source-of-truth order
+
+1. code validators / Pydantic contracts;
+2. frozen manifests;
+3. completion reports;
+4. `research/V04_DATA_READINESS.md`;
+5. stable market/data research references;
+6. this overview for corpus context.
+
+Current Gate and schedule are defined in [`ROADMAP.md`](ROADMAP.md), not here.
