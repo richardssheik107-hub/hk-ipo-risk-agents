@@ -415,3 +415,146 @@ def test_stage_one_shortest_text_values_regress_without_company_rules() -> None:
     ]
     assert customer.largest_counterparty_pct == Decimal("37.5")
     assert customer.top_five_pct == Decimal("68.0")
+
+
+def concentration_from_many(concentration_type: str, texts: list[str]):
+    """Run the concentration path over several evidence items on one period."""
+    chunks = {
+        f"c-{index}": DocumentChunk(
+            document_id="doc", chunk_id=f"c-{index}", page=20 + index, text=text
+        )
+        for index, text in enumerate(texts)
+    }
+    evidence = [
+        Evidence(
+            evidence_id=f"e-{index}",
+            document_id="doc",
+            chunk_id=f"c-{index}",
+            page=20 + index,
+            text=text,
+        )
+        for index, text in enumerate(texts)
+    ]
+    return V03FinancialFactExtractor()._extract_concentration(
+        concentration_type, evidence, chunks
+    )
+
+
+def test_a_label_split_by_a_hard_line_wrap_still_matches() -> None:
+    """PDF text wraps mid-label ("最大客\\n戶"), which used to lose the label."""
+    result = concentration(
+        "customer",
+        "截至2023年6月30日止六個月，來自我們最大客\n戶的收入佔總收入的25.8%，"
+        "而前五大客戶佔總收入的50.3%。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("25.8")
+    assert result.top_five_pct == Decimal("50.3")
+
+
+def test_an_unmatched_label_does_not_donate_its_percentages_to_the_previous_one() -> None:
+    """The failure mode is a wrong value, not a missing one.
+
+    When a wrapped label went unmatched its percentages fell inside the
+    preceding label's segment, so the top-five figure silently became the
+    largest-customer figure.
+    """
+    result = concentration(
+        "customer",
+        "截至2023年6月30日止六個月，前五大客戶佔總收入的50.3%，"
+        "而最大客\n戶佔總收入的25.8%。",
+    )
+
+    assert result.top_five_pct == Decimal("50.3")
+    assert result.largest_counterparty_pct == Decimal("25.8")
+
+
+def test_a_supplier_paragraph_does_not_donate_percentages_to_a_customer_label() -> None:
+    """Both kinds of label bound a segment even though only one collects values."""
+    result = concentration(
+        "customer",
+        "截至2023年6月30日止六個月，最大客戶佔總收入的25.8%。"
+        "最大供應商佔採購總額的24.9%，前五大供應商佔採購總額的62.4%。",
+    )
+
+    assert result.largest_counterparty_pct == Decimal("25.8")
+    assert result.top_five_pct is None
+
+
+def test_the_wrap_tolerance_does_not_join_distant_text() -> None:
+    """A bounded gap keeps unrelated table cells from forming a label."""
+    result = concentration(
+        "customer",
+        "截至2023年6月30日止六個月\n最大\n\n\n\n客戶\n25.8%\n50.3%",
+    )
+
+    assert result.status == ExtractionStatus.NOT_FOUND
+    assert result.issues == ["concentration_label_not_found"]
+
+
+def test_a_narrative_period_series_validates_the_percentage_count() -> None:
+    """The sentence names its own periods, and a later sentence refers back.
+
+    Only the interim stub resolves to a date, so counting resolved dates alone
+    made a correct four-value series look like a count mismatch.
+    """
+    result = concentration(
+        "customer",
+        "於2022年、2023年、2024年以及截至2025年6月30日止六個月，"
+        "前五大客戶對總收入的貢獻分別為55.2%、55.9%、51.0%及50.3%。"
+        "於往績記錄期間各年度╱期間，來自我們最大客\n戶的收入分別佔總收入的"
+        "24.8%、30.0%、27.8%及25.8%。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end.isoformat() == "2025-06-30"
+    assert result.period_months == 6
+    assert result.top_five_pct == Decimal("50.3")
+    assert result.largest_counterparty_pct == Decimal("25.8")
+
+
+def test_a_lone_year_is_a_mention_not_a_period_series() -> None:
+    """"於2011年上市" must not be read as a one-period series."""
+    result = concentration(
+        "customer",
+        "客戶H於2011年上市。截至2023年6月30日止六個月，"
+        "最大客戶佔30%及35%，五大客戶佔60%。",
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "value_period_count_mismatch" in result.issues
+
+
+def test_a_page_that_read_no_percentages_cannot_veto_a_clean_reading() -> None:
+    """A partial reading describes its own view, not a defect in the merge."""
+    result = concentration_from_many(
+        "customer",
+        [
+            "截至2023年6月30日止六個月，最大客戶佔總收入的25.8%，"
+            "前五大客戶佔總收入的50.3%。",
+            "以下為截至2023年6月30日止六個月來自前五大客戶的收入明細：客戶 收入 客戶類型",
+        ],
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("25.8")
+    assert result.top_five_pct == Decimal("50.3")
+
+
+def test_a_contradicting_page_still_blocks_a_clean_reading() -> None:
+    """Governing must not silence a genuine disagreement about the same period."""
+    result = concentration_from_many(
+        "customer",
+        [
+            "截至2023年6月30日止六個月，最大客戶佔總收入的25.8%，"
+            "前五大客戶佔總收入的50.3%。",
+            "截至2023年6月30日止六個月，最大客戶佔總收入的31.4%，"
+            "前五大客戶佔總收入的50.3%。",
+        ],
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_values_for_same_period" in result.issues
+    assert result.largest_counterparty_pct is None
