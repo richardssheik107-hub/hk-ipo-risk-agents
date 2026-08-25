@@ -23,6 +23,7 @@ from ipo_risk.agents.market_context import (
     GovernedPRBMarketContextProvider,
     SnapshotMarketContextProvider,
 )
+from ipo_risk.agents.market_intelligence import MarketIntelligenceAgent
 from ipo_risk.agents.mock import (
     MockBusinessAgent,
     MockFinancialAgent,
@@ -76,6 +77,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
 )
 from ipo_risk.workflows.enhanced_v2 import EnhancedV2Workflow
 from ipo_risk.workflows.mvp_v1 import MVPWorkflow
+from ipo_risk.workflows.v04_ai import V04AIWorkflow
 
 
 class ComponentRegistry:
@@ -109,7 +111,11 @@ def default_registry() -> ComponentRegistry:
         "financial_agent": {"mock": MockFinancialAgent, "cash_runway": CashRunwayFinancialAgent, "v03": V03FinancialAgent},
         "legal_agent": {"mock": MockLegalAgent, "disabled": DisabledLegalAgent, "v03": LegalAgent},
         "business_agent": {"mock": MockBusinessAgent, "disabled": DisabledBusinessAgent, "v03": V03BusinessAgent},
-        "market_agent": {"mock": MockMarketAgent, "disabled": DisabledMarketAgent},
+        "market_agent": {
+            "mock": MockMarketAgent,
+            "disabled": DisabledMarketAgent,
+            "market_intelligence": MarketIntelligenceAgent,
+        },
         "verifier": {"rule": RuleVerifier},
         "supervisor": {"rule": RuleSupervisor, "v03": V03Supervisor},
         "predictor": {"rule_based": RuleBasedPredictor, "fault": FaultPredictor},
@@ -159,8 +165,23 @@ class DependencyContainer:
             self._create_agent("financial_agent", self.settings.financial_agent, retriever, llm_provider),
             self._create_agent("legal_agent", self.settings.legal_agent, retriever, llm_provider),
             self._create_agent("business_agent", self.settings.business_agent, retriever, llm_provider),
-            self.registry.create("market_agent", self.settings.market_agent),
         ]
+        market_intelligence_agent = None
+        if self.settings.market_agent == "market_intelligence":
+            if self.settings.workflow_version != "enhanced_v2":
+                raise ComponentConfigurationError(
+                    "market_intelligence is supported only by enhanced_v2"
+                )
+            market_intelligence_agent = self.registry.create(
+                "market_agent",
+                "market_intelligence",
+                llm_provider=llm_provider,
+            )
+        else:
+            # Legacy mock/disabled Market Agents keep the historical Agent
+            # protocol and remain inside the ordinary agent loop.
+            agents.append(self.registry.create("market_agent", self.settings.market_agent))
+
         arguments = (
             self.registry.create("parser", self.settings.parser),
             retriever,
@@ -182,6 +203,12 @@ class DependencyContainer:
         if self.settings.workflow_version == "mvp_v1":
             return MVPWorkflow(*arguments, **channels)
         if self.settings.workflow_version == "enhanced_v2":
+            if market_intelligence_agent is not None:
+                return V04AIWorkflow(
+                    *arguments,
+                    market_intelligence_agent=market_intelligence_agent,
+                    **channels,
+                )
             return EnhancedV2Workflow(*arguments, **channels)
         raise ComponentConfigurationError(
             f"Unregistered workflow version: {self.settings.workflow_version!r}"
