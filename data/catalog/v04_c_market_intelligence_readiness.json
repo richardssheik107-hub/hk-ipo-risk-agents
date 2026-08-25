@@ -1,0 +1,2400 @@
+{
+  "blind_2025_y_accessed": false,
+  "demo_case_ids": [
+    "ipo_2020_01351",
+    "ipo_2021_02216",
+    "ipo_2024_02410",
+    "ipo_2021_02250"
+  ],
+  "demo_pass": "4 / 4",
+  "demos": [
+    {
+      "case_id": "ipo_2020_01351",
+      "final_supervisor_compatibility": true,
+      "ipo_heat_skill": {
+        "drivers": [
+          {
+            "driver_id": "recent_break_pressure",
+            "message": "Recent IPO break pressure is low_pressure.",
+            "source_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_1d_sample_count"
+            ]
+          },
+          {
+            "driver_id": "recent_return_condition",
+            "message": "Recent IPO five-session return condition is positive.",
+            "source_feature_ids": [
+              "recent_ipo_return_5d",
+              "recent_ipo_5d_sample_count"
+            ]
+          }
+        ],
+        "ipo_heat": "HOT",
+        "missingness": {},
+        "policy_version": "v04_ipo_heat_skill_v1",
+        "recent_break_pressure": "LOW_PRESSURE",
+        "recent_return_condition": "POSITIVE",
+        "sample_strength": "STRONG",
+        "source_feature_ids": [
+          "recent_ipo_break_rate",
+          "recent_ipo_return_5d",
+          "recent_ipo_1d_sample_count",
+          "recent_ipo_5d_sample_count"
+        ]
+      },
+      "listing_date": "2020-11-11",
+      "llm_interpretation": null,
+      "llm_model": null,
+      "llm_provider": null,
+      "llm_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+      "llm_status": "unavailable",
+      "market_context": {
+        "blocking_gate": null,
+        "feature_manifest_hash": null,
+        "observations": [
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.05460163361832706
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.09048211937992788
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_break_rate",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.3333333333333333
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.006808329743317703
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_1d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 18.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_5d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 16.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_turnover_20d_mean",
+            "source": "v04_c_extended_readiness",
+            "unit": "currency",
+            "value": 140373366511.25
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_volatility_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.012397641695919498
+          }
+        ],
+        "provenance": {
+          "case_id": "ipo_2020_01351",
+          "cutoff_semantics": "market_date_strictly_before_listing_date",
+          "dataset_split": "development",
+          "feature_pipeline": "governed_v04_c_extended_readiness",
+          "listing_date": "2020-11-11",
+          "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+          "llm_market_interpretation_status": "unavailable",
+          "market_intelligence": {
+            "ipo_heat": "HOT",
+            "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+            "key_drivers": [
+              {
+                "driver_id": "hsi_trend",
+                "message": "HSI pre-listing trend is positive.",
+                "source_feature_ids": [
+                  "hsi_return_5d",
+                  "hsi_return_20d"
+                ]
+              },
+              {
+                "driver_id": "market_volatility",
+                "message": "Pre-listing market volatility is normal.",
+                "source_feature_ids": [
+                  "market_volatility_20d"
+                ]
+              },
+              {
+                "driver_id": "market_turnover_observed",
+                "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                "source_feature_ids": [
+                  "market_turnover_20d_mean"
+                ]
+              },
+              {
+                "driver_id": "recent_break_pressure",
+                "message": "Recent IPO break pressure is low_pressure.",
+                "source_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_1d_sample_count"
+                ]
+              },
+              {
+                "driver_id": "recent_return_condition",
+                "message": "Recent IPO five-session return condition is positive.",
+                "source_feature_ids": [
+                  "recent_ipo_return_5d",
+                  "recent_ipo_5d_sample_count"
+                ]
+              }
+            ],
+            "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+            "market_regime": "RISK_ON",
+            "market_regime_policy_version": "v04_market_regime_skill_v1",
+            "missing_reasons": {
+              "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+              "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+            },
+            "risk_level": "low",
+            "risk_scope": "market_side_only",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "industry_return_5d",
+              "industry_return_20d",
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count",
+              "market_turnover_20d_mean",
+              "market_volatility_20d"
+            ],
+            "uncertainties": [
+              "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+              "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+              "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+            ]
+          },
+          "market_intelligence_schema_version": "v04_market_intelligence_v1",
+          "pit_cutoff_date": "2020-11-11",
+          "source_provider": "governed_market_x_extended_readiness",
+          "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+          "source_version": "v04_c_extended_readiness_v1",
+          "stock_code": "1351.HK"
+        },
+        "reason": "validated governed C Extended readiness projection",
+        "status": "available"
+      },
+      "market_regime_skill": {
+        "drivers": [
+          {
+            "driver_id": "hsi_trend",
+            "message": "HSI pre-listing trend is positive.",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d"
+            ]
+          },
+          {
+            "driver_id": "market_volatility",
+            "message": "Pre-listing market volatility is normal.",
+            "source_feature_ids": [
+              "market_volatility_20d"
+            ]
+          },
+          {
+            "driver_id": "market_turnover_observed",
+            "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+            "source_feature_ids": [
+              "market_turnover_20d_mean"
+            ]
+          }
+        ],
+        "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+        "market_regime": "RISK_ON",
+        "missingness": {},
+        "policy_version": "v04_market_regime_skill_v1",
+        "source_feature_ids": [
+          "hsi_return_5d",
+          "hsi_return_20d",
+          "market_volatility_20d",
+          "market_turnover_20d_mean"
+        ],
+        "trend_condition": "POSITIVE",
+        "uncertainties": [
+          "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+          "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+          "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+        ],
+        "volatility_condition": "NORMAL"
+      },
+      "missing_features": [
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        }
+      ],
+      "pit_cutoff": "2020-11-11",
+      "provenance": {
+        "case_id": "ipo_2020_01351",
+        "cutoff_semantics": "market_date_strictly_before_listing_date",
+        "dataset_split": "development",
+        "feature_pipeline": "governed_v04_c_extended_readiness",
+        "listing_date": "2020-11-11",
+        "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+        "llm_market_interpretation_status": "unavailable",
+        "market_intelligence": {
+          "ipo_heat": "HOT",
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "key_drivers": [
+            {
+              "driver_id": "hsi_trend",
+              "message": "HSI pre-listing trend is positive.",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d"
+              ]
+            },
+            {
+              "driver_id": "market_volatility",
+              "message": "Pre-listing market volatility is normal.",
+              "source_feature_ids": [
+                "market_volatility_20d"
+              ]
+            },
+            {
+              "driver_id": "market_turnover_observed",
+              "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+              "source_feature_ids": [
+                "market_turnover_20d_mean"
+              ]
+            },
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is low_pressure.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is positive.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+          "market_regime": "RISK_ON",
+          "market_regime_policy_version": "v04_market_regime_skill_v1",
+          "missing_reasons": {
+            "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+          },
+          "risk_level": "low",
+          "risk_scope": "market_side_only",
+          "source_feature_ids": [
+            "hsi_return_5d",
+            "hsi_return_20d",
+            "industry_return_5d",
+            "industry_return_20d",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "market_turnover_20d_mean",
+            "market_volatility_20d"
+          ],
+          "uncertainties": [
+            "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+            "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+            "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+          ]
+        },
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "pit_cutoff_date": "2020-11-11",
+        "source_provider": "governed_market_x_extended_readiness",
+        "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+        "source_version": "v04_c_extended_readiness_v1",
+        "stock_code": "1351.HK"
+      },
+      "selection_reason": "risk_on_and_hot",
+      "source_features": [
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.05460163361832706
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.09048211937992788
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_break_rate",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.3333333333333333
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.006808329743317703
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_1d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 18.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_5d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 16.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_turnover_20d_mean",
+          "source": "v04_c_extended_readiness",
+          "unit": "currency",
+          "value": 140373366511.25
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_volatility_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.012397641695919498
+        }
+      ],
+      "stock_code": "1351.HK",
+      "trace": [
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "recent_break_pressure",
+                  "message": "Recent IPO break pressure is low_pressure.",
+                  "source_feature_ids": [
+                    "recent_ipo_break_rate",
+                    "recent_ipo_1d_sample_count"
+                  ]
+                },
+                {
+                  "driver_id": "recent_return_condition",
+                  "message": "Recent IPO five-session return condition is positive.",
+                  "source_feature_ids": [
+                    "recent_ipo_return_5d",
+                    "recent_ipo_5d_sample_count"
+                  ]
+                }
+              ],
+              "ipo_heat": "HOT",
+              "missingness": {},
+              "policy_version": "v04_ipo_heat_skill_v1",
+              "recent_break_pressure": "LOW_PRESSURE",
+              "recent_return_condition": "POSITIVE",
+              "sample_strength": "STRONG",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_return_5d",
+                "recent_ipo_1d_sample_count",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "IPOHeatSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "market_volatility_20d",
+              "market_turnover_20d_mean"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "hsi_trend",
+                  "message": "HSI pre-listing trend is positive.",
+                  "source_feature_ids": [
+                    "hsi_return_5d",
+                    "hsi_return_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_volatility",
+                  "message": "Pre-listing market volatility is normal.",
+                  "source_feature_ids": [
+                    "market_volatility_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_turnover_observed",
+                  "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                  "source_feature_ids": [
+                    "market_turnover_20d_mean"
+                  ]
+                }
+              ],
+              "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+              "market_regime": "RISK_ON",
+              "missingness": {},
+              "policy_version": "v04_market_regime_skill_v1",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d",
+                "market_volatility_20d",
+                "market_turnover_20d_mean"
+              ],
+              "trend_condition": "POSITIVE",
+              "uncertainties": [
+                "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+                "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+                "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+              ],
+              "volatility_condition": "NORMAL"
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "MarketRegimeSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "reason": "LLM provider is not configured; deterministic MarketContext is retained"
+          },
+          "event_type": "llm",
+          "latency_ms": null,
+          "model_name": null,
+          "prompt_version": "v04_market_interpretation_v1",
+          "provider_name": null,
+          "status": "unavailable",
+          "task": "market_context_interpretation",
+          "tool_or_skill": "LLMProvider.generate_structured"
+        }
+      ]
+    },
+    {
+      "case_id": "ipo_2021_02216",
+      "final_supervisor_compatibility": true,
+      "ipo_heat_skill": {
+        "drivers": [
+          {
+            "driver_id": "recent_break_pressure",
+            "message": "Recent IPO break pressure is high_pressure.",
+            "source_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_1d_sample_count"
+            ]
+          },
+          {
+            "driver_id": "recent_return_condition",
+            "message": "Recent IPO five-session return condition is weak.",
+            "source_feature_ids": [
+              "recent_ipo_return_5d",
+              "recent_ipo_5d_sample_count"
+            ]
+          }
+        ],
+        "ipo_heat": "COLD",
+        "missingness": {},
+        "policy_version": "v04_ipo_heat_skill_v1",
+        "recent_break_pressure": "HIGH_PRESSURE",
+        "recent_return_condition": "WEAK",
+        "sample_strength": "LIMITED",
+        "source_feature_ids": [
+          "recent_ipo_break_rate",
+          "recent_ipo_return_5d",
+          "recent_ipo_1d_sample_count",
+          "recent_ipo_5d_sample_count"
+        ]
+      },
+      "listing_date": "2021-09-24",
+      "llm_interpretation": null,
+      "llm_model": null,
+      "llm_provider": null,
+      "llm_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+      "llm_status": "unavailable",
+      "market_context": {
+        "blocking_gate": null,
+        "feature_manifest_hash": null,
+        "observations": [
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.02086148759987233
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.04604079948781717
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_break_rate",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.75
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.11821830909632595
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_1d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 4.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_5d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 4.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_turnover_20d_mean",
+            "source": "v04_c_extended_readiness",
+            "unit": "currency",
+            "value": 157005248476.3
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_volatility_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.013568022975195855
+          }
+        ],
+        "provenance": {
+          "case_id": "ipo_2021_02216",
+          "cutoff_semantics": "market_date_strictly_before_listing_date",
+          "dataset_split": "development",
+          "feature_pipeline": "governed_v04_c_extended_readiness",
+          "listing_date": "2021-09-24",
+          "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+          "llm_market_interpretation_status": "unavailable",
+          "market_intelligence": {
+            "ipo_heat": "COLD",
+            "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+            "key_drivers": [
+              {
+                "driver_id": "hsi_trend",
+                "message": "HSI pre-listing trend is negative.",
+                "source_feature_ids": [
+                  "hsi_return_5d",
+                  "hsi_return_20d"
+                ]
+              },
+              {
+                "driver_id": "market_volatility",
+                "message": "Pre-listing market volatility is normal.",
+                "source_feature_ids": [
+                  "market_volatility_20d"
+                ]
+              },
+              {
+                "driver_id": "market_turnover_observed",
+                "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                "source_feature_ids": [
+                  "market_turnover_20d_mean"
+                ]
+              },
+              {
+                "driver_id": "recent_break_pressure",
+                "message": "Recent IPO break pressure is high_pressure.",
+                "source_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_1d_sample_count"
+                ]
+              },
+              {
+                "driver_id": "recent_return_condition",
+                "message": "Recent IPO five-session return condition is weak.",
+                "source_feature_ids": [
+                  "recent_ipo_return_5d",
+                  "recent_ipo_5d_sample_count"
+                ]
+              }
+            ],
+            "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+            "market_regime": "RISK_OFF",
+            "market_regime_policy_version": "v04_market_regime_skill_v1",
+            "missing_reasons": {
+              "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+              "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+            },
+            "risk_level": "high",
+            "risk_scope": "market_side_only",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "industry_return_5d",
+              "industry_return_20d",
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count",
+              "market_turnover_20d_mean",
+              "market_volatility_20d"
+            ],
+            "uncertainties": [
+              "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+              "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+              "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+            ]
+          },
+          "market_intelligence_schema_version": "v04_market_intelligence_v1",
+          "pit_cutoff_date": "2021-09-24",
+          "source_provider": "governed_market_x_extended_readiness",
+          "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+          "source_version": "v04_c_extended_readiness_v1",
+          "stock_code": "2216.HK"
+        },
+        "reason": "validated governed C Extended readiness projection",
+        "status": "available"
+      },
+      "market_regime_skill": {
+        "drivers": [
+          {
+            "driver_id": "hsi_trend",
+            "message": "HSI pre-listing trend is negative.",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d"
+            ]
+          },
+          {
+            "driver_id": "market_volatility",
+            "message": "Pre-listing market volatility is normal.",
+            "source_feature_ids": [
+              "market_volatility_20d"
+            ]
+          },
+          {
+            "driver_id": "market_turnover_observed",
+            "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+            "source_feature_ids": [
+              "market_turnover_20d_mean"
+            ]
+          }
+        ],
+        "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+        "market_regime": "RISK_OFF",
+        "missingness": {},
+        "policy_version": "v04_market_regime_skill_v1",
+        "source_feature_ids": [
+          "hsi_return_5d",
+          "hsi_return_20d",
+          "market_volatility_20d",
+          "market_turnover_20d_mean"
+        ],
+        "trend_condition": "NEGATIVE",
+        "uncertainties": [
+          "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+          "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+          "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+        ],
+        "volatility_condition": "NORMAL"
+      },
+      "missing_features": [
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        }
+      ],
+      "pit_cutoff": "2021-09-24",
+      "provenance": {
+        "case_id": "ipo_2021_02216",
+        "cutoff_semantics": "market_date_strictly_before_listing_date",
+        "dataset_split": "development",
+        "feature_pipeline": "governed_v04_c_extended_readiness",
+        "listing_date": "2021-09-24",
+        "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+        "llm_market_interpretation_status": "unavailable",
+        "market_intelligence": {
+          "ipo_heat": "COLD",
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "key_drivers": [
+            {
+              "driver_id": "hsi_trend",
+              "message": "HSI pre-listing trend is negative.",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d"
+              ]
+            },
+            {
+              "driver_id": "market_volatility",
+              "message": "Pre-listing market volatility is normal.",
+              "source_feature_ids": [
+                "market_volatility_20d"
+              ]
+            },
+            {
+              "driver_id": "market_turnover_observed",
+              "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+              "source_feature_ids": [
+                "market_turnover_20d_mean"
+              ]
+            },
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is high_pressure.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is weak.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+          "market_regime": "RISK_OFF",
+          "market_regime_policy_version": "v04_market_regime_skill_v1",
+          "missing_reasons": {
+            "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+          },
+          "risk_level": "high",
+          "risk_scope": "market_side_only",
+          "source_feature_ids": [
+            "hsi_return_5d",
+            "hsi_return_20d",
+            "industry_return_5d",
+            "industry_return_20d",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "market_turnover_20d_mean",
+            "market_volatility_20d"
+          ],
+          "uncertainties": [
+            "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+            "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+            "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+          ]
+        },
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "pit_cutoff_date": "2021-09-24",
+        "source_provider": "governed_market_x_extended_readiness",
+        "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+        "source_version": "v04_c_extended_readiness_v1",
+        "stock_code": "2216.HK"
+      },
+      "selection_reason": "risk_off_and_cold",
+      "source_features": [
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.02086148759987233
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.04604079948781717
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_break_rate",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.75
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.11821830909632595
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_1d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 4.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_5d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 4.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_turnover_20d_mean",
+          "source": "v04_c_extended_readiness",
+          "unit": "currency",
+          "value": 157005248476.3
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_volatility_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.013568022975195855
+        }
+      ],
+      "stock_code": "2216.HK",
+      "trace": [
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "recent_break_pressure",
+                  "message": "Recent IPO break pressure is high_pressure.",
+                  "source_feature_ids": [
+                    "recent_ipo_break_rate",
+                    "recent_ipo_1d_sample_count"
+                  ]
+                },
+                {
+                  "driver_id": "recent_return_condition",
+                  "message": "Recent IPO five-session return condition is weak.",
+                  "source_feature_ids": [
+                    "recent_ipo_return_5d",
+                    "recent_ipo_5d_sample_count"
+                  ]
+                }
+              ],
+              "ipo_heat": "COLD",
+              "missingness": {},
+              "policy_version": "v04_ipo_heat_skill_v1",
+              "recent_break_pressure": "HIGH_PRESSURE",
+              "recent_return_condition": "WEAK",
+              "sample_strength": "LIMITED",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_return_5d",
+                "recent_ipo_1d_sample_count",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "IPOHeatSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "market_volatility_20d",
+              "market_turnover_20d_mean"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "hsi_trend",
+                  "message": "HSI pre-listing trend is negative.",
+                  "source_feature_ids": [
+                    "hsi_return_5d",
+                    "hsi_return_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_volatility",
+                  "message": "Pre-listing market volatility is normal.",
+                  "source_feature_ids": [
+                    "market_volatility_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_turnover_observed",
+                  "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                  "source_feature_ids": [
+                    "market_turnover_20d_mean"
+                  ]
+                }
+              ],
+              "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+              "market_regime": "RISK_OFF",
+              "missingness": {},
+              "policy_version": "v04_market_regime_skill_v1",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d",
+                "market_volatility_20d",
+                "market_turnover_20d_mean"
+              ],
+              "trend_condition": "NEGATIVE",
+              "uncertainties": [
+                "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+                "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+                "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+              ],
+              "volatility_condition": "NORMAL"
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "MarketRegimeSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "reason": "LLM provider is not configured; deterministic MarketContext is retained"
+          },
+          "event_type": "llm",
+          "latency_ms": null,
+          "model_name": null,
+          "prompt_version": "v04_market_interpretation_v1",
+          "provider_name": null,
+          "status": "unavailable",
+          "task": "market_context_interpretation",
+          "tool_or_skill": "LLMProvider.generate_structured"
+        }
+      ]
+    },
+    {
+      "case_id": "ipo_2024_02410",
+      "final_supervisor_compatibility": true,
+      "ipo_heat_skill": {
+        "drivers": [
+          {
+            "driver_id": "recent_break_pressure",
+            "message": "Recent IPO break pressure is high_pressure.",
+            "source_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_1d_sample_count"
+            ]
+          },
+          {
+            "driver_id": "recent_return_condition",
+            "message": "Recent IPO five-session return condition is weak.",
+            "source_feature_ids": [
+              "recent_ipo_return_5d",
+              "recent_ipo_5d_sample_count"
+            ]
+          }
+        ],
+        "ipo_heat": "COLD",
+        "missingness": {},
+        "policy_version": "v04_ipo_heat_skill_v1",
+        "recent_break_pressure": "HIGH_PRESSURE",
+        "recent_return_condition": "WEAK",
+        "sample_strength": "STRONG",
+        "source_feature_ids": [
+          "recent_ipo_break_rate",
+          "recent_ipo_return_5d",
+          "recent_ipo_1d_sample_count",
+          "recent_ipo_5d_sample_count"
+        ]
+      },
+      "listing_date": "2024-08-20",
+      "llm_interpretation": null,
+      "llm_model": null,
+      "llm_provider": null,
+      "llm_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+      "llm_status": "unavailable",
+      "market_context": {
+        "blocking_gate": null,
+        "feature_manifest_hash": null,
+        "observations": [
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.02676071565278626
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.282886109159895
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_break_rate",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.6
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.0922801378828048
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_1d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 15.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_5d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 15.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_turnover_20d_mean",
+            "source": "v04_c_extended_readiness",
+            "unit": "currency",
+            "value": 94141656103.7
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_volatility_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.09001194263005736
+          }
+        ],
+        "provenance": {
+          "case_id": "ipo_2024_02410",
+          "cutoff_semantics": "market_date_strictly_before_listing_date",
+          "dataset_split": "validation",
+          "feature_pipeline": "governed_v04_c_extended_readiness",
+          "listing_date": "2024-08-20",
+          "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+          "llm_market_interpretation_status": "unavailable",
+          "market_intelligence": {
+            "ipo_heat": "COLD",
+            "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+            "key_drivers": [
+              {
+                "driver_id": "hsi_trend",
+                "message": "HSI pre-listing trend is mixed.",
+                "source_feature_ids": [
+                  "hsi_return_5d",
+                  "hsi_return_20d"
+                ]
+              },
+              {
+                "driver_id": "market_volatility",
+                "message": "Pre-listing market volatility is high.",
+                "source_feature_ids": [
+                  "market_volatility_20d"
+                ]
+              },
+              {
+                "driver_id": "market_turnover_observed",
+                "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                "source_feature_ids": [
+                  "market_turnover_20d_mean"
+                ]
+              },
+              {
+                "driver_id": "recent_break_pressure",
+                "message": "Recent IPO break pressure is high_pressure.",
+                "source_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_1d_sample_count"
+                ]
+              },
+              {
+                "driver_id": "recent_return_condition",
+                "message": "Recent IPO five-session return condition is weak.",
+                "source_feature_ids": [
+                  "recent_ipo_return_5d",
+                  "recent_ipo_5d_sample_count"
+                ]
+              }
+            ],
+            "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+            "market_regime": "MIXED",
+            "market_regime_policy_version": "v04_market_regime_skill_v1",
+            "missing_reasons": {
+              "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+              "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+            },
+            "risk_level": "medium",
+            "risk_scope": "market_side_only",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "industry_return_5d",
+              "industry_return_20d",
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count",
+              "market_turnover_20d_mean",
+              "market_volatility_20d"
+            ],
+            "uncertainties": [
+              "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+              "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+              "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+            ]
+          },
+          "market_intelligence_schema_version": "v04_market_intelligence_v1",
+          "pit_cutoff_date": "2024-08-20",
+          "source_provider": "governed_market_x_extended_readiness",
+          "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+          "source_version": "v04_c_extended_readiness_v1",
+          "stock_code": "2410.HK"
+        },
+        "reason": "validated governed C Extended readiness projection",
+        "status": "available"
+      },
+      "market_regime_skill": {
+        "drivers": [
+          {
+            "driver_id": "hsi_trend",
+            "message": "HSI pre-listing trend is mixed.",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d"
+            ]
+          },
+          {
+            "driver_id": "market_volatility",
+            "message": "Pre-listing market volatility is high.",
+            "source_feature_ids": [
+              "market_volatility_20d"
+            ]
+          },
+          {
+            "driver_id": "market_turnover_observed",
+            "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+            "source_feature_ids": [
+              "market_turnover_20d_mean"
+            ]
+          }
+        ],
+        "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+        "market_regime": "MIXED",
+        "missingness": {},
+        "policy_version": "v04_market_regime_skill_v1",
+        "source_feature_ids": [
+          "hsi_return_5d",
+          "hsi_return_20d",
+          "market_volatility_20d",
+          "market_turnover_20d_mean"
+        ],
+        "trend_condition": "MIXED",
+        "uncertainties": [
+          "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+          "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+          "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+        ],
+        "volatility_condition": "HIGH"
+      },
+      "missing_features": [
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        }
+      ],
+      "pit_cutoff": "2024-08-20",
+      "provenance": {
+        "case_id": "ipo_2024_02410",
+        "cutoff_semantics": "market_date_strictly_before_listing_date",
+        "dataset_split": "validation",
+        "feature_pipeline": "governed_v04_c_extended_readiness",
+        "listing_date": "2024-08-20",
+        "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+        "llm_market_interpretation_status": "unavailable",
+        "market_intelligence": {
+          "ipo_heat": "COLD",
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "key_drivers": [
+            {
+              "driver_id": "hsi_trend",
+              "message": "HSI pre-listing trend is mixed.",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d"
+              ]
+            },
+            {
+              "driver_id": "market_volatility",
+              "message": "Pre-listing market volatility is high.",
+              "source_feature_ids": [
+                "market_volatility_20d"
+              ]
+            },
+            {
+              "driver_id": "market_turnover_observed",
+              "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+              "source_feature_ids": [
+                "market_turnover_20d_mean"
+              ]
+            },
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is high_pressure.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is weak.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+          "market_regime": "MIXED",
+          "market_regime_policy_version": "v04_market_regime_skill_v1",
+          "missing_reasons": {
+            "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED"
+          },
+          "risk_level": "medium",
+          "risk_scope": "market_side_only",
+          "source_feature_ids": [
+            "hsi_return_5d",
+            "hsi_return_20d",
+            "industry_return_5d",
+            "industry_return_20d",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "market_turnover_20d_mean",
+            "market_volatility_20d"
+          ],
+          "uncertainties": [
+            "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+            "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+            "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+          ]
+        },
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "pit_cutoff_date": "2024-08-20",
+        "source_provider": "governed_market_x_extended_readiness",
+        "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+        "source_version": "v04_c_extended_readiness_v1",
+        "stock_code": "2410.HK"
+      },
+      "selection_reason": "high_volatility",
+      "source_features": [
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.02676071565278626
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.282886109159895
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_break_rate",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.6
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.0922801378828048
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_1d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 15.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_5d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 15.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_turnover_20d_mean",
+          "source": "v04_c_extended_readiness",
+          "unit": "currency",
+          "value": 94141656103.7
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_volatility_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.09001194263005736
+        }
+      ],
+      "stock_code": "2410.HK",
+      "trace": [
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "recent_break_pressure",
+                  "message": "Recent IPO break pressure is high_pressure.",
+                  "source_feature_ids": [
+                    "recent_ipo_break_rate",
+                    "recent_ipo_1d_sample_count"
+                  ]
+                },
+                {
+                  "driver_id": "recent_return_condition",
+                  "message": "Recent IPO five-session return condition is weak.",
+                  "source_feature_ids": [
+                    "recent_ipo_return_5d",
+                    "recent_ipo_5d_sample_count"
+                  ]
+                }
+              ],
+              "ipo_heat": "COLD",
+              "missingness": {},
+              "policy_version": "v04_ipo_heat_skill_v1",
+              "recent_break_pressure": "HIGH_PRESSURE",
+              "recent_return_condition": "WEAK",
+              "sample_strength": "STRONG",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_return_5d",
+                "recent_ipo_1d_sample_count",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "IPOHeatSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "market_volatility_20d",
+              "market_turnover_20d_mean"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "hsi_trend",
+                  "message": "HSI pre-listing trend is mixed.",
+                  "source_feature_ids": [
+                    "hsi_return_5d",
+                    "hsi_return_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_volatility",
+                  "message": "Pre-listing market volatility is high.",
+                  "source_feature_ids": [
+                    "market_volatility_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_turnover_observed",
+                  "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                  "source_feature_ids": [
+                    "market_turnover_20d_mean"
+                  ]
+                }
+              ],
+              "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+              "market_regime": "MIXED",
+              "missingness": {},
+              "policy_version": "v04_market_regime_skill_v1",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d",
+                "market_volatility_20d",
+                "market_turnover_20d_mean"
+              ],
+              "trend_condition": "MIXED",
+              "uncertainties": [
+                "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+                "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+                "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+              ],
+              "volatility_condition": "HIGH"
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "MarketRegimeSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "reason": "LLM provider is not configured; deterministic MarketContext is retained"
+          },
+          "event_type": "llm",
+          "latency_ms": null,
+          "model_name": null,
+          "prompt_version": "v04_market_interpretation_v1",
+          "provider_name": null,
+          "status": "unavailable",
+          "task": "market_context_interpretation",
+          "tool_or_skill": "LLMProvider.generate_structured"
+        }
+      ]
+    },
+    {
+      "case_id": "ipo_2021_02250",
+      "final_supervisor_compatibility": true,
+      "ipo_heat_skill": {
+        "drivers": [],
+        "ipo_heat": "INSUFFICIENT_DATA",
+        "missingness": {
+          "recent_ipo_break_rate": "no_recent_ipo_sample",
+          "recent_ipo_return_5d": "no_recent_ipo_sample"
+        },
+        "policy_version": "v04_ipo_heat_skill_v1",
+        "recent_break_pressure": "UNAVAILABLE",
+        "recent_return_condition": "UNAVAILABLE",
+        "sample_strength": "NONE",
+        "source_feature_ids": [
+          "recent_ipo_break_rate",
+          "recent_ipo_return_5d",
+          "recent_ipo_1d_sample_count",
+          "recent_ipo_5d_sample_count"
+        ]
+      },
+      "listing_date": "2022-01-17",
+      "llm_interpretation": null,
+      "llm_model": null,
+      "llm_provider": null,
+      "llm_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+      "llm_status": "unavailable",
+      "market_context": {
+        "blocking_gate": null,
+        "feature_manifest_hash": null,
+        "observations": [
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": -0.028694148145227933
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "hsi_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.01374294387335863
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "name": "industry_return_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "no_recent_ipo_sample",
+            "name": "recent_ipo_break_rate",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "unavailable",
+            "derivation": "",
+            "missing_reason": "no_recent_ipo_sample",
+            "name": "recent_ipo_return_5d",
+            "source": "v04_c_extended_readiness",
+            "unit": "",
+            "value": null
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_1d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 0.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "recent_ipo_5d_sample_count",
+            "source": "v04_c_extended_readiness",
+            "unit": "count",
+            "value": 0.0
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_turnover_20d_mean",
+            "source": "v04_c_extended_readiness",
+            "unit": "currency",
+            "value": 129324619689.45
+          },
+          {
+            "availability": "available",
+            "derivation": "governed point-in-time Market-X Extended readiness feature",
+            "missing_reason": null,
+            "name": "market_volatility_20d",
+            "source": "v04_c_extended_readiness",
+            "unit": "ratio",
+            "value": 0.01274388356282777
+          }
+        ],
+        "provenance": {
+          "case_id": "ipo_2021_02250",
+          "cutoff_semantics": "market_date_strictly_before_listing_date",
+          "dataset_split": "development",
+          "feature_pipeline": "governed_v04_c_extended_readiness",
+          "listing_date": "2022-01-17",
+          "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+          "llm_market_interpretation_status": "unavailable",
+          "market_intelligence": {
+            "ipo_heat": "INSUFFICIENT_DATA",
+            "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+            "key_drivers": [
+              {
+                "driver_id": "hsi_trend",
+                "message": "HSI pre-listing trend is mixed.",
+                "source_feature_ids": [
+                  "hsi_return_5d",
+                  "hsi_return_20d"
+                ]
+              },
+              {
+                "driver_id": "market_volatility",
+                "message": "Pre-listing market volatility is normal.",
+                "source_feature_ids": [
+                  "market_volatility_20d"
+                ]
+              },
+              {
+                "driver_id": "market_turnover_observed",
+                "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                "source_feature_ids": [
+                  "market_turnover_20d_mean"
+                ]
+              }
+            ],
+            "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+            "market_regime": "MIXED",
+            "market_regime_policy_version": "v04_market_regime_skill_v1",
+            "missing_reasons": {
+              "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+              "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+              "recent_ipo_break_rate": "no_recent_ipo_sample",
+              "recent_ipo_return_5d": "no_recent_ipo_sample"
+            },
+            "risk_level": "medium",
+            "risk_scope": "market_side_only",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "industry_return_5d",
+              "industry_return_20d",
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count",
+              "market_turnover_20d_mean",
+              "market_volatility_20d"
+            ],
+            "uncertainties": [
+              "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+              "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+              "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+            ]
+          },
+          "market_intelligence_schema_version": "v04_market_intelligence_v1",
+          "pit_cutoff_date": "2022-01-17",
+          "source_provider": "governed_market_x_extended_readiness",
+          "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+          "source_version": "v04_c_extended_readiness_v1",
+          "stock_code": "2250.HK"
+        },
+        "reason": "validated governed C Extended readiness projection",
+        "status": "available"
+      },
+      "market_regime_skill": {
+        "drivers": [
+          {
+            "driver_id": "hsi_trend",
+            "message": "HSI pre-listing trend is mixed.",
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d"
+            ]
+          },
+          {
+            "driver_id": "market_volatility",
+            "message": "Pre-listing market volatility is normal.",
+            "source_feature_ids": [
+              "market_volatility_20d"
+            ]
+          },
+          {
+            "driver_id": "market_turnover_observed",
+            "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+            "source_feature_ids": [
+              "market_turnover_20d_mean"
+            ]
+          }
+        ],
+        "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+        "market_regime": "MIXED",
+        "missingness": {},
+        "policy_version": "v04_market_regime_skill_v1",
+        "source_feature_ids": [
+          "hsi_return_5d",
+          "hsi_return_20d",
+          "market_volatility_20d",
+          "market_turnover_20d_mean"
+        ],
+        "trend_condition": "MIXED",
+        "uncertainties": [
+          "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+          "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+          "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+        ],
+        "volatility_condition": "NORMAL"
+      },
+      "missing_features": [
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "no_recent_ipo_sample",
+          "name": "recent_ipo_break_rate",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "no_recent_ipo_sample",
+          "name": "recent_ipo_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        }
+      ],
+      "pit_cutoff": "2022-01-17",
+      "provenance": {
+        "case_id": "ipo_2021_02250",
+        "cutoff_semantics": "market_date_strictly_before_listing_date",
+        "dataset_split": "development",
+        "feature_pipeline": "governed_v04_c_extended_readiness",
+        "listing_date": "2022-01-17",
+        "llm_market_interpretation_reason": "LLM provider is not configured; deterministic MarketContext is retained",
+        "llm_market_interpretation_status": "unavailable",
+        "market_intelligence": {
+          "ipo_heat": "INSUFFICIENT_DATA",
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "key_drivers": [
+            {
+              "driver_id": "hsi_trend",
+              "message": "HSI pre-listing trend is mixed.",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d"
+              ]
+            },
+            {
+              "driver_id": "market_volatility",
+              "message": "Pre-listing market volatility is normal.",
+              "source_feature_ids": [
+                "market_volatility_20d"
+              ]
+            },
+            {
+              "driver_id": "market_turnover_observed",
+              "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+              "source_feature_ids": [
+                "market_turnover_20d_mean"
+              ]
+            }
+          ],
+          "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+          "market_regime": "MIXED",
+          "market_regime_policy_version": "v04_market_regime_skill_v1",
+          "missing_reasons": {
+            "industry_return_20d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "industry_return_5d": "INDUSTRY_MAPPING_PIT_BLOCKED",
+            "recent_ipo_break_rate": "no_recent_ipo_sample",
+            "recent_ipo_return_5d": "no_recent_ipo_sample"
+          },
+          "risk_level": "medium",
+          "risk_scope": "market_side_only",
+          "source_feature_ids": [
+            "hsi_return_5d",
+            "hsi_return_20d",
+            "industry_return_5d",
+            "industry_return_20d",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "market_turnover_20d_mean",
+            "market_volatility_20d"
+          ],
+          "uncertainties": [
+            "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+            "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+            "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+          ]
+        },
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "pit_cutoff_date": "2022-01-17",
+        "source_provider": "governed_market_x_extended_readiness",
+        "source_sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c",
+        "source_version": "v04_c_extended_readiness_v1",
+        "stock_code": "2250.HK"
+      },
+      "selection_reason": "recent_ipo_sample_missing",
+      "source_features": [
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": -0.028694148145227933
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "hsi_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.01374294387335863
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED",
+          "name": "industry_return_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "no_recent_ipo_sample",
+          "name": "recent_ipo_break_rate",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "unavailable",
+          "derivation": "",
+          "missing_reason": "no_recent_ipo_sample",
+          "name": "recent_ipo_return_5d",
+          "source": "v04_c_extended_readiness",
+          "unit": "",
+          "value": null
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_1d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 0.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "recent_ipo_5d_sample_count",
+          "source": "v04_c_extended_readiness",
+          "unit": "count",
+          "value": 0.0
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_turnover_20d_mean",
+          "source": "v04_c_extended_readiness",
+          "unit": "currency",
+          "value": 129324619689.45
+        },
+        {
+          "availability": "available",
+          "derivation": "governed point-in-time Market-X Extended readiness feature",
+          "missing_reason": null,
+          "name": "market_volatility_20d",
+          "source": "v04_c_extended_readiness",
+          "unit": "ratio",
+          "value": 0.01274388356282777
+        }
+      ],
+      "stock_code": "2250.HK",
+      "trace": [
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count"
+            ],
+            "structured_output": {
+              "drivers": [],
+              "ipo_heat": "INSUFFICIENT_DATA",
+              "missingness": {
+                "recent_ipo_break_rate": "no_recent_ipo_sample",
+                "recent_ipo_return_5d": "no_recent_ipo_sample"
+              },
+              "policy_version": "v04_ipo_heat_skill_v1",
+              "recent_break_pressure": "UNAVAILABLE",
+              "recent_return_condition": "UNAVAILABLE",
+              "sample_strength": "NONE",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_return_5d",
+                "recent_ipo_1d_sample_count",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "IPOHeatSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "input_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "market_volatility_20d",
+              "market_turnover_20d_mean"
+            ],
+            "structured_output": {
+              "drivers": [
+                {
+                  "driver_id": "hsi_trend",
+                  "message": "HSI pre-listing trend is mixed.",
+                  "source_feature_ids": [
+                    "hsi_return_5d",
+                    "hsi_return_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_volatility",
+                  "message": "Pre-listing market volatility is normal.",
+                  "source_feature_ids": [
+                    "market_volatility_20d"
+                  ]
+                },
+                {
+                  "driver_id": "market_turnover_observed",
+                  "message": "Market turnover is observed, but no PIT-safe relative baseline is available for a high/low claim.",
+                  "source_feature_ids": [
+                    "market_turnover_20d_mean"
+                  ]
+                }
+              ],
+              "liquidity_condition": "OBSERVED_UNBENCHMARKED",
+              "market_regime": "MIXED",
+              "missingness": {},
+              "policy_version": "v04_market_regime_skill_v1",
+              "source_feature_ids": [
+                "hsi_return_5d",
+                "hsi_return_20d",
+                "market_volatility_20d",
+                "market_turnover_20d_mean"
+              ],
+              "trend_condition": "MIXED",
+              "uncertainties": [
+                "Liquidity strength is not classified because an absolute turnover threshold would not be comparable across years.",
+                "industry_return_5d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED.",
+                "industry_return_20d unavailable: INDUSTRY_MAPPING_PIT_BLOCKED."
+              ],
+              "volatility_condition": "NORMAL"
+            }
+          },
+          "event_type": "skill",
+          "latency_ms": 0,
+          "model_name": null,
+          "prompt_version": null,
+          "provider_name": null,
+          "status": "completed",
+          "task": "deterministic_market_classification",
+          "tool_or_skill": "MarketRegimeSkill"
+        },
+        {
+          "agent_name": "market_intelligence",
+          "details": {
+            "reason": "LLM provider is not configured; deterministic MarketContext is retained"
+          },
+          "event_type": "llm",
+          "latency_ms": null,
+          "model_name": null,
+          "prompt_version": "v04_market_interpretation_v1",
+          "provider_name": null,
+          "status": "unavailable",
+          "task": "market_context_interpretation",
+          "tool_or_skill": "LLMProvider.generate_structured"
+        }
+      ]
+    }
+  ],
+  "determinism": "PASS",
+  "downstream_compatibility": {
+    "c_to_e": "PASS",
+    "final_supervisor": "PASS",
+    "pr_h_runtime_contract": "PASS"
+  },
+  "fake_industry_proxy": false,
+  "future_row_poisoning": "PASS",
+  "industry_pit_block_retained": true,
+  "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+  "llm_interpretation": {
+    "fact_mutation": false,
+    "fallback": "PASS",
+    "implementation": "PASS",
+    "real_demo_status": "UNAVAILABLE_NO_PROVIDER"
+  },
+  "market_context_status": "PASS",
+  "market_intelligence_schema_version": "v04_market_intelligence_v1",
+  "market_regime_policy_version": "v04_market_regime_skill_v1",
+  "missingness_status": "PASS",
+  "pit_status": "PASS",
+  "readiness_version": "v04_c_market_intelligence_readiness_v1",
+  "selection_policy": {
+    "rule": "first case_id in each pre-listing MarketContext stratum, preferring an unused listing year",
+    "uses_model_correctness": false,
+    "uses_outcomes": false,
+    "version": "v04_c_demo_selection_v1"
+  },
+  "skill_status": {
+    "comparable_ipo": "DEFERRED",
+    "ipo_heat": "PASS",
+    "market_regime": "PASS"
+  },
+  "source": {
+    "artifact_name": "v04_c_extended_readiness_438.csv",
+    "row_count": 438,
+    "sha256": "9fc6b5c1bbc7589926dfa8b28abcd19c0da2156c6cdbe3be20188de15080100c"
+  }
+}
