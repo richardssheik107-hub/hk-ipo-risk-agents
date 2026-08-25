@@ -8,6 +8,7 @@ import pytest
 from ipo_risk.agents.final_supervisor import V04FinalSupervisor
 from ipo_risk.agents.market_intelligence import (
     GovernedExtendedReadinessMarketContextProvider,
+    MARKET_INTERPRETATION_PROMPT_VERSION,
     MARKET_INTERPRETATION_TASK,
     MarketIntelligenceAgent,
     MarketInterpretation,
@@ -17,6 +18,7 @@ from ipo_risk.market.skills import IPOHeat, IPOHeatSkill, MarketRegime, MarketRe
 from ipo_risk.market.skills.models import LiquidityCondition, VolatilityCondition
 from ipo_risk.providers.llm import UnavailableLLMProvider
 from ipo_risk.providers.mock import MockLLMProvider
+from ipo_risk.providers.prompt_registry import resolve_domain_instruction
 from ipo_risk.schemas import IPOProfile
 from ipo_risk.schemas.final_supervision import (
     ChannelStatus,
@@ -104,6 +106,20 @@ def _interpretation_payload(source_feature="hsi_return_20d") -> dict:
         }],
         "uncertainties": ["Industry benchmarking is unavailable under the PIT constraint."],
     }
+
+
+def test_market_interpretation_v2_prompt_requires_qualitative_prose() -> None:
+    assert MARKET_INTERPRETATION_PROMPT_VERSION == "v04_market_interpretation_v2"
+    instruction = resolve_domain_instruction(
+        MARKET_INTERPRETATION_TASK,
+        MARKET_INTERPRETATION_PROMPT_VERSION,
+    )
+    assert instruction is not None
+    assert "summary" in instruction
+    assert "driver.statement" in instruction
+    assert "no digits" in instruction
+    assert "1D, 5D, or 20D" in instruction
+    assert "source_feature_ids" in instruction
 
 
 class CapturingLLMProvider(MockLLMProvider):
@@ -271,8 +287,27 @@ def test_extended_provider_rejects_listing_day_or_future_benchmark_row(tmp_path)
     assert "strictly before listing date" in view.reason
 
 
+@pytest.mark.parametrize("numeric_uncertainty", [
+    "The 5D industry benchmark is unavailable.",
+    "The industry benchmark coverage is below 50%.",
+])
+def test_interpretation_schema_forbids_numeric_uncertainty(numeric_uncertainty: str) -> None:
+    with pytest.raises(ValueError, match="numeric market facts"):
+        MarketInterpretation.model_validate({
+            **_interpretation_payload(),
+            "uncertainties": [numeric_uncertainty],
+        })
+
+
+def test_interpretation_schema_accepts_compliant_qualitative_prose() -> None:
+    result = MarketInterpretation.model_validate(_interpretation_payload())
+    assert result.uncertainties == (
+        "Industry benchmarking is unavailable under the PIT constraint.",
+    )
+
+
 def test_interpretation_schema_forbids_numeric_fact_and_extra_fields() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="numeric market facts"):
         MarketInterpretation.model_validate({**_interpretation_payload(), "summary": "Turnover was 123."})
     with pytest.raises(ValueError):
         MarketInterpretation.model_validate({**_interpretation_payload(), "market_regime": "RISK_OFF"})
