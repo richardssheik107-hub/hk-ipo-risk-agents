@@ -7,7 +7,7 @@ retriever: keyword
 financial_agent: v03
 legal_agent: v03
 business_agent: v03
-market_agent: disabled
+market_agent: market_intelligence
 verifier: specialized_v03
 supervisor: v03
 predictor: rule_based
@@ -20,8 +20,9 @@ data_dir: data
 report_dir: reports
 log_level: INFO
 
-# PR-H runtime channels. The governed market view reads only the frozen PR-B
-# product projection; the legacy market-data snapshot remains unavailable.
+# The governed PR-B Market-X view is the only source of numeric market facts.
+# MarketIntelligenceAgent runs deterministic IPO Heat / Market Regime Skills on
+# that view and may add bounded LLM interpretation; unavailable facts remain null.
 market_context: governed_pr_b_core
 market_feature_dir: reports/v04_pr_b/core_features
 market_official_bridge: data/catalog/ipo_official_master_bridge.csv
