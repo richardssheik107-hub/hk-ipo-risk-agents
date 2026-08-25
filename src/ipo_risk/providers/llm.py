@@ -245,7 +245,7 @@ class OpenAICompatibleLLMProvider:
                     started=started,
                 )
                 return result
-            except (json.JSONDecodeError, ValidationError, ValueError, TypeError, IndexError, AttributeError) as exc:
+            except (json.JSONDecodeError, ValidationError, ValueError, TypeError, IndexError, AttributeError):
                 if attempt < total_attempts:
                     continue
                 raise LLMProviderError(
@@ -337,44 +337,105 @@ class OpenAIResponsesLLMProvider:
     name = "openai_responses"
     tool_name = "submit_structured_result"
 
-    def __init__(self, *, api_key: str, base_url: str, model: str, timeout_seconds: int = 60, max_retries: int = 2, client: Any | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        base_url: str,
+        model: str,
+        timeout_seconds: int = 60,
+        max_retries: int = 2,
+        client: Any | None = None,
+    ) -> None:
         if not api_key or not base_url or not model:
-            raise LLMProviderError(LLMFailureKind.UNAVAILABLE, "Responses API configuration is incomplete", recoverable=False)
+            raise LLMProviderError(
+                LLMFailureKind.UNAVAILABLE,
+                "Responses API configuration is incomplete",
+                recoverable=False,
+            )
         self.model = model
         self.max_retries = max(0, int(max_retries))
-        self.last_call_metadata = None
+        self.last_call_metadata: LLMCallMetadata | None = None
         self._client = client or self._build_client(api_key, base_url, timeout_seconds)
 
     @staticmethod
     def _build_client(api_key: str, base_url: str, timeout_seconds: int) -> Any:
         try:
             from openai import OpenAI
-            return OpenAI(api_key=api_key, base_url=base_url, timeout=timeout_seconds, max_retries=0)
+            return OpenAI(
+                api_key=api_key,
+                base_url=base_url,
+                timeout=timeout_seconds,
+                max_retries=0,
+            )
         except Exception:
-            raise LLMProviderError(LLMFailureKind.UNAVAILABLE, "Responses API client initialization failed", recoverable=False) from None
+            raise LLMProviderError(
+                LLMFailureKind.UNAVAILABLE,
+                "Responses API client initialization failed",
+                recoverable=False,
+            ) from None
 
     def complete(self, prompt: str) -> str:
-        response = self._request(input=prompt, instructions="Respond directly.")
+        response = self._request(
+            input=prompt,
+            instructions="Respond directly.",
+            prompt_version="legacy_complete",
+        )
         text = getattr(response, "output_text", None)
         if not isinstance(text, str) or not text.strip():
-            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API text output is missing", recoverable=False, attempts=1)
+            raise LLMProviderError(
+                LLMFailureKind.RESPONSE_VALIDATION,
+                "Responses API text output is missing",
+                recoverable=False,
+                attempts=1,
+            )
         return text
 
-    def generate_structured(self, *, task_name: str, prompt_version: str, evidence: list[Evidence], response_model: type[StructuredModel]) -> StructuredModel:
+    def generate_structured(
+        self,
+        *,
+        task_name: str,
+        prompt_version: str,
+        evidence: list[Evidence],
+        response_model: type[StructuredModel],
+    ) -> StructuredModel:
         try:
             domain_instruction = resolve_domain_instruction(task_name, prompt_version)
         except PromptResolutionError:
-            raise LLMProviderError(LLMFailureKind.REQUEST, "LLM prompt identity is not registered", recoverable=False) from None
-        request = {"task_name": task_name, "prompt_version": prompt_version, "evidence": [OpenAICompatibleLLMProvider._serialize_evidence(x) for x in evidence]}
-        instructions = "Judge only supplied Evidence and submit exactly one structured result through the required function."
+            raise LLMProviderError(
+                LLMFailureKind.REQUEST,
+                "LLM prompt identity is not registered",
+                recoverable=False,
+            ) from None
+        request = {
+            "task_name": task_name,
+            "prompt_version": prompt_version,
+            "evidence": [
+                OpenAICompatibleLLMProvider._serialize_evidence(item)
+                for item in evidence
+            ],
+        }
+        instructions = (
+            "Judge only supplied Evidence and submit exactly one structured result "
+            "through the required function."
+        )
         if domain_instruction:
             instructions += "\n\n" + domain_instruction
         response = self._request(
             input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
             instructions=instructions,
-            tools=[{"type": "function", "name": self.tool_name, "description": "Submit the complete structured judgment.", "parameters": response_model.model_json_schema(), "strict": True}],
+            tools=[
+                {
+                    "type": "function",
+                    "name": self.tool_name,
+                    "description": "Submit the complete structured judgment.",
+                    "parameters": response_model.model_json_schema(),
+                    "strict": True,
+                }
+            ],
             tool_choice={"type": "function", "name": self.tool_name},
             parallel_tool_calls=False,
+            prompt_version=prompt_version,
         )
         arguments = None
         for item in getattr(response, "output", None) or []:
@@ -384,22 +445,93 @@ class OpenAIResponsesLLMProvider:
                 arguments = item.get("arguments") if isinstance(item, dict) else getattr(item, "arguments", None)
                 break
         if not isinstance(arguments, str):
-            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API structured output is missing", recoverable=False, attempts=1)
+            raise LLMProviderError(
+                LLMFailureKind.RESPONSE_VALIDATION,
+                "Responses API structured output is missing",
+                recoverable=False,
+                attempts=1,
+            )
         try:
             return response_model.model_validate(json.loads(arguments))
         except (json.JSONDecodeError, ValidationError):
-            raise LLMProviderError(LLMFailureKind.RESPONSE_VALIDATION, "Responses API structured output failed validation", recoverable=False, attempts=1) from None
+            raise LLMProviderError(
+                LLMFailureKind.RESPONSE_VALIDATION,
+                "Responses API structured output failed validation",
+                recoverable=False,
+                attempts=1,
+            ) from None
 
-    def _request(self, **kwargs: Any) -> Any:
+    @staticmethod
+    def _response_raw(response: Any) -> str:
+        if hasattr(response, "model_dump_json"):
+            return str(response.model_dump_json())
+        if hasattr(response, "model_dump"):
+            return json.dumps(
+                response.model_dump(mode="json"),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        return str(response)
+
+    def _responses_metadata(
+        self,
+        *,
+        response: Any,
+        prompt_version: str,
+        started: float,
+    ) -> LLMCallMetadata:
+        request_id = str(
+            getattr(response, "_request_id", None)
+            or getattr(response, "request_id", None)
+            or getattr(response, "id", "")
+        )
+        usage = getattr(response, "usage", None)
+
+        def _usage_value(name: str) -> Any:
+            if isinstance(usage, dict):
+                return usage.get(name)
+            return getattr(usage, name, None)
+
+        token_usage: dict[str, int] = {}
+        for response_key, canonical_key in (
+            ("input_tokens", "prompt_tokens"),
+            ("output_tokens", "completion_tokens"),
+            ("total_tokens", "total_tokens"),
+        ):
+            value = _usage_value(response_key)
+            if value is not None:
+                token_usage[canonical_key] = int(value)
+        raw = self._response_raw(response)
+        return LLMCallMetadata(
+            provider_name=self.name,
+            model_name=self.model,
+            prompt_version=prompt_version,
+            latency_ms=max(0, int((perf_counter() - started) * 1000)),
+            token_usage=token_usage,
+            request_id=request_id,
+            raw_response_hash=sha256(raw.encode("utf-8")).hexdigest(),
+        )
+
+    def _request(self, *, prompt_version: str, **kwargs: Any) -> Any:
         for attempt in range(1, self.max_retries + 2):
+            started = perf_counter()
             try:
-                return self._client.responses.create(model=self.model, **kwargs)
+                response = self._client.responses.create(model=self.model, **kwargs)
+                self.last_call_metadata = self._responses_metadata(
+                    response=response,
+                    prompt_version=prompt_version,
+                    started=started,
+                )
+                return response
             except Exception as exc:
-                status = getattr(exc, "status_code", None)
-                name = type(exc).__name__.casefold()
-                recoverable = status in {408, 409, 429} or (status is not None and status >= 500) or "timeout" in name or "connection" in name
+                kind, recoverable = OpenAICompatibleLLMProvider._classify_remote_error(exc)
                 if recoverable and attempt <= self.max_retries:
                     continue
-                kind = LLMFailureKind.TRANSPORT if recoverable else LLMFailureKind.REQUEST
-                raise LLMProviderError(kind, "Responses API request failed", recoverable=recoverable, attempts=attempt) from None
+                raise LLMProviderError(
+                    kind,
+                    OpenAICompatibleLLMProvider._safe_failure_message(kind),
+                    recoverable=recoverable,
+                    attempts=attempt,
+                ) from None
         raise AssertionError("unreachable")
