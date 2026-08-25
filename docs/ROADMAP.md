@@ -1,8 +1,7 @@
 # Roadmap
 
 > Status snapshot: **2026-08-25**  
-> Time budget: **5 days to competition submission**  
-> Execution strategy: **return to the competition task → maximize real LLM value → finish governed E2E → stabilize demo → submit**
+> Execution strategy: **return to the competition task → five parallel ownership lanes → continuous integration → competition release**
 
 ## 1. Current state
 
@@ -10,145 +9,170 @@
 v0.3 Document Intelligence          COMPLETE / FROZEN
 PR-A–PR-G                           COMPLETE / FROZEN
 PR-H Full E2E                       PARTIAL / BLOCKED
-v0.4.3 Baseline E2E Freeze          NOT CREATED
-Competition submission sprint       ACTIVE — 5 DAYS
-Target                               v0.4.5 COMPETITION_READY
+Competition Final Sprint            ACTIVE
+Target                              v0.4.5 COMPETITION_READY
 ```
 
-Frozen measured facts remain unchanged:
+当前不再按日期推进，也不再优先做大规模研究探索。五个人各自拥有固定责任线并行开发，A 持续合流。
+
+## 2. Competition hard requirements
+
+赛题最终必须证明：
 
 ```text
-Official 2020–2024 universe          438
-Production Document-X                438 / 438, 100 dims
-Market-X Core                        438 / 438, 30 positions
-5D outcome                           424 / 438
-Canonical model-ready                424 = 354 Dev + 70 Val
-2025 Blind y accessed                NO
+1. 数百页招股书解析与非标风险抽取
+2. LLM 防幻觉 / Evidence-grounded semantic reasoning
+3. Financial / Legal / Market / Decision 多角色 Agent + Skill
+4. Agent conflict → re-check → verification → resolution
+5. 基本面 + 市场情绪联合预警
+6. 上市首日 / 5D / 20D / 60D 真实表现验证
+7. 可解释报告 + PDF Evidence + Agent trace + Human Review
+8. runnable prototype + prediction table + reasoning logs + case reports
 ```
 
-PR-F remains an honest auxiliary modeling baseline; weak 5D performance is not a reason to spend the remaining sprint on model exploration or Validation retuning.
-
-## 2. Competition-first objective
-
-The remaining work is no longer a broad research program. The product must directly satisfy the competition task:
+指标目标：
 
 ```text
-real prospectus PDF
-→ grounded Evidence retrieval
-→ Financial / Legal / Business Agents
-→ LLM semantic extraction where semantics matter
-→ deterministic Calculation where exact math matters
+关键风险要素抽取准确率      >= 80%
+关键 Evidence Recall         >= 85%
+Agent / Tool / Evidence trace = 100%
+```
+
+## 3. Five parallel lanes
+
+### A — Integration / Release
+
+```text
+public contracts
+GitHub / PR / CI
+E2E integration
+3–5 real-case matrix
+reproducibility
+release / submission
+```
+
+### B — LLM Document Intelligence
+
+```text
+Legal semantics
+Business semantics
+related-party / redemption / litigation
+core product / commercialization / pipeline
+Disclosure Tone bounded analysis
+Evidence grounding
+minimal Document benchmark
+```
+
+### C — Market Intelligence
+
+```text
+governed PIT facts
+IPO Heat / Market Regime Skills
+MarketContext
+LLM Market interpretation
+optional comparable context
+market provenance
+```
+
+### D — Quant / Outcome / Evaluation
+
+```text
+frozen PR-F runtime recovery
+1D / 5D / 20D / 60D outcomes
+prediction results
+AI-vs-Offline effect check
+submission evaluation artifacts
+```
+
+### E — Supervisor / Multi-Agent / Product
+
+```text
+LLM Final Supervisor
+Conflict / RecheckRequest / resolution
+Agent Trace
+Evidence Viewer
+Human Review
+final Streamlit
+3–5 stable demos
+```
+
+## 4. Current frozen foundation
+
+```text
+Official universe                  438
+Production Document-X             438 / 438, 100 dims
+Market-X Core                     438 / 438, 30 positions
+5D Outcome                        424 / 438
+Canonical                         424 = 354 Dev + 70 Val
+Oracle v2 strict                  96 = 77 Dev + 19 Val
+HSI Extended                      438 / 438
+HKEX turnover 20D                 438 / 438
+industry return                     0 / 438, PIT_BLOCKED
+2025 Blind y accessed             NO
+```
+
+## 5. LLM-first competition path
+
+```text
+PDF
+→ Retriever / Evidence
+→ Financial Agent + deterministic math
+→ Legal Agent + LLM semantics
+→ Business Agent + LLM semantics
 → Verifier
-→ governed Market context + LLM interpretation
-→ model/rule auxiliary signal
+→ governed Market facts / Skills
+→ LLM Market Agent
+→ Model if frozen runtime available + Rule
 → LLM Final Supervisor
-→ conflict / re-check / uncertainty
-→ auditable final report + Streamlit demo
+→ conflict → targeted re-check → resolved / unresolved
+→ Report / Evidence Viewer / Trace / Human Review
 ```
 
-The LLM must create observable functional improvement, not merely appear as an API dependency.
+## 6. Model policy
 
-## 3. Five-day execution sequence
+Frozen PR-F remains an auxiliary baseline:
 
 ```text
-DAY 1  Real LLM Document Intelligence
-DAY 2  LLM Market interpretation + LLM Final Supervisor + simple conflict re-check
-DAY 3  3–5 real-case E2E + targeted fixes + small Offline-vs-AI check
-DAY 4  Evidence / AI Analysis / Agent Trace product integration
-DAY 5  Regression + submission package + freeze + rehearsal
+M   0.4246
+P   0.5000
+PM  0.4246
 ```
 
-This sequence supersedes the previous 3-week CH-0..CH-6 execution schedule for the current submission window. CH items remain backlog concepts only where they directly support the five-day deliverable.
+本冲刺不做 broad model search、2024 retuning 或 score inversion。D 只恢复原 frozen runtime/handoff；若无法恢复，Model Channel 诚实显示 unavailable。
 
-## 4. What we deliberately stop doing
-
-Until submission, do **not** spend primary capacity on:
+## 7. What is explicitly deferred
 
 ```text
-full 1D/5D/20D/60D research matrix
-new P-Core / broad feature audit
-new model family / hyperparameter exploration
-large-scale Retriever redesign
-new industry mapping research
-large new market data families
-full-corpus benchmark construction
-story-only / presentation-only features without product value
+new model families / hyperparameter search
+broad P-Core / feature audit
+large Retriever redesign
+full multi-horizon modeling research
+industry PIT research
+broad new data acquisition
+paper-style ablation
+story-only UI work
 ```
 
-Allowed work must fix a real competition requirement, an E2E blocker, a high-impact extraction error, or a visible product usability problem.
+注意：1D/5D/20D/60D **Outcome 计算本身不是 defer 项**，因为它是赛题明确要求。
 
-## 5. LLM-first acceptance
+## 8. Final Gate
 
-By submission, the real AI path must demonstrate:
-
-```text
-Legal Agent       LLM structured semantic extraction from supplied Evidence
-Business Agent    LLM semantic cross-check / gap filling from supplied Evidence
-Market Agent      LLM interpretation of governed pre-listing market facts
-Final Supervisor  LLM synthesis / conflict detection / uncertainty / re-check request
-```
-
-Rules:
-
-- LLM only reasons over supplied governed facts/Evidence;
-- structured output must validate against schema;
-- out-of-scope Evidence IDs fail closed;
-- exact financial calculations stay deterministic;
-- model score is auxiliary and uncalibrated unless explicitly calibrated;
-- every visible AI conclusion must trace to Evidence / market facts / model drivers.
-
-## 6. Minimum effect check
-
-Do one small, submission-oriented comparison on the same 3–5 real cases:
+Competition release 只有在以下条件基本满足后才创建：
 
 ```text
-Offline deterministic mode
-vs
-AI-enhanced mode
-```
-
-Record only useful operational indicators:
-
-```text
-semantic fields resolved
-formal risks resolved
-needs_review / extraction_failed count
-Evidence grounding validity
-LLM structured-output validity
-conflict/re-check usefulness
-```
-
-This is not a new research benchmark; it is a sanity check that LLM integration materially improves the product.
-
-## 7. PR-H / model runtime rule
-
-Restoring the frozen PR-F per-case handoff remains D's highest-priority model task, but it is time-boxed. Do not retrain/reconstruct/tune merely to unblock UI.
-
-If the original frozen handoff cannot be recovered within the sprint, the formal PR-H all-channel Gate remains blocked and the product must show `Model Channel = unavailable` honestly. Document / Market / Rule / LLM Supervisor must continue to work. No fake model output is allowed.
-
-## 8. Final submission gate
-
-A competition release is accepted only if:
-
-```text
->= 3 stable real IPO demos
-real LLM calls visible in governed runtime
-Evidence references resolve
-Legal/Business semantic extraction works on selected cases
-Market interpretation is PIT-safe
-Final Supervisor can synthesize and expose uncertainty/conflict
-Agent/LLM trace is visible
-no fabricated Evidence / market / model facts
-no 2025 Blind y access
+real LLM provider path active
+Legal / Business semantic reasoning grounded
+Market Agent grounded in PIT facts
+LLM Final Supervisor active
+controlled conflict / re-check exists
+1D / 5D / 20D / 60D results generated
+Risk / Evidence benchmark produced
+Agent / Tool / Evidence trace complete
+>=3 stable real IPO demos
+Evidence Viewer / Human Review usable
+prediction table + reasoning logs + reports generated
 full CI + real-case smoke pass
-clone/install/run instructions are complete
+submission package reproducible
 ```
 
-Target tag after PASS:
-
-```text
-v0.4.5 COMPETITION_READY
-```
-
-Detailed ownership: [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).  
-Detailed five-day acceptance: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
+详细 ownership 见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
