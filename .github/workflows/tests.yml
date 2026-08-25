@@ -24,6 +24,8 @@ jobs:
         run: python scripts/validate_project.py
       - name: Competition data validation
         run: python scripts/validate_competition_data.py
+      - name: Competition runtime contract validation
+        run: python scripts/validate_competition_runtime.py
       - name: Golden-case manifest integrity
         run: >-
           python scripts/validate_v03_golden_manifest.py
