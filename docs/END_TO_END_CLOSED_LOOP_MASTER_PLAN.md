@@ -1,163 +1,241 @@
-# HK IPO Risk Agents — End-to-End Competition Delivery Plan
+# HK IPO Risk Agents — End-to-End Closed Loop Master Plan
 
 > Status snapshot: **2026-08-25**  
-> Time budget: **5 days**  
-> Strategy: **working competition product first; exploratory research deferred**
+> Current Gate: **PR-H PARTIAL / BLOCKED**  
+> Program mode: **Competition Final Sprint — five parallel ownership lanes**
 
-## 1. Final product path
+## 1. Program objective
 
-The final submission must make this path real and observable:
+项目不再扩展为长期研究计划，而是在现有 v0.4 基础上尽快完成赛题要求的完整 Competition Release。
+
+最终链路：
 
 ```text
 Prospectus PDF
-→ Parser / Retriever
-→ Financial Agent
+→ Parser / Retriever / Evidence
+→ Financial Agent + deterministic Calculation
 → Legal Agent + LLM semantic extraction
-→ Business Agent + LLM semantic cross-check
-→ Evidence / deterministic Calculation
+→ Business Agent + LLM semantic extraction
 → Verifier
-→ governed Market context + LLM interpretation
-→ frozen Model signal if available + Rule signal
+→ governed Market facts + Skills
+→ LLM Market Agent
+→ frozen Model signal if available + Rule
 → LLM Final Supervisor
-→ conflict / re-check / uncertainty
-→ Final Report / Streamlit / Agent Trace
+→ Conflict → targeted re-check → resolution / uncertainty
+→ Final Report / Evidence Viewer / Agent Trace / Human Review
+→ 1D / 5D / 20D / 60D real-performance validation
 ```
-
-LLM is used where semantic reasoning matters. Deterministic code remains authoritative for exact calculations, identity, PIT, hashes, model scoring and reproducibility.
 
 ## 2. Frozen foundation
 
 ```text
-PR-A–PR-G                           COMPLETE / FROZEN
-PR-H                               PARTIAL / BLOCKED
-Production Document-X              438 / 438
-Market-X Core                      438 / 438
-5D Outcome                         424 / 438
-Canonical                          424 = 354 Dev + 70 Val
-2025 Blind y accessed              false
+PR-A Document-X                 COMPLETE / FROZEN
+PR-B Market-X Core              COMPLETE / FROZEN
+PR-C 5D Outcome                 COMPLETE / FROZEN
+PR-D Canonical Dataset          COMPLETE / FROZEN
+Oracle v2                       COMPLETE / FROZEN / EVALUATION-ONLY
+PR-E Baseline + Oracle          COMPLETE / FROZEN
+PR-F LightGBM + Explainability  COMPLETE / FROZEN
+PR-G Market Agent + Supervisor  COMPLETE / FROZEN
+PR-H Full E2E                   PARTIAL / BLOCKED
 ```
 
-The frozen PR-F model result is kept as an auxiliary research baseline. The sprint does not spend time trying to improve its 5D AUC.
-
-## 3. Five-day priority order
+Measured anchors:
 
 ```text
-1. make real LLM Legal/Business extraction work
-2. make governed Market facts produce LLM Market interpretation
-3. make LLM Final Supervisor synthesize, detect conflict and request one re-check
-4. stabilize 3–5 real IPO cases
-5. expose Evidence + AI contribution + Agent Trace in the product
-6. regression / freeze / submission
+Official cases                  438
+Production Document-X           438 / 438, 100 dims
+Market-X Core                   438 / 438, 30 positions
+5D outcome                      424 / 438
+Canonical model-ready           424 = 354 Dev + 70 Val
+Oracle v2 strict                96 = 77 Dev + 19 Val
+2025 Blind y accessed           false
 ```
 
-Anything outside this order is backlog unless it blocks the final product.
-
-## 4. Deferred research
-
-Until submission, defer:
+## 3. Competition hard requirements
 
 ```text
-multi-horizon modeling
-new feature families
-new model families / tuning
-full feature audit
-large Retriever research
-industry PIT research
-full benchmark program
-large-scale new market acquisition
+关键风险要素抽取准确率      >= 80%
+关键 Evidence Recall         >= 85%
+Agent / Tool / Evidence trace = 100%
+上市首日 / 5D / 20D / 60D    required
+可运行原型 / API / UI         required
+prediction table / reasoning logs / Evidence / case reports required
+Human Review                   required
 ```
 
-A targeted fix is allowed when a selected real case proves it is necessary.
-
-## 5. LLM governance
-
-### LLM may
-
-- interpret retrieved legal/business evidence;
-- fill bounded semantic fields;
-- interpret governed market facts;
-- synthesize cross-agent findings;
-- detect conflict/uncertainty and request re-check.
-
-### LLM may not
-
-- invent Evidence or market facts;
-- cite IDs outside supplied inputs;
-- replace exact financial calculations;
-- alter frozen model output;
-- convert an uncalibrated score into probability;
-- bypass Verifier.
-
-Structured outputs must validate against schemas. Provider failure must degrade honestly.
-
-## 6. Real collaboration target
-
-The competition version upgrades parallel Agent output into one controlled collaboration loop:
+## 4. Five-person ownership
 
 ```text
-Agent claims
-→ LLM Final Supervisor detects conflict / uncertainty
-→ one targeted retrieval or existing Skill
+A  public contracts / integration / CI / release / submission
+B  LLM Document Intelligence / Evidence / benchmark
+C  Market Intelligence / Skills / LLM interpretation
+D  Outcome / PR-F runtime / evaluation
+E  LLM Supervisor / conflict / trace / Evidence Viewer / Human Review / UI
+```
+
+四条业务 lane 同时向 E 和 A 交付，不再按阶段串行等待。
+
+## 5. LLM architecture policy
+
+LLM 应负责：
+
+```text
+Legal complex clause semantics
+Business commercialization/core-product semantics
+Disclosure Tone bounded interpretation
+Market interpretation of governed PIT facts
+Final Supervisor synthesis / conflict / uncertainty / re-check
+```
+
+Deterministic code 继续负责：
+
+```text
+exact financial math
+schema / identity
+PIT guards
+feature materialization
+hash / manifest
+model scoring
+reproducibility
+```
+
+Formal RiskItem 仍需要 Evidence；LLM 不能创造 Evidence 或 market facts。
+
+## 6. Document Intelligence workstream
+
+B 负责让真实 case 走通：
+
+```text
+Retriever
+→ Evidence
+→ LLM structured extraction
+→ schema validation
+→ Risk Builder
 → Verifier
-→ Supervisor second pass
-→ resolved or unresolved
 ```
 
-One controlled re-check is enough for this sprint. Do not build an open-ended autonomous loop.
-
-## 7. Effect validation
-
-Use 3–5 selected real cases and compare:
+重点覆盖：
 
 ```text
-Offline deterministic
-vs
-AI enhanced
+redemption_rights
+material_litigation_compliance
+related_party_transaction
+precommercial_product
+core_product
+pipeline_stage
+commercialization_status
+Disclosure Tone / Obfuscation
 ```
 
-Record only whether LLM improves practical completion:
+同时产出 submission-ready Risk/Evidence benchmark。
+
+## 7. Market Intelligence workstream
+
+C 将已有 governed market facts 封装为：
 
 ```text
-semantic fields resolved
-risk decisions resolved
-needs_review / extraction_failed
-Evidence grounding validity
-structured-output validity
-conflict/re-check usefulness
+IPOHeatSkill
+MarketRegimeSkill
+optional ComparableIPOSkill
 ```
 
-This check exists to prove functional value, not to create a new research paper.
+再生成 `MarketContext → LLM Market interpretation`。
 
-## 8. Model and PR-H handling
+任何输出必须保留 value / availability / missing reason / cutoff / provenance。Industry return 在历史分类映射仍不 PIT-safe 时继续 unavailable。
 
-D first attempts to restore the original frozen PR-F per-case handoff. This task is time-boxed.
+## 8. Outcome / Model / Evaluation workstream
 
-If unavailable:
+D 必须补齐：
 
 ```text
-formal PR-H remains BLOCKED
-Model channel = unavailable
-Document + Market + Rule + LLM Supervisor continue
+return_1d
+return_5d
+return_20d
+return_60d
 ```
 
-Do not retrain or reconstruct PR-F simply to make the UI look complete.
+并尽量恢复 frozen PR-F per-case score + SHAP。若无法恢复，则 Model Channel 显式 unavailable。
 
-## 9. Submission definition of done
+D 还负责：
 
 ```text
->=3 real IPO cases stable
-real LLM provider path works
-Legal/Business LLM semantics are visible and grounded
-Market LLM interpretation is PIT-safe
-LLM Final Supervisor works
-at least one conflict/re-check path works
-Evidence / Calculation / Verifier boundaries hold
-Agent/LLM trace visible
-model availability is honest
-no 2025 Blind y access
-CI + real-case smoke pass
-reproducible runbook complete
+test_predictions.csv
+multi_horizon_results.csv
+AI-vs-Offline comparison
+submission evaluation summary
 ```
 
-Detailed five-person daily execution: [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).  
-Detailed acceptance: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
+当前 frozen PR-F 弱结果不触发 new model search。
+
+## 9. Multi-Agent / Product workstream
+
+E 负责：
+
+```text
+LLM Final Supervisor
+Conflict
+RecheckRequest
+Verifier challenge
+resolution / unresolved uncertainty
+Agent Trace
+Evidence Viewer
+Human Review
+final Streamlit
+```
+
+协同路径：
+
+```text
+Agent disagreement
+→ Conflict
+→ targeted re-retrieval
+→ Skill / Agent rerun
+→ Verifier challenge
+→ Supervisor resolution
+```
+
+不做无限 autonomous loop；一次受控 re-check 为主要比赛闭环。
+
+## 10. PR-H / model runtime boundary
+
+PR-H 的 frozen PR-F runtime/handoff 缺失仍是 formal blocker，且不能通过 retrain/reconstruct/retune 解阻。
+
+```text
+if recovered:
+  ModelSignal = governed frozen score + drivers
+else:
+  formal PR-H remains blocked
+  ModelSignal = unavailable
+  rest of competition runtime continues
+```
+
+## 11. Explicitly deferred
+
+```text
+new model family search
+large hyperparameter tuning
+broad feature/P-Core research
+large Retriever redesign
+industry PIT research
+broad new market datasets
+paper-style ablation
+story-only UI work
+```
+
+1D/5D/20D/60D outcome 计算不属于 defer 项，因为是赛题明确要求。
+
+## 12. Final release sequence
+
+这里不再按日期排序，而按完成条件推进：
+
+```text
+B/C/D/E 各 lane 达到 Done
+→ A 完成 all-lane integration
+→ >=3 real IPO stable E2E
+→ full CI / provenance / Blind / determinism checks
+→ submission artifacts complete
+→ Competition Release / v0.4.5 COMPETITION_READY
+```
+
+详细分工见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
