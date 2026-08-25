@@ -2,19 +2,22 @@
 
 Evidence-backed multi-agent risk analysis and market-warning system for Hong Kong IPO prospectuses.
 
-系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business / Market Agents、LLM semantic reasoning、deterministic Skills、Verifier 与 LLM Final Supervisor 形成可审计的港股 IPO 风险分析闭环。
+系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business Agents、LLM semantic reasoning、deterministic Skills、Verifier、governed MarketContext 与 Final Supervisor 形成可审计的港股 IPO 风险分析链。`v0.4.0` 先发布已经可运行、可验证的能力；LLM Market Agent、LLM Final Supervisor、controlled re-check 与完整 competition package 继续作为 `v0.4.5 COMPETITION_READY` Gate。
 
 > 规则分和 `uncalibrated_model_score` 不是实际下跌概率，也不构成投资建议。
 
 ## Current status — 2026-08-25
 
 ```text
+v0.4.0 Competition Preview              RELEASE CANDIDATE
 v0.3 Document Intelligence              COMPLETE / FROZEN
 PR-A–PR-G                               COMPLETE / FROZEN
 PR-H Full E2E                           PARTIAL / BLOCKED
 Competition Final Sprint                ACTIVE
-Target                                  v0.4.5 COMPETITION_READY
+Competition target                      v0.4.5 COMPETITION_READY
 ```
+
+`v0.4.0` 与最终比赛验收分开：前者冻结当前可运行的大版本能力并提供清晰 known limitations；后者只有在赛题硬 Gate 全部满足后才可标记 `COMPETITION_READY`。发布验收见 [`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)。
 
 当前不再按日期拆任务，也不继续展开大规模探索研究。五个人各自拥有一条固定工作流并行推进，A 持续集成到 `main`。
 
@@ -84,7 +87,7 @@ Prospectus PDF
 → Final Report / Evidence Viewer / Agent Trace / Human Review
 ```
 
-LLM is authoritative only for bounded semantic interpretation. Python remains authoritative for exact calculations, schema/identity, PIT checks, feature materialization, hashes, model scoring and reproducibility.
+上图是 `v0.4.5 COMPETITION_READY` 的目标闭环。当前 `v0.4.0` 已有 governed MarketContext 和 deterministic `V04FinalSupervisor` composition，但正式 runtime 里的 Market Agent 仍未接线，Final Supervisor 也尚未升级为 LLM arbitration。LLM is authoritative only for bounded semantic interpretation. Python remains authoritative for exact calculations, schema/identity, PIT checks, feature materialization, hashes, model scoring and reproducibility.
 
 ## What is already real
 
@@ -179,10 +182,11 @@ Secrets only come from environment variables. Do not commit `.env`, API keys, lo
 3. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
 4. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md)
 5. [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)
-6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
-7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
-9. [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md)
-10. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
+6. [`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
+7. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
+8. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+9. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
+10. [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md)
+11. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
 
 Frozen completion reports and `reports/frozen/*.json` remain authoritative for historical claims.
