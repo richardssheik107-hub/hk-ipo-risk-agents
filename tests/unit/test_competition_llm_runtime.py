@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+
+from pydantic import BaseModel, Field
+
 from ipo_risk.core.config import Settings
 from ipo_risk.providers.llm import OpenAIResponsesLLMProvider
 from ipo_risk.services.analysis_service import IPOAnalysisService
@@ -31,6 +35,47 @@ class _FakeClient:
     responses = _FakeResponses()
 
 
+class _StructuredResult(BaseModel):
+    label: str
+    evidence_ids: list[str] = Field(min_length=1)
+
+
+class _StructuredResponse:
+    usage = _FakeUsage()
+
+    def __init__(self, response_id: str, arguments: dict[str, object]) -> None:
+        self.id = response_id
+        self.output_text = ""
+        self.output = [
+            {
+                "type": "function_call",
+                "name": OpenAIResponsesLLMProvider.tool_name,
+                "arguments": json.dumps(arguments),
+            }
+        ]
+
+    def model_dump_json(self) -> str:
+        return json.dumps({"id": self.id, "output": self.output}, sort_keys=True)
+
+
+class _SequenceResponses:
+    def __init__(self) -> None:
+        self.calls: list[dict[str, object]] = []
+        self.responses = [
+            _StructuredResponse("resp-invalid", {"label": None, "evidence_ids": ["e1"]}),
+            _StructuredResponse("resp-valid", {"label": "ok", "evidence_ids": ["e1"]}),
+        ]
+
+    def create(self, **kwargs):
+        self.calls.append(kwargs)
+        return self.responses.pop(0)
+
+
+class _SequenceClient:
+    def __init__(self) -> None:
+        self.responses = _SequenceResponses()
+
+
 def test_responses_provider_records_trace_metadata_on_success():
     provider = OpenAIResponsesLLMProvider(
         api_key="test-key",
@@ -54,6 +99,33 @@ def test_responses_provider_records_trace_metadata_on_success():
     }
     assert len(metadata.raw_response_hash) == 64
     assert metadata.latency_ms >= 0
+
+
+def test_responses_provider_retries_schema_invalid_function_arguments_with_safe_feedback():
+    client = _SequenceClient()
+    provider = OpenAIResponsesLLMProvider(
+        api_key="test-key",
+        base_url="https://example.invalid/v1",
+        model="test-model",
+        max_retries=1,
+        client=client,
+    )
+
+    result = provider.generate_structured(
+        task_name="generic_test_task",
+        prompt_version="generic_test_v1",
+        evidence=[],
+        response_model=_StructuredResult,
+    )
+
+    assert result == _StructuredResult(label="ok", evidence_ids=["e1"])
+    assert len(client.responses.calls) == 2
+    assert "failed local schema validation" in str(
+        client.responses.calls[1]["instructions"]
+    )
+    assert "label" in str(client.responses.calls[1]["instructions"])
+    assert provider.last_call_metadata is not None
+    assert provider.last_call_metadata.request_id == "resp-valid"
 
 
 def _service_for(settings: Settings) -> IPOAnalysisService:
