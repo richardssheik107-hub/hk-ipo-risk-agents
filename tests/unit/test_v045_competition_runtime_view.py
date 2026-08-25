@@ -196,3 +196,27 @@ def test_an_unrenderable_page_raises_instead_of_returning_a_blank_image(content,
 def test_a_page_beyond_the_document_is_refused_by_name() -> None:
     with pytest.raises(PageRenderError, match="beyond the document"):
         render_page_png(REAL_PDF.read_bytes(), 10**6)
+
+
+def _app_source() -> str:
+    return (APP_DIR / "streamlit_app.py").read_text(encoding="utf-8")
+
+
+def test_the_frozen_summary_is_never_labelled_as_the_final_supervisor_conclusion() -> None:
+    """`FinalSupervisionResult.summary` is the Document Supervisor's string.
+
+    Presenting it under a Final Supervisor heading is what made 2410 read
+    "0 unresolved conflict(s)" while the competition layer held five. The label
+    is fixed here so the defect cannot come back through a second surface.
+    """
+    assert "Final Supervisor 综合结论" not in _app_source()
+
+
+def test_the_channel_grid_is_rendered_once_per_page() -> None:
+    """It sits above the workspaces; a second copy inside a tab is redundant."""
+    assert _app_source().count("render_channel_grid(payload)") == 1
+
+
+def test_the_report_surface_reuses_the_shared_supervisor_projection() -> None:
+    """One helper decides LLM-vs-deterministic labelling for every surface."""
+    assert "executive_supervisor_view(payload)" in _app_source()
