@@ -282,6 +282,20 @@ missing remains explicit
 no future leakage / no fake industry proxy
 ```
 
+### C Competition implementation identity
+
+```text
+IPO Heat policy       v04_ipo_heat_skill_v1
+Market Regime policy  v04_market_regime_skill_v1
+Market Intelligence   v04_market_intelligence_v1
+Comparable IPO        DEFERRED（当前没有正式 PIT-safe comparable 定义）
+Readiness artifact    data/catalog/v04_c_market_intelligence_readiness.json
+```
+
+成交额仅记录为 `OBSERVED_UNBENCHMARKED`；在没有严格上市前相对历史基准时，不作跨年份绝对强弱判断。Industry return 继续显式保留 `INDUSTRY_MAPPING_PIT_BLOCKED`，LLM 只能解释确定性 MarketContext，provider 不可用时保留完整确定性结果并诚实降级。
+
+两个 policy 都是未使用 2024 outcome 或 2025 Blind y 的 competition interpretation heuristic。IPO Heat 在一日破发率不高于 0.35 且近期五日收益非负时判为 `HOT`，在破发率不低于 0.60 或近期五日收益不高于 -0.05 时判为 `COLD`；没有可用 recent-IPO 样本时必须为 `INSUFFICIENT_DATA`。Market Regime 使用固定的 HSI 五日/二十日方向阈值（0.01 / 0.02）和二十日非年化波动阈值（低不高于 0.01，高不低于 0.02），冲突趋势或高波动进入 `MIXED`。这些阈值只服务于稳定、可解释的比赛展示，不是预测最优阈值。
+
 ## 5. D — Quant / Outcome / Model Runtime / Evaluation
 
 ### 目标
