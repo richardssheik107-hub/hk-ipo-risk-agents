@@ -2,64 +2,89 @@
 
 Evidence-backed multi-agent risk analysis and market-warning system for Hong Kong IPO prospectuses.
 
-系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business Agents、LLM semantic reasoning、deterministic Skills、Verifier、Market interpretation 与 Final Supervisor 形成可审计的风险分析闭环。
+系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business / Market Agents、LLM semantic reasoning、deterministic Skills、Verifier 与 LLM Final Supervisor 形成可审计的港股 IPO 风险分析闭环。
 
 > 规则分和 `uncalibrated_model_score` 不是实际下跌概率，也不构成投资建议。
 
-## Current Status — 2026-08-25
+## Current status — 2026-08-25
 
 ```text
 v0.3 Document Intelligence              COMPLETE / FROZEN
 PR-A–PR-G                               COMPLETE / FROZEN
-PR-H Streamlit Full E2E                 PARTIAL / BLOCKED
-v0.4.3 Baseline E2E Freeze              NOT CREATED
-5-Day Competition Submission Sprint     ACTIVE
-v0.4.5 Competition Ready                TARGET
+PR-H Full E2E                           PARTIAL / BLOCKED
+Competition Final Sprint                ACTIVE
+Target                                  v0.4.5 COMPETITION_READY
 ```
 
-## Competition delivery mode
+当前不再按日期拆任务，也不继续展开大规模探索研究。五个人各自拥有一条固定工作流并行推进，A 持续集成到 `main`。
 
-Only five days remain, so the project is no longer running a broad research roadmap. The active goal is to return to the competition task and make the working system materially stronger with real LLM capability.
+## Competition requirements mapped to the product
+
+赛题核心要求在当前版本中映射为：
 
 ```text
-Day 1  real LLM Legal / Business Document intelligence
-Day 2  governed Market → LLM interpretation + LLM Final Supervisor + one re-check
-Day 3  3–5 real IPO cases + targeted fixes + small Offline-vs-AI check
-Day 4  Evidence + AI Analysis + Agent Trace product integration
-Day 5  regression + freeze + submission + rehearsal
+数百页 PDF 招股书解析
+→ 标准化财务指标 + 非标隐性风险
+→ Financial / Legal / Market / Decision Agents
+→ Retriever / Cash-runway / IPO-heat / valuation-like Skills
+→ Agent conflict / re-check / verification
+→ 基本面 + 市场情绪联合预警
+→ 1D / 5D / 20D / 60D 真实表现验证
+→ Evidence / page / bbox / Agent trace
+→ Final Report / Streamlit / Human Review
 ```
 
-Deferred until after submission:
+Submission targets:
 
 ```text
-full multi-horizon research
-broad feature audit / P-Core
-new model families / tuning
-large Retriever research
-industry PIT research
-new broad market datasets
-full benchmark construction
-story-only features
+关键风险要素抽取准确率      >= 80%
+关键 Evidence Recall         >= 85%
+Agent / Tool / Evidence trace = 100%
+1D / 5D / 20D / 60D outcome   required
+3–5 stable real IPO demos      required
 ```
+
+## Five-person ownership
+
+### A — Tech Lead / Integration / Release
+
+负责公共 contract、GitHub、CI、E2E、real-case matrix、release、submission。A 不替其他成员重做领域算法；所有公共 Schema / workflow 边界由 A 审核。
+
+### B — LLM Document Intelligence
+
+负责 Legal + Business 的真实 LLM 能力、Evidence-grounded semantic extraction、related-party / redemption / litigation / commercialization / core-product 等非标风险，以及最小 Document benchmark。
+
+### C — Market Intelligence / Market Agent
+
+负责 governed PIT market facts、IPO Heat / Market Regime Skills、MarketContext、LLM market interpretation 和可用 comparable context；不允许 LLM 生成行情事实。
+
+### D — Quant / Outcome / Evaluation
+
+负责恢复 frozen PR-F product signal、1D/5D/20D/60D outcome、最终预测结果表、最小 Offline-vs-AI 效果验证和 submission evaluation artifacts；不进行大规模新模型搜索。
+
+### E — LLM Final Supervisor / Multi-Agent / Product
+
+负责 LLM Final Supervisor、conflict detection、controlled re-check、Agent Trace、Evidence Viewer、Human Review、最终 Streamlit 与 3–5 stable demo cases。
+
+Detailed ownership: [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md).
 
 ## Final product path
 
 ```text
 Prospectus PDF
 → Parser / Retriever / Evidence
-→ Financial Agent
-→ Legal Agent + LLM semantic extraction
-→ Business Agent + LLM semantic cross-check
-→ deterministic Calculation
+→ Financial Agent + deterministic calculations
+→ Legal Agent + LLM semantics
+→ Business Agent + LLM semantics
 → Verifier
-→ governed Market facts + LLM Market interpretation
+→ governed Market facts + Market Skills + LLM interpretation
 → frozen Model signal if available + Rule signal
 → LLM Final Supervisor
-→ conflict / one controlled re-check / uncertainty
-→ Final Report / Streamlit / Agent Trace
+→ conflict → targeted re-check → resolution / uncertainty
+→ Final Report / Evidence Viewer / Agent Trace / Human Review
 ```
 
-LLM is used where semantic understanding matters. Python remains authoritative for exact math, schema/identity, PIT checks, hashes, model scoring and reproducibility.
+LLM is authoritative only for bounded semantic interpretation. Python remains authoritative for exact calculations, schema/identity, PIT checks, feature materialization, hashes, model scoring and reproducibility.
 
 ## What is already real
 
@@ -69,113 +94,53 @@ Production Document-X                 438 / 438, 100 dims
 Market-X Core                         438 / 438, 30 positions
 5D outcome                            424 / 438
 Canonical model-ready                 424 = 354 Dev + 70 Val
-Oracle v2                             98 materialized / 96 strict
+Oracle v2 strict                      96 = 77 Dev + 19 Val
+HSI Extended                          438 / 438
+HKEX turnover 20D                     438 / 438
 2025 Blind y accessed                 NO
 ```
 
-Market Extended readiness:
+Industry return remains `PIT_BLOCKED` until a historically effective company-industry mapping exists.
+
+## LLM responsibilities
 
 ```text
-HSI return / volatility               438 / 438
-HKEX turnover 20D                     438 / 438
-production industry return              0 / 438 (PIT_BLOCKED)
+Legal      complex rights / litigation / compliance semantics
+Business   core product / pipeline / commercialization / revenue semantics
+Market     interpretation of governed PIT facts
+Supervisor synthesis / conflict / uncertainty / controlled re-check
 ```
 
-## LLM responsibilities in the competition version
+Financial exact math remains deterministic-first.
 
-### Legal Agent
+## Model policy
 
-Real LLM structured extraction should resolve complex clause semantics such as right effectiveness, post-listing survival, termination/restoration conditions and actual litigation/compliance matters versus generic disclosure.
-
-### Business Agent
-
-LLM should cross-check or fill bounded semantics such as core product identity, development stage, launch/commercialization state and product revenue versus generic revenue.
-
-### Financial Agent
-
-Financial calculations remain deterministic-first. LLM may assist only with already-grounded textual ambiguity.
-
-### Market Agent
-
-LLM interprets governed pre-listing facts into `market_regime / risk_level / key_drivers / uncertainty`; it never invents missing market values.
-
-### Final Supervisor
-
-LLM synthesizes existing Agent/Market/Model/Rule inputs, detects conflict and uncertainty, requests one controlled re-check, and produces the final explanation without creating new Evidence.
-
-## Frozen model finding
-
-PR-F Full Production 2024 remains an honest auxiliary baseline:
+Frozen PR-F remains an auxiliary signal. Current 2024 Full Production ROC-AUC:
 
 ```text
-M   Market only              ROC-AUC 0.4246
-P   Production Document      ROC-AUC 0.5000
-PM  Market + Production      ROC-AUC 0.4246
+M   0.4246
+P   0.5000
+PM  0.4246
 ```
 
-The five-day sprint does not spend time trying to make this result look better. No 2024 retuning, score inversion or new model search is part of the active plan.
-
-## PR-H / model runtime
-
-PR-H still formally requires the original frozen PR-F per-case runtime/handoff plus the all-channel real-case matrix. D time-boxes recovery of that original asset.
-
-If it cannot be recovered:
-
-```text
-formal PR-H remains BLOCKED
-Model Channel = unavailable
-Document + Market + Rule + LLM Supervisor continue
-```
-
-No retraining or fabricated model score is allowed merely to make the UI look complete.
-
-## Five-person ownership
-
-```text
-A  Integration / CI / Release / Submission
-B  Legal + Business real LLM semantics / Evidence / Verifier
-C  Governed Market facts + LLM Market interpretation
-D  Frozen PR-F handoff + minimal Offline-vs-AI effect check
-E  LLM Final Supervisor + conflict/re-check + Evidence/AI Trace + UI
-```
-
-Detailed plan: [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md).
+The sprint does not retune 2024, invert score direction or start broad model-family search. If the original frozen PR-F runtime/handoff cannot be recovered, `Model Channel = unavailable` and the rest of the governed pipeline continues honestly.
 
 ## Submission definition of done
 
 ```text
->=3 stable real IPO cases
-real LLM provider path active
-Legal/Business semantic reasoning visibly useful
-Market interpretation grounded in PIT facts
+real LLM Legal / Business semantics active
+Market Agent grounded in PIT facts
 LLM Final Supervisor active
-at least one controlled conflict/re-check example
-Evidence / Calculation / Verifier authoritative
-Agent/LLM trace visible
-model state honest
-no fake market facts
-no 2025 Blind y access
+controlled conflict / re-check path available
+1D / 5D / 20D / 60D outcomes generated
+>=3 stable real IPO cases
+Risk/Evidence benchmark artifact produced
+Agent / Tool / Evidence trace complete
+Evidence Viewer + Human Review usable
+prediction table + reasoning logs + case reports generated
 full CI + real-case smoke pass
-reproducible runbook and submission package
+reproducible runbook + submission package
 ```
-
-## Architecture
-
-```text
-Prospectus PDF
-→ Parser
-→ Retriever / Evidence
-→ Financial / Legal / Business Agents
-→ LLM semantic reasoning where needed
-→ deterministic Skills
-→ Verifier
-→ governed Market context
-→ Model / Rule auxiliary signals
-→ LLM Final Supervisor
-→ Streamlit / Final Report / Agent Trace
-```
-
-Oracle stays evaluation-only and isolated from Production.
 
 ## Governance
 
@@ -187,16 +152,13 @@ Oracle stays evaluation-only and isolated from Production.
 
 Formal RiskItem requires Evidence; exact numeric claims require deterministic Calculation. Missing is explicit. 2024 is not recycled into a tuning set; 2025 Blind y remains closed until formally authorized.
 
-## Quick Start
+## Quick start
 
 ### Windows PowerShell
 
 ```powershell
 python -m pip install -e ".[dev,retrieval-research]"
-Remove-Item Env:IPO_RISK_LLM_PROVIDER -ErrorAction SilentlyContinue
 $env:PYTHONPATH = "src"
-pytest -q
-python scripts/validate_project.py
 python -m streamlit run app/streamlit_app.py
 ```
 
@@ -205,16 +167,12 @@ python -m streamlit run app/streamlit_app.py
 ```bash
 python -m pip install -e '.[dev,retrieval-research]'
 export PYTHONPATH=src
-pytest -q
-python scripts/validate_project.py
 python -m streamlit run app/streamlit_app.py
 ```
 
 Secrets only come from environment variables. Do not commit `.env`, API keys, local absolute paths, licensed raw data or large runtime artifacts.
 
-## Documentation
-
-Read current active documents in this order:
+## Active documentation
 
 1. [`docs/README.md`](docs/README.md)
 2. [`docs/ROADMAP.md`](docs/ROADMAP.md)
@@ -224,6 +182,7 @@ Read current active documents in this order:
 6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
 7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
-9. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
+9. [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md)
+10. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
 
-Frozen facts remain authoritative in completion reports and `reports/frozen/*.json`.
+Frozen completion reports and `reports/frozen/*.json` remain authoritative for historical claims.

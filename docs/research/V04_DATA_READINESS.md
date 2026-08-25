@@ -2,7 +2,7 @@
 
 > Audit snapshot: **2026-08-25**  
 > Status: **PR-A–PR-G COMPLETE / FROZEN; PR-H PARTIAL / BLOCKED**  
-> This file records measured readiness only; plans do not change counts.
+> This file records measured readiness plus the remaining competition-required data artifacts.
 
 ## 1. Official modeling universe
 
@@ -29,77 +29,36 @@ Feature schema                 v04_document_features_v1
 Feature dimension              100
 Production failures            0
 Silent drops                   0
-Determinism                    438 checked / 0 mismatch / PASS
-2025 Blind y accessed          NO
-```
-
-Frozen Production artifact-set hash:
-
-```text
-9197b0f4f90e6d43277586ac40160679d40f91e3b30223578d0853d9dc288bf3
-```
-
-Recent opt-in table-path work improves mixed annual/interim statement extraction but does not rewrite the frozen PR-A Production artifact set.
-
-## 3. Governed IPO EOD foundation
-
-```text
-rows                           433,776
-target securities matched      432 / 438
-missing EOD                       6
-raw EOD SHA256                  190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
-official bridge SHA256          751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198
-```
-
-EOD match is not Outcome availability.
-
-## 4. Market-X Core — COMPLETE / FROZEN
-
-```text
-schema                         v04_ipo_market_context_features_v1
-policy                         ipo_market_context_policy_v1
-positions                      15 raw + 15 missing indicators = 30
-Official coverage              438 / 438
-Failures / silent drops        0 / 0
-PIT failures                   0
-Development / Validation       368 / 70
 Determinism                    PASS
 2025 Blind y accessed          NO
 ```
 
-Target IPO post-listing facts do not enter its own X.
+Competition gap is not corpus coverage; it is **real LLM semantic quality + submission-ready Risk/Evidence benchmark**.
 
-## 5. Market-X Extended — PARTIAL, governed where available
+## 3. Market-X Core — COMPLETE / FROZEN
 
-### HSI / broad market
+```text
+schema                         v04_ipo_market_context_features_v1
+positions                      15 raw + 15 missing indicators = 30
+Official coverage              438 / 438
+PIT failures                   0
+Determinism                    PASS
+```
 
-Governed HSI-derived pre-listing return/volatility features are ready for the official 438-case cohort:
+## 4. Market-X Extended — governed where available
 
 ```text
 hsi_return_5d                  438 / 438
 hsi_return_20d                 438 / 438
 market_volatility_20d          438 / 438
-PIT / future-row audit         PASS
-```
-
-### HKEX turnover
-
-Official HKEX Main Board + GEM turnover integration is accepted:
-
-```text
 market_turnover_20d_mean       438 / 438
-source status                  ACCEPT
-PIT                            PASS
+recent_ipo_1d_sample_count     438 / 438
+recent_ipo_5d_sample_count     438 / 438
+recent_ipo_break_rate          244 / 438 available
+recent_ipo_return_5d           243 / 438 available
 ```
 
-### HSCI industry indexes
-
-```text
-official series accepted       12 / 12
-coverage                       2021-08-19 ... 2025-12-30
-```
-
-However company industry classification is not PIT-safe:
+Industry remains blocked:
 
 ```text
 production industry_return_5d    0 / 438
@@ -108,20 +67,9 @@ INDUSTRY_MAPPING_PIT_BLOCKED    432 cases
 MISSING_INDUSTRY_CLASSIFICATION   6 cases
 ```
 
-Static current classification cannot be promoted to listing-time classification. Older HSCI price history alone does not resolve this blocker.
+Competition Market Agent can proceed without industry return; missing remains explicit.
 
-### Recent IPO context measured in current readiness audit
-
-```text
-recent_ipo_1d_sample_count      438 / 438
-recent_ipo_5d_sample_count      438 / 438
-recent_ipo_break_rate           244 / 438 available
-recent_ipo_return_5d            243 / 438 available
-```
-
-Missingness remains explicit where no eligible prior-IPO sample exists.
-
-## 6. PR-C 5D Outcome — COMPLETE / FROZEN
+## 5. Frozen 5D Outcome — COMPLETE / FROZEN
 
 ```text
 Official coverage              438
@@ -131,22 +79,41 @@ Development available          354 / 368
 Validation available            70 / 70
 missing_base_price              12
 no_eligible_session              2
-Development q25 threshold      -0.1000
 Determinism                    PASS
-2025 Blind y accessed          NO
 ```
 
-Frozen target-set hash:
+## 6. Competition multi-horizon outcome — REQUIRED / NOT YET FROZEN
+
+赛题要求的上市表现窗口：
 
 ```text
-5e0dedc8d207c8e73ca6439efb72f463c6b6f276c1c6c48e3ad7a989ad1533f4
+1D
+5D
+20D
+60D
+```
+
+当前 5D 已 frozen；Final Sprint 仍需独立 versioned sidecar：
+
+```text
+return_1d          REQUIRED
+return_20d         REQUIRED
+return_60d         REQUIRED
+```
+
+建议同时：
+
+```text
+break_flag_1d
+significant_drop_5d
+max_drawdown_20d
+max_drawdown_60d
 ```
 
 ## 7. PR-D Canonical Dataset — COMPLETE / FROZEN
 
 ```text
 Model-ready                    424
-Explicit exclusions             14
 Development                    354
 Validation                      70
 Schema                         v04_canonical_modeling_dataset_v1
@@ -154,114 +121,115 @@ Generation failures              0
 Silent drops                     0
 Identity mismatch                0
 Feature-order drift              0
-Same-provenance resume          PASS
 2025 Blind y accessed           NO
 ```
 
-Frozen PR-D manifest hash:
-
-```text
-f6900c707187c23c5d01fa98fc8d9d21d040ce2c3ffa0a2a6340a0947f78e80d
-```
+Final Sprint 不重写 frozen canonical matrix。
 
 ## 8. Oracle readiness
 
-### Oracle v1 — historical immutable
-
 ```text
-materialized        60
-current eligible    55
-Development         55
-Validation           0
+Oracle v2 materialized          98
+strict usable                   96
+Development / Validation        77 / 19
+feature count                  142
+evaluation_only               true
+production_consumable         false
 ```
 
-### Oracle v2 — COMPLETE / FROZEN / EVALUATION-ONLY
+Oracle 继续只用于 evaluation，不进入 production LLM runtime。
+
+## 9. Frozen PR-F readiness
+
+Frozen model results remain complete historically, but PR-H current workspace still lacks the original per-case runtime/handoff.
 
 ```text
-annotation inventory       101
-valid annotations          100
-materialized                98
-strict usable               96
-Development usable          77
-Validation usable           19
-feature count              142
-identity unresolved          0
-evaluation_only            true
-production_consumable      false
-2025 Blind y accessed      false
+historical PR-F gate             COMPLETE / FROZEN
+product runtime handoff          MISSING in current PR-H workspace
+allowed action                   recover original / valid hash-bound handoff
+forbidden action                 retrain / reconstruct / retune for UI
 ```
 
-## 9. Frozen PR-E / PR-F data usage
+If unrecovered: `ModelSignal.status = unavailable`.
 
-Formal model cohorts:
+## 10. LLM runtime readiness
+
+Architecture already contains LLM provider and Legal/Business integration points. Final Sprint still must prove on real cases:
 
 ```text
-Full Production        354 Dev / 70 Val
-Oracle fair intersection 77 Dev / 19 Val
+real provider connectivity
+Legal structured semantic extraction
+Business structured semantic extraction
+Evidence scope validation
+provider failure degradation
+LLM Market interpretation
+LLM Final Supervisor
+conflict / targeted re-check
 ```
 
-Frozen PR-F Full Production 2024:
+This is the main runtime capability gap, not a need to redesign the whole framework.
+
+## 11. Competition benchmark readiness
+
+Still required for submission:
 
 ```text
-M   ROC-AUC 0.4246
-P   ROC-AUC 0.5000
-PM  ROC-AUC 0.4246
+Risk benchmark artifact
+Evidence benchmark artifact
+AI-vs-Offline minimal effect artifact
 ```
 
-PM=M under the frozen LightGBM policy. Oracle OM-M is -0.0143 with a wide interval crossing zero. These are measured findings, not readiness failures.
-
-## 10. PR-G / PR-H product readiness
-
-PR-G is COMPLETE / FROZEN on a real 2410.HK prospectus and deterministic Final Supervisor/report output.
-
-PR-H infrastructure is implemented but formal gate remains blocked:
+Target metrics:
 
 ```text
-Document runtime         available on governed real case
-Market runtime           available on governed PR-B Core
-Rule runtime             available
-Model runtime            disabled without original frozen PR-F handoff
-real governed demo count 1 in the formal completion record
-formal requirement       3–5 2024 cases with all required channels
+关键风险要素抽取准确率 >= 80%
+关键 Evidence Recall    >= 85%
 ```
 
-The missing model runtime is an immutable-input availability problem, not authorization to rerun or tune PR-F.
+The benchmark should be submission-focused and representative; it does not need to become a new broad research program.
 
-## 11. Competition-stage planned data work
+## 12. Trace / product readiness
 
-Not yet frozen / not claimed complete:
+Current backend already has substantial provenance, but final Competition artifact must make it explicit and consumable:
 
 ```text
-CH-1  1D / 20D / 60D outcomes
-      market-adjusted return
-      20D / 60D drawdown / volatility
-
-CH-2  per-risk Document benchmark labels/metrics
-
-CH-3  versioned Competition Market / IPO Heat features
-      PIT-safe comparable context
+Agent / Tool / Evidence trace   REQUIRED 100%
+Evidence page / bbox Viewer     REQUIRED where source bbox exists
+Human Review                    REQUIRED
+reasoning logs                  REQUIRED
+3–5 stable real IPO cases       REQUIRED
 ```
 
-Every new dataset must preserve Development / Validation / Blind governance and version independently from frozen PR-A–PR-D artifacts.
+## 13. Current source status table
 
-## 12. Current source status table
-
-| Source / artifact | Status | Use |
+| Source / artifact | Status | Final Sprint use |
 | --- | --- | --- |
 | Official IPO identity | AVAILABLE 438/438 | identity / split |
-| Prospectus | AVAILABLE 438/438 baseline corpus | Document |
-| Production Document-X | FROZEN 438/438 | P / PM |
-| Governed IPO EOD | 432/438 securities | Core / Outcome |
-| Market-X Core | FROZEN 438/438 | M / PM |
-| HSI Extended | READY 438/438 | optional governed Market context |
-| HKEX turnover | READY 438/438 | optional governed Market context |
-| Industry return | PIT_BLOCKED 0/438 | unavailable until temporal mapping exists |
-| 5D Outcome | FROZEN 424/438 | baseline y |
-| Canonical Dataset | FROZEN 424 | baseline modeling |
-| Oracle v2 | FROZEN 98 / 96 strict | evaluation-only O / OM |
-| PR-F per-case runtime handoff | MISSING in current PR-H workspace | product model channel blocker |
+| Prospectus corpus | AVAILABLE | Document runtime |
+| Production Document-X | FROZEN 438/438 | historical P / PM |
+| Market-X Core | FROZEN 438/438 | Market facts |
+| HSI Extended | READY 438/438 | Market Agent |
+| HKEX turnover | READY 438/438 | Market Agent |
+| Recent IPO context | PARTIAL / governed | IPO Heat |
+| Industry return | PIT_BLOCKED | remain unavailable |
+| 5D Outcome | FROZEN 424/438 | required 5D validation |
+| 1D/20D/60D Outcome | REQUIRED / not frozen | D deliverable |
+| PR-F per-case handoff | MISSING in current workspace | optional model channel blocker |
+| Real LLM provider path | architecture ready / runtime proof needed | B/C/E deliverable |
+| Risk/Evidence benchmark | REQUIRED | B/D deliverable |
+| Agent trace product | REQUIRED | E deliverable |
 
-## 13. Gate state
+## 14. Final competition readiness gaps
+
+```text
+B  real LLM Document semantics + benchmark
+C  Market Agent / Skills / interpretation
+D  1D/20D/60D + PR-F state + evaluation tables
+E  LLM Supervisor / conflict / trace / Human Review / product
+A  integrated real-case matrix + CI + submission package
+```
+
+## 15. Gate state
 
 ```text
 PR-A_DOCUMENT_GATE        PASS / FROZEN
@@ -273,6 +241,6 @@ PR-E_BASELINE_GATE        PASS / FROZEN
 PR-F_LIGHTGBM_GATE        PASS / FROZEN
 PR-G_SUPERVISOR_GATE      PASS / FROZEN
 PR-H_FULL_E2E_GATE        PARTIAL / BLOCKED
-v0.4.3                    NOT CREATED
+COMPETITION_FINAL_SPRINT  ACTIVE
 2025_BLIND_Y              NOT ACCESSED
 ```

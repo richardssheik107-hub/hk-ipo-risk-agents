@@ -1,324 +1,376 @@
-# 港股 IPO 风险预警赛题强化与提交总计划（5-Day Competition Sprint）
+# 港股 IPO 风险预警赛题强化与提交总计划
 
 > Status snapshot: **2026-08-25**  
-> Remaining window: **5 days**  
-> Current baseline: **PR-A–PR-G COMPLETE / FROZEN; PR-H PARTIAL / BLOCKED**  
-> Target: **finish a strong, real, LLM-visible competition version and submit**
+> Current formal Gate: **PR-H PARTIAL / BLOCKED**  
+> Execution mode: **Competition Final Sprint — five parallel ownership lanes**
 
-## 1. Strategy reset
+## 1. Competition objective
 
-The remaining sprint returns fully to the competition task itself. We intentionally reduce exploratory experiments, long research loops and narrative-only work.
-
-The competition product must directly demonstrate:
+剩余开发不再围绕“探索还有什么可以做”，而围绕赛题硬要求逐项补齐：
 
 ```text
-long prospectus parsing
-→ grounded Evidence
-→ multi-agent Financial / Legal / Business analysis
-→ real LLM semantic understanding
-→ deterministic financial calculation
-→ verification
-→ point-in-time market context
-→ LLM market interpretation
-→ model/rule auxiliary warning
-→ LLM Final Supervisor
-→ conflict / re-check / uncertainty
-→ auditable final report / Streamlit
+长文本 PDF 防幻觉解析
+→ 标准财务 + 非标隐性风险
+→ Financial / Legal / Market / Decision Agents
+→ Retriever / Calculation / IPO Heat / comparable Skills
+→ Agent conflict / re-check / verification
+→ 基本面 + 市场情绪联合预警
+→ 1D / 5D / 20D / 60D 真实表现验证
+→ Evidence / page / bbox / trace / Human Review
+→ runnable prototype + prediction table + reasoning logs + case reports
 ```
 
-The goal is not to prove a new research thesis in five days. The goal is to make the system itself materially better and visibly AI-enabled.
-
-## 2. Frozen baseline that we keep
-
-We do not reopen completed PR-A–PR-G contracts or fabricate improved model results.
+## 2. Required competition metrics
 
 ```text
-438 official 2020–2024 cases
-438 / 438 Production Document-X
-438 / 438 Market-X Core
-424 / 438 valid 5D outcome
-424 canonical = 354 Dev + 70 Val
+关键风险要素抽取准确率      >= 80%
+关键 Evidence Recall         >= 85%
+Agent / Tool / Evidence trace = 100%
+```
+
+预测部分不承诺漂亮 AUC，但必须提供上市首日、5D、20D、60D 的真实表现验证，并重点支持 5D 显著下跌风险分析。
+
+## 3. Current baseline
+
+```text
+PR-A–PR-G COMPLETE / FROZEN
+PR-H       PARTIAL / BLOCKED
+438 official cases
+438 Production Document-X
+438 Market-X Core
+424 frozen 5D outcomes
+354 Dev + 70 Val canonical
 2025 Blind y accessed = NO
 ```
 
-Frozen PR-F 5D modeling remains an auxiliary baseline. No remaining sprint capacity is allocated to broad model search, multi-horizon research or Validation retuning.
-
-## 3. LLM role in the final product
-
-### 3.1 Legal Agent — mandatory LLM value
-
-LLM resolves complex clause semantics from retrieved Evidence, including:
+Frozen PR-F 2024 Full Production:
 
 ```text
-redemption / repurchase rights
-current effectiveness
-post-listing survival
-termination conditions
-restoration conditions
-actual litigation/compliance matter vs generic disclosure
-current / resolved / historical status
+M   ROC-AUC 0.4246
+P   ROC-AUC 0.5000
+PM  ROC-AUC 0.4246
 ```
 
-Output is structured and schema-validated. The LLM cannot cite Evidence outside the supplied set.
+该结果只作为辅助模型基线。剩余冲刺不投入大规模模型探索。
 
-### 3.2 Business Agent — mandatory LLM value
+## 4. Five-person final ownership
 
-LLM cross-checks or fills semantics that deterministic parsing cannot reliably resolve:
+### A — Integration / Release / Submission
+
+负责：
 
 ```text
-core product identity
-development stage
-launch / commercialization status
-product revenue vs generic revenue
-pre-commercial condition
+public contracts
+GitHub / CI / merge
+real E2E
+3–5 case matrix
+reproducibility
+release manifest
+submission package
 ```
 
-A conflict between deterministic facts and LLM facts becomes `NEEDS_REVIEW / CONFLICTING_VALUES`, not silent override.
+### B — LLM Document Intelligence
 
-### 3.3 Financial Agent — deterministic-first
-
-Financial calculations remain Python-owned. LLM may only assist with semantic ambiguity when a concrete Evidence set already exists.
+负责：
 
 ```text
-LLM = understand text
-Python = exact math / thresholds / calculation trace
+Legal LLM semantics
+Business LLM semantics
+redemption / litigation / related-party
+core product / commercialization / pipeline
+Disclosure Tone bounded analysis
+Evidence grounding
+Risk/Evidence benchmark
 ```
 
-### 3.4 Market Agent — LLM interpretation, not data invention
+### C — Market Intelligence
 
-The Market Agent consumes only governed pre-listing facts:
+负责：
 
 ```text
-Market-X Core
-HSI return / volatility
+PIT-safe MarketContext
+IPOHeatSkill
+MarketRegimeSkill
+optional ComparableIPOSkill
+LLM Market interpretation
+market provenance
+```
+
+### D — Outcome / Model / Evaluation
+
+负责：
+
+```text
+frozen PR-F handoff recovery
+1D / 5D / 20D / 60D outcome
+final prediction table
+AI-vs-Offline effect check
+evaluation artifacts
+```
+
+### E — Supervisor / Multi-Agent / Product
+
+负责：
+
+```text
+LLM Final Supervisor
+Conflict / RecheckRequest / resolution
+Agent Trace
+Evidence Viewer
+Human Review
+final Streamlit
+3–5 demo cases
+```
+
+## 5. LLM usage policy
+
+LLM 被集中用在真正有增益的位置：
+
+```text
+Legal      complex clause semantics
+Business   commercialization/core-product semantics
+Market     interpretation of governed PIT facts
+Supervisor synthesis / conflict / uncertainty / re-check
+```
+
+Deterministic code 继续负责：
+
+```text
+financial math
+exact calculations
+PIT guards
+identity / schema / hash
+feature materialization
+model scoring
+reproducibility
+```
+
+LLM 不得：invent Evidence、invent market facts、replace exact math、change frozen score、bypass Verifier。
+
+## 6. Document Intelligence acceptance
+
+B 必须让真实 case 走通：
+
+```text
+Evidence
+→ LLM structured extraction
+→ schema validation
+→ Risk Builder
+→ Verifier
+```
+
+优先正式风险：
+
+```text
+cash_runway
+continuous_loss
+customer_concentration
+supplier_concentration
+redemption_rights
+material_litigation_compliance
+related_party_transaction
+precommercial_product
+```
+
+同时提供轻量 `Disclosure Tone / Obfuscation` Evidence-backed 输出。
+
+最小 benchmark 至少报告：
+
+```text
+Precision / Recall / F1
+Evidence Recall / Evidence Precision
+```
+
+## 7. Market Intelligence acceptance
+
+C 必须把已治理事实转成可解释 Market Agent：
+
+```text
+HSI trend / volatility
 HKEX turnover
-prior IPO context
-available IPO activity facts
+recent IPO count
+recent IPO break rate
+recent IPO 1D / 5D performance
 ```
 
-LLM converts them into structured interpretation:
+标准输出：
 
 ```text
 market_regime
 risk_level
+ipo_heat
+liquidity_condition
 key_drivers
-uncertainty
+uncertainties
+source_feature_ids
+provenance
 ```
 
-It must not create missing market values.
+行业 return 在没有 PIT-safe temporal classification 前继续 unavailable。
 
-### 3.5 Final Supervisor — mandatory LLM synthesis
+## 8. Outcome / prediction acceptance
 
-The final LLM Supervisor consumes only existing governed facts and produces:
+D 必须生成独立 versioned sidecar：
 
 ```text
-overall_assessment
-key_findings
-conflicts
-uncertainty
-recheck_requests
-final_explanation
+return_1d
+return_5d
+return_20d
+return_60d
 ```
 
-If a conflict is detected, the five-day version permits one controlled re-check:
+建议同时：
 
 ```text
-conflict
-→ targeted retrieval / existing Skill
-→ Verifier
-→ Supervisor second pass
+break_flag_1d
+significant_drop_5d
+drawdown_20d
+drawdown_60d
 ```
 
-No infinite autonomous loop is required.
-
-## 4. Five-day schedule
-
-### Day 1 — Real LLM Document path
-
-PASS requires at least one real prospectus to complete:
+Submission 至少包含：
 
 ```text
-PDF → Evidence → Legal/Business real LLM call → structured result → Risk builder → Verifier
+test_predictions.csv
+multi_horizon_results.csv
+evaluation_summary.json
+ai_vs_offline_report.json
 ```
 
-Also establish auditable LLM metadata: provider/model/prompt version/latency/token usage/request identity or response hash where available.
+## 9. Multi-Agent collaboration acceptance
 
-### Day 2 — Market interpretation + Final Supervisor
-
-PASS requires one real case to complete:
+E 必须实现：
 
 ```text
-Financial + Legal + Business
-+ governed Market facts
-+ Model/Rule state
-→ LLM Final Supervisor
+Agent disagreement
+→ Conflict
+→ targeted re-retrieval
+→ Skill / Agent rerun
+→ Verifier challenge
+→ Final Supervisor resolution
 ```
 
-At least one conflict or uncertainty must be representable and one-step re-check must work.
-
-### Day 3 — 3–5 real cases and targeted fixes
-
-Select 3–5 stable cases. Fix only failures that block the selected competition capabilities.
-
-Recommended case patterns:
+最终状态：
 
 ```text
-A  deterministic Financial / Calculation case
-B  Legal or Business case where LLM resolves complex semantics
-C  cross-agent or Document-vs-Market conflict case
+resolved
+partially_resolved
+unresolved
 ```
 
-Run a small same-case Offline-vs-AI check. Do not start a full benchmark project.
+不需要无限 autonomous loop；一次可控 targeted re-check 足够体现 Agentic 协作，同时保证可审计。
 
-### Day 4 — Competition UI and trace
+## 10. Trace / Explainability / Human Review
 
-Final UI prioritizes only three primary workspaces:
+Agent Trace 必须至少记录：
 
 ```text
-Risk Command Center
-Evidence + AI Analysis
-Agent Trace + Final Supervisor
+agent_name
+task
+input_evidence_ids
+tool_or_skill
+llm_provider / model
+structured_output
+calculation_ids
+verifier_status
+conflict_id
+recheck_action
+final_status
+latency
 ```
 
-Market/Model information is embedded into the Command Center / trace rather than creating many new pages.
-
-### Day 5 — Freeze and submit
-
-No new features. Only:
+Evidence Viewer：
 
 ```text
-bug fixes
-regression
-real-case smoke
-README / runbook
-screenshots / reports
-release identity
-submission package
-demo rehearsal
+PDF page + bbox highlight
+Risk
+Evidence
+LLM interpretation
+Structured Fact
+Calculation
+Verifier
 ```
 
-## 5. Minimal effect validation
-
-The submission must be able to answer: **what did the LLM actually improve?**
-
-Use the same 3–5 cases in two modes:
+Human Review：
 
 ```text
-Offline deterministic
-AI enhanced
+Accept
+Reject
+Needs Follow-up
+Reviewer Note
 ```
 
-Track only practical indicators:
+机器结果与人工结果分开存储。
+
+## 11. Real-case strategy
+
+最终稳定 3–5 个真实 IPO，不追求数量。
+
+案例至少覆盖：
 
 ```text
-semantic fields resolved
-formal risks resolved
-needs_review count
-extraction_failed count
-Evidence grounding validity
-structured response validity
-useful conflict/re-check count
+Financial / Calculation case
+Legal LLM semantic case
+Business LLM semantic case
+Market context case
+Conflict / re-check case
 ```
 
-This is a product acceptance check, not a publication-grade experiment.
+同一 case 可以覆盖多个模式。
 
-## 6. Competition product acceptance
-
-### Document / Evidence
-
-- real PDF processing;
-- every formal risk is Evidence-grounded;
-- exact numeric claims have Calculation;
-- selected Legal/Business cases demonstrate real LLM semantic value;
-- out-of-scope LLM citations fail closed.
-
-### Multi-Agent
-
-- Financial / Legal / Business / Market outputs are separately observable;
-- Final Supervisor receives all available channels;
-- conflict / uncertainty is explicit;
-- one-step re-check is supported;
-- unresolved cases remain unresolved.
-
-### Market / Warning
-
-- only PIT-safe pre-listing facts are consumed;
-- Market LLM interpretation is traceable to those facts;
-- frozen model score + SHAP is shown if the original PR-F handoff is recovered;
-- otherwise Model channel is explicitly unavailable;
-- Rule signal remains deterministic.
-
-### Product
-
-- >=3 stable real IPO demos;
-- Evidence page/bbox and Agent/LLM trace visible;
-- real Provider state visible without exposing secrets;
-- final report is consistent with structured data;
-- full CI + real-case smoke passes.
-
-## 7. Explicit non-goals for the remaining five days
-
-Do not prioritize:
+## 12. Explicitly deferred
 
 ```text
-1D/20D/60D full modeling research
-P-Core or broad feature-selection experiments
-new XGBoost/CatBoost/Transformer model search
-new calibration/tuning loops
-large Retriever V3 restart
-large prompt research grid
-industry PIT blocker research
-new broad market datasets
-full 438-case LLM rerun unless required by final product
-full annotation benchmark build
-story-only diagrams or features not backed by working runtime
+new model families
+large hyperparameter search
+broad P-Core / feature audit
+large Retriever redesign
+industry PIT research
+broad new market datasets
+paper-style ablation
+story-only features
 ```
 
-A small targeted change is allowed only when it fixes a selected real-case failure or competition requirement.
+注意：1D/5D/20D/60D outcome 计算不是 exploratory research，而是赛题硬要求，因此必须完成。
 
-## 8. PR-H / v0.4.3 handling
-
-PR-H formal all-channel blockers remain factual:
+## 13. Submission package
 
 ```text
-frozen PR-F per-case runtime/handoff
->=3 matching real 2024 PDFs
-all-channel formal case matrix
+submission/
+├── README.md
+├── RUNBOOK.md
+├── source/
+├── configs/
+├── demo/
+├── evaluation/
+│   ├── test_predictions.csv
+│   ├── risk_benchmark.*
+│   ├── evidence_benchmark.*
+│   ├── multi_horizon_results.csv
+│   └── ai_vs_offline_report.*
+├── traces/
+├── evidence/
+├── reports/
+└── screenshots/
 ```
 
-D time-boxes recovery of the original frozen PR-F handoff. We do not reconstruct or retrain to satisfy the UI.
-
-If recovery fails, PR-H remains formally blocked; this does **not** stop the competition product from proceeding with explicit `Model unavailable`. No document may falsely claim v0.4.3 was frozen if the formal gate did not pass.
-
-## 9. Five-person ownership
+## 14. Final Gate
 
 ```text
-A  integration / CI / main / release / submission
-B  Legal + Business LLM Document intelligence / Evidence / Verifier
-C  governed Market facts + LLM Market interpretation
-D  frozen model handoff + minimal Offline-vs-AI effect check
-E  LLM Final Supervisor + conflict/re-check + Evidence/AI Trace + UI
+real LLM Document semantics        PASS
+Market Agent + Skills              PASS
+LLM Final Supervisor               PASS
+conflict / re-check                PASS
+1D / 5D / 20D / 60D               PASS
+Risk benchmark artifact            PASS
+Evidence benchmark artifact        PASS
+Traceability                       100%
+Evidence Viewer                    PASS
+Human Review                       PASS
+>=3 stable real IPO cases          PASS
+prediction table / logs / reports  PASS
+full CI / real-case smoke          PASS
+submission reproducible            PASS
 ```
 
-Detailed daily handoff is defined in [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).
-
-## 10. Final release gate
-
-A may mark the submission release `v0.4.5 COMPETITION_READY` only when:
-
-```text
->=3 real cases stable
-real LLM Document path works
-real LLM Market interpretation works
-real LLM Final Supervisor works
-Evidence/Calculation/Verifier boundaries remain intact
-Agent/LLM trace visible
-conflict/re-check works on at least one selected case
-model state is honest
-no fake market data
-no 2025 Blind y access
-CI and real-case smoke pass
-reproducible runbook is complete
-```
-
-The final submission is evaluated on the working system, not on the amount of exploratory research completed.
+未达标项必须显式记录 blocker，不能用 mock、fake market、fake model 或 UI hardcode 伪装完成。
