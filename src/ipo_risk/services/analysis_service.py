@@ -20,7 +20,11 @@ class IPOAnalysisService:
             "financial_agent": "real" if settings.financial_agent in {"cash_runway", "v03"} else "mock",
             "legal_agent": "real" if settings.legal_agent == "v03" else ("unavailable" if settings.legal_agent == "disabled" else "mock"),
             "business_agent": "real" if settings.business_agent == "v03" else ("unavailable" if settings.business_agent == "disabled" else "mock"),
-            "market_agent": "unavailable" if settings.market_agent == "disabled" else "mock",
+            "market_agent": (
+                "real"
+                if settings.market_agent == "market_intelligence"
+                else ("unavailable" if settings.market_agent == "disabled" else "mock")
+            ),
             "verifier": "deterministic" if settings.verifier in {"rule", "specialized_v03"} else settings.verifier,
             "predictor": "deterministic_rule" if settings.predictor == "rule_based" else settings.predictor,
             "market_data_provider": "unavailable" if settings.market_data_provider == "unavailable" else "mock",
@@ -104,6 +108,8 @@ class IPOAnalysisService:
             metadata["final_supervision"] = final_supervision
         if (market_context := diagnostics.get("market_context")):
             metadata["market_context"] = market_context
+        if (market_intelligence := diagnostics.get("market_intelligence")):
+            metadata["market_intelligence"] = market_intelligence
         if (model_prediction := diagnostics.get("model_prediction")):
             metadata["model_prediction"] = model_prediction
         if self.settings.workflow_version == "enhanced_v2":

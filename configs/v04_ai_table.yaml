@@ -1,8 +1,8 @@
 # v0.4 workflow on the opt-in table document path.
 # Identical to v04_ai.yaml except for the two document-intelligence
 # components: the borderless-table parser and the structured-first financial
-# extractor. Kept as a separate file so v04_ai.yaml keeps its frozen
-# behaviour and the two can be compared on the same workflow.
+# extractor. Kept as a separate file so v04_ai.yaml keeps its flat-text
+# document path and the two can be compared on the same workflow.
 workflow_version: enhanced_v2
 runtime_mode: ai_enhanced
 use_mock: false
@@ -13,7 +13,7 @@ financial_agent: v03
 financial_extractor: table
 legal_agent: v03
 business_agent: v03
-market_agent: disabled
+market_agent: market_intelligence
 verifier: specialized_v03
 supervisor: v03
 predictor: rule_based
@@ -26,8 +26,9 @@ data_dir: data
 report_dir: reports
 log_level: INFO
 
-# PR-H runtime channels. The governed market view reads only the frozen PR-B
-# product projection; the legacy market-data snapshot remains unavailable.
+# The governed PR-B Market-X view is the only source of numeric market facts.
+# MarketIntelligenceAgent runs deterministic IPO Heat / Market Regime Skills on
+# that view and may add bounded LLM interpretation; unavailable facts remain null.
 market_context: governed_pr_b_core
 market_feature_dir: reports/v04_pr_b/core_features
 market_official_bridge: data/catalog/ipo_official_master_bridge.csv
