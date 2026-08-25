@@ -1,128 +1,116 @@
 # HK IPO Risk Agents
 
-Evidence-backed multi-agent risk analysis and market-risk modeling for Hong Kong IPO prospectuses.
+Evidence-backed multi-agent risk analysis and market-warning research for Hong Kong IPO prospectuses.
 
-系统以真实招股书 Evidence 为基础运行 Financial / Legal / Business Agents，由 deterministic Skills、Verifier 与 Supervisor 生成可审计 Document Risk；v0.4 再把 Document X 与受治理的 Market X、Outcome Y 连接到正式建模、解释和最终产品闭环。
+系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business Agents、deterministic Skills、Verifier 与 Supervisor 生成可审计风险；v0.4 进一步连接 Production Document-X、governed Market-X、Outcome、模型解释与 Final Supervisor，形成 PDF → Final Report 的端到端闭环。
 
-> 规则分或未经校准的模型分数不是实际下跌概率，也不构成投资建议。
+> 规则分和 `uncalibrated_model_score` 不是实际下跌概率，也不构成投资建议。
 
-## Current Status — 2026-08-24
-
-```text
-v0.3 Document Intelligence              RELEASED / FROZEN
-PR-A Document materialization            COMPLETE / FROZEN
-PR-B Market-X Core                       COMPLETE / FROZEN
-PR-C 5D Outcome                          COMPLETE / FROZEN
-PR-D Canonical model-ready dataset       COMPLETE / FROZEN
-Oracle v2                                COMPLETE / FROZEN / EVALUATION-ONLY
-PR-E Baseline + Oracle Diagnostic        COMPLETE / FROZEN
-PR-F LightGBM + Explainability           COMPLETE / FROZEN
-PR-G Market Agent + Final Supervisor     COMPLETE / FROZEN
-PR-H Streamlit Full E2E                  CURRENT FORMAL GATE
-Competition Hardening                    STARTS AFTER PR-H BASELINE E2E
-```
-
-正式 Gate 顺序：
+## Current Status — 2026-08-25
 
 ```text
-PR-A → PR-B → PR-C → PR-D → PR-E → PR-F
-→ PR-G implementation/review
-→ PR-G local freeze manifest
-→ PR-H
-→ v0.4.3 Baseline E2E Freeze
-→ CH-0 ... CH-6
-→ v0.4.5 Competition Freeze
+v0.3 Document Intelligence              COMPLETE / FROZEN
+PR-A Document-X                         COMPLETE / FROZEN
+PR-B Market-X Core                      COMPLETE / FROZEN
+PR-C 5D Outcome                         COMPLETE / FROZEN
+PR-D Canonical Dataset                  COMPLETE / FROZEN
+Oracle v2                               COMPLETE / FROZEN / EVALUATION-ONLY
+PR-E Baseline + Oracle                  COMPLETE / FROZEN
+PR-F LightGBM + Explainability          COMPLETE / FROZEN
+PR-G Market Agent + Final Supervisor    COMPLETE / FROZEN
+PR-H Streamlit Full E2E                 PARTIAL / BLOCKED — CURRENT GATE
+v0.4.3 Baseline E2E Freeze              NOT CREATED
+Competition Hardening                   PLANNED
+v0.4.5 Competition Ready                PLANNED
 ```
-
-PR #104 已把 PR-G implementation 合入 main；A 的 Gate Review 已通过。随后以 2410.HK 真实 706 页 prospectus、官方上市日和冻结 PR-F identity 生成并校验 final freeze manifest。PR-G 现已 COMPLETE / FROZEN，PR-H 是当前正式 Gate。
 
 ## What is already real
 
 ```text
-Official 2020–2024 IPO universe         438
-Production analyses                     438 / 438
-Authoritative document snapshots        438 / 438
-Production Document-X                   438 / 438
-Document feature dimension              100
-Market-X Core                           438 / 438
-5D outcome available                    424 / 438
-Explicit outcome exclusions              14
-Canonical model-ready cohort            424
-Development / Validation                354 / 70
-Oracle v2 materialized                   98
-Oracle v2 strict usable                  96 = 77 Dev + 19 Val
-2025 Blind y accessed                    NO
+Official 2020–2024 IPO universe       438
+Production Document-X                 438 / 438, 100 dims
+Market-X Core                         438 / 438, 30 positions
+5D outcome                            424 / 438
+Canonical model-ready                 424 = 354 Dev + 70 Val
+Oracle v2                             98 materialized / 96 strict
+Oracle v2 split                       77 Dev / 19 Val
+2025 Blind y accessed                 NO
 ```
 
-Market-X Extended 已接入 governed CSMAR HSI daily close；438/438 官方 case 的 HSI 5D、20D return 与 20-session volatility 已通过 PIT readiness。industry benchmark / total-market turnover 仍显式缺失。
-
-PR-D 已输出正式 M / P / PM matrices；Oracle v2 为独立 evaluation-only 专家旁路。PR-E 与 PR-F 已冻结以下正式比较：
+Market Extended current readiness:
 
 ```text
-M   Market only
-P   Production Document only
-O   Oracle Document only
-PM  Market + Production
-OM  Market + Oracle
+HSI return / volatility               438 / 438
+HKEX turnover 20D                     438 / 438
+production industry return              0 / 438 (PIT_BLOCKED)
 ```
 
-核心诊断：
+Industry return is intentionally unavailable until a historically effective/PIT-safe company classification source exists.
+
+## Frozen model finding
+
+PR-F Full Production 2024:
 
 ```text
-Production Increment     = PM - M
-Document Signal Ceiling  = OM - M
-Pipeline Gap              = OM - PM
+M   Market only              ROC-AUC 0.4246
+P   Production Document      ROC-AUC 0.5000
+PM  Market + Production      ROC-AUC 0.4246
 ```
 
-PR-E 的 2024 Validation 没有显示 Document features 相对 Market-only 的稳健分类增量：Production `PM-M ROC-AUC = -0.0157`，Oracle `OM-M ROC-AUC = -0.0571`。Oracle Validation 仅 19 例，因此结论是信号不稳定，而不是证明“没有招股书信号”。
+PM and M are prediction-equivalent under the frozen LightGBM policy; all 100 Production Document features have zero split/gain/SHAP use in that run. Oracle `OM-M ROC-AUC = -0.0143`, with a wide 95% paired-bootstrap interval crossing zero on only 19 Validation cases.
 
-PR-F 的 frozen LightGBM 结果进一步显示：Full Production `M ROC-AUC = 0.4246`、`P = 0.5000`、`PM = 0.4246`；PM 与 M 预测完全等价，Production Document 100 维特征在该 frozen tree policy 下未被采用。Oracle `OM-M ROC-AUC = -0.0143`，95% paired-bootstrap interval 为 `[-0.3171, 0.2917]`。这些结果是当前数据、特征、目标和固定模型条件下的正式失败/不稳定发现，不得通过反转预测方向、反复查看 2024 后调参或重写口径来“修漂亮”。所有输出仍是未校准模型分数，不是实际概率。
+The correct conclusion is: **stable Document increment was not validated under the current 5D target/sample/representation/model**. It is not proof that prospectus risk information is intrinsically useless. We therefore diagnose extraction quality, feature representation, time horizon and market context before changing model families.
 
-## PR-G → PR-H transition
+## Current PR-H objective
 
-A 的正式裁定见 [`docs/V04_PR_G_A_GATE_REVIEW.md`](docs/V04_PR_G_A_GATE_REVIEW.md)。当前两项 PR-H runtime preflight 决策已经冻结：
+2410.HK has already demonstrated the governed real PDF → Document / Market / Rule → Final Supervisor → 13-section report path. PR-H still needs:
+
+1. the original frozen PR-F runtime or a pre-existing hash-bound sanitized handoff;
+2. at least three matching real 2024 prospectus PDFs;
+3. a 3–5 case matrix with Document / Market / Model / Rule all governed;
+4. determinism / provenance / Evidence / Blind checks.
+
+No retraining, reconstruction, score inversion or 2024 retuning is allowed just to unblock UI. PASS creates `v0.4.3 BASELINE E2E FREEZE`.
+
+## Competition plan
+
+After v0.4.3:
 
 ```text
-Market runtime
-→ governed PreListingMarketFeatureSnapshot / lossless projection
-→ legacy MarketSnapshot only remains for v0.3 compatibility
-
-Model runtime
-→ PR-F bulk remains outside Git
-→ PR-H consumes a checksummed local handoff through pr_f_run_dir
-→ frozen model_result_hash mismatch fails closed
+CH-0  Scope / Metrics Lock
+CH-1  Multi-Horizon Outcome + Predictive Diagnosis
+CH-2  Document Benchmark + Targeted Hardening
+CH-3  Market Intelligence / IPO Context
+CH-4  Multi-Agent Conflict + Full Trace
+CH-5  Evidence Viewer + Competition Product
+Beta  Integrated competition checkpoint
+CH-6  Formal Evaluation / Freeze
+→ v0.4.5 COMPETITION_READY
+→ Submission + Demo Rehearsal
 ```
 
-PR-H 需要完成 3–5 个真实 IPO 的：
+CH-1 / CH-2 / CH-3 run substantially in parallel.
+
+Competition scorecard:
 
 ```text
-PDF
-→ Document / Evidence / Calculation
-→ governed Market Context
-→ frozen per-case model score + SHAP drivers
-→ Final Supervisor
-→ 13-section / Streamlit report
+key risk quality target              >= 80%
+key Evidence Recall                  >= 85%
+Agent / Tool / Evidence traceability = 100%
+1D / 5D / 20D / 60D predictive results reported honestly
 ```
 
-## Post-PR-F strategy
-
-PR-F 的结果不改变 v0.4 的主线顺序。当前策略明确分成两条互补主线：
+## Five-person ownership
 
 ```text
-A. Risk Intelligence / Auditability
-   Document risk extraction
-   → Evidence / Calculation / page / bbox
-   → Verifier / conflict / human review
-   → Final Supervisor
-
-B. Market Warning / Predictive Validation
-   Market context / sentiment
-   + governed model score
-   + multi-horizon 1D / 5D / 20D / 60D validation
-   → uncertainty-aware warning
+A  Tech Lead / Integration / CI / Gate / Release / Submission
+B  Document Intelligence / Evidence / Benchmark
+C  Market Intelligence / PIT / Outcome Data
+D  Quant / ML / Multi-Horizon / SHAP / Ablation
+E  Multi-Agent / Conflict / Supervisor / Evidence Viewer / UI
 ```
 
-PR-G / PR-H 先完成稳定产品闭环，不以“把 5D AUC 调高”为 Gate 条件。Competition Hardening 再用直接指标判断该增强哪里：关键风险要素抽取准确率目标 `>= 80%`、关键 Evidence recall 目标 `>= 85%`、Agent / Tool / Evidence traceability 目标 `= 100%`。Document Pipeline 是否需要 Hybrid Retrieval / LLM semantic layer，将由 CH-2 的逐风险 benchmark 和 error attribution 决定，而不是仅由当前 5D AUC 决定。短期 5D 预测的新增研发优先考虑受治理的 Market Sentiment / IPO heat / liquidity context；结构性 Document 风险同时在 20D / 60D 等更长 horizon 上验证。
+Detailed plan: [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md).
 
 ## Architecture
 
@@ -131,17 +119,17 @@ Prospectus PDF
 → Parser
 → Retriever / Evidence
 → Financial / Legal / Business Agents
-→ Deterministic Skills
+→ deterministic Skills
 → Verifier / Document Supervisor
-→ Production Document X
-→ Market-X Core (+ optional governed Extended)
+→ Production Document-X
+→ Market-X Core (+ governed Extended)
 → Outcome / Canonical Dataset
 → Baseline / LightGBM / Explainability
 → Market Agent / Final Supervisor
 → Streamlit / Final Report
 ```
 
-项目保持模块化单体。Streamlit 只通过 `IPOAnalysisService` / 受控上层 service 调用业务能力；Parser、Agent、Provider、Predictor 不反向依赖 UI。Oracle 永久与 Production 分离。
+Oracle stays evaluation-only and isolated from Production.
 
 ## Governance
 
@@ -151,9 +139,7 @@ Prospectus PDF
 2025       Blind Test
 ```
 
-Validation 不用于反复调参后继续宣称 untouched；不得因为 AUC `< 0.5` 而在看过 2024 后反转 score 方向并把结果作为正式提升。2025 Blind y 在正式开放前不得用于 feature / threshold / model / prompt / Retriever / LLM 调优。
-
-所有正式 RiskItem 必须有可追溯 Evidence；需要精确数字的结论必须通过 deterministic Calculation。Verifier / Supervisor 不得创造原始 Evidence。
+Formal RiskItem requires Evidence; exact numeric claims require deterministic Calculation. Missing is explicit. 2024 is not recycled into a tuning set; 2025 Blind y remains closed until formally authorized.
 
 ## Quick Start
 
@@ -161,10 +147,10 @@ Validation 不用于反复调参后继续宣称 untouched；不得因为 AUC `< 
 
 ```powershell
 python -m pip install -e ".[dev,retrieval-research]"
+Remove-Item Env:IPO_RISK_LLM_PROVIDER -ErrorAction SilentlyContinue
 $env:PYTHONPATH = "src"
 pytest -q
 python scripts/validate_project.py
-$env:IPO_RISK_CONFIG = "configs/v03_offline.yaml"
 python -m streamlit run app/streamlit_app.py
 ```
 
@@ -175,25 +161,23 @@ python -m pip install -e '.[dev,retrieval-research]'
 export PYTHONPATH=src
 pytest -q
 python scripts/validate_project.py
-export IPO_RISK_CONFIG=configs/v03_offline.yaml
 python -m streamlit run app/streamlit_app.py
 ```
 
-密钥只允许来自环境变量；不得提交 `.env`、Token、API Key、本地绝对路径或大型 runtime artifacts。
+Secrets only come from environment variables. Do not commit `.env`, API keys, local absolute paths, licensed raw data or large runtime artifacts.
 
 ## Documentation
 
-当前文档入口按以下顺序阅读：
+Read current active documents in this order:
 
-1. [`docs/README.md`](docs/README.md) — 文档索引与 source-of-truth 层级
-2. [`docs/ROADMAP.md`](docs/ROADMAP.md) — 当前进度和下一 Gate
-3. [`docs/V04_PR_G_A_GATE_REVIEW.md`](docs/V04_PR_G_A_GATE_REVIEW.md) — PR-G A 审核与 PR-H runtime 决策
-4. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — v0.4 总计划
-5. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md) — 五人分工
-6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md) — 产品范围和成功标准
-7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — 技术架构与依赖边界
-8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md) — 公共数据 / modeling contracts
-9. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md) — 最新真实数据 readiness
-10. [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) — PR-H 后比赛强化
+1. [`docs/README.md`](docs/README.md) — source-of-truth and active index
+2. [`docs/ROADMAP.md`](docs/ROADMAP.md) — current Gate and schedule
+3. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) — program strategy
+4. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md) — team ownership
+5. [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) — hardening through submission
+6. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md) — product and governance contract
+7. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — technical boundaries
+8. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md) — data/model contracts
+9. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md) — measured readiness
 
-完成阶段的事实以对应 completion report + `reports/frozen/*.json` 为准。
+Frozen facts remain authoritative in completion reports and `reports/frozen/*.json`.
