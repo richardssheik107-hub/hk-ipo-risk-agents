@@ -201,3 +201,15 @@ def test_a_namespaced_channel_reference_is_not_treated_as_a_document_evidence_id
     report = traceability_report(sidecar)
     assert report.referenced_evidence_count == 0
     assert report.overall_traceability == 1.0
+
+
+def test_an_unparsable_market_event_is_recorded_not_dropped() -> None:
+    """Dropping it would shrink the denominator and inflate the measured rate."""
+    sidecar = _assemble(
+        component_diagnostics={"market_intelligence": {"trace_events": [{"not": "a trace event"}]}}
+    )
+    assert len(sidecar.trace_events) == 1
+    event = sidecar.trace_events[0]
+    assert event.status == "unparsable_trace_event"
+    assert event.details["reason"]
+    assert traceability_report(sidecar).overall_traceability == 1.0

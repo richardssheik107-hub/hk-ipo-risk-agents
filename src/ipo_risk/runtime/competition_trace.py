@@ -211,15 +211,26 @@ class CompetitionTraceAssembler:
             return []
         events = []
         for index, raw in enumerate(payload.get("trace_events", []) or []):
+            event_id = f"trace:{identity.run_id}:market_intelligence:{index:02d}"
             try:
                 event = TraceEvent.model_validate(raw)
-            except Exception:
+            except Exception as exc:
+                # A market event this assembler cannot parse is still a step that
+                # happened.  Dropping it would silently shrink the denominator and
+                # inflate the measured traceability, so it is recorded as
+                # unparsable instead.
+                events.append(TraceEvent(
+                    event_id=event_id, case_id=identity.case_id, run_id=identity.run_id,
+                    event_type=TraceEventType.MARKET, status="unparsable_trace_event",
+                    agent_name="market_intelligence", action="interpret_market_context",
+                    tool_or_skill="market_intelligence", latency_ms=0,
+                    details={
+                        "reason": f"{type(exc).__name__}: {exc}",
+                        "no_evidence_reason": "the market trace event could not be parsed into the public contract",
+                    },
+                ))
                 continue
-            events.append(
-                event.model_copy(
-                    update={"event_id": f"trace:{identity.run_id}:market_intelligence:{index:02d}"}
-                )
-            )
+            events.append(event.model_copy(update={"event_id": event_id}))
         return events
 
     @staticmethod
