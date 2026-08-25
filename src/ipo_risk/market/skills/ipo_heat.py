@@ -26,7 +26,11 @@ class IPOHeatSkill:
         facts = {item.name: item for item in observations}
         selected = {name: facts.get(name) for name in IPO_HEAT_SOURCE_FEATURES}
         missingness = {
-            name: (item.missing_reason or "source_unavailable")
+            name: (
+                (item.missing_reason or "source_unavailable")
+                if item is not None
+                else "source_unavailable"
+            )
             for name, item in selected.items()
             if item is None or item.availability == "unavailable"
         }
