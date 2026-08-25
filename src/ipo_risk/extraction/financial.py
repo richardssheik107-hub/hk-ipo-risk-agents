@@ -28,6 +28,9 @@ _EMPTY_AMOUNT_RE = re.compile(r"^\s*[-−–—]\s*$")
 _YEAR_RE = re.compile(r"^(20\d{2})\s*年?$", re.IGNORECASE)
 _CHINESE_DATE_RE = re.compile(r"(20\d{2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日")
 _ISO_DATE_RE = re.compile(r"(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})")
+# A year that is not the head of a full date, i.e. an enumerated fiscal year
+# ("於2022年、2023年、2024年以及截至2025年6月30日止六個月").
+_NARRATIVE_BARE_YEAR_RE = re.compile(r"(20\d{2})\s*年(?!\s*\d{1,2}\s*月)")
 _ENGLISH_DATE_DAY_FIRST_RE = re.compile(
     r"(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})",
     re.I,
@@ -77,14 +80,125 @@ _EXCLUDED_REVENUE_ROWS = re.compile(
     re.I,
 )
 
+# A hard line wrap splits a label mid-word ("最大客\n戶"), which used to leave the
+# label unmatched. An unmatched label does not merely lose its own percentages:
+# the preceding label's segment then runs on to the next match, so those
+# percentages are silently attributed to the wrong label. Labels are therefore
+# matched wrap-tolerantly. The gap is bounded to the one newline a wrap inserts
+# plus at most one indent character, because an unbounded gap would let a label
+# match across unrelated table cells.
+_WRAP = r"\s{0,2}"
+
+
+def _wrap_tolerant(label: str) -> str:
+    """Allow a single hard wrap between any two characters of a fixed label.
+
+    ``label`` is a plain string except for bracketed character classes, which
+    are kept intact so simplified/traditional variants stay expressible.
+    """
+    tokens = re.findall(r"\[[^\]]+\]|.", label)
+    return _WRAP.join(tokens)
+
+
+def _concentration_pattern(chinese: Sequence[str], english: Sequence[str]) -> re.Pattern[str]:
+    alternatives = [_wrap_tolerant(item) for item in chinese]
+    alternatives += [_WRAP.join(item.split(" ")) for item in english]
+    return re.compile("|".join(alternatives), re.I)
+
+
 _CONCENTRATION_LABELS = {
     "customer": {
-        "largest": re.compile(r"(?:單一|单一)?最大客[戶户]|(?:single )?largest customer", re.I),
-        "top_five": re.compile(r"(?:五大|前五大)客[戶户]|(?:five largest|top five) customers", re.I),
+        "largest": _concentration_pattern(
+            ["單一最大客[戶户]", "单一最大客[戶户]", "最大客[戶户]"],
+            ["single largest customer", "largest customer"],
+        ),
+        "top_five": _concentration_pattern(
+            ["前五大客[戶户]", "五大客[戶户]"],
+            ["five largest customers", "top five customers"],
+        ),
     },
     "supplier": {
-        "largest": re.compile(r"(?:單一|单一)?最大供應商|(?:single )?largest supplier", re.I),
-        "top_five": re.compile(r"(?:五大|前五大)供應商|(?:five largest|top five) suppliers", re.I),
+        "largest": _concentration_pattern(
+            ["單一最大供應商", "单一最大供应商", "最大供應商", "最大供应商"],
+            ["single largest supplier", "largest supplier"],
+        ),
+        "top_five": _concentration_pattern(
+            ["前五大供應商", "前五大供应商", "五大供應商", "五大供应商"],
+            ["five largest suppliers", "top five suppliers"],
+        ),
+    },
+}
+
+_LABELS = {
+    "net_result": (
+        re.compile(r"年[內内][╱／/]期[內内](?:虧損|亏损|溢利)"),
+        re.compile(r"年[╱／/]期[內内](?:虧損|亏损|溢利)"),
+        re.compile(r"(?:年|期)[內内](?:虧損|亏损|溢利|利潤|利润)"),
+        re.compile(r"(?:淨|净)(?:虧損|亏损|利潤|利润)"),
+        re.compile(r"本公司[擁拥]有人(?:應佔|应占).*?(?:虧損|亏损|溢利|利潤|利润)"),
+        re.compile(r"(?:溢利|利润)[╱／/]（?(?:虧損|亏损)）?"),
+        re.compile(r"(?:loss|profit)(?:/loss)? for the (?:year|period)", re.I),
+        re.compile(r"(?:loss|profit) attributable to (?:the )?owners", re.I),
+        re.compile(r"net (?:loss|profit)", re.I),
+    ),
+    "revenue": (
+        re.compile(r"^(?:收入|收益|營業收入|营业收入|收入總額|收入总额|收益總額|收益总额)(?:\s|$)"),
+        re.compile(r"^(?:total revenue|revenue|turnover)(?:\s|$)", re.I),
+    ),
+}
+
+_EXCLUDED_NET_RESULT_LABELS = re.compile(
+    r"經營活動|经营活动|經營虧損|经营亏损|毛利|研發開支|研发开支|綜合開支|综合开支|operating (?:cash|loss)|gross profit|research and development",
+    re.I,
+)
+_EXCLUDED_REVENUE_LABELS = re.compile(
+    r"^(?:利息收入|其他收入|政府補助|政府补助|interest income|other income|government grant)",
+    re.I,
+)
+_EXCLUDED_REVENUE_ROWS = re.compile(
+    r"^(?:收入|收益|revenue).*?(?:來自|来自|from|產品|产品|客[戶户]|segment|分部|尚未|not yet|has not)",
+    re.I,
+)
+
+# A hard line wrap splits a label mid-word ("最大客\n戶"), which used to leave the
+# label unmatched. An unmatched label does not merely lose its own percentages:
+# the preceding label's segment runs on to the next match, so those percentages
+# are silently attributed to the wrong label. Every gap below is therefore
+# whitespace-tolerant. The quantifier is bounded because a wrap inserts one
+# newline plus at most the indent that follows it, while an unbounded gap would
+# let a label match across unrelated table cells.
+_WRAP = r"\s{0,2}"
+
+
+def _wrap_tolerant(*characters: str) -> str:
+    """Join label characters so a single hard wrap between any two still matches."""
+    return _WRAP.join(characters)
+
+
+_CONCENTRATION_LABELS = {
+    "customer": {
+        "largest": re.compile(
+            rf"(?:單一|单一)?{_wrap_tolerant('最', '大', '客', '[戶户]')}"
+            rf"|(?:single\s+)?largest{_WRAP}\s*customer",
+            re.I,
+        ),
+        "top_five": re.compile(
+            rf"(?:五大|前五大){_WRAP}{_wrap_tolerant('客', '[戶户]')}"
+            rf"|(?:five largest|top five){_WRAP}\s*customers",
+            re.I,
+        ),
+    },
+    "supplier": {
+        "largest": re.compile(
+            rf"(?:單一|单一)?{_wrap_tolerant('最', '大', '供', '應', '商')}"
+            rf"|(?:single\s+)?largest{_WRAP}\s*supplier",
+            re.I,
+        ),
+        "top_five": re.compile(
+            rf"(?:五大|前五大){_WRAP}{_wrap_tolerant('供', '應', '商')}"
+            rf"|(?:five largest|top five){_WRAP}\s*suppliers",
+            re.I,
+        ),
     },
 }
 
@@ -1205,10 +1319,28 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 evidence_ids=[evidence.evidence_id],
             )
 
+        # A percentage belongs to the nearest label above it, whichever kind that
+        # label is. Bounding a segment only by the next label of the *same*
+        # concentration type let an intervening supplier paragraph donate its
+        # percentages to the customer label that preceded it, so both kinds act
+        # as boundaries even though only this kind collects values.
+        boundaries = sorted(
+            match.start()
+            for group in _CONCENTRATION_LABELS.values()
+            for pattern in group.values()
+            for match in pattern.finditer(target.text)
+        )
+
         values: dict[str, list[Decimal]] = {"largest": [], "top_five": []}
         raw_percentages: dict[str, list[str]] = {"largest": [], "top_five": []}
-        for index, (_, start_after_label, name) in enumerate(matches):
-            end = matches[index + 1][0] if index + 1 < len(matches) else len(target.text)
+        # The first occurrence of a label is the one the period series was
+        # written against; later occurrences refer back to it.
+        label_starts: dict[str, int] = {}
+        for label_start, start_after_label, name in matches:
+            label_starts.setdefault(name, label_start)
+            end = next(
+                (item for item in boundaries if item >= start_after_label), len(target.text)
+            )
             segment = target.text[start_after_label:end]
             for match in _PERCENT_RE.finditer(segment):
                 raw = match.group("value").replace("−", "-").replace(" ", "")
@@ -1233,8 +1365,12 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         if not values["largest"] and not values["top_five"]:
             issues.append("concentration_percentage_missing")
 
-        largest, largest_issue = self._latest_concentration_value(values["largest"], periods)
-        top_five, top_five_issue = self._latest_concentration_value(values["top_five"], periods)
+        largest, largest_issue = self._latest_concentration_value(
+            values["largest"], periods, self._enumerated_period_count(target.text, label_starts.get("largest", 0))
+        )
+        top_five, top_five_issue = self._latest_concentration_value(
+            values["top_five"], periods, self._enumerated_period_count(target.text, label_starts.get("top_five", 0))
+        )
         issues.extend(largest_issue)
         issues.extend(top_five_issue)
         if largest is None or top_five is None:
@@ -1275,15 +1411,53 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             },
         )
 
+    @classmethod
+    def _enumerated_period_count(cls, text: str, label_start: int) -> int | None:
+        """Count the periods named by the series established just above a label.
+
+        A track-record narrative names its periods once and then quotes one
+        percentage per period ("於2022年、2023年、2024年以及截至2025年6月30日止六個
+        月，前五大客戶……分別為55.2%、55.9%、51.0%及50.3%"). A following sentence
+        refers back to that series rather than repeating it ("於往績記錄期間各年度
+        ╱期間"), so the nearest preceding sentence that names periods governs both.
+
+        ``_narrative_periods`` resolves only full dates, so the three bare years
+        were invisible and a correct four-value series looked like a count
+        mismatch against a single period. Returns ``None`` when no sentence above
+        the label names a series, which leaves the caller's behaviour unchanged.
+        """
+        sentences = [item for item in re.split(r"[。;；]", text[:label_start]) if item.strip()]
+        for sentence in reversed(sentences):
+            years = {match.group(1) for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)}
+            dates = {match.group(0) for match in _CHINESE_DATE_RE.finditer(sentence)}
+            dates |= {match.group(0) for match in _ISO_DATE_RE.finditer(sentence)}
+            # A full date carries its own year, which the bare-year pattern is
+            # written to skip, so the two counts never double-count a period.
+            total = len(years) + len(dates)
+            if total >= 2:
+                return total
+            if total == 1:
+                # A lone year is a mention ("於2011年上市"), not a series.
+                return None
+        return None
+
     @staticmethod
     def _latest_concentration_value(
-        values: Sequence[Decimal], periods: Sequence[_Period]
+        values: Sequence[Decimal],
+        periods: Sequence[_Period],
+        enumerated_count: int | None = None,
     ) -> tuple[Decimal | None, list[str]]:
         if not values:
             return None, []
         if not periods:
             return values[-1], []
-        if len(values) != len(periods):
+        expected = len(periods)
+        if enumerated_count is not None and enumerated_count > expected:
+            # The narrative names more periods than the dates alone resolved to.
+            # Trust the sentence: it is the series the percentages were written
+            # against, and `values[-1]` still refers to its latest period.
+            expected = enumerated_count
+        if len(values) != expected:
             return values[-1], ["value_period_count_mismatch"]
         return values[-1], []
 
@@ -1301,7 +1475,22 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         top_five_values = {
             item.top_five_pct for item in selected if item.top_five_pct is not None
         }
-        issues = [issue for item in selected for issue in item.issues]
+        # A page that read the whole series cleanly governs the merged reading.
+        # Pages that read it only partially — a risk-factor paragraph quoting the
+        # top-five figure but not the largest, or a customer table carrying no
+        # percentages at all — describe their own partial view, so their issues
+        # must not taint a complete clean reading of the same period. They can
+        # still contradict it: the conflict check below runs over every
+        # candidate regardless.
+        governing = [
+            item
+            for item in selected
+            if item.status is ExtractionStatus.EXTRACTED
+            and not item.issues
+            and item.largest_counterparty_pct is not None
+            and item.top_five_pct is not None
+        ]
+        issues = [] if governing else [issue for item in selected for issue in item.issues]
         if len(largest_values) > 1 or len(top_five_values) > 1:
             issues.append("conflicting_values_for_same_period")
         if "conflicting_values_for_same_period" in issues and any(

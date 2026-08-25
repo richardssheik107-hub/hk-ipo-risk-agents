@@ -1,5 +1,72 @@
 # Changelog
 
+## Unreleased — concentration extraction: wrapped labels, segment boundaries, narrative period series
+
+Four independent defects made `customer_concentration` and
+`supplier_concentration` almost inert: over the 2020–2023 **development**
+cohort (376 documents) only 1 document produced a clean customer reading and 4
+produced a clean supplier reading. Every rule below was derived from that
+cohort; 0501.HK (2025 blind) was used only to confirm the outcome.
+
+### Fixed
+
+- **A hard line wrap split a label mid-word.** PDF text wraps as `最大客\n戶`,
+  so the label went unmatched. That did not merely lose its own percentages:
+  the *preceding* label's segment then ran on to the next match and absorbed
+  them, so a top-five figure was silently recorded as the largest-customer
+  figure. Labels are now matched wrap-tolerantly, with the gap bounded to
+  `\s{0,2}` so a label cannot form across unrelated table cells.
+- **A segment was bounded only by the next label of the same kind.** An
+  intervening supplier paragraph therefore donated its percentages to the
+  customer label above it. Both kinds of label now bound a segment, while only
+  the requested kind collects values.
+- **A narrative period series was counted by resolved dates alone.** A track
+  record names its periods once ("於2022年、2023年、2024年以及截至2025年6月30日
+  止六個月") and a later sentence refers back to it; only the interim stub
+  resolves to a date, so a correct four-value series looked like a count
+  mismatch against one period. `_enumerated_period_count` now reads the count
+  from the sentence that established the series. It counts only — bare years
+  are still never resolved to a calendar year end, so
+  `test_bare_years_are_not_guessed_as_calendar_year_ends` is unchanged.
+- **A page that read nothing could veto a page that read cleanly.** The merge
+  unioned issues across every candidate for the selected period, so a customer
+  table with no percentages, or a risk-factor paragraph quoting only the
+  top-five figure, blocked a complete clean reading — and the rule builder
+  rejects any fact carrying issues. A complete clean reading now governs;
+  contradicting candidates still raise `conflicting_values_for_same_period`.
+
+### Development cohort (376 documents, 2020–2023)
+
+| | before | after |
+|---|---|---|
+| clean `customer_concentration` | 1 | 18 |
+| clean `supplier_concentration` | 4 | 27 |
+| clean readings regressed | — | **0** |
+| baseline clean values the fix changes | — | **0** |
+| `value_period_count_mismatch` (customer / supplier) | 221 / 224 | 152 / 151 |
+| `largest_percentage_exceeds_top_five` (customer) | 54 | 39 |
+
+No issue category increased except supplier `missing_period` (66 → 67).
+
+Values churn inside the `needs_review` pool: 56 readings gained a value, 30
+lost one, 34 changed. **None of the 30 losses was a clean reading**, so no risk
+decision regressed. Some losses are improvements — 01597 納泉能源 reported
+`top_five = 70` taken from a run ending `5%, 30%, 70%`, and the fix now
+separates the series well enough for two candidates to disagree, turning a
+garbage value into an honest conflict. One is a genuine quality loss: on 01645
+海納智能 the wrap-tolerant label matches an incidental mention carrying a lone
+`5%`, which conflicts with a plausible `38.3` and voids both. Both documents
+stay `needs_review` either way, so neither changes a decision.
+
+### Confirmation on 2025 blind (not used to choose any rule)
+
+0501.HK 豪威集成電路, table path: `customer_concentration` extracts
+L=25.8% / T5=50.3% and the rule returns `not_applicable` (both under the
+30 / 60 medium thresholds); `supplier_concentration` extracts L=24.9% /
+T5=62.4% and generates a medium risk (top-five ≥ 60). All five financial risk
+codes now report a clean diagnosis; `cash_runway` remains blocked upstream in
+retrieval and is untouched here.
+
 ## Unreleased — v0.4 table scenarios reachable from the UI
 
 The v0.4 table configs shipped without a scenario entry, so the table document
