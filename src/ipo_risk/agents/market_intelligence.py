@@ -23,7 +23,7 @@ from ipo_risk.schemas.final_supervision import ChannelStatus, MarketContextView,
 
 
 MARKET_INTELLIGENCE_SCHEMA_VERSION = "v04_market_intelligence_v1"
-MARKET_INTERPRETATION_PROMPT_VERSION = "v04_market_interpretation_v1"
+MARKET_INTERPRETATION_PROMPT_VERSION = "v04_market_interpretation_v2"
 MARKET_INTERPRETATION_TASK = "market_context_interpretation"
 EXTENDED_READINESS_SOURCE_VERSION = "v04_c_extended_readiness_v1"
 

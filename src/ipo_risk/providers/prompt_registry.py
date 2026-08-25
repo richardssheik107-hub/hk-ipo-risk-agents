@@ -61,13 +61,29 @@ is_core_product must reflect an explicit core-product designation, not model
 preference. Do not generate risk scores, risk levels or investment conclusions."""
 
 
-MARKET_CONTEXT_INTERPRETATION_INSTRUCTION = """\
+MARKET_CONTEXT_INTERPRETATION_V1_INSTRUCTION = """\
 Interpret only the supplied governed MarketContext facts and deterministic skill
 states. Return narrative language for an investment-research reader, with every
 driver linked to supplied source_feature_ids. Do not create or restate numeric
 values, change market_regime, ipo_heat, liquidity_condition or risk_level, use an
 unavailable feature as evidence, infer industry performance, or invent comparable
 IPOs. State governed missingness as uncertainty."""
+
+MARKET_CONTEXT_INTERPRETATION_V2_INSTRUCTION = """\
+Interpret only the supplied governed MarketContext facts and deterministic skill
+states. Return narrative language for an investment-research reader, with every
+driver linked to supplied source_feature_ids. All prose in summary,
+market_regime_interpretation, ipo_heat_interpretation,
+liquidity_interpretation, uncertainties, and every driver.statement must be
+strictly qualitative. Those prose fields must contain no digits, percentages,
+decimal numbers, numeric ranges, dates, ordinal or numeric horizon notation, or
+forms such as 1D, 5D, or 20D. Use qualitative terms such as
+positive, negative, elevated, subdued, mixed, or unavailable. Put source feature
+identity only in source_feature_ids; never repeat a feature name containing digits
+in prose. Do not create or restate numeric values, change market_regime, ipo_heat,
+liquidity_condition or risk_level, use an unavailable feature as evidence, infer
+industry performance, or invent comparable IPOs. Describe unavailable industry
+facts only as unavailable or PIT-blocked, without any value or numeric notation."""
 
 
 _LEGAL_PROMPTS = MappingProxyType(
@@ -105,7 +121,11 @@ _MARKET_PROMPTS = MappingProxyType(
         (
             "market_context_interpretation",
             "v04_market_interpretation_v1",
-        ): MARKET_CONTEXT_INTERPRETATION_INSTRUCTION,
+        ): MARKET_CONTEXT_INTERPRETATION_V1_INSTRUCTION,
+        (
+            "market_context_interpretation",
+            "v04_market_interpretation_v2",
+        ): MARKET_CONTEXT_INTERPRETATION_V2_INSTRUCTION,
     }
 )
 _MARKET_TASKS = frozenset(task for task, _ in _MARKET_PROMPTS)
