@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from inspect import signature
+import re
 from typing import Any
 
 from ipo_risk.agents.base import RiskAgent
@@ -173,17 +174,50 @@ class V03BusinessAgent:
         ) <= allowed_ids:
             return deterministic, "evidence_out_of_scope", metadata
 
-        if self._llm_conflicts(deterministic, llm_commercial, llm_core):
+        llm_commercial, llm_core = self._canonicalize_llm_candidates(
+            llm_commercial, llm_core
+        )
+        metadata["llm_normalization"] = "business_candidate_canonical_v1"
+        conflict_reasons = self._llm_conflict_reasons(
+            deterministic, llm_commercial, llm_core
+        )
+        if conflict_reasons:
+            metadata["llm_conflicts"] = conflict_reasons
             return deterministic, "candidate_conflict", metadata
         metadata["llm_cross_check"] = "consistent"
         return self._fill_from_llm(deterministic, llm_commercial, llm_core), None, metadata
 
-    @staticmethod
-    def _llm_conflicts(
+    @classmethod
+    def _canonicalize_llm_candidates(
+        cls,
+        commercial: CommercializationCandidate,
+        core: CoreProductCandidate,
+    ) -> tuple[CommercializationCandidate, CoreProductCandidate]:
+        stage = cls._canonical_stage(commercial.development_stage)
+        launch = cls._canonical_launch_status(core.launch_status)
+        approval = cls._canonical_approval_status(core.approval_status)
+        return (
+            commercial.model_copy(
+                update={
+                    "development_stage": stage or commercial.development_stage.strip(),
+                }
+            ),
+            core.model_copy(
+                update={
+                    "launch_status": launch or core.launch_status.strip(),
+                    "approval_status": approval or core.approval_status.strip(),
+                }
+            ),
+        )
+
+    @classmethod
+    def _llm_conflict_reasons(
+        cls,
         deterministic: BusinessExtractionResult,
         commercial: CommercializationCandidate,
         core: CoreProductCandidate,
-    ) -> bool:
+    ) -> list[str]:
+        conflicts: list[str] = []
         det_commercial = deterministic.commercialization
         det_core = deterministic.core_product
         if (
@@ -191,20 +225,101 @@ class V03BusinessAgent:
             and commercial.has_product_revenue is not None
             and deterministic.has_product_revenue != commercial.has_product_revenue
         ):
-            return True
-        if det_core and core.product_name.casefold() != det_core.product_name.casefold():
-            return True
+            conflicts.append("product_revenue")
+        if det_core and cls._canonical_product_name(core.product_name) != cls._canonical_product_name(
+            det_core.product_name
+        ):
+            conflicts.append("core_product_identity")
         if det_core and not core.is_core_product:
-            return True
+            conflicts.append("core_product_designation")
         if det_commercial and det_commercial.development_stage not in {"", "unknown"}:
-            llm_stage = commercial.development_stage.casefold()
-            det_stage = det_commercial.development_stage.casefold()
+            llm_stage = cls._canonical_stage(commercial.development_stage)
+            det_stage = cls._canonical_stage(det_commercial.development_stage)
             if llm_stage not in {"", "unknown", det_stage}:
-                return True
-        det_launch = det_core.launch_status if det_core else ""
-        if det_launch and core.launch_status and det_launch != core.launch_status:
-            return True
-        return False
+                conflicts.append("development_stage")
+        det_launch = cls._canonical_launch_status(det_core.launch_status) if det_core else ""
+        llm_launch = cls._canonical_launch_status(core.launch_status)
+        if det_launch and llm_launch and det_launch != llm_launch:
+            conflicts.append("launch_status")
+        return conflicts
+
+    @classmethod
+    def _llm_conflicts(
+        cls,
+        deterministic: BusinessExtractionResult,
+        commercial: CommercializationCandidate,
+        core: CoreProductCandidate,
+    ) -> bool:
+        """Backward-compatible boolean view used by older tests/callers."""
+
+        return bool(cls._llm_conflict_reasons(deterministic, commercial, core))
+
+    @staticmethod
+    def _canonical_product_name(value: str) -> str:
+        return re.sub(r"[^a-z0-9]+", "", value.casefold())
+
+    @staticmethod
+    def _canonical_stage(value: str) -> str:
+        raw = value.strip().casefold()
+        if not raw:
+            return ""
+        compact = re.sub(r"[\s_-]+", "", raw)
+        if raw == "unknown" or compact in {"unknown", "未知"}:
+            return "unknown"
+        if compact in {"launched", "commerciallylaunched", "商业化", "商業化", "已上市"}:
+            return "launched"
+        if compact in {"approved", "marketingapproved", "获批", "獲批", "批准上市"}:
+            return "approved"
+        if compact in {"registration", "nda", "bla", "注册申请", "註冊申請"}:
+            return "registration"
+        if compact in {"phaseiii", "phase3", "clinicalphaseiii", "三期", "iii期", "临床iii期", "臨床iii期"}:
+            return "phase_iii"
+        if compact in {"phaseii", "phase2", "clinicalphaseii", "二期", "ii期", "临床ii期", "臨床ii期"}:
+            return "phase_ii"
+        if compact in {"phasei", "phase1", "clinicalphasei", "一期", "i期", "临床i期", "臨床i期"}:
+            return "phase_i"
+        if compact in {"preclinical", "临床前", "臨床前"}:
+            return "preclinical"
+        return raw.replace(" ", "_").replace("-", "_")
+
+    @staticmethod
+    def _canonical_launch_status(value: str) -> str:
+        raw = value.strip().casefold()
+        if not raw:
+            return ""
+        compact = re.sub(r"[\s_-]+", "", raw)
+        if compact in {"launched", "commerciallylaunched", "commercialized", "commercialised", "已上市", "已商业化", "已商業化"}:
+            return "launched"
+        if compact in {
+            "notlaunched",
+            "notyetlaunched",
+            "notcommercialized",
+            "notcommercialised",
+            "notyetcommercialized",
+            "notyetcommercialised",
+            "尚未上市",
+            "未上市",
+            "尚未商业化",
+            "尚未商業化",
+        }:
+            return "not_launched"
+        if compact in {"unknown", "未知"}:
+            return ""
+        return raw.replace(" ", "_").replace("-", "_")
+
+    @staticmethod
+    def _canonical_approval_status(value: str) -> str:
+        raw = value.strip().casefold()
+        if not raw:
+            return ""
+        compact = re.sub(r"[\s_-]+", "", raw)
+        if compact in {"approved", "marketingapproved", "获批", "獲批", "已批准"}:
+            return "approved"
+        if compact in {"notapproved", "notyetapproved", "未获批", "未獲批", "尚未批准"}:
+            return "not_approved"
+        if compact in {"unknown", "未知"}:
+            return ""
+        return raw.replace(" ", "_").replace("-", "_")
 
     @staticmethod
     def _fill_from_llm(

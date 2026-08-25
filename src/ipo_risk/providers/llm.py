@@ -415,51 +415,102 @@ class OpenAIResponsesLLMProvider:
                 for item in evidence
             ],
         }
-        instructions = (
+        base_instructions = (
             "Judge only supplied Evidence and submit exactly one structured result "
-            "through the required function."
+            "through the required function. Do not add facts to satisfy the schema."
         )
         if domain_instruction:
-            instructions += "\n\n" + domain_instruction
-        response = self._request(
-            input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
-            instructions=instructions,
-            tools=[
-                {
-                    "type": "function",
-                    "name": self.tool_name,
-                    "description": "Submit the complete structured judgment.",
-                    "parameters": response_model.model_json_schema(),
-                    "strict": True,
-                }
-            ],
-            tool_choice={"type": "function", "name": self.tool_name},
-            parallel_tool_calls=False,
-            prompt_version=prompt_version,
-        )
-        arguments = None
+            base_instructions += "\n\n" + domain_instruction
+
+        tools = [
+            {
+                "type": "function",
+                "name": self.tool_name,
+                "description": "Submit the complete structured judgment.",
+                "parameters": response_model.model_json_schema(),
+                "strict": True,
+            }
+        ]
+        validation_feedback = ""
+        total_validation_attempts = 1 + min(self.max_retries, 2)
+        for structured_attempt in range(1, total_validation_attempts + 1):
+            instructions = base_instructions
+            if validation_feedback:
+                instructions += "\n\n" + validation_feedback
+            response = self._request(
+                input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
+                instructions=instructions,
+                tools=tools,
+                tool_choice={"type": "function", "name": self.tool_name},
+                parallel_tool_calls=False,
+                prompt_version=prompt_version,
+            )
+            arguments = self._function_arguments(response)
+            if not isinstance(arguments, str):
+                validation_feedback = (
+                    "The previous response did not provide string JSON arguments through "
+                    "the required function. Call the required function exactly once with "
+                    "arguments matching its schema."
+                )
+                if structured_attempt < total_validation_attempts:
+                    continue
+                raise LLMProviderError(
+                    LLMFailureKind.RESPONSE_VALIDATION,
+                    "Responses API structured output is missing",
+                    recoverable=False,
+                    attempts=structured_attempt,
+                )
+            try:
+                payload = json.loads(arguments)
+                return response_model.model_validate(payload)
+            except json.JSONDecodeError:
+                validation_feedback = (
+                    "The previous function arguments were not valid JSON. Submit valid JSON "
+                    "through the required function without changing the Evidence-grounded facts."
+                )
+            except ValidationError as exc:
+                validation_feedback = self._validation_feedback(exc)
+            if structured_attempt >= total_validation_attempts:
+                raise LLMProviderError(
+                    LLMFailureKind.RESPONSE_VALIDATION,
+                    "Responses API structured output failed validation",
+                    recoverable=False,
+                    attempts=structured_attempt,
+                ) from None
+        raise AssertionError("unreachable structured validation state")
+
+    @classmethod
+    def _function_arguments(cls, response: Any) -> str | None:
         for item in getattr(response, "output", None) or []:
             kind = item.get("type") if isinstance(item, dict) else getattr(item, "type", None)
             name = item.get("name") if isinstance(item, dict) else getattr(item, "name", None)
-            if kind == "function_call" and name == self.tool_name:
-                arguments = item.get("arguments") if isinstance(item, dict) else getattr(item, "arguments", None)
-                break
-        if not isinstance(arguments, str):
-            raise LLMProviderError(
-                LLMFailureKind.RESPONSE_VALIDATION,
-                "Responses API structured output is missing",
-                recoverable=False,
-                attempts=1,
+            if kind == "function_call" and name == cls.tool_name:
+                arguments = (
+                    item.get("arguments")
+                    if isinstance(item, dict)
+                    else getattr(item, "arguments", None)
+                )
+                return arguments if isinstance(arguments, str) else None
+        return None
+
+    @staticmethod
+    def _validation_feedback(exc: ValidationError) -> str:
+        safe_errors = []
+        for error in exc.errors(include_input=False)[:8]:
+            path = ".".join(str(part) for part in error.get("loc", ())) or "<root>"
+            safe_errors.append(
+                {
+                    "path": path,
+                    "type": str(error.get("type", "validation_error")),
+                    "message": str(error.get("msg", "invalid value")),
+                }
             )
-        try:
-            return response_model.model_validate(json.loads(arguments))
-        except (json.JSONDecodeError, ValidationError):
-            raise LLMProviderError(
-                LLMFailureKind.RESPONSE_VALIDATION,
-                "Responses API structured output failed validation",
-                recoverable=False,
-                attempts=1,
-            ) from None
+        return (
+            "The previous structured result failed local schema validation. Submit a "
+            "corrected function call using only the same supplied Evidence; do not invent "
+            "facts just to satisfy the schema. Validation errors: "
+            + json.dumps(safe_errors, ensure_ascii=False, separators=(",", ":"))
+        )
 
     @staticmethod
     def _response_raw(response: Any) -> str:

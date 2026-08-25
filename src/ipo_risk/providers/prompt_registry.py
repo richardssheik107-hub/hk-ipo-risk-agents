@@ -11,9 +11,17 @@ SHAREHOLDER_RIGHTS_INSTRUCTION = """\
 Extract only shareholder-right facts explicitly supported by the supplied Evidence.
 Distinguish historical from current rights and before-listing, on-listing and
 after-listing timing. Treat termination and restoration as separate facts. Never
-invent a holder, termination event or restoration condition. Use null/empty values
-when the Evidence is incomplete. Cite only supplied evidence_ids. Do not assess a
-final risk score, risk level, verification status or investment recommendation."""
+invent a holder, termination event or restoration condition. Cite only supplied
+evidence_ids. Do not assess a final risk score, risk level, verification status or
+investment recommendation.
+
+For schema stability, use canonical right_type values only when supported:
+none, redemption_right, liquidation_preference, anti_dilution_right,
+pre_emptive_right, repurchase_right, veto_right, director_nomination_right,
+special_right, valuation_adjustment_mechanism. If Evidence establishes a special
+right but not a narrower supported type, use special_right. Use empty strings for
+unknown string fields and null only for nullable boolean fields. Never combine
+multiple right types into one free-form right_type value."""
 
 
 LITIGATION_COMPLIANCE_INSTRUCTION = """\
@@ -22,7 +30,36 @@ Evidence. Distinguish actual events from generic future-risk language and explic
 negative statements. Preserve historical/current and pending/resolved/settled/
 closed/remediated status. Do not infer materiality, amount, regulator, counterparty
 or case status unless explicit. Cite only supplied evidence_ids. Do not assess a
-final risk score, risk level, verification status or investment recommendation."""
+final risk score, risk level, verification status or investment recommendation.
+
+For schema stability, matter_type must be one of: none, litigation, arbitration,
+administrative_penalty, regulatory_investigation, non_compliance, license_permit,
+tax, environmental_penalty, data_privacy, unknown. current_status must be one of:
+pending, ongoing, resolved, remediated, not_applicable, unknown. When a required
+categorical fact is not established, use the literal string unknown instead of
+null. Use empty strings for unknown optional string fields; use null for unknown
+nullable booleans, event_date or amount. event_date must be YYYY-MM-DD or null,
+amount must be a plain JSON number or null, and evidence_ids must be a non-empty
+array containing only supplied Evidence IDs."""
+
+
+BUSINESS_PRECOMMERCIAL_INSTRUCTION = """\
+Extract only commercialization and core-product facts supported by the supplied
+prospectus Evidence. Keep direct product-sales revenue distinct from licensing,
+milestone, collaboration, R&D-service or other non-product revenue. Do not treat
+pipeline progress, approval filing, partnership income or milestone receipts as
+proof of commercial product sales. Preserve the product identifier as written in
+Evidence and cite only supplied evidence_ids.
+
+Use canonical development_stage values when supported: launched, approved,
+registration, phase_iii, phase_ii, phase_i, preclinical, unknown. For core-product
+launch_status use launched, not_launched, or an empty string when Evidence does not
+establish it. For approval_status use approved, not_approved, or an empty string.
+has_product_revenue must be true only for direct product-sales revenue, false only
+when Evidence explicitly establishes no product-sales revenue, otherwise null.
+is_core_product must reflect an explicit core-product designation, not model
+preference. Do not generate risk scores, risk levels or investment conclusions."""
+
 
 MARKET_CONTEXT_INTERPRETATION_INSTRUCTION = """\
 Interpret only the supplied governed MarketContext facts and deterministic skill
@@ -48,6 +85,21 @@ _LEGAL_PROMPTS = MappingProxyType(
 _LEGAL_TASKS = frozenset(task for task, _ in _LEGAL_PROMPTS)
 _LEGAL_VERSIONS = frozenset(version for _, version in _LEGAL_PROMPTS)
 
+_BUSINESS_PROMPTS = MappingProxyType(
+    {
+        (
+            "business_precommercial_commercialization_extract",
+            "business_precommercial_v1",
+        ): BUSINESS_PRECOMMERCIAL_INSTRUCTION,
+        (
+            "business_precommercial_core_product_extract",
+            "business_precommercial_v1",
+        ): BUSINESS_PRECOMMERCIAL_INSTRUCTION,
+    }
+)
+_BUSINESS_TASKS = frozenset(task for task, _ in _BUSINESS_PROMPTS)
+_BUSINESS_VERSIONS = frozenset(version for _, version in _BUSINESS_PROMPTS)
+
 _MARKET_PROMPTS = MappingProxyType(
     {
         (
@@ -59,28 +111,35 @@ _MARKET_PROMPTS = MappingProxyType(
 _MARKET_TASKS = frozenset(task for task, _ in _MARKET_PROMPTS)
 _MARKET_VERSIONS = frozenset(version for _, version in _MARKET_PROMPTS)
 
-_RERANK_PROMPTS = MappingProxyType({(f"rerank_{risk}", PROMPT_VERSION): instruction(risk) for risk in RISK_FACETS})
+_RERANK_PROMPTS = MappingProxyType(
+    {(f"rerank_{risk}", PROMPT_VERSION): instruction(risk) for risk in RISK_FACETS}
+)
 _RERANK_TASKS = frozenset(task for task, _ in _RERANK_PROMPTS)
 
 
 class PromptResolutionError(ValueError):
-    """Raised when a known Legal prompt identity is incomplete or mismatched."""
+    """Raised when a known domain prompt identity is incomplete or mismatched."""
 
 
 def resolve_domain_instruction(task_name: str, prompt_version: str) -> str | None:
-    """Resolve an exact Legal prompt pair while preserving generic callers."""
+    """Resolve an exact registered prompt pair while preserving generic callers."""
 
-    instruction = (
+    instruction_text = (
         _LEGAL_PROMPTS.get((task_name, prompt_version))
+        or _BUSINESS_PROMPTS.get((task_name, prompt_version))
         or _MARKET_PROMPTS.get((task_name, prompt_version))
         or _RERANK_PROMPTS.get((task_name, prompt_version))
     )
-    if instruction is not None:
-        return instruction
+    if instruction_text is not None:
+        return instruction_text
     if task_name in _LEGAL_TASKS or prompt_version in _LEGAL_VERSIONS:
         raise PromptResolutionError("Unknown or mismatched Legal prompt identity")
+    if task_name in _BUSINESS_TASKS or prompt_version in _BUSINESS_VERSIONS:
+        raise PromptResolutionError("Unknown or mismatched Business prompt identity")
     if task_name in _MARKET_TASKS or prompt_version in _MARKET_VERSIONS:
         raise PromptResolutionError("Unknown or mismatched Market prompt identity")
-    if task_name in _RERANK_TASKS or (prompt_version == PROMPT_VERSION and task_name not in _RERANK_TASKS):
+    if task_name in _RERANK_TASKS or (
+        prompt_version == PROMPT_VERSION and task_name not in _RERANK_TASKS
+    ):
         raise PromptResolutionError("Unknown or mismatched reranker prompt identity")
     return None
