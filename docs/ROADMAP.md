@@ -1,39 +1,21 @@
 # Roadmap
 
 > Status snapshot: **2026-08-25**  
-> Current formal Gate: **PR-H — Streamlit Full E2E + 3–5 real 2024 IPO demo**  
-> Execution strategy: **Freeze baseline → diagnose signal → targeted hardening → competition product → submission**
+> Time budget: **5 days to competition submission**  
+> Execution strategy: **return to the competition task → maximize real LLM value → finish governed E2E → stabilize demo → submit**
 
 ## 1. Current state
 
-| Phase | Status | Frozen / active result |
-| --- | --- | --- |
-| v0.3 Document Intelligence | COMPLETE / FROZEN | real PDF → Evidence → Agents → Verifier → Supervisor |
-| PR-A Document materialization | COMPLETE / FROZEN | 438/438 Production Document-X, 100 dims |
-| PR-B Market-X Core | COMPLETE / FROZEN | 438/438, 30 positions, PIT audited |
-| PR-C 5D Outcome | COMPLETE / FROZEN | 424 available / 14 explicit unavailable |
-| PR-D Canonical Dataset | COMPLETE / FROZEN | 424 = 354 Development + 70 Validation |
-| Oracle v2 | COMPLETE / FROZEN / EVALUATION-ONLY | 98 materialized / 96 strict = 77 Dev + 19 Val |
-| PR-E Baseline + Oracle | COMPLETE / FROZEN | time-aware baseline + Oracle diagnostic |
-| PR-F LightGBM + Explainability | COMPLETE / FROZEN | LightGBM / SHAP / calibration assessment / ablation / error analysis |
-| PR-G Market Agent + Final Supervisor | COMPLETE / FROZEN | real 2410.HK, 13 sections, deterministic traceability |
-| PR-H Full E2E | **PARTIAL / BLOCKED** | governed runtime implemented; formal 3–5 case gate not passed |
-| v0.4.3 Baseline E2E Freeze | NOT CREATED | after PR-H PASS |
-| CH-0..CH-6 | PLANNED | formal competition hardening |
-| v0.4.5 | PLANNED | COMPETITION_READY / Submission Freeze |
+```text
+v0.3 Document Intelligence          COMPLETE / FROZEN
+PR-A–PR-G                           COMPLETE / FROZEN
+PR-H Full E2E                       PARTIAL / BLOCKED
+v0.4.3 Baseline E2E Freeze          NOT CREATED
+Competition submission sprint       ACTIVE — 5 DAYS
+Target                               v0.4.5 COMPETITION_READY
+```
 
-## 2. PR-H remaining blockers
-
-PR-H is not blocked by missing code design. It is blocked by immutable/runtime inputs required for the formal gate:
-
-1. restore original frozen PR-F runtime or an already generated hash-bound sanitized handoff;
-2. provide at least 3 matching real 2024 prospectus PDFs;
-3. execute 3–5 cases with Document / Market / Model / Rule all governed and available;
-4. pass determinism / provenance / Evidence / Blind checks.
-
-No retraining, reconstruction, score inversion or 2024 retuning is allowed merely to unblock the UI.
-
-## 3. Current measured anchors
+Frozen measured facts remain unchanged:
 
 ```text
 Official 2020–2024 universe          438
@@ -41,116 +23,132 @@ Production Document-X                438 / 438, 100 dims
 Market-X Core                        438 / 438, 30 positions
 5D outcome                           424 / 438
 Canonical model-ready                424 = 354 Dev + 70 Val
-Oracle v2 strict                     96 = 77 Dev + 19 Val
 2025 Blind y accessed                NO
 ```
 
-Market Extended current facts:
+PR-F remains an honest auxiliary modeling baseline; weak 5D performance is not a reason to spend the remaining sprint on model exploration or Validation retuning.
+
+## 2. Competition-first objective
+
+The remaining work is no longer a broad research program. The product must directly satisfy the competition task:
 
 ```text
-HSI 5D / 20D / volatility readiness      438 / 438
-HKEX turnover 20D readiness               438 / 438
-production industry return                  0 / 438
-industry reason                           PIT_BLOCKED / missing classification
+real prospectus PDF
+→ grounded Evidence retrieval
+→ Financial / Legal / Business Agents
+→ LLM semantic extraction where semantics matter
+→ deterministic Calculation where exact math matters
+→ Verifier
+→ governed Market context + LLM interpretation
+→ model/rule auxiliary signal
+→ LLM Final Supervisor
+→ conflict / re-check / uncertainty
+→ auditable final report + Streamlit demo
 ```
 
-Industry features remain explicitly unavailable until historically effective/PIT-safe classification exists.
+The LLM must create observable functional improvement, not merely appear as an API dependency.
 
-## 4. Frozen modeling finding
-
-PR-E / PR-F establish an honest baseline, not a competition ceiling.
+## 3. Five-day execution sequence
 
 ```text
-PR-F Full Production 2024
-M   ROC-AUC 0.4246
-P   ROC-AUC 0.5000
-PM  ROC-AUC 0.4246
+DAY 1  Real LLM Document Intelligence
+DAY 2  LLM Market interpretation + LLM Final Supervisor + simple conflict re-check
+DAY 3  3–5 real-case E2E + targeted fixes + small Offline-vs-AI check
+DAY 4  Evidence / AI Analysis / Agent Trace product integration
+DAY 5  Regression + submission package + freeze + rehearsal
 ```
 
-PM and M are prediction-equivalent under the frozen LightGBM policy; Production Document features received zero split/gain/SHAP use. Oracle `OM-M ROC-AUC = -0.0143` with 95% bootstrap `[-0.3171, 0.2917]` on only 19 Validation cases.
+This sequence supersedes the previous 3-week CH-0..CH-6 execution schedule for the current submission window. CH items remain backlog concepts only where they directly support the five-day deliverable.
 
-Interpretation: current 5D target / representation / sample / model did not validate stable Document increment. It does **not** prove prospectus risk information has no value. Competition work therefore diagnoses where signal is lost before choosing a new model.
+## 4. What we deliberately stop doing
 
-## 5. Strict sequence
+Until submission, do **not** spend primary capacity on:
 
 ```text
-NOW
-PR-H real-case completion
-→ v0.4.3 BASELINE E2E FREEZE
-→ CH-0 Scope / Metrics Lock
-→ CH-1 Multi-Horizon Outcome + Predictive Diagnosis
-→ CH-2 Document Benchmark + Targeted Hardening
-→ CH-3 Market Intelligence / IPO Context
-→ CH-4 Multi-Agent Conflict + Full Trace
-→ CH-5 Evidence Viewer + Competition Product
-→ Competition Beta
-→ CH-6 Formal Evaluation / Freeze
-→ v0.4.5 COMPETITION_READY
-→ Submission + Demo Rehearsal
+full 1D/5D/20D/60D research matrix
+new P-Core / broad feature audit
+new model family / hyperparameter exploration
+large-scale Retriever redesign
+new industry mapping research
+large new market data families
+full-corpus benchmark construction
+story-only / presentation-only features without product value
 ```
 
-CH-1 / CH-2 / CH-3 are executed substantially in parallel after CH-0. CH-4 / CH-5 begin once their data contracts are stable enough; they do not wait for every research experiment to finish.
+Allowed work must fix a real competition requirement, an E2E blocker, a high-impact extraction error, or a visible product usability problem.
 
-## 6. Competition Scorecard
+## 5. LLM-first acceptance
 
-### Risk Intelligence
+By submission, the real AI path must demonstrate:
 
 ```text
-Precision / Recall / F1 by risk
-Evidence Recall / Evidence Precision
-key risk quality target >= 80%
-key Evidence Recall     >= 85%
+Legal Agent       LLM structured semantic extraction from supplied Evidence
+Business Agent    LLM semantic cross-check / gap filling from supplied Evidence
+Market Agent      LLM interpretation of governed pre-listing market facts
+Final Supervisor  LLM synthesis / conflict detection / uncertainty / re-check request
 ```
 
-### Predictive validation
+Rules:
+
+- LLM only reasons over supplied governed facts/Evidence;
+- structured output must validate against schema;
+- out-of-scope Evidence IDs fail closed;
+- exact financial calculations stay deterministic;
+- model score is auxiliary and uncalibrated unless explicitly calibrated;
+- every visible AI conclusion must trace to Evidence / market facts / model drivers.
+
+## 6. Minimum effect check
+
+Do one small, submission-oriented comparison on the same 3–5 real cases:
 
 ```text
-1D / 5D / 20D / 60D
-M / P / P-Core / PM / O / OM
-ROC-AUC / PR-AUC / Brier
-regression metrics where appropriate
-bootstrap uncertainty
+Offline deterministic mode
+vs
+AI-enhanced mode
 ```
 
-### Multi-Agent / Auditability
+Record only useful operational indicators:
 
 ```text
-Agent / Tool / Evidence traceability = 100%
-real conflict cases                  >= 3
-unresolved uncertainty preserved     = 100%
+semantic fields resolved
+formal risks resolved
+needs_review / extraction_failed count
+Evidence grounding validity
+LLM structured-output validity
+conflict/re-check usefulness
 ```
 
-## 7. Route decisions after diagnosis
+This is not a new research benchmark; it is a sanity check that LLM integration materially improves the product.
+
+## 7. PR-H / model runtime rule
+
+Restoring the frozen PR-F per-case handoff remains D's highest-priority model task, but it is time-boxed. Do not retrain/reconstruct/tune merely to unblock UI.
+
+If the original frozen handoff cannot be recovered within the sprint, the formal PR-H all-channel Gate remains blocked and the product must show `Model Channel = unavailable` honestly. Document / Market / Rule / LLM Supervisor must continue to work. No fake model output is allowed.
+
+## 8. Final submission gate
+
+A competition release is accepted only if:
 
 ```text
-Oracle strong / Production weak
-→ prioritize Document pipeline / representation
-
-20D/60D stronger than 5D
-→ structural Document risk is a longer-horizon signal
-
-Market strong on 1D/5D
-→ prioritize PIT IPO Heat / market context for short horizon
-
-all predictive arms weak
-→ keep model auxiliary and make Risk Intelligence / Evidence / Multi-Agent auditability the primary competition value
+>= 3 stable real IPO demos
+real LLM calls visible in governed runtime
+Evidence references resolve
+Legal/Business semantic extraction works on selected cases
+Market interpretation is PIT-safe
+Final Supervisor can synthesize and expose uncertainty/conflict
+Agent/LLM trace is visible
+no fabricated Evidence / market / model facts
+no 2025 Blind y access
+full CI + real-case smoke pass
+clone/install/run instructions are complete
 ```
 
-No route is selected by cherry-picking one Validation metric.
+Target tag after PASS:
 
-## 8. Compact schedule
+```text
+v0.4.5 COMPETITION_READY
+```
 
-| Window | Target |
-| --- | --- |
-| Day 1–3 | PR-H close + v0.4.3 freeze |
-| Day 3–4 | CH-0 Scorecard lock |
-| Day 4–8 | CH-1 / CH-2 / CH-3 first pass in parallel |
-| Day 8–12 | targeted Document + Market + multi-horizon iteration |
-| Day 10–14 | CH-4 real conflict resolution |
-| Day 10–16 | CH-5 Evidence Viewer / product integration |
-| Day 15–18 | Competition Beta Gate |
-| Day 18–21 | CH-6 formal evaluation / regression / freeze |
-| Final | submission package + demo rehearsal |
-
-Detailed owners: [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).  
-Detailed hardening and submission acceptance: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
+Detailed ownership: [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).  
+Detailed five-day acceptance: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
