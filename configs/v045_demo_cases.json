@@ -1,0 +1,27 @@
+{
+  "manifest_version": "v045_role_e_demo_cases_v1",
+  "note": "Every case_id, stock_code and listing_date below is taken from data/catalog/ipo_official_master_bridge.csv. Prospectus PDFs are local, licensed inputs and are never committed: a case whose PDF is absent is reported as unavailable, never substituted, mocked or silently skipped.",
+  "cases": [
+    {
+      "case_id": "ipo_2024_02410",
+      "company_name": "浙江同源康医药股份有限公司",
+      "stock_code": "2410.HK",
+      "listing_date": "2024-08-20",
+      "prospectus_path": "data/local/real_case_001/prospectus.pdf"
+    },
+    {
+      "case_id": "ipo_2024_02460",
+      "company_name": "华润饮料控股有限公司",
+      "stock_code": "2460.HK",
+      "listing_date": "2024-10-23",
+      "prospectus_path": "data/local/real_case_002/prospectus.pdf"
+    },
+    {
+      "case_id": "ipo_2024_01318",
+      "company_name": "毛戈平化妆品股份有限公司",
+      "stock_code": "1318.HK",
+      "listing_date": "2024-12-10",
+      "prospectus_path": "data/local/real_case_003/prospectus.pdf"
+    }
+  ]
+}

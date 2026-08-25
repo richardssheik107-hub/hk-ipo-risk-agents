@@ -12,6 +12,9 @@ data/inputs/*
 !data/inputs/.gitkeep
 data/results/*
 !data/results/.gitkeep
+# Reviewer decisions are local audit records, never committed.
+data/human_review/*
+!data/human_review/.gitkeep
 data/competition/*
 !data/competition/.gitignore
 !data/competition/README.md

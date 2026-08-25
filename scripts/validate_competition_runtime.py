@@ -26,6 +26,7 @@ from ipo_risk.schemas.competition_runtime import (
 AI_CONFIGS = (
     Path("configs/v04_ai.yaml"),
     Path("configs/v04_ai_table.yaml"),
+    Path("configs/v045_competition_ai.yaml"),
 )
 
 

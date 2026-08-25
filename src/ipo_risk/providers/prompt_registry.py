@@ -86,6 +86,30 @@ industry performance, or invent comparable IPOs. Describe unavailable industry
 facts only as unavailable or PIT-blocked, without any value or numeric notation."""
 
 
+FINAL_SUPERVISION_V1_INSTRUCTION = """\
+Synthesise the supplied governed channel outputs into one supervisory judgement
+for an investment-research reader. You are a composition layer: you may weigh,
+explain and prioritise what the Document, Market, Model and Rule channels already
+produced, and nothing else.
+
+Cite only supplied risk_ids and evidence_ids; every key finding must name at
+least one supplied risk_id. Never introduce a risk, an evidence item, a market
+fact, a model score or a number that is not present in the supplied payload.
+Never restate an uncalibrated model score as a probability, a likelihood, a
+forecast or an expected return, and never predict a listing-day or post-listing
+price move.
+
+overall_risk must not be lower than the supplied deterministic_severity_floor,
+which is derived from verified document risks; you may raise it when a supplied
+channel supports the escalation, and you must say which channel in
+overall_risk_rationale. Report every unresolved or partially resolved conflict in
+conflict_assessments using only the supplied conflict_ids, and state plainly what
+remains unsettled. Set recheck_required to true only when a further bounded,
+targeted re-check of a named supplied target could change the judgement.
+State channel absence, verifier non-verification and governed missingness as
+uncertainties instead of resolving them by assumption."""
+
+
 _LEGAL_PROMPTS = MappingProxyType(
     {
         (
@@ -131,6 +155,17 @@ _MARKET_PROMPTS = MappingProxyType(
 _MARKET_TASKS = frozenset(task for task, _ in _MARKET_PROMPTS)
 _MARKET_VERSIONS = frozenset(version for _, version in _MARKET_PROMPTS)
 
+_SUPERVISION_PROMPTS = MappingProxyType(
+    {
+        (
+            "final_supervision_synthesis",
+            "v04_final_supervision_v1",
+        ): FINAL_SUPERVISION_V1_INSTRUCTION,
+    }
+)
+_SUPERVISION_TASKS = frozenset(task for task, _ in _SUPERVISION_PROMPTS)
+_SUPERVISION_VERSIONS = frozenset(version for _, version in _SUPERVISION_PROMPTS)
+
 _RERANK_PROMPTS = MappingProxyType(
     {(f"rerank_{risk}", PROMPT_VERSION): instruction(risk) for risk in RISK_FACETS}
 )
@@ -148,6 +183,7 @@ def resolve_domain_instruction(task_name: str, prompt_version: str) -> str | Non
         _LEGAL_PROMPTS.get((task_name, prompt_version))
         or _BUSINESS_PROMPTS.get((task_name, prompt_version))
         or _MARKET_PROMPTS.get((task_name, prompt_version))
+        or _SUPERVISION_PROMPTS.get((task_name, prompt_version))
         or _RERANK_PROMPTS.get((task_name, prompt_version))
     )
     if instruction_text is not None:
@@ -158,6 +194,8 @@ def resolve_domain_instruction(task_name: str, prompt_version: str) -> str | Non
         raise PromptResolutionError("Unknown or mismatched Business prompt identity")
     if task_name in _MARKET_TASKS or prompt_version in _MARKET_VERSIONS:
         raise PromptResolutionError("Unknown or mismatched Market prompt identity")
+    if task_name in _SUPERVISION_TASKS or prompt_version in _SUPERVISION_VERSIONS:
+        raise PromptResolutionError("Unknown or mismatched Final Supervision prompt identity")
     if task_name in _RERANK_TASKS or (
         prompt_version == PROMPT_VERSION and task_name not in _RERANK_TASKS
     ):

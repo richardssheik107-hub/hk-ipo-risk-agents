@@ -1,0 +1,36 @@
+# v0.4.5 Competition runtime, offline.
+#
+# Identical to configs/v04_offline.yaml except for the Final Supervisor: the E
+# lane's LLM Supervisor keeps the frozen PR-G composition as its spine and adds
+# deterministic conflict detection, one bounded targeted re-check and Agent /
+# Tool / Evidence trace assembly.  With llm_provider: unavailable the synthesis
+# degrades honestly and everything else still runs, so this config is the
+# reproducible offline reference for the competition product.
+workflow_version: enhanced_v2
+runtime_mode: offline
+use_mock: false
+enable_verifier: true
+parser: pymupdf
+retriever: keyword
+financial_agent: v03
+legal_agent: v03
+business_agent: v03
+market_agent: disabled
+verifier: specialized_v03
+supervisor: v03
+predictor: rule_based
+llm_provider: unavailable
+market_data_provider: unavailable
+ipo_data_provider: catalog
+repository: json
+report_generator: v04
+data_dir: data
+report_dir: reports
+log_level: INFO
+
+market_context: governed_pr_b_core
+market_feature_dir: reports/v04_pr_b/core_features
+market_official_bridge: data/catalog/ipo_official_master_bridge.csv
+final_supervisor: llm
+# Set IPO_RISK_PR_F_RUN_DIR to a local sanitized handoff. It stays empty in Git.
+pr_f_run_dir: ""
