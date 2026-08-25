@@ -336,9 +336,13 @@ class MarketIntelligenceAgent:
                 status="unavailable", agent_name=self.name, action=MARKET_INTERPRETATION_TASK,
                 tool_or_skill="LLMProvider.generate_structured",
                 prompt_version=MARKET_INTERPRETATION_PROMPT_VERSION,
-                details={"reason": reason},
+                details={
+                    "reason": reason,
+                    "no_evidence_reason": "LLM market interpretation was not invoked because no provider was configured",
+                },
             )
         evidence = self._bounded_evidence(context)
+        evidence_ids = [item.evidence_id for item in evidence]
         started = perf_counter()
         try:
             result = self.llm_provider.generate_structured(
@@ -369,6 +373,7 @@ class MarketIntelligenceAgent:
                 tool_or_skill="LLMProvider.generate_structured",
                 provider_name=getattr(self.llm_provider, "name", None),
                 prompt_version=MARKET_INTERPRETATION_PROMPT_VERSION,
+                evidence_ids=evidence_ids,
                 latency_ms=max(0, int((perf_counter() - started) * 1000)),
                 details={"reason": reason},
             )
@@ -380,6 +385,7 @@ class MarketIntelligenceAgent:
             provider_name=metadata.provider_name if metadata else getattr(self.llm_provider, "name", None),
             model_name=metadata.model_name if metadata else None,
             prompt_version=MARKET_INTERPRETATION_PROMPT_VERSION,
+            evidence_ids=evidence_ids,
             latency_ms=metadata.latency_ms if metadata else max(0, int((perf_counter() - started) * 1000)),
             request_id=metadata.request_id if metadata else None,
             raw_response_hash=metadata.raw_response_hash if metadata else None,
@@ -415,6 +421,7 @@ class MarketIntelligenceAgent:
 
     @staticmethod
     def _skill_trace(case_id: str, run_id: str, skill: str, output: dict[str, Any]) -> TraceEvent:
+        feature_ids = list(output["source_feature_ids"])
         return TraceEvent(
             case_id=case_id,
             run_id=run_id,
@@ -423,9 +430,10 @@ class MarketIntelligenceAgent:
             agent_name="market_intelligence",
             action="deterministic_market_classification",
             tool_or_skill=skill,
+            evidence_ids=[f"market_feature:{feature_id}" for feature_id in feature_ids],
             latency_ms=0,
             details={
-                "input_feature_ids": output["source_feature_ids"],
+                "input_feature_ids": feature_ids,
                 "structured_output": output,
             },
         )

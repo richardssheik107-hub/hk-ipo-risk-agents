@@ -336,6 +336,7 @@ class OpenAIResponsesLLMProvider:
 
     name = "openai_responses"
     tool_name = "submit_structured_result"
+    _CHAT_FALLBACK_TASKS = frozenset({"final_supervision_synthesis"})
 
     def __init__(
         self,
@@ -354,9 +355,10 @@ class OpenAIResponsesLLMProvider:
                 recoverable=False,
             )
         self.model = model
+        self.timeout_seconds = int(timeout_seconds)
         self.max_retries = max(0, int(max_retries))
         self.last_call_metadata: LLMCallMetadata | None = None
-        self._client = client or self._build_client(api_key, base_url, timeout_seconds)
+        self._client = client or self._build_client(api_key, base_url, self.timeout_seconds)
 
     @staticmethod
     def _build_client(api_key: str, base_url: str, timeout_seconds: int) -> Any:
@@ -433,18 +435,40 @@ class OpenAIResponsesLLMProvider:
         ]
         validation_feedback = ""
         total_validation_attempts = 1 + min(self.max_retries, 2)
+        # The Final Supervisor is the last remote call in a long E2E run.  Three
+        # consecutive Responses transport timeouts used to add minutes and still
+        # end in deterministic fallback.  For this bounded task we make one
+        # Responses transport attempt, then try the same model/client through the
+        # already-supported Chat Completions JSON path.  Schema validation and
+        # fail-closed behaviour remain identical.
+        transport_retries = 0 if task_name in self._CHAT_FALLBACK_TASKS else None
         for structured_attempt in range(1, total_validation_attempts + 1):
             instructions = base_instructions
             if validation_feedback:
                 instructions += "\n\n" + validation_feedback
-            response = self._request(
-                input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
-                instructions=instructions,
-                tools=tools,
-                tool_choice={"type": "function", "name": self.tool_name},
-                parallel_tool_calls=False,
-                prompt_version=prompt_version,
-            )
+            try:
+                response = self._request(
+                    input=json.dumps(request, ensure_ascii=False, separators=(",", ":")),
+                    instructions=instructions,
+                    tools=tools,
+                    tool_choice={"type": "function", "name": self.tool_name},
+                    parallel_tool_calls=False,
+                    prompt_version=prompt_version,
+                    max_retries_override=transport_retries,
+                )
+            except LLMProviderError as exc:
+                if (
+                    task_name in self._CHAT_FALLBACK_TASKS
+                    and exc.kind is LLMFailureKind.TRANSPORT
+                    and exc.recoverable
+                ):
+                    return self._chat_structured_fallback(
+                        request=request,
+                        domain_instruction=domain_instruction,
+                        prompt_version=prompt_version,
+                        response_model=response_model,
+                    )
+                raise
             arguments = self._function_arguments(response)
             if not isinstance(arguments, str):
                 validation_feedback = (
@@ -478,6 +502,74 @@ class OpenAIResponsesLLMProvider:
                     attempts=structured_attempt,
                 ) from None
         raise AssertionError("unreachable structured validation state")
+
+    def _chat_structured_fallback(
+        self,
+        *,
+        request: dict[str, Any],
+        domain_instruction: str | None,
+        prompt_version: str,
+        response_model: type[StructuredModel],
+    ) -> StructuredModel:
+        """Retry one recoverable Final-Supervisor transport failure via chat JSON.
+
+        This is not a different model, credential set, or source of facts: it uses
+        the same OpenAI client and model and validates against the same caller-owned
+        Pydantic schema.  The metadata names the fallback explicitly so the trace
+        never presents it as a successful Responses function call.
+        """
+
+        system_instruction = "Return exactly one JSON object matching response_schema."
+        if domain_instruction is not None:
+            system_instruction = (
+                f"{system_instruction}\n\nDomain extraction instruction:\n"
+                f"{domain_instruction}"
+            )
+        chat_request = {**request, "response_schema": response_model.model_json_schema()}
+        messages = [
+            {"role": "system", "content": system_instruction},
+            {
+                "role": "user",
+                "content": json.dumps(chat_request, ensure_ascii=False, separators=(",", ":")),
+            },
+        ]
+        started = perf_counter()
+        try:
+            response = self._client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                response_format={"type": "json_object"},
+            )
+            raw = OpenAICompatibleLLMProvider._response_text(response)
+            result = response_model.model_validate(json.loads(raw))
+            metadata = OpenAICompatibleLLMProvider._metadata(
+                self,
+                response=response,
+                raw=raw,
+                prompt_version=prompt_version,
+                started=started,
+            )
+            self.last_call_metadata = metadata.model_copy(
+                update={"provider_name": "openai_responses_chat_fallback"}
+            )
+            return result
+        except (json.JSONDecodeError, ValidationError, ValueError, TypeError, IndexError, AttributeError):
+            raise LLMProviderError(
+                LLMFailureKind.RESPONSE_VALIDATION,
+                "Chat fallback response failed structured validation",
+                recoverable=False,
+                attempts=1,
+            ) from None
+        except LLMProviderError:
+            raise
+        except Exception as exc:
+            kind, recoverable = OpenAICompatibleLLMProvider._classify_remote_error(exc)
+            raise LLMProviderError(
+                kind,
+                OpenAICompatibleLLMProvider._safe_failure_message(kind),
+                recoverable=recoverable,
+                attempts=1,
+            ) from None
 
     @classmethod
     def _function_arguments(cls, response: Any) -> str | None:
@@ -564,8 +656,15 @@ class OpenAIResponsesLLMProvider:
             raw_response_hash=sha256(raw.encode("utf-8")).hexdigest(),
         )
 
-    def _request(self, *, prompt_version: str, **kwargs: Any) -> Any:
-        for attempt in range(1, self.max_retries + 2):
+    def _request(
+        self,
+        *,
+        prompt_version: str,
+        max_retries_override: int | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        retries = self.max_retries if max_retries_override is None else max(0, int(max_retries_override))
+        for attempt in range(1, retries + 2):
             started = perf_counter()
             try:
                 response = self._client.responses.create(model=self.model, **kwargs)
@@ -577,7 +676,7 @@ class OpenAIResponsesLLMProvider:
                 return response
             except Exception as exc:
                 kind, recoverable = OpenAICompatibleLLMProvider._classify_remote_error(exc)
-                if recoverable and attempt <= self.max_retries:
+                if recoverable and attempt <= retries:
                     continue
                 raise LLMProviderError(
                     kind,

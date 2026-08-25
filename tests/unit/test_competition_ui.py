@@ -14,6 +14,7 @@ from competition_ui import (  # noqa: E402
     channel_state_map,
     domain_summary_rows,
     evidence_reference_count,
+    executive_supervisor_view,
     localize_market_observation_rows,
     report_section_title,
     risk_display_name,
@@ -40,12 +41,13 @@ def _payload() -> dict[str, object]:
             ]
         },
         "final_supervision": {
+            "summary": "Document summary says 0 unresolved conflict(s).",
             "channel_states": [
                 {"channel": "document", "status": "available"},
                 {"channel": "market", "status": "available"},
                 {"channel": "model", "status": "disabled"},
                 {"channel": "rule", "status": "available"},
-            ]
+            ],
         },
         "domains": {
             "financial": {
@@ -89,6 +91,54 @@ def test_executive_helpers_only_derive_existing_payload_values() -> None:
         "model": "disabled",
         "rule": "available",
     }
+
+
+def test_executive_supervisor_view_keeps_document_summary_separate_from_competition_conflicts() -> None:
+    payload = _payload()
+    payload["component_diagnostics"] = {
+        "final_supervision_llm": {
+            "status": "unavailable",
+            "reason": "LLM final supervision unavailable: LLMProviderError: LLM transport request failed",
+            "judgement": None,
+        },
+        "conflict_detection": {
+            "conflicts": [
+                {"status": "partially_resolved"},
+                {"status": "partially_resolved"},
+                {"status": "unresolved"},
+                {"status": "unresolved"},
+                {"status": "unresolved"},
+            ]
+        },
+    }
+
+    view = executive_supervisor_view(payload)
+    assert view["mode"] == "deterministic_fallback"
+    assert view["title"] == "确定性 Document Supervisor 汇总"
+    assert "0 unresolved" in view["body"]
+    assert view["conflict_counts"] == {"partially_resolved": 2, "unresolved": 3}
+    assert "transport request failed" in view["llm_reason"]
+
+
+def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
+    payload = _payload()
+    payload["component_diagnostics"] = {
+        "final_supervision_llm": {
+            "status": "available",
+            "reason": "grounded supervisory synthesis available",
+            "judgement": {
+                "final_explanation": "Grounded competition-wide explanation.",
+                "overall_risk_rationale": "Fallback rationale.",
+            },
+        },
+        "conflict_detection": {"conflicts": [{"status": "resolved"}]},
+    }
+
+    view = executive_supervisor_view(payload)
+    assert view["mode"] == "llm"
+    assert view["title"] == "LLM Final Supervisor 综合判断"
+    assert view["body"] == "Grounded competition-wide explanation."
+    assert view["conflict_counts"] == {"resolved": 1}
 
 
 def test_workspace_inventory_localizes_display_without_changing_source_values() -> None:

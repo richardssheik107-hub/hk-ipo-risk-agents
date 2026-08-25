@@ -365,6 +365,51 @@ def channel_state_map(payload: dict[str, Any]) -> dict[str, str]:
     return {str(item.get("channel")): str(item.get("status", "unavailable")) for item in states}
 
 
+def executive_supervisor_view(payload: dict[str, Any]) -> dict[str, Any]:
+    """Project the correct competition-level summary without recomputing backend facts.
+
+    ``FinalSupervisionResult.summary`` is the frozen Document Supervisor summary.
+    Competition conflicts and the optional LLM judgement are separate governed
+    outputs.  Keeping them separate prevents a document-level ``0 unresolved``
+    message from being presented as the competition-wide conflict count.
+    """
+
+    final = payload.get("final_supervision") or {}
+    diagnostics = payload.get("component_diagnostics") or {}
+    synthesis = diagnostics.get("final_supervision_llm") or {}
+    detected = (diagnostics.get("conflict_detection") or {}).get("conflicts") or []
+    conflict_counts: dict[str, int] = {}
+    for conflict in detected:
+        status = str(conflict.get("status") or "unknown")
+        conflict_counts[status] = conflict_counts.get(status, 0) + 1
+
+    llm_judgement = synthesis.get("judgement") if synthesis.get("status") == "available" else None
+    if isinstance(llm_judgement, dict):
+        body = (
+            llm_judgement.get("final_explanation")
+            or llm_judgement.get("overall_risk_rationale")
+            or final.get("summary")
+            or "本次运行未生成综合结论。"
+        )
+        return {
+            "title": "LLM Final Supervisor 综合判断",
+            "body": body,
+            "mode": "llm",
+            "llm_status": "available",
+            "llm_reason": synthesis.get("reason") or "",
+            "conflict_counts": conflict_counts,
+        }
+
+    return {
+        "title": "确定性 Document Supervisor 汇总",
+        "body": final.get("summary") or "本次运行未生成文档汇总结论。",
+        "mode": "deterministic_fallback",
+        "llm_status": synthesis.get("status") or "not_configured",
+        "llm_reason": synthesis.get("reason") or "",
+        "conflict_counts": conflict_counts,
+    }
+
+
 def evidence_reference_count(payload: dict[str, Any]) -> int:
     return sum(len(risk.get("evidence") or []) for risk in payload.get("verified_risks") or [])
 
@@ -457,9 +502,24 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
 
     final = payload.get("final_supervision") or {}
     if final:
+        view = executive_supervisor_view(payload)
         with st.container(border=True):
-            st.markdown("**Final Supervisor 综合结论**")
-            st.write(final.get("summary") or "本次运行未生成综合结论。")
+            st.markdown(f"**{view['title']}**")
+            st.write(view["body"])
+            conflict_counts = view["conflict_counts"]
+            if conflict_counts:
+                st.caption(
+                    "Competition Conflict · "
+                    f"已解决 {conflict_counts.get('resolved', 0)} · "
+                    f"部分解决 {conflict_counts.get('partially_resolved', 0)} · "
+                    f"未解决 {conflict_counts.get('unresolved', 0)}"
+                )
+            if view["mode"] == "deterministic_fallback" and view["llm_status"] == "unavailable":
+                st.warning(
+                    "LLM Final Supervisor 当前不可用："
+                    f"{view['llm_reason'] or '未说明原因'}。"
+                    "上方为确定性 Document Supervisor 汇总；Competition Conflict 状态单独列示，不用旧文档摘要替代。"
+                )
             uncertainty = final.get("uncertainty_statement")
             if uncertainty:
                 st.caption(uncertainty)
