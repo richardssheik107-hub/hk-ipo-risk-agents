@@ -34,6 +34,7 @@ PR-H completion
 
 ```text
 README.md
+AGENTS.md
 docs/README.md
 docs/ROADMAP.md
 docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md
@@ -45,6 +46,8 @@ docs/DATA_SCHEMA.md
 docs/COMPETITION_DATA_OVERVIEW.md
 docs/research/V04_DATA_READINESS.md
 ```
+
+`CHANGELOG.md` 是历史变更记录，本轮审计后**刻意不重写**。
 
 关键同步事项：
 
