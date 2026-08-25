@@ -2,56 +2,46 @@
 
 > Status snapshot: **2026-08-25**  
 > Baseline: **PR-A–PR-G COMPLETE / FROZEN**  
-> Current formal Gate: **PR-H PARTIAL / BLOCKED**  
-> Target release: **v0.4.3 baseline → v0.4.5 COMPETITION_READY**
+> Current delivery mode: **5-day competition submission sprint**  
+> Target: **v0.4.5 COMPETITION_READY**
 
 ## 1. Product definition
 
-HK IPO Risk Agents 是一个 Evidence-driven、多 Agent 协同、可审计的港股 IPO 招股书风险分析与上市后风险预警系统。
+HK IPO Risk Agents 是一个 Evidence-driven、多智能体协同、可审计的港股 IPO 招股书风险分析与上市后风险预警系统。
+
+最终比赛版核心链路：
 
 ```text
 Prospectus PDF
 → Parser / Retriever
 → Financial / Legal / Business Agents
+→ LLM semantic reasoning where needed
 → Evidence / Calculation
-→ Verifier / Document Supervisor
-→ Document-X
-→ governed Market-X
-→ Outcome / Modeling
-→ Market Agent / Final Supervisor
-→ Report / Streamlit
+→ Verifier
+→ governed Market facts + LLM Market interpretation
+→ model/rule auxiliary signal
+→ LLM Final Supervisor
+→ conflict / re-check / uncertainty
+→ Final Report / Streamlit / Agent Trace
 ```
 
-产品不把单一模型分数当最终结论，也不把未校准 score 描述为实际下跌概率或投资建议。
+## 2. Competition requirement first
 
-## 2. Current v0.4 state
+The remaining sprint prioritizes working competition capabilities over exploratory research. The product must visibly demonstrate:
 
 ```text
-v0.3 Document Intelligence          COMPLETE / FROZEN
-PR-A Document-X                     COMPLETE / FROZEN
-PR-B Market-X Core                  COMPLETE / FROZEN
-PR-C 5D Outcome                     COMPLETE / FROZEN
-PR-D Canonical Dataset              COMPLETE / FROZEN
-Oracle v2                           COMPLETE / FROZEN / EVALUATION-ONLY
-PR-E Baseline + Oracle              COMPLETE / FROZEN
-PR-F LightGBM + Explainability      COMPLETE / FROZEN
-PR-G Market Agent + Supervisor      COMPLETE / FROZEN
-PR-H Full E2E                       PARTIAL / BLOCKED
+long-document understanding
+Evidence-grounded risk extraction
+Financial / Legal / Business multi-agent specialization
+real LLM semantic reasoning
+point-in-time market interpretation
+cross-agent synthesis / conflict handling
+traceable final warning and report
 ```
 
-Measured production cohort:
+Work that does not materially improve one of these capabilities is deferred until after submission.
 
-```text
-438 official cases
-438 Document-X / 100 dims
-438 Market-X Core / 30 positions
-424 valid 5D outcomes
-424 canonical = 354 Dev + 70 Val
-Oracle v2 = 98 materialized / 96 strict = 77 Dev + 19 Val
-2025 Blind y accessed = NO
-```
-
-## 3. Formal Document risk scope
+## 3. Formal risk scope
 
 ### Financial
 
@@ -76,30 +66,68 @@ material_litigation_compliance
 precommercial_product
 ```
 
-Every formal RiskItem requires real Evidence. Exact numeric claims use deterministic Calculation/Skill. `pending / rejected / needs_review` remain explicit states rather than being silently dropped.
+Every formal RiskItem requires real Evidence. Exact numeric claims require deterministic Calculation. `pending / rejected / needs_review` remain explicit.
 
-## 4. Trust boundaries
+## 4. LLM responsibility
+
+### Legal Agent
+
+LLM is expected to resolve bounded legal semantics such as:
+
+```text
+right exists / effective / survives listing
+termination / restoration conditions
+actual litigation matter vs template disclosure
+current / resolved / historical status
+```
+
+### Business Agent
+
+LLM is expected to resolve bounded business semantics such as:
+
+```text
+core product identity
+development stage
+commercialization / launch status
+product revenue vs generic revenue
+```
+
+### Financial Agent
+
+Financial exact math remains deterministic. LLM may assist only with already-grounded textual ambiguity.
+
+### Market Agent
+
+LLM interprets only governed pre-listing market facts into a structured market environment. It does not manufacture data.
+
+### Final Supervisor
+
+LLM synthesizes existing channel outputs, detects conflict/uncertainty, requests at most one controlled re-check, and produces the final explanation. It never creates new Evidence.
+
+## 5. Trust boundaries
 
 ### LLM may
 
-- extract and interpret semantics;
-- assess contextual relevance;
-- generate constrained explanations.
+- perform semantic extraction and contextual interpretation;
+- fill bounded structured fields;
+- summarize supported cross-agent findings;
+- detect conflicts and uncertainty;
+- request targeted re-check.
 
 ### LLM may not
 
-- replace deterministic financial calculations;
-- create verified risk without Evidence;
-- invent market facts or missing values;
-- change frozen model score;
+- invent Evidence / market facts / model outputs;
+- cite Evidence IDs outside supplied inputs;
+- replace deterministic calculations;
+- alter frozen model score;
 - call an uncalibrated score a probability;
-- bypass Verifier / Supervisor governance.
+- bypass Verifier.
 
 ### Deterministic code owns
 
 ```text
-calculation
-schema / identity
+financial calculations
+schema / identity validation
 PIT guards
 feature vectorization
 hash / manifest
@@ -107,163 +135,86 @@ model fitting / scoring
 reproducibility
 ```
 
-## 5. Market specification
-
-### Core
-
-Frozen `Market-X Core`:
+## 6. Frozen data/model baseline
 
 ```text
-438 / 438
-15 raw + 15 missing indicators = 30 positions
-strict PIT audited
+438 official cases
+438 / 438 Production Document-X
+438 / 438 Market-X Core
+424 / 438 valid 5D outcomes
+424 canonical = 354 Dev + 70 Val
+2025 Blind y accessed = NO
 ```
 
-### Extended current readiness
+Frozen PR-F remains an auxiliary warning baseline. The five-day sprint does not spend primary capacity on new model search, multi-horizon research or 2024 retuning.
+
+## 7. Market specification
+
+Use only already governed sources during the sprint:
 
 ```text
-HSI 5D / 20D / volatility       438 / 438
-HKEX turnover 20D                438 / 438
-industry return                    0 / 438
+Market-X Core
+HSI return / volatility
+HKEX turnover
+prior IPO context
 ```
 
-Industry classification remains PIT-blocked because the available company classification lacks historically effective/listing-time semantics. Industry return stays unavailable until a valid temporal mapping exists.
+Industry return remains unavailable while historical company classification mapping is PIT-blocked. Missing remains explicit.
 
-Runtime source-of-truth is governed `PreListingMarketFeatureSnapshot` or a lossless governed projection. Legacy `MarketSnapshot` is compatibility-only.
+## 8. PR-H / model channel
 
-## 6. Production / Oracle isolation
+PR-H remains `PARTIAL / BLOCKED` until the original frozen PR-F per-case handoff and required all-channel real-case matrix are available.
 
-Production:
+D time-boxes recovery. If it cannot be recovered:
 
 ```text
-real Prospectus
-→ Parser / Retriever / Agents
-→ Snapshot
-→ Production Document-X
+Model channel = unavailable
+formal PR-H remains blocked
+Document + Market + Rule + LLM Supervisor still operate
 ```
 
-Oracle:
+No retraining or fabricated score is allowed merely to make the product look complete.
+
+## 9. Competition UI requirement
+
+Final UI prioritizes three primary workspaces:
+
+### Risk Command Center
+
+Overall assessment, top domain risks, market environment, model/rule state and uncertainty.
+
+### Evidence + AI Analysis
+
+For each key risk show:
 
 ```text
-Reviewed Expert Gold
-→ Oracle feature builder
-→ Oracle-X
-```
-
-Oracle is `evaluation_only=true` and `production_consumable=false`. Gold answers, Gold pages or manual labels never enter Production X.
-
-## 7. Frozen predictive baseline
-
-Frozen arms:
-
-```text
-M   Market only
-P   Production Document only
-O   Oracle Document only
-PM  Market + Production
-OM  Market + Oracle
-```
-
-PR-F Full Production 2024:
-
-```text
-M   ROC-AUC 0.4246
-P   ROC-AUC 0.5000
-PM  ROC-AUC 0.4246
-```
-
-PM and M are prediction-equivalent under the frozen LightGBM policy; Production Document features received zero split/gain/SHAP use. Oracle `OM-M=-0.0143`, bootstrap interval crosses zero on a 19-case Validation intersection.
-
-Formal interpretation: stable Document increment is **not validated under the current 5D target/sample/representation/model**. This does not prove prospectus information is useless. The model remains an auxiliary warning channel.
-
-## 8. PR-H baseline product Gate
-
-Required path:
-
-```text
-3–5 real 2024 IPOs
-PDF
-→ Document / Evidence / Calculation
-→ governed Market-X
-→ frozen per-case PR-F score + SHAP
-→ Rule
-→ Final Supervisor
-→ 13-section report / Streamlit
-```
-
-Current blockers:
-
-1. restore original frozen PR-F runtime or pre-existing hash-bound sanitized handoff;
-2. provide at least three matching real 2024 prospectus PDFs;
-3. run the 3–5 case matrix with all required governed channels.
-
-PR-H does **not** require a higher 5D AUC. It requires correct consumption, traceability, honest degradation and reproducibility. PASS creates `v0.4.3 BASELINE E2E FREEZE`.
-
-## 9. Competition product objective
-
-Competition version is judged on three complementary capabilities.
-
-### Risk Intelligence / Auditability
-
-```text
-risk extraction
-Evidence / Calculation / page / bbox
+PDF page / bbox
+Evidence
+Agent
+LLM task and structured semantic result
+Calculation where applicable
 Verifier
-human review / audit trail
+AI contribution
 ```
 
-Targets:
+### Agent Trace + Final Supervisor
+
+Show the actual flow from retrieval through domain Agents, Market interpretation, verification, conflict/re-check and final synthesis. Display provider/model/prompt/latency/token metadata where safe and available.
+
+## 10. Minimal LLM effect check
+
+For the same 3–5 real cases compare Offline vs AI-enhanced mode and record:
 
 ```text
-key risk quality target >= 80%
-key Evidence Recall     >= 85%
+semantic fields resolved
+risk decisions resolved
+needs_review / extraction_failed
+Evidence grounding validity
+structured-output validity
+useful conflict/re-check count
 ```
 
-### Market Warning / Predictive Validation
-
-```text
-PIT IPO context / Market Environment
-+ model score / SHAP / uncertainty
-+ 1D / 5D / 20D / 60D validation
-```
-
-### Multi-Agent Collaboration
-
-```text
-conflict detection
-→ Evidence re-check
-→ Skill / Verifier challenge
-→ Supervisor arbitration
-→ resolved / unresolved uncertainty
-```
-
-Target: `Agent / Tool / Evidence traceability = 100%`.
-
-## 10. Competition hardening rules
-
-### CH-1
-
-Build independent 1D/20D/60D outcomes, market-adjusted returns and risk outcomes; keep frozen 5D unchanged.
-
-### CH-2
-
-Benchmark every formal risk with Precision/Recall/F1/Evidence Recall/Evidence Precision. Only benchmark-proven weak classes receive targeted Retriever/Table/LLM/Skill changes.
-
-### CH-3
-
-Enhance PIT-safe IPO Heat, recent IPO performance, HSI, turnover/activity and comparable context. No fake proxy.
-
-### CH-4
-
-Implement real conflict/re-check/challenge/arbitration and preserve unresolved uncertainty.
-
-### CH-5
-
-Final competition workspaces: Risk Command Center, Risk Map, Evidence Viewer, Market & Model, Agent Trace.
-
-### CH-6
-
-Freeze all benchmark/model/market/trace/product evidence and create `v0.4.5 COMPETITION_READY`.
+This is a product acceptance check, not a full benchmark program.
 
 ## 11. Time / Blind governance
 
@@ -273,24 +224,25 @@ Freeze all benchmark/model/market/trace/product evidence and create `v0.4.5 COMP
 2025       Blind Test
 ```
 
-2024 is not recycled into a tuning set. 2025 y remains closed until formally authorized. `ROC-AUC < 0.5` is not permission to reverse score direction after seeing Validation.
+2024 is not recycled into a tuning set. 2025 y remains closed. Weak AUC is not permission to reverse score direction or tune on Validation.
 
 ## 12. Submission definition of done
 
-Final submission must contain:
-
 ```text
-source + configs + environment
-reproducible runbook
-Document benchmark
-Market/PIT methodology
-multi-horizon model evaluation
-SHAP / ablation / error analysis
-real Evidence and conflict cases
-competition Streamlit
-3–5 stable star demos
-final reports/screenshots
+>=3 stable real IPO demos
+real LLM provider path active
+Legal/Business semantic reasoning visibly useful
+Market interpretation grounded in PIT facts
+LLM Final Supervisor active
+at least one controlled conflict/re-check example
+Evidence / Calculation / Verifier authoritative
+Agent/LLM trace visible
+model state honest
+no fake market facts
+no 2025 Blind y access
+full CI + real-case smoke pass
+reproducible runbook and submission package
 ```
 
 Detailed execution: [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md).  
-Detailed acceptance/submission: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
+Detailed sprint acceptance: [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md).
