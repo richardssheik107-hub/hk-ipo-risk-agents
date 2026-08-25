@@ -4,34 +4,24 @@
 
 本项目构建一个**证据驱动、多智能体协同、可审计**的港股 IPO 招股书解析与上市后风险预警系统。
 
-当前状态：
+当前进入 **5-day competition submission sprint**：
 
 ```text
-v0.3 Document Intelligence          COMPLETE / FROZEN
 PR-A–PR-G                           COMPLETE / FROZEN
-PR-H Full E2E                       PARTIAL / BLOCKED — CURRENT GATE
-v0.4.3 Baseline E2E Freeze          NOT CREATED
-Competition Hardening               PLANNED
-v0.4.5 COMPETITION_READY            TARGET
+PR-H                               PARTIAL / BLOCKED
+Competition submission sprint       ACTIVE
+Target                               v0.4.5 COMPETITION_READY
 ```
 
-正式路线：
+当前路线不再按 3 周探索计划推进，而是：
 
 ```text
-PR-H completion
-→ v0.4.3 Baseline E2E Freeze
-→ CH-0 Scope / Metrics Lock
-→ CH-1 Multi-Horizon
-→ CH-2 Document Benchmark / Targeted Hardening
-→ CH-3 Market Intelligence
-→ CH-4 Multi-Agent Conflict / Trace
-→ CH-5 Evidence Viewer / Competition Product
-→ CH-6 Formal Evaluation / Freeze
-→ v0.4.5 COMPETITION_READY
-→ Submission
+Day 1  real LLM Document Intelligence
+Day 2  LLM Market interpretation + LLM Final Supervisor + one re-check
+Day 3  3–5 real cases + targeted fixes + minimal Offline-vs-AI check
+Day 4  Evidence / AI Analysis / Agent Trace product integration
+Day 5  regression + freeze + submission
 ```
-
-Retriever V3 等研究成果保持历史/冻结状态。只有 CH-2 direct benchmark + error attribution 证明 retrieval/semantic understanding 是瓶颈时，才重启 targeted Retriever/LLM research。
 
 ## 2. 开始任务前
 
@@ -43,23 +33,48 @@ Retriever V3 等研究成果保持历史/冻结状态。只有 CH-2 direct bench
 4. `docs/ARCHITECTURE.md`；
 5. `docs/DATA_SCHEMA.md`；
 6. 本 `AGENTS.md`；
-7. 涉及比赛计划/分工时读 `docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` 与 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`；
-8. 涉及数据/模型时读 `docs/research/V04_DATA_READINESS.md` 与对应 frozen completion/policy；
-9. 检查实现、测试与当前 `main`，说明修改范围和公共接口影响。
+7. `docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`；
+8. `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`。
 
-历史 handoff / one-off readiness 文档不能覆盖 active docs、completion report 或 frozen manifest。
+如涉及 frozen data/model，再读对应 completion / manifest / research contract。
 
-## 3. 架构规则
+## 3. Sprint 优先级
 
-1. 保持模块化单体；
-2. 不为比赛展示引入无必要微服务/Kafka/Redis/Neo4j/Kubernetes；
-3. 业务逻辑不得堆在 `streamlit_app.py`；
-4. UI 只能通过 `IPOAnalysisService` / 受控上层 service；
-5. Agent 不直接操作前端；Parser 不依赖 Agent；Schema 不依赖具体实现；
-6. Mock / unavailable / real implementation 必须可配置替换；
-7. Competition UI 是 governed output consumer，不能创造 Risk/Evidence/Market/Model fact。
+任何新任务必须直接满足至少一项：
 
-## 4. 受保护接口
+```text
+competition requirement
+real E2E blocker
+Legal/Business LLM semantic quality
+Market LLM interpretation
+Final Supervisor / conflict / re-check
+Evidence / Agent trace visibility
+selected real-case stability
+submission reproducibility
+```
+
+以下工作默认 defer：
+
+```text
+full multi-horizon research
+broad feature audit / P-Core
+new model family / tuning
+large Retriever redesign
+industry PIT research
+new broad market data acquisition
+full benchmark construction
+story-only / presentation-only features
+```
+
+## 4. 架构规则
+
+- 保持模块化单体；
+- UI 只能消费受控 service 输出，不能创造事实；
+- Parser 不依赖 Agent；Schema 不依赖实现；
+- Mock / unavailable / real implementation 必须显式可区分；
+- 不为比赛临时引入无必要微服务/Kafka/Redis/Neo4j/Kubernetes。
+
+Protected interfaces：
 
 ```text
 src/ipo_risk/schemas/
@@ -74,21 +89,43 @@ src/ipo_risk/core/container.py
 src/ipo_risk/domain/risk_codes.py
 ```
 
-跨边界修改必须说明影响、版本化语义并补 contract tests。禁止用临时 hack 绕过 service / registry / provenance。
+跨边界修改必须补 contract/regression test。
 
-## 5. Evidence / Agent / Skill 规则
+## 5. LLM 规则
 
-- Parser 返回稳定 `DocumentChunk`；
-- Agent 返回 `list[RiskItem]`；
+### LLM 应做
+
+```text
+Legal complex clause semantics
+Business commercialization/core-product semantics
+Market fact interpretation
+Final Supervisor synthesis/conflict/uncertainty/re-check request
+```
+
+### LLM 不得做
+
+```text
+invent Evidence
+invent market facts
+cite out-of-scope Evidence IDs
+replace exact financial calculations
+change frozen model score
+call uncalibrated score a probability
+bypass Verifier
+```
+
+LLM structured output 必须 schema validate；provider failure 必须 honest degradation。
+
+## 6. Evidence / Calculation / Verifier
+
 - formal RiskItem 必须有真实 Evidence；
 - exact numeric claim 必须有 deterministic Calculation；
 - Calculation 记录 inputs / formula / result / unit / evidence IDs；
 - 无法核验进入 `pending / needs_review`；
 - Verifier / Supervisor 不创造原始 Evidence；
-- LLM 做 semantic extraction/interpretation，不做 authoritative exact math；
-- 新 Agent / Skill / Provider 必须有测试与受控注册。
+- Evidence page / bbox / identity 不得由 UI 修补。
 
-## 6. 数据 / PIT / Blind 规则
+## 7. Data / PIT / Blind
 
 ```text
 2020–2023  Development / Training
@@ -97,149 +134,70 @@ src/ipo_risk/domain/risk_codes.py
 ```
 
 - X 只使用 listing 前可得事实；
-- 2025 y 不得用于 feature / threshold / rule / prompt / model / retrieval tuning；
-- 2024 不得在看过结果后重新当 tuning set；
-- AUC `< 0.5` 不授权事后反转 score direction；
-- missing 必须显式，不得 fake proxy / neutral zero；
-- provenance / source / feature / model / policy version 必须可追踪；
-- 未校准 score 只能称 `uncalibrated_model_score` / score，不得称真实概率。
+- 2025 y 禁止访问；
+- 2024 不得重新当 tuning set；
+- missing 不得 fake-fill；
+- provenance / source / policy / model version 必须可追踪；
+- weak AUC 不授权 score inversion。
 
-## 7. Frozen boundary
+## 8. Frozen boundary
 
-PR-A–PR-G 的 frozen contracts / manifests 不因比赛优化而原地重写。
+PR-A–PR-G frozen contracts / manifests 不因五天冲刺而原地重写。新增功能应作为受控 runtime/sidecar 增量。
 
-Competition additions 使用新 version / sidecar：
+PR-H 当前 formal blocker 仍包括 frozen PR-F per-case handoff 与 all-channel real-case matrix。D 优先恢复，但不得 retrain/reconstruct 仅为 UI 解阻。
 
-```text
-CH-1 new outcome horizons
-CH-2 benchmark / optional P-Core
-CH-3 Competition Market features
-CH-4 trace / conflict
-CH-5 human-review / presentation sidecars
-```
-
-需要改变 frozen boundary 时必须显式提出新 Gate，而不是 silently overwrite。
-
-## 8. 当前 PR-H 规则
-
-PR-H 当前 formal blockers：
+若 handoff 仍不可得：
 
 ```text
-original frozen PR-F runtime or pre-existing hash-bound handoff missing
-formal governed real 2024 prospectus count < 3
-3–5 all-channel case matrix not executed
+formal PR-H stays BLOCKED
+Model Channel = unavailable
+Document + Market + Rule + LLM Supervisor continue
 ```
 
-禁止为了 PR-H：
+## 9. Five-day product contract
 
-- retrain/reconstruct PR-F；
-- 根据 2024 重调模型；
-- 提交 target labels / Blind y / raw licensed data 到 product handoff；
-- 用 mock Market/Model 伪装正式 available。
-
-PR-H PASS 才能创建 v0.4.3 baseline freeze。
-
-## 9. Competition Experiment 规则
-
-每个实验必须写清：
+最终真实路径目标：
 
 ```text
-hypothesis
-input/version
-Development protocol
-Validation protocol
-metrics
-result
-route decision
+PDF
+→ Evidence
+→ Financial / Legal / Business
+→ LLM semantic extraction where needed
+→ Verifier
+→ governed Market facts
+→ LLM Market interpretation
+→ Model if frozen runtime available + Rule
+→ LLM Final Supervisor
+→ one controlled re-check if needed
+→ Report / Streamlit / Agent Trace
 ```
 
-不允许无限调参。CH-1/2/3 的目的先是定位 signal loss：
+不实现 open-ended autonomous loop；一轮可控 re-check 足够。
+
+## 10. Minimal effect check
+
+只在 selected 3–5 cases 上比较：
 
 ```text
-Document extraction quality
-Document representation
-horizon alignment
-Market/IPO context
-model family
+Offline deterministic
+vs
+AI enhanced
 ```
 
-只有 evidence 指向具体瓶颈时才做 targeted enhancement。
-
-## 10. CH-2 Document Benchmark 规则
-
-核心 formal risks 至少逐类报告：
+记录：
 
 ```text
-Precision
-Recall
-F1
-Evidence Recall
-Evidence Precision / page correctness
+semantic fields resolved
+risk decisions resolved
+needs_review / extraction_failed
+Evidence grounding validity
+structured-output validity
+useful conflict/re-check count
 ```
 
-Error attribution 统一为：
+不要扩展成新的大规模研究项目。
 
-```text
-retrieval_miss
-parser_or_table_error
-semantic_agent_error
-calculation_error
-risk_rule_error
-gold_uncertainty
-```
-
-只优先修最差 2–3 类；达标类别不无差别重写。
-
-## 11. CH-3 Market 规则
-
-Competition Market 优先 PIT-safe：
-
-```text
-recent IPO count
-recent IPO break rate
-recent IPO 1D/5D performance
-HSI
-HKEX turnover/activity
-PIT-safe comparable context
-```
-
-Current industry return remains PIT-blocked until historical company classification mapping is valid. HSCI price history alone does not solve classification PIT.
-
-## 12. CH-4 / CH-5 产品规则
-
-Conflict path：
-
-```text
-Agent claim
-→ Conflict Detector
-→ Evidence re-check / targeted retrieval
-→ Skill
-→ Verifier challenge
-→ Final Supervisor arbitration
-```
-
-Unresolved conflict must remain unresolved + uncertainty.
-
-Competition UI target workspaces：
-
-```text
-Risk Command Center
-Risk Map
-Evidence Viewer
-Market & Model
-Agent Trace
-```
-
-Evidence Viewer / Agent Trace 不改变 source identity，不通过 UI 修正后端事实。
-
-## 13. 代码质量与测试
-
-- 类型标注；
-- 公共函数简短 docstring；
-- 明确异常处理，不宽泛吞错；
-- 不在 import 时执行耗时逻辑；
-- 不删除有效测试、不弱化断言迁就错误；
-- 新功能必须补 regression / contract tests。
+## 11. 测试与质量
 
 完整环境：
 
@@ -249,26 +207,33 @@ pytest -q
 python scripts/validate_project.py
 ```
 
-CI 绿不等于用户本地资产存在；runtime asset availability 必须单独验证。
+提交前还需 selected real-case smoke。不得删除有效测试、弱化断言、伪造通过结果。
 
-## 14. Git / 协作规则
+## 12. Git / 协作
 
-1. 不直接把未经测试的开发提交推到 `main`；
-2. 从最新 `main` 建短分支，单 PR 单主题；
-3. PR body 写 scope、tests、governance、remaining blockers；
-4. A / integration owner 每 2–3 天做一次合流 checkpoint；
-5. 不提交大型 PDF、licensed raw data、model bulk、cache、credential、local absolute path；
-6. push / PR / merge 仅在明确授权时执行；
-7. 临时 handoff 优先放 PR/issue/comment，不再新增长期 `HANDOFF_FINAL` / `PREP_V2` 文档。
-
-## 15. 当前五人优先级
+五天内改为高频小 PR：
 
 ```text
-A  PR-H integration / Gate / v0.4.3 / later release & submission
-B  real-case Evidence QA → CH-2 Document Benchmark
-C  PR-H Market QA → CH-1 outcome data + CH-3 Market Intelligence
-D  frozen PR-F handoff → feature/multi-horizon/model diagnosis
-E  PR-H E2E → CH-4 conflict + CH-5 Evidence Viewer / Competition UI
+morning   confirm one deliverable per owner
+afternoon short branch / small PR
+evening   A integration + CI + real-case smoke
+```
+
+- main 每晚保持可运行；
+- 单 PR 单主题；
+- 不保留长寿命实验分支；
+- 不提交大型 PDF、licensed raw data、model bulk、cache、credential、absolute path；
+- 不新增长篇 exploration / handoff 文档；
+- 失败方向当天止损。
+
+## 13. 当前五人优先级
+
+```text
+A  integration / CI / release / submission
+B  Legal + Business real LLM semantics / Evidence / Verifier
+C  governed Market facts + LLM Market interpretation
+D  frozen PR-F handoff + minimal Offline-vs-AI effect check
+E  LLM Final Supervisor + conflict/re-check + Evidence/AI Trace + UI
 ```
 
 完整排期以 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md` 为准。
