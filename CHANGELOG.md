@@ -1,5 +1,81 @@
 # Changelog
 
+## Unreleased — concentration extraction: duplicate label block, narrative period counts, receivable scope
+
+Follow-up to the previous concentration work, driven by 0699.HK 均勝電子, whose
+five financial risk codes produced no formal risk at all. Every rule was derived
+from the 2020–2023 **development** cohort (376 documents); the 2025 blind
+documents were used only to locate defects and confirm outcomes.
+
+### Fixed
+
+- **`_CONCENTRATION_LABELS` was defined twice, and the dead copy was the good
+  one.** The previous change replaced a block whose end was located with
+  `s.index("_LABELS = {")` — a substring of `_CONCENTRATION_LABELS = {` — so the
+  rewrite was inserted above the original instead of replacing it. Both copies
+  were wrap-tolerant, so every behavioural test passed while the later
+  definition shadowed the earlier one and silently dropped the simplified-Chinese
+  supplier labels (`最大供应商`, `五大供应商`). A parametrised test now pins
+  simplified and traditional coverage for both counterparty kinds.
+- **A neighbouring table header outranked the sentence carrying the
+  percentages.** `_best_v03_periods` may resolve periods from a context chunk,
+  and a track-record table prints a comparative interim column the narrative
+  omits. Preferring whichever count was larger flagged correct series as
+  mismatched. The sentence that established the series now governs.
+- **Balance-sheet concentration was read as revenue concentration.** A
+  prospectus also discloses "最大客戶的貿易應收款項……佔貿易應收款項總額的16.61%"
+  over the same counterparties. Read as one series with the revenue figures, two
+  unrelated metrics looked like contradictory readings of one fact. A segment
+  whose denominator is a receivable or payable balance now contributes no values;
+  scope is judged per segment, so one page can carry both disclosures.
+- **A span phrase was counted as an enumeration.** "截至2021年12月31日止三個年度
+  及2022年首四個月" covers four periods while naming one date and one year.
+  Counting the named periods under-counted the series and flagged an 83.3%
+  top-five supplier share — a high risk — as a mismatch. Such a sentence now
+  yields no count and the resolved periods govern instead.
+
+### Not changed, deliberately
+
+`selected_period` still takes the last entry of `periods`, which arrives in
+document order rather than chronological order, so a table caption below the
+narrative can date a 2025 reading to 2022. Selecting the chronologically latest
+period is correct in isolation and was measured on the development cohort:
+clean customer readings 18 → 15, supplier 27 → 18, and 48 additional
+`conflicting_values_for_same_period`. Dating facts accurately makes far more of
+them collide in the merge's latest-period bucket, and the merge voids a period
+the moment any two candidates disagree by any amount. The brittle merge has to
+be fixed before this selection can be. The reverted change is documented in a
+comment at the call site.
+
+### Development cohort (376 documents, 2020–2023)
+
+| | before | after |
+|---|---|---|
+| clean `customer_concentration` | 18 | 24 |
+| clean `supplier_concentration` | 27 | 33 |
+| baseline clean values the fix changes | — | **0** |
+| `conflicting_values_for_same_period` (customer) | 141 | 129 |
+| `largest_percentage_exceeds_top_five` (customer / supplier) | 39 / 53 | 35 / 52 |
+| `value_period_count_mismatch` (customer / supplier) | 152 / 151 | 142 / 140 |
+
+One customer reading regressed: 01490 CHESHI keeps its values (17.7 / 50.4) but
+gains `value_period_count_mismatch`. Both figures sit under the 30 / 60 medium
+thresholds, so the rule returns `not_applicable` either way and no risk is lost.
+The cause is understood: its sentence both enumerates its years *and* carries a
+span phrase, and the span guard is blunt enough to fire on either. Separating the
+two cases means tuning a new heuristic on two documents, which is not worth a
+clean-but-riskless reading.
+
+### Confirmation on 2025 blind (not used to choose any rule)
+
+0699.HK 均勝電子 is a profitable, growing auto-parts maker; all five financial
+rules should return no risk, and `cash_runway` already established that from the
+cash-flow statement. This change lets `customer_concentration` establish
+`largest = 23.2%` where it previously established nothing.
+`supplier_concentration` remains blocked on the reverted period selection, and
+`customer_concentration`'s top-five figure remains blocked because the document
+itself prints 47.2% in the business section and 47.1% in the summary.
+
 ## Unreleased — concentration extraction: wrapped labels, segment boundaries, narrative period series
 
 Four independent defects made `customer_concentration` and

@@ -558,3 +558,106 @@ def test_a_contradicting_page_still_blocks_a_clean_reading() -> None:
     assert result.status == ExtractionStatus.NEEDS_REVIEW
     assert "conflicting_values_for_same_period" in result.issues
     assert result.largest_counterparty_pct is None
+
+
+@pytest.mark.parametrize(
+    ("concentration_type", "text"),
+    [
+        ("supplier", "截至2023年6月30日止六個月，最大供应商佔採購總額的22.6%，五大供应商佔68.0%。"),
+        ("supplier", "截至2023年6月30日止六個月，最大供應商佔採購總額的22.6%，五大供應商佔68.0%。"),
+        ("customer", "截至2023年6月30日止六個月，最大客户佔總收入的22.6%，五大客户佔68.0%。"),
+        ("customer", "截至2023年6月30日止六個月，最大客戶佔總收入的22.6%，五大客戶佔68.0%。"),
+    ],
+)
+def test_simplified_and_traditional_labels_are_both_recognised(
+    concentration_type: str, text: str
+) -> None:
+    """A duplicated pattern block once left the simplified supplier labels dead.
+
+    Both definitions were wrap-tolerant, so every behavioural test still passed
+    while the later block silently shadowed the earlier one and dropped
+    简体 supplier coverage. This pins the coverage itself.
+    """
+    result = concentration(concentration_type, text)
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("22.6")
+    assert result.top_five_pct == Decimal("68.0")
+
+
+def test_the_sentence_outranks_a_header_that_names_more_periods() -> None:
+    """A track-record table prints a comparative interim the narrative omits.
+
+    The header resolves five periods, the sentence names four and quotes four
+    percentages. Preferring whichever count was larger flagged the correct
+    series as a mismatch.
+    """
+    result = concentration(
+        "customer",
+        "於2022年、2023年、2024年及截至2025年4月30日止四個月，"
+        "前五大客戶佔總收入的48.6%、50.1%、47.6%和47.2%，"
+        "最大客戶佔總收入的22.1%、24.4%、23.6%和23.2%。",
+        header=(
+            "截至2022年12月31日止年度\n截至2023年12月31日止年度\n"
+            "截至2024年12月31日止年度\n截至2024年4月30日止四個月\n"
+            "截至2025年4月30日止四個月"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.top_five_pct == Decimal("47.2")
+    assert result.largest_counterparty_pct == Decimal("23.2")
+
+
+def test_a_receivables_share_is_not_read_as_a_revenue_share() -> None:
+    """Balance-sheet concentration is a different metric over the same parties."""
+    result = concentration(
+        "customer",
+        "截至2025年4月30日止四個月，最大客戶的貿易應收款項佔貿易應收款項總額的16.61%，"
+        "五大客戶的貿易應收款項佔貿易應收款項總額的28.4%。",
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "concentration_percentage_missing" in result.issues
+    assert result.largest_counterparty_pct is None
+    assert result.top_five_pct is None
+
+
+def test_a_revenue_share_survives_a_receivables_share_on_the_same_page() -> None:
+    """Scope is judged per segment, so one page can carry both disclosures."""
+    result = concentration(
+        "customer",
+        "截至2025年4月30日止四個月，最大客戶佔總收入的23.2%，前五大客戶佔總收入的47.2%。"
+        "此外，最大客戶的貿易應收款項佔貿易應收款項總額的16.61%。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("23.2")
+    assert result.top_five_pct == Decimal("47.2")
+
+
+def test_a_span_phrase_is_not_counted_as_an_enumeration() -> None:
+    """A track record may state its span instead of listing it.
+
+    "截至2021年12月31日止三個年度及2022年首四個月" covers four periods while naming
+    one date and one year. Counting the named periods under-counts the series,
+    which flagged a correct four-value reading — a top-five supplier share of
+    83.3%, a high risk — as a mismatch. Such a sentence now yields no count and
+    the resolved periods govern instead.
+    """
+    result = concentration(
+        "supplier",
+        "於截至2021年12月31日止三個年度及2022年首四個月，"
+        "我們五大供應商約佔我們採購總額的74.2%、65.1%、74.2%及83.3%，"
+        "而最大供應商佔採購總額的36.8%、33.9%、62.6%及76.8%。",
+        header=(
+            "截至2019年12月31日止年度\n截至2020年12月31日止年度\n"
+            "截至2021年12月31日止年度\n截至2022年4月30日止四個月"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.top_five_pct == Decimal("83.3")
+    assert result.largest_counterparty_pct == Decimal("76.8")

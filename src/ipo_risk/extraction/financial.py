@@ -30,6 +30,17 @@ _CHINESE_DATE_RE = re.compile(r"(20\d{2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*
 _ISO_DATE_RE = re.compile(r"(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})")
 # A year that is not the head of a full date, i.e. an enumerated fiscal year
 # ("於2022年、2023年、2024年以及截至2025年6月30日止六個月").
+# A track record can state its span instead of listing it ("截至2021年12月31日止
+# 三個年度及2022年首四個月" covers four periods but names one date and one year).
+# Counting the named periods there under-counts the series, so a sentence
+# carrying a span phrase yields no count at all rather than a wrong one.
+_PERIOD_SPAN_PHRASE = re.compile(
+    r"[一二三四五六七八九十兩两\d]+\s*[個个](?:財政|财政)?年度"
+    r"|(?:two|three|four|five|six)\s+years\s+ended",
+    re.I,
+)
+
+
 _NARRATIVE_BARE_YEAR_RE = re.compile(r"(20\d{2})\s*年(?!\s*\d{1,2}\s*月)")
 _ENGLISH_DATE_DAY_FIRST_RE = re.compile(
     r"(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})",
@@ -106,6 +117,21 @@ def _concentration_pattern(chinese: Sequence[str], english: Sequence[str]) -> re
     return re.compile("|".join(alternatives), re.I)
 
 
+# A concentration percentage means nothing without its denominator. A prospectus
+# also discloses *balance-sheet* concentration over the same counterparties —
+# "最大客戶的貿易應收款項……佔貿易應收款項總額的16.61%" — which is a different
+# metric from the revenue or purchase concentration these risk codes rule on.
+# Reading both as one series makes two unrelated figures look like contradictory
+# readings of the same fact, so a segment whose denominator is a receivable or
+# payable balance contributes no values.
+_CONCENTRATION_BALANCE_SCOPE = re.compile(
+    r"貿易應收款項|贸易应收款项|應收賬款|应收账款|應收款項|应收款项"
+    r"|貿易應付款項|贸易应付款项|應付賬款|应付账款|應付款項|应付款项"
+    r"|trade\s+receivables?|trade\s+payables?|accounts?\s+receivable|accounts?\s+payable",
+    re.I,
+)
+
+
 _CONCENTRATION_LABELS = {
     "customer": {
         "largest": _concentration_pattern(
@@ -159,48 +185,6 @@ _EXCLUDED_REVENUE_ROWS = re.compile(
     r"^(?:收入|收益|revenue).*?(?:來自|来自|from|產品|产品|客[戶户]|segment|分部|尚未|not yet|has not)",
     re.I,
 )
-
-# A hard line wrap splits a label mid-word ("最大客\n戶"), which used to leave the
-# label unmatched. An unmatched label does not merely lose its own percentages:
-# the preceding label's segment runs on to the next match, so those percentages
-# are silently attributed to the wrong label. Every gap below is therefore
-# whitespace-tolerant. The quantifier is bounded because a wrap inserts one
-# newline plus at most the indent that follows it, while an unbounded gap would
-# let a label match across unrelated table cells.
-_WRAP = r"\s{0,2}"
-
-
-def _wrap_tolerant(*characters: str) -> str:
-    """Join label characters so a single hard wrap between any two still matches."""
-    return _WRAP.join(characters)
-
-
-_CONCENTRATION_LABELS = {
-    "customer": {
-        "largest": re.compile(
-            rf"(?:單一|单一)?{_wrap_tolerant('最', '大', '客', '[戶户]')}"
-            rf"|(?:single\s+)?largest{_WRAP}\s*customer",
-            re.I,
-        ),
-        "top_five": re.compile(
-            rf"(?:五大|前五大){_WRAP}{_wrap_tolerant('客', '[戶户]')}"
-            rf"|(?:five largest|top five){_WRAP}\s*customers",
-            re.I,
-        ),
-    },
-    "supplier": {
-        "largest": re.compile(
-            rf"(?:單一|单一)?{_wrap_tolerant('最', '大', '供', '應', '商')}"
-            rf"|(?:single\s+)?largest{_WRAP}\s*supplier",
-            re.I,
-        ),
-        "top_five": re.compile(
-            rf"(?:五大|前五大){_WRAP}{_wrap_tolerant('供', '應', '商')}"
-            rf"|(?:five largest|top five){_WRAP}\s*suppliers",
-            re.I,
-        ),
-    },
-}
 
 _LABELS = {
     "cash_and_cash_equivalents": (
@@ -1336,12 +1320,16 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         # The first occurrence of a label is the one the period series was
         # written against; later occurrences refer back to it.
         label_starts: dict[str, int] = {}
+        scope_skipped = False
         for label_start, start_after_label, name in matches:
             label_starts.setdefault(name, label_start)
             end = next(
                 (item for item in boundaries if item >= start_after_label), len(target.text)
             )
             segment = target.text[start_after_label:end]
+            if self._is_balance_scope_segment(segment):
+                scope_skipped = True
+                continue
             for match in _PERCENT_RE.finditer(segment):
                 raw = match.group("value").replace("−", "-").replace(" ", "")
                 try:
@@ -1380,6 +1368,16 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         if largest is not None and top_five is not None and largest > top_five:
             issues.append("largest_percentage_exceeds_top_five")
 
+        # NOTE: `periods` arrives in document order, not chronological order — a
+        # table caption or acquisition date below the narrative appends older
+        # entries after it — so this can date a 2025 reading to 2022. Selecting
+        # the chronologically latest period instead is correct in isolation but
+        # regressed the 2020-2023 development cohort badly (clean customer
+        # readings 18 -> 15, supplier 27 -> 18, +48 conflicts): dating facts
+        # accurately makes far more of them collide in the merge's
+        # latest-period bucket, and the merge voids a period the moment any two
+        # candidates disagree by any amount. The brittle merge has to be fixed
+        # before this selection can be.
         selected_period = periods[-1] if periods else None
         context_used = self._dedupe_chunks(
             [item for item in [period_source if period_source != target else None] if item]
@@ -1408,8 +1406,23 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 ],
                 "percentage_semantics": "0_to_100_percent",
                 "period_source_chunk_id": period_source.chunk_id if period_source else None,
+                # Records that a receivable/payable share was read and discarded,
+                # so a dropped segment is auditable rather than silently absent.
+                "balance_scope_segment_skipped": scope_skipped,
             },
         )
+
+    @staticmethod
+    def _is_balance_scope_segment(segment: str) -> bool:
+        """True when a segment states a receivable/payable share, not a revenue share.
+
+        Only the text before the first percentage is examined: that is where the
+        denominator is named, while later sentences in the same segment may have
+        moved on to an unrelated subject.
+        """
+        first = _PERCENT_RE.search(segment)
+        prefix = segment[: first.start()] if first else segment
+        return bool(_CONCENTRATION_BALANCE_SCOPE.search(prefix))
 
     @classmethod
     def _enumerated_period_count(cls, text: str, label_start: int) -> int | None:
@@ -1435,7 +1448,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             # written to skip, so the two counts never double-count a period.
             total = len(years) + len(dates)
             if total >= 2:
-                return total
+                return None if _PERIOD_SPAN_PHRASE.search(sentence) else total
             if total == 1:
                 # A lone year is a mention ("於2011年上市"), not a series.
                 return None
@@ -1451,12 +1464,13 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             return None, []
         if not periods:
             return values[-1], []
-        expected = len(periods)
-        if enumerated_count is not None and enumerated_count > expected:
-            # The narrative names more periods than the dates alone resolved to.
-            # Trust the sentence: it is the series the percentages were written
-            # against, and `values[-1]` still refers to its latest period.
-            expected = enumerated_count
+        # The sentence carrying the percentages is the series they were written
+        # against, so it outranks `periods`, which `_best_v03_periods` may have
+        # taken from a neighbouring table header. That header can name *more*
+        # periods than the sentence — a track-record table prints a comparative
+        # interim column that the narrative omits — so preferring whichever
+        # count is larger produced a false mismatch on a correct series.
+        expected = enumerated_count if enumerated_count is not None else len(periods)
         if len(values) != expected:
             return values[-1], ["value_period_count_mismatch"]
         return values[-1], []
