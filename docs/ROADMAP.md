@@ -1,19 +1,20 @@
 # Roadmap
 
 > Status snapshot: **2026-08-25**  
-> Execution strategy: **return to the competition task → five parallel ownership lanes → continuous integration → competition release**
+> Execution strategy: **stop expanding scope → validate real cases → close metrics → package submission**
 
 ## 1. Current state
 
 ```text
 v0.3 Document Intelligence          COMPLETE / FROZEN
 PR-A–PR-G                           COMPLETE / FROZEN
-PR-H Full E2E                       PARTIAL / BLOCKED
+v0.4.5 competition runtime          IMPLEMENTED / HARDENING
+Historical PR-H formal freeze       PARTIAL / BLOCKED
 Competition Final Sprint            ACTIVE
 Target                              v0.4.5 COMPETITION_READY
 ```
 
-当前不再按日期推进，也不再优先做大规模研究探索。五个人各自拥有固定责任线并行开发，A 持续合流。
+开发重心已经从“继续加大模块”切换为 competition closure。Market Intelligence 正式 runtime wiring、LLM Final Supervisor、conflict detection、bounded targeted re-check、Agent Trace、Evidence Viewer 与 Human Review 都已经进入 `main`，不再列为待开发功能。
 
 ## 2. Competition hard requirements
 
@@ -23,7 +24,7 @@ Target                              v0.4.5 COMPETITION_READY
 1. 数百页招股书解析与非标风险抽取
 2. LLM 防幻觉 / Evidence-grounded semantic reasoning
 3. Financial / Legal / Market / Decision 多角色 Agent + Skill
-4. Agent conflict → re-check → verification → resolution
+4. Agent conflict → re-check → verification → resolution / explicit unresolved
 5. 基本面 + 市场情绪联合预警
 6. 上市首日 / 5D / 20D / 60D 真实表现验证
 7. 可解释报告 + PDF Evidence + Agent trace + Human Review
@@ -33,70 +34,97 @@ Target                              v0.4.5 COMPETITION_READY
 指标目标：
 
 ```text
-关键风险要素抽取准确率      >= 80%
-关键 Evidence Recall         >= 85%
+关键风险要素抽取准确率       >= 80%
+关键 Evidence Recall          >= 85%
 Agent / Tool / Evidence trace = 100%
 ```
 
-## 3. Five parallel lanes
+## 3. What is already closed
+
+```text
+[done] real remote LLM provider integration boundary
+[done] Legal / Business LLM runtime path
+[done] governed Market-X Core projection
+[done] IPOHeatSkill / MarketRegimeSkill implementation
+[done] MarketIntelligenceAgent formal AI runtime wiring
+[done] bounded qualitative Market LLM interpretation path
+[done] conflict detection
+[done] targeted re-check budget and one-attempt contract
+[done] LLM Final Supervisor implementation
+[done] Agent / Tool / Evidence trace sidecar
+[done] Evidence Viewer
+[done] Human Review
+[done] v0.4.5 competition Streamlit scenarios
+```
+
+PR #128 已证明 E-lane 真实受控路径可以产生 conflict / re-check / trace；其历史完成报告保持在 `V04_ROLE_E_COMPLETION_REPORT.md`。
+
+## 4. Current hardening fix
+
+2410.HK 的 v0.4.5 AI smoke 暴露：Core-only Market-X 在 Extended-only feature 完全缺席时，`MarketRegimeSkill` 会访问 `None.missing_reason`。
+
+当前修复策略：
+
+```text
+feature object exists + unavailable → preserve governed missing_reason
+feature object absent               → source_unavailable
+feature available                   → consume governed numeric value
+```
+
+同类逻辑在 `IPOHeatSkill` 一并修复，并有 core-only regression tests。修复只改变缺失值处理，不改变 Market threshold、不填零、不构造 HSI/turnover/industry 值。
+
+真实 2410.HK 仍需在更新后的 `main` 上重跑，才能把该案例从 partial acceptance 升为 pass。
+
+## 5. Remaining closure lanes
 
 ### A — Integration / Release
 
 ```text
-public contracts
-GitHub / PR / CI
-E2E integration
-3–5 real-case matrix
-reproducibility
-release / submission
+rerun 2410.HK after current fix
+close >=3 stable real-case matrix
+verify component diagnostics are clean or explicitly degraded
+keep main CI green
+freeze final runbook / release / submission package
 ```
 
 ### B — LLM Document Intelligence
 
 ```text
-Legal semantics
-Business semantics
-related-party / redemption / litigation
-core product / commercialization / pipeline
-Disclosure Tone bounded analysis
-Evidence grounding
-minimal Document benchmark
+finish minimal real-case Legal / Business benchmark
+measure Risk extraction and Evidence Recall
+keep true semantic conflicts fail-closed
 ```
 
 ### C — Market Intelligence
 
 ```text
-governed PIT facts
-IPO Heat / Market Regime Skills
-MarketContext
-LLM Market interpretation
-optional comparable context
-market provenance
+confirm Core-only graceful degradation
+optionally materialize governed Extended readiness in local final runtime
+validate Market LLM on final real-case matrix
+keep industry return PIT_BLOCKED unless legitimate mapping exists
 ```
 
 ### D — Quant / Outcome / Evaluation
 
 ```text
-frozen PR-F runtime recovery
-1D / 5D / 20D / 60D outcomes
-prediction results
+return_1d
+return_5d
+return_20d
+return_60d
+prediction outputs
 AI-vs-Offline effect check
 submission evaluation artifacts
 ```
 
-### E — Supervisor / Multi-Agent / Product
+### E — Supervisor / Product hardening
 
 ```text
-LLM Final Supervisor
-Conflict / RecheckRequest / resolution
-Agent Trace
-Evidence Viewer
-Human Review
-final Streamlit
-3–5 stable demos
+confirm real-provider LLM Final Supervisor on final case matrix
+verify conflict / re-check UI and trace on >=3 cases
+polish product presentation without changing backend truth
 ```
 
-## 4. Current frozen foundation
+## 6. Frozen foundation
 
 ```text
 Official universe                  438
@@ -105,30 +133,13 @@ Market-X Core                     438 / 438, 30 positions
 5D Outcome                        424 / 438
 Canonical                         424 = 354 Dev + 70 Val
 Oracle v2 strict                  96 = 77 Dev + 19 Val
-HSI Extended                      438 / 438
-HKEX turnover 20D                 438 / 438
+HSI Extended readiness            438 / 438
+HKEX turnover 20D readiness       438 / 438
 industry return                     0 / 438, PIT_BLOCKED
 2025 Blind y accessed             NO
 ```
 
-## 5. LLM-first competition path
-
-```text
-PDF
-→ Retriever / Evidence
-→ Financial Agent + deterministic math
-→ Legal Agent + LLM semantics
-→ Business Agent + LLM semantics
-→ Verifier
-→ governed Market facts / Skills
-→ LLM Market Agent
-→ Model if frozen runtime available + Rule
-→ LLM Final Supervisor
-→ conflict → targeted re-check → resolved / unresolved
-→ Report / Evidence Viewer / Trace / Human Review
-```
-
-## 6. Model policy
+## 7. Model policy
 
 Frozen PR-F remains an auxiliary baseline:
 
@@ -138,41 +149,38 @@ P   0.5000
 PM  0.4246
 ```
 
-本冲刺不做 broad model search、2024 retuning 或 score inversion。D 只恢复原 frozen runtime/handoff；若无法恢复，Model Channel 诚实显示 unavailable。
+不做 broad model search、2024 retuning、score inversion，也不为了 UI 可用而重建一个“像 PR-F”的新模型。若原 frozen runtime/handoff 无法恢复，Model Channel 明确显示 unavailable。
 
-## 7. What is explicitly deferred
+## 8. Explicitly deferred
 
 ```text
 new model families / hyperparameter search
-broad P-Core / feature audit
 large Retriever redesign
-full multi-horizon modeling research
 industry PIT research
 broad new data acquisition
 paper-style ablation
-story-only UI work
+full 438-case LLM execution
+story-only UI work without backend truth
 ```
 
-注意：1D/5D/20D/60D **Outcome 计算本身不是 defer 项**，因为它是赛题明确要求。
+1D/5D/20D/60D Outcome 计算本身不是 defer 项，因为它是赛题硬要求。
 
-## 8. Final Gate
+## 9. Final Gate
 
-Competition release 只有在以下条件基本满足后才创建：
+只有以下条件基本闭合后才允许标记 `COMPETITION_READY`：
 
 ```text
-real LLM provider path active
-Legal / Business semantic reasoning grounded
-Market Agent grounded in PIT facts
-LLM Final Supervisor active
-controlled conflict / re-check exists
-1D / 5D / 20D / 60D results generated
-Risk / Evidence benchmark produced
-Agent / Tool / Evidence trace complete
->=3 stable real IPO demos
-Evidence Viewer / Human Review usable
-prediction table + reasoning logs + reports generated
-full CI + real-case smoke pass
-submission package reproducible
+[ ] >=3 stable real IPO E2E demos
+[ ] 2410.HK post-fix AI smoke passes or all remaining degradations are explained
+[ ] real-provider Final Supervisor validated on final case matrix
+[ ] 1D / 5D / 20D / 60D results generated
+[ ] Risk extraction benchmark >= target or gap explicitly documented
+[ ] Evidence Recall benchmark >= target or gap explicitly documented
+[ ] Agent / Tool / Evidence trace measured at required level
+[ ] prediction table + reasoning logs + case reports generated
+[ ] Evidence Viewer / Human Review usable
+[ ] full CI + determinism + provenance + blind audit pass
+[ ] reproducible runbook + submission package complete
 ```
 
-详细 ownership 见 [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md)。
+详细验收状态见 [`V0.4_RELEASE_ACCEPTANCE.md`](V0.4_RELEASE_ACCEPTANCE.md)。
