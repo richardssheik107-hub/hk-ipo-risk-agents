@@ -88,8 +88,8 @@ def test_v04_market_intelligence_enriches_governed_context_and_emits_trace():
 
     enriched = outcome["market_context_view"]
     intelligence = enriched.provenance["market_intelligence"]
-    assert intelligence["ipo_heat"] == "hot"
-    assert intelligence["market_regime"] == "risk_on"
+    assert intelligence["ipo_heat"] == "HOT"
+    assert intelligence["market_regime"] == "RISK_ON"
     assert intelligence["missing_reasons"]["industry_return_5d"] == "INDUSTRY_MAPPING_PIT_BLOCKED"
 
     diagnostics = outcome["component_diagnostics"]["market_intelligence"]
