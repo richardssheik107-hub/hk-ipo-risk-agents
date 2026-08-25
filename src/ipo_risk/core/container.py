@@ -13,6 +13,7 @@ from ipo_risk.agents.disabled import (
     DisabledLegalAgent,
     DisabledMarketAgent,
 )
+from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor
 from ipo_risk.agents.final_supervisor import GatePendingFinalSupervisor, V04FinalSupervisor
 from ipo_risk.agents.financial import CashRunwayFinancialAgent
 from ipo_risk.agents.financial_v03 import V03FinancialAgent
@@ -78,6 +79,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
 from ipo_risk.workflows.enhanced_v2 import EnhancedV2Workflow
 from ipo_risk.workflows.mvp_v1 import MVPWorkflow
 from ipo_risk.workflows.v04_ai import V04AIWorkflow
+from ipo_risk.workflows.v04_competition import V04CompetitionWorkflow
 
 
 class ComponentRegistry:
@@ -198,11 +200,23 @@ class DependencyContainer:
         channels = {
             "market_context": self._create_channel("market_context", self.settings.market_context),
             "model_prediction_provider": self._model_prediction_provider(),
-            "final_supervisor": self._create_channel("final_supervisor", self.settings.final_supervisor),
+            "final_supervisor": self._create_channel(
+                "final_supervisor", self.settings.final_supervisor, llm_provider=llm_provider
+            ),
         }
         if self.settings.workflow_version == "mvp_v1":
             return MVPWorkflow(*arguments, **channels)
         if self.settings.workflow_version == "enhanced_v2":
+            # The competition workflow adds conflict detection, one targeted
+            # re-check and trace assembly.  It is selected by the Final
+            # Supervisor identity, so a config that does not ask for LLM
+            # synthesis keeps exactly its historical workflow class.
+            if self.settings.final_supervisor == "llm":
+                return V04CompetitionWorkflow(
+                    *arguments,
+                    market_intelligence_agent=market_intelligence_agent,
+                    **channels,
+                )
             if market_intelligence_agent is not None:
                 return V04AIWorkflow(
                     *arguments,
@@ -214,12 +228,19 @@ class DependencyContainer:
             f"Unregistered workflow version: {self.settings.workflow_version!r}"
         )
 
-    def _create_channel(self, kind: str, name: str):
+    def _create_channel(self, kind: str, name: str, *, llm_provider=None):
         """Build an optional PR-G channel; "none" means build nothing at all."""
         if name == NO_COMPONENT:
             return None
         if kind == "final_supervisor" and name == "v04":
             return V04FinalSupervisor(self._frozen_cohort_evidence())
+        if kind == "final_supervisor" and name == "llm":
+            # The LLM Supervisor keeps the frozen PR-G composition as its spine;
+            # an unavailable provider degrades to exactly that composition.
+            return LLMFinalSupervisor(
+                llm_provider=llm_provider if llm_provider is not None else self.create_llm_provider(),
+                cohort_evidence=self._frozen_cohort_evidence(),
+            )
         if kind == "market_context" and name == "governed_pr_b_core":
             return self.registry.create(
                 kind,

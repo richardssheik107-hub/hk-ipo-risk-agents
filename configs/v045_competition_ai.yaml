@@ -1,0 +1,36 @@
+# v0.4.5 Competition runtime, AI enhanced.
+#
+# The full competition chain: governed Market Intelligence, LLM Legal/Business
+# semantics, deterministic conflict detection, one bounded targeted re-check and
+# the LLM Final Supervisor.  The LLM interprets and synthesises governed facts
+# only; it never mints a risk, an Evidence id, a market value or a probability,
+# and every stage degrades to its deterministic result when the provider is
+# unavailable.
+workflow_version: enhanced_v2
+runtime_mode: ai_enhanced
+use_mock: false
+enable_verifier: true
+parser: pymupdf
+retriever: keyword
+financial_agent: v03
+legal_agent: v03
+business_agent: v03
+market_agent: market_intelligence
+verifier: specialized_v03
+supervisor: v03
+predictor: rule_based
+llm_provider: openai_compatible
+market_data_provider: unavailable
+ipo_data_provider: catalog
+repository: json
+report_generator: v04
+data_dir: data
+report_dir: reports
+log_level: INFO
+
+market_context: governed_pr_b_core
+market_feature_dir: reports/v04_pr_b/core_features
+market_official_bridge: data/catalog/ipo_official_master_bridge.csv
+final_supervisor: llm
+# Set IPO_RISK_PR_F_RUN_DIR to a local sanitized handoff. It stays empty in Git.
+pr_f_run_dir: ""

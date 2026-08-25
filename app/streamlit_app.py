@@ -18,7 +18,6 @@ from competition_ui import (
     localize_market_observation_rows,
     render_case_header,
     render_channel_grid,
-    render_competition_roadmap,
     render_empty_state,
     render_executive_snapshot,
     render_pipeline_strip,
@@ -33,6 +32,19 @@ from competition_ui import (
     stage_unblocked_items_zh,
     status_label,
 )
+from competition_runtime_view import (
+    RESOLUTION_LABELS,
+    conflict_rows,
+    conflict_status_counts,
+    judgement,
+    recheck_outcomes,
+    supervision_synthesis,
+    trace_rows,
+    traceability,
+    traceability_metrics,
+)
+from evidence_viewer import render_evidence_viewer
+from human_review_ui import render_human_review
 from pipeline_stages import resolve_stages
 from presenters import (
     DOMAINS,
@@ -44,15 +56,20 @@ from presenters import (
     validate_pdf_upload,
 )
 from ipo_risk.core.config import load_settings
+from ipo_risk.services.human_review_service import HumanReviewService
 from ipo_risk.services.analysis_service import IPOAnalysisService
 
 
+SCENARIO_COMPETITION_OFFLINE = "v0.4.5 比赛版（离线）"
+SCENARIO_COMPETITION_AI = "v0.4.5 比赛版（AI）"
 SCENARIO_PREDICTOR_FAILURE = "预测器故障降级演示"
 SCENARIO_V04_OFFLINE = "v0.4 离线模式 + Final Supervisor"
 SCENARIO_V04_OFFLINE_TABLE = "v0.4 离线模式（表格）+ Final Supervisor"
 SCENARIO_V04_AI_TABLE = "v0.4 AI 模式（表格）+ Final Supervisor"
 
 SCENARIOS = {
+    SCENARIO_COMPETITION_OFFLINE: ("configs/v045_competition_offline.yaml", True),
+    SCENARIO_COMPETITION_AI: ("configs/v045_competition_ai.yaml", True),
     "Mock 架构演示": ("configs/mock.yaml", False),
     "v0.2 真实现金可支撑期切片": ("configs/real_pdf.yaml", True),
     "v0.3 增强版（离线）": ("configs/v03_offline.yaml", True),
@@ -74,6 +91,7 @@ def _display_value(value: object) -> str:
 def _clear_result() -> None:
     st.session_state.pop("analysis_result", None)
     st.session_state.pop("analysis_scenario", None)
+    st.session_state.pop("prospectus_bytes", None)
 
 
 def _friendly_error(message: str) -> str:
@@ -106,6 +124,9 @@ def _run_analysis(
             raise ValueError("Please upload a prospectus PDF.")
         content = uploaded.getvalue()
         validate_pdf_upload(uploaded.name, content)
+        # Kept only in this session, so the Evidence Viewer can render the very
+        # pages the parser cited. It is never written to disk by the UI.
+        st.session_state["prospectus_bytes"] = content
         with temporary_pdf(content) as prospectus_path:
             request = build_analysis_request(
                 company_name=company,
@@ -471,6 +492,150 @@ def _render_system(payload: dict[str, object], stages) -> None:
         st.json(payload.get("agent_logs") or [])
 
 
+
+def _render_supervisor_judgement(payload: dict[str, object]) -> None:
+    """Render the LLM Final Supervisor judgement, or state honestly why there is none."""
+
+    synthesis = supervision_synthesis(payload)
+    verdict = judgement(payload)
+    with st.container(border=True):
+        st.markdown("#### LLM Final Supervisor 综合判断")
+        if not synthesis:
+            st.info("当前运行模式没有启用 LLM Final Supervisor，只有确定性汇总结论。")
+            return
+        floor = synthesis.get("deterministic_severity_floor")
+        if verdict is None:
+            st.warning(
+                f"LLM 综合判断不可用：{synthesis.get('reason', '未说明原因')}。"
+                "确定性 Final Supervisor 汇总结论完整保留，未做任何替代或补写。"
+            )
+            if floor:
+                st.caption(
+                    f"确定性风险下限仍为 **{risk_level_label(floor)}**，"
+                    "由已验证文档风险直接决定。"
+                )
+            return
+
+        overall = verdict.get("overall_risk")
+        head = st.columns(3)
+        head[0].metric("综合风险判断", risk_level_label(overall))
+        head[1].metric("确定性风险下限", risk_level_label(floor))
+        head[2].metric("是否建议继续复核", "是" if verdict.get("recheck_required") else "否")
+        st.caption(
+            "LLM 只能在确定性下限之上做解释与升级，不能下调已验证的文档风险，"
+            "也不能引入未提供的 risk_id / evidence_id 或任何概率表述。"
+        )
+        st.markdown("**判断依据**")
+        st.write(verdict.get("overall_risk_rationale") or "未给出依据。")
+
+        findings = verdict.get("key_findings") or []
+        st.markdown(f"**关键发现 · {len(findings)}**")
+        for finding in findings:
+            st.markdown(
+                f"- {finding.get('statement', '')}  \n"
+                f"  <span class='risk-chip'>risk {len(finding.get('risk_ids') or [])}</span> "
+                f"<span class='risk-chip'>evidence {len(finding.get('evidence_ids') or [])}</span>",
+                unsafe_allow_html=True,
+            )
+
+        assessments = verdict.get("conflict_assessments") or []
+        if assessments:
+            with st.expander(f"冲突评述 · {len(assessments)}", expanded=False):
+                for item in assessments:
+                    st.markdown(f"- `{item.get('conflict_id', '')}` — {item.get('assessment', '')}")
+
+        uncertainties = verdict.get("uncertainties") or []
+        if uncertainties:
+            st.markdown("**不确定性**")
+            for item in uncertainties:
+                st.markdown(f"- {item}")
+
+        targets = verdict.get("recheck_targets") or []
+        if targets:
+            st.markdown("**建议的定向复核对象**")
+            for item in targets:
+                st.markdown(f"- `{item.get('target', '')}` — {item.get('reason', '')}")
+
+        st.markdown("**最终说明**")
+        st.write(verdict.get("final_explanation") or "未给出最终说明。")
+
+
+def _render_command_center(payload: dict[str, object], stages) -> None:
+    st.markdown("### 风险指挥中心")
+    st.caption("一屏看清：通道状态、综合判断、风险清单与本次运行链路。")
+    _render_supervisor_judgement(payload)
+
+    final = payload.get("final_supervision") or {}
+    if final:
+        with st.container(border=True):
+            st.markdown("#### 确定性 Final Supervisor 汇总")
+            st.write(final.get("summary") or "本次运行未生成综合结论。")
+            uncertainty = final.get("uncertainty_statement")
+            if uncertainty:
+                st.warning(uncertainty)
+
+    counts = conflict_status_counts(payload)
+    if counts:
+        chips = st.columns(len(counts))
+        for column, (status, count) in zip(chips, sorted(counts.items()), strict=True):
+            column.metric(f"冲突 · {RESOLUTION_LABELS.get(status, status)}", count)
+
+    _render_overview(payload, stages)
+
+
+def _render_agent_trace(payload: dict[str, object], stages) -> None:
+    st.markdown("### Agent 协作轨迹")
+    st.caption(
+        "每一步都记录 Agent、工具 / Skill、Provider、Prompt 版本、Evidence 与 Calculation；"
+        "没有 Evidence 的步骤必须写明原因，可追溯率因此是被度量出来的，而不是宣称的。"
+    )
+
+    metrics = traceability_metrics(payload)
+    if metrics:
+        st.markdown("#### 可追溯率")
+        st.dataframe(metrics, hide_index=True, use_container_width=True)
+        unresolved = (traceability(payload) or {}).get("unresolved_evidence_ids") or []
+        if unresolved:
+            st.warning(f"有 {len(unresolved)} 个被引用的 Evidence ID 无法回溯到本次运行的 Evidence 集合。")
+            st.json(unresolved)
+    else:
+        st.info("当前运行模式没有生成 Agent Trace sidecar。")
+
+    conflicts_table = conflict_rows(payload)
+    st.markdown("#### 跨 Agent 冲突与定向复核")
+    if conflicts_table:
+        st.dataframe(conflicts_table, hide_index=True, use_container_width=True)
+        outcomes = recheck_outcomes(payload)
+        with st.expander(f"定向复核执行明细 · {len(outcomes)}", expanded=False):
+            st.json(outcomes)
+    else:
+        st.info("本次运行没有检出跨 Agent 冲突。")
+
+    rows = trace_rows(payload)
+    st.markdown(f"#### 完整事件轨迹 · {len(rows)}")
+    if rows:
+        st.dataframe(rows, hide_index=True, use_container_width=True)
+        with st.expander("原始 trace sidecar（competition_runtime_v1）", expanded=False):
+            st.json((payload.get("component_diagnostics") or {}).get("competition_runtime", {}))
+    else:
+        st.info("本次运行没有可展示的 trace 事件。")
+
+    st.divider()
+    _render_system(payload, stages)
+
+
+def _render_review_and_report(payload: dict[str, object], result, stages_by_id) -> None:
+    render_human_review(
+        payload,
+        analysis_id=result.analysis_id,
+        case_id=str((payload.get("profile") or {}).get("stock_code") or result.stock_code or "unknown_case"),
+        run_id=result.request_id,
+        service=HumanReviewService(),
+    )
+    st.divider()
+    _render_supervisor_and_report(payload, result, stages_by_id)
+
+
 st.set_page_config(
     page_title="港股 IPO 风险分析",
     page_icon="📈",
@@ -481,7 +646,7 @@ apply_competition_theme()
 render_product_header()
 
 scenario_names = list(SCENARIOS)
-default_scenario = scenario_names.index(SCENARIO_V04_OFFLINE)
+default_scenario = scenario_names.index(SCENARIO_COMPETITION_OFFLINE)
 scenario = st.sidebar.selectbox(
     "运行模式",
     scenario_names,
@@ -546,31 +711,30 @@ else:
     st.markdown("<div class='section-eyebrow'>通道状态</div>", unsafe_allow_html=True)
     render_channel_grid(payload)
 
+    # Five workspaces, one job each: decide, verify, contextualise, audit, sign off.
     workspace_tabs = st.tabs(
         [
-            "概览",
-            "风险与 Evidence",
+            "风险指挥中心",
+            "Evidence 与 AI 分析",
             "市场与模型",
-            "Final Supervisor 与报告",
-            "后续计划",
-            "系统信息",
+            "Agent 协作轨迹",
+            "人机复核与最终报告",
         ]
     )
 
     with workspace_tabs[0]:
-        _render_overview(payload, stages)
+        _render_command_center(payload, stages)
 
     with workspace_tabs[1]:
         _render_risks_and_evidence(payload)
+        st.divider()
+        render_evidence_viewer(payload, st.session_state.get("prospectus_bytes"))
 
     with workspace_tabs[2]:
         _render_market_and_model(payload, stages_by_id)
 
     with workspace_tabs[3]:
-        _render_supervisor_and_report(payload, result, stages_by_id)
+        _render_agent_trace(payload, stages)
 
     with workspace_tabs[4]:
-        render_competition_roadmap()
-
-    with workspace_tabs[5]:
-        _render_system(payload, stages)
+        _render_review_and_report(payload, result, stages_by_id)
