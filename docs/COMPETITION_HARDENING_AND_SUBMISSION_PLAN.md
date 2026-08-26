@@ -58,6 +58,8 @@ evaluation_summary.json
 - 2025 y 在正式授权前不访问；
 - uncalibrated score 不叫 probability。
 
+A 的 final readiness 会检查四个 horizon column、非空结果和显式 Blind=false，但不会替 D 生成结果。
+
 ## 3. CH-2 — Document Intelligence benchmark
 
 **Owner：B；Status：MEASURED FAIL / OPEN**
@@ -89,9 +91,12 @@ real-LLM prediction
 - Legal semantic accuracy；
 - Business semantic accuracy；
 - per-risk breakdown；
-- failure taxonomy。
+- failure taxonomy；
+- `ai_vs_offline_report.json`。
 
 只有在 real-LLM measurement 后才允许做 Development-only targeted remediation。
+
+A 的 readiness 只接受 evaluator 实测的 real-LLM / target / Blind 字段；missing 或 offline-only 直接 FAIL。
 
 ## 4. CH-3 — Market Intelligence
 
@@ -115,13 +120,16 @@ governed MarketContext
 - Core-only 不 crash；
 - Extended 只有真实 governed artifact 才启用；
 - industry mapping 缺失继续 PIT-blocked；
-- Market LLM 不生成输入中不存在的数字。
+- Market LLM 不生成输入中不存在的数字；
+- 每个 final-case Market trace event 有 governed namespaced input / Calculation / explicit no-Evidence reason。
 
 `ComparableIPOSkill` 继续 deferred，不为故事完整而仓促定义。
 
+A readiness 已实现 final-matrix Market trace accounting；需要最终 AI matrix 工件后才会给 PASS。
+
 ## 5. CH-4 — Multi-Agent conflict / arbitration / trace
 
-**Owner：E；Status：IMPLEMENTATION CLOSED**
+**Owner：E；Status：IMPLEMENTATION CLOSED / REAL-PROVIDER ACCEPTANCE OPEN**
 
 已实现：
 
@@ -136,9 +144,28 @@ Agent outputs
 → TraceEvent
 ```
 
-3 个真实 PDF 离线案例全部产生真实 conflict/re-check，measured traceability 均为 1.0。
+3 个真实 PDF offline 案例全部产生真实 conflict/re-check，measured traceability 均为 1.0。
 
-剩余验收：同一 final matrix 上 real-provider Final Supervisor synthesis 成功。
+PR #135 进一步把最终提交工件与 Gate-E1 acceptance 机器化：
+
+```text
+agent_reasoning_log.json / .md
+case_report.md
+gate_e1_evidence.json
+```
+
+Gate-E1 outcome 区分：
+
+```text
+accepted
+provider_not_configured
+provider_call_failed
+rejected_out_of_scope
+```
+
+只有 real remote provider + accepted + call trace 完整 + scope passed 才算成功仲裁。mock、fallback、transport failure、scope reject 都不能算 PASS。
+
+当前 measured offline matrix 仍是 0/3 successful arbitration，因此 final real-provider 3-case rerun 仍是 open Gate。
 
 ## 6. CH-5 — Product / Evidence / Human Review
 
@@ -160,17 +187,49 @@ Evidence Viewer 当前有真实 physical-page grounding；parser 暂无 bbox。�
 
 ## 7. CH-6 — Formal competition evaluation / freeze
 
-**Owner：A + B/C/D/E；Status：OPEN**
+**Owner：A + B/C/D/E；Status：TOOLING IMPLEMENTED / FINAL EXECUTION OPEN**
 
-进入 CH-6 前必须具备：
+进入最终 freeze 前必须具备：
 
 - B real-LLM benchmark；
 - D multi-horizon artifact；
 - E final-matrix real-provider synthesis；
-- final case Market behavior；
+- final-case Market trace accounting；
 - current main CI green。
 
-CH-6 输出：
+A 已实现：
+
+```text
+scripts/build_v045_submission_readiness.py
+scripts/package_v045_submission.py
+docs/SUBMISSION_RUNBOOK.md
+```
+
+Readiness 命令生成：
+
+```text
+submission_readiness.json
+blind_audit.json
+provenance_audit.json
+determinism_audit.json
+artifact_index.json
+```
+
+其规则是 fail closed：
+
+- missing handoff 不推断为 PASS；
+- B 只认 real-LLM evaluator 字段；
+- D 必须真实包含 1D/5D/20D/60D；
+- C 必须有 final-matrix market state + accounted trace；
+- E 必须 3/3 `gate_e1.satisfied=true` 且 traceability=1.0；
+- Blind / provenance / determinism audit 必须 PASS；
+- Model Channel 可诚实 `unavailable`，不要求替代训练。
+
+Determinism 的口径不是“LLM 文本每次完全一样”，而是 deterministic request identity / governed deterministic facets 可复现，同时 provider/model/prompt/request/response hash 可审计。
+
+Packager 只有在 `competition_ready=true` 时运行，并使用 allowlist；拒绝 PDF、secret-bearing files、private key、token-like secret 和本地绝对路径。
+
+最终 CH-6 产物：
 
 ```text
 risk_benchmark.csv / json
@@ -182,10 +241,13 @@ evaluation_summary.json
 agent_reasoning_logs
 Evidence / Human Review exports
 3 case reports
-blind_audit.json (or equivalent auditable statement)
-provenance / determinism evidence
+blind_audit.json
+provenance_audit.json
+determinism_audit.json
 RUNBOOK
 submission artifact index
+submission_readiness.json
+submission bundle + manifest + SHA-256
 ```
 
 ## 8. Current real-case evidence
@@ -200,7 +262,7 @@ Offline final matrix：
 
 三份 PDF 全部通过 catalog-bound SHA-256 / size / page verification；未读取 outcome labels。
 
-这个矩阵证明工程稳定性和 Multi-Agent trace，不证明 B 的风险抽取质量或 D 的预测效果。
+这个矩阵证明工程稳定性和 Multi-Agent trace，不证明 B 的风险抽取质量、D 的预测效果或 E 的 successful remote arbitration。
 
 ## 9. Submission story 必须与事实一致
 
@@ -214,7 +276,8 @@ Offline final matrix：
 - real conflict / re-check；
 - measured traceability；
 - Human Review；
-- graceful degradation。
+- graceful degradation；
+- machine-checked submission readiness / provenance / Blind / Gate-E1 evidence。
 
 禁止宣称：
 
@@ -223,7 +286,8 @@ Offline final matrix：
 - model channel 可用但没有 authentic handoff；
 - unavailable industry return 有可靠代理；
 - offline Final Supervisor fallback 是成功的 remote LLM arbitration；
-- 3-case E2E 成功等于预测准确。
+- 3-case E2E 成功等于预测准确；
+- remote LLM prose 是 byte-for-byte deterministic。
 
 ## 10. Scope freeze
 
