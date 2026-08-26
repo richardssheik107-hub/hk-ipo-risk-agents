@@ -1,8 +1,8 @@
 # v0.4.5 Role E 完成报告 —— LLM Final Supervisor / Conflict / Trace / Product
 
-> Date: **2026-08-25**
+> Date: **2026-08-25**，submission artifacts 增补于 **2026-08-26**
 > Owner: **E —— LLM Final Supervisor / Multi-Agent / Trace / Product**
-> Baseline: `origin/main` @ `9e0793e`
+> Baseline: `origin/main` @ `9e0793e`；本轮增补基于 `origin/main` @ `6748a8c`
 > 2025 Blind y accessed: **NO** · upstream PR-A–PR-F rerun: **NO** · frozen manifest changed: **NO**
 
 ## 1. Verdict
@@ -16,6 +16,8 @@ Evidence Viewer (page + bbox)     IMPLEMENTED
 Human Review                      IMPLEMENTED
 Final Streamlit workspaces        IMPLEMENTED (5 workspaces)
 3–5 stable real demo cases        CLOSED —— 3 / 3 offline，全部 SHA-256 校验通过
+Case report / reasoning log       IMPLEMENTED —— 3 / 3 由真实 run 渲染
+Gate E1 acceptance evidence       IMPLEMENTED，实测 NOT MET（无 real provider 凭证）
 ```
 
 E lane 的代码路径全部完成并有回归测试。3 案例矩阵已在离线链路上跑通（见 §3.2）；
@@ -152,6 +154,54 @@ outcome labels accessed        false
 
 三个案例的 Agent / Tool / Evidence 可追溯率均为 1.0，且都产生了真实的跨 Agent 冲突与受控定向复核。
 
+### 3.4 Submission artifacts 与 Gate E1 acceptance evidence
+
+每个 case 现在额外产出三份提交面工件，全部由该次 run 的真实记录渲染，不做任何补写：
+
+```text
+agent_reasoning_log.json / .md   逐步 Agent 推理轨迹（AGENTS §11 要求的 agent_reasoning_logs）
+case_report.md                   加厚后的案例报告：来源完整性 / 通道状态 / 证据页码 /
+                                 确定性计算 / 冲突与复核 / 可追溯率 / 本次未证明事项
+gate_e1_evidence.json            Gate E1 逐案验收证据；矩阵级汇总写入 summary.json
+```
+
+reasoning log 不隐藏缺口：没有 Evidence 的步骤必须带 `no_evidence_reason`，两者都没有的步骤
+显式标记 `unaccounted`（与 traceability 的度量口径一致）；被受控预算跳过的冲突记为
+`conflicts_not_attempted`，不静默丢弃。
+
+Gate E1 证据由 run 自己产出，判据是机器可核的：
+
+```text
+successful_llm_arbitration   仅当 outcome=accepted 且 provider 为真实远端 provider
+provider_trace_complete      provider / model / prompt / request / response hash / latency 齐全
+out_of_scope_reference_check passed / failed / not_applicable —— 只有真实响应才能证明 passed
+severity_floor_respected     综合结论不得低于确定性下限
+satisfied                    以上全部成立才为 true
+```
+
+`SynthesisOutcome` 把三种降级分开记录，因为它们对验收的含义完全不同：
+
+```text
+provider_not_configured   没有 provider，什么都没证明
+provider_call_failed      调用失败，对 scope 没有任何证明力
+rejected_out_of_scope     真实响应被 scope guard 拒绝 —— fail closed 确实生效，但仲裁失败
+accepted                  唯一可计入 Gate E1 的结果
+```
+
+本机三案例实测（离线配置，无凭证）：
+
+```text
+declared / with evidence                 3 / 3
+cases_with_successful_llm_arbitration    0
+cases_on_deterministic_fallback          3
+satisfied                                false
+unmet                                    real remote provider (provider: unavailable)
+                                         successful bounded LLM synthesis (outcome: provider_call_failed)
+```
+
+这是**设计内的诚实降级**，不是 Gate E1 通过。mock provider 即使给出完全合规的结论也被显式拒绝计入
+（`provider_is_real_remote=false`），以免离线演示被误读成真实仲裁。
+
 ### 3.3 三案例矩阵暴露的文档覆盖问题（B lane）
 
 2460 与 1318 在离线链路下 **verified / pending / rejected 全部为 0**，即没有任何正式风险项进入报告。
@@ -177,7 +227,9 @@ redemption_rights               extraction_failed     2 evidence
 ```text
 1. 真实 provider 的 LLM 综合判断仍未在最终矩阵上验证
    三案例矩阵目前跑的是 offline 配置，Final Supervisor 诚实降级为确定性组合。
-   configs/v045_competition_ai.yaml 配好凭证后重跑同一脚本即可。
+   configs/v045_competition_ai.yaml 配好凭证后重跑同一脚本即可；
+   Gate E1 的验收判据已经由 run 机器产出（见 §3.4），凭证到位后跑一次即得验收证据，
+   当前实测记录为 satisfied=false。
 
 2. 两个案例没有任何正式风险项（见 §3.3）
    属 B lane 的文档抽取覆盖问题；E 已把它作为覆盖冲突显式暴露，不做掩盖。
@@ -221,6 +273,7 @@ src/ipo_risk/agents/targeted_recheck.py
 src/ipo_risk/agents/final_supervision_llm.py
 src/ipo_risk/runtime/__init__.py
 src/ipo_risk/runtime/competition_trace.py
+src/ipo_risk/runtime/submission_artifacts.py
 src/ipo_risk/repositories/human_review.py
 src/ipo_risk/services/human_review_service.py
 src/ipo_risk/workflows/v04_competition.py
@@ -234,6 +287,7 @@ scripts/run_v04_role_e_demo.py
 tests/contract/test_v045_llm_final_supervisor.py
 tests/unit/test_v045_conflict_and_recheck.py
 tests/unit/test_v045_competition_trace.py
+tests/unit/test_v045_role_e_submission_artifacts.py
 tests/unit/test_v045_human_review.py
 tests/unit/test_v045_competition_runtime_view.py
 tests/integration/test_v045_competition_workflow.py
@@ -258,4 +312,6 @@ IPO_RISK_PROSPECTUS_ROOT=<授权招股书归档根目录> python scripts/run_v04
 streamlit run app/streamlit_app.py   # 选择「v0.4.5 比赛版（离线）」并上传招股书 PDF
 ```
 
-测试基线：`1783 passed`（本轮新增 86 项）。
+per-case 工件写入 `reports/v045_role_e/<case_id>/`（`reports/*` 不入库）。
+
+测试基线：`1783 passed`（首轮新增 86 项）；submission artifacts 增补后为 `1879 passed`。

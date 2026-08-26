@@ -5,7 +5,14 @@ verifies its bytes, then executes the full governed chain -- parse, agents,
 verifier, Document Supervisor, governed market context, rule signal, conflict
 detection, one bounded targeted re-check per conflict, LLM Final Supervisor
 synthesis and trace assembly -- and writes the per-case artifacts the submission
-package needs.
+package needs: the analysis result, the conflict / re-check / trace sidecars, an
+agent reasoning log, a case report and the Gate E1 acceptance evidence.
+
+The Gate E1 evidence is produced by the run itself rather than read off the
+artifacts afterwards.  It records whether a real remote provider actually
+arbitrated, whether its call trace was retained and whether the out-of-scope
+guard passed on a real response; an honest deterministic fallback leaves the
+Gate unmet and says so, which is the only reading of it that can be trusted.
 
 Prospectus resolution is deliberately indirect.  The licensed PDFs live outside
 the repository, so the case list carries only a ``case_id``; the filename, the
@@ -34,6 +41,14 @@ from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from ipo_risk.core.config import load_settings
+from ipo_risk.runtime.submission_artifacts import (
+    CaseRunArtifacts,
+    build_agent_reasoning_log,
+    build_gate_e1_evidence,
+    render_agent_reasoning_log,
+    render_case_report,
+    summarise_gate_e1,
+)
 from ipo_risk.schemas import IPOAnalysisRequest, IPOAnalysisResult
 from ipo_risk.services.analysis_service import IPOAnalysisService
 
@@ -193,21 +208,45 @@ def _write_artifacts(
 
     case_dir = output_dir / case_id
     case_dir.mkdir(parents=True, exist_ok=True)
+
+    run_artifacts = CaseRunArtifacts(
+        case_id=case_id,
+        company_name=case["company_name"],
+        stock_code=stock_code,
+        listing_date=listing_date.isoformat(),
+        config=config,
+        result=json.loads(result.model_dump_json()),
+        sidecar=runtime.get("sidecar") or {},
+        composition=final,
+        supervision_llm=supervision_llm,
+        conflicts=conflicts,
+        rechecks=rechecks,
+        traceability=runtime.get("traceability") or {},
+        verification=verification,
+    )
+    reasoning_log = build_agent_reasoning_log(run_artifacts)
+    gate_e1 = build_gate_e1_evidence(run_artifacts)
+
     artifacts = {
-        "analysis_result.json": json.loads(result.model_dump_json()),
+        "analysis_result.json": run_artifacts.result,
         "final_supervision.json": {"composition": final, "llm_synthesis": supervision_llm},
         "conflicts.json": conflicts,
         "rechecks.json": rechecks,
         "trace_sidecar.json": runtime.get("sidecar"),
         "traceability.json": runtime.get("traceability"),
         "prospectus_verification.json": verification,
+        "agent_reasoning_log.json": reasoning_log,
+        "gate_e1_evidence.json": gate_e1,
     }
     for name, payload in artifacts.items():
         (case_dir / name).write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+    (case_dir / "agent_reasoning_log.md").write_text(
+        render_agent_reasoning_log(reasoning_log), encoding="utf-8"
+    )
     (case_dir / "case_report.md").write_text(
-        _markdown(case_id, case, stock_code, listing_date, result), encoding="utf-8"
+        render_case_report(run_artifacts, reasoning_log, gate_e1), encoding="utf-8"
     )
 
     conflict_statuses: dict[str, int] = {}
@@ -235,7 +274,9 @@ def _write_artifacts(
         "conflict_statuses": conflict_statuses,
         "recheck_attempted": rechecks.get("attempted", 0),
         "llm_synthesis_status": supervision_llm.get("status"),
+        "llm_synthesis_outcome": supervision_llm.get("outcome"),
         "llm_synthesis_reason": supervision_llm.get("reason"),
+        "gate_e1": gate_e1,
         "deterministic_severity_floor": supervision_llm.get("deterministic_severity_floor"),
         "traceability": runtime.get("traceability"),
         "final_supervision_content_hash": _sha(final),
@@ -243,54 +284,6 @@ def _write_artifacts(
         "creates_no_new_risk": final.get("metadata", {}).get("creates_no_new_risk"),
         "artifact_dir": str(case_dir),
     }
-
-
-def _markdown(
-    case_id: str, case: dict, stock_code: str, listing_date: date, result: IPOAnalysisResult
-) -> str:
-    diagnostics = result.metadata.get("component_diagnostics", {})
-    conflicts = diagnostics.get("conflict_detection", {}).get("conflicts", [])
-    supervision = diagnostics.get("final_supervision_llm", {})
-    lines = [
-        f"# {case['company_name']} ({stock_code}) — Competition case report",
-        "",
-        f"- case_id: `{case_id}`",
-        f"- listing_date: `{listing_date.isoformat()}`",
-        f"- analysis status: `{result.status.value}`",
-        f"- verified risks: {len(result.verified_risks)}; pending: {len(result.pending_risks)}; "
-        f"rejected: {len(result.rejected_risks)}",
-        "",
-        "## Verified risks",
-        "",
-    ]
-    if result.verified_risks:
-        for risk in result.verified_risks:
-            lines.append(
-                f"- **{risk.risk_code}** · {risk.level.value} · {risk.verification_status.value} · "
-                f"{len(risk.evidence)} evidence — {risk.conclusion}"
-            )
-    else:
-        lines.append("- none")
-    lines += ["", "## Cross-agent conflicts and targeted re-check", ""]
-    if conflicts:
-        for conflict in conflicts:
-            lines.append(f"- `{conflict['status']}` — {conflict['summary']}")
-            if conflict.get("resolution_note"):
-                lines.append(f"  - re-check: {conflict['resolution_note']}")
-    else:
-        lines.append("- no cross-agent conflict was detected in this run")
-    lines += [
-        "",
-        "## Final Supervisor",
-        "",
-        f"- LLM synthesis: `{supervision.get('status')}` — {supervision.get('reason')}",
-        f"- deterministic severity floor: `{supervision.get('deterministic_severity_floor')}`",
-        "",
-        "The rule and model scores are not probabilities. This report is not investment, legal or",
-        "listing advice.",
-        "",
-    ]
-    return "\n".join(lines)
 
 
 def main() -> int:
@@ -345,6 +338,9 @@ def main() -> int:
         ),
         "outcome_labels_accessed": False,
         "blind_2025_y_accessed": False,
+        "gate_e1": summarise_gate_e1(
+            [item["gate_e1"] for item in executed if item.get("gate_e1")], len(cases)
+        ),
         "cases": results,
     }
     (arguments.output_dir / "summary.json").write_text(

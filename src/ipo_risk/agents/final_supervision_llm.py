@@ -63,6 +63,26 @@ class SupervisionStatus(StrEnum):
     UNAVAILABLE = "unavailable"
 
 
+class SynthesisOutcome(StrEnum):
+    """Why this run ended where it did.
+
+    ``status`` alone cannot carry the acceptance evidence the competition Gate
+    needs: a provider that was never configured, a transport failure and a
+    judgement the scope guard refused are all ``unavailable``, but only the last
+    one demonstrates that the out-of-scope guard actually fired against a real
+    model response.  Keeping them apart is what stops an honest degradation from
+    later being read as a successful arbitration.
+    """
+
+    ACCEPTED = "accepted"
+    PROVIDER_NOT_CONFIGURED = "provider_not_configured"
+    PROVIDER_CALL_FAILED = "provider_call_failed"
+    REJECTED_OUT_OF_SCOPE = "rejected_out_of_scope"
+    # A configured Final Supervisor that has no synthesis pass at all; the
+    # composition is still valid, there is simply nothing to arbitrate.
+    SUPERVISOR_WITHOUT_SYNTHESIS = "supervisor_without_synthesis"
+
+
 class ScopeViolation(ValueError):
     """The model cited something it was not given."""
 
@@ -115,6 +135,20 @@ class FinalSupervisionJudgement(BaseModel):
         return value
 
 
+class SynthesisAttempt(BaseModel):
+    """One synthesis attempt, with the evidence a Gate reviewer has to see."""
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    judgement: FinalSupervisionJudgement | None
+    status: SupervisionStatus
+    outcome: SynthesisOutcome
+    reason: str
+    scope_check: dict[str, Any]
+    call: dict[str, Any]
+    trace_events: tuple[TraceEvent, ...]
+
+
 class FinalSupervisionBundle(BaseModel):
     """Everything the E lane produced for one run, ready for trace and product."""
 
@@ -123,7 +157,12 @@ class FinalSupervisionBundle(BaseModel):
     result: FinalSupervisionResult
     judgement: FinalSupervisionJudgement | None = None
     status: SupervisionStatus
+    # Required: a default here would let a caller silently mislabel why a run
+    # degraded, which is the one thing the acceptance evidence must not do.
+    outcome: SynthesisOutcome
     reason: str
+    scope_check: dict[str, Any] = Field(default_factory=dict)
+    call: dict[str, Any] = Field(default_factory=dict)
     deterministic_severity_floor: str
     conflicts: tuple[CompetitionConflict, ...] = ()
     agent_result: AgentResultEnvelope
@@ -173,7 +212,8 @@ class LLMFinalSupervisor:
         verified = list(inputs.document_supervision.verified_risks) if inputs.document_supervision else []
         floor = severity_floor(verified)
         payload = self._payload(composed, inputs, conflicts, unsettled_risks, rejected_risks, floor)
-        judgement, status, reason, trace = self._synthesise(payload, case_id=case_id, run_id=run_id)
+        attempt = self._synthesise(payload, case_id=case_id, run_id=run_id)
+        judgement, status, reason = attempt.judgement, attempt.status, attempt.reason
 
         result = composed.model_copy(
             update={
@@ -183,7 +223,13 @@ class LLMFinalSupervisor:
                         "schema_version": self.schema_version,
                         "prompt_version": self.prompt_version,
                         "status": status.value,
+                        "outcome": attempt.outcome.value,
                         "reason": reason,
+                        # True only when the scope guard refused a real model
+                        # response; a missing provider never proves this.
+                        "fail_closed": attempt.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE,
+                        "scope_check": attempt.scope_check,
+                        "call": attempt.call,
                         "deterministic_severity_floor": floor,
                         "judgement": judgement.model_dump(mode="json") if judgement else None,
                     },
@@ -198,7 +244,10 @@ class LLMFinalSupervisor:
             result=result,
             judgement=judgement,
             status=status,
+            outcome=attempt.outcome,
             reason=reason,
+            scope_check=attempt.scope_check,
+            call=attempt.call,
             deterministic_severity_floor=floor,
             conflicts=tuple(conflicts),
             agent_result=AgentResultEnvelope(
@@ -219,7 +268,7 @@ class LLMFinalSupervisor:
                     "probability_claimed": False,
                 },
             ),
-            trace_events=trace,
+            trace_events=attempt.trace_events,
         )
 
     @staticmethod
@@ -318,13 +367,47 @@ class LLMFinalSupervisor:
             )
         return evidence
 
-    def _synthesise(
-        self, payload: dict[str, Any], *, case_id: str, run_id: str
-    ) -> tuple[FinalSupervisionJudgement | None, SupervisionStatus, str, tuple[TraceEvent, ...]]:
+    def _call_record(self, latency_fallback: int) -> dict[str, Any]:
+        """The provider trace the Gate asks to be retained, whatever the outcome.
+
+        A response the scope guard refused still came from a real provider call,
+        so its identity is recorded there too; that is what makes a fail-closed
+        run auditable rather than merely absent.
+        """
+
+        metadata = getattr(self.llm_provider, "last_call_metadata", None)
+        return {
+            "provider_name": (
+                (metadata.provider_name if metadata else None) or getattr(self.llm_provider, "name", None)
+            ),
+            "model_name": metadata.model_name if metadata else None,
+            "prompt_version": self.prompt_version,
+            "request_id": metadata.request_id if metadata else None,
+            "raw_response_hash": metadata.raw_response_hash if metadata else None,
+            "latency_ms": metadata.latency_ms if metadata else latency_fallback,
+        }
+
+    def _synthesise(self, payload: dict[str, Any], *, case_id: str, run_id: str) -> SynthesisAttempt:
         if self.llm_provider is None:
             reason = "LLM provider is not configured; the deterministic composition is retained in full"
-            return None, SupervisionStatus.UNAVAILABLE, reason, (
-                self._trace(case_id, run_id, "unavailable", reason=reason),
+            scope_check = {
+                "status": "not_applicable",
+                "reason": "no provider was configured, so no judgement was produced to check",
+            }
+            outcome = SynthesisOutcome.PROVIDER_NOT_CONFIGURED
+            return SynthesisAttempt(
+                judgement=None,
+                status=SupervisionStatus.UNAVAILABLE,
+                outcome=outcome,
+                reason=reason,
+                scope_check=scope_check,
+                call={},
+                trace_events=(
+                    self._trace(
+                        case_id, run_id, "unavailable",
+                        reason=reason, outcome=outcome, scope_check=scope_check,
+                    ),
+                ),
             )
         started = perf_counter()
         try:
@@ -336,26 +419,61 @@ class LLMFinalSupervisor:
             )
             if not isinstance(result, FinalSupervisionJudgement):
                 result = FinalSupervisionJudgement.model_validate(result)
-            self._validate_scope(result, payload)
+            scope_check = self._validate_scope(result, payload)
         except Exception as exc:
+            latency = max(0, int((perf_counter() - started) * 1000))
+            refused = isinstance(exc, ScopeViolation)
+            outcome = (
+                SynthesisOutcome.REJECTED_OUT_OF_SCOPE if refused
+                else SynthesisOutcome.PROVIDER_CALL_FAILED
+            )
             reason = f"LLM final supervision unavailable: {type(exc).__name__}: {exc}"
-            return None, SupervisionStatus.UNAVAILABLE, reason, (
-                self._trace(
-                    case_id, run_id, "unavailable", reason=reason,
-                    latency_ms=max(0, int((perf_counter() - started) * 1000)),
+            scope_check = (
+                {"status": "failed", "violation": str(exc)} if refused
+                else {
+                    "status": "not_applicable",
+                    "reason": "the provider call returned no judgement to check",
+                }
+            )
+            return SynthesisAttempt(
+                judgement=None,
+                status=SupervisionStatus.UNAVAILABLE,
+                outcome=outcome,
+                reason=reason,
+                scope_check=scope_check,
+                # A failed transport has no call identity worth asserting; a
+                # refused response does, so it is kept.
+                call=self._call_record(latency) if refused else {},
+                trace_events=(
+                    self._trace(
+                        case_id, run_id, "unavailable", reason=reason, latency_ms=latency,
+                        outcome=outcome, scope_check=scope_check,
+                    ),
                 ),
             )
-        metadata = getattr(self.llm_provider, "last_call_metadata", None)
-        return result, SupervisionStatus.AVAILABLE, "grounded supervisory synthesis available", (
-            self._trace(
-                case_id, run_id, "completed",
-                latency_ms=metadata.latency_ms if metadata else max(0, int((perf_counter() - started) * 1000)),
-                provider_name=metadata.provider_name if metadata else getattr(self.llm_provider, "name", None),
-                model_name=metadata.model_name if metadata else None,
-                request_id=metadata.request_id if metadata else None,
-                raw_response_hash=metadata.raw_response_hash if metadata else None,
-                evidence_ids=sorted({item for finding in result.key_findings for item in finding.evidence_ids}),
-                structured_output=result.model_dump(mode="json"),
+        call = self._call_record(max(0, int((perf_counter() - started) * 1000)))
+        return SynthesisAttempt(
+            judgement=result,
+            status=SupervisionStatus.AVAILABLE,
+            outcome=SynthesisOutcome.ACCEPTED,
+            reason="grounded supervisory synthesis available",
+            scope_check=scope_check,
+            call=call,
+            trace_events=(
+                self._trace(
+                    case_id, run_id, "completed",
+                    latency_ms=call["latency_ms"],
+                    provider_name=call["provider_name"],
+                    model_name=call["model_name"],
+                    request_id=call["request_id"],
+                    raw_response_hash=call["raw_response_hash"],
+                    evidence_ids=sorted(
+                        {item for finding in result.key_findings for item in finding.evidence_ids}
+                    ),
+                    structured_output=result.model_dump(mode="json"),
+                    outcome=SynthesisOutcome.ACCEPTED,
+                    scope_check=scope_check,
+                ),
             ),
         )
 
@@ -373,8 +491,12 @@ class LLMFinalSupervisor:
         raw_response_hash: str | None = None,
         evidence_ids: Sequence[str] = (),
         structured_output: dict[str, Any] | None = None,
+        outcome: SynthesisOutcome = SynthesisOutcome.ACCEPTED,
+        scope_check: dict[str, Any] | None = None,
     ) -> TraceEvent:
-        details: dict[str, Any] = {"schema_version": self.schema_version}
+        details: dict[str, Any] = {"schema_version": self.schema_version, "outcome": outcome.value}
+        if scope_check is not None:
+            details["scope_check"] = scope_check
         if reason:
             details["reason"] = reason
         if not evidence_ids:
@@ -406,8 +528,15 @@ class LLMFinalSupervisor:
         )
 
     @staticmethod
-    def _validate_scope(judgement: FinalSupervisionJudgement, payload: dict[str, Any]) -> None:
-        """Reject the whole judgement if any cited id or number was not supplied."""
+    def _validate_scope(
+        judgement: FinalSupervisionJudgement, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Reject the whole judgement if any cited id or number was not supplied.
+
+        Returns the accounting a Gate reviewer needs -- what was cited, out of
+        how much was supplied -- so that "no out-of-scope reference" is a
+        measured statement about this run rather than an assertion about the code.
+        """
 
         risk_groups = ("verified_risks", "unsettled_risks", "rejected_risks")
         allowed_risks = {
@@ -468,6 +597,22 @@ class LLMFinalSupervisor:
         if any(term in lowered for term in _FORBIDDEN_TERMS):
             raise ScopeViolation("supervisory synthesis used prediction vocabulary")
 
+        return {
+            "status": "passed",
+            "cited_risk_ids": sorted(cited_risks),
+            "cited_evidence_ids": sorted(cited_evidence),
+            "cited_conflict_ids": sorted(cited_conflicts),
+            "supplied_risk_id_count": len(allowed_risks),
+            "supplied_evidence_id_count": len(allowed_evidence),
+            "supplied_conflict_id_count": len(allowed_conflicts),
+            "out_of_scope_reference_count": 0,
+            "deterministic_severity_floor": floor,
+            "overall_risk": judgement.overall_risk,
+            "severity_floor_respected": True,
+            "invented_number_count": 0,
+            "prediction_vocabulary_used": False,
+        }
+
 
 __all__ = [
     "ConflictAssessment",
@@ -481,5 +626,7 @@ __all__ = [
     "ScopeViolation",
     "SupervisionFinding",
     "SupervisionStatus",
+    "SynthesisAttempt",
+    "SynthesisOutcome",
     "severity_floor",
 ]

@@ -17,6 +17,11 @@ import pytest
 from ipo_risk.core.config import load_settings
 from ipo_risk.core.container import DependencyContainer, default_registry
 from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor
+from ipo_risk.runtime.submission_artifacts import (
+    CaseRunArtifacts,
+    build_agent_reasoning_log,
+    build_gate_e1_evidence,
+)
 from ipo_risk.schemas import IPOAnalysisRequest, TaskStatus
 from ipo_risk.services.analysis_service import IPOAnalysisService
 from ipo_risk.workflows.v04_competition import V04CompetitionWorkflow
@@ -94,6 +99,56 @@ def test_every_trace_event_names_an_actor_a_tool_and_accounts_for_evidence(resul
             or event["details"].get("no_evidence_reason")
         )
         assert accounted, event
+
+
+def _case_artifacts(result, config: str = "configs/v045_competition_offline.yaml") -> CaseRunArtifacts:
+    """Assemble the submission artifacts exactly as the demo runner does."""
+    diagnostics = _diagnostics(result)
+    runtime = diagnostics["competition_runtime"]
+    return CaseRunArtifacts(
+        case_id="ipo_2024_02410",
+        company_name="同源康医药-B",
+        stock_code="2410.HK",
+        listing_date="2024-08-20",
+        config=config,
+        result=json.loads(result.model_dump_json()),
+        sidecar=runtime["sidecar"],
+        composition=result.metadata["final_supervision"],
+        supervision_llm=diagnostics["final_supervision_llm"],
+        conflicts=diagnostics["conflict_detection"],
+        rechecks=diagnostics["targeted_recheck"],
+        traceability=runtime["traceability"],
+        verification={"source_filename": "fixture.pdf", "sha256_matches_frozen_catalog": True},
+    )
+
+
+def test_the_reasoning_log_covers_every_trace_event_of_a_real_run(result) -> None:
+    """The submission log is a rendering of the run, so it cannot be shorter."""
+    artifacts = _case_artifacts(result)
+    log = build_agent_reasoning_log(artifacts)
+    assert len(log["steps"]) == len(artifacts.sidecar["trace_events"])
+    assert log["accounting"]["unaccounted_step_count"] == 0
+    produced = {
+        evidence_id
+        for event in artifacts.sidecar["trace_events"]
+        for evidence_id in event["evidence_ids"]
+    }
+    cited = {item for step in log["steps"] for item in step["evidence_ids"]}
+    assert cited <= produced
+
+
+def test_the_gate_evidence_is_built_from_what_the_run_actually_recorded(result) -> None:
+    """Gate E1 evidence comes off the run, not off the script that wrote it out.
+
+    This run degrades honestly, so every Gate condition must read as unmet: that
+    is the reading the acceptance depends on.
+    """
+    evidence = build_gate_e1_evidence(_case_artifacts(result))
+    assert evidence["synthesis_outcome"] is not None, "the run must record why it degraded"
+    assert evidence["successful_llm_arbitration"] is False
+    assert evidence["deterministic_fallback_used"] is True
+    assert evidence["satisfied"] is False
+    assert evidence["unmet_conditions"]
 
 
 def test_an_unavailable_provider_degrades_the_synthesis_without_losing_composition(result) -> None:
@@ -187,3 +242,15 @@ def test_a_grounded_llm_judgement_reaches_the_result_metadata(tmp_path) -> None:
     assert cited <= every_risk_id and cited
     # The synthesis is attached to, not substituted for, the frozen composition.
     assert result.metadata["final_supervision"]["metadata"]["creates_no_new_risk"] is True
+    # An accepted synthesis records what it cited and the call that produced it.
+    assert synthesis["outcome"] == "accepted"
+    assert synthesis["scope_check"]["status"] == "passed"
+    assert synthesis["scope_check"]["out_of_scope_reference_count"] == 0
+    assert synthesis["call"]["prompt_version"] == "v04_final_supervision_v1"
+
+    # ...and it still cannot satisfy Gate E1, because a mock is not a real provider.
+    evidence = build_gate_e1_evidence(_case_artifacts(result))
+    assert evidence["synthesis_outcome"] == "accepted"
+    assert evidence["out_of_scope_reference_check"]["status"] == "passed"
+    assert evidence["provider_is_real_remote"] is False
+    assert evidence["satisfied"] is False
