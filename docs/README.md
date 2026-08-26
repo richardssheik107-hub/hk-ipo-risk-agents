@@ -7,7 +7,7 @@
 | 文档 | 作用 |
 |---|---|
 | `../README.md` | 项目入口与当前摘要 |
-| `COMPETITION_METRIC_PROTOCOL.md` | **比赛指标唯一评价口径：M1–M5、Gold、Top-K、5D、解释评分、split** |
+| `COMPETITION_METRIC_PROTOCOL.md` | **比赛指标唯一评价口径：M1–M5、Existing Gold、Top-K、5D、split** |
 | `V0.4_RELEASE_ACCEPTANCE.md` | **唯一当前 Gate / blocker 状态源** |
 | `ROADMAP.md` | 只记录尚未关闭的执行路线 |
 | `V04_FIVE_PERSON_EXECUTION_PLAN.md` | A/B/C/D/E ownership、handoff、merge boundary |
@@ -15,7 +15,7 @@
 | `SUBMISSION_RUNBOOK.md` | 最终安装、benchmark、3-case、readiness、打包与 freeze 操作手册 |
 | `PROJECT_SPEC.md` | 产品边界与不可破坏原则 |
 | `ARCHITECTURE.md` | 当前 runtime 架构 |
-| `DATA_SCHEMA.md` | 当前公共/比赛 sidecar schema；metric artifact 字段必须与代码/协议一致 |
+| `DATA_SCHEMA.md` | 当前公共/比赛 sidecar schema |
 | `COMPETITION_DATA_OVERVIEW.md` | 数据范围、split、Gold/Validation/Blind 边界 |
 | `research/V04_DATA_READINESS.md` | 数据就绪技术事实 |
 | `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 旧 10-case governed offline diagnostic baseline 实测证据 |
@@ -25,7 +25,7 @@ Machine-readable metric freeze：
 
 ```text
 configs/v045_competition_metric_protocol.json
-protocol_version = v045_competition_metric_protocol_v1
+protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
 ```
 
 `AGENTS.md` 是跨版本工程治理规则，优先级高于叙述性文档。
@@ -42,33 +42,42 @@ protocol_version = v045_competition_metric_protocol_v1
 6. 其他 active docs；
 7. research、历史 completion report、Git history。
 
-重要区别：历史报告里的 `Recall@5`、旧 risk set 或旧 target 字段保留原始语义；它们不会因为 metric-v1 发布而被追溯改写。
+历史报告里的 Recall@5、旧 risk set 或旧 target 字段保留原始语义，不因新协议追溯改写。
 
-## Metric-v1 解释规则
+## Metric-v2 解释规则
 
-从本协议冻结后，正式比赛表述统一为：
+正式比赛表述统一为：
 
 ```text
-M1 Risk official-aligned Accuracy >=80%
-   + Positive Recall / Macro F1 anti-gaming guardrails
+M1 Existing-Gold Risk Accuracy >=80%
+   project target >=85%
 
-M2 Evidence Group Coverage Recall >=85%
-   Recall@1/@3/@5/@10/@20 仅为 secondary ranking diagnostics
+M2 Existing-Gold Evidence Coverage Recall >=85%
+   project target >=88%
+   Recall@1/@3/@5/@10/@20 仅为 diagnostics
 
-M3 Traceability = 100%
+M3 Traceability =100%
 
 M4 Explanation Quality
-   5 dimensions, >=2 human reviewers, project target mean >=4.0/5
+   沿用当前 final product rubric
 
 M5 1D/5D/20D/60D
-   primary 5D significant drop = return_5d <= -10%
+   primary 5D significant drop = return_5d <= -10%（项目定义）
 ```
 
-赛题没有规定 Recall@5 作为官方 Evidence 指标，也没有规定 5D 的数值阈值；上述 Top-K 拆分与 -10% 是项目在 Validation 重评前冻结的透明内部 protocol。
+M1/M2 Gold policy：
+
+```text
+Existing Expert Annotation / Oracle Gold only
+no new manual annotation
+no existing Gold modification
+UNJUDGED != negative
+no manual semantic Evidence regrouping
+```
+
+现有 inventory：101 annotations / 100 valid / 98 official materialized。实际 evaluable support 由只读代码统计。
 
 ## 当前状态快照
-
-当前 main / active branch 所承接的事实：
 
 - 3 个真实 2024 招股书 offline E2E 3/3 completed，完整性 3/3；
 - 三案例 measured traceability 均为 1.0；
@@ -76,10 +85,10 @@ M5 1D/5D/20D/60D
 - E 已实现 reasoning log / case report / machine Gate-E1 evidence；
 - A 已实现 submission readiness、Blind/provenance/determinism audit、artifact index、Runbook 与 fail-closed packager；
 - B 旧 10-case offline baseline：Risk P/R/F1=0%，Evidence Recall@5=20%，Real LLM=0；
-- 该 20% 只作为 legacy diagnostic，不再等同于官方 `>=85%` 的 M2 primary metric；
-- B 尚需 real-LLM measurement + metric-v1 Gold/evaluator；
+- 该 20% 只作为 legacy diagnostic，不等同官方 M2 primary；
+- B/A 下一步不是补 Gold，而是 Existing-Gold coverage audit + evaluator + real-LLM Development optimization；
 - D 尚需 final 1D/5D/20D/60D + frozen 5D metrics；
-- E 尚需 final 3-case real-provider acceptance + explanation-quality artifact；
+- E 尚需 final 3-case real-provider acceptance；
 - 2025 Blind y 仍未访问。
 
 精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
@@ -105,13 +114,14 @@ M5 1D/5D/20D/60D
 - 记录稳定技术设计且仍有当前消费者；
 - 作为 governed research / annotation evidence。
 
-`COMPETITION_METRIC_PROTOCOL.md` 与 `SUBMISSION_RUNBOOK.md` 均属于正式比赛 contract，长期保留。
+`COMPETITION_METRIC_PROTOCOL.md` 与 `SUBMISSION_RUNBOOK.md` 属于正式比赛 contract。
 
 ## 更新责任
 
-- **A**：README、Metric Protocol governance、Gate、Roadmap、ownership、release/submission、readiness/audit/package；
-- **B**：metric-v1 Document Gold/evaluator、Risk/Evidence benchmark、Document semantic evidence；
+- **A**：README、Metric Protocol governance、Existing-Gold evaluator/manifest contract、Gate、Roadmap、release/submission；
+- **B**：real-LLM Document optimization、Risk/Evidence benchmark；
 - **C**：Market technical evidence；
-- **D**：5D definition materialization、Outcome/model/evaluation artifacts；
-- **E**：Supervisor/Trace/Product + explanation-quality evidence；
+- **D**：Outcome/model/evaluation artifacts；
+- **E**：Supervisor/Trace/Product / explanation-quality evidence；
+- Existing Expert Gold 在比赛收尾阶段由任何 lane 都不得修改；
 - shared architecture/schema/metric contract 变更必须由 A 做 cross-lane review。

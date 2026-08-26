@@ -18,80 +18,131 @@
 - 3-case offline measured traceability = 1.0；
 - E reasoning log / case report / Gate-E1 renderer；
 - A readiness / Blind / provenance / determinism / artifact index / Runbook / packager；
-- `v045_competition_metric_protocol_v1` definition + machine-readable config。
+- Existing Expert Gold / Oracle annotation inventory 已冻结；
+- `v045_competition_metric_protocol_v2_existing_gold_only` 已定义。
 
-除非出现回归或直接影响比赛 Gate，不再对这些模块做架构探索。
+除非出现回归或直接影响比赛 hard Gate，不再扩架构。
 
-## P0 — B：M1 Risk Extraction closure
+## P0 — B/A：M1/M2 Existing-Gold closure
 
-当前旧 10-case offline diagnostic baseline：
+### Scope freeze
+
+从现在开始，M1/M2 **不再做任何新增人工标注**：
 
 ```text
-Risk P/R/F1 = 0 / 0 / 0
-Real LLM cases = 0
+Existing Expert Annotation / Oracle Gold only
++ read-only deterministic normalization
++ real-LLM/code optimization
 ```
 
-metric-v1 primary families：
+明确停止：
+
+- 新建 20-case Gold annotation task；
+- 为五个 competition-priority risk family 补样本；
+- 新增 negative 标注以计算更漂亮的 Precision/F1；
+- 人工重新组织 Evidence Groups；
+- 看模型错误后修改 Gold；
+- 把未标注项当作不存在。
+
+现有 inventory：
 
 ```text
-redemption_rights
-related_party_transaction
-customer_concentration
-supplier_concentration
-cash_burn_pressure
+annotation inventory   101
+valid annotations      100
+official materialized   98
 ```
 
-执行顺序：
+实际 M1/M2 support 由只读 coverage audit 统计，不能预先假设 98 家全部对每个 risk 都可评价。
+
+### M1 — Risk Extraction
+
+Primary：
 
 ```text
-1. 固定 20-case Development target allowlist
-2. 当前 10 cases 可纳入；补齐 family coverage 前先冻结新 allowlist
-3. 2+ reviewer 建立 Gold Risk Units
-4. real-provider run first，禁止先看结果改 metric
-5. freeze prediction
-6. evaluate official-aligned Accuracy / Precision / Positive Recall / Macro F1 / per-risk
-7. error taxonomy
-8. Development-only targeted remediation
-9. rerun same evaluator
+Existing-Gold Official-aligned Accuracy
+= correct evaluable positive Existing-Gold Risk Units
+  / all evaluable positive Existing-Gold Risk Units
 ```
 
-Primary Gate：
+Gate：
 
 ```text
-Official-aligned Risk Extraction Accuracy >=0.80
+Official pass >=0.80
 Project target >=0.85
-Positive Recall >=0.82
-Macro F1 >=0.82
 ```
 
-Accuracy 分母使用 positive Gold Risk Units，不允许 negative-heavy true-negative accuracy 刷分。
-
-## P0 — B：M2 Evidence Group Coverage closure
-
-旧 `Evidence Recall@5=20%` 只保留为 legacy diagnostic，不再当官方 `>=85%` 的直接口径。
-
-正式优化链：
+必须披露：
 
 ```text
-Gold Evidence Groups
-→ Candidate retrieval
-→ Reranking
-→ Final Evidence selection
-→ RiskItem / Verifier
+evaluable positive support
+correct positive count
+per-risk support
+per-risk correct / recall
 ```
 
-工程目标：
+`Precision` / `Macro F1` 只有旧 Gold 本身提供足够明确的 exhaustive positive/negative judgment 时才报告；否则：
 
 ```text
-Candidate Retrieval Recall@20 >=0.95
-Reranked Recall@10           >=0.90
-Evidence Group Coverage Recall >=0.85 official pass
+NOT_AVAILABLE_FROM_EXISTING_GOLD
+```
+
+不得为了得到这些指标再补标。
+
+### M2 — Evidence
+
+Primary：
+
+```text
+Existing-Gold Evidence Coverage Recall
+= covered evaluable existing Evidence Units
+  / all evaluable existing Evidence Units
+```
+
+Gate：
+
+```text
+Official pass >=0.85
 Project target >=0.88
 ```
 
-Recall@1/@3/@5/@10/@20 全部报告，但只作为排序诊断。
+Primary 不固定 Top-5。继续报告：
 
-最终 Evidence 不固定只能 5 条；按风险复杂度和多样性动态保留足够证据。
+```text
+Recall@1/@3/@5/@10/@20
+Candidate Recall@20
+Reranked Recall@10
+```
+
+这些只用于定位 Retriever/ranking 问题。旧 `Recall@5=20%` 仍只是 legacy offline diagnostic。
+
+### 执行顺序
+
+```text
+1. 对既有 Expert Gold 做只读 coverage audit
+2. 生成 evaluable-unit manifest + source hash
+3. 从既有 Development Gold 选一个固定小 debug subset（仅为迭代速度）
+4. 跑 real-provider Document chain
+5. 用同一 Existing-Gold evaluator 评分
+6. 自动 failure taxonomy
+7. 只在 Development 优化：Retriever / ranking / Prompt / extraction / normalization / RiskItem reconciliation / Verifier
+8. 重复直到 Full Development Existing-Gold benchmark 达标或时间到
+9. 冻结代码 / Prompt / evaluator / manifest
+10. 对全部可评价 Existing Validation Gold 做一次性确认
+```
+
+正式 Development benchmark 不再是“20家”，而是：
+
+```text
+ALL evaluable existing 2020–2023 Expert Gold
+```
+
+Validation：
+
+```text
+ALL evaluable existing 2024 Expert Gold
+```
+
+不得因 Validation 结果继续调优。
 
 ## P0 — D：M5 Multi-horizon / 5D package
 
@@ -109,127 +160,75 @@ evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-metric-v1 Primary 5D：
+Primary：
 
 ```text
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-Robustness：Development return_5d bottom 20%，只在 Development 计算一次并冻结。
+至少报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有给绝对 5D 及格线，不为过 Gate 事后选阈值。
 
-至少报告：
+## P1 — E：Real-provider Final Supervisor / M3 / M4
 
-```text
-Precision
-Recall
-F1
-PR-AUC
-ROC-AUC
-Top-10% risk hit rate
-Top-20% risk hit rate
-base prevalence
-```
-
-赛题没有规定绝对 5D 及格线，所以 D 不允许为“过 Gate”事后创造阈值。目标是协议固定、完整、可复现，并透明比较 no-skill/base-rate、document-only、market-only、combined（可用时）。
-
-## P1 — E：Real-provider Final Supervisor acceptance
-
-同一 final 3-case matrix：
-
-```text
-2410.HK
-2460.HK
-1318.HK
-```
+Final 3-case matrix：2410.HK / 2460.HK / 1318.HK。
 
 必须：
 
 - real provider；
 - `outcome=accepted`；
-- per-case 与 matrix `gate_e1.satisfied=true`；
+- `gate_e1.satisfied=true`；
 - provider/model/prompt/request/hash/latency 完整；
-- in-scope reference check PASS；
-- severity floor 不降低；
-- fallback 仍是正确降级，但不能计 successful arbitration。
+- scope check PASS；
+- severity floor preserved；
+- final real-provider traceability = 1.0。
 
-## P1 — E：M4 Explanation Quality
-
-新增最终 artifact：
-
-```text
-explanation_quality.json
-```
-
-5 维评分：
-
-```text
-Evidence grounding
-Logical consistency
-Conflict handling
-Re-check quality
-Final conclusion
-```
-
-至少 2 名人类 reviewer，LLM 仅辅助。内部目标：
-
-```text
-mean >=4.0/5
-formal case minimum >=3.0/5
-```
+M4 继续使用现有 explanation rubric；本次 Existing-Gold 变更不增加任何新的 M4 标注工作。
 
 ## P1 — C：Final case Market validation
 
-C 主体代码已完成，只需确认：
+只做最终 3-case governed Market state / trace 验收；不新增 ComparableIPOSkill、不补造 industry/PIT proxy。
 
-- Core materialization 可解析；
-- Core-only 不 crash；
-- Extended 只有真实 governed artifact 才启用；
-- industry return 不可用时保留 PIT missing reason；
-- Market LLM 不生成不存在的数字；
-- Market trace namespaced evidence/calculation/no-evidence accounting 完整。
+## P1 — A：Metric-v2 integration / release freeze
 
-不新增 ComparableIPOSkill，不为 M5 临时发明不可证明 PIT 的 feature。
+A 剩余：
 
-## P1 — A：Metric-v1 integration / release freeze
-
-A 基础收口工具开发已完成。剩余是对 metric-v1 handoff 的 final integration：
-
-1. review/merge B/C/D/E small PR；
-2. 确认 B/D/E artifact 均记录 `metric_protocol_version=v045_competition_metric_protocol_v1`；
-3. legacy-only Recall@5 或旧 bool target 不得作为 M1/M2 final PASS；
-4. latest-main CI；
-5. final 3-case AI smoke；
-6. Blind / provenance / determinism actual PASS；
-7. final metric dashboard / artifact completeness；
-8. artifact index；
+1. review/merge B/C/D/E final PR；
+2. 更新 readiness 读取 `v045_competition_metric_protocol_v2_existing_gold_only`；
+3. 验证 B artifact 声明 `new_manual_annotations_added=false`、`existing_gold_modified=false`；
+4. legacy Recall@5 不得作为 M2 PASS；
+5. latest-main CI；
+6. final 3-case AI smoke；
+7. Blind / provenance / determinism actual PASS；
+8. final metric dashboard / artifact index；
 9. submission ZIP security audit；
-10. release note；
-11. hard Gate 全绿后 `COMPETITION_READY`。
+10. hard Gate 全绿后 `COMPETITION_READY`。
 
-## P2 — Evidence bbox grounding
+## P2 — Evidence bbox
 
-page grounding 已可用，bbox 仍 optional quality gap。若最终 demo 需要精确高亮：B 负责 parser/Evidence，A 审 schema/version/hash；UI 不得猜坐标。
+保持 optional。提交前只有在不影响 P0/P1 时才处理。
 
 ## 明确停止的工作
 
 比赛提交前不做：
 
+- **任何新的 M1/M2 人工 Gold 标注**；
 - broad model tuning / new model families；
 - full Retriever redesign；
 - historical industry PIT research；
 - broad new market acquisition；
 - full 438-case LLM run；
 - 大规模 feature search；
-- 纯装饰 UI；
+- presentation-only expansion；
+- PR-F 替代训练；
 - proxy/zero fill unavailable market facts。
 
 ## Completion condition
 
 ```text
-M1 Risk official-aligned Accuracy >=80% + guardrails
-+ M2 Evidence Group Coverage Recall >=85%
+M1 Existing-Gold Risk Accuracy >=80%
++ M2 Existing-Gold Evidence Coverage Recall >=85%
 + M3 real final traceability =100%
-+ M4 explanation-quality internal Gate
++ M4 current explanation-quality Gate
 + M5 complete 1D/5D/20D/60D + frozen 5D evaluation
 + C final Market validation
 + E final real-provider acceptance
