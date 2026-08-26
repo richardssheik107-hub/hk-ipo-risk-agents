@@ -10,8 +10,6 @@
 
 ## 当前能力
 
-主链已经从单纯离线规则系统推进为：
-
 ```text
 Prospectus PDF
 → Parser / Retriever / Evidence
@@ -21,7 +19,7 @@ Prospectus PDF
 → governed Market-X
 → IPOHeatSkill / MarketRegimeSkill
 → bounded Market LLM interpretation
-→ Rule / optional frozen Model signal
+→ Rule / optional authentic frozen Model signal
 → Conflict detection
 → one bounded targeted re-check
 → LLM Final Supervisor with deterministic fallback
@@ -31,22 +29,75 @@ Prospectus PDF
 → A-owned readiness / Blind / provenance / determinism / package gate
 ```
 
-核心治理原则不变：
+核心治理原则：
 
 - LLM 负责语义理解与综合，不负责权威数值计算；
 - 精确计算由 Python `Calculation` 完成；
 - 正式 `RiskItem` 必须有真实 `Evidence`；
 - LLM 只能引用输入作用域内的 Evidence / Risk / Conflict；
-- 市场事实必须来自 PIT-governed Market-X，缺失不得补零或造代理值；
-- 未校准模型分数只能称 `uncalibrated_model_score`，不能称概率；
-- 2025 Blind outcome 在正式授权前保持未访问；
-- frozen PR-A–PR-G 结果不因比赛展示需要而重写。
+- 市场事实必须来自 PIT-governed Market-X，缺失不得补零或造代理；
+- 未校准模型分数只能称 `uncalibrated_model_score`；
+- 2024 Validation 不做 post-hoc tuning；2025 Blind outcome 未授权前不访问；
+- frozen PR-A–PR-G 不因比赛展示需要而重写。
+
+## Competition Metric Protocol v1
+
+赛题原文件给出了几个目标，但没有给出完整 evaluator 公式。项目现已冻结：
+
+```text
+docs/COMPETITION_METRIC_PROTOCOL.md
+configs/v045_competition_metric_protocol.json
+```
+
+Protocol ID：
+
+```text
+v045_competition_metric_protocol_v1
+```
+
+正式比赛指标解释从现在开始统一采用：
+
+| Metric | Official requirement | Project primary definition |
+|---|---:|---|
+| M1 Risk extraction | >=80% | attribute-correct positive Gold Risk Unit Accuracy |
+| M2 Evidence recall | >=85% | Evidence Group Coverage Recall，**不是 Recall@5** |
+| M3 Traceability | 100% | accounted Agent/Tool/Evidence-or-reason trace |
+| M4 Explanation | “高” | 5维、2+ human reviewers，内部目标 >=4.0/5 |
+| M5 Post-listing | 1D/5D/20D/60D；5D更高权重 | 5D primary，`return_5d <= -10%` 为预先冻结的 significant-drop 定义 |
+
+### M1 primary risk families
+
+为对齐赛题点名的风险范围，metric-v1 的 primary families 固定为：
+
+```text
+redemption_rights
+related_party_transaction        # additive competition sidecar
+customer_concentration
+supplier_concentration
+cash_burn_pressure               # metric family mapped to existing cash_runway/cash-burn calculation
+```
+
+这只是比赛评价映射，不静默改动 frozen formal baseline risk registry。
+
+### M2 不再把 Recall@5 当成官方 85%
+
+当前历史 offline benchmark 的：
+
+```text
+Evidence Recall@1/@3/@5 = 20% / 20% / 20%
+```
+
+继续保留为**排序/端到端诊断事实**，但赛题原文没有指定 Top-K，因此不能再写成“官方 Evidence Recall 当前为 20%”。最终 official-aligned Evidence Gate 使用：
+
+```text
+covered Gold Evidence Groups / all Gold Evidence Groups >= 85%
+```
+
+Recall@1/@3/@5/@10/@20 作为 secondary diagnostics。
 
 ## 最新实测状态
 
 ### 1. 三个真实招股书案例已完成 offline E2E
-
-冻结 catalog 驱动的真实 PDF runner 已验证并执行：
 
 | Case | Stock | Pages | Status | Conflicts | Re-checks | Traceability |
 |---|---|---:|---|---:|---:|---:|
@@ -54,13 +105,11 @@ Prospectus PDF
 | `ipo_2024_02460` | `2460.HK` | 579 | completed | 7 | 3 | 1.0 |
 | `ipo_2024_01318` | `1318.HK` | 617 | completed | 7 | 3 | 1.0 |
 
-三份 PDF 均通过 SHA-256、字节数和物理页数校验；结构化 workflow error 为 0；运行没有读取任何 outcome label，也没有访问 2025 Blind y。
+三份 PDF 均通过 SHA-256、字节数和物理页数校验；结构化 workflow error 为 0；未读取任何 outcome label，也没有访问 2025 Blind y。
 
-这关闭了“至少 3 个真实 PDF 案例能否跑通”的工程 Gate，但**不等于最终比赛质量 Gate 已关闭**。
+### 2. Role B 仍是第一质量 blocker
 
-### 2. Role B 文档智能当前是主要质量 blocker
-
-10 个 2020–2023 Development 真实 PDF 的 governed offline benchmark 已完成：
+当前正式测得的是旧 10-case governed **offline diagnostic baseline**：
 
 ```text
 Risk Precision / Recall / F1      0% / 0% / 0%
@@ -69,49 +118,33 @@ Physical-page correctness         100%
 Real LLM cases                    0
 ```
 
-因此比赛要求的风险抽取与 Evidence 指标目前**没有被证明达标**。这个结果是离线基线，不是 real-LLM benchmark；B 下一步必须先用真实 provider 在固定 Development benchmark 上测量，再按错误归因做最小修复。
+这不能证明 metric-v1 的 M1/M2 达标。B 下一步必须：
 
-2460.HK 和 1318.HK 的离线三案例运行进一步说明了问题位置：多个 risk code 已检索到 Evidence，但没有形成正式风险项，缺口主要落在 `Evidence → structured extraction → RiskItem / Verifier`。
+```text
+real-LLM measurement first
+→ build/freeze metric-v1 Development Gold
+→ candidate Retrieval Recall@20
+→ reranked Recall@10
+→ Evidence Group Coverage Recall
+→ structured extraction / reconciliation / Verifier
+→ M1/M2 rerun
+```
+
+当前重点 failure mode 仍是 `Evidence → structured extraction → RiskItem / Verifier`。
 
 ### 3. Market Intelligence 主体已实现
 
-已实现并接入正式 AI runtime：
+已实现 governed `MarketContext`、IPOHeatSkill、MarketRegimeSkill、bounded Market LLM、PIT/missingness 与 Trace/Final Supervisor handoff。最终只剩同一 3-case submission matrix 上的 Market state / trace accounting 验收。
 
-- governed `MarketContext`；
-- `IPOHeatSkill`；
-- `MarketRegimeSkill`；
-- bounded structured Market LLM interpretation；
-- 显式 missingness / PIT provenance；
-- Market Trace 与 Final Supervisor handoff。
+### 4. LLM Final Supervisor / Product 已实现，real-provider acceptance 仍 open
 
-真实 Volcengine/OpenAI-compatible provider 已在两只真实 IPO 上验证 Market LLM 路径。`ComparableIPOSkill` 与 PIT-safe industry return 不是当前提交 blocker；没有可靠数据时保持 unavailable。
+三案例 offline matrix traceability 均为 1.0；reasoning log、case report 和 machine Gate-E1 evidence 已实现。当前 measured offline matrix 仍为 **0/3 successful LLM arbitration**，最终需 real-provider accepted run。
 
-最终只剩同一 3-case submission matrix 上的 Market state / trace accounting 验收。
-
-### 4. LLM Final Supervisor / Multi-Agent / Product 已实现
-
-已实现：
-
-- deterministic conflict detection；
-- 每个冲突最多一次 targeted re-check，并有总预算；
-- Verifier challenge；
-- LLM Final Supervisor；
-- deterministic fail-closed fallback；
-- Agent / Tool / Evidence trace；
-- Evidence Viewer；
-- Human Review sidecar；
-- 五个 Streamlit 比赛工作区；
-- per-case `agent_reasoning_log.json/.md`；
-- `case_report.md`；
-- machine-checked `gate_e1_evidence.json`。
-
-三案例 offline matrix 的 measured traceability 均为 1.0。Gate E1 现在只在真实远端 provider 成功输出、scope check 通过且 call trace 完整时才接受；offline/mock/fallback 均不会被误记为成功仲裁。
-
-当前 measured offline matrix 仍是 **0/3 successful LLM arbitration**，因此最终还需要在同一案例矩阵上完成 real-provider Final Supervisor 验收。
+metric-v1 另外要求 E 在最终案例上生成 `explanation_quality.json`，用至少 2 名人类 reviewer 对 Evidence grounding、logical consistency、conflict handling、re-check quality、final conclusion 评分。
 
 ### 5. Outcome / Model 最终比赛包仍未闭合
 
-仓库已有 1D / 5D / 20D / 60D outcome foundation；正式 frozen PR-C 仍是 5D 研究结果。比赛提交还需要 D 产出可复现的最小多周期结果包：
+D 仍需生成：
 
 ```text
 return_1d
@@ -125,107 +158,58 @@ evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-原始 frozen PR-F per-case runtime / sanitized handoff 若仍不可恢复，Model Channel 必须继续明确 `unavailable`；禁止为了前端完整而重训、重构或反转分数。
-
-### 6. A 的最终提交工具已实现，真实 freeze 仍等待 B/C/D/E handoff
-
-A 已实现：
+5D 是 primary business horizon。metric-v1 已在 Validation 重评前固定：
 
 ```text
-submission_readiness.json
-blind_audit.json
-provenance_audit.json
-determinism_audit.json
-artifact_index.json
-SUBMISSION_RUNBOOK.md
-COMPETITION_READY-only submission packager
+significant_drop_5d = (return_5d <= -0.10)
 ```
 
-Readiness 是 fail closed：missing handoff 不会被推断成 PASS；packager 只有在全部 measured Gate 真正通过时才允许生成 ZIP，并拒绝 PDF、secret-bearing file、token/private key 与本地绝对路径。
+并要求报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% 与 Top-20% risk-bucket hit rate。赛题没有给这些指标的绝对合格线，因此项目不会伪造一个“官方阈值”。
+
+### 6. A submission tooling 已实现，但需要 metric-v1 handoff 对齐
+
+A 已实现 readiness、Blind/provenance/determinism audit、artifact index、Runbook 与 fail-closed packager。最终 freeze 前，B/D/E 新 handoff 必须按 `COMPETITION_METRIC_PROTOCOL.md` 输出 metric-v1 字段；A readiness 只允许消费真实、可审计 artifact，legacy-only Recall@5 不能作为最终 M2 PASS。
 
 ## 当前比赛 Gate
 
 | Gate | Status |
 |---|---|
-| 公共 competition runtime contracts | PASS |
-| Main CI / integration gate | PASS baseline |
-| Legal / Business LLM runtime path | IMPLEMENTED，需 final real-LLM benchmark |
+| competition runtime contracts | PASS |
 | Market Intelligence implementation + AI wiring | PASS |
-| 3 个真实 PDF offline E2E | PASS |
-| Conflict / bounded re-check / Trace / Human Review | PASS implementation |
-| 3-case measured traceability | PASS = 1.0 |
-| E reasoning log / case report / machine Gate-E1 | PASS implementation |
-| A readiness / audit / Runbook / packager tooling | PASS implementation |
-| B Risk / Evidence benchmark | **FAIL / OPEN** |
-| C final-matrix Market validation | **OPEN** |
-| D 1D/5D/20D/60D submission artifacts | **OPEN** |
-| Real-provider Final Supervisor on final matrix | **OPEN** |
-| Evidence bbox upstream grounding | OPEN quality gap；page grounding 已可用 |
-| Authentic frozen PR-F per-case handoff | OPTIONAL for competition UI / still missing for historical PR-H closure |
+| 3 real PDF offline E2E | PASS |
+| Conflict / re-check / Trace / Human Review | PASS implementation |
+| 3-case offline traceability | PASS = 1.0 |
+| A readiness / audit / Runbook / packager | PASS implementation |
+| Metric Protocol v1 definition | **FROZEN** |
+| B metric-v1 M1 Risk benchmark | **OPEN / P0** |
+| B metric-v1 M2 Evidence Group Recall | **OPEN / P0** |
+| D 1D/5D/20D/60D + frozen 5D evaluation | **OPEN / P0** |
+| E real-provider Final Supervisor | **OPEN / P1** |
+| E explanation-quality evaluation | **OPEN / P1** |
+| C final-matrix Market validation | **OPEN / P1** |
+| Evidence bbox upstream grounding | P2 quality gap |
 | Final real audits / bundle / release freeze | **OPEN** |
 
-详细且唯一的当前 Gate 状态见 `docs/V0.4_RELEASE_ACCEPTANCE.md`。
-
-## 五人职责
-
-- **A — Tech Lead / Integration / Release / Submission**：公共契约、集成 Gate、PR/CI、readiness/audit/Runbook/package 与最终 release freeze。
-- **B — LLM Document Intelligence**：Legal / Business 语义抽取、Risk/Evidence benchmark、Evidence grounding。
-- **C — Market Intelligence**：PIT MarketContext、Skills、Market LLM interpretation。
-- **D — Outcome / Model / Evaluation**：1D/5D/20D/60D、最终结果文件、authentic PR-F signal if available。
-- **E — LLM Final Supervisor / Multi-Agent / Product**：冲突、复核、Supervisor、Trace、Human Review、Streamlit、submission case artifacts。
-
-具体交接与文件边界见 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`。
+详细状态见 `docs/V0.4_RELEASE_ACCEPTANCE.md`。
 
 ## 文档入口
 
+- Metric contract：`docs/COMPETITION_METRIC_PROTOCOL.md`
 - 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
 - 最终提交 Runbook：`docs/SUBMISSION_RUNBOOK.md`
 - 剩余路线：`docs/ROADMAP.md`
 - 五人执行：`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`
 - 赛题映射：`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`
-- 架构：`docs/ARCHITECTURE.md`
-- Schema：`docs/DATA_SCHEMA.md`
-- 数据：`docs/COMPETITION_DATA_OVERVIEW.md`
-- B 当前实测：`docs/V045_ROLE_B_REAL_BENCHMARK_REPORT.md`
-- E 当前实测：`docs/V04_ROLE_E_COMPLETION_REPORT.md`
+- 数据与 split：`docs/COMPETITION_DATA_OVERVIEW.md`
+- 当前 B 离线历史基线：`docs/V045_ROLE_B_REAL_BENCHMARK_REPORT.md`
 
-冻结 completion reports、`reports/frozen/*` 和 research 文档属于历史/研究证据，不作为“当前 Gate”来源。
+冻结 completion reports、`reports/frozen/*` 和 research 文档属于历史/研究证据，不因 metric-v1 改写其原始实测事实。
 
 ## 快速运行
 
-安装：
-
 ```bash
 pip install -e ".[dev,retrieval-research]"
-```
-
-离线比赛 runtime：
-
-```bash
-IPO_RISK_CONFIG=configs/v045_competition_offline.yaml streamlit run app/streamlit_app.py
-```
-
-AI 比赛 runtime 需要本地提供 provider secrets；不要把密钥写入 Git：
-
-```bash
-IPO_RISK_CONFIG=configs/v045_competition_ai.yaml streamlit run app/streamlit_app.py
-```
-
-A-owned network-free integration gate：
-
-```bash
 python scripts/validate_competition_runtime.py
 ```
 
-A-owned final submission readiness：
-
-```bash
-python scripts/build_v045_submission_readiness.py \
-  --role-b-dir reports/v045_role_b \
-  --role-d-dir reports/v045_role_d \
-  --role-e-dir reports/v045_role_e_ai_final \
-  --output-dir reports/v045_submission \
-  --require-ready
-```
-
-最终 `COMPETITION_READY` 只能在 `docs/V0.4_RELEASE_ACCEPTANCE.md` 的开放 Gate 被实测关闭之后使用。
+最终 `COMPETITION_READY` 只能在 metric-v1 与其余 hard Gate 被真实数据关闭之后使用。
