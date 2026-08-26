@@ -1,221 +1,192 @@
 # HK IPO Risk Agents
 
-Evidence-backed multi-agent risk analysis and market-warning system for Hong Kong IPO prospectuses.
+面向港股 IPO 招股书风险识别、市场环境解释与可审计多 Agent 决策的比赛型原型系统。
 
-系统以真实招股书 Evidence 为基础，由 Financial / Legal / Business Agents、LLM semantic reasoning、deterministic Skills、Verifier、governed MarketContext、controlled re-check 与 Final Supervisor 形成可审计的港股 IPO 风险分析链。
+> 当前 package checkpoint：`v0.4.0`
+>
+> 当前比赛 runtime：`v0.4.5`
+>
+> 当前状态：**Competition closure in progress — 尚未标记 `COMPETITION_READY`**
 
-> 规则分和 `uncalibrated_model_score` 不是实际下跌概率，也不构成投资建议。
+## 当前能力
 
-## Current status — 2026-08-25
-
-```text
-v0.4.0 Competition Preview              RELEASE CANDIDATE
-v0.4.5 competition runtime              IMPLEMENTED / HARDENING
-v0.3 Document Intelligence              COMPLETE / FROZEN
-PR-A–PR-G                               COMPLETE / FROZEN
-Historical PR-H formal freeze           PARTIAL / BLOCKED
-Competition Final Sprint                ACTIVE
-Competition target                      v0.4.5 COMPETITION_READY
-```
-
-`v0.4.0` 与最终比赛验收分开：前者是当前 package/release checkpoint；`v0.4.5` 是比赛 runtime 和最终验收目标。只有赛题硬 Gate 全部闭合后才能标记 `COMPETITION_READY`。发布验收与剩余 blocker 见 [`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)。
-
-## Competition runtime now implemented
-
-当前 `configs/v045_competition_ai.yaml` 的主链已经实现：
+主链已经从单纯离线规则系统推进为：
 
 ```text
 Prospectus PDF
 → Parser / Retriever / Evidence
-→ Financial Agent + deterministic calculations
-→ Legal Agent + bounded LLM semantics
-→ Business Agent + bounded LLM semantics
+→ Financial deterministic analysis
+→ Legal / Business structured LLM analysis
 → Verifier / Document Supervisor
 → governed Market-X
 → IPOHeatSkill / MarketRegimeSkill
-→ MarketIntelligenceAgent + bounded LLM interpretation
-→ Rule signal + frozen Model signal if available
-→ deterministic conflict detection
-→ bounded targeted re-check
-→ LLM Final Supervisor synthesis
-→ Agent / Tool / Evidence trace
-→ Evidence Viewer / Human Review / Final Report
+→ bounded Market LLM interpretation
+→ Rule / optional frozen Model signal
+→ Conflict detection
+→ one bounded targeted re-check
+→ LLM Final Supervisor with deterministic fallback
+→ Agent / Tool / Evidence Trace
+→ Human Review
+→ Streamlit / report / submission artifacts
 ```
 
-Market Agent formal runtime wiring、LLM Final Supervisor、conflict detection、最多一次的 targeted re-check、Agent Trace、Evidence Viewer、Human Review 和五工作区 Streamlit 均已进入 `main`。缺失通道必须显式降级，不能用 mock、零值或代理变量补位。
+核心治理原则不变：
 
-### Market missingness contract
+- LLM 负责语义理解与综合，不负责权威数值计算；
+- 精确计算由 Python `Calculation` 完成；
+- 正式 `RiskItem` 必须有真实 `Evidence`；
+- LLM 只能引用输入作用域内的 Evidence / Risk / Conflict；
+- 市场事实必须来自 PIT-governed Market-X，缺失不得补零或造代理值；
+- 未校准模型分数只能称 `uncalibrated_model_score`，不能称概率；
+- 2025 Blind outcome 在正式授权前保持未访问；
+- frozen PR-A–PR-G 结果不因比赛展示需要而重写。
 
-`governed_pr_b_core` 可以在没有 C-lane Extended readiness 的情况下运行。此时 HSI / volatility / turnover 等 Extended-only feature 可能完全不在 `MarketContextView.observations` 中；Skill 必须把“feature 不存在”视为 `source_unavailable`，而不是访问空对象或制造数值。
+## 最新实测状态
 
-Competition config 默认：
+### 1. 三个真实招股书案例已完成离线 E2E
+
+冻结 catalog 驱动的真实 PDF runner 已验证并执行：
+
+| Case | Stock | Pages | Status | Conflicts | Re-checks | Traceability |
+|---|---|---:|---|---:|---:|---:|
+| `ipo_2024_02410` | `2410.HK` | 706 | completed | 6 | 3 | 1.0 |
+| `ipo_2024_02460` | `2460.HK` | 579 | completed | 7 | 3 | 1.0 |
+| `ipo_2024_01318` | `1318.HK` | 617 | completed | 7 | 3 | 1.0 |
+
+三份 PDF 均通过 SHA-256、字节数和物理页数校验；结构化 workflow error 为 0；运行没有读取任何 outcome label，也没有访问 2025 Blind y。
+
+这关闭了“至少 3 个真实 PDF 案例能否跑通”的工程 Gate，但**不等于最终比赛质量 Gate 已关闭**。
+
+### 2. Role B 文档智能当前是主要质量 blocker
+
+10 个 2020–2023 Development 真实 PDF 的 governed offline benchmark 已完成：
 
 ```text
-market_context              governed_pr_b_core
-market_extended_readiness   ""   # optional local governed artifact
+Risk Precision / Recall / F1      0% / 0% / 0%
+Evidence Recall@1 / @3 / @5       20% / 20% / 20%
+Physical-page correctness         100%
+Real LLM cases                    0
 ```
 
-因此 Core-only 运行允许 `MarketRegime = INSUFFICIENT_DATA`。若本地有经过治理的 Extended readiness，可通过 YAML 或环境变量 `IPO_RISK_MARKET_EXTENDED_READINESS` 显式接入；industry return 仍保持 PIT-blocked，不做替代。
+因此比赛要求的风险抽取与 Evidence 指标目前**没有被证明达标**。这个结果是离线基线，不是 real-LLM benchmark；B 下一步必须先用真实 provider 在固定 Development benchmark 上测量，再按错误归因做最小修复。
 
-## Real-case hardening status
+2460.HK 和 1318.HK 的离线三案例运行进一步说明了问题位置：多个 risk code 已检索到 Evidence，但没有形成正式风险项，缺口主要落在 `Evidence → structured extraction → RiskItem / Verifier`。
 
-当前正式 demo matrix：
+### 3. Market Intelligence 主体已实现
+
+已实现并接入正式 AI runtime：
+
+- governed `MarketContext`；
+- `IPOHeatSkill`；
+- `MarketRegimeSkill`；
+- bounded structured Market LLM interpretation；
+- 显式 missingness / PIT provenance；
+- Market Trace 与 Final Supervisor handoff。
+
+真实 Volcengine/OpenAI-compatible provider 已在两只真实 IPO 上验证 Market LLM 路径。`ComparableIPOSkill` 与 PIT-safe industry return 不是当前提交 blocker；没有可靠数据时保持 unavailable。
+
+### 4. LLM Final Supervisor / Multi-Agent / Product 已实现
+
+已实现：
+
+- deterministic conflict detection；
+- 每个冲突最多一次 targeted re-check，并有总预算；
+- Verifier challenge；
+- LLM Final Supervisor；
+- deterministic fail-closed fallback；
+- Agent / Tool / Evidence trace；
+- Evidence Viewer；
+- Human Review sidecar；
+- 五个 Streamlit 比赛工作区。
+
+三案例离线矩阵的 measured traceability 均为 1.0。最终还需要在同一最终案例矩阵上完成真实 provider 的 LLM Final Supervisor 综合判断验证。
+
+### 5. Outcome / Model 最终比赛包仍未闭合
+
+仓库已有 1D / 5D / 20D / 60D outcome foundation；正式 frozen PR-C 仍是 5D 研究结果。比赛提交还需要 D 产出可复现的最小多周期结果包：
 
 ```text
-ipo_2024_02410   2410.HK   浙江同源康医药股份有限公司   2024-08-20
-ipo_2024_02460   2460.HK   华润饮料控股有限公司       2024-10-23
-ipo_2024_01318   1318.HK   毛戈平化妆品股份有限公司   2024-12-10
+return_1d
+return_5d
+return_20d
+return_60d
+
+test_predictions.csv
+multi_horizon_results.csv
+evaluation_summary.json
+ai_vs_offline_report.json
 ```
 
-2410.HK 已多次用于真实 E2E smoke。最新 AI smoke 暴露了 Core-only Market Intelligence 的 absent-feature bug：`'NoneType' object has no attribute 'missing_reason'`。代码现已将 absent source feature 映射为显式 `source_unavailable` 并新增 regression tests；该真实案例仍需在更新后的 `main` 上重跑后才能记为最终 PASS。
+原始 frozen PR-F per-case runtime / sanitized handoff 若仍不可恢复，Model Channel 必须继续明确 `unavailable`；禁止为了前端完整而重训、重构或反转分数。
 
-PR #128 的 E-lane真实受控案例已证明 conflict / re-check / trace 链可以工作：6 conflicts、3 controlled re-checks、22 trace events、83/83 Evidence refs resolved、overall traceability 1.0；该完成报告见 [`docs/V04_ROLE_E_COMPLETION_REPORT.md`](docs/V04_ROLE_E_COMPLETION_REPORT.md)。这不替代最终 3–5 case 验收。
+## 当前比赛 Gate
 
-## Competition requirements mapped to the product
+| Gate | Status |
+|---|---|
+| 公共 competition runtime contracts | PASS |
+| Main CI / integration gate | PASS baseline |
+| Legal / Business LLM runtime path | IMPLEMENTED，需 final benchmark |
+| Market Intelligence implementation + AI wiring | PASS |
+| 3 个真实 PDF offline E2E | PASS |
+| Conflict / bounded re-check / Trace / Human Review | PASS implementation |
+| 3-case measured traceability | PASS = 1.0 |
+| B Risk / Evidence benchmark | **FAIL / OPEN** |
+| D 1D/5D/20D/60D submission artifacts | **OPEN** |
+| Real-provider Final Supervisor on final matrix | **OPEN** |
+| Evidence bbox upstream grounding | OPEN quality gap；page grounding 已可用 |
+| Authentic frozen PR-F per-case handoff | OPTIONAL for competition UI / still missing for historical PR-H closure |
+| Final runbook / submission archive / release freeze | **OPEN** |
 
-```text
-数百页 PDF 招股书解析
-→ 标准化财务指标 + 非标隐性风险
-→ Financial / Legal / Business / Market / Decision roles
-→ Retriever / deterministic Calculation / IPO Heat / Market Regime Skills
-→ Evidence-grounded LLM semantics
-→ Agent conflict / targeted re-check / verification
-→ 基本面 + 市场情绪联合预警
-→ 1D / 5D / 20D / 60D 真实表现验证
-→ Evidence / page / bbox / Agent trace
-→ Final Report / Streamlit / Human Review
-```
+详细且唯一的当前 Gate 状态见 `docs/V0.4_RELEASE_ACCEPTANCE.md`。
 
-Submission targets:
+## 五人职责
 
-```text
-关键风险要素抽取准确率       >= 80%
-关键 Evidence Recall          >= 85%
-Agent / Tool / Evidence trace = 100%
-1D / 5D / 20D / 60D outcome   required
-3–5 stable real IPO demos      required
-```
+- **A — Tech Lead / Integration / Release / Submission**：公共契约、集成 Gate、PR/CI、最终 runbook 与 release freeze。
+- **B — LLM Document Intelligence**：Legal / Business 语义抽取、Risk/Evidence benchmark、Evidence grounding。
+- **C — Market Intelligence**：PIT MarketContext、Skills、Market LLM interpretation。
+- **D — Outcome / Model / Evaluation**：1D/5D/20D/60D、最终结果文件、authentic PR-F signal if available。
+- **E — LLM Final Supervisor / Multi-Agent / Product**：冲突、复核、Supervisor、Trace、Human Review、Streamlit。
 
-## Five-person ownership
+具体交接与文件边界见 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`。
 
-### A — Tech Lead / Integration / Release
+## 文档入口
 
-公共 contract、GitHub、CI、E2E、real-case matrix、release、submission。A 不替其他成员重做领域算法；所有公共 Schema / workflow 边界由 A 审核。
+- 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
+- 剩余路线：`docs/ROADMAP.md`
+- 五人执行：`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`
+- 赛题映射：`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`
+- 架构：`docs/ARCHITECTURE.md`
+- Schema：`docs/DATA_SCHEMA.md`
+- 数据：`docs/COMPETITION_DATA_OVERVIEW.md`
+- B 当前实测：`docs/V045_ROLE_B_REAL_BENCHMARK_REPORT.md`
+- E 当前实测：`docs/V04_ROLE_E_COMPLETION_REPORT.md`
 
-### B — LLM Document Intelligence
+冻结 completion reports、`reports/frozen/*` 和 research 文档属于历史/研究证据，不作为“当前 Gate”来源。
 
-Legal + Business 真实 LLM、Evidence-grounded semantic extraction、related-party / redemption / litigation / commercialization / core-product 等非标风险和最小 Document benchmark。
+## 快速运行
 
-### C — Market Intelligence / Market Agent
-
-governed PIT market facts、IPO Heat / Market Regime Skills、MarketContext、LLM market interpretation 与 market provenance；LLM 不生成行情事实。
-
-### D — Quant / Outcome / Evaluation
-
-恢复 frozen PR-F product signal（若原 handoff 可得）、1D/5D/20D/60D outcome、预测结果表、Offline-vs-AI 效果验证和 submission evaluation artifacts；不做大规模新模型搜索。
-
-### E — LLM Final Supervisor / Multi-Agent / Product
-
-LLM Final Supervisor、conflict detection、controlled re-check、Agent Trace、Evidence Viewer、Human Review、最终 Streamlit 与 real demo closure。
-
-Detailed ownership: [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md).
-
-## What is already real
-
-```text
-Official 2020–2024 IPO universe       438
-Production Document-X                 438 / 438, 100 dims
-Market-X Core                         438 / 438, 30 positions
-5D outcome                            424 / 438
-Canonical model-ready                 424 = 354 Dev + 70 Val
-Oracle v2 strict                      96 = 77 Dev + 19 Val
-HSI Extended readiness                438 / 438
-HKEX turnover 20D readiness           438 / 438
-production industry return              0 / 438, PIT_BLOCKED
-2025 Blind y accessed                 NO
-```
-
-Frozen historical reports and `reports/frozen/*.json` remain authoritative for those measured claims.
-
-## LLM responsibilities
-
-```text
-Legal       complex rights / litigation / compliance semantics
-Business    core product / pipeline / commercialization / revenue semantics
-Market      qualitative interpretation of governed PIT facts
-Supervisor  bounded synthesis / conflict / uncertainty / re-check decision support
-```
-
-Python remains authoritative for exact calculations, schema/identity, PIT checks, feature materialization, hashes, model scoring and reproducibility. Formal `RiskItem` requires Evidence; exact numeric claims require deterministic `Calculation`.
-
-## Model policy
-
-Frozen PR-F remains an auxiliary signal. Current frozen 2024 Full Production ROC-AUC:
-
-```text
-M   0.4246
-P   0.5000
-PM  0.4246
-```
-
-The sprint does not retune 2024, invert score direction or start broad model-family search. If the original frozen PR-F runtime/handoff cannot be recovered, `Model Channel = unavailable` and the rest of the governed pipeline continues honestly.
-
-## Remaining competition gates
-
-```text
-[ ] rerun 2410.HK after Market missingness fix and close remote AI diagnostics
-[ ] complete >=3 stable real IPO E2E cases
-[ ] produce 1D / 5D / 20D / 60D evaluation package
-[ ] produce Risk extraction / Evidence Recall benchmark artifacts
-[ ] confirm real-provider LLM Final Supervisor behavior on final case matrix
-[ ] recover original frozen PR-F runtime if available, otherwise keep Model unavailable
-[ ] generate final prediction table / reasoning logs / case reports / runbook
-[ ] final CI + deterministic + provenance + blind audit
-[ ] package submission and bump/release only when Gate passes
-```
-
-## Governance
-
-```text
-2020–2023  Development / Training
-2024       Validation
-2025       Blind Test
-```
-
-2024 is not recycled into a tuning set; 2025 Blind y remains closed until formally authorized.
-
-## Quick start
-
-### Windows PowerShell
-
-```powershell
-python -m pip install -e ".[dev,retrieval-research]"
-$env:PYTHONPATH = "src"
-python -m streamlit run app/streamlit_app.py
-```
-
-选择 `v0.4.5 比赛版（AI）` 可运行 competition AI path。Secrets only come from environment variables. Do not commit `.env`, API keys, local absolute paths, licensed raw data or large runtime artifacts.
-
-### Linux / macOS
+安装：
 
 ```bash
-python -m pip install -e '.[dev,retrieval-research]'
-export PYTHONPATH=src
-python -m streamlit run app/streamlit_app.py
+pip install -e ".[dev,retrieval-research]"
 ```
 
-## Active documentation
+离线比赛 runtime：
 
-1. [`docs/README.md`](docs/README.md)
-2. [`docs/ROADMAP.md`](docs/ROADMAP.md)
-3. [`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
-4. [`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`](docs/V04_FIVE_PERSON_EXECUTION_PLAN.md)
-5. [`docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](docs/END_TO_END_CLOSED_LOOP_MASTER_PLAN.md)
-6. [`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md)
-7. [`docs/PROJECT_SPEC.md`](docs/PROJECT_SPEC.md)
-8. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-9. [`docs/DATA_SCHEMA.md`](docs/DATA_SCHEMA.md)
-10. [`docs/COMPETITION_DATA_OVERVIEW.md`](docs/COMPETITION_DATA_OVERVIEW.md)
-11. [`docs/research/V04_DATA_READINESS.md`](docs/research/V04_DATA_READINESS.md)
+```bash
+IPO_RISK_CONFIG=configs/v045_competition_offline.yaml streamlit run app/streamlit_app.py
+```
 
-Frozen completion reports remain historical records; active docs describe the current competition state and must not rewrite frozen claims.
+AI 比赛 runtime 需要本地提供 provider secrets；不要把密钥写入 Git：
+
+```bash
+IPO_RISK_CONFIG=configs/v045_competition_ai.yaml streamlit run app/streamlit_app.py
+```
+
+A-owned network-free integration gate：
+
+```bash
+python scripts/validate_competition_runtime.py
+```
+
+最终 `COMPETITION_READY` 只能在 `docs/V0.4_RELEASE_ACCEPTANCE.md` 的开放 Gate 被实测关闭之后使用。

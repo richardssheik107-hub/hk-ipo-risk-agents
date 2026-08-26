@@ -1,133 +1,97 @@
-# Documentation Index
+# Documentation Index and Governance
 
-> Audit date: **2026-08-25**  
-> PR-A–PR-G: **COMPLETE / FROZEN**  
-> Historical PR-H formal freeze: **PARTIAL / BLOCKED**  
-> v0.4.5 competition runtime: **IMPLEMENTED / HARDENING**  
-> Current mode: **Competition closure — real-case validation + metrics + submission**
+本文档是仓库文档治理入口。**当前状态只能由当前 Gate 文档、代码 validator、冻结 manifest 和最新实测报告共同确定，不能从历史 completion report 的“next step”语句推断。**
 
-本目录采用“少量 active docs + frozen completion records + stable technical references”的维护方式。Active docs 描述当前比赛状态；frozen completion reports 与 `reports/frozen/*.json` 只记录历史事实，不为了新开发结果回写。
+## 当前权威文档
 
-## 1. Source-of-truth hierarchy
+| 文档 | 作用 |
+|---|---|
+| `../README.md` | 项目入口与当前摘要 |
+| `V0.4_RELEASE_ACCEPTANCE.md` | **唯一当前 Gate / blocker 状态源** |
+| `ROADMAP.md` | 只记录尚未关闭的执行路线 |
+| `V04_FIVE_PERSON_EXECUTION_PLAN.md` | A/B/C/D/E ownership、handoff、merge boundary |
+| `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` | 赛题要求 → 系统能力 → 验收 artifact 映射 |
+| `PROJECT_SPEC.md` | 产品边界与不可破坏原则 |
+| `ARCHITECTURE.md` | 当前 runtime 架构 |
+| `DATA_SCHEMA.md` | 当前公共/比赛 sidecar schema 说明 |
+| `COMPETITION_DATA_OVERVIEW.md` | 数据范围、split、PIT/blind 边界 |
+| `research/V04_DATA_READINESS.md` | 数据就绪技术事实 |
+| `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 当前 governed offline benchmark 实测证据 |
+| `V04_ROLE_E_COMPLETION_REPORT.md` | E 当前实现与 3-case matrix 实测证据 |
 
-发生冲突时：
+`AGENTS.md` 是跨版本工程治理规则，优先级高于叙述性文档。
 
-1. executable contracts / Pydantic / Protocol / validator；
-2. `reports/frozen/*.json`；
-3. formal completion report / Gate review；
-4. current active docs；
-5. stable research reference / Git history。
+## Source-of-truth hierarchy
 
-## 2. Active documents
+出现冲突时按以下顺序裁定：
 
-| Document | Current purpose |
-| --- | --- |
-| [`V0.4_RELEASE_ACCEPTANCE.md`](V0.4_RELEASE_ACCEPTANCE.md) | 当前 v0.4.0 / v0.4.5 验收、已关闭项与剩余 blocker |
-| [`ROADMAP.md`](ROADMAP.md) | 从“继续开发”切换到 competition closure 的最短路径 |
-| [`V04_FIVE_PERSON_EXECUTION_PLAN.md`](V04_FIVE_PERSON_EXECUTION_PLAN.md) | A/B/C/D/E ownership 与依赖边界 |
-| [`END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`](END_TO_END_CLOSED_LOOP_MASTER_PLAN.md) | 从 baseline 到 Competition Release 的总链路 |
-| [`COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`](COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md) | 赛题要求逐项映射、验收与 submission |
-| [`PROJECT_SPEC.md`](PROJECT_SPEC.md) | Competition product scope / LLM responsibility / definition of done |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | LLM + deterministic + Market + Supervisor + Product 边界 |
-| [`DATA_SCHEMA.md`](DATA_SCHEMA.md) | frozen baseline 与 competition runtime sidecars/contracts |
-| [`COMPETITION_DATA_OVERVIEW.md`](COMPETITION_DATA_OVERVIEW.md) | 数据宇宙、1D/5D/20D/60D 与 PIT 数据要求 |
-| [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) | measured readiness 与数据缺口 |
+1. 代码中的 validator / Pydantic / Protocol / fail-closed guard；
+2. `reports/frozen/*.json` 与其 hash-bound frozen manifest；
+3. 已冻结 completion report 中的**实测事实**；
+4. `V0.4_RELEASE_ACCEPTANCE.md` 当前状态；
+5. 其他 active docs；
+6. research、历史 completion report、Git history。
 
-Historical implementation evidence such as [`V04_ROLE_E_COMPLETION_REPORT.md`](V04_ROLE_E_COMPLETION_REPORT.md) stays as a completion record and is not a live roadmap.
+历史文档可以保存当时的 Gate、下一步和限制，但它们的“当前/下一步”文本不会自动随 main 更新。
 
-## 3. Current implemented competition chain
+## 当前状态快照
 
-```text
-Prospectus PDF
-→ Parser / Retriever / Evidence
-→ Financial / Legal / Business Agents
-→ deterministic Calculation + Verifier
-→ governed Market-X
-→ IPO Heat / Market Regime Skills
-→ Market Intelligence + bounded LLM interpretation
-→ Rule + optional frozen Model channel
-→ Conflict detection
-→ bounded targeted re-check
-→ LLM Final Supervisor
-→ Agent / Tool / Evidence Trace
-→ Evidence Viewer / Human Review / Final Report
-```
+截至 main 合入 PR #133：
 
-PR #126 closed formal Market Intelligence runtime wiring. PR #128 implemented the E-lane LLM Final Supervisor, conflict/re-check, trace and product surface. These are no longer roadmap-only features.
+- 3 个真实 2024 招股书离线 E2E 已 3/3 completed，完整性校验 3/3；
+- 三案例 Agent / Tool / Evidence measured traceability 均为 1.0；
+- Market Intelligence 已实现并正式接入 AI runtime，真实 provider 的 Market interpretation 已在两只真实 IPO 上通过；
+- LLM Final Supervisor / conflict / bounded re-check / Human Review / 五工作区已实现；
+- Role B 的 10-case governed offline benchmark **FAIL**：Risk P/R/F1 = 0%，Evidence Recall@5 = 20%；
+- B 尚未完成固定 benchmark 上的 real-LLM measurement；
+- D 尚未关闭最终 1D/5D/20D/60D submission package；
+- 最终 3-case matrix 上的 real-provider Final Supervisor synthesis 尚未验收；
+- Evidence page grounding 可用，parser 尚不产出 bbox；
+- historical PR-H authentic frozen PR-F runtime/handoff 条件仍未闭合；
+- 2025 Blind y 仍未访问。
 
-## 4. Current hardening issue closed in code
+精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
 
-A real 2410.HK v0.4.5 AI smoke exposed a Core-only Market Intelligence integration defect:
+## 历史 / 冻结证据
 
-```text
-stage       market_intelligence
-code        component_failure
-message     'NoneType' object has no attribute 'missing_reason'
-recoverable true
-```
+以下类型默认**保留，不做“追当前状态”的编辑**：
 
-Root cause: a Market Skill treated “expected feature absent from `observations`” as though a `MarketObservation` object existed. The contract now distinguishes:
+- PR-A–PR-G completion reports；
+- Oracle v1/v2 completion/evaluation records；
+- `reports/frozen/*`；
+- annotation protocol / receipt / ledger；
+- Retriever、模型、数据源等 research technical notes；
+- `CHANGELOG.md` 历史 release ledger。
 
-```text
-explicit unavailable observation  → preserve its governed missing_reason
-absent optional source feature     → source_unavailable
-available observation              → consume only its numeric governed value
-```
+如历史 completion report 写有“PR-X is next / not started”，应理解为 freeze-time handoff state，而不是当前 Roadmap。
 
-This applies to both `IPOHeatSkill` and `MarketRegimeSkill`. Core-only Market-X therefore degrades to deterministic `INSUFFICIENT_DATA` where necessary instead of raising `component_failure`. No Extended value is imputed and no threshold is changed.
+## 已删除的过时/重复文档
 
-Real-case re-run is still required after pulling the fix; code-level closure is not the same as case-level acceptance.
+本轮 A 文档审计删除以下不再承担唯一事实职责的文档：
 
-## 5. Competition hard requirements
+- `END_TO_END_CLOSED_LOOP_MASTER_PLAN.md`：与 Roadmap、五人计划、比赛硬化计划高度重复，且 Gate 状态已漂移；
+- `DOCUMENTATION_AUDIT_2026-08-25.md`：一次性日期快照，本身会立即过时；治理规则已收敛到本文件；
+- `UI_DESIGN_REFERENCE_2026-08-24.md`：一次性 UI 设计参考，相关产品结构已实现并由代码/tests 约束；
+- `V045_ROLE_B_DOCUMENT_INTELLIGENCE_REPORT.md`：实现阶段报告已被 governed real benchmark 实测报告取代。
 
-```text
-关键风险要素抽取准确率       >= 80%
-关键 Evidence Recall          >= 85%
-Agent / Tool / Evidence trace = 100%
-上市首日 / 5D / 20D / 60D    required
-可运行原型 / API / UI         required
-测试预测表 / 推理日志 / Evidence / 典型案例 required
-人机复核能力                  required
-```
+Git history 仍完整保留这些记录。
 
-## 6. Current closure status
+## 文档生命周期规则
 
-```text
-Remote LLM provider boundary          IMPLEMENTED
-Legal / Business LLM path             IMPLEMENTED, benchmark pending
-Market Agent runtime wiring           COMPLETE
-Market missing-feature safety         FIXED IN CODE, real-case rerun pending
-Conflict / controlled re-check        COMPLETE
-LLM Final Supervisor implementation   COMPLETE, final online case validation pending
-Agent Trace                            COMPLETE; E real case measured 1.0
-Evidence Viewer / Human Review        COMPLETE
-3+ stable real E2E cases              OPEN
-1D / 5D / 20D / 60D package          OPEN
-Risk / Evidence benchmark             OPEN
-Frozen PR-F per-case handoff           OPEN / explicit unavailable allowed
-Submission package                    OPEN
-2025 Blind y accessed                 NO
-```
+新文档只有在满足至少一个条件时才应长期保留：
 
-## 7. Frozen measured facts
+- 定义当前唯一 contract / Gate / ownership；
+- 记录不可重建的冻结实测结果；
+- 记录稳定技术设计，且仍有当前消费者；
+- 作为 governed research / annotation evidence。
 
-```text
-Official cases                        438
-Production Document-X                 438 / 438, 100 dims
-Market-X Core                         438 / 438, 30 positions
-5D outcome                            424 / 438
-Canonical                             424 = 354 Dev + 70 Val
-Oracle v2 strict                      96 = 77 Dev + 19 Val
-HSI Extended readiness                438 / 438
-HKEX turnover 20D readiness           438 / 438
-production industry return              0 / 438, PIT_BLOCKED
-2025 Blind y accessed                 NO
-```
+禁止为了每一次 PR 新建长期“一次性 handoff / audit / preflight”文档。短期信息优先写 PR body；必须长期保留的内容合并进现有权威文档。
 
-## 8. Documentation rule
+## 更新责任
 
-- 不再新增按日期拆分的计划文档。
-- 不用 story 文档替代测试、artifact 或真实 E2E 证据。
-- 只有 execution contract、Gate 状态或 materially changed integration behavior 变化时更新 active docs。
-- 真实运行失败必须写成已知缺口；代码修复后必须区分“regression test 通过”和“真实案例已复跑通过”。
-- Frozen completion report 不回写为新的 current status；Current status 统一收敛到本索引、`ROADMAP.md` 与 `V0.4_RELEASE_ACCEPTANCE.md`。
+- **A**：README、Gate、Roadmap、ownership、release/submission docs；
+- **B**：Role-B benchmark / Document semantic evidence；
+- **C**：Market technical evidence；
+- **D**：Outcome/model/evaluation artifacts；
+- **E**：Supervisor/Trace/Product completion evidence；
+- shared architecture/schema 变更必须由 A 做 cross-lane review。

@@ -1,196 +1,164 @@
-# 赛事数据概览
+# Competition Data Overview
 
-> Audit snapshot: **2026-08-25**  
-> Purpose: 描述原始赛事数据宇宙、当前 frozen baseline 与 Competition Final Sprint 的数据交付要求。  
-> Measured readiness 以 [`research/V04_DATA_READINESS.md`](research/V04_DATA_READINESS.md) 为准。
+本文件记录比赛数据范围、split、主要 materialization 状态与数据治理边界。当前 Gate 见 `V0.4_RELEASE_ACCEPTANCE.md`。
 
-## 1. Raw competition data universe
+## 1. Official universe
 
-| 数据 | 规模 | 说明 |
-| --- | ---: | --- |
-| 招股书 | 565 份 | historical PDF corpus |
-| 公司资料 | 4501 行 / 25 列 | supplemental company data |
-| 证券资料 | 803 行 / 30 列 | supplemental security data |
-| 日行情 | 4,117,539 行 / 22 列 | governed EOD source |
-| 行情代码 | 3756 | `S_INFO_WINDCODE` |
-
-Historical document `source_year` 不是 modeling split authority。
-
-## 2. Official cohort / split
+正式 2020–2024 IPO universe：
 
 ```text
-2020–2023 official listing year → Development / Training
-2024 official listing year      → Validation
-2025 official listing year      → Blind Test
+438 cases
 ```
 
-Official 2020–2024 universe: **438 cases**。
+chronological split：
 
 ```text
-2020  125
-2021   97
-2022   78
-2023   68
-2024   70
+2020–2023  Development
+2024       Validation
+2025       Blind（feature-only / outcome 未授权前不可访问）
 ```
 
-## 3. Frozen baseline coverage
+## 2. Document data
+
+Production Document-X：
 
 ```text
-Production Document-X        438 / 438
-Market-X Core                438 / 438
-Governed EOD match            432 / 438 securities
-5D Outcome                    424 / 438
-Canonical model-ready         424 = 354 Dev + 70 Val
+438 / 438
+100 positions
 ```
 
-Frozen PR-A–PR-D artifacts 在 Final Sprint 中不原地重写。
-
-## 4. Market readiness
-
-### Available governed inputs
+比赛真实案例当前已验证 3 份 2024 招股书：
 
 ```text
-HSI return / volatility readiness       438 / 438
-HKEX Main Board + GEM turnover 20D      438 / 438
-recent_ipo_1d_sample_count              438 / 438
-recent_ipo_5d_sample_count              438 / 438
-recent_ipo_break_rate                   244 / 438 available
-recent_ipo_return_5d                    243 / 438 available
+ipo_2024_02410 / 2410.HK / 706 pages
+ipo_2024_02460 / 2460.HK / 579 pages
+ipo_2024_01318 / 1318.HK / 617 pages
 ```
 
-### Industry limitation
+三份均通过 frozen catalog 的 filename / SHA-256 / byte size / physical-page verification，并完成 offline competition E2E。
+
+此外 Role B 已对 10 个 2020–2023 Development PDF 完成 governed streaming benchmark input validation：10/10 found、10/10 SHA、10/10 page、10/10 analyzed。
+
+这证明输入治理与 parser/runtime 能运行，不证明 Document 风险质量达标。
+
+## 3. Market-X
+
+Frozen PR-B Core：
 
 ```text
-production industry_return_5d             0 / 438
-production industry_return_20d            0 / 438
+438 / 438
+30 positions = 15 raw + 15 missing indicators
+PIT governed
 ```
 
-原因仍为缺少 historical effective/listing-time company classification。禁止静态 current classification、proxy 或 neutral zero 冒充 PIT-safe feature。
-
-## 5. Competition Market data priority
-
-C 的 Final Sprint 只优先使用已经可治理、能直接支撑赛题的市场信息：
+Extended readiness：
 
 ```text
-HSI trend / volatility
-HKEX turnover / activity
-recent IPO count
-recent IPO break rate
-recent IPO 1D / 5D performance
-IPO Heat
-Market Regime
-optional PIT-safe comparable context
+HSI features              438 / 438
+HKEX turnover 20D         438 / 438
+production industry return 0 / 438
 ```
 
-每个 feature 必须记录：
+industry return 为 0/438 的原因是缺乏历史时点有效的 authoritative company→industry mapping。禁止使用未来 classification、静态映射或 zero-fill 伪装生产 PIT feature。
+
+Market Intelligence 可以在 Core-only 模式下部分运行；Extended source 缺失时必须保留 missing reason。
+
+## 4. Outcome data
+
+Frozen PR-C 5D governed outcome：
 
 ```text
-value
-availability / missing_reason
-as_of / cutoff
-source / provenance
-policy / feature version
+official cases       438
+available            424
+unavailable           14
+Development available 354
+Validation available   70
 ```
 
-## 6. Competition outcome requirement
-
-赛题要求结合：
+missing reasons：
 
 ```text
-上市首日
-上市后 5 个交易日
-上市后 20 个交易日
-上市后 60 个交易日
+missing_base_price    12
+no_eligible_session    2
 ```
 
-因此 D 必须建立独立 versioned sidecar：
+项目更早的 market foundation 已定义 1D / 5D / 20D / 60D 生成语义，但最终比赛多周期 materialization/result package 仍由 D 收口；不要把“schema/engine 存在”写成“final artifact 已完成”。
+
+## 5. Canonical modeling data
+
+Frozen canonical dataset：
 
 ```text
-return_1d
-return_5d
-return_20d
-return_60d
+424 model-ready
+354 Development
+70 Validation
 ```
 
-建议同时：
+Oracle v2 evaluation-only：
 
 ```text
-break_flag_1d
-significant_drop_5d
-max_drawdown_20d
-max_drawdown_60d
+98 materialized
+96 strict usable
+77 Development
+19 Validation
+142 features
 ```
 
-Frozen PR-C 5D 保持历史不变；新 sidecar 只作为 Competition validation layer。
+Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。
 
-## 7. Document / LLM data boundary
+## 6. Model artifacts
 
-LLM 只能读取已经进入其任务 scope 的 Evidence，不直接消费 Gold answer/page 或未来标签。
+Frozen PR-E/PR-F 研究结果保持历史事实。当前 competition runtime 只有在 authentic frozen PR-F per-case runtime 或 hash-bound sanitized handoff 可用时才展示 model score/driver。
 
-Production：
+若本地 handoff 不存在：
 
 ```text
-real Prospectus
-→ Parser / Retriever
-→ Evidence
-→ LLM semantic extraction
-→ Risk / Verifier
+Model Channel = unavailable
 ```
 
-Oracle：
+不得根据 cohort result 重建 per-case prediction，也不得为了 UI 完整重训模型。
 
-```text
-Reviewed Expert Gold
-→ evaluation-only Oracle-X
-```
+## 7. Real case use of 2024 Validation
 
-Oracle 不能进入 Production runtime。
+2024 案例可用于：
 
-## 8. Final submission data artifacts
+- fixed workflow smoke；
+- Evidence/Trace/Product validation；
+- 在不读取 outcome label 的情况下验证文档/市场/Agent 链路。
 
-D/A 最终统一生成：
+不得用于：
 
-```text
-evaluation/test_predictions.csv
-evaluation/multi_horizon_results.csv
-evaluation/risk_benchmark.*
-evaluation/evidence_benchmark.*
-evaluation/ai_vs_offline_report.*
-traces/agent_reasoning_logs/
-evidence/
-reports/
-```
+- 根据真实 2024 outcome 反复调 prompt/threshold/model；
+- 看完 2024 y 后决定 score inversion；
+- 把 Validation 变成开发集。
 
-`test_predictions.csv` 至少包含：
+PR #133 的 2460/1318 运行明确没有读取任何年份 outcome label，因此属于固定分析链验证，不是 outcome tuning。
 
-```text
-case_id
-stock_code
-risk_score
-risk_level
-model_status
-return_1d
-return_5d
-return_20d
-return_60d
-```
+## 8. 2025 Blind
 
-## 9. Source governance
+当前正式规则：
 
-- official membership controls eligibility；
-- official listing year controls split；
-- target IPO post-listing data cannot enter that IPO's X；
-- prior IPO outcome may enter Market context only after it was observable before target cutoff；
-- missing remains missing；
-- 2025 Blind y remains closed until formally authorized。
+- 可以准备 2025 feature-only inputs；
+- 未授权前不得读 2025 outcome/target；
+- schema/builder/validator 应 fail closed 防止 Blind y 进入 Development/Validation；
+- 每个 formal artifact/report 应保留 `blind_2025_accessed=false` 或等价可审计声明。
 
-## 10. Final data ownership
+## 9. Data → role ownership
 
-```text
-A  identity / contracts / submission data packaging
-B  Document Evidence / benchmark labels/results
-C  MarketContext / PIT provenance
-D  outcomes / ModelSignal / prediction/evaluation tables
-E  trace / human-review / case product consumption
-```
+- B：Prospectus / Evidence / Document benchmark；
+- C：PIT market features / MarketContext；
+- D：Outcome / model / evaluation outputs；
+- E：最终案例 analysis/trace/review artifacts；
+- A：catalog identity、cross-lane provenance、final submission audit。
+
+## 10. Current data-related blockers
+
+真正影响最终比赛提交的数据/产物缺口：
+
+1. B fixed Development benchmark 的 real-LLM predictions + metrics；
+2. D final 1D/5D/20D/60D result package；
+3. final matrix 的 local Market Core materialization/validation（若最终 demo 要展示 Market 通道）；
+4. real-provider Final Supervisor final matrix trace；
+5. optional Evidence bbox upstream coordinates。
+
+不把 historical industry mapping 研究或 broad new data acquisition 列为当前 blocker。
