@@ -1,6 +1,6 @@
 # Competition Data Overview
 
-本文件记录比赛数据范围、split、主要 materialization 状态与数据治理边界。当前 Gate 见 `V0.4_RELEASE_ACCEPTANCE.md`。
+本文件记录比赛数据范围、split、metric-v1 Gold/Validation/Blind 边界、主要 materialization 状态与数据治理规则。当前 Gate 见 `V0.4_RELEASE_ACCEPTANCE.md`；指标口径见 `COMPETITION_METRIC_PROTOCOL.md`。
 
 ## 1. Official universe
 
@@ -18,7 +18,45 @@ chronological split：
 2025       Blind（feature-only / outcome 未授权前不可访问）
 ```
 
-## 2. Document data
+## 2. Metric-v1 data governance
+
+Protocol：
+
+```text
+v045_competition_metric_protocol_v1
+```
+
+规则：
+
+- Development 可做 Gold annotation、error taxonomy、Prompt/code targeted remediation；
+- Validation 只做冻结 protocol 的一次性确认，不根据 2024 结果回头改 metric / threshold / model；
+- 2025 Blind y 未授权前不得访问；
+- metric allowlist、Gold schema、Risk family mapping、Evidence Group rules、5D threshold 必须在 Validation 重评前冻结。
+
+### Development metric-v1 target
+
+```text
+20 fixed Development cases
+5 primary risk families
+```
+
+当前旧 10-case governed benchmark 可以纳入，但不足部分需要在 prediction freeze 前补齐并冻结 allowlist。
+
+Primary families：
+
+```text
+redemption_rights
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
+```
+
+尽量保证每个 family 至少 5 positive Gold Units；若真实数据不足，使用全部可得 positive 并披露 support，不人为制造 positive。
+
+Gold 至少由 2 名人类 reviewer 做独立/交叉复核。
+
+## 3. Document data
 
 Production Document-X：
 
@@ -27,7 +65,7 @@ Production Document-X：
 100 positions
 ```
 
-比赛真实案例当前已验证 3 份 2024 招股书：
+比赛真实案例当前已验证：
 
 ```text
 ipo_2024_02410 / 2410.HK / 706 pages
@@ -37,11 +75,62 @@ ipo_2024_01318 / 1318.HK / 617 pages
 
 三份均通过 frozen catalog 的 filename / SHA-256 / byte size / physical-page verification，并完成 offline competition E2E。
 
-此外 Role B 已对 10 个 2020–2023 Development PDF 完成 governed streaming benchmark input validation：10/10 found、10/10 SHA、10/10 page、10/10 analyzed。
+Role B 旧 10-case 2020–2023 Development benchmark input validation：
 
-这证明输入治理与 parser/runtime 能运行，不证明 Document 风险质量达标。
+```text
+10/10 found
+10/10 SHA
+10/10 page
+10/10 analyzed
+```
 
-## 3. Market-X
+这证明输入治理与 parser/runtime 能运行，不证明 M1/M2 达标。
+
+## 4. Gold Risk Unit data
+
+M1 Gold Risk Unit 至少包含：
+
+```text
+case_id
+risk_family
+applicable
+required_attributes
+accepted_evidence_groups[]
+annotation_status
+reviewer_provenance
+```
+
+`applicable=true` 进入 official-aligned Risk Accuracy 分母；`applicable=false` 用于 false-positive/precision 统计，但不允许大量 negative 直接刷高 Primary Accuracy。
+
+数值属性使用 deterministic exact/tolerance rule；枚举使用 canonical value；条款语义使用预先写明的 canonical semantic criteria。
+
+## 5. Evidence Group data
+
+M2 不再把 Top-5 当 official primary denominator。
+
+Human Gold 以“支撑事实”建立 Evidence Group：
+
+```text
+risk unit
+→ evidence fact group A
+→ evidence fact group B
+→ ...
+```
+
+一个 group 可以包含多个等价 paragraph / table / page anchor。系统命中其中一个被预先接受的等价证据，即覆盖该 group。
+
+Primary：
+
+```text
+Evidence Group Coverage Recall
+= covered Gold groups / all Gold groups
+```
+
+Recall@1/@3/@5/@10/@20 仅作为检索/排序 diagnostics。
+
+当前旧 10-case offline `Evidence Recall@5=20%` 保留原始事实，但不能被直接解释为官方 `>=85%` 的 M2 当前值。
+
+## 6. Market-X
 
 Frozen PR-B Core：
 
@@ -54,25 +143,23 @@ PIT governed
 Extended readiness：
 
 ```text
-HSI features              438 / 438
-HKEX turnover 20D         438 / 438
-production industry return 0 / 438
+HSI features                438 / 438
+HKEX turnover 20D           438 / 438
+production industry return    0 / 438
 ```
 
-industry return 为 0/438 的原因是缺乏历史时点有效的 authoritative company→industry mapping。禁止使用未来 classification、静态映射或 zero-fill 伪装生产 PIT feature。
+industry return 缺失原因是没有历史时点有效的 authoritative company→industry mapping。禁止未来 classification、静态映射或 zero-fill 伪装 PIT。
 
-Market Intelligence 可以在 Core-only 模式下部分运行；Extended source 缺失时必须保留 missing reason。
-
-## 4. Outcome data
+## 7. Outcome data / M5
 
 Frozen PR-C 5D governed outcome：
 
 ```text
-official cases       438
-available            424
-unavailable           14
-Development available 354
-Validation available   70
+official cases          438
+available               424
+unavailable              14
+Development available   354
+Validation available     70
 ```
 
 missing reasons：
@@ -82,9 +169,19 @@ missing_base_price    12
 no_eligible_session    2
 ```
 
-项目更早的 market foundation 已定义 1D / 5D / 20D / 60D 生成语义，但最终比赛多周期 materialization/result package 仍由 D 收口；不要把“schema/engine 存在”写成“final artifact 已完成”。
+已有 foundation 定义 1D / 5D / 20D / 60D 语义，但 final competition materialization 仍由 D 收口。
 
-## 5. Canonical modeling data
+Metric-v1 已在 Validation 重评前冻结：
+
+```text
+significant_drop_5d = (return_5d <= -0.10)
+```
+
+Robustness：Development return_5d bottom 20% cutoff，只从 2020–2023 Development 计算一次并冻结。
+
+D 不允许根据 2024 Validation 结果重新选 threshold、score inversion 或重训 frozen PR-F。
+
+## 8. Canonical modeling data
 
 Frozen canonical dataset：
 
@@ -106,59 +203,57 @@ Oracle v2 evaluation-only：
 
 Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。
 
-## 6. Model artifacts
+## 9. Model artifacts
 
-Frozen PR-E/PR-F 研究结果保持历史事实。当前 competition runtime 只有在 authentic frozen PR-F per-case runtime 或 hash-bound sanitized handoff 可用时才展示 model score/driver。
+Frozen PR-E/PR-F 研究结果保持历史事实。Competition runtime 只有在 authentic frozen PR-F per-case runtime 或 hash-bound sanitized handoff 可用时展示 model score/driver。
 
-若本地 handoff 不存在：
+若不存在：
 
 ```text
 Model Channel = unavailable
 ```
 
-不得根据 cohort result 重建 per-case prediction，也不得为了 UI 完整重训模型。
+不得从 cohort result 重建 per-case prediction，不得为了 UI 或 M5 结果重训替代。
 
-## 7. Real case use of 2024 Validation
+## 10. 2024 Validation
 
-2024 案例可用于：
+2024 可以用于：
 
 - fixed workflow smoke；
 - Evidence/Trace/Product validation；
-- 在不读取 outcome label 的情况下验证文档/市场/Agent 链路。
+- 不读取 outcome 的文档/市场/Agent 链路验证；
+- Development metric-v1 闭合后的一次性 frozen evaluator confirmation。
 
 不得用于：
 
-- 根据真实 2024 outcome 反复调 prompt/threshold/model；
-- 看完 2024 y 后决定 score inversion；
-- 把 Validation 变成开发集。
+- 看完 2024 outcome 后调 prompt/threshold/model；
+- 根据 2024 选择 Evidence K；
+- 根据 2024 改 Risk Accuracy 公式；
+- 根据 2024 改 significant-drop 5D threshold；
+- score inversion / model retraining。
 
-PR #133 的 2460/1318 运行明确没有读取任何年份 outcome label，因此属于固定分析链验证，不是 outcome tuning。
+## 11. 2025 Blind
 
-## 8. 2025 Blind
+- 可以准备 feature-only inputs；
+- 未授权前不得读 outcome/target；
+- schema/builder/validator 应 fail closed；
+- formal artifact 保留 `blind_2025_accessed=false` 或等价声明。
 
-当前正式规则：
+## 12. Data → role ownership
 
-- 可以准备 2025 feature-only inputs；
-- 未授权前不得读 2025 outcome/target；
-- schema/builder/validator 应 fail closed 防止 Blind y 进入 Development/Validation；
-- 每个 formal artifact/report 应保留 `blind_2025_accessed=false` 或等价可审计声明。
-
-## 9. Data → role ownership
-
-- B：Prospectus / Evidence / Document benchmark；
+- B：Prospectus / metric-v1 Gold Risk Units / Evidence Groups / Document benchmark；
 - C：PIT market features / MarketContext；
-- D：Outcome / model / evaluation outputs；
-- E：最终案例 analysis/trace/review artifacts；
-- A：catalog identity、cross-lane provenance、final submission audit。
+- D：Outcome / 5D definition materialization / model/evaluation；
+- E：final case analysis/trace/review + explanation-quality artifact；
+- A：metric protocol governance、catalog identity、cross-lane provenance、final submission audit。
 
-## 10. Current data-related blockers
+## 13. Current data-related blockers
 
-真正影响最终比赛提交的数据/产物缺口：
-
-1. B fixed Development benchmark 的 real-LLM predictions + metrics；
-2. D final 1D/5D/20D/60D result package；
-3. final matrix 的 local Market Core materialization/validation（若最终 demo 要展示 Market 通道）；
+1. B metric-v1 Development Gold + real-LLM predictions + M1/M2 metrics；
+2. D final 1D/5D/20D/60D + frozen 5D metrics；
+3. final matrix local Market Core validation；
 4. real-provider Final Supervisor final matrix trace；
-5. optional Evidence bbox upstream coordinates。
+5. E explanation-quality human review artifact；
+6. optional Evidence bbox upstream coordinates。
 
-不把 historical industry mapping 研究或 broad new data acquisition 列为当前 blocker。
+不把 broad historical industry research 或 full new data acquisition 列为当前 blocker。

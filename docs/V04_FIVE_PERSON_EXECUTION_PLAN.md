@@ -1,6 +1,6 @@
 # v0.4.5 Five-Person Execution Plan
 
-本文件定义 A/B/C/D/E 的稳定 ownership、handoff 和完成标准。**不按日期排期**；状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
+本文件定义 A/B/C/D/E 的稳定 ownership、handoff 和完成标准。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；比赛指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
 
 ## 全队共同约束
 
@@ -10,69 +10,87 @@
 - 2024 Validation 不作为调参集；2025 Blind y 未授权前不访问；
 - frozen PR-A–PR-G 不为比赛展示而回写；
 - PR-F authentic handoff 不存在时 Model Channel = unavailable；
-- 公共 contract 只允许兼容式扩展，shared files 由 A 审核；
-- 每个 PR 都应小而可验证，不允许五个人同时“全仓集成”。
+- shared contract 只允许兼容式扩展；
+- metric-v1 定义不得由各 lane 私自改写；
+- 每个 PR 小而可验证，不允许五个人同时“全仓提分”。
+
+## Competition Metric v1 — 全队共同目标
+
+```text
+M1 Risk Extraction
+Official-aligned Accuracy >=0.80
+Project target >=0.85
+Positive Recall >=0.82
+Macro F1 >=0.82
+
+M2 Evidence Group Coverage Recall >=0.85
+Project target >=0.88
+Recall@K = secondary diagnostics
+
+M3 Traceability =1.0
+
+M4 Explanation Quality
+>=2 human reviewers
+mean >=4.0/5 project target
+minimum formal case >=3.0/5
+
+M5 Outcome
+1D / 5D / 20D / 60D complete
+Primary significant_drop_5d = return_5d <= -0.10
+```
+
+赛题没有规定 Top-5 Evidence、5D -10% 或 M4 数值线；这些属于项目在 Validation 重评前冻结的 protocol，不得宣称为官方公式。
 
 ## A — Tech Lead / Integration / Release / Submission
 
 ### 已完成
 
-- `competition_runtime_v1` 公共 sidecar contract；
-- `Conflict / RecheckRequest / TraceEvent / HumanReview` runtime boundary；
-- LLM provider observability / Responses metadata；
-- network-free competition runtime CI gate；
-- C Market Intelligence → v0.4 AI runtime wiring；
-- Market missingness / trace / Final Supervisor transport/UI integration hardening；
-- 3-case runner 跨 lane 集成；
-- active documentation audit / stale-doc pruning；
-- final submission readiness engine；
-- Blind / provenance / determinism audit builder；
+- competition runtime contracts；
+- conflict/recheck/trace/human-review boundary；
+- provider observability；
+- network-free CI gate；
+- Market / Final Supervisor integration；
+- 3-case runner；
+- documentation governance；
+- readiness / Blind / provenance / determinism audit；
 - SHA-256 artifact index；
-- `SUBMISSION_RUNBOOK.md`；
-- COMPETITION_READY-only fail-closed packager；
-- CI readiness fail-closed smoke。
+- Submission Runbook；
+- fail-closed packager；
+- Metric Protocol v1 governance + machine-readable config。
 
 ### 剩余职责
 
-A 的**工具开发基本关闭**，剩余是最终真实执行：
-
-- B/C/D/E PR 的 contract review、CI、real smoke、merge；
-- final handoff 到齐后运行 readiness；
-- latest-main full CI；
-- final 3-case AI smoke；
-- Blind / provenance / determinism audit 实际 PASS；
-- final artifact index / release notes / submission archive；
-- 决定 `COMPETITION_READY` 是否可使用。
+- review/merge B/C/D/E metric-v1 PR；
+- 保护 `metric_protocol_version` 与 shared artifact contract；
+- 不允许 legacy-only Recall@5 被标成 M2 PASS；
+- final handoff 到齐后 latest-main CI + 3-case AI smoke；
+- Blind / provenance / determinism actual PASS；
+- final metric dashboard / artifact index / release note / submission bundle；
+- 决定 `COMPETITION_READY`。
 
 ### A 禁区
 
-A 不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训 PR-F，不替 E 在 UI 造 Supervisor 结果。
+A 不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训/翻转 PR-F，不替 E 造 Supervisor 结果，不在看到 Validation 后改 metric protocol。
 
-## B — LLM Document Intelligence
+## B — LLM Document Intelligence / Metric M1-M2 owner
 
-### Owner 范围
+### Competition primary risk families
 
-Legal：
+B 负责 metric harness / semantic side 的整体闭环，但不改 frozen Financial ownership：
 
-- `redemption_rights`；
-- `material_litigation_compliance`；
-- versioned competition extension 只能 sidecar/additive，不改 frozen baseline identity。
+```text
+redemption_rights
+related_party_transaction        # additive competition sidecar
+customer_concentration           # consume existing Financial output
+supplier_concentration           # consume existing Financial output
+cash_burn_pressure               # consume cash_runway / deterministic cash-burn output
+```
 
-Business：
-
-- `precommercial_product`；
-- core product / commercialization / pipeline / revenue semantics；
-- disclosure tone 等扩展只能 Evidence-grounded、versioned。
-
-Evidence：
-
-- Retriever → Evidence → structured LLM extraction；
-- Evidence ID scope validation；
-- optional parser bbox grounding。
+现有 `material_litigation_compliance`、`precommercial_product` 等继续作为扩展能力与 error analysis，不替代 primary five。
 
 ### 当前实测
 
-10-case Development governed offline benchmark：
+旧 10-case Development offline diagnostic：
 
 ```text
 Risk P/R/F1        0 / 0 / 0
@@ -80,21 +98,52 @@ Evidence Recall@5  20%
 Real LLM cases     0
 ```
 
-因此 B 当前是**第一质量 blocker**。
+该 Recall@5 不再等同官方 Evidence `>=85%`。
 
-### 下一交付
+### 下一交付 — M1
 
-- 固定同一 Development benchmark 的 real-LLM run；
-- Risk / Evidence benchmark artifacts；
-- error taxonomy：retrieval / semantic / reconciliation / verifier / ranking；
-- Development-only 最小 remediation；
-- Before/After / Offline-vs-AI 证据；
-- `ai_vs_offline_report.json`；
-- 若做 bbox：与 A 明确 version/hash 影响后再改 parser。
+1. 冻结 metric-v1 Development allowlist，target 20 cases；
+2. 当前 10 cases 可纳入，补充 family coverage；
+3. 2+ reviewer 建立 Gold Risk Units；
+4. 先跑 real-LLM，不先修改结果口径；
+5. 输出 official-aligned Accuracy / Precision / Positive Recall / Macro F1 / per-risk；
+6. 按 retrieval / ranking / semantics / normalization / reconciliation / verifier / Gold ambiguity 分类错误；
+7. 只在 Development 做 targeted remediation；
+8. 同 protocol rerun。
+
+M1 closure：
+
+```text
+Accuracy >=0.80
+Positive Recall >=0.82
+Macro F1 >=0.82
+```
+
+### 下一交付 — M2
+
+Gold 按支撑事实建立 Evidence Groups，不把重复句子机械算多个必命中项。
+
+```text
+Candidate Recall@20 target >=0.95
+Reranked Recall@10 target >=0.90
+Evidence Group Coverage Recall >=0.85 official
+Project target >=0.88
+```
+
+Recall@1/@3/@5/@10/@20 全部输出，但只作排序诊断。Final Evidence 不强制固定 5 条。
 
 ### Handoff → E/A
 
-`AgentResultEnvelope + risk_ids + evidence_ids + structured diagnostics + provider metadata + benchmark artifacts`。
+```text
+AgentResultEnvelope
+risk/evidence ids
+structured diagnostics
+provider metadata
+document_benchmark_summary.json with metric_protocol_version
+risk_benchmark.csv
+evidence_benchmark.csv
+ai_vs_offline_report.json
+```
 
 ## C — Market Intelligence
 
@@ -103,43 +152,35 @@ Real LLM cases     0
 - governed MarketContext；
 - IPOHeatSkill；
 - MarketRegimeSkill；
-- bounded Market LLM interpretation；
-- explicit PIT/missingness；
-- Trace / Final Supervisor compatible handoff；
-- 正式 AI runtime wiring；
-- 两只真实 IPO 的 real-provider Market LLM validation。
+- bounded Market LLM；
+- PIT/missingness；
+- trace/final-supervisor handoff；
+- AI runtime wiring；
+- real-provider Market path validation。
 
 ### 剩余交付
 
-- 在 final 3-case environment 验证 Market Core artifact consumption；
-- Core-only 与 Extended 的诚实降级；
-- namespaced market evidence/trace 完整；
-- 不可用 industry feature 保留 PIT-blocked reason。
+只做 final-matrix acceptance：
 
-A readiness 会从 final matrix 自动检查 market channel state 与 trace accounting，因此 C 不需要另造一套状态文档。
+- Core 可读取；
+- Core-only 不 crash；
+- Extended 只有真实 governed artifact 才启用；
+- industry feature 缺失保持 PIT-blocked；
+- Market LLM 不生成不存在的数字；
+- namespaced Market trace 完整。
 
-### 当前不做
+### C 禁区
 
-- 没有 frozen PIT-safe 定义时不做 `ComparableIPOSkill`；
-- 不用行业静态映射伪装历史 PIT；
-- 不用 zero/proxy 填 missing market values。
+不为提高 M5 临时新增不可证明 PIT 的 market proxy，不做 ComparableIPOSkill，除非所有 P0/P1 已闭合且另行扩 scope。
 
-### Handoff → E/A
-
-`MarketContext + deterministic skill outputs + bounded interpretation + trace provenance`。
-
-## D — Outcome / Model / Evaluation
+## D — Outcome / Model / Evaluation / Metric M5 owner
 
 ### 已有基础
 
-- 1D/5D/20D/60D outcome foundation；
+- 1D/5D/20D/60D foundation；
 - chronological split/blind guard；
 - frozen PR-C 5D；
 - frozen PR-E/PR-F research evidence。
-
-### 当前缺口
-
-最终比赛结果包尚未关闭，因此 D 是**第一交付 blocker**。
 
 ### 下一交付
 
@@ -155,84 +196,106 @@ evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-如 authentic frozen PR-F handoff 可恢复，则额外提供：
+Primary 5D definition 已冻结：
 
-- per-case `uncalibrated_model_score`；
-- model/run identity；
-- checksum；
-- top signed SHAP drivers。
+```text
+significant_drop_5d = (return_5d <= -0.10)
+```
 
-不可恢复则明确 `ModelSignal.status=unavailable`，不重训替代。
+Robustness：Development bottom 20% cutoff，只计算一次并冻结。
 
-### Handoff → E/A
+`evaluation_summary.json` 至少报告：
 
-`multi-horizon outcomes + evaluation artifacts + optional authentic ModelSignal`。
+```text
+metric_protocol_version
+precision / recall / f1
+PR-AUC / ROC-AUC
+Top-10% / Top-20% hit rate
+base prevalence
+blind_2025_y_accessed=false
+```
 
-## E — LLM Final Supervisor / Multi-Agent / Product
+赛题没有绝对 5D 合格线，因此 D 不为“过 Gate”事后选阈值。主要目标是 5D business value，相比 base-rate / document-only / market-only / combined 透明报告。
+
+如 authentic PR-F handoff 可恢复则 hash-bound 消费；不可恢复就 `ModelSignal.status=unavailable`，不重训替代。
+
+## E — LLM Final Supervisor / Multi-Agent / Product / M3-M4 owner
 
 ### 已完成主体
 
-- LLM Final Supervisor；
-- deterministic conflict policy；
-- one bounded targeted re-check；
-- Verifier challenge / resolution states；
-- Agent / Tool / Evidence trace；
-- Human Review；
-- Evidence Viewer；
-- 五个 Streamlit workspaces；
-- 3/3 real-PDF offline matrix；
-- 三案例 measured traceability = 1.0；
-- submission-facing `agent_reasoning_log.json/.md`；
-- `case_report.md`；
-- per-case `gate_e1_evidence.json`；
-- machine-checked matrix Gate E1 summary。
+- Final Supervisor；
+- conflict policy；
+- bounded re-check；
+- Verifier challenge；
+- Trace / Human Review；
+- Evidence Viewer / Streamlit；
+- 3/3 offline matrix；
+- offline traceability 1.0；
+- reasoning log / case report / Gate-E1 evidence。
 
-### 剩余交付
+### 剩余 E1
 
-- final 3-case matrix 上 real-provider Final Supervisor synthesis；
-- 每案 `gate_e1.satisfied=true`；
-- 保存 provider/model/prompt/request/hash/latency trace；
-- 验证 out-of-scope reference fail closed；
-- 接入 B/C/D 最终真实结果后做 UI smoke。
+- final 3-case real-provider synthesis；
+- 3/3 `gate_e1.satisfied=true`；
+- provider/model/prompt/request/hash/latency；
+- scope fail-closed；
+- severity floor preserved。
 
-当前 offline matrix 的 successful LLM arbitration 仍为 0/3；fallback 不能算成功仲裁。
+### 剩余 M3
+
+```text
+Development real-LLM traceability =1.0
+final 3-case real-provider traceability =1.0
+```
+
+### 剩余 M4
+
+生成：
+
+```text
+explanation_quality.json
+```
+
+5 维 rubric：Evidence grounding / Logical consistency / Conflict handling / Re-check quality / Final conclusion。
+
+至少 2 名人类 reviewer，LLM 只能辅助。内部目标 mean >=4.0/5，minimum formal case >=3.0/5。
 
 ### E 禁区
 
-- 不补写 B 没抽出的 RiskItem；
-- 不补 C 缺失的市场事实；
-- 不生成 D 不存在的模型分数；
-- 不在 UI 伪造 bbox。
+不补写 B 没抽出的 RiskItem，不补 C 缺失 market fact，不生成 D 不存在 model score，不在 UI 猜 bbox。
 
 ## Handoff graph
 
 ```text
-B → AgentResult / Risk / Evidence / benchmark ┐
-C → MarketContext / market interpretation      ├→ E Final Supervisor / Trace / Product
-D → Outcome / ModelSignal / evaluation         ┘
+B M1/M2 + AgentResult / Risk / Evidence ┐
+C MarketContext / interpretation          ├→ E Final Supervisor / Trace / Product
+D M5 Outcome / ModelSignal / evaluation  ┘
 
-E → final case artifacts / Gate E1 evidence ┐
-B/C/D → measured final handoffs             ├→ A readiness / audits / package / release
-A → contracts / config / CI / gate control  ┘
+E E1/M3/M4 final artifacts ┐
+B/C/D metric-v1 handoffs   ├→ A readiness / audits / package / release
+A metric/config/CI control ┘
 ```
 
 ## Shared-file ownership
 
-- schemas / registry / global config / analysis service / CI：A writer，相关 role reviewer；
-- Legal/Business semantic internals：B；
-- Market skills/agent internals：C；
-- outcome/model/evaluation：D；
-- final supervisor/trace/product UI：E；
-- `streamlit_app`：E writer，A integration reviewer；
-- frozen completion reports/manifests：原则上无人修改。
+- metric protocol / global configs / shared schema / CI / readiness：A writer，lane reviewer；
+- Legal/Business semantics / Document metric evaluator：B；
+- Financial existing deterministic risk internals保持既有 ownership，不因 B benchmark 改写；
+- Market internals：C；
+- Outcome/model/evaluation：D；
+- Final Supervisor/trace/product/M4 artifact：E；
+- frozen completion reports/manifests 原则上不改原始实测事实。
 
 ## Team completion condition
 
 ```text
-B real-LLM benchmark + quality evidence
-AND C final-matrix market validation
-AND D multi-horizon submission package
-AND E real-provider final matrix accepted
-AND A readiness/audits/final CI/package freeze
+M1 >=80% + guardrails
+AND M2 >=85%
+AND M3 =100%
+AND M4 internal rubric PASS
+AND M5 complete/frozen 5D evaluation
+AND C final Market validation
+AND E real-provider final matrix
+AND A final readiness/audits/CI/package
 → COMPETITION_READY
 ```

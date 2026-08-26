@@ -1,22 +1,24 @@
 # Data Schema — Current Contracts
 
-本文件只描述当前代码中存在的 contract。Pydantic/Protocol 源码仍是最终权威；文档不得定义代码中不存在的公共字段。
+本文件描述当前代码中的 runtime contract，并补充 Metric Protocol v1 的**evaluation artifact boundary**。Pydantic/Protocol 源码仍是 runtime 最终权威；Metric Protocol 不得被误解为偷偷改公共 runtime schema。
 
 ## 1. Core document contracts
 
 ### Evidence
 
-Evidence 是所有正式文档结论的来源锚点，核心语义包括：
+核心语义：
 
-- `evidence_id`
-- `document_id`
-- `chunk_id`
-- `page`
-- `section`
-- `text`
-- `source_type`
-- `relevance_score`
-- optional `bbox`
+```text
+evidence_id
+document_id
+chunk_id
+page
+section
+text
+source_type
+relevance_score
+optional bbox
+```
 
 约束：
 
@@ -25,13 +27,19 @@ Evidence 是所有正式文档结论的来源锚点，核心语义包括：
 - bbox 缺失就保持缺失；
 - LLM 只能引用输入 Evidence ID 子集。
 
+Metric-v1 的 Evidence Group 是**evaluation Gold object**，不是 runtime `Evidence` 替代物。一个 Gold Evidence Group 可以接受多个等价 runtime Evidence/page/table anchor。
+
 ### Calculation
 
 精确数值计算的 deterministic provenance object。Financial 风险需要数值推导时，应引用 Calculation，而不是把 LLM 文本当计算依据。
 
 ### RiskItem
 
-正式风险结论。其风险码必须属于注册表/对应 owner 的 versioned extension；RiskItem 与 Evidence/Calculation 的关系由 Verifier 和治理测试约束。
+正式风险结论。风险码必须属于注册表/owner 的 versioned extension；RiskItem 与 Evidence/Calculation 的关系由 Verifier 和治理测试约束。
+
+Metric-v1 的 `cash_burn_pressure` 是 competition evaluation family，可映射既有 `cash_runway`/cash-burn Calculation；这不是 runtime rename。
+
+`related_party_transaction` 如新增，必须 additive/versioned sidecar，不静默修改 frozen baseline registry。
 
 ## 2. Competition runtime sidecar
 
@@ -61,8 +69,6 @@ provenance
 
 ### AgentResultEnvelope
 
-跨 lane 的最小 Agent handoff：
-
 ```text
 case_id
 run_id
@@ -78,15 +84,13 @@ warnings[]
 metadata
 ```
 
-它只引用业务对象 ID，不重新定义 RiskItem/Evidence 内容。
-
 ### CompetitionConflict
 
 ```text
 conflict_id
 case_id
 run_id
-involved_agents[]   # 至少两个不同 agent
+involved_agents[]
 risk_ids[]
 claim_ids[]
 summary
@@ -96,17 +100,7 @@ resolution_note
 created_at
 ```
 
-`status` 枚举：
-
-```text
-detected
-rechecking
-resolved
-partially_resolved
-unresolved
-```
-
-不存在旧文档曾描述的 `left_agent/right_agent` 公共 contract；当前实现以 `involved_agents[]` 为准。
+`status`：detected / rechecking / resolved / partially_resolved / unresolved。
 
 ### RecheckRequest
 
@@ -124,22 +118,7 @@ status
 created_at
 ```
 
-`max_attempts` 当前 schema 强制：
-
-```text
-1 <= max_attempts <= 1
-```
-
-即每个 conflict 只能有一次 controlled re-check。
-
-`status`：
-
-```text
-pending
-running
-completed
-failed
-```
+`max_attempts=1`。
 
 ### TraceEvent
 
@@ -166,22 +145,7 @@ occurred_at
 details
 ```
 
-`event_type` 当前枚举：
-
-```text
-parser
-retriever
-agent
-skill
-llm
-verifier
-market
-model
-conflict
-recheck
-supervisor
-human_review
-```
+M3 evaluation 只统计真实 trace。relevant event 必须有 Evidence/Calculation 或 explicit `no_evidence_reason`；remote LLM event 需要 provider/model/prompt/request/hash/latency。
 
 ### HumanReview
 
@@ -201,49 +165,20 @@ bbox
 reviewed_at
 ```
 
-`decision`：
+HumanReview 是 sidecar，不修改机器生成 RiskItem/Evidence。
 
-```text
-accept
-reject
-needs_follow_up
-```
+## 3. Final Supervisor boundary
 
-HumanReview 是 sidecar，不修改机器生成的 RiskItem / Evidence / analysis result。
+公共 competition sidecar 没有为了比赛 metric 强行替换成新 `SupervisorDecision` schema。现有 FinalSupervisionResult / internal bundle 继续作为 runtime truth；metric-v1 只消费其已记录 output/trace。
 
-### CompetitionRuntimeSidecar
-
-```text
-identity
-agent_results[]
-conflicts[]
-rechecks[]
-trace_events[]
-human_reviews[]
-```
-
-## 3. Final Supervisor schema boundary
-
-当前 competition sidecar **没有一个名为 `SupervisorDecision` 的公共 Pydantic model**。
-
-现有 E 路径在既有 `FinalSupervisionResult`/typed internal bundle 上做 LLM synthesis，并将 versioned structured synthesis 投影到既有 metadata surface；公共 frozen contract 没有为了 competition sprint 被强行替换。
-
-因此下游不要自行假设 `SupervisorDecision` 字段。如果未来要公开新 contract，必须由 A 做 additive/versioned schema review 后再更新本文档。
-
-## 4. Market schema boundary
-
-Market 运行时消费 governed `MarketContext`/structured observations，不允许把 legacy mock numbers 冒充 PR-B lineage。
-
-核心语义：
+## 4. Market boundary
 
 - available observation 必须有真实 value/provenance；
-- unavailable observation 必须有明确 missing reason；
-- Market LLM interpretation 是定性结构化解释，不拥有数值事实；
-- namespaced market references 可以进入 Trace，但不能伪装成 prospectus Evidence。
+- unavailable observation 有明确 missing reason；
+- Market LLM 只做定性解释，不拥有数值事实；
+- namespaced market references 可以进 Trace，但不伪装成 prospectus Evidence。
 
 ## 5. Model signal boundary
-
-Model signal 必须保留：
 
 ```text
 score
@@ -254,17 +189,82 @@ optional signed drivers
 availability / missing reason
 ```
 
-公共 model view 故意不把 uncalibrated score 叫 probability。
-
-如 authentic frozen PR-F handoff 不存在，消费者必须使用 unavailable 状态，而不是生成替代 score。
+缺 authentic PR-F handoff 时必须 unavailable，不生成替代 score。
 
 ## 6. Outcome boundary
 
-已有 market/outcome foundation 定义 1D/5D/20D/60D horizon 与 chronological split/blind rules。
+已有 foundation 定义 1D/5D/20D/60D horizon。Metric-v1 预先冻结 evaluation label：
 
-比赛 final package 需要把这些 schema 物化成可复现结果 artifact；这属于 D 当前未关闭的交付，不应通过文档宣称已完成。
+```text
+significant_drop_5d = (return_5d <= -0.10)
+```
 
-## 7. Identity rules
+这属于 evaluation definition，不改变原始 `return_5d` 数据。
+
+Robustness bottom-20% cutoff 只能从 Development 计算一次并冻结。
+
+## 7. Metric-v1 evaluation artifact boundary
+
+Machine-readable protocol：
+
+```text
+configs/v045_competition_metric_protocol.json
+protocol_version = v045_competition_metric_protocol_v1
+```
+
+这些字段属于 final evaluation handoff，并非公共 runtime Pydantic schema。B/D/E 实现落地后必须由 owner + A 做 code/schema review。
+
+### Role B summary target shape
+
+```text
+metric_protocol_version
+risk_extraction.official_aligned_accuracy
+risk_extraction.precision
+risk_extraction.positive_recall
+risk_extraction.macro_f1
+risk_extraction.per_risk
+
+evidence_coverage.group_coverage_recall
+evidence_coverage.gold_group_count
+evidence_coverage.covered_group_count
+retrieval_diagnostics.recall_at_1
+retrieval_diagnostics.recall_at_3
+retrieval_diagnostics.recall_at_5
+retrieval_diagnostics.recall_at_10
+retrieval_diagnostics.recall_at_20
+```
+
+Legacy `risk_target_at_least_80_percent` / `evidence_target_at_least_85_percent` bool 如果仍存在，只能作为旧 evaluator compatibility 字段，不能单独证明 metric-v1 PASS。
+
+### Role D evaluation summary target shape
+
+```text
+metric_protocol_version
+significant_drop_5d_definition
+five_day_metrics.precision
+five_day_metrics.recall
+five_day_metrics.f1
+five_day_metrics.pr_auc
+five_day_metrics.roc_auc
+five_day_metrics.top_10pct_hit_rate
+five_day_metrics.top_20pct_hit_rate
+five_day_metrics.base_prevalence
+blind_2025_y_accessed
+```
+
+### Role E explanation-quality target shape
+
+```text
+metric_protocol_version
+human_reviewer_count
+mean_score
+minimum_case_score
+per_case_scores
+```
+
+`explanation_quality.json` 是 evaluation artifact，不改 HumanReview runtime sidecar。
+
+## 8. Identity rules
 
 跨模块至少保持：
 
@@ -275,23 +275,15 @@ listing_date
 run_id
 ```
 
-LLM 相关 trace 进一步保留：
+LLM trace 进一步保留 provider_name / model_name / prompt_version / request_id / raw_response_hash / latency_ms。
 
-```text
-provider_name
-model_name
-prompt_version
-request_id
-raw_response_hash
-latency_ms
-```
+任何 cross-lane join 优先稳定 identity/hash，不用公司名称 fuzzy join 作为正式绑定。
 
-任何 cross-lane join 必须优先使用稳定 identity/hash，不用公司名称 fuzzy join 作为正式身份绑定。
-
-## 8. Change policy
+## 9. Change policy
 
 - frozen core schema 不原地破坏；
-- competition 新字段优先 additive/versioned sidecar；
-- rename/delete/type-breaking 必须有 A review 和迁移说明；
-- UI 不得定义后端事实 schema；
-- 文档发现与源码不一致时，以源码为准并修本文档。
+- competition 新字段优先 additive/versioned；
+- metric protocol 改动必须在 Validation 重评前完成并 version bump；
+- Validation 结果打开后不得原地改 v1 口径；
+- UI 不定义后端事实 schema；
+- 文档与源码不一致时 runtime 以源码为准，metric evaluation 以 frozen protocol + evaluator version 为准，并修正文档。

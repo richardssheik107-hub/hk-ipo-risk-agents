@@ -12,6 +12,7 @@ PDF → Evidence → specialized analysis → verification
 + optional authentic frozen model signal
 → conflict / re-check / final supervision
 → trace / human review / report
+→ metric-v1 evaluation / submission gate
 ```
 
 ## 2. Non-negotiable invariants
@@ -21,7 +22,8 @@ PDF → Evidence → specialized analysis → verification
 - 正式风险必须引用本次运行真实 Evidence；
 - LLM 不得引用输入作用域外的 Evidence ID；
 - Evidence identity / page / bbox 不在 UI 层修补；
-- 未检索到证据不能伪造“无风险”。
+- 未检索到证据不能伪造“无风险”；
+- final competition Evidence primary metric 不固定 Top-5，而按 Gold Evidence Group coverage 评价。
 
 ### Calculation
 
@@ -32,7 +34,7 @@ PDF → Evidence → specialized analysis → verification
 
 - 市场事实只能来自 listing date 之前可得的 governed source；
 - 缺失值保持 null + missing reason；
-- 禁止用 listing-day/future rows、静态未来分类、zero/proxy 伪装 PIT。
+- 禁止 listing-day/future rows、静态未来分类、zero/proxy 伪装 PIT。
 
 ### Model
 
@@ -49,9 +51,85 @@ PDF → Evidence → specialized analysis → verification
 2025       Blind
 ```
 
-2024 不能被反复调参；2025 outcome 在正式授权前不得访问。
+- Development 可以诊断与 targeted remediation；
+- Validation 不做 post-hoc tuning；
+- Blind outcome 未授权前不得访问；
+- metric definition / Gold / threshold / allowlist 必须在 Validation 重评前冻结。
 
-## 3. Formal risk scope
+## 3. Competition Metric Protocol v1
+
+最终比赛评价采用：
+
+```text
+v045_competition_metric_protocol_v1
+```
+
+权威文档：`COMPETITION_METRIC_PROTOCOL.md`。
+
+### M1 Risk extraction
+
+Primary competition risk families：
+
+```text
+redemption_rights
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
+```
+
+其中：
+
+- `related_party_transaction` 是 additive competition sidecar，不改 frozen baseline identity；
+- `cash_burn_pressure` 是比赛 metric family，消费现有 `cash_runway` / deterministic cash-burn 结果；
+- M1 Primary Accuracy 只用 positive Gold Risk Units，避免大量 true negative 刷高 Accuracy；
+- official pass >=0.80，project target >=0.85；
+- Positive Recall / Macro F1 project guardrails >=0.82。
+
+### M2 Evidence
+
+Primary：
+
+```text
+Evidence Group Coverage Recall >=0.85
+```
+
+Recall@1/@3/@5/@10/@20 仅是 secondary ranking diagnostics。旧 offline Recall@5=20% 不再直接代表官方 M2 当前值。
+
+### M3 Traceability
+
+```text
+=1.0
+```
+
+Development real-LLM 与 final 3-case real-provider 都必须达到 1.0。
+
+### M4 Explanation Quality
+
+5维 human rubric：Evidence grounding、Logical consistency、Conflict handling、Re-check quality、Final conclusion。
+
+至少 2 名人类 reviewer；内部目标 mean >=4.0/5，formal case minimum >=3.0/5。
+
+### M5 Outcome
+
+必须完成：
+
+```text
+return_1d
+return_5d
+return_20d
+return_60d
+```
+
+Primary 5D：
+
+```text
+significant_drop_5d = (return_5d <= -0.10)
+```
+
+赛题没有给 5D 绝对指标及格线，因此项目只要求 predeclared、完整、可复现、透明对比，不虚构“官方 xx%”。
+
+## 4. Frozen formal risk scope
 
 冻结 formal baseline 仍是 8 个 risk codes：
 
@@ -72,17 +150,17 @@ Business：
 
 - `precommercial_product`
 
-比赛示例中的 related-party transaction、disclosure tone 等只能作为 versioned sidecar/additive extension，不得静默改变 frozen baseline feature/risk identity。
+比赛的 related-party / cash-burn family 等通过 metric mapping / additive sidecar 对齐，不静默改变 frozen baseline feature/risk identity。
 
-## 4. Current runtime components
+## 5. Current runtime components
 
 ### Document
 
-- PyMuPDF / table-aware parser path；
-- keyword/bounded retrieval；
-- Financial deterministic-first extraction；
-- Legal structured LLM extraction；
-- Business hybrid deterministic + structured LLM extraction；
+- PyMuPDF / table-aware parser；
+- bounded retrieval；
+- Financial deterministic-first；
+- Legal structured LLM；
+- Business hybrid deterministic + structured LLM；
 - specialized Verifier；
 - deterministic Document Supervisor。
 
@@ -106,42 +184,46 @@ Business：
 
 ### Product
 
-五个 Streamlit workspaces：
+五个 Streamlit workspaces：Risk Command Center、Evidence & AI Analysis、Market & Model、Agent Collaboration Trace、Human Review & Final Report。
 
-- Risk Command Center；
-- Evidence & AI Analysis；
-- Market & Model；
-- Agent Collaboration Trace；
-- Human Review & Final Report。
-
-## 5. Measured current state
+## 6. Measured current state
 
 ### E2E engineering
 
-3 个真实 2024 PDF 已完成 catalog-bound offline matrix：2410.HK / 2460.HK / 1318.HK，3/3 integrity verified、0 structured workflow errors、traceability 1.0。
+3 个真实 2024 PDF：2410.HK / 2460.HK / 1318.HK，3/3 integrity verified、0 structured workflow errors、offline traceability 1.0。
 
 ### Document quality
 
-10-case governed offline Development benchmark 当前为：Risk P/R/F1 = 0%，Evidence Recall@5 = 20%。这不是 real-LLM benchmark，因此 Document quality Gate 仍 open。
+旧 10-case governed offline Development diagnostic：
+
+```text
+Risk P/R/F1 = 0%
+Evidence Recall@5 = 20%
+Real LLM = 0
+```
+
+它不是 metric-v1 final benchmark，也不是 real-LLM benchmark。
 
 ### Market
 
-Market Agent 已实现并接入 AI runtime；真实 provider Market interpretation 已在两只真实 IPO 上验证。industry return 无可靠 PIT mapping 时继续 unavailable。
+Market Agent 已实现并接入 AI runtime；real-provider Market interpretation 已在真实 IPO 上验证。industry return 无可靠 PIT mapping 时继续 unavailable。
 
 ### Evaluation
 
-multi-horizon foundation 已存在，但 final 1D/5D/20D/60D competition artifacts 仍需 D 关闭。
+multi-horizon foundation 已存在，但 final M5 artifacts 尚未关闭。
 
-## 6. Completion definition
+## 7. Completion definition
 
-系统只有在以下全部实测闭合后才能标记 `COMPETITION_READY`：
+`COMPETITION_READY` 需要：
 
-- fixed Development real-LLM Document benchmark；
-- Risk / Evidence 指标材料；
-- 1D/5D/20D/60D final outputs；
-- final matrix real-provider Final Supervisor；
-- final CI / blind / provenance / determinism；
-- reproducible runbook；
-- submission package。
+- M1 Risk Accuracy >=80% + guardrails；
+- M2 Evidence Group Coverage Recall >=85%；
+- M3 real final traceability=100%；
+- M4 explanation-quality artifact internal Gate；
+- M5 1D/5D/20D/60D + frozen 5D evaluation；
+- C final-matrix Market validation；
+- E real-provider final matrix；
+- final CI / Blind / provenance / determinism；
+- reproducible Runbook / artifact index / submission package。
 
 详细状态见 `V0.4_RELEASE_ACCEPTANCE.md`。

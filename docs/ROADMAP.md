@@ -1,102 +1,140 @@
 # Roadmap — Competition Closure Only
 
-本 Roadmap 只记录**尚未完成的工作**。已完成能力不再重复规划；当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
+本 Roadmap 只记录尚未完成的工作。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准，指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
 
 ## 已关闭，不再扩展
 
 - competition runtime contracts / CI gate；
 - governed MarketContext；
 - IPOHeatSkill / MarketRegimeSkill；
-- Market Intelligence AI runtime wiring；
-- bounded Market LLM interpretation；
+- Market AI runtime wiring；
 - LLM Final Supervisor implementation；
 - deterministic conflict detection；
 - one bounded targeted re-check；
-- Agent / Tool / Evidence Trace；
+- Agent / Tool / Evidence Trace implementation；
 - Human Review；
-- 五个 Streamlit competition workspaces；
-- 3 个真实招股书 offline E2E matrix；
-- 三案例 measured traceability = 1.0；
-- E submission reasoning logs / case reports / machine Gate-E1 evidence renderer；
-- A final submission readiness engine；
-- A Blind / provenance / determinism audit tooling；
-- A SHA-256 artifact index；
-- A `SUBMISSION_RUNBOOK.md`；
-- A COMPETITION_READY-only fail-closed submission packager。
+- 五个 Streamlit workspaces；
+- 3 real prospectus offline E2E matrix；
+- 3-case offline measured traceability = 1.0；
+- E reasoning log / case report / Gate-E1 renderer；
+- A readiness / Blind / provenance / determinism / artifact index / Runbook / packager；
+- `v045_competition_metric_protocol_v1` definition + machine-readable config。
 
 除非出现回归或直接影响比赛 Gate，不再对这些模块做架构探索。
 
-## P0 — B：Document quality closure
+## P0 — B：M1 Risk Extraction closure
 
-当前 measured offline governed baseline：
-
-```text
-10 Development PDFs      10/10 完整性验证并完成分析
-Risk Precision           0.0%
-Risk Recall              0.0%
-Risk F1                  0.0%
-Evidence Recall@5        20.0%
-Real LLM cases           0
-```
-
-下一步必须固定同一 Development benchmark：
+当前旧 10-case offline diagnostic baseline：
 
 ```text
-same cases / same Gold / same evaluator
-→ real provider Legal + Business
-→ freeze prediction first
-→ evaluate
-→ classify failure:
-   retrieval miss
-   structured semantic miss
-   candidate conflict
-   verifier mismatch
-   evidence ranking miss
-→ only Development-only targeted remediation
-→ rerun same protocol
+Risk P/R/F1 = 0 / 0 / 0
+Real LLM cases = 0
 ```
 
-禁止：
+metric-v1 primary families：
 
-- 为指标调 2024 Validation；
-- 修改 Gold 迎合预测；
-- 把无风险输出当 true negative 除非 evaluator 明确定义；
-- 让 LLM 直接做权威数值计算；
-- 为提高 recall 放松 Evidence scope。
+```text
+redemption_rights
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
+```
 
-2460/1318 是重要失败案例：已有 Evidence，但没有形成正式风险项，应优先检查 `Evidence → candidate → RiskItem / Verifier`。
+执行顺序：
 
-## P0 — D：Multi-horizon submission package
+```text
+1. 固定 20-case Development target allowlist
+2. 当前 10 cases 可纳入；补齐 family coverage 前先冻结新 allowlist
+3. 2+ reviewer 建立 Gold Risk Units
+4. real-provider run first，禁止先看结果改 metric
+5. freeze prediction
+6. evaluate official-aligned Accuracy / Precision / Positive Recall / Macro F1 / per-risk
+7. error taxonomy
+8. Development-only targeted remediation
+9. rerun same evaluator
+```
 
-D 直接使用已有 outcome foundation，补齐比赛最小结果包：
+Primary Gate：
+
+```text
+Official-aligned Risk Extraction Accuracy >=0.80
+Project target >=0.85
+Positive Recall >=0.82
+Macro F1 >=0.82
+```
+
+Accuracy 分母使用 positive Gold Risk Units，不允许 negative-heavy true-negative accuracy 刷分。
+
+## P0 — B：M2 Evidence Group Coverage closure
+
+旧 `Evidence Recall@5=20%` 只保留为 legacy diagnostic，不再当官方 `>=85%` 的直接口径。
+
+正式优化链：
+
+```text
+Gold Evidence Groups
+→ Candidate retrieval
+→ Reranking
+→ Final Evidence selection
+→ RiskItem / Verifier
+```
+
+工程目标：
+
+```text
+Candidate Retrieval Recall@20 >=0.95
+Reranked Recall@10           >=0.90
+Evidence Group Coverage Recall >=0.85 official pass
+Project target >=0.88
+```
+
+Recall@1/@3/@5/@10/@20 全部报告，但只作为排序诊断。
+
+最终 Evidence 不固定只能 5 条；按风险复杂度和多样性动态保留足够证据。
+
+## P0 — D：M5 Multi-horizon / 5D package
+
+必须输出：
 
 ```text
 return_1d
 return_5d
 return_20d
 return_60d
-```
 
-输出：
-
-```text
 test_predictions.csv
 multi_horizon_results.csv
 evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-要求：
+metric-v1 Primary 5D：
 
-- 保留 2020–2023 Development / 2024 Validation / 2025 Blind 隔离；
-- frozen 5D policy 不重写；
-- 5D significant-drop 作为高权重分析项，但其他 horizon 也必须输出；
-- PR-F authentic per-case signal 若存在则 hash-bound 消费；若不存在，写 `unavailable`；
-- 不因旧 PR-F AUC 弱而重训/反转分数。
+```text
+significant_drop_5d = (return_5d <= -0.10)
+```
 
-## P1 — E：Final matrix real-provider acceptance
+Robustness：Development return_5d bottom 20%，只在 Development 计算一次并冻结。
 
-对已经完成 offline 的同一 3-case matrix：
+至少报告：
+
+```text
+Precision
+Recall
+F1
+PR-AUC
+ROC-AUC
+Top-10% risk hit rate
+Top-20% risk hit rate
+base prevalence
+```
+
+赛题没有规定绝对 5D 及格线，所以 D 不允许为“过 Gate”事后创造阈值。目标是协议固定、完整、可复现，并透明比较 no-skill/base-rate、document-only、market-only、combined（可用时）。
+
+## P1 — E：Real-provider Final Supervisor acceptance
+
+同一 final 3-case matrix：
 
 ```text
 2410.HK
@@ -104,65 +142,73 @@ ai_vs_offline_report.json
 1318.HK
 ```
 
-在最终 AI config + real provider 下验证：
+必须：
 
-- Final Supervisor structured synthesis 成功；
-- 每案与 matrix-level `gate_e1.satisfied=true`；
-- provider/model/prompt/request/hash/latency trace 完整；
-- synthesis 只能引用 in-scope Risk/Evidence/Conflict；
-- deterministic severity floor 不被降低；
-- provider 失败仍正确 fallback，但失败 run 不计 successful LLM arbitration。
+- real provider；
+- `outcome=accepted`；
+- per-case 与 matrix `gate_e1.satisfied=true`；
+- provider/model/prompt/request/hash/latency 完整；
+- in-scope reference check PASS；
+- severity floor 不降低；
+- fallback 仍是正确降级，但不能计 successful arbitration。
 
-当前正式 offline matrix 仍为 0/3 successful remote arbitration，因此这一项尚未关闭。
+## P1 — E：M4 Explanation Quality
 
-E 不修 B 的风险抽取，也不补 D 的模型/Outcome。
+新增最终 artifact：
+
+```text
+explanation_quality.json
+```
+
+5 维评分：
+
+```text
+Evidence grounding
+Logical consistency
+Conflict handling
+Re-check quality
+Final conclusion
+```
+
+至少 2 名人类 reviewer，LLM 仅辅助。内部目标：
+
+```text
+mean >=4.0/5
+formal case minimum >=3.0/5
+```
 
 ## P1 — C：Final case Market validation
 
-C 主体代码已完成，只需确保最终案例环境中：
+C 主体代码已完成，只需确认：
 
-- PR-B Core materialization 可解析；
-- Core-only 时不 crash；
-- Extended 有真实 governed artifact 才启用；
+- Core materialization 可解析；
+- Core-only 不 crash；
+- Extended 只有真实 governed artifact 才启用；
 - industry return 不可用时保留 PIT missing reason；
-- Market LLM 不生成输入里没有的数字；
-- Market trace 的 namespaced evidence/accounting 完整。
+- Market LLM 不生成不存在的数字；
+- Market trace namespaced evidence/calculation/no-evidence accounting 完整。
 
-A 的 final readiness engine 会直接从最终 matrix 检查 market channel state 与 trace accounting，因此不需要另造重复验收口径。
+不新增 ComparableIPOSkill，不为 M5 临时发明不可证明 PIT 的 feature。
 
-不再新增 ComparableIPOSkill，除非上述 P0/P1 全关闭且还有明确时间与 PIT-safe 定义。
+## P1 — A：Metric-v1 integration / release freeze
 
-## P1 — A：Final execution / release freeze
+A 基础收口工具开发已完成。剩余是对 metric-v1 handoff 的 final integration：
 
-A 的**收口工具开发已关闭**，不再新增业务 Agent 或新的提交基础设施。A 剩余的是依赖真实 handoff 的执行工作：
-
-1. 审 B/C/D/E 的小 PR，保护公共 contract；
-2. 每次合并后运行 CI / contract gate / relevant real-case smoke；
-3. 保持 `V0.4_RELEASE_ACCEPTANCE.md` 与 main 同步；
-4. B/C/D/E 最终 handoff 到齐后运行 `build_v045_submission_readiness.py --require-ready`；
-5. 实际关闭：
-   - latest-main full CI；
-   - final 3-case AI smoke；
-   - Blind audit PASS；
-   - provenance / determinism PASS；
-   - artifact completeness；
-   - final `artifact_index.json`；
-   - submission ZIP security audit；
-   - release note；
-6. 只有 hard Gate 真实通过后生成 bundle 并打 `COMPETITION_READY`。
-
-当前 `SUBMISSION_RUNBOOK.md`、readiness/audit/index/packager 代码已经存在；不要再把“实现这些工具”列为未来工作。
+1. review/merge B/C/D/E small PR；
+2. 确认 B/D/E artifact 均记录 `metric_protocol_version=v045_competition_metric_protocol_v1`；
+3. legacy-only Recall@5 或旧 bool target 不得作为 M1/M2 final PASS；
+4. latest-main CI；
+5. final 3-case AI smoke；
+6. Blind / provenance / determinism actual PASS；
+7. final metric dashboard / artifact completeness；
+8. artifact index；
+9. submission ZIP security audit；
+10. release note；
+11. hard Gate 全绿后 `COMPETITION_READY`。
 
 ## P2 — Evidence bbox grounding
 
-当前 page grounding 已可用，但 parser 不产出 bbox。若最终 demo 需要精确高亮：
-
-- B 负责 parser/Evidence grounding；
-- A 审核 schema/version/hash/provenance 影响；
-- UI 禁止自己猜 bbox；
-- frozen PR-G/PR-H 不直接原地重写。
-
-它低于 B real-LLM benchmark、D multi-horizon、E final remote validation 的优先级。
+page grounding 已可用，bbox 仍 optional quality gap。若最终 demo 需要精确高亮：B 负责 parser/Evidence，A 审 schema/version/hash；UI 不得猜坐标。
 
 ## 明确停止的工作
 
@@ -174,18 +220,19 @@ A 的**收口工具开发已关闭**，不再新增业务 Agent 或新的提交�
 - broad new market acquisition；
 - full 438-case LLM run；
 - 大规模 feature search；
-- 纯故事/装饰型 UI；
-- 用 proxy/zero 填 unavailable market facts。
+- 纯装饰 UI；
+- proxy/zero fill unavailable market facts。
 
 ## Completion condition
 
-Roadmap 结束条件不是“代码功能足够多”，而是：
-
 ```text
-B real-LLM quality evidence closed
-+ C final-matrix Market validation closed
-+ D multi-horizon artifacts closed
-+ E real-provider final matrix closed
-+ A final readiness/audit/CI/package execution closed
+M1 Risk official-aligned Accuracy >=80% + guardrails
++ M2 Evidence Group Coverage Recall >=85%
++ M3 real final traceability =100%
++ M4 explanation-quality internal Gate
++ M5 complete 1D/5D/20D/60D + frozen 5D evaluation
++ C final Market validation
++ E final real-provider acceptance
++ A final readiness/audit/CI/package
 = v0.4.5 COMPETITION_READY
 ```

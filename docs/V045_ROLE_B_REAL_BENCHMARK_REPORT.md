@@ -1,11 +1,22 @@
-# ROLE B — OFFLINE GOVERNED DEVELOPMENT BENCHMARK:
+# ROLE B — OFFLINE GOVERNED DEVELOPMENT BENCHMARK
 
-## FAIL
+## FAIL — legacy diagnostic baseline, not metric-v1 final benchmark
 
-The governed input/runtime Gate passed: all ten allowlisted Development PDFs were
-streamed one at a time from the nested source ZIP, matched the frozen catalog
-SHA-256, size and physical-page count, and completed the non-mock offline Document
-pipeline. The measured Risk/Evidence performance Gate failed.
+> Historical evaluator version: `v045_role_b_real_document_benchmark_v1`
+>
+> Current competition metric protocol: `v045_competition_metric_protocol_v1`
+
+本报告保留 10-case offline governed benchmark 的原始实测事实。`COMPETITION_METRIC_PROTOCOL.md` 发布后，本报告中的 Risk P/R/F1、Evidence Recall@K 仍保持原始语义，但**不再把 `Evidence Recall@5` 直接解释为赛题官方“关键证据片段召回率 >=85%”的唯一公式**。
+
+赛题没有规定 Top-K；metric-v1 最终 M2 使用 Evidence Group Coverage Recall。当前报告因此是：
+
+```text
+input/runtime governance evidence
++ offline extraction/retrieval diagnostic baseline
+!= real-LLM metric-v1 competition benchmark
+```
+
+## 1. Measured results
 
 ```text
 PDFs requested:                 10
@@ -34,9 +45,6 @@ Verifier rejected:              0
 Extraction failed:              0
 Provider unavailable/offline:  10
 
-Risk target >=80%:           FAIL
-Evidence target >=85%:       FAIL
-
 2024 Validation opened:       NO
 2025 Blind accessed:          NO
 API key accessed:             NO
@@ -44,32 +52,30 @@ Network model calls:           0
 Evidence egress:                0
 ```
 
-## 1. Governed streaming run
-
-The source was the existing 6.7 GB competition ZIP beside the repository. It was
-not copied or expanded. The runner processed years in the frozen order
-2021 smoke → 2020 → 2022 → 2023. At any moment the task staged no more than:
+旧 evaluator 当时输出：
 
 ```text
-D:/Multi-Project/.tmp_role_b_offline_benchmark/current_year.zip
-D:/Multi-Project/.tmp_role_b_offline_benchmark/current.pdf
+Risk target >=80%:           FAIL
+Evidence target >=85%:       FAIL
 ```
 
-The outer ZIP was opened only to stream the exact annual member. Each annual ZIP
-was then opened to locate the exact catalog filename; fuzzy matching was not used.
-ZIP traversal and duplicate paths are rejected. The annual ZIP was deleted after
-the year and `current.pdf` after every case. The temporary directory is clean.
+这两个 legacy bool 只能表示“旧 evaluator 按当时 frozen semantics 未达到其 target”。它们**不能单独证明/否定 metric-v1 最终 M1/M2**，因为：
 
-All PDF identities came exclusively from
-`data/catalog/ipo_prospectus_manifest.csv`. All ten matched filename, byte size,
-SHA-256, stock/case identity and one-based physical PDF page count. No 2024/2025
-member was extracted or read.
+- M1 metric-v1 使用 5 个 competition primary risk families 的 positive Gold Risk Unit Accuracy + anti-gaming guardrails；
+- M2 metric-v1 使用 Evidence Group Coverage Recall，而不是固定 Recall@5；
+- 当前 run 没有真实 LLM 调用。
 
-## 2. Prediction/Gold isolation
+无论采用旧还是新协议，本次 offline 结果都不能证明比赛质量达标。
 
-Prediction generation read only the allowlist, catalog, frozen configuration and
-current PDF. The streaming runner has no Golden or expert-annotation input. It
-forced these settings without loading environment-variable secrets:
+## 2. Governed streaming run
+
+数据来自现有 competition ZIP；runner 一次只流式 staging 当前年度 ZIP 和当前 PDF，不展开完整数据集。每个 PDF identity 均来自 `data/catalog/ipo_prospectus_manifest.csv`，并通过 filename / byte size / SHA-256 / stock/case identity / one-based physical page count 校验。
+
+没有读取 2024/2025 member，也没有访问 Golden 生成 prediction。
+
+## 3. Prediction/Gold isolation
+
+Prediction generation 只读取 allowlist、catalog、frozen configuration、当前 PDF，并强制：
 
 ```text
 runtime_mode = offline
@@ -85,22 +91,13 @@ market_context = none
 final_supervisor = none
 ```
 
-The in-memory production result retained required Evidence text only while the
-pipeline executed. The persisted JSONL is a compact projection with identifiers,
-pages, ranks, calculation references and component identities; it contains no
-Evidence/page text, chunks, prompt or response. Predictions were frozen before
-the evaluator opened the formal Human Golden.
+预测先冻结，evaluator 后打开 formal Human Golden。Persisted JSONL 不包含 Evidence/page body、chunk、prompt 或 response。
 
 ```text
 OFFLINE GOVERNED BENCHMARK != REAL LLM BENCHMARK
 ```
 
-## 3. Benchmark metrics
-
-The evaluator reused the frozen `golden_eval.py` semantics. Non-annotated
-predictions remained `UNJUDGED`; they were not converted to false positives.
-Evidence Precision@5 remains unavailable because the Golden does not exhaustively
-judge every predicted page.
+## 4. Legacy per-risk metrics
 
 | Risk | Golden cases | Risk Precision | Risk Recall | Risk F1 | Evidence Recall@5 |
 |---|---:|---:|---:|---:|---:|
@@ -108,53 +105,66 @@ judge every predicted page.
 | `material_litigation_compliance` | 4 | 0.0% | 0.0% | 0.0% | 0.0% |
 | `precommercial_product` | 2 | 0.0% | 0.0% | 0.0% | 50.0% |
 
-The offline provider produced one Role-B RiskItem across the ten cases:
-`ipo_2020_01167/precommercial_product`, with nine bounded Evidence references.
-The frozen Human Golden expects `needs_review`, while the offline Verifier placed
-the item in `verified`; it therefore does not count as a correct verified-risk
-prediction. Nine cases produced no Role-B RiskItem. This is a measured baseline,
-not an extraction failure or an invented “no-risk” label.
+Offline provider produced one Role-B RiskItem：`ipo_2020_01167/precommercial_product`，带 9 个 bounded Evidence refs。Frozen Human Golden 期待 `needs_review`，offline Verifier 将其置于 `verified`，因此未计为正确 verified-risk prediction。其余 9 cases 没有形成 Role-B RiskItem。
 
-All three risks tie at 0 Risk F1. On Evidence, `redemption_rights` and
-`material_litigation_compliance` are weakest at Recall@5 = 0; Business reaches
-50% for its two applicable page judgments. No tuning was performed after viewing
-these results.
+这个结果暴露的主要问题仍然是：
 
-## 4. `ipo_2020_01167` governance
+```text
+Evidence candidate may exist
+→ structured extraction / candidate formation
+→ reconciliation / Verifier
+→ no formal RiskItem
+```
 
-The case is evaluable because its formal Human-Golden rows satisfy the frozen
-evaluator policy. Its supplementary expert annotation remains separately invalid:
-the existing receipt has `valid: false` for three unsupported `expected_level`
-values. The packet was not repaired, guessed, or supplied to prediction. Owner:
-A — Pipeline/data governance; B can re-audit a corrected supplementary packet.
+## 5. Metric-v1 implications
 
-## 5. Required answers
+新的 final competition benchmark 不会覆盖/重写本报告，而是新增一套 metric-v1 handoff：
 
-1. **Were all ten PDFs found?** YES, in the exact 2020–2023 nested annual ZIPs.
-2. **Did all pass SHA and page validation?** YES, 10/10 for byte size, SHA-256
-   and catalog physical-page count.
-3. **Which cases failed parsing/analysis?** None; 10/10 completed and cleaned.
-4. **Offline metrics:** Risk Precision/Recall/F1 = 0%; Evidence Recall@5 = 20%;
-   physical-page correctness = 100%; Evidence Precision@5 is not available.
-5. **Weakest risk:** all three tie at Risk F1 = 0; Legal redemption and litigation
-   are weakest on Evidence Recall@5 at 0.
-6. **Is 1167 evaluable?** YES using the valid formal Human Golden. Its invalid
-   supplementary annotation remains quarantined.
-7. **Were 80% / 85% reached?** NO; both targets failed.
-8. **Why is this not a real-LLM benchmark?** The provider was deliberately
-   unavailable, so real LLM calls, Evidence egress and network model calls were 0.
-9. **Is external-LLM authorization the only remaining step?** It is the remaining
-   gate for measuring the real-LLM path, but performance is not otherwise proven:
-   the offline baseline is below target. Any semantic remediation after a real-LLM
-   measurement requires a separately approved, Development-only B task; this
-   benchmark did not tune frozen components.
+### M1
 
-Market remains C-owned; Outcome/model remains D-owned; Final Supervisor,
-Streamlit and product/submission remain E-owned. Role B changed none of them.
+Primary families：
 
-## 6. Artifacts
+```text
+redemption_rights
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
+```
 
-The ignored runtime bundle is intentionally small:
+最终需报告 official-aligned positive Gold Risk Unit Accuracy、Precision、Positive Recall、Macro F1、per-risk support。official pass Accuracy >=0.80；内部 guardrails Positive Recall / Macro F1 >=0.82。
+
+### M2
+
+Human Gold 按支撑事实建立 Evidence Groups：
+
+```text
+Evidence Group Coverage Recall >=0.85
+```
+
+Recall@1/@3/@5/@10/@20 保留为 ranking diagnostics。旧本报告的 Recall@5=20% 仍可作为优化前 baseline 对照。
+
+### Execution
+
+下一步必须先做真实 LLM measurement，再做 Development-only remediation，禁止看 2024 Validation 后改 metric definition。
+
+## 6. `ipo_2020_01167` governance
+
+该 case 可用 formal Human Golden 评价。Supplementary expert annotation 的现有 receipt 因 unsupported `expected_level` values 保持 invalid/quarantined；本次 benchmark 没有修复、猜测或用它生成 prediction。
+
+## 7. Required answers after metric-v1 clarification
+
+1. 10 PDFs 是否全部找到？**YES**。
+2. SHA/page 是否通过？**YES, 10/10**。
+3. parsing/analysis failure？**None**。
+4. 旧 offline Risk P/R/F1？**0/0/0**。
+5. 旧 offline Recall@5？**20%**，仅 legacy ranking/end-to-end diagnostic。
+6. 它是不是官方 Evidence Recall 的唯一口径？**NO**。
+7. Real LLM cases？**0**。
+8. 能否宣称 M1/M2 达标？**NO**。
+9. 下一步？**metric-v1 real-LLM Development benchmark → failure taxonomy → Development-only remediation → frozen rerun**。
+
+## 8. Artifacts
 
 - `reports/v045_role_b/offline_development_analysis_results.jsonl`
 - `reports/v045_role_b/offline_pdf_run_manifest.json`
@@ -163,10 +173,9 @@ The ignored runtime bundle is intentionally small:
 - `reports/v045_role_b/evidence_benchmark.csv`
 - `reports/v045_role_b/document_benchmark_protocol.json`
 
-No PDF, annual ZIP, Evidence body, parsed page, chunk, model, index or cache is
-stored in the repository or runtime report directory.
+这些是 legacy offline benchmark artifacts；final metric-v1 artifacts 必须额外记录 `metric_protocol_version=v045_competition_metric_protocol_v1`。
 
-## 7. Verification performed
+## 9. Verification performed at original run
 
 ```text
 Formal Golden schema/catalog integrity: PASS
@@ -177,5 +186,4 @@ Full pytest: NOT RUN
 438-case/PDF-heavy benchmark: NOT RUN
 ```
 
-Only the ten governed Development PDFs were parsed. No full dataset benchmark or
-unrelated test suite was run.
+原始事实保持不变。
