@@ -15,10 +15,11 @@ Agent / Tool / Evidence trace     IMPLEMENTED, measured 1.0 on the real case
 Evidence Viewer (page + bbox)     IMPLEMENTED
 Human Review                      IMPLEMENTED
 Final Streamlit workspaces        IMPLEMENTED (5 workspaces)
-3–5 stable real demo cases        BLOCKED —— 本机只有 1 份受治理招股书 PDF
+3–5 stable real demo cases        CLOSED —— 3 / 3 offline，全部 SHA-256 校验通过
 ```
 
-E lane 的代码路径全部完成并有回归测试；唯一未达标项是 demo case 数量，其原因是本地缺少另外两份 licensed PDF，**不通过 mock / 复制 / 伪造案例来凑数**。
+E lane 的代码路径全部完成并有回归测试。3 案例矩阵已在离线链路上跑通（见 §3.2）；
+剩余未达标项是**真实 provider 的 LLM 综合判断**，需要凭证，不通过 mock 伪造。
 
 ## 2. 交付链路
 
@@ -100,7 +101,9 @@ Streamlit 收敛为 5 个工作区：**风险指挥中心 / Evidence 与 AI 分�
 
 ## 3. 真实案例证据
 
-`configs/v045_competition_offline.yaml` + `data/local/real_case_001/prospectus.pdf`：
+### 3.1 单案例受控协作轨迹（ipo_2024_02410）
+
+`configs/v045_competition_offline.yaml`：
 
 ```text
 case_id                         ipo_2024_02410 / 2410.HK / 2024-08-20
@@ -125,23 +128,69 @@ creates new risk                false
 Financial 的 `continuous_loss` / `customer_concentration` 经定向复核确认为 retrieval gap 并产出新 Evidence，
 `precommercial_product` 被确认为 extraction gap。
 
+### 3.2 三案例矩阵（offline）
+
+招股书 PDF 位于仓库之外的授权归档中。case list 只声明 `case_id`；文件名、SHA-256、字节数与
+物理页数全部来自冻结的 `ipo_prospectus_manifest.csv`，归档根目录由 `--prospectus-root` 或
+`IPO_RISK_PROSPECTUS_ROOT` 在运行时提供，因此**仓库内不落任何本地绝对路径**。
+字节、大小或页数与冻结记录不符的招股书**一律拒绝分析**（fail closed）。
+
+```text
+case            code      split                  pages  status     conflicts  re-checks  trace  traceability
+ipo_2024_02410  2410.HK   development_exception    706  completed          6          3     22           1.0
+ipo_2024_02460  2460.HK   validation               579  completed          7          3     23           1.0
+ipo_2024_01318  1318.HK   validation               617  completed          7          3     23           1.0
+```
+
+```text
+executed / declared            3 / 3
+SHA-256 + size + page verified 3 / 3
+structured workflow errors     0
+outcome labels accessed        false
+2025 Blind y accessed          false
+```
+
+三个案例的 Agent / Tool / Evidence 可追溯率均为 1.0，且都产生了真实的跨 Agent 冲突与受控定向复核。
+
+### 3.3 三案例矩阵暴露的文档覆盖问题（B lane）
+
+2460 与 1318 在离线链路下 **verified / pending / rejected 全部为 0**，即没有任何正式风险项进入报告。
+workflow structured error 为 0，说明链路本身跑通，缺口在文档抽取。E 的覆盖冲突规则把它完整暴露出来，
+以 2460 为例：
+
+```text
+precommercial_product           needs_review          8 evidence
+continuous_loss                 extraction_failed     1 evidence
+customer_concentration          conflicting_values    2 evidence   → partially_resolved（检索缺口）
+revenue_growth                  conflicting_values    3 evidence
+supplier_concentration          conflicting_values    4 evidence
+material_litigation_compliance  extraction_failed    10 evidence
+redemption_rights               extraction_failed     2 evidence
+```
+
+七个 risk code 都检索到了 Evidence，没有一个形成风险项。这与 B 自己的离线基准
+（`V045_ROLE_B_REAL_BENCHMARK_REPORT.md`，Risk Precision 0.0%）一致，属 **B lane 的抽取覆盖问题**，
+不是 Supervisor / conflict / trace 的缺陷。E 侧不做任何补写或降级掩盖。
+
 ## 4. 未达标项与 blocker
 
 ```text
-1. >=3 real demo cases
-   本机仅 1 份受治理招股书 PDF。configs/v045_demo_cases.json 已声明 3 个 catalog 内真实案例
-   (ipo_2024_02410 / ipo_2024_02460 / ipo_2024_01318)，缺失的两个在 summary.json 中显式记为
-   unavailable_prospectus，不做替代。补齐 PDF 后重跑同一脚本即可。
+1. 真实 provider 的 LLM 综合判断仍未在最终矩阵上验证
+   三案例矩阵目前跑的是 offline 配置，Final Supervisor 诚实降级为确定性组合。
+   configs/v045_competition_ai.yaml 配好凭证后重跑同一脚本即可。
 
-2. Market 通道在本机为 unavailable_error
+2. 两个案例没有任何正式风险项（见 §3.3）
+   属 B lane 的文档抽取覆盖问题；E 已把它作为覆盖冲突显式暴露，不做掩盖。
+
+3. Market 通道在本机为 unavailable_error
    reports/v04_pr_b/core_features 在本 workspace 不存在（reports/* 未入库）。E 不重跑 frozen PR-B。
    A / B 在本地物化该产物后，Market 通道即自动可用，Market Intelligence 与市场侧冲突规则随之生效。
 
-3. LLM Final Supervisor 在离线配置下 status=unavailable
+4. LLM Final Supervisor 在离线配置下 status=unavailable
    这是设计中的诚实降级。configs/v045_competition_ai.yaml 配好远端 provider 凭证后即为 available；
    接线与越界校验已由 contract / integration 测试覆盖。
 
-4. Model 通道 disabled
+5. Model 通道 disabled
    仍受 PR-H 的 frozen PR-F handoff blocker 约束，属 D lane，未在本轮触碰。
 ```
 
@@ -205,7 +254,7 @@ scripts/validate_competition_runtime.py   把 v045_competition_ai.yaml 纳入 A 
 ```bash
 python -m pytest -q
 python scripts/validate_competition_runtime.py
-python scripts/run_v04_role_e_demo.py
+IPO_RISK_PROSPECTUS_ROOT=<授权招股书归档根目录> python scripts/run_v04_role_e_demo.py
 streamlit run app/streamlit_app.py   # 选择「v0.4.5 比赛版（离线）」并上传招股书 PDF
 ```
 
