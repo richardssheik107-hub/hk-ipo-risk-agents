@@ -154,7 +154,7 @@ outcome labels accessed        false
 
 三个案例的 Agent / Tool / Evidence 可追溯率均为 1.0，且都产生了真实的跨 Agent 冲突与受控定向复核。
 
-### 3.4 Submission artifacts 与 Gate E1 acceptance evidence
+### 3.3 Submission artifacts 与 Gate E1 acceptance evidence
 
 每个 case 现在额外产出三份提交面工件，全部由该次 run 的真实记录渲染，不做任何补写：
 
@@ -202,7 +202,7 @@ unmet                                    real remote provider (provider: unavail
 这是**设计内的诚实降级**，不是 Gate E1 通过。mock provider 即使给出完全合规的结论也被显式拒绝计入
 （`provider_is_real_remote=false`），以免离线演示被误读成真实仲裁。
 
-### 3.3 三案例矩阵暴露的文档覆盖问题（B lane）
+### 3.4 三案例矩阵暴露的文档覆盖问题（B lane）
 
 2460 与 1318 在离线链路下 **verified / pending / rejected 全部为 0**，即没有任何正式风险项进入报告。
 workflow structured error 为 0，说明链路本身跑通，缺口在文档抽取。E 的覆盖冲突规则把它完整暴露出来，
@@ -222,16 +222,50 @@ redemption_rights               extraction_failed     2 evidence
 （`V045_ROLE_B_REAL_BENCHMARK_REPORT.md`，Risk Precision 0.0%）一致，属 **B lane 的抽取覆盖问题**，
 不是 Supervisor / conflict / trace 的缺陷。E 侧不做任何补写或降级掩盖。
 
+### 3.5 M4 Explanation Quality 与 Evidence / Human Review 导出
+
+metric protocol v2 把 M4 明确划给 E（`Gate E2 — Explanation Quality`）。rubric 已经冻结在
+`configs/v045_competition_metric_protocol.json`，本实现**从该文件读取阈值**，不在代码里复述：
+
+```text
+dimensions   evidence_grounding / logical_consistency / conflict_handling /
+             recheck_quality / final_conclusion
+scale        1–5
+每案人类评审  >= 2
+mean 目标     >= 4.0
+单案例下限    >= 3.0
+LLM 单独评审  不允许
+```
+
+分数只能来自人。本模块只做两件事：产出**空表单**（每个案例带真实 run 事实与要读的工件路径，
+所有分数为 null），以及把填好的评审**聚合**成 `explanation_quality.json`。
+
+计分策略是保守的：**primary mean 只算人类评审**，LLM 评审可以记录但标为 advisory 且永不计入——
+否则模型可以给自己的解释抬分。未评审 / 只有一名评审 / 只有 LLM 评审的案例一律 `satisfied=false`
+并写明原因，与 Gate E1 证据同一套 fail-closed 口径。
+
+同时补齐 CH-6 里 E 名下的另一项产物（Evidence / Human Review exports），逐案写出：
+
+```text
+evidence_export.json / .csv   每条被风险实际引用的 Evidence：id / 页码 / section /
+                              retriever / relevance / 是否有 bbox / 受限 snippet
+human_review_export.json      该 analysis 的人工复核决定；**没有复核就写明没有复核**，
+                              不用空表冒充「无异议」
+```
+
+Evidence 导出只收录**被风险引用**的 Evidence——检索到但没形成结论的不算发现，不进导出。
+snippet 有长度上限（全文本来就在 `analysis_result.json` 里，导出是索引不是副本）。
+
 ## 4. 未达标项与 blocker
 
 ```text
 1. 真实 provider 的 LLM 综合判断仍未在最终矩阵上验证
    三案例矩阵目前跑的是 offline 配置，Final Supervisor 诚实降级为确定性组合。
    configs/v045_competition_ai.yaml 配好凭证后重跑同一脚本即可；
-   Gate E1 的验收判据已经由 run 机器产出（见 §3.4），凭证到位后跑一次即得验收证据，
+   Gate E1 的验收判据已经由 run 机器产出（见 §3.3），凭证到位后跑一次即得验收证据，
    当前实测记录为 satisfied=false。
 
-2. 两个案例没有任何正式风险项（见 §3.3）
+2. 两个案例没有任何正式风险项（见 §3.4）
    属 B lane 的文档抽取覆盖问题；E 已把它作为覆盖冲突显式暴露，不做掩盖。
 
 3. Market 通道在本机为 unavailable_error
@@ -274,6 +308,9 @@ src/ipo_risk/agents/final_supervision_llm.py
 src/ipo_risk/runtime/__init__.py
 src/ipo_risk/runtime/competition_trace.py
 src/ipo_risk/runtime/submission_artifacts.py
+src/ipo_risk/runtime/submission_exports.py
+src/ipo_risk/runtime/explanation_quality.py
+scripts/build_v045_explanation_quality.py
 src/ipo_risk/repositories/human_review.py
 src/ipo_risk/services/human_review_service.py
 src/ipo_risk/workflows/v04_competition.py
@@ -288,6 +325,8 @@ tests/contract/test_v045_llm_final_supervisor.py
 tests/unit/test_v045_conflict_and_recheck.py
 tests/unit/test_v045_competition_trace.py
 tests/unit/test_v045_role_e_submission_artifacts.py
+tests/unit/test_v045_submission_exports.py
+tests/unit/test_v045_explanation_quality.py
 tests/unit/test_v045_human_review.py
 tests/unit/test_v045_competition_runtime_view.py
 tests/integration/test_v045_competition_workflow.py
@@ -314,4 +353,13 @@ streamlit run app/streamlit_app.py   # 选择「v0.4.5 比赛版（离线）」�
 
 per-case 工件写入 `reports/v045_role_e/<case_id>/`（`reports/*` 不入库）。
 
-测试基线：`1783 passed`（首轮新增 86 项）；submission artifacts 增补后为 `1879 passed`。
+测试基线：`1783 passed`（首轮新增 86 项）；submission artifacts 增补后 `1879 passed`；
+M4 + exports 增补后 `1919 passed`。
+
+M4 表单与聚合：
+
+```bash
+python scripts/build_v045_explanation_quality.py --emit-form   # 产出空表单
+# 至少两名评审各自独立填分后
+python scripts/build_v045_explanation_quality.py               # 产出 explanation_quality.json
+```
