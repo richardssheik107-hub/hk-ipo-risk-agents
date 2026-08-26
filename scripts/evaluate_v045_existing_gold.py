@@ -56,12 +56,12 @@ def main() -> int:
     parser.add_argument(
         "--require-real-llm",
         action="store_true",
-        help="fail unless at least one governed real external LLM case is measured",
+        help="fail unless every expected case in scope is a governed real external LLM run",
     )
     parser.add_argument(
         "--require-pass",
         action="store_true",
-        help="fail unless full-split, complete, real-LLM M1>=80% and M2>=85%",
+        help="fail unless full-split, complete, all-real-LLM M1>=80% and M2>=85%",
     )
     parser.add_argument(
         "--output-dir",
@@ -104,12 +104,16 @@ def main() -> int:
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
 
     gate = summary["measurement_gate"]
+    expected = int(summary["expected_case_count_for_split"])
+    all_real_llm = expected > 0 and int(summary["real_llm_cases"]) == expected
     if args.require_complete and not gate["all_expected_cases_present"]:
         return 2
-    if args.require_real_llm and not gate["real_llm_measurement_present"]:
+    if args.require_real_llm and not all_real_llm:
         return 3
     if args.require_pass:
-        if not gate["competition_pass_claim_eligible"]:
+        if summary["evaluation_scope"] != "full_split":
+            return 4
+        if not gate["all_expected_cases_present"] or not all_real_llm:
             return 4
         if gate["official_m1_pass"] is not True or gate["official_m2_pass"] is not True:
             return 5
