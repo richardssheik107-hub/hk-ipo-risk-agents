@@ -1,6 +1,6 @@
 # Architecture — Current v0.4.5 Competition Runtime
 
-本文件描述**当前 main 已实现架构**，不是未来愿望清单。
+本文件描述当前 v0.4.5 runtime 架构，以及 final competition evaluation 如何在 runtime 之外消费受治理 artifact。业务 runtime 不因 Metric Protocol v1 而被静默改写。
 
 ## 1. Runtime overview
 
@@ -32,8 +32,6 @@ Governed Market-X ───► MarketContext
                  MarketRegimeSkill
                       ▼
               Market Intelligence
-              deterministic context
-              + bounded LLM interpretation
                       │
 Optional authentic   │
 frozen PR-F signal ──┤
@@ -54,51 +52,69 @@ frozen PR-F signal ──┤
                Streamlit / exports
 ```
 
+Final competition evaluation 位于上述 runtime 之后：
+
+```text
+B Document artifacts ┐
+C Market trace       ├→ Metric Protocol v1 evaluator / A readiness
+D Outcome artifacts  │
+E Final artifacts    ┘
+                    ↓
+M1 / M2 / M3 / M4 / M5
+                    ↓
+Blind / provenance / determinism / package
+```
+
+`COMPETITION_METRIC_PROTOCOL.md` 定义 evaluator 口径，不允许反向篡改 runtime 的 frozen business truth。
+
 ## 2. Document boundary
 
 ### Parser
 
-Parser 负责产生真实 physical page identity。当前 PyMuPDF 路径可以提供 page grounding；真实 2410.HK 测量显示 706/706 chunks 有 page，但 parser 尚未产生 bbox。
+Parser 负责真实 physical page identity。当前 PyMuPDF 路径可以提供 page grounding；2410.HK 已测 706/706 chunks 有 page，但 parser 尚未产生 bbox。
 
 规则：
 
-- UI 不得自己猜页码/bbox；
+- UI 不得猜页码/bbox；
 - 新增 bbox 必须由 parser/Evidence layer 产生；
-- 因 bbox 会进入 Evidence content，改变 hash 时必须做 version/provenance review。
+- bbox 改变 Evidence content/hash 时必须做 version/provenance review。
 
 ### Retriever / Evidence
 
-Retriever 只负责把有限证据送给下游。LLM 不直接获得整份 700 页 PDF 的无限上下文。
-
-正式语义链：
+正式链：
 
 ```text
 Retriever
-→ bounded Evidence
+→ bounded Evidence candidates
 → structured LLM candidate
 → Evidence ID scope validation
 → Risk Builder
 → Verifier
 ```
 
+Metric-v1 对这条链分层评价：
+
+```text
+Candidate Recall@20        diagnostic target >=0.95
+Reranked Recall@10         diagnostic target >=0.90
+Evidence Group Coverage    official-aligned M2 >=0.85
+```
+
+Primary Evidence Gate 不固定 Top-5。Recall@1/@3/@5/@10/@20 用来定位 retrieval/ranking 问题。
+
 ### Financial
 
 Financial 保持 deterministic-first：表格/文本抽取、Calculation、规则判定由 Python 主导。LLM 不作为精确数学权威。
 
+Metric-v1 的 `customer_concentration`、`supplier_concentration`、`cash_burn_pressure` 可以消费现有 Financial 输出；metric family mapping 不修改 frozen internal code identity。
+
 ### Legal / Business
 
-Legal / Business 可以调用 provider-neutral structured LLM：
+Legal / Business 使用 provider-neutral structured LLM：prompt identity、Pydantic schema、bounded repair、Evidence scope guard、canonical normalization、semantic conflict fail-closed。
 
-- prompt identity registered；
-- Pydantic response schema authoritative；
-- invalid structured result 可以 bounded repair retry；
-- out-of-scope Evidence reference fail closed；
-- harmless vocabulary variants 可 canonicalize；
-- genuine semantic conflict 不被吞掉。
+`related_party_transaction` 如用于 competition metric，只允许 additive/versioned sidecar，不静默改 frozen baseline registry。
 
 ## 3. Market boundary
-
-生产数值来源是 governed Market-X，不是 legacy mock snapshot。
 
 ```text
 Pre-listing governed facts
@@ -109,107 +125,105 @@ Pre-listing governed facts
 
 Market LLM 只能解释输入事实，不能 mint numeric market facts。
 
-Core-only 情况合法：缺 Extended source 时 `MarketRegimeSkill` 可以 `INSUFFICIENT_DATA`/partial，不得 crash，也不得 zero-fill。
-
-PIT-safe industry classification 不存在时，industry return 继续显式 blocked/missing。
+Core-only 合法；Extended 缺失时保持 partial/INSUFFICIENT_DATA；PIT-safe industry mapping 不存在时继续 blocked/missing。
 
 ## 4. Model boundary
 
-模型通道只允许消费 authentic frozen PR-F evidence/handoff。
-
 ```text
-available authentic handoff
+available authentic frozen handoff
 → uncalibrated_model_score + identity + optional signed SHAP
 
 handoff absent / hash mismatch
 → Model Channel unavailable
 ```
 
-不允许在线重新训练一个替代模型来“补通道”。
+不允许为 UI 或 M5 临时重训替代模型。
 
 ## 5. Competition supervision
 
 ### Conflict Detection
 
-Competition conflict 是跨 named outputs 的分歧或覆盖缺口，不是一个 Agent 的普通 uncertainty。
-
-当前策略包括：
-
-- Agent assertion vs Verifier；
-- unresolved bounded claim；
-- Document internal conflict 上抬；
-- document vs rule / market / model divergence（只有对应通道真实可用时）。
+覆盖 Agent assertion vs Verifier、unresolved bounded claim、Document internal conflict、以及真实可用通道之间的 divergence。
 
 ### Targeted Re-check
 
-`RecheckRequest.max_attempts` schema 层固定为 1；同时 workflow 有总预算。超预算 conflict 显式保留 unresolved/not-attempted，不静默丢弃。
+`RecheckRequest.max_attempts=1`，workflow 还有总预算；超预算 conflict 显式 unresolved/not-attempted。
 
 ### LLM Final Supervisor
 
-输入仅来自已结构化的 channel outputs、Evidence/Calculations、Conflict/Recheck result。
+输入仅来自已结构化 outputs、Evidence/Calculations、Conflict/Recheck result。
 
 约束：
 
-- 引用 ID 必须属于输入；
-- overall severity 不能低于 deterministic verified-risk floor；
+- 引用 ID 必须 in-scope；
+- severity 不低于 deterministic verified-risk floor；
 - 不凭空新增数值/概率；
-- provider failure 时回退到 deterministic composition，并保留 unavailable reason。
+- provider failure 保留 deterministic fallback/unavailable reason。
 
-针对 recoverable Responses transport failure，Final Supervisor 有受限 same-model chat JSON fallback；该 fallback 在 trace 中明确标识，不能冒充原 function call 成功。
+fallback 是正确降级，但不计 E1 successful remote arbitration。
 
-## 6. Trace
+## 6. Trace / M3
 
 `TraceEvent` 覆盖 parser/retriever/agent/skill/llm/verifier/market/model/conflict/recheck/supervisor/human_review。
 
-每个事件应记录：
+relevant event 必须有 actor/action/tool identity，并有 Evidence / Calculation reference 或 explicit `no_evidence_reason`。远程 LLM 还保留 provider/model/prompt/request/hash/latency。
 
-- case/run identity；
-- actor/action/tool_or_skill；
-- provider/model/prompt；
-- Evidence/Calculation refs 或明确 no-evidence reason；
-- conflict/recheck refs；
-- latency/request/hash when available；
-- status/details。
+traceability 从真实事件计算，不硬编码。
 
-traceability 是从真实事件计算的最小覆盖值，不得硬编码 1.0。
-
-当前三案例 offline matrix measured traceability 均为 1.0。
-
-## 7. Human Review / Product boundary
-
-Human Review 写独立 sidecar：
+Metric-v1 M3：
 
 ```text
-machine result stays immutable
-+ reviewer decision / note
-→ review sidecar
+Development real-LLM traceability =1.0
+final 3-case real-provider traceability =1.0
 ```
 
-Streamlit 只消费 service/runtime 输出，不在展示层修复后端事实。
+当前 3-case offline matrix 已测 1.0 / 1.0 / 1.0。
 
-当前五工作区：
+## 7. Human Review / M4
 
-1. 风险指挥中心；
-2. Evidence 与 AI 分析；
-3. 市场与模型；
-4. Agent 协作轨迹；
-5. 人机复核与最终报告。
+Human Review 写独立 sidecar，不修改机器事实。
+
+Metric-v1 最终额外要求 explanation-quality artifact，由至少 2 名人类 reviewer 对：
+
+```text
+Evidence grounding
+Logical consistency
+Conflict handling
+Re-check quality
+Final conclusion
+```
+
+评分。LLM reviewer 只能辅助。
 
 ## 8. Runtime modes
 
-- `v045_competition_offline`：真实 PDF + deterministic/offline degradation，不发远端 LLM；
+- `v045_competition_offline`：真实 PDF + deterministic/offline degradation；
 - `v045_competition_ai`：相同治理链 + configured remote provider；
-- frozen `v04_*` baseline configs 不因 competition product 改名或静默替换。
+- frozen baseline configs 不被 competition metric 静默替换。
 
-## 9. Current measured limits
+## 9. Evaluation boundary / M1-M5
 
-架构完整不等于效果达标。当前主要限制：
+Metric Protocol v1 是 evaluation contract，不是 runtime schema replacement：
 
-- B 10-case offline benchmark Risk P/R/F1 = 0%，Evidence Recall@5 = 20%；
-- 2460/1318 已有 Evidence 但离线下没有正式风险项；
-- final matrix 的 remote Final Supervisor 尚未验收；
-- D multi-horizon final outputs 尚未闭合；
+```text
+M1 Risk Accuracy >=0.80 + internal anti-gaming guardrails
+M2 Evidence Group Coverage Recall >=0.85
+M3 Traceability =1.0
+M4 Explanation internal rubric
+M5 1D/5D/20D/60D, primary significant_drop_5d = return_5d <= -0.10
+```
+
+赛题没有规定 Top-5 Evidence 或 5D -10% 为官方公式；这些属于 project predeclared protocol。
+
+## 10. Current measured limits
+
+- B 旧 10-case offline：Risk P/R/F1=0%，Evidence Recall@5=20%，Real LLM=0；
+- 该 Recall@5 是 legacy diagnostic，不等于 M2 official-aligned current value；
+- 2460/1318 有 Evidence 但 offline 下未形成 formal risk；
+- final 3-case remote Final Supervisor 尚未 acceptance；
+- M4 explanation-quality artifact 尚未产生；
+- D M5 final outputs 尚未闭合；
 - parser bbox 尚未生成；
 - authentic frozen PR-F per-case handoff 未恢复。
 
-这些限制必须在产品/报告中显式呈现，不得由 UI 或 narrative 掩盖。
+这些限制必须显式呈现，不得由 UI 或 narrative 掩盖。
