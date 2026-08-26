@@ -6,7 +6,8 @@ verifier, Document Supervisor, governed market context, rule signal, conflict
 detection, one bounded targeted re-check per conflict, LLM Final Supervisor
 synthesis and trace assembly -- and writes the per-case artifacts the submission
 package needs: the analysis result, the conflict / re-check / trace sidecars, an
-agent reasoning log, a case report and the Gate E1 acceptance evidence.
+agent reasoning log, a case report, the Evidence and Human Review exports and
+the Gate E1 acceptance evidence.
 
 The Gate E1 evidence is produced by the run itself rather than read off the
 artifacts afterwards.  It records whether a real remote provider actually
@@ -41,6 +42,11 @@ from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 from ipo_risk.core.config import load_settings
+from ipo_risk.runtime.submission_exports import (
+    build_evidence_export,
+    build_human_review_export,
+    render_evidence_export_csv,
+)
 from ipo_risk.runtime.submission_artifacts import (
     CaseRunArtifacts,
     build_agent_reasoning_log,
@@ -51,6 +57,7 @@ from ipo_risk.runtime.submission_artifacts import (
 )
 from ipo_risk.schemas import IPOAnalysisRequest, IPOAnalysisResult
 from ipo_risk.services.analysis_service import IPOAnalysisService
+from ipo_risk.services.human_review_service import HumanReviewService
 
 DEMO_VERSION = "v045_role_e_demo_v2"
 DEFAULT_CASES = Path("configs/v045_demo_cases.json")
@@ -226,6 +233,16 @@ def _write_artifacts(
     )
     reasoning_log = build_agent_reasoning_log(run_artifacts)
     gate_e1 = build_gate_e1_evidence(run_artifacts)
+    evidence_export = build_evidence_export(
+        case_id=case_id, stock_code=stock_code, result=run_artifacts.result
+    )
+    # Reviewer decisions live in their own sidecar store and are read, never
+    # merged: a case nobody reviewed is exported as unreviewed.
+    human_review_export = build_human_review_export(
+        case_id=case_id,
+        analysis_id=result.analysis_id,
+        reviews=HumanReviewService().history(result.analysis_id),
+    )
 
     artifacts = {
         "analysis_result.json": run_artifacts.result,
@@ -237,11 +254,16 @@ def _write_artifacts(
         "prospectus_verification.json": verification,
         "agent_reasoning_log.json": reasoning_log,
         "gate_e1_evidence.json": gate_e1,
+        "evidence_export.json": evidence_export,
+        "human_review_export.json": human_review_export,
     }
     for name, payload in artifacts.items():
         (case_dir / name).write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+    (case_dir / "evidence_export.csv").write_text(
+        render_evidence_export_csv(evidence_export), encoding="utf-8"
+    )
     (case_dir / "agent_reasoning_log.md").write_text(
         render_agent_reasoning_log(reasoning_log), encoding="utf-8"
     )
@@ -275,6 +297,8 @@ def _write_artifacts(
         "recheck_attempted": rechecks.get("attempted", 0),
         "llm_synthesis_status": supervision_llm.get("status"),
         "llm_synthesis_outcome": supervision_llm.get("outcome"),
+        "evidence_export_row_count": evidence_export["evidence_row_count"],
+        "human_review_count": human_review_export["review_count"],
         "llm_synthesis_reason": supervision_llm.get("reason"),
         "gate_e1": gate_e1,
         "deterministic_severity_floor": supervision_llm.get("deterministic_severity_floor"),
