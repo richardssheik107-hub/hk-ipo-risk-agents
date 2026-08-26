@@ -1,12 +1,16 @@
-# Competition Metric Protocol v1
+# Competition Metric Protocol v2 — Existing-Gold-Only
 
-> Protocol ID: `v045_competition_metric_protocol_v1`
+> Protocol ID: `v045_competition_metric_protocol_v2_existing_gold_only`
 >
 > Scope: v0.4.5 competition evaluation and final submission
 >
-> Status: **FROZEN BEFORE 2024 VALIDATION RE-EVALUATION**
+> Status: **FROZEN BEFORE ANY NEW 2024 VALIDATION METRIC RE-EVALUATION**
+>
+> Supersedes: `v045_competition_metric_protocol_v1`
 
-本文件把赛题中没有给出完整 evaluator 细节的指标，转换成一套预先声明、可复现、可审计的比赛评价协议。它不是对命题方公式的“官方解释”；它是本项目在不事后挑口径的前提下，对官方要求做出的透明对齐方案。
+本文件把赛题中未给出完整 evaluator 细节的指标，转换成一套预先声明、可复现、可审计的项目评价协议。v2 的核心变化只有一个：**M1/M2 不再新增任何人工 Gold 标注，不补 risk family，不重新做人类 Evidence Group；只使用项目此前已经完成并冻结的 Expert Annotation / Oracle Gold 作为标准答案来源。**
+
+v1 在任何新的 2024 Validation metric 重评之前被本版本取代；本次调整没有打开新的 Validation 结果，也没有访问 2025 Blind y。
 
 赛题原文件明确要求：
 
@@ -16,9 +20,9 @@
 - 逻辑解释有效性高；
 - 用上市首日、5D、20D、60D 真实表现验证预警价值，其中 5D 显著下跌识别给予更高权重。
 
-原文件没有规定：Risk Accuracy 的唯一公式、Evidence 是否采用 Top-K、K 等于多少、5D“显著下跌”的阈值、解释质量的打分表。因此本协议在打开新的 Validation 结果前先冻结这些定义。
+原文件没有规定 Risk Accuracy 的唯一公式、Evidence 是否采用 Top-K、K 等于多少、5D“显著下跌”的阈值或 Explanation rubric。本协议不冒充官方唯一公式，只定义本项目提交前固定使用的可复现口径。
 
-## 1. Split 与 anti-tuning 规则
+## 1. 数据与 split 治理
 
 ```text
 2020–2023  Development
@@ -26,59 +30,106 @@
 2025       Blind
 ```
 
-规则：
+### 1.1 Existing Gold only
 
-- Development：可以标注、诊断、改代码/Prompt、做 targeted remediation；
-- Validation：只做冻结方案的一次性确认，不根据 2024 结果回头改阈值/Prompt/模型；
+M1/M2 的唯一人工标准答案来源是项目此前已经存在并冻结的 Expert Annotation / Oracle Gold：
+
+```text
+annotation inventory   101
+valid annotations      100
+official materialized   98
+```
+
+这些数字描述现有 Gold inventory，不等于 M1/M2 最终可评价单元数量。M1/M2 evaluator 必须通过只读代码审计现有 annotation，统计实际 `evaluable` support。
+
+从本版本开始明确禁止：
+
+- 为比赛指标新增人工标注；
+- 为某个低 support risk family 临时补标；
+- 看模型错误后修改旧专家答案；
+- 把旧 Gold 未标注的风险解释为“明确不存在”；
+- 为了满足新协议人工重做 Evidence Group；
+- 根据 Validation 结果回头调整 Gold、Prompt、阈值或 metric 公式。
+
+### 1.2 Unjudged semantics
+
+旧 Gold 没有明确判断的 `case × risk` 单元统一视为：
+
+```text
+UNJUDGED
+```
+
+`UNJUDGED`：
+
+- 不进入 M1 正样本分母；
+- 不自动当 negative；
+- 不用于制造 false positive / true negative；
+- 在最终报告中按 risk family 披露 support。
+
+### 1.3 Anti-tuning
+
+- Development：允许看错误、改代码、Retriever、Prompt、structured extraction、normalization、RiskItem reconciliation、Verifier；
+- Validation：系统/Prompt/evaluator 冻结后一次性确认，不作为第二开发集；
 - Blind：未正式授权前不读取 2025 outcome/y；
-- metric definition、Gold schema、case allowlist、阈值和 evaluator 版本必须在 Validation 重评前冻结；
-- 不允许看完 Validation 再选择“最好看的 Accuracy / Recall / 5D threshold”。
-
-当前 10-case Role-B offline benchmark 继续保留为历史诊断基线；它不等同于本协议的最终 official-aligned competition benchmark。
+- evaluator version、Gold source hash、evaluable-unit manifest 必须在 Validation 运行前冻结。
 
 ## 2. M1 — 关键风险要素抽取
 
-### 2.1 Competition-aligned core risk families
+### 2.1 Risk scope
 
-赛题点名“包括但不限于”对赌/赎回、关联交易、客户或供应商集中度、现金流消耗压力。为形成可复现 evaluator，本协议将以下 5 类作为 **competition primary risk families**：
+赛题点名“包括但不限于”对赌/赎回、关联交易、客户或供应商集中度、现金流消耗压力。项目仍保留这些 competition-priority 映射：
 
-| Competition family | 当前项目映射 | 说明 |
-|---|---|---|
-| `redemption_rights` | existing Legal risk | 对赌/赎回条款 |
-| `related_party_transaction` | additive competition sidecar | 不修改 frozen baseline risk identity |
-| `customer_concentration` | existing Financial risk | 客户集中度 |
-| `supplier_concentration` | existing Financial risk | 供应商集中度 |
-| `cash_burn_pressure` | mapped from `cash_runway` / deterministic cash-burn calculation | 比赛评价族，不静默重命名 frozen `cash_runway` |
+```text
+redemption_rights
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
+```
 
-`material_litigation_compliance`、`precommercial_product`、`continuous_loss`、`revenue_growth` 等继续作为系统能力与扩展报告项，但不替代上述 5 个 primary families 的覆盖。
+但 **v2 不要求人为补齐这五类 Gold**。最终可评价范围完全由既有专家 Gold 实际覆盖决定：
 
-### 2.2 Gold Risk Unit
+```text
+existing Gold 有明确 positive judgment -> evaluable
+existing Gold 无明确 judgment          -> UNJUDGED
+support = 0                             -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+```
 
-一个 Gold Risk Unit 至少包含：
+`related_party_transaction` 如旧 Gold 无有效 support，就明确报告 `NOT_EVALUABLE_FROM_EXISTING_GOLD`，不新增 sidecar 标注来凑指标。`cash_burn_pressure` 仅在旧 annotation 能确定性映射到已有 cash/runway/cash-burn 专家事实时进入评价。
+
+现有 `material_litigation_compliance`、`precommercial_product`、`continuous_loss`、`revenue_growth` 等，如果旧 Gold 已明确标注，可以进入 per-risk diagnostics；不得为了对齐“五类”删除已有可评价事实。
+
+### 2.2 Existing-Gold Risk Unit
+
+M1 evaluator 只从既有 annotation 中确定性提取可评价单元。每个单元至少记录：
 
 ```text
 case_id
+source_annotation_id / hash
 risk_family
-applicable
-required_attributes
-accepted_evidence_groups[]
-annotation_status
-reviewer_provenance
+existing_gold_status
+existing_required_attributes
+existing_evidence_refs
+split
+evaluable=true
 ```
 
-- `applicable=true` 的单位进入 Primary Accuracy 分母；
-- `applicable=false` 的单位用于 false-positive / precision 统计，但不允许通过大量 true negative 把 Primary Accuracy 刷高；
-- 数值字段按 deterministic exact/tolerance rule 判定；
-- 枚举/状态字段按 canonical value 判定；
-- 条款语义字段按预先写明的 canonical semantic criteria 判定；
-- 一个正式“正确抽取”必须同时有正确 risk family、关键属性满足规则，并至少命中一个支撑该 Risk Unit 的 Evidence Group。
+不得新增人工属性或把缺失字段猜出来。
+
+一个正式“正确抽取”要求：
+
+1. risk family 与既有 Gold 一致；
+2. 旧 Gold 已明确要求的关键属性满足 deterministic/canonical matching；
+3. 若旧 Gold 本身包含支撑 Evidence，则系统至少命中一条可接受的既有 Evidence 依据。
+
+如果某旧 annotation 只有 risk existence、没有足够属性，则 evaluator 只能按其实际已有标注粒度判定，不得为了 metric 临时增加 required attributes。
 
 ### 2.3 Primary metric
 
 ```text
-Official-aligned Risk Extraction Accuracy
-= attribute-correct extracted positive Gold Risk Units
-  / all positive Gold Risk Units
+Official-aligned Existing-Gold Risk Extraction Accuracy
+= correct evaluable positive Existing-Gold Risk Units
+  / all evaluable positive Existing-Gold Risk Units
 ```
 
 Official pass line：
@@ -93,80 +144,68 @@ Project safety target：
 >= 0.85
 ```
 
-### 2.4 Anti-gaming guardrails
+### 2.4 Secondary metrics
 
-同时必须报告：
-
-```text
-Precision
-Positive Risk Recall
-Macro F1
-Per-risk support / Precision / Recall / F1
-```
-
-内部 guardrail：
+必须报告：
 
 ```text
-Positive Risk Recall >= 0.82
-Macro F1             >= 0.82
+evaluable positive support
+correct positive count
+positive extraction recall / accuracy
+per-risk support
+per-risk correct / recall
 ```
 
-这两个 0.82 是项目内部质量线，不冒充赛题官方阈值；其作用是防止只靠高频风险或 negative case 获得漂亮 Accuracy。
-
-### 2.5 Benchmark case plan
-
-Development 最终 metric-v1 benchmark 目标：
+`Precision`、`Macro F1` 只有在旧 Gold 对对应风险提供足够明确、近似 exhaustive 的 positive/negative judgment 时才允许正式报告；否则必须写：
 
 ```text
-20 fixed Development cases
-5 primary risk families
-fixed allowlist before final remediation
+NOT_AVAILABLE_FROM_EXISTING_GOLD
 ```
 
-- 当前 10 个 governed Development cases 可纳入其中，但不足部分需补齐；
-- 尽量保证每个 primary family 至少 5 个 positive Gold Units；若真实 Development 数据不足，不人工制造 positive，改为使用全部可得 positive 并明确 support；
-- Gold 至少由 2 名 reviewer 完成独立/交叉复核，争议项在 prediction freeze 前解决；
-- Development 闭合后，再对固定 2024 Validation subset 做一次性复核；不得用 Validation 作为第二开发集。
+不再为了得到 Precision/Macro F1 去补标 negative cases，也不设置必须靠新增标注才能满足的内部 guardrail。
 
 ## 3. M2 — 关键 Evidence Recall
 
-### 3.1 官方要求不等于 Recall@5
+### 3.1 官方 85% 不是 Recall@5
 
-赛题原文件只要求“关键证据片段召回率 >=85%”，没有规定 Top-K，也没有规定 K=5。
+赛题只要求“关键证据片段召回率 >=85%”，没有规定 Top-K，也没有规定 K=5。
 
-因此本项目正式拆成：
+v2 正式拆分为：
 
 ```text
-Primary official-aligned metric:
-Evidence Group Coverage Recall
+Primary official-aligned:
+Existing-Gold Evidence Coverage Recall
 
 Secondary diagnostics:
 Recall@1 / @3 / @5 / @10 / @20
 ```
 
-当前 offline `Evidence Recall@5 = 20%` 仅保留为旧 benchmark 的诊断事实：它不是 real-LLM 指标，也不能再被直接解释为“官方 85% 指标的当前值”。
+历史 offline `Evidence Recall@5 = 20%` 继续保留为旧 benchmark 诊断事实，不是 real-LLM 指标，也不能直接写成“官方 Evidence Recall 当前为20%”。
 
-### 3.2 Evidence Group
+### 3.2 Existing-Gold Evidence Unit
 
-Human Gold 不把招股书中所有重复出现的句子机械当成独立必命中片段，而按“支撑事实”形成 Evidence Group。
+M2 只使用旧 annotation 里已经存在的 Evidence/page/span/table/anchor 信息。
 
-例如一个赎回风险可以有：
+一个 `Existing-Gold Evidence Unit` 必须来自比赛收尾之前已经存在的专家标注或有效 audit overlay。允许的处理只有：
 
-```text
-Group A: 赎回权存在
-Group B: 触发条件
-Group C: 权利主体
-Group D: 上市前是否终止/失效
-```
+- 确定性 schema normalization；
+- identity/page 格式标准化；
+- 去除完全重复的同一既有 anchor；
+- 尊重旧标注本身已有的等价/分组关系。
 
-同一 Group 可以包含多个等价段落、表格或页码锚点。系统命中其中一个被预先认可的等价证据，即覆盖该 Group。
+禁止：
+
+- 新增人工 Evidence；
+- 人工把多个旧片段重新解释成新的 semantic group；
+- 为模型漏掉的证据临时增加替代页；
+- 从 PDF 重新人工寻找“更容易命中”的标准答案。
 
 ### 3.3 Primary metric
 
 ```text
-Evidence Group Coverage Recall
-= covered Gold Evidence Groups
-  / all Gold Evidence Groups
+Existing-Gold Evidence Coverage Recall
+= covered evaluable Existing-Gold Evidence Units
+  / all evaluable Existing-Gold Evidence Units
 ```
 
 Official pass line：
@@ -181,23 +220,81 @@ Project safety target：
 >= 0.88
 ```
 
-Primary metric **不设置固定 Top-5 上限**。
+Primary metric 不设置固定 Top-5 上限。
 
-### 3.4 Retrieval stage diagnostics
+### 3.4 Retrieval diagnostics
 
-为了知道 85% 卡在哪一层，内部使用分阶段目标：
+为了定位问题，继续报告：
+
+```text
+Candidate Retrieval Recall@20
+Reranked Recall@10
+Recall@1
+Recall@3
+Recall@5
+Recall@10
+Recall@20
+Final Existing-Gold Evidence Coverage Recall
+```
+
+工程目标保留为：
 
 ```text
 Candidate Retrieval Recall@20 >= 0.95
 Reranked Recall@10           >= 0.90
-Final Evidence Group Recall  >= 0.88 project target
+Final Existing-Gold Coverage >= 0.88 project target
 ```
 
-这些是项目内部诊断/工程目标，不是官方额外阈值。
+这些是内部工程目标，不是官方额外阈值。
 
-最终 RiskItem Evidence 不再规定“永远只能 5 条”；可以根据风险复杂度与证据多样性动态保留足够证据。Top-K 指标继续用于评价排序效率，而不是替代官方对齐的 Coverage Recall。
+## 4. B lane 的唯一优化范围
 
-## 4. M3 — Traceability
+从现在开始 B/A 在 M1/M2 上只做：
+
+```text
+existing Gold read-only coverage audit
+→ real-LLM Development run
+→ evaluate
+→ failure taxonomy
+→ Development-only code / Retriever / Prompt / extraction / reconciliation / Verifier optimization
+→ rerun same evaluator
+→ freeze
+→ one-shot Validation evaluation
+```
+
+Failure taxonomy：
+
+```text
+retrieval_candidate_miss
+ranking_miss
+semantic_extraction_miss
+schema_normalization_miss
+riskitem_reconciliation_miss
+verifier_rejection
+existing_gold_unjudged_or_unsupported
+```
+
+不新增标注，不扩 Gold universe，不增加新的 risk family 标注任务。
+
+### 4.1 Benchmark scope
+
+不再新建“20-case Gold target”。
+
+允许为了迭代速度从既有 Development Gold 中固定一个小 debug subset，但它只用于快速回归；正式 Development benchmark 使用：
+
+```text
+ALL evaluable existing Development Expert Gold
+```
+
+Validation 使用：
+
+```text
+ALL evaluable existing Validation Expert Gold
+```
+
+前提是对应 prediction 在 Gold 评分前冻结，并且 Validation 不用于后续调优。
+
+## 5. M3 — Traceability
 
 Official target：
 
@@ -205,17 +302,9 @@ Official target：
 100%
 ```
 
-一个 relevant TraceEvent 只有在满足以下之一时才算 accounted：
+一个 relevant TraceEvent 只有在 actor/action/tool-or-skill identity 完整，且有 Evidence reference、Calculation reference 或 explicit `no_evidence_reason` 时才算 accounted。
 
-```text
-agent/action/tool-or-skill identity recorded
-AND
-Evidence reference
-OR Calculation reference
-OR explicit no_evidence_reason
-```
-
-涉及远程 LLM 的事件还必须保留：
+远程 LLM 事件还必须保留：
 
 ```text
 provider
@@ -234,32 +323,15 @@ AND
 final 3-case matrix traceability = 1.0
 ```
 
-当前 3-case offline matrix 的 1.0 是已完成工程事实；后续重点是防回归，并在 real-provider run 上继续保持 1.0。
+## 6. M4 — Explanation Quality
 
-## 5. M4 — Explanation Quality
+赛题要求“逻辑解释有效性高”但没有给绝对数值线。现有 5 维 rubric 保持：Evidence grounding、Logical consistency、Conflict handling、Re-check quality、Final conclusion。
 
-赛题要求“逻辑解释有效性高”，但没有给出固定数值阈值。本项目采用 5 维、每维 1–5 分的 rubric：
+该项属于 E/A 最终产品验收，不属于 B 的 Gold 扩标任务。本版本不因 M1/M2 变更增加任何新的 M4 标注工作。
 
-| Dimension | 评价内容 |
-|---|---|
-| Evidence grounding | 关键结论是否有真实、相关 Evidence/Calculation 支撑 |
-| Logical consistency | 推理前后是否自洽，不自相矛盾 |
-| Conflict handling | Agent 冲突是否被准确识别、说明 |
-| Re-check quality | 为什么复核、复核什么、结果如何影响结论是否清楚 |
-| Final conclusion | Final Supervisor 是否从已知事实推出结论且不越权 |
+## 7. M5 — 上市后风险预警
 
-评审规则：
-
-- 至少 2 名人类 reviewer；
-- LLM reviewer 只能辅助，不作为唯一评分人；
-- 记录 per-case score、reviewer id/role、分歧与 resolution；
-- project target：平均分 `>=4.0/5`；任何正式展示案例不得 `<3.0/5`。
-
-这组数值是内部质量 Gate，不声称为命题方官方阈值。
-
-## 6. M5 — 上市后风险预警
-
-### 6.1 必须输出的 horizon
+必须输出：
 
 ```text
 return_1d
@@ -268,157 +340,61 @@ return_20d
 return_60d
 ```
 
-5D 为 Primary business horizon；1D/20D/60D 是完整性与稳健性 horizon。
-
-### 6.2 `significant_drop_5d` 定义
-
-赛题没有规定“显著下跌”的数值阈值。本协议预先固定 Primary 定义：
+Primary business horizon 仍为 5D。项目预先定义：
 
 ```text
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-同时提供 robustness definition：
+并报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有给这些指标绝对及格线，不伪造官方门槛。
+
+## 8. Required M1/M2 artifacts
+
+Role B 最终 `document_benchmark_summary.json` 至少提供：
 
 ```text
-Development return_5d bottom 20% cutoff
-```
+metric_protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
+existing_gold_source
+existing_gold_source_hash_or_manifest
+evaluable_development_case_count
+evaluable_validation_case_count
 
-Robustness cutoff 只能从 2020–2023 Development 计算一次并冻结；不得根据 2024 Validation 重新选择。
-
-### 6.3 5D metrics
-
-至少报告：
-
-```text
-Precision
-Recall
-F1
-PR-AUC
-ROC-AUC
-Top-risk-bucket hit rate (Top 10% / Top 20%)
-base prevalence
-```
-
-赛题没有给 5D 指标的绝对合格线，因此项目**不伪造一个“官方 0.xx 才算 PASS”**。最终 readiness 要求：
-
-- 指标完整、协议固定、可复现；
-- 与 no-skill/base-rate 和可用的 document-only / market-only / combined baseline 做透明比较；
-- 重点优化 5D，但不能在 2024 Validation 上 post-hoc 选阈值、反转 score 或重新训练 frozen PR-F。
-
-如果融合模型没有稳定提升，也要如实报告“有限 predictive increment”，而不是修改评价口径。
-
-## 7. Optimization order
-
-比赛收口的优化顺序固定为：
-
-```text
-P0  B: real-LLM measurement first
-    → Retrieval candidate coverage
-    → Evidence ranking / group coverage
-    → Structured extraction
-    → Candidate reconciliation
-    → Verifier
-    → M1/M2 rerun on Development
-
-P0  D: freeze 5D definition
-    → materialize 1D/5D/20D/60D
-    → primary 5D evaluation + baselines
-
-P1  E: final real-provider 3-case acceptance
-    → explanation-quality rubric
-    → traceability remains 100%
-
-P1  C: final-matrix governed Market validation only
-    → no new broad market feature scope
-
-P1  A: consume frozen metric-v1 artifacts
-    → readiness / Blind / provenance / determinism
-    → final metric dashboard / package / release
-```
-
-禁止五条 lane 同时为了“提分”修改公共 contract。
-
-## 8. Required final metric artifacts
-
-Role B 至少需要在 `document_benchmark_summary.json` 中提供 metric-v1 字段：
-
-```text
-metric_protocol_version = v045_competition_metric_protocol_v1
+risk_extraction.evaluable_positive_count
+risk_extraction.correct_positive_count
 risk_extraction.official_aligned_accuracy
-risk_extraction.precision
-risk_extraction.positive_recall
-risk_extraction.macro_f1
+risk_extraction.project_target_met
 risk_extraction.per_risk
+risk_extraction.precision_status
+risk_extraction.macro_f1_status
 
-evidence_coverage.group_coverage_recall
-evidence_coverage.gold_group_count
-evidence_coverage.covered_group_count
+evidence_coverage.evaluable_existing_gold_count
+evidence_coverage.covered_existing_gold_count
+evidence_coverage.coverage_recall
+evidence_coverage.project_target_met
 retrieval_diagnostics.recall_at_1/3/5/10/20
+
+new_manual_annotations_added = false
+existing_gold_modified = false
+blind_2025_outcome_accessed = false
 ```
 
-Role D 的 `evaluation_summary.json` 至少提供：
+`risk_benchmark.csv` 与 `evidence_benchmark.csv` 必须携带 source annotation identity/hash 或可追溯 manifest key，证明评价来自旧 Gold，而不是比赛收尾阶段新造答案。
+
+## 9. Final acceptance semantics
+
+M1/M2 只有在以下条件同时满足时才可声明达标：
 
 ```text
-metric_protocol_version
-significant_drop_5d_definition = return_5d <= -0.10
-five_day_metrics.precision
-five_day_metrics.recall
-five_day_metrics.f1
-five_day_metrics.pr_auc
-five_day_metrics.roc_auc
-five_day_metrics.top_10pct_hit_rate
-five_day_metrics.top_20pct_hit_rate
-blind_2025_y_accessed = false
+existing Gold source frozen/read-only
++ no new manual annotations
++ no unjudged-as-negative
++ real-LLM Development measurement
++ M1 existing-Gold official-aligned Accuracy >=0.80
++ M2 existing-Gold Evidence Coverage Recall >=0.85
++ per-risk / evidence support disclosed
++ evaluator/version/source manifest frozen
++ Validation one-shot only
++ 2025 Blind untouched
 ```
 
-Role E 最终额外提供：
-
-```text
-explanation_quality.json
-```
-
-至少含：
-
-```text
-metric_protocol_version
-human_reviewer_count
-mean_score
-minimum_case_score
-per_case_scores
-```
-
-A 最终 readiness 只消费这些真实 artifact；missing 字段、legacy-only Recall@5、offline-only B benchmark 均不能被解释成 metric-v1 PASS。
-
-## 9. Current baseline interpretation
-
-截至本协议冻结时：
-
-```text
-Role-B 10-case offline:
-Risk P/R/F1 = 0/0/0
-Evidence Recall@1/@3/@5 = 20/20/20%
-Real LLM cases = 0
-
-Final 3-case offline:
-Traceability = 1.0 / 1.0 / 1.0
-Real-provider Final Supervisor accepted = 0/3
-
-D final 1D/5D/20D/60D submission artifact = not yet closed
-```
-
-这些数值保持原始实测含义，不因新协议被重写。新协议只改变**从现在开始怎样定义最终比赛达标**。
-
-## 10. Competition-ready metric condition
-
-```text
-M1 Official-aligned Risk Extraction Accuracy >= 0.80
-AND project anti-gaming guardrails recorded and passed
-AND M2 Evidence Group Coverage Recall >= 0.85
-AND M3 Traceability = 1.0
-AND M4 Explanation Quality artifact meets internal rubric gate
-AND M5 1D/5D/20D/60D + frozen 5D evaluation are complete
-AND all split/Blind/provenance rules pass
-```
-
-只有以上条件与其他 B/C/D/E/A hard Gate 同时关闭，才允许 `COMPETITION_READY`。
+项目内部目标仍是 M1 `>=0.85`、M2 `>=0.88`，但当前比赛收尾的优化手段只允许是**代码和真实大模型链路优化**，不再通过增加人工 Gold 改变分母。
