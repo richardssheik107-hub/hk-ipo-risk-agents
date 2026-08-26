@@ -1,6 +1,6 @@
 # v0.4 Data Readiness — Technical Reference
 
-本文档保留 v0.4 数据层的技术就绪事实。比赛当前 Gate 由 `../V0.4_RELEASE_ACCEPTANCE.md` 维护；最终指标定义由 `../COMPETITION_METRIC_PROTOCOL.md` 维护。冻结 manifest / completion report 中的既有 hash 与实测数字不因 Metric Protocol v1 更新而改变。
+本文档保留 v0.4 数据层的技术就绪事实。比赛当前 Gate 由 `../V0.4_RELEASE_ACCEPTANCE.md` 维护；最终指标定义由 `../COMPETITION_METRIC_PROTOCOL.md` 维护。冻结 manifest / completion report 中的既有 hash 与实测数字不因比赛收尾策略更新而改变。
 
 ## 1. Official cohort / split
 
@@ -11,11 +11,11 @@ Validation (2024)              70
 2025 Blind                     protected
 ```
 
-Metric-v1 规则：
+Metric-v2：
 
 ```text
-Development = Gold / diagnosis / targeted remediation
-Validation  = frozen-protocol one-shot confirmation, no post-hoc tuning
+Development = Existing-Gold diagnosis / code+LLM remediation
+Validation  = frozen one-shot confirmation, no post-hoc tuning
 Blind       = outcome inaccessible until formal authorization
 ```
 
@@ -37,7 +37,7 @@ Raw features                    15
 Missing indicators              15
 ```
 
-Core 使用 listing-date 前可得数据并保留 missing semantics。Frozen Core 不因后续 Extended/Market Agent/metric 改动而重写。
+Core 使用 listing-date 前可得数据并保留 missing semantics。
 
 ## 4. Market-X Extended readiness
 
@@ -47,7 +47,7 @@ HKEX turnover 20D              438 / 438 available
 Production industry return       0 / 438 PIT-safe available
 ```
 
-industry return blocker 是 historical company-classification PIT mapping。没有 authoritative historical mapping 时继续 unavailable；不使用未来分类、counterfactual mapping 或 zero fill。
+industry return blocker 是 historical company-classification PIT mapping。没有 authoritative historical mapping 时继续 unavailable；不使用未来分类或 zero fill。
 
 ## 5. Outcome readiness / M5
 
@@ -65,14 +65,14 @@ no_eligible_session               2
 
 已有 outcome foundation 定义 1D / 5D / 20D / 60D horizon；final competition materialization 仍未完成。
 
-Metric-v1 已在 Validation 重评前冻结：
+项目预定义：
 
 ```text
 primary significant_drop_5d = (return_5d <= -0.10)
 robustness cutoff = Development return_5d bottom 20%
 ```
 
-Robustness cutoff 只能从 Development 计算一次。赛题没有给 5D 绝对 metric pass line，项目不人为制造“官方 xx%”。
+赛题没有给 5D 绝对 metric pass line。
 
 ## 6. Canonical dataset
 
@@ -85,18 +85,34 @@ Explicit exclusions              14
 
 Production / Market / Outcome bulk bindings 和 split rules 保持 fail closed。
 
-## 7. Oracle v2
+## 7. Existing Expert Gold / Oracle v2
+
+现有人工标注 inventory：
 
 ```text
 Annotation inventory            101
-Materialized                     98
-Strict usable                    96
-Development usable               77
-Validation usable                19
-Feature count                   142
+Valid annotations               100
+Official materialized            98
+Strict usable                     96
+Development usable                77
+Validation usable                  19
+Feature count                    142
 ```
 
-Oracle v2 为 evaluation-only，不作为 production feature source。
+重要区别：`96 strict usable / 77 / 19` 是原 Oracle/model evaluation 的 outcome-compatible 口径；M1/M2 Document benchmark 不机械套用该分母。
+
+Metric-v2 的 M1/M2 从 `98 official materialized` Existing Gold 出发，通过**只读代码**判断哪些 risk / Evidence unit 实际可评价。
+
+从现在开始：
+
+```text
+new manual annotation = forbidden
+existing Gold modification = forbidden
+UNJUDGED != negative
+manual Evidence semantic regrouping = forbidden
+```
+
+Oracle v2 仍是 evaluation-only，不进入 production runtime。
 
 ## 8. Real prospectus runtime readiness
 
@@ -117,8 +133,6 @@ workflow errors       0
 outcome labels read   false
 ```
 
-因此真实 demo PDF 不足不再是数据 blocker。
-
 ## 9. Role-B legacy benchmark input readiness
 
 旧 10 个 allowlisted 2020–2023 Development PDF：
@@ -138,21 +152,28 @@ Evidence Recall@5    20%
 Real LLM cases       0
 ```
 
-这证明输入/runtime ready，不证明 metric-v1 M1/M2 达标。
+这证明 input/runtime ready，不证明 metric-v2 M1/M2 达标。`Recall@5=20%` 继续只作为 legacy diagnostic。
 
-尤其：`Evidence Recall@5=20%` 继续保留为历史 ranking/end-to-end diagnostic；赛题原文件没有规定 Top-K，因此它不再被直接解释为官方 Evidence `>=85%` 的当前值。
+## 10. Metric-v2 Existing-Gold readiness
 
-## 10. Metric-v1 Development Gold readiness
+不再建立新的 20-case Gold target，也不再要求补齐 5 个 primary family。
 
-最终 M1/M2 target：
+正式步骤：
 
 ```text
-20 fixed Development cases
-5 primary risk families
->=2 human reviewers for Gold
+Existing Gold frozen
+→ read-only coverage audit
+→ evaluable manifest + source hash
+→ optional small fixed Dev debug subset
+→ real-LLM Development run
+→ evaluator + failure taxonomy
+→ Development-only code/Prompt optimization
+→ Full Existing Development Gold benchmark
+→ freeze
+→ Existing Validation Gold one-shot
 ```
 
-Primary families：
+Competition-priority risk mapping：
 
 ```text
 redemption_rights
@@ -162,40 +183,29 @@ supplier_concentration
 cash_burn_pressure
 ```
 
-当前 10 cases 可纳入。尽量每个 family 至少 5 positive Gold Units；若真实 support 不足，使用全部可得 positive 并披露 support，禁止人为制造 positive。
+但只有 Existing Gold 有 support 才评价；support=0 时 `NOT_EVALUABLE_FROM_EXISTING_GOLD`，不补标。
 
-### M1 Gold Risk Unit
-
-至少：
+M1：
 
 ```text
-case_id
-risk_family
-applicable
-required_attributes
-accepted_evidence_groups
-annotation_status
-reviewer_provenance
+Existing-Gold Risk Accuracy >=0.80 official
+Project target >=0.85
 ```
 
-Primary official-aligned Accuracy 只以 positive Gold Units 为分母，避免 true-negative-heavy accuracy。
-
-### M2 Evidence Groups
-
-Gold 按“支撑事实”分组；一个 Evidence Group 可以包含多个等价段落/表格/page anchors。
+M2：
 
 ```text
-Evidence Group Coverage Recall >=0.85 official-aligned pass
+Existing-Gold Evidence Coverage Recall >=0.85 official
 Project target >=0.88
 ```
 
-Recall@1/@3/@5/@10/@20 仅为 secondary diagnostics。
+Recall@1/@3/@5/@10/@20 仅为 diagnostics。
 
 ## 11. Market Agent readiness
 
 C 已完成 IPOHeatSkill、MarketRegimeSkill、structured Market interpretation、PIT/missingness provenance、AI runtime wiring、真实 provider path validation。
 
-最终 3-case demo 若没有本地 Core materialization，Market Channel 可以诚实 unavailable；最终提交机器需要物化/验证 governed artifact，而不是提交 raw licensed data。
+最终 3-case demo 若没有本地 Core materialization，Market Channel 可以诚实 unavailable；不得提交 raw licensed data。
 
 ## 12. Model runtime readiness
 
@@ -206,37 +216,38 @@ authentic hash-bound handoff present → consume
 absent / mismatch                    → unavailable
 ```
 
-不得从 aggregate metrics 反推个股分数，也不得为了 M5/UI 重新训练“等价”模型。
+不得从 aggregate metrics 反推个股分数，也不得重新训练“等价”模型。
 
 ## 13. Evidence grounding readiness
 
 Physical page grounding 已成立。当前 parser 不生成 bbox：真实 2410 测量 706/706 chunk 有 page，0/706 有 bbox。
 
-bbox 若补齐会改变 Evidence content/hash，应由 B 实现、A 做 provenance/version review；UI 不得推断坐标。它低于 M1/M2/M5/E1/E2 hard Gate。
+bbox 为 P2，不得优先于 M1/M2/M5/E1。
 
 ## 14. Blind / validation boundary
 
 ```text
-Development  2020–2023: remediation / Gold / benchmark iteration
-Validation   2024: frozen evaluator confirmation / label-free workflow smoke
+Development  2020–2023: Existing-Gold remediation / benchmark iteration
+Validation   2024: frozen evaluator one-shot confirmation / label-free smoke
 Blind        2025: outcome unopened until authorization
 ```
 
 特别禁止：
 
 - 根据 2024 选择 Evidence Top-K；
-- 根据 2024 改 Risk Accuracy 公式；
-- 根据 2024 改 5D significant-drop threshold；
-- 根据 2024 score inversion / model retraining。
+- 根据 2024 改 M1/M2 公式；
+- 根据 2024 改 5D threshold；
+- 根据 2024 score inversion / model retraining；
+- 根据 2024 failure 回头补 Gold。
 
 ## 15. Current readiness verdict
 
 数据基础设施不再是主瓶颈。比赛收口真实 blocker：
 
-- B：metric-v1 Development Gold + real-LLM M1/M2；
-- D：M5 final 1D/5D/20D/60D + frozen 5D metrics；
-- E：final matrix remote synthesis + M4 explanation-quality artifact；
+- A/B：Existing-Gold coverage/evaluator + real-LLM M1/M2 optimization；
+- D：M5 final 1D/5D/20D/60D；
+- E：final matrix remote synthesis；
 - C：final Market trace validation；
-- A：metric-v1 final integration/release/submission freeze。
+- A：metric-v2 final integration/release/submission freeze。
 
-不应重新打开 broad data acquisition、industry PIT research 或大规模模型探索来替代这些直接 Gate。
+明确不重新打开新的 M1/M2 annotation、broad data acquisition、industry PIT research 或大规模模型探索。
