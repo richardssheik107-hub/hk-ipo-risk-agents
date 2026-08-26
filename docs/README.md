@@ -11,13 +11,14 @@
 | `ROADMAP.md` | 只记录尚未关闭的执行路线 |
 | `V04_FIVE_PERSON_EXECUTION_PLAN.md` | A/B/C/D/E ownership、handoff、merge boundary |
 | `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` | 赛题要求 → 系统能力 → 验收 artifact 映射 |
+| `SUBMISSION_RUNBOOK.md` | **最终安装、3-case smoke、readiness audit、打包与 freeze 操作手册** |
 | `PROJECT_SPEC.md` | 产品边界与不可破坏原则 |
 | `ARCHITECTURE.md` | 当前 runtime 架构 |
 | `DATA_SCHEMA.md` | 当前公共/比赛 sidecar schema 说明 |
 | `COMPETITION_DATA_OVERVIEW.md` | 数据范围、split、PIT/blind 边界 |
 | `research/V04_DATA_READINESS.md` | 数据就绪技术事实 |
 | `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 当前 governed offline benchmark 实测证据 |
-| `V04_ROLE_E_COMPLETION_REPORT.md` | E 当前实现与 3-case matrix 实测证据 |
+| `V04_ROLE_E_COMPLETION_REPORT.md` | E 当前实现、3-case matrix 与 submission artifact 实测证据 |
 
 `AGENTS.md` 是跨版本工程治理规则，优先级高于叙述性文档。
 
@@ -36,16 +37,18 @@
 
 ## 当前状态快照
 
-截至 main 合入 PR #133：
+当前 main 已完成：
 
-- 3 个真实 2024 招股书离线 E2E 已 3/3 completed，完整性校验 3/3；
+- 3 个真实 2024 招股书 offline E2E 3/3 completed，完整性校验 3/3；
 - 三案例 Agent / Tool / Evidence measured traceability 均为 1.0；
 - Market Intelligence 已实现并正式接入 AI runtime，真实 provider 的 Market interpretation 已在两只真实 IPO 上通过；
 - LLM Final Supervisor / conflict / bounded re-check / Human Review / 五工作区已实现；
+- E 已生成 per-case reasoning log / case report / machine Gate-E1 evidence 的正式代码路径；
+- A 已实现 final submission readiness、Blind/provenance/determinism audit、artifact index、Runbook 与 fail-closed packager；
 - Role B 的 10-case governed offline benchmark **FAIL**：Risk P/R/F1 = 0%，Evidence Recall@5 = 20%；
 - B 尚未完成固定 benchmark 上的 real-LLM measurement；
 - D 尚未关闭最终 1D/5D/20D/60D submission package；
-- 最终 3-case matrix 上的 real-provider Final Supervisor synthesis 尚未验收；
+- final 3-case matrix 上的 real-provider Final Supervisor synthesis 尚未验收；
 - Evidence page grounding 可用，parser 尚不产出 bbox；
 - historical PR-H authentic frozen PR-F runtime/handoff 条件仍未闭合；
 - 2025 Blind y 仍未访问。
@@ -85,11 +88,11 @@ Git history 仍完整保留这些记录。
 - 记录稳定技术设计，且仍有当前消费者；
 - 作为 governed research / annotation evidence。
 
-禁止为了每一次 PR 新建长期“一次性 handoff / audit / preflight”文档。短期信息优先写 PR body；必须长期保留的内容合并进现有权威文档。
+`SUBMISSION_RUNBOOK.md` 属于正式提交操作 contract，因此长期保留。禁止为了每一次 PR 新建长期“一次性 handoff / audit / preflight”文档；短期信息优先写 PR body，必须长期保留的内容合并进现有权威文档。
 
 ## 更新责任
 
-- **A**：README、Gate、Roadmap、ownership、release/submission docs；
+- **A**：README、Gate、Roadmap、ownership、release/submission docs、readiness/audit/package tooling；
 - **B**：Role-B benchmark / Document semantic evidence；
 - **C**：Market technical evidence；
 - **D**：Outcome/model/evaluation artifacts；
