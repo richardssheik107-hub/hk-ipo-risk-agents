@@ -26,6 +26,10 @@ jobs:
         run: python scripts/validate_competition_data.py
       - name: Competition runtime contract validation
         run: python scripts/validate_competition_runtime.py
+      - name: Submission readiness fail-closed smoke
+        run: >-
+          python scripts/build_v045_submission_readiness.py
+          --output-dir "$RUNNER_TEMP/v045_submission_readiness"
       - name: Golden-case manifest integrity
         run: >-
           python scripts/validate_v03_golden_manifest.py
