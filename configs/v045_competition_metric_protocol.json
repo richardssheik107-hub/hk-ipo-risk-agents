@@ -1,0 +1,80 @@
+{
+  "protocol_version": "v045_competition_metric_protocol_v1",
+  "status": "FROZEN_BEFORE_VALIDATION_REEVALUATION",
+  "split_policy": {
+    "development": "2020-2023",
+    "validation": "2024",
+    "blind": "2025",
+    "validation_post_hoc_tuning_allowed": false,
+    "blind_outcome_access_allowed": false
+  },
+  "risk_extraction": {
+    "primary_metric": "official_aligned_accuracy",
+    "official_threshold": 0.8,
+    "project_target": 0.85,
+    "positive_recall_guardrail": 0.82,
+    "macro_f1_guardrail": 0.82,
+    "primary_families": [
+      "redemption_rights",
+      "related_party_transaction",
+      "customer_concentration",
+      "supplier_concentration",
+      "cash_burn_pressure"
+    ],
+    "frozen_mapping": {
+      "redemption_rights": "redemption_rights",
+      "related_party_transaction": "competition_additive_sidecar",
+      "customer_concentration": "customer_concentration",
+      "supplier_concentration": "supplier_concentration",
+      "cash_burn_pressure": "cash_runway_and_deterministic_cash_burn"
+    },
+    "development_case_target": 20,
+    "minimum_positive_support_per_family_when_available": 5
+  },
+  "evidence": {
+    "primary_metric": "evidence_group_coverage_recall",
+    "official_threshold": 0.85,
+    "project_target": 0.88,
+    "fixed_top_k_for_primary_metric": null,
+    "candidate_recall_at_20_target": 0.95,
+    "reranked_recall_at_10_target": 0.9,
+    "secondary_rank_metrics": [1, 3, 5, 10, 20]
+  },
+  "traceability": {
+    "official_threshold": 1.0,
+    "development_real_llm_required": true,
+    "final_matrix_required": true
+  },
+  "explanation_quality": {
+    "dimensions": [
+      "evidence_grounding",
+      "logical_consistency",
+      "conflict_handling",
+      "recheck_quality",
+      "final_conclusion"
+    ],
+    "scale_min": 1,
+    "scale_max": 5,
+    "minimum_human_reviewers": 2,
+    "mean_score_target": 4.0,
+    "minimum_case_score": 3.0,
+    "llm_reviewer_may_be_sole_reviewer": false
+  },
+  "post_listing": {
+    "required_horizons": [1, 5, 20, 60],
+    "primary_horizon": 5,
+    "significant_drop_5d_definition": "return_5d <= -0.10",
+    "robustness_definition": "development_return_5d_bottom_20_percent",
+    "five_day_metrics": [
+      "precision",
+      "recall",
+      "f1",
+      "pr_auc",
+      "roc_auc",
+      "top_10pct_hit_rate",
+      "top_20pct_hit_rate",
+      "base_prevalence"
+    ],
+    "official_absolute_metric_threshold_defined": false
+  }
+}
