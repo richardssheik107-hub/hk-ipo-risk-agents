@@ -1,6 +1,6 @@
 # Data Schema — Current Contracts
 
-本文件描述当前代码中的 runtime contract，并补充 Metric Protocol v1 的**evaluation artifact boundary**。Pydantic/Protocol 源码仍是 runtime 最终权威；Metric Protocol 不得被误解为偷偷改公共 runtime schema。
+本文件描述当前代码中的 runtime contract，并补充 Metric Protocol v2 的**evaluation artifact boundary**。Pydantic/Protocol 源码仍是 runtime 最终权威；Metric Protocol 不得被误解为偷偷改公共 runtime schema。
 
 ## 1. Core document contracts
 
@@ -27,7 +27,7 @@ optional bbox
 - bbox 缺失就保持缺失；
 - LLM 只能引用输入 Evidence ID 子集。
 
-Metric-v1 的 Evidence Group 是**evaluation Gold object**，不是 runtime `Evidence` 替代物。一个 Gold Evidence Group 可以接受多个等价 runtime Evidence/page/table anchor。
+Metric-v2 的 Existing-Gold Evidence Unit 是**evaluation object**，不是 runtime `Evidence` 替代物。它只能来自比赛收尾前已经存在的 Expert Annotation / valid audit overlay；不新增人工 Evidence，也不人工重做 semantic group。
 
 ### Calculation
 
@@ -37,9 +37,9 @@ Metric-v1 的 Evidence Group 是**evaluation Gold object**，不是 runtime `Evi
 
 正式风险结论。风险码必须属于注册表/owner 的 versioned extension；RiskItem 与 Evidence/Calculation 的关系由 Verifier 和治理测试约束。
 
-Metric-v1 的 `cash_burn_pressure` 是 competition evaluation family，可映射既有 `cash_runway`/cash-burn Calculation；这不是 runtime rename。
+Competition-priority `cash_burn_pressure` 仍可作为 evaluation mapping 到既有 `cash_runway`/cash-burn Calculation，但只有 Existing Gold 有明确可评价事实时才进入 M1。
 
-`related_party_transaction` 如新增，必须 additive/versioned sidecar，不静默修改 frozen baseline registry。
+`related_party_transaction` 若 runtime 需要支持，仍必须 additive/versioned sidecar；但 Metric-v2 不为其新增人工 Gold。Existing Gold support=0 时仅报告 `NOT_EVALUABLE_FROM_EXISTING_GOLD`。
 
 ## 2. Competition runtime sidecar
 
@@ -169,7 +169,7 @@ HumanReview 是 sidecar，不修改机器生成 RiskItem/Evidence。
 
 ## 3. Final Supervisor boundary
 
-公共 competition sidecar 没有为了比赛 metric 强行替换成新 `SupervisorDecision` schema。现有 FinalSupervisionResult / internal bundle 继续作为 runtime truth；metric-v1 只消费其已记录 output/trace。
+公共 competition sidecar 没有为了比赛 metric 强行替换成新 `SupervisorDecision` schema。现有 FinalSupervisionResult / internal bundle 继续作为 runtime truth；Metric-v2 只消费其已记录 output/trace。
 
 ## 4. Market boundary
 
@@ -193,48 +193,82 @@ availability / missing reason
 
 ## 6. Outcome boundary
 
-已有 foundation 定义 1D/5D/20D/60D horizon。Metric-v1 预先冻结 evaluation label：
+已有 foundation 定义 1D/5D/20D/60D horizon。项目预先定义：
 
 ```text
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-这属于 evaluation definition，不改变原始 `return_5d` 数据。
+这属于 evaluation definition，不改变原始 `return_5d` 数据。赛题没有给绝对 5D pass threshold。
 
-Robustness bottom-20% cutoff 只能从 Development 计算一次并冻结。
-
-## 7. Metric-v1 evaluation artifact boundary
+## 7. Metric-v2 Existing-Gold evaluation artifact boundary
 
 Machine-readable protocol：
 
 ```text
 configs/v045_competition_metric_protocol.json
-protocol_version = v045_competition_metric_protocol_v1
+protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
 ```
 
-这些字段属于 final evaluation handoff，并非公共 runtime Pydantic schema。B/D/E 实现落地后必须由 owner + A 做 code/schema review。
+这些字段属于 final evaluation handoff，不是公共 runtime Pydantic schema。
+
+### Existing-Gold evaluable manifest
+
+Role B/A 必须先生成只读：
+
+```text
+existing_gold_evaluable_manifest.json
+```
+
+目标字段：
+
+```text
+metric_protocol_version
+existing_gold_source
+source_manifest_or_hash
+case_id
+split
+risk_support
+Evidence_support
+UNJUDGED_counts
+NOT_EVALUABLE_families
+new_manual_annotations_added=false
+existing_gold_modified=false
+```
+
+`UNJUDGED` 不等于 negative。
 
 ### Role B summary target shape
 
 ```text
 metric_protocol_version
-risk_extraction.official_aligned_accuracy
-risk_extraction.precision
-risk_extraction.positive_recall
-risk_extraction.macro_f1
-risk_extraction.per_risk
+existing_gold_source
+existing_gold_source_hash_or_manifest
 
-evidence_coverage.group_coverage_recall
-evidence_coverage.gold_group_count
-evidence_coverage.covered_group_count
+risk_extraction.evaluable_positive_count
+risk_extraction.correct_positive_count
+risk_extraction.official_aligned_accuracy
+risk_extraction.per_risk
+risk_extraction.precision_status
+risk_extraction.macro_f1_status
+
+evidence_coverage.evaluable_existing_gold_count
+evidence_coverage.covered_existing_gold_count
+evidence_coverage.coverage_recall
 retrieval_diagnostics.recall_at_1
 retrieval_diagnostics.recall_at_3
 retrieval_diagnostics.recall_at_5
 retrieval_diagnostics.recall_at_10
 retrieval_diagnostics.recall_at_20
+
+new_manual_annotations_added=false
+existing_gold_modified=false
+blind_2025_outcome_accessed=false
 ```
 
-Legacy `risk_target_at_least_80_percent` / `evidence_target_at_least_85_percent` bool 如果仍存在，只能作为旧 evaluator compatibility 字段，不能单独证明 metric-v1 PASS。
+`Precision` / `Macro F1` 只有 Existing Gold 本身提供足够 exhaustive positive/negative judgments 时才可以有数值；否则 status 必须 `NOT_AVAILABLE_FROM_EXISTING_GOLD`。
+
+Legacy `risk_target_at_least_80_percent` / `evidence_target_at_least_85_percent` bool 若仍存在，只是 compatibility 字段，不能单独证明 Metric-v2 PASS。
 
 ### Role D evaluation summary target shape
 
@@ -254,15 +288,7 @@ blind_2025_y_accessed
 
 ### Role E explanation-quality target shape
 
-```text
-metric_protocol_version
-human_reviewer_count
-mean_score
-minimum_case_score
-per_case_scores
-```
-
-`explanation_quality.json` 是 evaluation artifact，不改 HumanReview runtime sidecar。
+沿用当前 E/A final explanation-quality artifact；本次 Existing-Gold-only M1/M2 政策不新增其人工 Gold 任务。
 
 ## 8. Identity rules
 
@@ -275,15 +301,8 @@ listing_date
 run_id
 ```
 
+Existing-Gold evaluator 另外必须保留 source annotation identity/hash，防止比赛收尾阶段悄悄替换标准答案。
+
 LLM trace 进一步保留 provider_name / model_name / prompt_version / request_id / raw_response_hash / latency_ms。
 
 任何 cross-lane join 优先稳定 identity/hash，不用公司名称 fuzzy join 作为正式绑定。
-
-## 9. Change policy
-
-- frozen core schema 不原地破坏；
-- competition 新字段优先 additive/versioned；
-- metric protocol 改动必须在 Validation 重评前完成并 version bump；
-- Validation 结果打开后不得原地改 v1 口径；
-- UI 不定义后端事实 schema；
-- 文档与源码不一致时 runtime 以源码为准，metric evaluation 以 frozen protocol + evaluator version 为准，并修正文档。
