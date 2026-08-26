@@ -22,7 +22,7 @@ from __future__ import annotations
 from typing import Any
 
 from ipo_risk.agents.conflict_detection import CONFLICT_POLICY_VERSION, ConflictDetector
-from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor
+from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor, SynthesisOutcome
 from ipo_risk.agents.targeted_recheck import RECHECK_POLICY_VERSION, TargetedRecheckRunner
 from ipo_risk.runtime.competition_trace import (
     CompetitionTraceAssembler,
@@ -175,7 +175,14 @@ class V04CompetitionWorkflow(V04AIWorkflow):
                 result = bundle.result
                 supervision_diagnostics = {
                     "status": bundle.status.value,
+                    # Why the run ended where it did, kept apart from the status:
+                    # the acceptance evidence has to distinguish an absent
+                    # provider from a response the scope guard refused.
+                    "outcome": bundle.outcome.value,
                     "reason": bundle.reason,
+                    "fail_closed": bundle.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE,
+                    "scope_check": bundle.scope_check,
+                    "call": bundle.call,
                     "deterministic_severity_floor": bundle.deterministic_severity_floor,
                     "judgement": bundle.judgement.model_dump(mode="json") if bundle.judgement else None,
                     "agent_result": bundle.agent_result.model_dump(mode="json"),
@@ -187,7 +194,14 @@ class V04CompetitionWorkflow(V04AIWorkflow):
                 result = self.final_supervisor.finalize(inputs)
                 supervision_diagnostics = {
                     "status": "unavailable",
+                    "outcome": SynthesisOutcome.SUPERVISOR_WITHOUT_SYNTHESIS.value,
                     "reason": "the configured Final Supervisor does not implement LLM synthesis",
+                    "fail_closed": False,
+                    "scope_check": {
+                        "status": "not_applicable",
+                        "reason": "this Final Supervisor performs no LLM synthesis to check",
+                    },
+                    "call": {},
                     "deterministic_severity_floor": None,
                     "judgement": None,
                 }

@@ -16,6 +16,7 @@ from ipo_risk.agents.final_supervision_llm import (
     FinalSupervisionJudgement,
     LLMFinalSupervisor,
     SupervisionStatus,
+    SynthesisOutcome,
     severity_floor,
 )
 from ipo_risk.agents.final_supervisor import V04FinalSupervisor
@@ -206,6 +207,67 @@ def test_conflict_status_counts_are_carried_into_the_result_metadata() -> None:
 def test_the_severity_floor_is_the_highest_verified_level() -> None:
     assert severity_floor([]) == "low"
     assert severity_floor([_risk(RiskLevel.MEDIUM), _risk(RiskLevel.CRITICAL)]) == "critical"
+
+
+def test_a_refused_judgement_is_classified_apart_from_a_transport_failure() -> None:
+    """Both degrade honestly, but only one proves the scope guard fired.
+
+    Gate E1 asks for evidence that no out-of-scope reference survived. A provider
+    that never answered says nothing about scope; a response the guard refused
+    says a great deal, so the two outcomes must not collapse into one status.
+    """
+    refused = _supervisor(
+        _judgement(key_findings=[{"statement": "invented", "risk_ids": ["risk-unknown"]}])
+    ).supervise(_inputs())
+    unanswered = _supervisor(None).supervise(_inputs())
+
+    assert refused.status is unanswered.status is SupervisionStatus.UNAVAILABLE
+    assert refused.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE
+    assert unanswered.outcome is SynthesisOutcome.PROVIDER_CALL_FAILED
+    assert refused.scope_check["status"] == "failed"
+    assert unanswered.scope_check["status"] == "not_applicable"
+    assert refused.result.metadata["final_supervision_llm"]["fail_closed"] is True
+    assert unanswered.result.metadata["final_supervision_llm"]["fail_closed"] is False
+
+
+def test_a_refused_response_still_records_the_call_that_produced_it() -> None:
+    """A fail-closed run has to stay auditable, not merely absent."""
+    refused = _supervisor(
+        _judgement(key_findings=[{"statement": "invented", "risk_ids": ["risk-unknown"]}])
+    ).supervise(_inputs())
+    assert refused.call["provider_name"] == "mock"
+    assert refused.call["prompt_version"] == FINAL_SUPERVISION_PROMPT_VERSION
+
+
+def test_an_absent_provider_is_not_reported_as_a_failed_call() -> None:
+    bundle = LLMFinalSupervisor(llm_provider=None).supervise(_inputs())
+    assert bundle.outcome is SynthesisOutcome.PROVIDER_NOT_CONFIGURED
+    assert bundle.call == {}
+    assert bundle.scope_check["status"] == "not_applicable"
+
+
+def test_an_accepted_judgement_records_what_it_cited_and_what_was_supplied() -> None:
+    """"No out-of-scope reference" has to be measured on the run, not asserted."""
+    bundle = _supervisor(_judgement()).supervise(_inputs(), conflicts=[_conflict()])
+    assert bundle.outcome is SynthesisOutcome.ACCEPTED
+    check = bundle.scope_check
+    assert check["status"] == "passed"
+    assert check["cited_risk_ids"] == [RISK_ID]
+    assert check["cited_evidence_ids"] == [EVIDENCE_ID]
+    assert check["out_of_scope_reference_count"] == 0
+    assert check["supplied_conflict_id_count"] == 1
+    assert check["severity_floor_respected"] is True
+    assert bundle.result.metadata["final_supervision_llm"]["scope_check"] == check
+
+
+def test_an_accepted_judgement_retains_the_provider_call_trace() -> None:
+    bundle = _supervisor(_judgement()).supervise(_inputs())
+    call = bundle.call
+    assert call["provider_name"] == "mock"
+    assert call["model_name"] == "mock-structured"
+    assert call["prompt_version"] == FINAL_SUPERVISION_PROMPT_VERSION
+    assert call["latency_ms"] is not None
+    assert bundle.result.metadata["final_supervision_llm"]["call"] == call
 
 
 def test_the_result_carries_no_probability_field() -> None:
