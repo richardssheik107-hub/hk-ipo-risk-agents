@@ -12,7 +12,7 @@ PDF → Evidence → specialized analysis → verification
 + optional authentic frozen model signal
 → conflict / re-check / final supervision
 → trace / human review / report
-→ metric-v1 evaluation / submission gate
+→ Existing-Gold metric evaluation / submission gate
 ```
 
 ## 2. Non-negotiable invariants
@@ -23,7 +23,7 @@ PDF → Evidence → specialized analysis → verification
 - LLM 不得引用输入作用域外的 Evidence ID；
 - Evidence identity / page / bbox 不在 UI 层修补；
 - 未检索到证据不能伪造“无风险”；
-- final competition Evidence primary metric 不固定 Top-5，而按 Gold Evidence Group coverage 评价。
+- final M2 primary metric 不固定 Top-5，而按 Existing-Gold Evidence coverage 评价。
 
 ### Calculation
 
@@ -54,21 +54,33 @@ PDF → Evidence → specialized analysis → verification
 - Development 可以诊断与 targeted remediation；
 - Validation 不做 post-hoc tuning；
 - Blind outcome 未授权前不得访问；
-- metric definition / Gold / threshold / allowlist 必须在 Validation 重评前冻结。
+- metric definition / Existing-Gold source manifest / threshold / evaluator 必须在 Validation 重评前冻结。
 
-## 3. Competition Metric Protocol v1
+### Existing Gold
+
+M1/M2 只使用比赛收尾之前已经存在并冻结的 Expert Annotation / Oracle Gold：
+
+```text
+annotation inventory   101
+valid annotations      100
+official materialized   98
+```
+
+禁止新增 M1/M2 人工 Gold、修改旧 Gold、把 UNJUDGED 当 negative、人工重做 Evidence Group。
+
+## 3. Competition Metric Protocol v2
 
 最终比赛评价采用：
 
 ```text
-v045_competition_metric_protocol_v1
+v045_competition_metric_protocol_v2_existing_gold_only
 ```
 
 权威文档：`COMPETITION_METRIC_PROTOCOL.md`。
 
 ### M1 Risk extraction
 
-Primary competition risk families：
+Competition-priority mapping：
 
 ```text
 redemption_rights
@@ -78,23 +90,31 @@ supplier_concentration
 cash_burn_pressure
 ```
 
-其中：
+但只有 Existing Gold 真正有 support 时才评价；support=0 时 `NOT_EVALUABLE_FROM_EXISTING_GOLD`，不补标。
 
-- `related_party_transaction` 是 additive competition sidecar，不改 frozen baseline identity；
-- `cash_burn_pressure` 是比赛 metric family，消费现有 `cash_runway` / deterministic cash-burn 结果；
-- M1 Primary Accuracy 只用 positive Gold Risk Units，避免大量 true negative 刷高 Accuracy；
-- official pass >=0.80，project target >=0.85；
-- Positive Recall / Macro F1 project guardrails >=0.82。
+Primary：
+
+```text
+Existing-Gold Official-aligned Accuracy
+= correct evaluable positive Existing-Gold Risk Units
+  / all evaluable positive Existing-Gold Risk Units
+```
+
+Official pass `>=0.80`，project target `>=0.85`。
+
+Precision / Macro F1 只有 Existing Gold 本身足够 exhaustive 时才正式报告，否则 `NOT_AVAILABLE_FROM_EXISTING_GOLD`。
 
 ### M2 Evidence
 
 Primary：
 
 ```text
-Evidence Group Coverage Recall >=0.85
+Existing-Gold Evidence Coverage Recall >=0.85
 ```
 
-Recall@1/@3/@5/@10/@20 仅是 secondary ranking diagnostics。旧 offline Recall@5=20% 不再直接代表官方 M2 当前值。
+Project target `>=0.88`。Recall@1/@3/@5/@10/@20 仅为 diagnostics。旧 offline `Recall@5=20%` 不直接代表官方 M2 当前值。
+
+M2 只使用旧 annotation 已存在的 Evidence/page/span/table/anchor；允许 deterministic normalization 和 exact duplicate dedupe，不新增人工 Evidence。
 
 ### M3 Traceability
 
@@ -106,9 +126,7 @@ Development real-LLM 与 final 3-case real-provider 都必须达到 1.0。
 
 ### M4 Explanation Quality
 
-5维 human rubric：Evidence grounding、Logical consistency、Conflict handling、Re-check quality、Final conclusion。
-
-至少 2 名人类 reviewer；内部目标 mean >=4.0/5，formal case minimum >=3.0/5。
+沿用当前 final product explanation-quality 方案。本次 Existing-Gold-only 决策不增加 M1/M2 人工标注工作。
 
 ### M5 Outcome
 
@@ -127,30 +145,19 @@ Primary 5D：
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-赛题没有给 5D 绝对指标及格线，因此项目只要求 predeclared、完整、可复现、透明对比，不虚构“官方 xx%”。
+赛题没有给 5D 绝对指标及格线，项目不虚构“官方 xx%”。
 
 ## 4. Frozen formal risk scope
 
 冻结 formal baseline 仍是 8 个 risk codes：
 
-Financial：
+Financial：`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`、`supplier_concentration`。
 
-- `cash_runway`
-- `continuous_loss`
-- `revenue_growth`
-- `customer_concentration`
-- `supplier_concentration`
+Legal：`redemption_rights`、`material_litigation_compliance`。
 
-Legal：
+Business：`precommercial_product`。
 
-- `redemption_rights`
-- `material_litigation_compliance`
-
-Business：
-
-- `precommercial_product`
-
-比赛的 related-party / cash-burn family 等通过 metric mapping / additive sidecar 对齐，不静默改变 frozen baseline feature/risk identity。
+Competition-priority related-party / cash-burn 只作为 metric mapping / additive sidecar 语义，不静默改变 frozen baseline identity，也不为了比赛补新 Gold。
 
 ## 5. Current runtime components
 
@@ -202,7 +209,9 @@ Evidence Recall@5 = 20%
 Real LLM = 0
 ```
 
-它不是 metric-v1 final benchmark，也不是 real-LLM benchmark。
+它不是 metric-v2 final benchmark，也不是 real-LLM benchmark。
+
+下一步不是补 Gold，而是 Existing-Gold coverage audit → real-LLM Development run → code/Prompt optimization → Full Existing Development Gold benchmark。
 
 ### Market
 
@@ -216,10 +225,11 @@ multi-horizon foundation 已存在，但 final M5 artifacts 尚未关闭。
 
 `COMPETITION_READY` 需要：
 
-- M1 Risk Accuracy >=80% + guardrails；
-- M2 Evidence Group Coverage Recall >=85%；
+- Existing-Gold source / evaluable manifest frozen；
+- M1 Existing-Gold Risk Accuracy >=80%；
+- M2 Existing-Gold Evidence Coverage Recall >=85%；
 - M3 real final traceability=100%；
-- M4 explanation-quality artifact internal Gate；
+- M4 current explanation-quality Gate；
 - M5 1D/5D/20D/60D + frozen 5D evaluation；
 - C final-matrix Market validation；
 - E real-provider final matrix；
