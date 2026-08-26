@@ -16,7 +16,13 @@
 - Human Review；
 - 五个 Streamlit competition workspaces；
 - 3 个真实招股书 offline E2E matrix；
-- 三案例 measured traceability = 1.0。
+- 三案例 measured traceability = 1.0；
+- E submission reasoning logs / case reports / machine Gate-E1 evidence renderer；
+- A final submission readiness engine；
+- A Blind / provenance / determinism audit tooling；
+- A SHA-256 artifact index；
+- A `SUBMISSION_RUNBOOK.md`；
+- A COMPETITION_READY-only fail-closed submission packager。
 
 除非出现回归或直接影响比赛 Gate，不再对这些模块做架构探索。
 
@@ -101,10 +107,13 @@ ai_vs_offline_report.json
 在最终 AI config + real provider 下验证：
 
 - Final Supervisor structured synthesis 成功；
+- 每案与 matrix-level `gate_e1.satisfied=true`；
 - provider/model/prompt/request/hash/latency trace 完整；
 - synthesis 只能引用 in-scope Risk/Evidence/Conflict；
 - deterministic severity floor 不被降低；
 - provider 失败仍正确 fallback，但失败 run 不计 successful LLM arbitration。
+
+当前正式 offline matrix 仍为 0/3 successful remote arbitration，因此这一项尚未关闭。
 
 E 不修 B 的风险抽取，也不补 D 的模型/Outcome。
 
@@ -119,24 +128,30 @@ C 主体代码已完成，只需确保最终案例环境中：
 - Market LLM 不生成输入里没有的数字；
 - Market trace 的 namespaced evidence/accounting 完整。
 
+A 的 final readiness engine 会直接从最终 matrix 检查 market channel state 与 trace accounting，因此不需要另造重复验收口径。
+
 不再新增 ComparableIPOSkill，除非上述 P0/P1 全关闭且还有明确时间与 PIT-safe 定义。
 
-## P1 — A：Integration / Release / Submission
+## P1 — A：Final execution / release freeze
 
-A 不再开发新的业务 Agent。A 的剩余任务：
+A 的**收口工具开发已关闭**，不再新增业务 Agent 或新的提交基础设施。A 剩余的是依赖真实 handoff 的执行工作：
 
 1. 审 B/C/D/E 的小 PR，保护公共 contract；
 2. 每次合并后运行 CI / contract gate / relevant real-case smoke；
 3. 保持 `V0.4_RELEASE_ACCEPTANCE.md` 与 main 同步；
-4. 最终关闭：
-   - full CI；
-   - blind audit；
-   - provenance / determinism；
+4. B/C/D/E 最终 handoff 到齐后运行 `build_v045_submission_readiness.py --require-ready`；
+5. 实际关闭：
+   - latest-main full CI；
+   - final 3-case AI smoke；
+   - Blind audit PASS；
+   - provenance / determinism PASS；
    - artifact completeness；
-   - runbook；
-   - submission archive；
+   - final `artifact_index.json`；
+   - submission ZIP security audit；
    - release note；
-5. 只有 hard Gate 真实通过后打 `COMPETITION_READY`。
+6. 只有 hard Gate 真实通过后生成 bundle 并打 `COMPETITION_READY`。
+
+当前 `SUBMISSION_RUNBOOK.md`、readiness/audit/index/packager 代码已经存在；不要再把“实现这些工具”列为未来工作。
 
 ## P2 — Evidence bbox grounding
 
@@ -167,9 +182,10 @@ A 不再开发新的业务 Agent。A 的剩余任务：
 Roadmap 结束条件不是“代码功能足够多”，而是：
 
 ```text
-B quality evidence closed
+B real-LLM quality evidence closed
++ C final-matrix Market validation closed
 + D multi-horizon artifacts closed
 + E real-provider final matrix closed
-+ A final release/submission gate closed
++ A final readiness/audit/CI/package execution closed
 = v0.4.5 COMPETITION_READY
 ```
