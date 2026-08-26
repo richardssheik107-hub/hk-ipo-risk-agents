@@ -28,6 +28,7 @@ Prospectus PDF
 → Agent / Tool / Evidence Trace
 → Human Review
 → Streamlit / report / submission artifacts
+→ A-owned readiness / Blind / provenance / determinism / package gate
 ```
 
 核心治理原则不变：
@@ -43,7 +44,7 @@ Prospectus PDF
 
 ## 最新实测状态
 
-### 1. 三个真实招股书案例已完成离线 E2E
+### 1. 三个真实招股书案例已完成 offline E2E
 
 冻结 catalog 驱动的真实 PDF runner 已验证并执行：
 
@@ -85,6 +86,8 @@ Real LLM cases                    0
 
 真实 Volcengine/OpenAI-compatible provider 已在两只真实 IPO 上验证 Market LLM 路径。`ComparableIPOSkill` 与 PIT-safe industry return 不是当前提交 blocker；没有可靠数据时保持 unavailable。
 
+最终只剩同一 3-case submission matrix 上的 Market state / trace accounting 验收。
+
 ### 4. LLM Final Supervisor / Multi-Agent / Product 已实现
 
 已实现：
@@ -97,9 +100,14 @@ Real LLM cases                    0
 - Agent / Tool / Evidence trace；
 - Evidence Viewer；
 - Human Review sidecar；
-- 五个 Streamlit 比赛工作区。
+- 五个 Streamlit 比赛工作区；
+- per-case `agent_reasoning_log.json/.md`；
+- `case_report.md`；
+- machine-checked `gate_e1_evidence.json`。
 
-三案例离线矩阵的 measured traceability 均为 1.0。最终还需要在同一最终案例矩阵上完成真实 provider 的 LLM Final Supervisor 综合判断验证。
+三案例 offline matrix 的 measured traceability 均为 1.0。Gate E1 现在只在真实远端 provider 成功输出、scope check 通过且 call trace 完整时才接受；offline/mock/fallback 均不会被误记为成功仲裁。
+
+当前 measured offline matrix 仍是 **0/3 successful LLM arbitration**，因此最终还需要在同一案例矩阵上完成 real-provider Final Supervisor 验收。
 
 ### 5. Outcome / Model 最终比赛包仍未闭合
 
@@ -119,39 +127,59 @@ ai_vs_offline_report.json
 
 原始 frozen PR-F per-case runtime / sanitized handoff 若仍不可恢复，Model Channel 必须继续明确 `unavailable`；禁止为了前端完整而重训、重构或反转分数。
 
+### 6. A 的最终提交工具已实现，真实 freeze 仍等待 B/C/D/E handoff
+
+A 已实现：
+
+```text
+submission_readiness.json
+blind_audit.json
+provenance_audit.json
+determinism_audit.json
+artifact_index.json
+SUBMISSION_RUNBOOK.md
+COMPETITION_READY-only submission packager
+```
+
+Readiness 是 fail closed：missing handoff 不会被推断成 PASS；packager 只有在全部 measured Gate 真正通过时才允许生成 ZIP，并拒绝 PDF、secret-bearing file、token/private key 与本地绝对路径。
+
 ## 当前比赛 Gate
 
 | Gate | Status |
 |---|---|
 | 公共 competition runtime contracts | PASS |
 | Main CI / integration gate | PASS baseline |
-| Legal / Business LLM runtime path | IMPLEMENTED，需 final benchmark |
+| Legal / Business LLM runtime path | IMPLEMENTED，需 final real-LLM benchmark |
 | Market Intelligence implementation + AI wiring | PASS |
 | 3 个真实 PDF offline E2E | PASS |
 | Conflict / bounded re-check / Trace / Human Review | PASS implementation |
 | 3-case measured traceability | PASS = 1.0 |
+| E reasoning log / case report / machine Gate-E1 | PASS implementation |
+| A readiness / audit / Runbook / packager tooling | PASS implementation |
 | B Risk / Evidence benchmark | **FAIL / OPEN** |
+| C final-matrix Market validation | **OPEN** |
 | D 1D/5D/20D/60D submission artifacts | **OPEN** |
 | Real-provider Final Supervisor on final matrix | **OPEN** |
 | Evidence bbox upstream grounding | OPEN quality gap；page grounding 已可用 |
 | Authentic frozen PR-F per-case handoff | OPTIONAL for competition UI / still missing for historical PR-H closure |
-| Final runbook / submission archive / release freeze | **OPEN** |
+| Final real audits / bundle / release freeze | **OPEN** |
 
 详细且唯一的当前 Gate 状态见 `docs/V0.4_RELEASE_ACCEPTANCE.md`。
 
 ## 五人职责
 
-- **A — Tech Lead / Integration / Release / Submission**：公共契约、集成 Gate、PR/CI、最终 runbook 与 release freeze。
+- **A — Tech Lead / Integration / Release / Submission**：公共契约、集成 Gate、PR/CI、readiness/audit/Runbook/package 与最终 release freeze。
 - **B — LLM Document Intelligence**：Legal / Business 语义抽取、Risk/Evidence benchmark、Evidence grounding。
 - **C — Market Intelligence**：PIT MarketContext、Skills、Market LLM interpretation。
 - **D — Outcome / Model / Evaluation**：1D/5D/20D/60D、最终结果文件、authentic PR-F signal if available。
-- **E — LLM Final Supervisor / Multi-Agent / Product**：冲突、复核、Supervisor、Trace、Human Review、Streamlit。
+- **E — LLM Final Supervisor / Multi-Agent / Product**：冲突、复核、Supervisor、Trace、Human Review、Streamlit、submission case artifacts。
 
 具体交接与文件边界见 `docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`。
 
 ## 文档入口
 
 - 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
+- 最终提交 Runbook：`docs/SUBMISSION_RUNBOOK.md`
 - 剩余路线：`docs/ROADMAP.md`
 - 五人执行：`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`
 - 赛题映射：`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`
@@ -187,6 +215,17 @@ A-owned network-free integration gate：
 
 ```bash
 python scripts/validate_competition_runtime.py
+```
+
+A-owned final submission readiness：
+
+```bash
+python scripts/build_v045_submission_readiness.py \
+  --role-b-dir reports/v045_role_b \
+  --role-d-dir reports/v045_role_d \
+  --role-e-dir reports/v045_role_e_ai_final \
+  --output-dir reports/v045_submission \
+  --require-ready
 ```
 
 最终 `COMPETITION_READY` 只能在 `docs/V0.4_RELEASE_ACCEPTANCE.md` 的开放 Gate 被实测关闭之后使用。
