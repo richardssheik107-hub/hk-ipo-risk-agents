@@ -203,6 +203,38 @@ reports/v045_role_b/
 
 ## 7. Role D — M5 Multi-horizon handoff
 
+前置条件：
+
+```text
+reports/v04_pr_e/{run_manifest.json,baseline_results.json,value_diagnostic.json}
+reports/v04_pr_f/{run_manifest.json,model_results.json,model_comparison.json}
+data/cache/{v04_ipo_eod.csv,v04_ipo_eod.manifest.json}
+```
+
+PR-E / PR-F runtime 必须逐文件匹配 `reports/frozen/` 中的 SHA-256；EOD 必须由授权的
+`data/competition/hkshareeodprices.csv` 经 governed filtered-store builder 生成，不得换成网络代理行情。
+
+若 filtered store 尚未生成：
+
+```bash
+python scripts/build_v04_ipo_eod_store.py
+```
+
+生成 D handoff：
+
+```bash
+python scripts/build_v045_role_d_m5.py
+```
+
+输出已存在时，只允许对完全一致的内容恢复：
+
+```bash
+python scripts/build_v045_role_d_m5.py --resume
+```
+
+脚本 fail-closed 检查 2024 Validation、冻结 PR-E/PR-F 哈希、5D return/label 一致性、
+最少 60 个有效交易日，以及 `blind_2025_y_accessed=false`；不会训练、调参、校准或读取 2025 Blind y。
+
 D 必须输出：
 
 ```text
