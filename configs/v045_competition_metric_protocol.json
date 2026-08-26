@@ -1,44 +1,69 @@
 {
-  "protocol_version": "v045_competition_metric_protocol_v1",
+  "protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
   "status": "FROZEN_BEFORE_VALIDATION_REEVALUATION",
+  "supersedes": "v045_competition_metric_protocol_v1",
+  "gold_policy": {
+    "existing_expert_gold_only": true,
+    "new_manual_annotations_allowed": false,
+    "existing_gold_modification_allowed": false,
+    "unjudged_treated_as_negative": false,
+    "manual_evidence_regrouping_allowed": false,
+    "allow_deterministic_schema_normalization": true,
+    "allow_exact_duplicate_anchor_deduplication": true,
+    "annotation_inventory": 101,
+    "valid_annotations": 100,
+    "official_materialized": 98
+  },
   "split_policy": {
     "development": "2020-2023",
     "validation": "2024",
     "blind": "2025",
+    "development_remediation_allowed": true,
     "validation_post_hoc_tuning_allowed": false,
-    "blind_outcome_access_allowed": false
+    "blind_outcome_access_allowed": false,
+    "final_development_scope": "all_evaluable_existing_development_expert_gold",
+    "final_validation_scope": "all_evaluable_existing_validation_expert_gold"
   },
   "risk_extraction": {
-    "primary_metric": "official_aligned_accuracy",
+    "primary_metric": "existing_gold_official_aligned_accuracy",
     "official_threshold": 0.8,
     "project_target": 0.85,
-    "positive_recall_guardrail": 0.82,
-    "macro_f1_guardrail": 0.82,
-    "primary_families": [
+    "competition_priority_families": [
       "redemption_rights",
       "related_party_transaction",
       "customer_concentration",
       "supplier_concentration",
       "cash_burn_pressure"
     ],
-    "frozen_mapping": {
-      "redemption_rights": "redemption_rights",
-      "related_party_transaction": "competition_additive_sidecar",
-      "customer_concentration": "customer_concentration",
-      "supplier_concentration": "supplier_concentration",
-      "cash_burn_pressure": "cash_runway_and_deterministic_cash_burn"
-    },
-    "development_case_target": 20,
-    "minimum_positive_support_per_family_when_available": 5
+    "evaluate_only_when_existing_gold_supports_family": true,
+    "zero_support_status": "NOT_EVALUABLE_FROM_EXISTING_GOLD",
+    "precision_requires_exhaustive_existing_judgment": true,
+    "macro_f1_requires_exhaustive_existing_judgment": true,
+    "unsupported_precision_or_f1_status": "NOT_AVAILABLE_FROM_EXISTING_GOLD"
   },
   "evidence": {
-    "primary_metric": "evidence_group_coverage_recall",
+    "primary_metric": "existing_gold_evidence_coverage_recall",
     "official_threshold": 0.85,
     "project_target": 0.88,
     "fixed_top_k_for_primary_metric": null,
+    "manual_new_evidence_allowed": false,
+    "manual_semantic_regrouping_allowed": false,
     "candidate_recall_at_20_target": 0.95,
     "reranked_recall_at_10_target": 0.9,
     "secondary_rank_metrics": [1, 3, 5, 10, 20]
+  },
+  "optimization_policy": {
+    "allowed_on_development": [
+      "retriever_code",
+      "ranking_code",
+      "llm_prompt",
+      "structured_extraction",
+      "schema_normalization",
+      "riskitem_reconciliation",
+      "verifier"
+    ],
+    "gold_expansion_allowed": false,
+    "new_risk_annotation_allowed": false
   },
   "traceability": {
     "official_threshold": 1.0,
