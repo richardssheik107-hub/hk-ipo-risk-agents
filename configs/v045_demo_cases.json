@@ -1,27 +1,18 @@
 {
-  "manifest_version": "v045_role_e_demo_cases_v1",
-  "note": "Every case_id, stock_code and listing_date below is taken from data/catalog/ipo_official_master_bridge.csv. Prospectus PDFs are local, licensed inputs and are never committed: a case whose PDF is absent is reported as unavailable, never substituted, mocked or silently skipped.",
+  "manifest_version": "v045_role_e_demo_cases_v2",
+  "note": "Only case_id and a display company_name are declared here. The stock code and listing date are resolved from data/catalog/ipo_official_master_bridge.csv; the prospectus filename, expected SHA-256, byte size and page count come from data/catalog/ipo_prospectus_manifest.csv. The licensed PDFs live outside the repository: supply the archive root with --prospectus-root or IPO_RISK_PROSPECTUS_ROOT, so no local absolute path is ever committed. A prospectus whose bytes do not match the frozen catalog is refused, never analysed.",
   "cases": [
     {
       "case_id": "ipo_2024_02410",
-      "company_name": "浙江同源康医药股份有限公司",
-      "stock_code": "2410.HK",
-      "listing_date": "2024-08-20",
-      "prospectus_path": "data/local/real_case_001/prospectus.pdf"
+      "company_name": "浙江同源康医药股份有限公司"
     },
     {
       "case_id": "ipo_2024_02460",
-      "company_name": "华润饮料控股有限公司",
-      "stock_code": "2460.HK",
-      "listing_date": "2024-10-23",
-      "prospectus_path": "data/local/real_case_002/prospectus.pdf"
+      "company_name": "华润饮料控股有限公司"
     },
     {
       "case_id": "ipo_2024_01318",
-      "company_name": "毛戈平化妆品股份有限公司",
-      "stock_code": "1318.HK",
-      "listing_date": "2024-12-10",
-      "prospectus_path": "data/local/real_case_003/prospectus.pdf"
+      "company_name": "毛戈平化妆品股份有限公司"
     }
   ]
 }

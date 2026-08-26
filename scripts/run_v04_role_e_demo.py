@@ -1,25 +1,33 @@
 """Run the E-lane competition chain over the declared demo cases.
 
-For each case with a locally available prospectus this executes the full
-governed chain -- parse, agents, verifier, Document Supervisor, governed market
-context, rule signal, conflict detection, one bounded targeted re-check per
-conflict, LLM Final Supervisor synthesis and trace assembly -- and writes the
-per-case artifacts the submission package needs.
+For each declared case this resolves the prospectus through the frozen catalog,
+verifies its bytes, then executes the full governed chain -- parse, agents,
+verifier, Document Supervisor, governed market context, rule signal, conflict
+detection, one bounded targeted re-check per conflict, LLM Final Supervisor
+synthesis and trace assembly -- and writes the per-case artifacts the submission
+package needs.
 
-A declared case whose PDF is not present locally is reported as
-``unavailable_prospectus``.  Nothing is substituted, mocked or quietly dropped:
-the summary states how many of the declared cases actually ran.
+Prospectus resolution is deliberately indirect.  The licensed PDFs live outside
+the repository, so the case list carries only a ``case_id``; the filename, the
+expected SHA-256, the byte size and the page count all come from the frozen
+``ipo_prospectus_manifest.csv``.  The archive root is supplied at run time by
+``--prospectus-root`` or ``IPO_RISK_PROSPECTUS_ROOT``, so no local absolute path
+is ever committed.
 
-The request identity is derived from the governed case, its listing date and the
-prospectus bytes, so two runs of the same case produce the same Evidence
-identities and the same Final Supervisor content hash.
+Integrity fails closed: a prospectus whose bytes do not match the frozen
+SHA-256 and size is never analysed.  A declared case whose PDF is absent is
+reported ``unavailable_prospectus``.  Nothing is substituted or silently dropped.
+
+Only pre-listing inputs are read.  No outcome label of any year is opened.
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
+import os
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
@@ -29,16 +37,28 @@ from ipo_risk.core.config import load_settings
 from ipo_risk.schemas import IPOAnalysisRequest, IPOAnalysisResult
 from ipo_risk.services.analysis_service import IPOAnalysisService
 
-DEMO_VERSION = "v045_role_e_demo_v1"
+DEMO_VERSION = "v045_role_e_demo_v2"
 DEFAULT_CASES = Path("configs/v045_demo_cases.json")
 DEFAULT_CONFIG = "configs/v045_competition_offline.yaml"
 DEFAULT_OUTPUT = Path("reports/v045_role_e")
+DEFAULT_CATALOG = Path("data/catalog/ipo_prospectus_manifest.csv")
+DEFAULT_BRIDGE = Path("data/catalog/ipo_official_master_bridge.csv")
+PROSPECTUS_ROOT_ENV = "IPO_RISK_PROSPECTUS_ROOT"
+
+
+class ProspectusIntegrityError(RuntimeError):
+    """The located prospectus does not match its frozen catalog record."""
 
 
 def _sha(payload: object) -> str:
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
+
+
+def _read_catalog(path: Path, key: str) -> dict[str, dict[str, str]]:
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        return {row[key]: row for row in csv.DictReader(handle)}
 
 
 def deterministic_request_id(stock_code: str, listing_date: date, prospectus_sha256: str) -> str:
@@ -49,37 +69,118 @@ def deterministic_request_id(stock_code: str, listing_date: date, prospectus_sha
     )
 
 
-def run_case(case: dict, config: str, output_dir: Path) -> dict:
-    prospectus = Path(case["prospectus_path"])
-    if not prospectus.exists():
+def resolve_prospectus(
+    catalog_row: dict[str, str], root: Path | None, override: str | None
+) -> tuple[Path, dict[str, object]]:
+    """Locate the prospectus and prove it is the frozen one, or refuse it."""
+
+    if override:
+        path = Path(override)
+    elif root is not None:
+        path = root / catalog_row["relative_path"]
+    else:
+        raise FileNotFoundError(
+            f"no prospectus root supplied; pass --prospectus-root or set {PROSPECTUS_ROOT_ENV}"
+        )
+    if not path.exists():
+        raise FileNotFoundError(f"declared prospectus is not present locally: {path}")
+
+    content = path.read_bytes()
+    actual_sha = hashlib.sha256(content).hexdigest()
+    expected_sha = catalog_row["sha256"]
+    expected_size = int(catalog_row["file_size_bytes"])
+    if actual_sha != expected_sha or len(content) != expected_size:
+        raise ProspectusIntegrityError(
+            f"{path} does not match the frozen catalog record "
+            f"(sha256 {actual_sha[:12]}… vs {expected_sha[:12]}…, "
+            f"{len(content)} vs {expected_size} bytes)"
+        )
+    expected_pages = int(catalog_row["pdf_page_count"])
+    actual_pages = _page_count(content)
+    if actual_pages != expected_pages:
+        raise ProspectusIntegrityError(
+            f"{path} has {actual_pages} physical pages, the frozen catalog records {expected_pages}"
+        )
+    verification = {
+        "source_filename": catalog_row["source_filename"],
+        "sha256": actual_sha,
+        "sha256_matches_frozen_catalog": True,
+        "file_size_bytes": len(content),
+        "size_matches_frozen_catalog": True,
+        "pdf_page_count": actual_pages,
+        "page_count_matches_frozen_catalog": True,
+        "dataset_split": catalog_row["dataset_split"],
+        # The path is deliberately not recorded: it is a local, licensed location.
+        "path_recorded": False,
+    }
+    return path, verification
+
+
+def _page_count(content: bytes) -> int:
+    """Physical page count, so a same-size different document cannot pass."""
+
+    import pymupdf
+
+    with pymupdf.open(stream=content, filetype="pdf") as document:
+        return document.page_count
+
+
+def run_case(
+    case: dict,
+    config: str,
+    output_dir: Path,
+    catalog: dict[str, dict[str, str]],
+    bridge: dict[str, dict[str, str]],
+    root: Path | None,
+) -> dict:
+    case_id = case["case_id"]
+    catalog_row = catalog.get(case_id)
+    bridge_row = bridge.get(case_id)
+    if catalog_row is None or bridge_row is None:
         return {
-            "case_id": case["case_id"],
-            "stock_code": case["stock_code"],
-            "status": "unavailable_prospectus",
-            "reason": f"declared prospectus is not present locally: {prospectus}",
+            "case_id": case_id,
+            "status": "unknown_case",
+            "reason": "case_id is not present in the frozen prospectus catalog or official bridge",
         }
-    listing_date = date.fromisoformat(case["listing_date"])
-    prospectus_sha256 = hashlib.sha256(prospectus.read_bytes()).hexdigest()
-    request_id = deterministic_request_id(case["stock_code"], listing_date, prospectus_sha256)
+    stock_code = bridge_row["stock_code_wind"]
+    listing_date = date.fromisoformat(bridge_row["official_listed_date"])
+    try:
+        prospectus, verification = resolve_prospectus(catalog_row, root, case.get("prospectus_path"))
+    except ProspectusIntegrityError as exc:
+        return {"case_id": case_id, "stock_code": stock_code, "status": "integrity_failed", "reason": str(exc)}
+    except FileNotFoundError as exc:
+        return {
+            "case_id": case_id,
+            "stock_code": stock_code,
+            "status": "unavailable_prospectus",
+            "reason": str(exc),
+        }
+
+    request_id = deterministic_request_id(stock_code, listing_date, verification["sha256"])
     settings = load_settings(config)
     result = IPOAnalysisService(settings=settings).analyze(
         IPOAnalysisRequest(
             request_id=request_id,
             company_name=case["company_name"],
-            stock_code=case["stock_code"],
+            stock_code=stock_code,
             listing_date=listing_date,
             prospectus_path=str(prospectus),
             use_mock=False,
         )
     )
-    return _write_artifacts(case, result, config, prospectus_sha256, request_id, output_dir)
+    return _write_artifacts(
+        case_id, case, stock_code, listing_date, result, config, verification, request_id, output_dir
+    )
 
 
 def _write_artifacts(
+    case_id: str,
     case: dict,
+    stock_code: str,
+    listing_date: date,
     result: IPOAnalysisResult,
     config: str,
-    prospectus_sha256: str,
+    verification: dict[str, object],
     request_id: str,
     output_dir: Path,
 ) -> dict:
@@ -90,7 +191,7 @@ def _write_artifacts(
     conflicts = diagnostics.get("conflict_detection", {})
     rechecks = diagnostics.get("targeted_recheck", {})
 
-    case_dir = output_dir / case["case_id"]
+    case_dir = output_dir / case_id
     case_dir.mkdir(parents=True, exist_ok=True)
     artifacts = {
         "analysis_result.json": json.loads(result.model_dump_json()),
@@ -99,28 +200,34 @@ def _write_artifacts(
         "rechecks.json": rechecks,
         "trace_sidecar.json": runtime.get("sidecar"),
         "traceability.json": runtime.get("traceability"),
+        "prospectus_verification.json": verification,
     }
     for name, payload in artifacts.items():
         (case_dir / name).write_text(
             json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
-    (case_dir / "case_report.md").write_text(_markdown(case, result), encoding="utf-8")
+    (case_dir / "case_report.md").write_text(
+        _markdown(case_id, case, stock_code, listing_date, result), encoding="utf-8"
+    )
 
     conflict_statuses: dict[str, int] = {}
     for conflict in conflicts.get("conflicts", []):
         conflict_statuses[conflict["status"]] = conflict_statuses.get(conflict["status"], 0) + 1
     return {
-        "case_id": case["case_id"],
-        "stock_code": case["stock_code"],
-        "listing_date": case["listing_date"],
+        "case_id": case_id,
+        "stock_code": stock_code,
+        "listing_date": listing_date.isoformat(),
         "status": result.status.value,
         "config": config,
-        "prospectus_sha256": prospectus_sha256,
+        "prospectus_verification": verification,
         "deterministic_request_id": request_id,
         "analysis_id": result.analysis_id,
+        "parsed_chunk_count": result.metadata.get("document", {}).get("parsed_chunk_count"),
         "verified_risk_count": len(result.verified_risks),
         "pending_risk_count": len(result.pending_risks),
+        "rejected_risk_count": len(result.rejected_risks),
         "report_section_count": len(result.report_sections),
+        "structured_error_count": len(result.errors),
         "channel_states": {
             item["channel"]: item["status"] for item in final.get("channel_states", [])
         },
@@ -138,17 +245,20 @@ def _write_artifacts(
     }
 
 
-def _markdown(case: dict, result: IPOAnalysisResult) -> str:
+def _markdown(
+    case_id: str, case: dict, stock_code: str, listing_date: date, result: IPOAnalysisResult
+) -> str:
     diagnostics = result.metadata.get("component_diagnostics", {})
     conflicts = diagnostics.get("conflict_detection", {}).get("conflicts", [])
     supervision = diagnostics.get("final_supervision_llm", {})
     lines = [
-        f"# {case['company_name']} ({case['stock_code']}) — Competition case report",
+        f"# {case['company_name']} ({stock_code}) — Competition case report",
         "",
-        f"- case_id: `{case['case_id']}`",
-        f"- listing_date: `{case['listing_date']}`",
+        f"- case_id: `{case_id}`",
+        f"- listing_date: `{listing_date.isoformat()}`",
         f"- analysis status: `{result.status.value}`",
-        f"- verified risks: {len(result.verified_risks)}; pending: {len(result.pending_risks)}",
+        f"- verified risks: {len(result.verified_risks)}; pending: {len(result.pending_risks)}; "
+        f"rejected: {len(result.rejected_risks)}",
         "",
         "## Verified risks",
         "",
@@ -190,27 +300,50 @@ def main() -> int:
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
+    parser.add_argument("--bridge", type=Path, default=DEFAULT_BRIDGE)
+    parser.add_argument(
+        "--prospectus-root",
+        type=Path,
+        default=None,
+        help=f"local archive root; defaults to ${PROSPECTUS_ROOT_ENV}. Never committed.",
+    )
     parser.add_argument("--case-id", action="append", default=None, help="run only these case ids")
     arguments = parser.parse_args()
 
+    root = arguments.prospectus_root
+    if root is None and os.getenv(PROSPECTUS_ROOT_ENV):
+        root = Path(os.environ[PROSPECTUS_ROOT_ENV])
+
     manifest = json.loads(arguments.cases.read_text(encoding="utf-8"))
+    catalog = _read_catalog(arguments.catalog, "case_id")
+    bridge = _read_catalog(arguments.bridge, "case_id")
     cases = [
         case for case in manifest["cases"]
         if arguments.case_id is None or case["case_id"] in set(arguments.case_id)
     ]
     arguments.output_dir.mkdir(parents=True, exist_ok=True)
-    results = [run_case(case, arguments.config, arguments.output_dir) for case in cases]
-    executed = [item for item in results if item["status"] != "unavailable_prospectus"]
+    results = [
+        run_case(case, arguments.config, arguments.output_dir, catalog, bridge, root)
+        for case in cases
+    ]
+    executed = [item for item in results if item.get("traceability") is not None]
     summary = {
         "demo_version": DEMO_VERSION,
         "config": arguments.config,
         "cases_manifest": str(arguments.cases),
         "cases_manifest_version": manifest.get("manifest_version"),
+        "prospectus_root_supplied": root is not None,
         "declared_case_count": len(cases),
         "executed_case_count": len(executed),
-        "unavailable_case_count": len(cases) - len(executed),
+        "unexecuted_case_count": len(cases) - len(executed),
         "minimum_required_demo_cases": 3,
         "minimum_demo_cases_met": len(executed) >= 3,
+        "all_prospectus_sha256_verified": all(
+            item.get("prospectus_verification", {}).get("sha256_matches_frozen_catalog") is True
+            for item in executed
+        ),
+        "outcome_labels_accessed": False,
         "blind_2025_y_accessed": False,
         "cases": results,
     }
@@ -218,8 +351,8 @@ def main() -> int:
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    # A missing local prospectus is a declared, reported state, not a script
-    # failure; the summary is what records whether the demo bar was met.
+    # A missing or mismatched local prospectus is a declared, reported state, not a
+    # script failure; the summary is what records whether the demo bar was met.
     return 0
 
 
