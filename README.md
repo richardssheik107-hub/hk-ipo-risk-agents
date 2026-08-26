@@ -175,9 +175,11 @@ Existing Gold read-only coverage audit
 
 三案例 offline traceability 均 1.0；reasoning log、case report、machine Gate-E1 evidence 已实现。最终仍需 3/3 real-provider accepted run。
 
-### 5. Outcome / Model 最终比赛包仍未闭合
+### 5. Outcome / Model 生成器已实现，最终行情物化仍待完成
 
-D 仍需生成：
+D 的 frozen PR-E/PR-F 校验、1D/5D/20D/60D 计算、指标复算、SHAP handoff 和
+AI-vs-Offline 汇总已由 `scripts/build_v045_role_d_m5.py` 实现。最终运行仍需本地授权的
+`hkshareeodprices.csv` 先生成 governed filtered EOD store，随后输出：
 
 ```text
 return_1d
