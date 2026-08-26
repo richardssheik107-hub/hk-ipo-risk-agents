@@ -11,35 +11,48 @@
 - frozen PR-A–PR-G 不为比赛展示而回写；
 - PR-F authentic handoff 不存在时 Model Channel = unavailable；
 - shared contract 只允许兼容式扩展；
-- metric-v1 定义不得由各 lane 私自改写；
+- 指标定义不得由各 lane 私自改写；
 - 每个 PR 小而可验证，不允许五个人同时“全仓提分”。
 
-## Competition Metric v1 — 全队共同目标
+## Competition Metric v2 — Existing-Gold-Only
+
+Protocol：
 
 ```text
-M1 Risk Extraction
-Official-aligned Accuracy >=0.80
-Project target >=0.85
-Positive Recall >=0.82
-Macro F1 >=0.82
+v045_competition_metric_protocol_v2_existing_gold_only
+```
 
-M2 Evidence Group Coverage Recall >=0.85
-Project target >=0.88
-Recall@K = secondary diagnostics
+M1/M2 从现在开始只使用项目此前已有的 Expert Annotation / Oracle Gold：
+
+```text
+annotation inventory   101
+valid annotations      100
+official materialized   98
+```
+
+**不新增人工 Gold，不补 risk family，不把 UNJUDGED 当 negative，不人工重做 Evidence Group。**
+
+共同目标：
+
+```text
+M1 Existing-Gold Risk Extraction Accuracy
+official >=0.80
+project target >=0.85
+
+M2 Existing-Gold Evidence Coverage Recall
+ official >=0.85
+ project target >=0.88
+ Recall@K = diagnostics only
 
 M3 Traceability =1.0
 
 M4 Explanation Quality
->=2 human reviewers
-mean >=4.0/5 project target
-minimum formal case >=3.0/5
+保持现有 E/A rubric，不因 M1/M2 变化增加 Gold 标注工作
 
 M5 Outcome
 1D / 5D / 20D / 60D complete
 Primary significant_drop_5d = return_5d <= -0.10
 ```
-
-赛题没有规定 Top-5 Evidence、5D -10% 或 M4 数值线；这些属于项目在 Validation 重评前冻结的 protocol，不得宣称为官方公式。
 
 ## A — Tech Lead / Integration / Release / Submission
 
@@ -56,13 +69,28 @@ Primary significant_drop_5d = return_5d <= -0.10
 - SHA-256 artifact index；
 - Submission Runbook；
 - fail-closed packager；
-- Metric Protocol v1 governance + machine-readable config。
+- Metric Protocol governance + machine-readable config。
 
-### 剩余职责
+### 当前与 B 并行负责 M1/M2 evaluator infrastructure
 
-- review/merge B/C/D/E metric-v1 PR；
-- 保护 `metric_protocol_version` 与 shared artifact contract；
-- 不允许 legacy-only Recall@5 被标成 M2 PASS；
+A 负责“尺子和治理”，不是替 B 改语义模型：
+
+```text
+1. 只读 Existing-Gold coverage audit
+2. evaluable-unit manifest + source hash
+3. UNJUDGED / NOT_EVALUABLE 语义
+4. M1/M2 evaluator
+5. failure taxonomy output
+6. metric-v2 artifact contract
+7. final readiness integration
+```
+
+A 不新增人工 Gold，也不要求 B 新标 20 家。
+
+### 最终剩余职责
+
+- review/merge B/C/D/E final PR；
+- 保护 `metric_protocol_version=v045_competition_metric_protocol_v2_existing_gold_only`；
 - final handoff 到齐后 latest-main CI + 3-case AI smoke；
 - Blind / provenance / determinism actual PASS；
 - final metric dashboard / artifact index / release note / submission bundle；
@@ -70,27 +98,35 @@ Primary significant_drop_5d = return_5d <= -0.10
 
 ### A 禁区
 
-A 不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训/翻转 PR-F，不替 E 造 Supervisor 结果，不在看到 Validation 后改 metric protocol。
+A 不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训/翻转 PR-F，不替 E 造 Supervisor 结果，不新增 M1/M2 Gold，不在看到 Validation 后改 metric protocol。
 
-## B — LLM Document Intelligence / Metric M1-M2 owner
+## B — LLM Document Intelligence / M1-M2 quality owner
 
-### Competition primary risk families
+### Gold policy
 
-B 负责 metric harness / semantic side 的整体闭环，但不改 frozen Financial ownership：
+B 不再承担“补 Gold”的任务。B 只能消费既有 Expert Gold 的只读 evaluator 结果。
+
+Competition-priority risk mapping 仍保留：
 
 ```text
 redemption_rights
-related_party_transaction        # additive competition sidecar
-customer_concentration           # consume existing Financial output
-supplier_concentration           # consume existing Financial output
-cash_burn_pressure               # consume cash_runway / deterministic cash-burn output
+related_party_transaction
+customer_concentration
+supplier_concentration
+cash_burn_pressure
 ```
 
-现有 `material_litigation_compliance`、`precommercial_product` 等继续作为扩展能力与 error analysis，不替代 primary five。
+但只有既有 Gold 真正有 support 时才评价：
 
-### 当前实测
+```text
+support > 0 -> evaluable
+support = 0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+未明确标注 -> UNJUDGED
+```
 
-旧 10-case Development offline diagnostic：
+`material_litigation_compliance`、`precommercial_product` 等旧 Gold 已覆盖的风险可继续作为 diagnostics，不为了“五类”删除。
+
+### 当前旧实测
 
 ```text
 Risk P/R/F1        0 / 0 / 0
@@ -98,51 +134,87 @@ Evidence Recall@5  20%
 Real LLM cases     0
 ```
 
-该 Recall@5 不再等同官方 Evidence `>=85%`。
+旧 Recall@5 是 offline diagnostic，不等同官方 Evidence `>=85%`。
 
-### 下一交付 — M1
-
-1. 冻结 metric-v1 Development allowlist，target 20 cases；
-2. 当前 10 cases 可纳入，补充 family coverage；
-3. 2+ reviewer 建立 Gold Risk Units；
-4. 先跑 real-LLM，不先修改结果口径；
-5. 输出 official-aligned Accuracy / Precision / Positive Recall / Macro F1 / per-risk；
-6. 按 retrieval / ranking / semantics / normalization / reconciliation / verifier / Gold ambiguity 分类错误；
-7. 只在 Development 做 targeted remediation；
-8. 同 protocol rerun。
-
-M1 closure：
+### B 的唯一优化任务
 
 ```text
-Accuracy >=0.80
-Positive Recall >=0.82
-Macro F1 >=0.82
+real-provider Development run
+→ evaluator score
+→ failure taxonomy
+→ targeted remediation
+→ rerun
 ```
 
-### 下一交付 — M2
+允许优化：
 
-Gold 按支撑事实建立 Evidence Groups，不把重复句子机械算多个必命中项。
+- Retriever candidate retrieval；
+- reranking；
+- LLM Prompt；
+- structured extraction；
+- schema normalization；
+- Candidate → RiskItem reconciliation；
+- Verifier。
+
+禁止：
+
+- 新增人工标注；
+- 为低 support risk 补样本；
+- 人工重做 Evidence Group；
+- 修改旧专家答案；
+- 把未标注项当 negative；
+- 用 Validation 反复调 Prompt。
+
+### M1 closure
 
 ```text
-Candidate Recall@20 target >=0.95
-Reranked Recall@10 target >=0.90
-Evidence Group Coverage Recall >=0.85 official
+Existing-Gold official-aligned Accuracy >=0.80
+Project target >=0.85
+```
+
+必须报告 per-risk support。Precision/Macro F1 只有 Existing Gold 本身足够 exhaustive 时才报告，否则明确 `NOT_AVAILABLE_FROM_EXISTING_GOLD`。
+
+### M2 closure
+
+```text
+Existing-Gold Evidence Coverage Recall >=0.85
 Project target >=0.88
 ```
 
-Recall@1/@3/@5/@10/@20 全部输出，但只作排序诊断。Final Evidence 不强制固定 5 条。
+同时输出 Recall@1/@3/@5/@10/@20、Candidate Recall@20、Reranked Recall@10 做诊断；Primary 不固定 Top-5。
+
+### Benchmark scope
+
+为迭代速度可从 Existing Development Gold 固定一个小 debug subset，但正式 Development benchmark 使用：
+
+```text
+ALL evaluable existing Development Expert Gold
+```
+
+系统冻结后，Validation 使用：
+
+```text
+ALL evaluable existing Validation Expert Gold
+```
+
+一次性确认，不再调优。
 
 ### Handoff → E/A
 
 ```text
-AgentResultEnvelope
-risk/evidence ids
-structured diagnostics
-provider metadata
-document_benchmark_summary.json with metric_protocol_version
+document_benchmark_summary.json
 risk_benchmark.csv
 evidence_benchmark.csv
 ai_vs_offline_report.json
+existing_gold_evaluable_manifest.json
+```
+
+所有 artifact 必须记录 Existing-Gold source identity/hash，并声明：
+
+```text
+new_manual_annotations_added=false
+existing_gold_modified=false
+blind_2025_outcome_accessed=false
 ```
 
 ## C — Market Intelligence
@@ -160,29 +232,15 @@ ai_vs_offline_report.json
 
 ### 剩余交付
 
-只做 final-matrix acceptance：
-
-- Core 可读取；
-- Core-only 不 crash；
-- Extended 只有真实 governed artifact 才启用；
-- industry feature 缺失保持 PIT-blocked；
-- Market LLM 不生成不存在的数字；
-- namespaced Market trace 完整。
+只做 final-matrix acceptance：Core 可读、Core-only 不 crash、Extended 真实才启用、industry 缺失继续 PIT-blocked、Market LLM 不造数字、trace accounting 完整。
 
 ### C 禁区
 
-不为提高 M5 临时新增不可证明 PIT 的 market proxy，不做 ComparableIPOSkill，除非所有 P0/P1 已闭合且另行扩 scope。
+不为提高 M5 临时新增不可证明 PIT 的 market proxy，不做 ComparableIPOSkill。
 
 ## D — Outcome / Model / Evaluation / Metric M5 owner
 
-### 已有基础
-
-- 1D/5D/20D/60D foundation；
-- chronological split/blind guard；
-- frozen PR-C 5D；
-- frozen PR-E/PR-F research evidence。
-
-### 下一交付
+D 继续产出：
 
 ```text
 return_1d
@@ -196,28 +254,15 @@ evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-Primary 5D definition 已冻结：
+Primary：
 
 ```text
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-Robustness：Development bottom 20% cutoff，只计算一次并冻结。
+报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有绝对 5D 合格线，不为过 Gate 事后改阈值。
 
-`evaluation_summary.json` 至少报告：
-
-```text
-metric_protocol_version
-precision / recall / f1
-PR-AUC / ROC-AUC
-Top-10% / Top-20% hit rate
-base prevalence
-blind_2025_y_accessed=false
-```
-
-赛题没有绝对 5D 合格线，因此 D 不为“过 Gate”事后选阈值。主要目标是 5D business value，相比 base-rate / document-only / market-only / combined 透明报告。
-
-如 authentic PR-F handoff 可恢复则 hash-bound 消费；不可恢复就 `ModelSignal.status=unavailable`，不重训替代。
+如 authentic PR-F handoff 不可恢复，ModelSignal 明确 unavailable，不重训替代。
 
 ## E — LLM Final Supervisor / Multi-Agent / Product / M3-M4 owner
 
@@ -233,66 +278,49 @@ blind_2025_y_accessed=false
 - offline traceability 1.0；
 - reasoning log / case report / Gate-E1 evidence。
 
-### 剩余 E1
+### 剩余
 
 - final 3-case real-provider synthesis；
 - 3/3 `gate_e1.satisfied=true`；
 - provider/model/prompt/request/hash/latency；
 - scope fail-closed；
-- severity floor preserved。
+- severity floor preserved；
+- final real-provider traceability =1.0；
+- 按现有方案完成 explanation quality artifact。
 
-### 剩余 M3
-
-```text
-Development real-LLM traceability =1.0
-final 3-case real-provider traceability =1.0
-```
-
-### 剩余 M4
-
-生成：
-
-```text
-explanation_quality.json
-```
-
-5 维 rubric：Evidence grounding / Logical consistency / Conflict handling / Re-check quality / Final conclusion。
-
-至少 2 名人类 reviewer，LLM 只能辅助。内部目标 mean >=4.0/5，minimum formal case >=3.0/5。
-
-### E 禁区
-
-不补写 B 没抽出的 RiskItem，不补 C 缺失 market fact，不生成 D 不存在 model score，不在 UI 猜 bbox。
+M1/M2 Existing-Gold 政策不要求 E 新增人工 Gold。
 
 ## Handoff graph
 
 ```text
+Existing Expert Gold ──read-only──> A evaluator/manifest
+                                  └> B real-LLM optimization loop
+
 B M1/M2 + AgentResult / Risk / Evidence ┐
 C MarketContext / interpretation          ├→ E Final Supervisor / Trace / Product
 D M5 Outcome / ModelSignal / evaluation  ┘
 
-E E1/M3/M4 final artifacts ┐
-B/C/D metric-v1 handoffs   ├→ A readiness / audits / package / release
-A metric/config/CI control ┘
+B/C/D/E final handoffs ────────────────→ A readiness / audits / package / release
 ```
 
 ## Shared-file ownership
 
-- metric protocol / global configs / shared schema / CI / readiness：A writer，lane reviewer；
-- Legal/Business semantics / Document metric evaluator：B；
-- Financial existing deterministic risk internals保持既有 ownership，不因 B benchmark 改写；
-- Market internals：C；
+- metric protocol / global configs / shared schema / CI / readiness：A writer；
+- Existing Gold 不允许在比赛收尾阶段由任何 lane 修改；
+- Legal/Business semantics / Document optimization：B；
+- Financial deterministic internals 保持既有 ownership；
+- Market：C；
 - Outcome/model/evaluation：D；
-- Final Supervisor/trace/product/M4 artifact：E；
-- frozen completion reports/manifests 原则上不改原始实测事实。
+- Final Supervisor/trace/product：E；
+- frozen completion reports/manifests 不改原始实测事实。
 
 ## Team completion condition
 
 ```text
-M1 >=80% + guardrails
-AND M2 >=85%
+M1 Existing-Gold Accuracy >=80%
+AND M2 Existing-Gold Evidence Coverage Recall >=85%
 AND M3 =100%
-AND M4 internal rubric PASS
+AND M4 current rubric PASS
 AND M5 complete/frozen 5D evaluation
 AND C final Market validation
 AND E real-provider final matrix
