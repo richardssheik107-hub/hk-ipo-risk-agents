@@ -10,6 +10,7 @@ import pytest
 
 from ipo_risk.runtime.submission_readiness import (
     ROLE_E_CASE_REQUIRED,
+    _scan_path_for_sensitive_material,
     build_artifact_index,
     build_submission_readiness,
     package_submission_bundle,
@@ -249,6 +250,34 @@ def test_audit_writer_and_index_hash_real_files(tmp_path: Path) -> None:
     write_artifact_index(a / "artifact_index.json", index)
     assert index["artifact_count"] > 20
     assert all(len(item["sha256"]) == 64 for item in index["artifacts"])
+
+
+def test_the_audits_never_write_the_local_path_their_own_packager_forbids(
+    tmp_path: Path,
+) -> None:
+    """The tooling must not refuse its own output.
+
+    The audits are packaged and shipped, and the packager rejects any artifact
+    carrying a local absolute path. Recording the role directories verbatim made
+    that self-contradictory whenever the dirs were passed as absolute paths --
+    which is exactly what a run outside the working tree does. The scan itself is
+    the oracle here, so the producer and the check cannot drift apart again.
+    """
+    repo, b, d, e, a = _ready_tree(tmp_path)
+    assert b.is_absolute(), "the fixture must exercise absolute role directories"
+
+    readiness, blind, provenance, determinism = build_submission_readiness(
+        repo_root=repo, role_b_dir=b, role_d_dir=d, role_e_dir=e, a_output_dir=a
+    )
+    write_submission_audits(
+        output_dir=a,
+        readiness=readiness,
+        blind=blind,
+        provenance=provenance,
+        determinism=determinism,
+    )
+    for written in sorted(a.glob("*.json")):
+        assert _scan_path_for_sensitive_material(written) == [], written.name
 
 
 def test_packager_refuses_before_competition_ready(tmp_path: Path) -> None:
