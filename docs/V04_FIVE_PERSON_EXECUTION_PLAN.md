@@ -1,605 +1,217 @@
-# v0.4 → Competition Submission 五人执行计划
+# v0.4.5 Five-Person Execution Plan
 
-> Status snapshot: **2026-08-25**  
-> PR-A–PR-G: **COMPLETE / FROZEN**  
-> PR-H: **PARTIAL / BLOCKED**  
-> Current mode: **Competition Final Sprint**  
-> End state: **v0.4.5 COMPETITION_READY + reproducible submission package**
+本文件定义 A/B/C/D/E 的稳定 ownership、handoff 和完成标准。**不按日期排期**；状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
 
-本文件不按日期排任务，只回答：**每个人从现在到提交必须完成什么、依赖谁、交付什么、什么算完成。**
+## 全队共同约束
 
-## 1. 协同原则
+- `RiskItem` 必须有真实 Evidence；需要精确计算时必须有 `Calculation`；
+- LLM 只做语义与综合，不是权威计算器；
+- Market 数值只能来自 PIT-governed 输入；缺失显式 missing；
+- 2024 Validation 不作为调参集；2025 Blind y 未授权前不访问；
+- frozen PR-A–PR-G 不为比赛展示而回写；
+- PR-F authentic handoff 不存在时 Model Channel = unavailable；
+- 公共 contract 只允许兼容式扩展，shared files 由 A 审核；
+- 每个 PR 都应小而可验证，不允许五个人同时“全仓集成”。
 
-五个人并行推进，不串行排队：
+## A — Tech Lead / Integration / Release / Submission
 
-```text
-B  LLM Document Intelligence ─────┐
-C  Market Intelligence ───────────┼→ E Final Supervisor / Product
-D  Outcome / Model / Evaluation ──┘
+### 已完成
 
-A = public contracts + integration + CI + real-case matrix + release + submission
-```
+- `competition_runtime_v1` 公共 sidecar contract；
+- `Conflict / RecheckRequest / TraceEvent / HumanReview` runtime boundary；
+- LLM provider observability / Responses metadata；
+- network-free competition runtime CI gate；
+- C Market Intelligence → v0.4 AI runtime wiring；
+- Market missingness / trace / Final Supervisor transport/UI integration hardening；
+- 3-case runner 所需的跨 lane 集成已进入 main；
+- 本轮 active documentation audit / stale-doc pruning。
 
-所有人从最新 `main` 建短分支；单 PR 单主题；A 高频合流。公共 Schema / workflow / service / container 修改由 A 审核。
+### 剩余职责
 
-## 2. A — Tech Lead / Integration / Release / Submission
+- B/C/D/E PR 的 contract review、CI、real smoke、merge；
+- 保持当前 Gate 文档与 main 同步；
+- 最终 artifact completeness / blind / provenance / determinism audit；
+- RUNBOOK、release notes、submission archive；
+- 决定 `COMPETITION_READY` 是否可使用。
 
-### 目标
+### A 禁区
 
-保证所有模块最终能合、能跑、能复现、能提交。
+A 不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训 PR-F，不替 E 在 UI 造 Supervisor 结果。
 
-### A 必须冻结的公共 contracts
+## B — LLM Document Intelligence
 
-```text
-RiskItem
-Evidence
-Calculation
-AgentResult
-MarketContext
-ModelSignal
-Conflict
-RecheckRequest
-SupervisorDecision
-TraceEvent
-HumanReview
-```
+### Owner 范围
 
-所有跨模块对象必须能追踪：
+Legal：
 
-```text
-case_id
-stock_code
-listing_date
-run_id
-provider / model
-prompt / policy / schema version
-provenance / hash where applicable
-```
+- `redemption_rights`；
+- `material_litigation_compliance`；
+- versioned competition extension（如 related-party）只能做 sidecar/additive，不改 frozen baseline code identity。
 
-### A 负责
+Business：
 
-- 最新 `main`、branch / PR / merge 策略；
-- protected interface review；
-- CI / regression / compile / validation；
-- 3–5 个真实 IPO case matrix；
-- `PDF → Final Report` E2E smoke；
-- determinism / provenance / Blind audit；
-- final release manifest / tag；
-- submission tree、README、RUNBOOK、环境和复现说明。
+- `precommercial_product`；
+- core product / commercialization / pipeline / revenue semantics；
+- disclosure tone 等扩展只能 Evidence-grounded、versioned。
 
-### A 不负责
+Evidence：
 
-- 不替 B 重写 Legal/Business Agent；
-- 不替 C 造 Market feature；
-- 不替 D 调模型；
-- 不替 E 在 UI 层修后端事实。
+- Retriever → Evidence → structured LLM extraction；
+- Evidence ID scope validation；
+- optional parser bbox grounding。
 
-### A Done
+### 当前实测
+
+10-case Development governed offline benchmark：
 
 ```text
-main green
->=3 real IPO stable E2E
-all public contracts versioned
-no fake unavailable channel
-full submission package reproducible
-Competition Release identity frozen
+Risk P/R/F1        0 / 0 / 0
+Evidence Recall@5  20%
+Real LLM cases     0
 ```
 
-## 3. B — LLM Document Intelligence / Evidence / Benchmark
+因此 B 当前是**第一质量 blocker**。
 
-### 目标
+### 下一交付
 
-让 LLM 真正提升复杂招股书语义理解，并保持 Evidence-grounded / verifier-governed。
+- 固定同一 Development benchmark 的 real-LLM run；
+- Risk / Evidence benchmark artifacts；
+- error taxonomy：retrieval / semantic / reconciliation / verifier / ranking；
+- Development-only 最小 remediation；
+- Before/After / Offline-vs-AI 证据；
+- 若做 bbox：与 A 明确 version/hash 影响后再改 parser。
 
-### Legal Agent
+### Handoff → E/A
 
-优先完成：
+`AgentResultEnvelope + risk_ids + evidence_ids + structured diagnostics + provider metadata`。
 
-```text
-redemption_rights
-material_litigation_compliance
-related_party_transaction
-```
+## C — Market Intelligence
 
-标准链路：
+### 已完成主体
 
-```text
-Retriever
-→ bounded Evidence
-→ LLM structured extraction
-→ Evidence-scope validation
-→ Risk Builder
-→ Verifier
-```
+- governed MarketContext；
+- IPOHeatSkill；
+- MarketRegimeSkill；
+- bounded Market LLM interpretation；
+- explicit PIT/missingness；
+- Trace / Final Supervisor compatible handoff；
+- 正式 AI runtime wiring；
+- 两只真实 IPO 的 real-provider Market LLM validation。
 
-需要解析：
+### 剩余交付
 
-```text
-right existence / effectiveness
-post-listing survival
-termination / restoration condition
-materiality
-actual litigation/compliance issue vs generic disclosure
-```
+- 在 final 3-case environment 验证 Market Core artifact consumption；
+- Core-only 与 Extended 两种配置的诚实降级；
+- namespaced market evidence/trace 完整；
+- 不可用 industry feature 保留 PIT-blocked reason。
 
-### Business Agent
+### 当前不做
 
-优先完成：
+- 没有 frozen PIT-safe 定义时不做 `ComparableIPOSkill`；
+- 不用行业静态映射伪装历史 PIT；
+- 不用 zero/proxy 填 missing market values。
 
-```text
-core_product
-pipeline_stage
-commercialization_status
-precommercial_product
-product_revenue_semantics
-```
+### Handoff → E/A
 
-重点解决未盈利生物科技/特专科技中：
+`MarketContext + deterministic skill outputs + bounded interpretation + trace provenance`。
 
-```text
-核心产品是谁
-研发处于什么阶段
-是否已商业化
-收入是否来自产品销售
-是否只是授权/合作收入
-```
+## D — Outcome / Model / Evaluation
 
-### Disclosure Tone
+### 已有基础
 
-增加轻量 Evidence-bounded `Disclosure Tone / Obfuscation` 分析：
+- 1D/5D/20D/60D outcome foundation；
+- chronological split/blind guard；
+- frozen PR-C 5D；
+- frozen PR-E/PR-F research evidence。
 
-```text
-tone_risk
-hedging_language
-obfuscation_signal
-missing_quantification
-supporting_evidence_ids
-```
+### 当前缺口
 
-不做开放式文学评价，不允许无 Evidence 结论。
+最终比赛结果包尚未关闭，因此 D 是**第一交付 blocker**。
 
-### B Benchmark
-
-至少生成 submission-ready 最小 benchmark：
-
-```text
-Risk Precision / Recall / F1
-Evidence Recall
-Evidence Precision / page correctness
-```
-
-赛题目标：
-
-```text
-关键风险要素抽取准确率 >= 80%
-关键 Evidence Recall    >= 85%
-```
-
-### B → E
-
-交付：
-
-```text
-RiskItem
-Evidence / page / bbox
-LLM structured facts
-Calculation refs
-Verifier status
-AI contribution metadata
-```
-
-### B Done
-
-```text
-real Legal cases pass
-real Business cases pass
-LLM citations all in scope
-structured output schema-valid
-benchmark artifact generated
-top errors fixed with regression tests
-```
-
-## 4. C — Market Intelligence / Market Agent / Skills
-
-### 目标
-
-把现有 governed Market-X 从“数据字段”变成真正可解释的市场情绪 Agent，同时保持 PIT-safe。
-
-### Governed facts
-
-优先使用：
-
-```text
-HSI trend / return
-market volatility
-HKEX turnover / activity
-recent IPO count
-recent IPO break rate
-recent IPO 1D / 5D performance
-```
-
-### Skills
-
-至少实现：
-
-```text
-IPOHeatSkill
-MarketRegimeSkill
-```
-
-如已有可靠数据再实现：
-
-```text
-ComparableIPOSkill
-```
-
-不能为了“同行估值”临时使用无 PIT / 无 provenance 数据。
-
-### Market Agent
-
-```text
-Governed market facts
-→ deterministic Skills
-→ MarketContext
-→ LLM interpretation
-```
-
-输出：
-
-```text
-market_regime
-risk_level
-ipo_heat
-liquidity_condition
-key_drivers
-uncertainties
-source_feature_ids
-provenance
-```
-
-LLM 只能解释已有事实，不能生成行情值。
-
-### C → E
-
-交付：
-
-```text
-MarketContext
-Market Environment
-key drivers
-source feature ids
-PIT cutoff / provenance
-missing reason
-```
-
-### C Done
-
-```text
-3–5 demo cases have governed MarketContext
-IPO Heat / Market Regime reproducible
-LLM interpretation grounded in feature ids
-missing remains explicit
-no future leakage / no fake industry proxy
-```
-
-### C Competition implementation identity
-
-```text
-IPO Heat policy       v04_ipo_heat_skill_v1
-Market Regime policy  v04_market_regime_skill_v1
-Market Intelligence   v04_market_intelligence_v1
-Comparable IPO        DEFERRED（当前没有正式 PIT-safe comparable 定义）
-Readiness artifact    data/catalog/v04_c_market_intelligence_readiness.json
-```
-
-成交额仅记录为 `OBSERVED_UNBENCHMARKED`；在没有严格上市前相对历史基准时，不作跨年份绝对强弱判断。Industry return 继续显式保留 `INDUSTRY_MAPPING_PIT_BLOCKED`，LLM 只能解释确定性 MarketContext，provider 不可用时保留完整确定性结果并诚实降级。
-
-两个 policy 都是未使用 2024 outcome 或 2025 Blind y 的 competition interpretation heuristic。IPO Heat 在一日破发率不高于 0.35 且近期五日收益非负时判为 `HOT`，在破发率不低于 0.60 或近期五日收益不高于 -0.05 时判为 `COLD`；没有可用 recent-IPO 样本时必须为 `INSUFFICIENT_DATA`。Market Regime 使用固定的 HSI 五日/二十日方向阈值（0.01 / 0.02）和二十日非年化波动阈值（低不高于 0.01，高不低于 0.02），冲突趋势或高波动进入 `MIXED`。这些阈值只服务于稳定、可解释的比赛展示，不是预测最优阈值。
-
-## 5. D — Quant / Outcome / Model Runtime / Evaluation
-
-### 目标
-
-补齐赛题要求的真实表现验证，并生成最终可提交的效果证据；不再展开模型探索。
-
-### Frozen PR-F runtime
-
-优先恢复原 frozen runtime 或合法 hash-bound handoff：
-
-```text
-per-case score
-score semantics
-signed top SHAP
-model/run identity
-checksum
-```
-
-禁止：
-
-```text
-retrain
-reconstruct
-2024 retune
-score inversion
-```
-
-若恢复失败：
-
-```text
-ModelSignal.status = unavailable
-```
-
-不阻断 Document / Market / Rule / Supervisor 主链。
-
-### 1D / 5D / 20D / 60D Outcome
-
-必须补齐：
+### 下一交付
 
 ```text
 return_1d
 return_5d
 return_20d
 return_60d
-```
 
-建议同时生成：
-
-```text
-break_flag_1d
-significant_drop_5d
-drawdown_20d
-drawdown_60d
-```
-
-所有 horizon 必须统一 session / suspension / missing-price policy，并独立版本化，不改写 frozen PR-C 5D。
-
-### Offline vs AI minimal effect check
-
-在相同 selected real cases 上比较：
-
-```text
-Offline deterministic
-vs
-AI enhanced
-```
-
-至少记录：
-
-```text
-risk decisions resolved
-semantic fields resolved
-Extraction Failed
-Needs Review
-Evidence grounding validity
-Legal semantic accuracy
-Business semantic accuracy
-useful conflict / re-check count
-```
-
-### Final evaluation artifacts
-
-必须生成：
-
-```text
 test_predictions.csv
-evaluation_summary.json
 multi_horizon_results.csv
+evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-`test_predictions.csv` 至少：
+如 authentic frozen PR-F handoff 可恢复，则额外提供：
+
+- per-case `uncalibrated_model_score`；
+- model/run identity；
+- checksum；
+- top signed SHAP drivers。
+
+不可恢复则明确 `ModelSignal.status=unavailable`，不重训替代。
+
+### Handoff → E/A
+
+`multi-horizon outcomes + evaluation artifacts + optional authentic ModelSignal`。
+
+## E — LLM Final Supervisor / Multi-Agent / Product
+
+### 已完成主体
+
+- LLM Final Supervisor；
+- deterministic conflict policy；
+- one bounded targeted re-check；
+- Verifier challenge / resolution states；
+- Agent / Tool / Evidence trace；
+- Human Review；
+- Evidence Viewer；
+- 五个 Streamlit workspaces；
+- 3/3 real-PDF offline matrix；
+- 三案例 measured traceability = 1.0。
+
+### 剩余交付
+
+- final 3-case matrix 上 real-provider Final Supervisor synthesis；
+- 保存 provider/model/prompt/request/hash/latency trace；
+- 验证 out-of-scope reference fail closed；
+- 接入 B/C/D 最终真实结果后做 UI smoke；
+- submission-facing case reports / reasoning logs。
+
+### E 禁区
+
+- 不补写 B 没抽出的 RiskItem；
+- 不补 C 缺失的市场事实；
+- 不生成 D 不存在的模型分数；
+- 不在 UI 伪造 bbox。
+
+## Handoff graph
 
 ```text
-case_id
-stock_code
-risk_score
-risk_level
-model_status
-return_1d
-return_5d
-return_20d
-return_60d
+B → AgentResult / Risk / Evidence / diagnostics ┐
+C → MarketContext / market interpretation       ├→ E Final Supervisor / Trace / Product
+D → Outcome / ModelSignal / evaluation          ┘
+
+A → contracts / config ownership / CI / integration / release
+E → final product artifacts → A final Gate
 ```
 
-### D → E
+## Shared-file ownership
 
-交付：
+- schemas / registry / global config / analysis service / CI：A writer，相关 role reviewer；
+- Legal/Business semantic internals：B；
+- Market skills/agent internals：C；
+- outcome/model/evaluation：D；
+- final supervisor/trace/product UI：E；
+- `streamlit_app`：E writer，A integration reviewer；
+- frozen completion reports/manifests：原则上无人修改。
+
+## Team completion condition
 
 ```text
-ModelSignal
-SHAP if available
-score semantics
-outcome validation
-uncertainty / limitations
+B real-LLM benchmark + quality evidence
+AND D multi-horizon submission package
+AND E real-provider final matrix
+AND A final CI/runbook/submission freeze
+→ COMPETITION_READY
 ```
-
-### D Done
-
-```text
-1D/5D/20D/60D outcome reproducible
-PR-F state resolved as available or explicit unavailable
-AI-vs-Offline artifact exists
-final prediction table exists
-no Blind leakage
-```
-
-## 6. E — LLM Final Supervisor / Multi-Agent / Trace / Product
-
-### 目标
-
-让 Multi-Agent 真正发生可观察协作，并把所有能力变成投研人员可使用的产品。
-
-### LLM Final Supervisor
-
-输入只允许 governed：
-
-```text
-Financial Agent result
-Legal Agent result
-Business Agent result
-MarketContext / Market Agent result
-ModelSignal
-Rule signal
-Evidence / Calculation refs
-Verifier status
-```
-
-输出：
-
-```text
-overall_risk
-key_findings
-conflicts
-uncertainties
-recheck_required
-recheck_targets
-final_explanation
-```
-
-### Conflict / Re-check
-
-标准路径：
-
-```text
-Agent disagreement
-→ Conflict
-→ targeted re-retrieval
-→ Skill / Agent rerun
-→ Verifier challenge
-→ Final Supervisor resolution
-```
-
-状态必须区分：
-
-```text
-resolved
-partially_resolved
-unresolved
-```
-
-不做无限 autonomous loop；一次可控 targeted re-check 为主。
-
-### Agent Trace
-
-每步至少记录：
-
-```text
-agent_name
-task
-input_evidence_ids
-tool_or_skill
-llm_provider / model
-structured_output
-calculation_ids
-verifier_status
-conflict_id
-recheck_action
-final_status
-latency
-```
-
-赛题目标：`Agent / Tool / Evidence traceability = 100%`。
-
-### Evidence Viewer
-
-核心视图：
-
-```text
-左侧  PDF page + bbox highlight
-右侧  Risk / Evidence / LLM interpretation / Structured Fact / Calculation / Verifier
-```
-
-### Human Review
-
-最小可用：
-
-```text
-Accept
-Reject
-Needs Follow-up
-Reviewer Note
-```
-
-机器结果和人工结果必须分开存储。
-
-### Final product workspaces
-
-只保留高价值工作区：
-
-```text
-Risk Command Center
-Evidence + AI Analysis
-Market & Model
-Agent Trace
-Human Review / Final Report
-```
-
-### E Done
-
-```text
-LLM Final Supervisor runs on real case
->=1 real controlled conflict/re-check trace
-Agent trace complete
-Evidence Viewer usable
-Human Review usable
-3–5 stable demo cases
-final Streamlit uses governed outputs only
-```
-
-## 7. Cross-owner handoff contracts
-
-```text
-B → E  Risk + Evidence + LLM facts + Verifier
-C → E  MarketContext + interpretation + provenance
-D → E  ModelSignal + outcomes + evaluation
-E → A  Supervisor + Trace + Product
-A → all public contract / CI / release decisions
-```
-
-任何跨 owner 数据都必须通过正式 schema/sidecar，不通过临时 dict 或 UI hack。
-
-## 8. Final submission package
-
-A 统一最终结构：
-
-```text
-submission/
-├── README.md
-├── RUNBOOK.md
-├── source/
-├── configs/
-├── demo/
-├── evaluation/
-│   ├── test_predictions.csv
-│   ├── risk_benchmark.*
-│   ├── evidence_benchmark.*
-│   ├── multi_horizon_results.csv
-│   └── ai_vs_offline_report.*
-├── traces/
-├── evidence/
-├── reports/
-└── screenshots/
-```
-
-## 9. Final acceptance matrix
-
-```text
-PDF long-document parsing                       PASS
-standard + non-standard risk extraction         PASS
-real LLM Legal / Business semantics             PASS
-Market Agent + Skills                           PASS
-LLM Final Supervisor                            PASS
-conflict / re-check                             PASS
-1D / 5D / 20D / 60D                            PASS
-Risk benchmark artifact                         PASS
-Evidence benchmark artifact                     PASS
-Agent / Tool / Evidence trace                   100%
-Evidence Viewer                                 PASS
-Human Review                                    PASS
->=3 stable real IPO cases                       PASS
-prediction table / reasoning logs / case report PASS
-full CI / real-case smoke                       PASS
-submission reproducible                         PASS
-```
-
-未达标项必须显式记录 blocker，不允许通过 mock / fake data / score rewrite 伪装 PASS。

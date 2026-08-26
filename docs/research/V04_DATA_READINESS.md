@@ -1,246 +1,185 @@
-# V04 Data Readiness — Current Reference Snapshot
+# v0.4 Data Readiness — Technical Reference
 
-> Audit snapshot: **2026-08-25**  
-> Status: **PR-A–PR-G COMPLETE / FROZEN; PR-H PARTIAL / BLOCKED**  
-> This file records measured readiness plus the remaining competition-required data artifacts.
+本文档保留 v0.4 数据层的技术就绪事实；比赛当前 Gate 由 `../V0.4_RELEASE_ACCEPTANCE.md` 维护。冻结 manifest / completion report 中的既有 hash 与实测数字不因本文件更新而改变。
 
-## 1. Official modeling universe
-
-Official 2020–2024 listing-year universe: **438 cases**.
+## 1. Official cohort
 
 ```text
-2020  125
-2021   97
-2022   78
-2023   68
-2024   70
+Official 2020–2024 IPO cases  438
+Development (2020–2023)      368 official identities before target availability filtering
+Validation (2024)              70
+2025 Blind                     protected
 ```
 
-Split authority is `official_listed_date.year`, not document `source_year`.
-
-## 2. Production Document readiness — COMPLETE / FROZEN
+## 2. Production Document-X
 
 ```text
-Official cases                 438
-Production analyses            438 / 438
-Authoritative snapshots        438 / 438
-Production Document-X          438 / 438
-Feature schema                 v04_document_features_v1
-Feature dimension              100
-Production failures            0
-Silent drops                   0
-Determinism                    PASS
-2025 Blind y accessed          NO
+Production artifacts           438 / 438
+Feature positions              100
 ```
 
-Competition gap is not corpus coverage; it is **real LLM semantic quality + submission-ready Risk/Evidence benchmark**.
+Document production materialization 已完成；比赛阶段的主要问题不是“有没有 Document-X”，而是 Legal/Business/RiskItem 的语义抽取质量。
 
-## 3. Market-X Core — COMPLETE / FROZEN
+## 3. Market-X Core
 
 ```text
-schema                         v04_ipo_market_context_features_v1
-positions                      15 raw + 15 missing indicators = 30
-Official coverage              438 / 438
-PIT failures                   0
-Determinism                    PASS
+Core cases                     438 / 438
+Core positions                  30
+Raw features                    15
+Missing indicators              15
 ```
 
-## 4. Market-X Extended — governed where available
+Core 使用 listing-date 前可得数据并保留 missing semantics。Frozen Core 不因后续 Extended/Market Agent 改动而重写。
+
+## 4. Market-X Extended readiness
+
+当前受治理数据结论：
 
 ```text
-hsi_return_5d                  438 / 438
-hsi_return_20d                 438 / 438
-market_volatility_20d          438 / 438
-market_turnover_20d_mean       438 / 438
-recent_ipo_1d_sample_count     438 / 438
-recent_ipo_5d_sample_count     438 / 438
-recent_ipo_break_rate          244 / 438 available
-recent_ipo_return_5d           243 / 438 available
+HSI 5D/20D/volatility          438 / 438 available
+HKEX turnover 20D              438 / 438 available
+Production industry return       0 / 438 PIT-safe available
 ```
 
-Industry remains blocked:
+industry return 的 blocker 是 historical company-classification PIT mapping，不是价格序列本身。没有 authoritative historical mapping 时继续 unavailable；不使用静态未来分类、counterfactual mapping 或 zero fill 进入 production。
+
+Market Intelligence 已能在 Core-only 输入上合法降级。
+
+## 5. Outcome readiness
+
+Frozen PR-C 5D：
 
 ```text
-production industry_return_5d    0 / 438
-production industry_return_20d   0 / 438
-INDUSTRY_MAPPING_PIT_BLOCKED    432 cases
-MISSING_INDUSTRY_CLASSIFICATION   6 cases
+Official                        438
+Available                       424
+Unavailable                      14
+Development available           354
+Validation available             70
+missing_base_price               12
+no_eligible_session               2
 ```
 
-Competition Market Agent can proceed without industry return; missing remains explicit.
+已有 outcome foundation 定义 1D / 5D / 20D / 60D horizon。**最终 competition multi-horizon artifact 仍未物化完成**；这是 D 当前交付 Gate，而不是数据 schema blocker。
 
-## 5. Frozen 5D Outcome — COMPLETE / FROZEN
+## 6. Canonical dataset
+
+Frozen PR-D：
 
 ```text
-Official coverage              438
-Outcome available              424
-Outcome unavailable             14
-Development available          354 / 368
-Validation available            70 / 70
-missing_base_price              12
-no_eligible_session              2
-Determinism                    PASS
+Model-ready                     424
+Development                     354
+Validation                       70
+Explicit exclusions              14
 ```
 
-## 6. Competition multi-horizon outcome — REQUIRED / NOT YET FROZEN
+Production / Market / Outcome bulk bindings 和 split rules 保持 fail closed。
 
-赛题要求的上市表现窗口：
+## 7. Oracle v2
 
 ```text
-1D
-5D
-20D
-60D
+Annotation inventory            101
+Materialized                     98
+Strict usable                    96
+Development usable               77
+Validation usable                19
+Feature count                   142
 ```
 
-当前 5D 已 frozen；Final Sprint 仍需独立 versioned sidecar：
+Oracle v2 为 evaluation-only；不得作为 production feature source。
+
+## 8. Real prospectus runtime readiness
+
+当前比赛 runner 已通过 frozen catalog 安全解析并验证：
 
 ```text
-return_1d          REQUIRED
-return_20d         REQUIRED
-return_60d         REQUIRED
+2410.HK    706 physical pages
+2460.HK    579 physical pages
+1318.HK    617 physical pages
 ```
 
-建议同时：
+三份：
 
 ```text
-break_flag_1d
-significant_drop_5d
-max_drawdown_20d
-max_drawdown_60d
+SHA-256 verified      3 / 3
+byte size verified    3 / 3
+page count verified   3 / 3
+offline E2E completed 3 / 3
+workflow errors       0
+outcome labels read   false
 ```
 
-## 7. PR-D Canonical Dataset — COMPLETE / FROZEN
+因此“真实 demo PDF 不足”不再是当前数据 blocker。
+
+## 9. Role-B benchmark input readiness
+
+10 个 allowlisted 2020–2023 Development PDF 已通过 governed streaming run：
 
 ```text
-Model-ready                    424
-Development                    354
-Validation                      70
-Schema                         v04_canonical_modeling_dataset_v1
-Generation failures              0
-Silent drops                     0
-Identity mismatch                0
-Feature-order drift              0
-2025 Blind y accessed           NO
+found        10 / 10
+SHA          10 / 10
+page         10 / 10
+analyzed     10 / 10
 ```
 
-Final Sprint 不重写 frozen canonical matrix。
-
-## 8. Oracle readiness
+但 quality benchmark 为：
 
 ```text
-Oracle v2 materialized          98
-strict usable                   96
-Development / Validation        77 / 19
-feature count                  142
-evaluation_only               true
-production_consumable         false
+Risk P/R/F1          0 / 0 / 0
+Evidence Recall@5    20%
+Real LLM cases       0
 ```
 
-Oracle 继续只用于 evaluation，不进入 production LLM runtime。
+所以 Document 数据输入是 ready 的，**Document semantic quality 不是 ready 的**。B 需要在同一固定 benchmark 上测 real-LLM path。
 
-## 9. Frozen PR-F readiness
+## 10. Market Agent runtime readiness
 
-Frozen model results remain complete historically, but PR-H current workspace still lacks the original per-case runtime/handoff.
+C 已完成：
+
+- IPOHeatSkill；
+- MarketRegimeSkill；
+- structured Market interpretation；
+- PIT/missingness provenance；
+- AI runtime wiring；
+- 两只真实 IPO 的 real-provider Market LLM validation。
+
+最终 3-case demo workspace 若没有本地 `reports/v04_pr_b/core_features` 等 ignored runtime materialization，Market Channel 可以诚实 unavailable；A/C 应在最终 demo 机器上物化/验证，而不是提交 raw licensed data。
+
+## 11. Model runtime readiness
+
+Frozen PR-F cohort results存在，但 original per-case runtime bulk 不在 repo。
+
+当前规则：
 
 ```text
-historical PR-F gate             COMPLETE / FROZEN
-product runtime handoff          MISSING in current PR-H workspace
-allowed action                   recover original / valid hash-bound handoff
-forbidden action                 retrain / reconstruct / retune for UI
+authentic hash-bound handoff present → consume
+absent / mismatch                  → unavailable
 ```
 
-If unrecovered: `ModelSignal.status = unavailable`.
+不允许从 frozen aggregate metrics 反推个股分数，也不允许重新训练一个“等价”模型来关闭历史 PR-H。
 
-## 10. LLM runtime readiness
+## 12. Evidence grounding readiness
 
-Architecture already contains LLM provider and Legal/Business integration points. Final Sprint still must prove on real cases:
+Physical page grounding 已成立。当前 parser 不生成 bbox：真实 2410 测量 706/706 chunk 有 page，0/706 有 bbox。
+
+bbox 若补齐会改变 Evidence content/hash，应由 B 实现、A 做 provenance/version review；UI 不得推断坐标。
+
+## 13. Blind / validation boundary
 
 ```text
-real provider connectivity
-Legal structured semantic extraction
-Business structured semantic extraction
-Evidence scope validation
-provider failure degradation
-LLM Market interpretation
-LLM Final Supervisor
-conflict / targeted re-check
+Development  2020–2023: allowed for remediation / benchmark iteration
+Validation   2024: fixed evaluation and label-free workflow smoke, not tuning
+Blind        2025: outcome unopened until formal authorization
 ```
 
-This is the main runtime capability gap, not a need to redesign the whole framework.
+所有 final evaluation/output scripts 应继续保持这一边界。
 
-## 11. Competition benchmark readiness
+## 14. Current readiness verdict
 
-Still required for submission:
+数据基础设施已不再是主瓶颈。比赛收口的真实 blocker 是：
 
-```text
-Risk benchmark artifact
-Evidence benchmark artifact
-AI-vs-Offline minimal effect artifact
-```
+- B：real-LLM Document quality evidence；
+- D：final multi-horizon results；
+- E：final matrix remote synthesis；
+- A：最终 integration/release/submission freeze。
 
-Target metrics:
-
-```text
-关键风险要素抽取准确率 >= 80%
-关键 Evidence Recall    >= 85%
-```
-
-The benchmark should be submission-focused and representative; it does not need to become a new broad research program.
-
-## 12. Trace / product readiness
-
-Current backend already has substantial provenance, but final Competition artifact must make it explicit and consumable:
-
-```text
-Agent / Tool / Evidence trace   REQUIRED 100%
-Evidence page / bbox Viewer     REQUIRED where source bbox exists
-Human Review                    REQUIRED
-reasoning logs                  REQUIRED
-3–5 stable real IPO cases       REQUIRED
-```
-
-## 13. Current source status table
-
-| Source / artifact | Status | Final Sprint use |
-| --- | --- | --- |
-| Official IPO identity | AVAILABLE 438/438 | identity / split |
-| Prospectus corpus | AVAILABLE | Document runtime |
-| Production Document-X | FROZEN 438/438 | historical P / PM |
-| Market-X Core | FROZEN 438/438 | Market facts |
-| HSI Extended | READY 438/438 | Market Agent |
-| HKEX turnover | READY 438/438 | Market Agent |
-| Recent IPO context | PARTIAL / governed | IPO Heat |
-| Industry return | PIT_BLOCKED | remain unavailable |
-| 5D Outcome | FROZEN 424/438 | required 5D validation |
-| 1D/20D/60D Outcome | REQUIRED / not frozen | D deliverable |
-| PR-F per-case handoff | MISSING in current workspace | optional model channel blocker |
-| Real LLM provider path | architecture ready / runtime proof needed | B/C/E deliverable |
-| Risk/Evidence benchmark | REQUIRED | B/D deliverable |
-| Agent trace product | REQUIRED | E deliverable |
-
-## 14. Final competition readiness gaps
-
-```text
-B  real LLM Document semantics + benchmark
-C  Market Agent / Skills / interpretation
-D  1D/20D/60D + PR-F state + evaluation tables
-E  LLM Supervisor / conflict / trace / Human Review / product
-A  integrated real-case matrix + CI + submission package
-```
-
-## 15. Gate state
-
-```text
-PR-A_DOCUMENT_GATE        PASS / FROZEN
-PR-B_MARKET_CORE_GATE     PASS / FROZEN
-PR-C_OUTCOME_GATE         PASS / FROZEN
-PR-D_MODEL_READY_GATE     PASS / FROZEN
-ORACLE_V2_GATE            PASS / FROZEN
-PR-E_BASELINE_GATE        PASS / FROZEN
-PR-F_LIGHTGBM_GATE        PASS / FROZEN
-PR-G_SUPERVISOR_GATE      PASS / FROZEN
-PR-H_FULL_E2E_GATE        PARTIAL / BLOCKED
-COMPETITION_FINAL_SPRINT  ACTIVE
-2025_BLIND_Y              NOT ACCESSED
-```
+不应重新打开 broad data acquisition、industry PIT research 或大规模模型探索来替代这些直接 Gate。
