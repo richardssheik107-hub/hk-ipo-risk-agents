@@ -23,15 +23,25 @@
 - network-free competition runtime CI gate；
 - C Market Intelligence → v0.4 AI runtime wiring；
 - Market missingness / trace / Final Supervisor transport/UI integration hardening；
-- 3-case runner 所需的跨 lane 集成已进入 main；
-- 本轮 active documentation audit / stale-doc pruning。
+- 3-case runner 跨 lane 集成；
+- active documentation audit / stale-doc pruning；
+- final submission readiness engine；
+- Blind / provenance / determinism audit builder；
+- SHA-256 artifact index；
+- `SUBMISSION_RUNBOOK.md`；
+- COMPETITION_READY-only fail-closed packager；
+- CI readiness fail-closed smoke。
 
 ### 剩余职责
 
+A 的**工具开发基本关闭**，剩余是最终真实执行：
+
 - B/C/D/E PR 的 contract review、CI、real smoke、merge；
-- 保持当前 Gate 文档与 main 同步；
-- 最终 artifact completeness / blind / provenance / determinism audit；
-- RUNBOOK、release notes、submission archive；
+- final handoff 到齐后运行 readiness；
+- latest-main full CI；
+- final 3-case AI smoke；
+- Blind / provenance / determinism audit 实际 PASS；
+- final artifact index / release notes / submission archive；
 - 决定 `COMPETITION_READY` 是否可使用。
 
 ### A 禁区
@@ -46,7 +56,7 @@ Legal：
 
 - `redemption_rights`；
 - `material_litigation_compliance`；
-- versioned competition extension（如 related-party）只能做 sidecar/additive，不改 frozen baseline code identity。
+- versioned competition extension 只能 sidecar/additive，不改 frozen baseline identity。
 
 Business：
 
@@ -79,11 +89,12 @@ Real LLM cases     0
 - error taxonomy：retrieval / semantic / reconciliation / verifier / ranking；
 - Development-only 最小 remediation；
 - Before/After / Offline-vs-AI 证据；
+- `ai_vs_offline_report.json`；
 - 若做 bbox：与 A 明确 version/hash 影响后再改 parser。
 
 ### Handoff → E/A
 
-`AgentResultEnvelope + risk_ids + evidence_ids + structured diagnostics + provider metadata`。
+`AgentResultEnvelope + risk_ids + evidence_ids + structured diagnostics + provider metadata + benchmark artifacts`。
 
 ## C — Market Intelligence
 
@@ -101,9 +112,11 @@ Real LLM cases     0
 ### 剩余交付
 
 - 在 final 3-case environment 验证 Market Core artifact consumption；
-- Core-only 与 Extended 两种配置的诚实降级；
+- Core-only 与 Extended 的诚实降级；
 - namespaced market evidence/trace 完整；
 - 不可用 industry feature 保留 PIT-blocked reason。
+
+A readiness 会从 final matrix 自动检查 market channel state 与 trace accounting，因此 C 不需要另造一套状态文档。
 
 ### 当前不做
 
@@ -168,15 +181,21 @@ ai_vs_offline_report.json
 - Evidence Viewer；
 - 五个 Streamlit workspaces；
 - 3/3 real-PDF offline matrix；
-- 三案例 measured traceability = 1.0。
+- 三案例 measured traceability = 1.0；
+- submission-facing `agent_reasoning_log.json/.md`；
+- `case_report.md`；
+- per-case `gate_e1_evidence.json`；
+- machine-checked matrix Gate E1 summary。
 
 ### 剩余交付
 
 - final 3-case matrix 上 real-provider Final Supervisor synthesis；
+- 每案 `gate_e1.satisfied=true`；
 - 保存 provider/model/prompt/request/hash/latency trace；
 - 验证 out-of-scope reference fail closed；
-- 接入 B/C/D 最终真实结果后做 UI smoke；
-- submission-facing case reports / reasoning logs。
+- 接入 B/C/D 最终真实结果后做 UI smoke。
+
+当前 offline matrix 的 successful LLM arbitration 仍为 0/3；fallback 不能算成功仲裁。
 
 ### E 禁区
 
@@ -188,12 +207,13 @@ ai_vs_offline_report.json
 ## Handoff graph
 
 ```text
-B → AgentResult / Risk / Evidence / diagnostics ┐
-C → MarketContext / market interpretation       ├→ E Final Supervisor / Trace / Product
-D → Outcome / ModelSignal / evaluation          ┘
+B → AgentResult / Risk / Evidence / benchmark ┐
+C → MarketContext / market interpretation      ├→ E Final Supervisor / Trace / Product
+D → Outcome / ModelSignal / evaluation         ┘
 
-A → contracts / config ownership / CI / integration / release
-E → final product artifacts → A final Gate
+E → final case artifacts / Gate E1 evidence ┐
+B/C/D → measured final handoffs             ├→ A readiness / audits / package / release
+A → contracts / config / CI / gate control  ┘
 ```
 
 ## Shared-file ownership
@@ -210,8 +230,9 @@ E → final product artifacts → A final Gate
 
 ```text
 B real-LLM benchmark + quality evidence
+AND C final-matrix market validation
 AND D multi-horizon submission package
-AND E real-provider final matrix
-AND A final CI/runbook/submission freeze
+AND E real-provider final matrix accepted
+AND A readiness/audits/final CI/package freeze
 → COMPETITION_READY
 ```
