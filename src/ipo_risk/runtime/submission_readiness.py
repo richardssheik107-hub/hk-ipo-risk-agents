@@ -155,7 +155,7 @@ def audit_role_b(role_b_dir: Path) -> GateResult:
             "B1_real_llm_document_benchmark",
             "B",
             False,
-            {"artifact_dir": str(role_b_dir), "missing_files": missing},
+            {"artifact_dir": _record_path(role_b_dir), "missing_files": missing},
             tuple(f"missing Role-B artifact: {name}" for name in missing),
         )
 
@@ -194,7 +194,7 @@ def audit_role_b(role_b_dir: Path) -> GateResult:
         "B",
         passed,
         {
-            "artifact_dir": str(role_b_dir),
+            "artifact_dir": _record_path(role_b_dir),
             "benchmark_version": summary.get("benchmark_version"),
             "result": summary.get("result"),
             "real_llm_cases": real_llm_cases,
@@ -218,7 +218,7 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
             "D1_multi_horizon_evaluation",
             "D",
             False,
-            {"artifact_dir": str(role_d_dir), "missing_files": missing},
+            {"artifact_dir": _record_path(role_d_dir), "missing_files": missing},
             tuple(f"missing Role-D artifact: {name}" for name in missing),
         )
 
@@ -247,7 +247,7 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
         "D",
         passed,
         {
-            "artifact_dir": str(role_d_dir),
+            "artifact_dir": _record_path(role_d_dir),
             "prediction_rows": pred_rows,
             "prediction_columns": pred_header,
             "multi_horizon_rows": horizon_rows,
@@ -272,7 +272,7 @@ def audit_market_from_final_matrix(role_e_dir: Path, summary: dict[str, Any] | N
                 "C1_final_matrix_market_validation",
                 "C",
                 False,
-                {"artifact_dir": str(role_e_dir)},
+                {"artifact_dir": _record_path(role_e_dir)},
                 ("Role-E final matrix summary is missing",),
             )
         summary = _read_json(summary_path)
@@ -329,7 +329,7 @@ def audit_market_from_final_matrix(role_e_dir: Path, summary: dict[str, Any] | N
         "C1_final_matrix_market_validation",
         "C",
         passed,
-        {"artifact_dir": str(role_e_dir), "cases": checked},
+        {"artifact_dir": _record_path(role_e_dir), "cases": checked},
         tuple(blockers),
     )
 
@@ -341,7 +341,7 @@ def audit_role_e(role_e_dir: Path) -> GateResult:
             "E1_real_provider_final_supervisor",
             "E",
             False,
-            {"artifact_dir": str(role_e_dir)},
+            {"artifact_dir": _record_path(role_e_dir)},
             ("Role-E final matrix summary.json is missing",),
         )
     summary = _read_json(summary_path)
@@ -406,7 +406,7 @@ def audit_role_e(role_e_dir: Path) -> GateResult:
         "E",
         passed,
         {
-            "artifact_dir": str(role_e_dir),
+            "artifact_dir": _record_path(role_e_dir),
             "declared_case_count": declared,
             "executed_case_count": executed,
             "all_prospectus_sha256_verified": all_integrity,
@@ -427,14 +427,14 @@ def build_blind_audit(role_b_dir: Path, role_d_dir: Path, role_e_dir: Path) -> d
         payload = _read_json(b_path)
         checks.append(
             {
-                "source": str(b_path),
+                "source": _record_path(b_path),
                 "assertion": "blind_2025_outcome_accessed is false",
                 "passed": payload.get("blind_2025_outcome_accessed") is False,
                 "value": payload.get("blind_2025_outcome_accessed"),
             }
         )
     else:
-        checks.append({"source": str(b_path), "assertion": "Role-B blind attestation exists", "passed": False})
+        checks.append({"source": _record_path(b_path), "assertion": "Role-B blind attestation exists", "passed": False})
 
     d_path = role_d_dir / "evaluation_summary.json"
     if d_path.is_file():
@@ -449,14 +449,14 @@ def build_blind_audit(role_b_dir: Path, role_d_dir: Path, role_e_dir: Path) -> d
         )
         checks.append(
             {
-                "source": str(d_path),
+                "source": _record_path(d_path),
                 "assertion": "Role-D explicitly records no 2025 Blind y access",
                 "passed": value is False,
                 "value": value,
             }
         )
     else:
-        checks.append({"source": str(d_path), "assertion": "Role-D blind attestation exists", "passed": False})
+        checks.append({"source": _record_path(d_path), "assertion": "Role-D blind attestation exists", "passed": False})
 
     e_path = role_e_dir / "summary.json"
     if e_path.is_file():
@@ -464,13 +464,13 @@ def build_blind_audit(role_b_dir: Path, role_d_dir: Path, role_e_dir: Path) -> d
         checks.extend(
             [
                 {
-                    "source": str(e_path),
+                    "source": _record_path(e_path),
                     "assertion": "blind_2025_y_accessed is false",
                     "passed": payload.get("blind_2025_y_accessed") is False,
                     "value": payload.get("blind_2025_y_accessed"),
                 },
                 {
-                    "source": str(e_path),
+                    "source": _record_path(e_path),
                     "assertion": "Role-E demo did not open outcome labels",
                     "passed": payload.get("outcome_labels_accessed") is False,
                     "value": payload.get("outcome_labels_accessed"),
@@ -478,7 +478,7 @@ def build_blind_audit(role_b_dir: Path, role_d_dir: Path, role_e_dir: Path) -> d
             ]
         )
     else:
-        checks.append({"source": str(e_path), "assertion": "Role-E blind attestation exists", "passed": False})
+        checks.append({"source": _record_path(e_path), "assertion": "Role-E blind attestation exists", "passed": False})
 
     passed = bool(checks) and all(check.get("passed") is True for check in checks)
     return {
@@ -722,6 +722,26 @@ def build_artifact_index(
     }
 
 
+def _record_path(path: Path) -> str:
+    """Render a path for an audit record without embedding a local absolute path.
+
+    These audits are themselves packaged and shipped, and the packager refuses
+    any artifact carrying a local absolute path -- so the audits must not create
+    one, or the tooling refuses its own output.  A path inside the working tree
+    is recorded relative to it; anything outside is reduced to its own name,
+    which keeps the record readable without pinning it to the machine that
+    produced it.  Relative inputs, which is what the CLI defaults pass, are kept
+    verbatim.
+    """
+
+    if not path.is_absolute():
+        return path.as_posix()
+    try:
+        return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return f"<external>/{path.name}"
+
+
 def _scan_path_for_sensitive_material(path: Path) -> list[str]:
     issues: list[str] = []
     if path.name in _FORBIDDEN_PACKAGE_NAMES:
@@ -789,7 +809,7 @@ def build_submission_readiness(
             "provenance_audit_passed": provenance["passed"],
             "determinism_audit_passed": determinism["passed"],
             "runbook_present": runbook.is_file(),
-            "ai_vs_offline_report": str(ai_vs_offline) if ai_vs_offline else None,
+            "ai_vs_offline_report": _record_path(ai_vs_offline) if ai_vs_offline else None,
             "latest_main_ci": "EXTERNAL_CHECK_REQUIRED_AT_FREEZE",
         },
         tuple(a_blockers),
