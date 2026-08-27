@@ -138,6 +138,31 @@ def test_conflicts_and_rechecks_reach_the_public_sidecar() -> None:
     assert {TraceEventType.CONFLICT, TraceEventType.RETRIEVER} <= kinds
 
 
+def test_an_explicit_zero_result_retrieval_states_why_it_has_no_new_evidence() -> None:
+    outcome = _outcome()
+    empty_retrieval = outcome.trace_events[0].model_copy(update={
+        "evidence_ids": [],
+        "details": {
+            "new_evidence_count": 0,
+            "retrieved_counts": {"redemption_rights": 1},
+            "retriever_errors": [],
+        },
+    })
+    outcome = RecheckOutcome(
+        request=outcome.request,
+        conflict_id=outcome.conflict_id,
+        status=outcome.status,
+        resolution_note="no new evidence found",
+        trace_events=(empty_retrieval,),
+    )
+
+    sidecar = _assemble(recheck_outcomes=[outcome])
+    event = sidecar.trace_events[0]
+    assert event.evidence_ids == []
+    assert "no new Evidence" in event.details["no_evidence_reason"]
+    assert traceability_report(sidecar).overall_traceability == 1.0
+
+
 def test_a_human_review_becomes_its_own_trace_event() -> None:
     review = HumanReview(
         case_id="ipo_2024_02410", run_id="run-1", target_id="r1", original_machine_status="verified",

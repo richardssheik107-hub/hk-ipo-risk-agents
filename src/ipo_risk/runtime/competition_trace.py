@@ -105,7 +105,7 @@ class CompetitionTraceAssembler:
         events.extend(self._market_intelligence_events(diagnostics, identity))
         events.extend(self._conflict_events(conflicts, identity))
         for outcome in recheck_outcomes:
-            events.extend(outcome.trace_events)
+            events.extend(self._recheck_trace_events(outcome))
         events.extend(extra_trace_events)
         events.extend(self._human_review_events(human_reviews, identity))
         return CompetitionRuntimeSidecar(
@@ -122,6 +122,43 @@ class CompetitionTraceAssembler:
         """Stable order: chronological, then by id so equal timestamps never swap."""
 
         return sorted(events, key=lambda event: (event.occurred_at, event.event_id))
+
+    @staticmethod
+    def _recheck_trace_events(outcome: RecheckOutcome) -> list[TraceEvent]:
+        """Account for an explicit zero-result re-retrieval without hiding gaps.
+
+        A document re-check records ``new_evidence_count`` even when every
+        retrieved item was already known to the agent.  Such an event has no new
+        Evidence id to cite, but it is still a fully observed retriever outcome.
+        Preserve the event and state that reason explicitly.  Empty events that
+        do not carry this deterministic zero-result signal remain unaccounted.
+        """
+
+        events: list[TraceEvent] = []
+        for event in outcome.trace_events:
+            details = dict(event.details)
+            already_accounted = bool(
+                event.evidence_ids
+                or event.calculation_ids
+                or str(details.get("no_evidence_reason") or "")
+            )
+            explicit_zero_result = (
+                event.event_type is TraceEventType.RETRIEVER
+                and event.agent_name == "targeted_recheck"
+                and event.action == "targeted_re_retrieval"
+                and details.get("new_evidence_count") == 0
+            )
+            if not already_accounted and explicit_zero_result:
+                errors = details.get("retriever_errors") or []
+                details["no_evidence_reason"] = (
+                    "the targeted re-retrieval returned no attributable Evidence because "
+                    "retriever errors were recorded"
+                    if errors
+                    else "the targeted re-retrieval found no new Evidence beyond what the agent already held"
+                )
+                event = event.model_copy(update={"details": details})
+            events.append(event)
+        return events
 
     @staticmethod
     def _evidence_by_component(
