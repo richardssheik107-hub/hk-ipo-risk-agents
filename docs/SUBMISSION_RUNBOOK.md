@@ -141,14 +141,17 @@ blind_2025_outcome_accessed=false
 
 ### 6.1 当前本地状态
 
-2026-08-27 最近一次 constrained Lunamax/Codex Runner 已正确进入 preflight，并返回：
+2026-08-27 本地 `iter_004` 已完成 frozen fixed-10 10/10 real-LLM 与 Existing-Gold debug 评分：
 
 ```text
-EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
+Validation opened = false
+2025 Blind accessed = false
 ```
 
-当前处理只允许设置本地环境变量后重试，不允许因此修改代码或 config。
+招股书根目录与 governed `case_id` serialization blocker 已解除。该结果未达到 fixed-10 内部目标，也不是 ALL 79 Development 正式 PASS；下一轮仍保持 Runner/Fixer 分离和单一 dominant-failure 归因。
 
 ### 6.2 正式 fixed-10 source of truth
 
@@ -345,9 +348,13 @@ python scripts/build_v045_submission_readiness.py \
   --role-b-dir reports/v045_role_b \
   --role-d-dir reports/v045_role_d \
   --role-e-dir reports/v045_role_e_ai_final \
+  --baseline-role-e-dir reports/v045_role_e_offline_final \
   --output-dir reports/v045_submission \
+  --latest-main-ci-passed \
   --require-ready
 ```
+
+`--latest-main-ci-passed` 只能在本节要求的 latest-main CI 与基础 validators 已真实通过后使用；它是显式 freeze attestation，不能用于普通 dry run 或绕过失败测试。
 
 必须确认：
 
@@ -391,8 +398,8 @@ Packager 继续拒绝 PDF、secret/private key、token-like material、本地绝
 [x] fixed-10 runner available
 [x] constrained Runner operating procedure documented
 
-[ ] IPO_RISK_PROSPECTUS_ROOT configured for current run
-[ ] fixed-10 baseline produced
+[x] IPO_RISK_PROSPECTUS_ROOT configured for measured fixed-10 run
+[x] fixed-10 debug baseline produced
 [ ] ALL 79 Development benchmark produced
 [ ] M1 >=80%
 [ ] M2 >=85%

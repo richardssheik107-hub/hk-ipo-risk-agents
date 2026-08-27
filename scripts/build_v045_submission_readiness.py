@@ -15,7 +15,9 @@ from pathlib import Path
 from ipo_risk.runtime.submission_readiness import (
     build_artifact_index,
     build_submission_readiness,
+    finalize_readiness_with_artifact_index,
     write_artifact_index,
+    write_market_final_matrix_validation,
     write_submission_audits,
 )
 
@@ -28,6 +30,11 @@ def main() -> int:
     parser.add_argument("--role-e-dir", type=Path, default=Path("reports/v045_role_e"))
     parser.add_argument("--baseline-role-e-dir", type=Path)
     parser.add_argument("--output-dir", type=Path, default=Path("reports/v045_submission"))
+    parser.add_argument(
+        "--latest-main-ci-passed",
+        action="store_true",
+        help="explicitly attest that the required CI commands passed on the latest main SHA",
+    )
     parser.add_argument(
         "--require-ready",
         action="store_true",
@@ -43,7 +50,26 @@ def main() -> int:
         role_e_dir=args.role_e_dir,
         a_output_dir=args.output_dir,
         baseline_role_e_dir=args.baseline_role_e_dir,
+        latest_main_ci_passed=args.latest_main_ci_passed,
     )
+    write_submission_audits(
+        output_dir=args.output_dir,
+        readiness=readiness,
+        blind=blind,
+        provenance=provenance,
+        determinism=determinism,
+    )
+    write_market_final_matrix_validation(
+        args.role_e_dir / "market_final_matrix_validation.json", readiness
+    )
+    index = build_artifact_index(
+        role_b_dir=args.role_b_dir,
+        role_d_dir=args.role_d_dir,
+        role_e_dir=args.role_e_dir,
+        a_output_dir=args.output_dir,
+        runbook_path=repo_root / "docs/SUBMISSION_RUNBOOK.md",
+    )
+    finalize_readiness_with_artifact_index(readiness, index)
     write_submission_audits(
         output_dir=args.output_dir,
         readiness=readiness,
@@ -58,6 +84,7 @@ def main() -> int:
         a_output_dir=args.output_dir,
         runbook_path=repo_root / "docs/SUBMISSION_RUNBOOK.md",
     )
+    finalize_readiness_with_artifact_index(readiness, index)
     write_artifact_index(args.output_dir / "artifact_index.json", index)
 
     print(

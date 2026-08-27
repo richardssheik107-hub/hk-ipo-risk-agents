@@ -4,21 +4,24 @@
 
 ## 当前立即动作
 
-Role B 已从开放式 Codex 工作流切换为 constrained Lunamax/Codex Runner。2026-08-27 本地最近一次执行能够正确进入 runner，并在 preflight 因本地环境变量缺失返回：
+Role B 已从开放式 Codex 工作流切换为 constrained Lunamax/Codex Runner。2026-08-27 本地 `iter_004` 已完成 frozen fixed-10 10/10 real-LLM 与 Existing-Gold debug 评分：
 
 ```text
-EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
+Validation opened = false
+2025 Blind accessed = false
 ```
 
-这不是代码 blocker。当前第一动作只有：
+招股书根目录与 governed `case_id` serialization blocker 已解除。当前并行收口顺序为：
 
 ```text
-设置真实授权招股书根目录 IPO_RISK_PROSPECTUS_ROOT
--> 重新执行 existing fixed-10 runner
--> 生成第一轮 M1/M2 baseline
--> 读取 iteration_summary.json / failure_focus.json
--> 停止
+B: one dominant-failure Fixer -> bounded fixed-10 rerun -> ALL 79 Development
+D: multi-horizon + frozen 5D + AI-vs-offline formal handoff
+C: complete unavailable-observation unit / derivation metadata
+E: restore 3/3 accepted real-provider output and collect 6 human reviews
+A: rerun readiness/audits; package only after every Gate passes
 ```
 
 完整 Runner prompt、10 家历史 smoke 参考公司与 blocker 恢复模板见：
@@ -196,13 +199,12 @@ Fixer 必须另开短任务，只处理 `dominant_failure_reason`，做一个最
 ### B closure 顺序
 
 ```text
-1. 解除本地 prospectus-root blocker
-2. fixed-10 baseline
-3. 最多 2-4 轮 Runner -> one dominant Fixer -> Runner
-4. larger Development checkpoint
-5. ALL 79 Development
-6. freeze code / Prompt / evaluator / manifest / runtime
-7. one-shot ALL 19 Validation
+1. 使用 `iter_004` failure focus 做单一最小 Fixer
+2. 最多 2-4 轮 Runner -> one dominant Fixer -> Runner
+3. larger Development checkpoint
+4. ALL 79 Development
+5. freeze code / Prompt / evaluator / manifest / runtime
+6. one-shot ALL 19 Validation
 ```
 
 fixed-10 内部目标：

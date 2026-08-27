@@ -78,18 +78,20 @@ no manual semantic Evidence regrouping
 
 ## 当前状态快照
 
-- 3 个真实 2024 招股书 offline E2E 3/3 completed；
-- 三案例 measured traceability 均为 1.0；
+- 3 个真实 2024 招股书 offline E2E 3/3 completed，PDF 完整性 3/3；
+- final AI matrix 三案例均实际进入 `openai_responses`；2410/1318 accepted，2460 两次被 scope guard 拒绝并 honest fallback，E1 accepted 2/3、fallback 1/3；
+- 三案例 final measured traceability 均为 1.0，M3 PASS；
 - Market Intelligence、LLM Final Supervisor、conflict/re-check/Human Review/五工作区均已实现；
 - A 已实现 submission readiness、Blind/provenance/determinism audit、artifact index 与 fail-closed packager；
 - Existing-Gold coverage audit：79 Development / 19 Validation；128 primary Risk Units / 217 Evidence Units；
 - 1167.HK 已跑通真实 `openai_responses + ark-code-latest` 全流程；
 - Role-B fixed-10 runner 已实现；
 - Role-B 已切换为 constrained Lunamax/Codex Runner/Fixer 分离；
-- 2026-08-27 最近一次本地 Runner 正确在 `IPO_RISK_PROSPECTUS_ROOT` 缺失处 fail-closed；
-- 当前立即动作是设置真实授权招股书根目录后重新跑 fixed-10 baseline；
-- D 尚需 final 1D/5D/20D/60D + frozen 5D metrics；
-- E 尚需 final 2410/2460/1318 real-provider acceptance；
+- 2026-08-27 本地 `iter_004` 已完成 frozen fixed-10 10/10 real-LLM，M1=23.33%、M2=18.75%；该结果仅为 Development debug baseline，未达到目标；
+- 招股书根目录与 governed `case_id` serialization blocker 已解除；
+- C final matrix explicit state 与 trace 3/3，但 2460/1318 的 unavailable industry observations 缺 `unit`/`derivation`，严格 C1 仅 1/3；
+- D 尚未交付 final 1D/5D/20D/60D、frozen 5D 与 AI-vs-offline 正式 artifacts；
+- M4 review form 已建立但 human reviews 为 0/6；
 - 2025 Blind y 仍未访问。
 
 精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。

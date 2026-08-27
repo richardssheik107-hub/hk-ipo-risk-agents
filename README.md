@@ -175,44 +175,17 @@ fixed-10
 reports/v045_role_b/fixed10_development_subset.json
 ```
 
-2026-08-27 最近一次本地真实执行已经完成 10/10 real-LLM analysis，但 evaluator handoff 在汇总阶段暴露：
+2026-08-27 本地 `iter_004` 已完成同一冻结 fixed-10 的 10/10 real-LLM 执行与 Existing-Gold 评分：
 
 ```text
-EXECUTION_BLOCKED
-ValueError: governed result missing case_id
+M1 = 23.33%
+M2 = 18.75%
+Validation opened = false
+2025 Blind accessed = false
+dominant failure = semantic_extraction_miss
 ```
 
-根因已收敛到 runner serialization：单案 `analysis_result.json` 本身可完成，但汇总 `analysis_results.jsonl` 未显式携带 runner 已知的 canonical `case_id`。当前实现已改为：
-
-```text
-- JSONL row 始终写入 canonical case_id；
-- 若 result.metadata.case_id 或 result.case_id 已存在且与 expected case_id 冲突，fail closed；
-- 不修改原始 analysis_result.json；
-- evaluator contract 不放宽。
-```
-
-为了保护这批已经完成的 10/10 真实结果，新增纯离线恢复入口：
-
-```bash
-python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
-```
-
-该命令只复用现有 `run/<case_id>/analysis_result.json`，重建 governed JSONL、重新执行 Existing-Gold evaluator，并生成：
-
-```text
-iteration_summary.json
-failure_focus.json
-```
-
-恢复路径不会重新进入 analysis runtime，目标约束：
-
-```text
-external_llm_calls_added = 0
-Validation = false
-2025 Blind = false
-```
-
-M1/M2/Recall@K 仍以本地 recovery 实际产出的 summary 为准，在 summary 生成前不做数值宣称。
+早前的招股书根目录与 governed `case_id` serialization blocker 均已解除。上述结果仅是 Development debug subset，不是比赛正式 PASS；B 线仍需达到 fixed-10 内部目标后再进入 ALL 79 Development 和冻结后的一次性 Validation。
 
 ### 5. 历史 smoke 参考 10 家
 
@@ -241,9 +214,9 @@ docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
 ### 6. fixed-10 后续节奏
 
 ```text
-offline recover current 10/10 persisted results
--> materialize M1/M2/Recall@K baseline
--> max 2-4 targeted Runner/Fixer rounds
+iter_004 failure_focus
+-> one dominant-failure Fixer at a time
+-> bounded fixed-10 rerun
 -> larger Development checkpoint
 -> ALL 79 Development
 -> freeze
@@ -261,10 +234,10 @@ M2 >=0.85
 
 ### 7. 其余 hard Gate
 
-- D：final 1D/5D/20D/60D + frozen 5D metrics；
-- E：2410 / 2460 / 1318 final real-provider 3/3 accepted + M3/M4；
-- C：final governed Market state / trace；
-- A：latest-main CI、Blind/provenance/determinism、artifact index、security audit、submission bundle、release freeze。
+- D：尚缺 final 1D/5D/20D/60D、frozen 5D 与 AI-vs-offline 正式 handoff；
+- E：2410 / 2460 / 1318 final provider attempted 3/3，accepted 2/3；2460 两次被 scope guard 拒绝并 honest fallback；M3=3/3，M4=0/6 human reviews；
+- C：explicit Market state 与 trace 3/3；严格 observation metadata 仅 1/3 通过；
+- A：readiness 与 audits 已 fail closed；必须等真实 handoff 齐全后才允许生成 submission bundle。
 
 ## 当前比赛 Gate
 
@@ -284,14 +257,16 @@ M2 >=0.85
 | governed-result case identity serialization | **FIXED** |
 | fixed-10 offline score recovery tooling | **PASS implementation** |
 | constrained Lunamax/Codex operating procedure | **PASS operating procedure** |
-| B fixed-10 real-LLM analysis | **10/10 completed; metrics recovery pending** |
-| B M1 real-LLM Existing-Gold benchmark | **OPEN / P0** |
-| B M2 real-LLM Existing-Gold Evidence Recall | **OPEN / P0** |
-| D 1D/5D/20D/60D + 5D evaluation | **OPEN / P0** |
-| E final 3-case real-provider Final Supervisor | **OPEN / P1** |
-| C final-matrix Market validation | **OPEN / P1** |
+| B fixed-10 real-LLM debug baseline | **10/10; M1=23.33%; M2=18.75%; below target** |
+| B ALL 79 Development M1 handoff | **MISSING / P0** |
+| B ALL 79 Development M2 handoff | **MISSING / P0** |
+| D 1D/5D/20D/60D + 5D evaluation | **MISSING / P0** |
+| E final 3-case real-provider Final Supervisor | **BLOCKED: accepted 2/3；2460 scope violation** |
+| M3 final traceability | **PASS: 3/3 = 1.0** |
+| M4 explanation-quality human review | **OPEN: 0/6 reviews** |
+| C final-matrix Market validation | **BLOCKED: strict C1 1/3** |
 | Evidence bbox upstream grounding | P2 quality gap |
-| Final audits / bundle / release freeze | **OPEN** |
+| Final audits / bundle / release freeze | **NOT READY; package not generated** |
 
 详细状态见 `docs/V0.4_RELEASE_ACCEPTANCE.md`。
 

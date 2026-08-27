@@ -12,71 +12,35 @@
 
 ## 1. 当前执行状态
 
-当前 Role-B 策略已经从“让 Codex 自由分析仓库”切换为“Runner only”。本地 constrained Lunamax/Codex 已经完成最近一轮 fixed-10 的 10/10 真实 LLM 分析，并保持：
+当前 Role-B 策略已经从“让 Codex 自由分析仓库”切换为“Runner only”。本地 `iter_004` 已完成 frozen fixed-10 的 10/10 真实 LLM 与 Existing-Gold debug 评分：
 
 ```text
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
 Validation opened = false
 2025 Blind accessed = false
 ```
 
-当前 blocker 已从此前的本地 PDF 根目录环境问题推进到 evaluator handoff：
+招股书根目录与 governed `case_id` serialization blocker 均已解除。该 debug baseline 远低于 fixed-10 内部目标，且不能代替 ALL 79 Development 正式 benchmark。
 
 ```text
-EXECUTION_BLOCKED
-ValueError: governed result missing case_id
-```
-
-这不是 LLM、Prompt、Retriever、Gold 或 evaluator metric 定义问题。根因是 runner 汇总 `analysis_results.jsonl` 时没有把外层已知的 canonical `case_id` 写入 governed row。
-
-当前代码已修复该 serialization contract：
-
-```text
-- JSONL row 始终携带 canonical case_id；
-- metadata.case_id / top-level case_id 如已存在，必须与 expected case_id 一致；
-- 不一致时 fail closed；
-- 不修改原始 analysis_result.json；
-- evaluator contract 不放宽。
-```
-
-因为这 10 家真实 LLM 已经完成，当前立即动作不是重新跑模型，而是离线恢复评分：
-
-```bash
-python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
-```
-
-恢复脚本只复用当前 iteration 下既有：
-
-```text
-run/<case_id>/analysis_result.json
-```
-
-并重建：
-
-```text
-analysis_results.jsonl
-iteration_summary.json
-failure_focus.json
-```
-
-恢复路径约束：
-
-```text
-external_llm_calls_added = 0
-Validation = false
-2025 Blind = false
+B formal ALL 79 handoff = missing
+D multi-horizon / AI-vs-offline handoff = missing
+E1 final accepted = 2/3; 2460 scope-blocked
+C1 strict observation contract = 1/3
+M3 traceability = 3/3 exactly 1.0
+M4 human reviews = 0/6
 ```
 
 当前操作顺序：
 
 ```text
-pull latest main
--> identify completed fixed-10 iteration id
--> offline recover Existing-Gold score
--> read M1/M2/Recall@K + failure_focus
--> stop
+B: use iter_004 failure_focus -> one bounded Fixer -> fixed-10 rerun
+D: deliver governed M5 and AI-vs-offline artifacts
+C/E: close strict C1, E1 and M4 without weakening contracts
+A: rerun readiness/audits -> package only when every hard Gate passes
 ```
-
-在 recovery summary 真正生成前，不对 M1/M2 数值做任何宣称。
 
 ## 2. fixed-10 的两个口径必须分开
 
@@ -227,7 +191,7 @@ EXECUTION_BLOCKED
 如果 baseline 正常产生，本轮立即停止，不自动修代码。
 ```
 
-## 4. 当前 blocker：case identity handoff 与离线恢复
+## 4. 已解除的 runner blocker 与保留的恢复路径
 
 ### 4.1 已修复的 runner contract
 
@@ -335,13 +299,13 @@ Offline Recovery
 
 ## 6. 当前比赛收尾顺序
 
-### Phase B1 — fixed-10 baseline（当前）
+### Phase B1 — fixed-10 baseline（已物化，未达标）
 
 ```text
 10/10 real-LLM analysis 已完成
--> offline recover Existing-Gold evaluator handoff
--> M1/M2/Recall@K baseline
--> failure taxonomy
+-> M1=23.33% / M2=18.75%
+-> dominant failure=semantic_extraction_miss
+-> Validation=false / Blind=false
 ```
 
 ### Phase B2 — fixed-10 targeted optimization
@@ -470,4 +434,4 @@ E2 explanation quality              OPEN / P1
 A1 final readiness/package          OPEN / P1
 ```
 
-当前最重要的不是增加新功能，也不是重新跑已经完成的 10 家，而是先离线恢复这批 persisted results 的 M1/M2/Recall@K 与 `failure_focus.json`，然后再依据 dominant failure 做最小闭环。
+当前最重要的是依据 `iter_004` 的 dominant failure 做单一、最小、可归因的修复，并行补齐 D/C/E 正式 handoff；A 只在全部 hard Gate 真实通过后打包。
