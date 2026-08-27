@@ -101,6 +101,10 @@ def main() -> int:
         raise IterationRunnerError(
             f"recovery requires all persisted analysis results; found {completed}/{len(case_ids)}"
         )
+    if real != len(case_ids):
+        raise IterationRunnerError(
+            f"recovery requires all persisted results to be real-LLM; found {real}/{len(case_ids)}"
+        )
 
     _write_json(iteration_dir / "case_statuses.json", statuses)
     results_path = iteration_dir / "analysis_results.jsonl"
