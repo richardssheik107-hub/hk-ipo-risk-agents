@@ -1,6 +1,32 @@
 # Roadmap — Competition Closure Only
 
-本 Roadmap 只记录尚未完成的工作。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准，指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
+本 Roadmap 只记录尚未完成的工作。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准，指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准，当前操作层执行顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
+
+## 当前立即动作
+
+Role B 已从开放式 Codex 工作流切换为 constrained Lunamax/Codex Runner。2026-08-27 本地最近一次执行能够正确进入 runner，并在 preflight 因本地环境变量缺失返回：
+
+```text
+EXECUTION_BLOCKED
+blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+```
+
+这不是代码 blocker。当前第一动作只有：
+
+```text
+设置真实授权招股书根目录 IPO_RISK_PROSPECTUS_ROOT
+-> 重新执行 existing fixed-10 runner
+-> 生成第一轮 M1/M2 baseline
+-> 读取 iteration_summary.json / failure_focus.json
+-> 停止
+```
+
+完整 Runner prompt、10 家历史 smoke 参考公司与 blocker 恢复模板见：
+
+```text
+docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
+docs/V045_CURRENT_EXECUTION_PLAN.md
+```
 
 ## 已关闭，不再扩展
 
@@ -22,7 +48,8 @@
 - `v045_competition_metric_protocol_v2_existing_gold_only` 已定义；
 - Existing-Gold read-only coverage audit / evaluator 已实现并实测；
 - real `openai_responses` runtime 已由 1167.HK 单案例真实 PDF 全流程验证；
-- Role-B 固定 10 家 Development 自动迭代 runner 已实现。
+- Role-B fixed-10 Development 自动迭代 runner 已实现；
+- constrained Lunamax/Codex Runner 操作规范已文档化并本地验证能够 fail-closed。
 
 除非出现回归或直接影响比赛 hard Gate，不再扩架构。
 
@@ -40,12 +67,12 @@ Existing Expert Annotation / Oracle Gold only
 
 明确停止：
 
-- 新建 20-case Gold annotation task；
-- 为五个 competition-priority risk family 补样本；
-- 新增 negative 标注以计算更漂亮的 Precision/F1；
+- 新建 Gold annotation task；
+- 为 competition-priority risk family 补样本；
+- 新增 negative 标注；
 - 人工重新组织 Evidence Groups；
 - 看模型错误后修改 Gold；
-- 把未标注项当作不存在。
+- 把未标注项当 negative。
 
 现有 inventory / audit：
 
@@ -77,8 +104,6 @@ fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
 
 ### M1 — Risk Extraction
 
-Primary：
-
 ```text
 Existing-Gold Official-aligned Accuracy
 = correct evaluable positive Existing-Gold Risk Units
@@ -92,20 +117,7 @@ Official pass >=0.80
 Project target >=0.85
 ```
 
-必须披露：
-
-```text
-evaluable positive support
-correct positive count
-per-risk support
-per-risk correct / recall
-```
-
-`Precision` / `Macro F1` 只有旧 Gold 本身提供足够明确的 exhaustive positive/negative judgment 时才报告；否则不得为了得到这些指标再补标。
-
 ### M2 — Evidence
-
-Primary：
 
 ```text
 Existing-Gold Evidence Coverage Recall
@@ -120,7 +132,7 @@ Official pass >=0.85
 Project target >=0.88
 ```
 
-Primary 不固定 Top-5。继续报告：
+同时报告：
 
 ```text
 Recall@1/@3/@5/@10/@20
@@ -128,52 +140,79 @@ Candidate Recall@20
 Reranked Recall@10
 ```
 
-这些只用于定位 Retriever/ranking 问题。旧 `Recall@5=20%` 仍只是 legacy offline diagnostic。
+这些只用于定位 Retriever/ranking 问题；legacy `Recall@5=20%` 不等于 M2 primary。
 
-### 当前执行顺序
+### fixed-10 当前执行方式
 
-Role B 不再让 Codex 每轮开放式扫描仓库；固定执行：
+当前 Metric-v2 正式 debug subset 权威来源：
 
 ```text
-1. 使用已冻结 Existing-Gold manifest
-2. 固定 10 家 Development debug subset
-3. real-provider sequential run
-4. Existing-Gold evaluator 评分
-5. iteration_summary + failure_focus
-6. 只修 dominant Development failure
-7. 用相同 10 家进入下一 iteration
-8. 每 2-4 轮做更大 Development checkpoint
-9. 最后跑 ALL 79 Development
-10. freeze code / Prompt / evaluator / manifest / runtime settings
-11. one-shot ALL 19 Validation
+reports/v045_role_b/fixed10_development_subset.json
 ```
 
-固定 10 家 runner：
+不存在时只运行一次：
 
 ```bash
 python scripts/run_v045_role_b_iteration.py --subset-only
+```
+
+每轮：
+
+```bash
 python scripts/run_v045_role_b_iteration.py --iteration auto
 ```
 
-详细见：
+Runner 只做：
 
 ```text
-docs/V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md
+preflight
+-> fixed 10 sequential real LLM
+-> evaluator
+-> M1/M2/Recall@K
+-> failure taxonomy
+-> iteration_summary.json / failure_focus.json
+-> STOP
 ```
 
-固定 10 家只用于 debug，永远不能声称比赛 PASS。正式 Development benchmark 是：
+Fixer 必须另开短任务，只处理 `dominant_failure_reason`，做一个最小修改 + regression test 后停止。
+
+历史 smoke 参考 10 家：
 
 ```text
-ALL 79 evaluable existing 2020–2023 Expert Gold cases
+1167.HK 加科思─B
+1942.HK MOG Holdings
+1961.HK 九尊数字互娱
+9600.HK 新纽科技
+9633.HK 农夫山泉
+9898.HK 微博─SW
+6698.HK 星空华文
+9863.HK 零跑汽车
+2451.HK 绿源集团控股
+2517.HK 锅圈
 ```
 
-Validation：
+该列表只用于 smoke/人工核对，不覆盖本地自动生成的正式 Metric-v2 fixed-10。
+
+### B closure 顺序
 
 ```text
-ALL 19 evaluable existing 2024 Expert Gold cases
+1. 解除本地 prospectus-root blocker
+2. fixed-10 baseline
+3. 最多 2-4 轮 Runner -> one dominant Fixer -> Runner
+4. larger Development checkpoint
+5. ALL 79 Development
+6. freeze code / Prompt / evaluator / manifest / runtime
+7. one-shot ALL 19 Validation
 ```
 
-不得因 Validation 结果继续调优。
+fixed-10 内部目标：
+
+```text
+M1 >=0.80
+M2 >=0.85
+```
+
+fixed-10 永远不能声称正式比赛 PASS。
 
 ## P0 — D：M5 Multi-horizon / 5D package
 
@@ -201,9 +240,13 @@ significant_drop_5d = (return_5d <= -0.10)
 
 ## P1 — E：Real-provider Final Supervisor / M3 / M4
 
-1167.HK 单案例真实 runtime 已 PASS，证明 `openai_responses + ark-code-latest` 真实链路可用；这不是最终 E1 closure。
+1167.HK 单案例真实 runtime 已 PASS，证明 `openai_responses + ark-code-latest` 链路可用；这不是最终 E1 closure。
 
-Final 3-case matrix 仍为：2410.HK / 2460.HK / 1318.HK。
+Final 3-case matrix：
+
+```text
+2410.HK / 2460.HK / 1318.HK
+```
 
 最终必须：
 
@@ -215,19 +258,19 @@ Final 3-case matrix 仍为：2410.HK / 2460.HK / 1318.HK。
 - severity floor preserved；
 - final real-provider traceability = 1.0。
 
-M4 继续使用现有 explanation rubric；本次 Existing-Gold 变更不增加任何新的 M4 标注工作。
+M4 继续使用现有 explanation rubric。
 
 ## P1 — C：Final case Market validation
 
-只做最终 3-case governed Market state / trace 验收；不新增 ComparableIPOSkill、不补造 industry/PIT proxy。
+只做 final 3-case governed Market state / trace 验收；不新增 ComparableIPOSkill、不补造 industry/PIT proxy。
 
 ## P1 — A：Metric-v2 integration / release freeze
 
 A 剩余：
 
-1. review/merge B/C/D/E final PR；
-2. 更新 readiness 读取 `v045_competition_metric_protocol_v2_existing_gold_only`；
-3. 验证 B artifact 声明 `new_manual_annotations_added=false`、`existing_gold_modified=false`；
+1. review/merge B/C/D/E final handoff；
+2. readiness 读取 metric-v2 artifacts；
+3. 验证 `new_manual_annotations_added=false`、`existing_gold_modified=false`；
 4. legacy Recall@5 不得作为 M2 PASS；
 5. latest-main CI；
 6. final 3-case AI smoke；
