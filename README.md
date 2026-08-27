@@ -155,13 +155,14 @@ llm_timeout_seconds = 300
 llm_max_retries = 0
 ```
 
-### 4. Role-B fixed-10 自动化已进入实际执行阶段
+### 4. Role-B fixed-10：10/10 real-LLM 已完成，评分 handoff 已修复
 
-Role B 现在不再让 Codex 开放式扫描仓库，而是使用 constrained Lunamax/Codex Runner：
+Role B 继续使用 constrained Lunamax/Codex Runner：
 
 ```text
 fixed-10
 → real-LLM
+→ governed analysis JSONL
 → Existing-Gold evaluator
 → M1/M2/Recall@K
 → failure taxonomy
@@ -174,26 +175,44 @@ fixed-10
 reports/v045_role_b/fixed10_development_subset.json
 ```
 
-不存在时只生成一次：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --subset-only
-```
-
-每轮：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --iteration auto
-```
-
-2026-08-27 最近一次本地 Runner 已正确进入 preflight，并返回：
+2026-08-27 最近一次本地真实执行已经完成 10/10 real-LLM analysis，但 evaluator handoff 在汇总阶段暴露：
 
 ```text
 EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+ValueError: governed result missing case_id
 ```
 
-该 blocker 只需要在本地设置真实授权招股书根目录后继续，不需要改代码。
+根因已收敛到 runner serialization：单案 `analysis_result.json` 本身可完成，但汇总 `analysis_results.jsonl` 未显式携带 runner 已知的 canonical `case_id`。当前实现已改为：
+
+```text
+- JSONL row 始终写入 canonical case_id；
+- 若 result.metadata.case_id 或 result.case_id 已存在且与 expected case_id 冲突，fail closed；
+- 不修改原始 analysis_result.json；
+- evaluator contract 不放宽。
+```
+
+为了保护这批已经完成的 10/10 真实结果，新增纯离线恢复入口：
+
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+```
+
+该命令只复用现有 `run/<case_id>/analysis_result.json`，重建 governed JSONL、重新执行 Existing-Gold evaluator，并生成：
+
+```text
+iteration_summary.json
+failure_focus.json
+```
+
+恢复路径不会重新进入 analysis runtime，目标约束：
+
+```text
+external_llm_calls_added = 0
+Validation = false
+2025 Blind = false
+```
+
+M1/M2/Recall@K 仍以本地 recovery 实际产出的 summary 为准，在 summary 生成前不做数值宣称。
 
 ### 5. 历史 smoke 参考 10 家
 
@@ -212,7 +231,7 @@ blocker = IPO_RISK_PROSPECTUS_ROOT is not set
 | `ipo_2023_02451` | `2451.HK` | 绿源集团控股 |
 | `ipo_2023_02517` | `2517.HK` | 锅圈 |
 
-完整公司行业/上市日期、canonical Runner prompt、`IPO_RISK_PROSPECTUS_ROOT` blocker 恢复 prompt 已统一写入：
+完整公司行业/上市日期、canonical Runner prompt 与 blocker/recovery 操作见：
 
 ```text
 docs/V045_CURRENT_EXECUTION_PLAN.md
@@ -222,8 +241,8 @@ docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
 ### 6. fixed-10 后续节奏
 
 ```text
-current local env unblock
--> fixed-10 baseline
+offline recover current 10/10 persisted results
+-> materialize M1/M2/Recall@K baseline
 -> max 2-4 targeted Runner/Fixer rounds
 -> larger Development checkpoint
 -> ALL 79 Development
@@ -262,8 +281,10 @@ M2 >=0.85
 | Existing-Gold coverage audit / evaluator | **PASS** |
 | real-LLM single-case runtime smoke | **PASS** |
 | fixed-10 Development iteration tooling | **PASS implementation** |
+| governed-result case identity serialization | **FIXED** |
+| fixed-10 offline score recovery tooling | **PASS implementation** |
 | constrained Lunamax/Codex operating procedure | **PASS operating procedure** |
-| B fixed-10 baseline | **EXECUTION ACTIVE; local env unblock required** |
+| B fixed-10 real-LLM analysis | **10/10 completed; metrics recovery pending** |
 | B M1 real-LLM Existing-Gold benchmark | **OPEN / P0** |
 | B M2 real-LLM Existing-Gold Evidence Recall | **OPEN / P0** |
 | D 1D/5D/20D/60D + 5D evaluation | **OPEN / P0** |
@@ -295,6 +316,8 @@ python scripts/validate_competition_runtime.py
 python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
 python scripts/run_v045_role_b_iteration.py --subset-only
 python scripts/run_v045_role_b_iteration.py --iteration auto
+# 仅用于已经完成 real-LLM、但 evaluator/summary 阶段失败的既有 iteration：
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
 ```
 
 最终 `COMPETITION_READY` 只能在 metric-v2 与其余 hard Gate 被真实数据关闭之后使用。
