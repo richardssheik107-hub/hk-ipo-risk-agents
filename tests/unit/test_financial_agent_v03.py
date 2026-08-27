@@ -34,6 +34,29 @@ class NoCashRunwayAgent:
         return []
 
 
+class RiskSpecificRetriever:
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, int]] = []
+
+    def retrieve_for_risk(self, chunks, risk_code, *, limit=20):
+        self.calls.append((risk_code, limit))
+        return []
+
+
+def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
+    retriever = RiskSpecificRetriever()
+    agent = v03_agent(retriever=retriever)
+
+    agent.analyze(IPOProfile(company_name="Demo"), [])
+
+    assert retriever.calls == [
+        ("continuous_loss", 10),
+        ("revenue_growth", 10),
+        ("customer_concentration", 10),
+        ("supplier_concentration", 10),
+    ]
+
+
 def v03_agent(**kwargs) -> V03FinancialAgent:
     return V03FinancialAgent(cash_runway_agent=NoCashRunwayAgent(), **kwargs)
 

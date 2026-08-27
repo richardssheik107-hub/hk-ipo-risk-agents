@@ -316,6 +316,16 @@ class V03FinancialAgent:
     def _retrieve_family(
         self, risk_code: str, chunks: list[DocumentChunk]
     ) -> _RetrievalResult:
+        retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
+        if callable(retrieve_for_risk):
+            try:
+                candidates = list(retrieve_for_risk(chunks, risk_code, limit=10))
+                if any(not isinstance(item, Evidence) for item in candidates):
+                    raise TypeError("retriever_item_type_invalid")
+                return _RetrievalResult(candidates, [])
+            except Exception as exc:
+                return _RetrievalResult([], [type(exc).__name__])
+
         retained: list[Evidence] = []
         source_keys: set[tuple[object, ...]] = set()
         error_types: list[str] = []

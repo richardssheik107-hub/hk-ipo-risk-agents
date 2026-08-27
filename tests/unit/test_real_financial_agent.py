@@ -12,7 +12,7 @@ from ipo_risk.extraction import (
     FinancialExtractionResult,
     FinancialMetricValue,
 )
-from ipo_risk.schemas import DocumentChunk, IPOProfile, VerificationStatus
+from ipo_risk.schemas import DocumentChunk, Evidence, IPOProfile, VerificationStatus
 
 
 def financial_chunks(*, operating_value: str = "(83,918)") -> list[DocumentChunk]:
@@ -62,6 +62,32 @@ def test_real_financial_agent_builds_pending_cash_runway() -> None:
 class EmptyRetriever:
     def retrieve(self, chunks, query, limit=3):
         return []
+
+
+class RiskPoolRetriever:
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, int]] = []
+
+    def retrieve_for_risk(self, chunks, risk_code, *, limit=20):
+        self.calls.append((risk_code, limit))
+        return [
+            Evidence(
+                evidence_id="shared",
+                document_id=chunks[0].document_id,
+                chunk_id=chunks[0].chunk_id,
+                page=chunks[0].page,
+                text=chunks[0].text,
+            )
+        ]
+
+
+def test_cash_agent_uses_one_bounded_risk_specific_pool() -> None:
+    retriever = RiskPoolRetriever()
+    agent = CashRunwayFinancialAgent(retriever=retriever, extractor=ReviewExtractor())
+
+    agent.analyze(IPOProfile(company_name="Demo"), financial_chunks())
+
+    assert retriever.calls == [("cash_runway", 10)]
 
 
 def test_real_financial_agent_reports_retriever_no_result() -> None:

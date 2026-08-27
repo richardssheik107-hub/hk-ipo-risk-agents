@@ -61,12 +61,20 @@ class CashRunwayFinancialAgent:
         """Return a pending cash-runway risk only when the full chain succeeds."""
 
         try:
-            cash_evidence = self.retriever.retrieve(
-                chunks, "现金流量表期末现金及现金等价物", limit=5
-            )
-            cash_flow_evidence = self.retriever.retrieve(
-                chunks, "经营活动现金流", limit=5
-            )
+            retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
+            if callable(retrieve_for_risk):
+                shared_candidates = list(
+                    retrieve_for_risk(chunks, "cash_runway", limit=10)
+                )
+                cash_evidence = shared_candidates
+                cash_flow_evidence = shared_candidates
+            else:
+                cash_evidence = self.retriever.retrieve(
+                    chunks, "现金流量表期末现金及现金等价物", limit=5
+                )
+                cash_flow_evidence = self.retriever.retrieve(
+                    chunks, "经营活动现金流", limit=5
+                )
         except Exception as exc:
             self.last_diagnostics = CashRunwayAgentDiagnostics(
                 status=CashRunwayAgentStatus.COMPONENT_FAILURE,

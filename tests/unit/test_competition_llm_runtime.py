@@ -101,6 +101,25 @@ def test_responses_provider_records_trace_metadata_on_success():
     assert metadata.latency_ms >= 0
 
 
+def test_responses_provider_exposes_exact_instruction_hash_without_prompt_text():
+    provider = OpenAIResponsesLLMProvider(
+        api_key="test-key",
+        base_url="https://example.invalid/v1",
+        model="test-model",
+        max_retries=0,
+        client=_FakeClient(),
+    )
+
+    generic = provider.structured_prompt_hash("generic_task", "generic_v1")
+    legal = provider.structured_prompt_hash(
+        "litigation_compliance_extract", "legal_litigation_compliance_v1"
+    )
+
+    assert len(generic) == 64
+    assert len(legal) == 64
+    assert legal != generic
+
+
 def test_responses_provider_retries_schema_invalid_function_arguments_with_safe_feedback():
     client = _SequenceClient()
     provider = OpenAIResponsesLLMProvider(
@@ -126,6 +145,32 @@ def test_responses_provider_retries_schema_invalid_function_arguments_with_safe_
     assert "label" in str(client.responses.calls[1]["instructions"])
     assert provider.last_call_metadata is not None
     assert provider.last_call_metadata.request_id == "resp-valid"
+    assert provider.last_attempt_trace == [
+        {
+            "stage": "transport",
+            "structured_attempt": 1,
+            "attempt": 1,
+            "outcome": "success",
+        },
+        {
+            "stage": "structured_validation",
+            "structured_attempt": 1,
+            "outcome": "failure",
+            "failure_kind": "pydantic_validation",
+            "retry_scheduled": True,
+        },
+        {
+            "stage": "transport",
+            "structured_attempt": 2,
+            "attempt": 1,
+            "outcome": "success",
+        },
+        {
+            "stage": "structured_validation",
+            "structured_attempt": 2,
+            "outcome": "success",
+        },
+    ]
 
 
 def _service_for(settings: Settings) -> IPOAnalysisService:

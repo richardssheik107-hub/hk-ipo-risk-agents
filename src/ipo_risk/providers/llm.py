@@ -106,6 +106,7 @@ class OpenAICompatibleLLMProvider:
         self.max_retries = max(0, int(max_retries))
         self.temperature = temperature
         self.last_call_metadata: LLMCallMetadata | None = None
+        self.last_attempt_trace: list[dict[str, Any]] = []
         if client is not None:
             self._client = client
         else:
@@ -144,6 +145,7 @@ class OpenAICompatibleLLMProvider:
     def complete(self, prompt: str) -> str:
         """Run the legacy free-text compatibility method."""
 
+        self.last_attempt_trace = []
         return self._call(
             messages=[{"role": "user", "content": prompt}],
             prompt_version="legacy_complete",
@@ -161,8 +163,11 @@ class OpenAICompatibleLLMProvider:
     ) -> StructuredModel:
         """Request JSON and return only an exactly validated Pydantic model."""
 
+        self.last_attempt_trace = []
         try:
-            domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+            system_instruction = self._structured_system_instruction(
+                task_name, prompt_version
+            )
         except PromptResolutionError:
             raise LLMProviderError(
                 LLMFailureKind.REQUEST,
@@ -177,12 +182,6 @@ class OpenAICompatibleLLMProvider:
             "response_schema": response_model.model_json_schema(),
             "evidence": [self._serialize_evidence(item) for item in evidence],
         }
-        system_instruction = "Return exactly one JSON object matching response_schema."
-        if domain_instruction is not None:
-            system_instruction = (
-                f"{system_instruction}\n\nDomain extraction instruction:\n"
-                f"{domain_instruction}"
-            )
         messages = [
             {
                 "role": "system",
@@ -204,6 +203,23 @@ class OpenAICompatibleLLMProvider:
             parse=validate,
             response_format={"type": "json_object"},
         )
+
+    @staticmethod
+    def _structured_system_instruction(task_name: str, prompt_version: str) -> str:
+        domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+        instruction = "Return exactly one JSON object matching response_schema."
+        if domain_instruction is not None:
+            instruction = (
+                f"{instruction}\n\nDomain extraction instruction:\n"
+                f"{domain_instruction}"
+            )
+        return instruction
+
+    def structured_prompt_hash(self, task_name: str, prompt_version: str) -> str:
+        """Hash the exact provider-side instruction without exposing its text."""
+
+        instruction = self._structured_system_instruction(task_name, prompt_version)
+        return sha256(instruction.encode("utf-8")).hexdigest()
 
     @staticmethod
     def _serialize_evidence(evidence: Evidence) -> dict[str, Any]:
@@ -244,8 +260,24 @@ class OpenAICompatibleLLMProvider:
                     prompt_version=prompt_version,
                     started=started,
                 )
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "request",
+                        "attempt": attempt,
+                        "outcome": "success",
+                    }
+                )
                 return result
             except (json.JSONDecodeError, ValidationError, ValueError, TypeError, IndexError, AttributeError):
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "structured_validation",
+                        "attempt": attempt,
+                        "outcome": "failure",
+                        "failure_kind": LLMFailureKind.RESPONSE_VALIDATION.value,
+                        "retry_scheduled": attempt < total_attempts,
+                    }
+                )
                 if attempt < total_attempts:
                     continue
                 raise LLMProviderError(
@@ -258,6 +290,16 @@ class OpenAICompatibleLLMProvider:
                 raise
             except Exception as exc:
                 kind, recoverable = self._classify_remote_error(exc)
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "transport",
+                        "attempt": attempt,
+                        "outcome": "failure",
+                        "failure_kind": kind.value,
+                        "recoverable": recoverable,
+                        "retry_scheduled": recoverable and attempt < total_attempts,
+                    }
+                )
                 if recoverable and attempt < total_attempts:
                     continue
                 raise LLMProviderError(
@@ -360,6 +402,7 @@ class OpenAIResponsesLLMProvider:
         self.max_retries = max(0, int(max_retries))
         self.last_call_metadata: LLMCallMetadata | None = None
         self.last_failure_diagnostics: dict[str, Any] | None = None
+        self.last_attempt_trace: list[dict[str, Any]] = []
         self._client = client or self._build_client(api_key, base_url, self.timeout_seconds)
 
     @staticmethod
@@ -380,6 +423,7 @@ class OpenAIResponsesLLMProvider:
             ) from None
 
     def complete(self, prompt: str) -> str:
+        self.last_attempt_trace = []
         response = self._request(
             input=prompt,
             instructions="Respond directly.",
@@ -404,8 +448,9 @@ class OpenAIResponsesLLMProvider:
         response_model: type[StructuredModel],
     ) -> StructuredModel:
         self.last_failure_diagnostics = None
+        self.last_attempt_trace = []
         try:
-            domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+            base_instructions = self._structured_instructions(task_name, prompt_version)
         except PromptResolutionError:
             raise LLMProviderError(
                 LLMFailureKind.REQUEST,
@@ -420,22 +465,6 @@ class OpenAIResponsesLLMProvider:
                 for item in evidence
             ],
         }
-        base_instructions = (
-            "Judge only supplied Evidence and submit exactly one structured result "
-            "through the required function. Do not add facts to satisfy the schema."
-        )
-        if task_name == self._FINAL_SUPERVISOR_TASK:
-            base_instructions += (
-                " Be concise: return one to three key findings, keep each prose field "
-                "to at most two short sentences, and include only conflicts that need "
-                "an explicit assessment. The supplied reference_scope is authoritative: "
-                "cite only IDs listed there, and use an empty ID list whenever the "
-                "corresponding allowed list is empty. Evidence IDs beginning with "
-                "supervision_input: are transport envelopes and must never be cited."
-            )
-        if domain_instruction:
-            base_instructions += "\n\n" + domain_instruction
-
         tools = [
             {
                 "type": "function",
@@ -476,6 +505,7 @@ class OpenAIResponsesLLMProvider:
                 reasoning={"effort": "low"},
                 prompt_version=prompt_version,
                 max_retries_override=transport_retries,
+                structured_attempt=structured_attempt,
             )
             arguments = self._function_arguments(response)
             if not isinstance(arguments, str):
@@ -490,6 +520,15 @@ class OpenAIResponsesLLMProvider:
                     "output_types": output_types,
                     "arguments_present": False,
                 }
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "structured_validation",
+                        "structured_attempt": structured_attempt,
+                        "outcome": "failure",
+                        "failure_kind": "function_arguments_missing",
+                        "retry_scheduled": structured_attempt < total_validation_attempts,
+                    }
+                )
                 validation_feedback = (
                     "The previous response did not provide string JSON arguments through "
                     "the required function. Call the required function exactly once with "
@@ -505,7 +544,15 @@ class OpenAIResponsesLLMProvider:
                 )
             try:
                 payload = json.loads(arguments)
-                return response_model.model_validate(payload)
+                result = response_model.model_validate(payload)
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "structured_validation",
+                        "structured_attempt": structured_attempt,
+                        "outcome": "success",
+                    }
+                )
+                return result
             except json.JSONDecodeError:
                 self.last_failure_diagnostics = {
                     "stage": "json_parse",
@@ -514,6 +561,15 @@ class OpenAIResponsesLLMProvider:
                     "first_char_class": self._first_char_class(arguments),
                     "arguments_hash": sha256(arguments.encode("utf-8")).hexdigest(),
                 }
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "structured_validation",
+                        "structured_attempt": structured_attempt,
+                        "outcome": "failure",
+                        "failure_kind": "json_parse",
+                        "retry_scheduled": structured_attempt < total_validation_attempts,
+                    }
+                )
                 validation_feedback = (
                     "The previous function arguments were not valid JSON. Submit valid JSON "
                     "through the required function without changing the Evidence-grounded facts."
@@ -527,6 +583,15 @@ class OpenAIResponsesLLMProvider:
                     "arguments_hash": sha256(arguments.encode("utf-8")).hexdigest(),
                     "errors": self._safe_validation_errors(exc),
                 }
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "structured_validation",
+                        "structured_attempt": structured_attempt,
+                        "outcome": "failure",
+                        "failure_kind": "pydantic_validation",
+                        "retry_scheduled": structured_attempt < total_validation_attempts,
+                    }
+                )
                 validation_feedback = self._validation_feedback(exc)
             if structured_attempt >= total_validation_attempts:
                 raise LLMProviderError(
@@ -536,6 +601,32 @@ class OpenAIResponsesLLMProvider:
                     attempts=structured_attempt,
                 ) from None
         raise AssertionError("unreachable structured validation state")
+
+    @classmethod
+    def _structured_instructions(cls, task_name: str, prompt_version: str) -> str:
+        domain_instruction = resolve_domain_instruction(task_name, prompt_version)
+        instructions = (
+            "Judge only supplied Evidence and submit exactly one structured result "
+            "through the required function. Do not add facts to satisfy the schema."
+        )
+        if task_name == cls._FINAL_SUPERVISOR_TASK:
+            instructions += (
+                " Be concise: return one to three key findings, keep each prose field "
+                "to at most two short sentences, and include only conflicts that need "
+                "an explicit assessment. The supplied reference_scope is authoritative: "
+                "cite only IDs listed there, and use an empty ID list whenever the "
+                "corresponding allowed list is empty. Evidence IDs beginning with "
+                "supervision_input: are transport envelopes and must never be cited."
+            )
+        if domain_instruction:
+            instructions += "\n\n" + domain_instruction
+        return instructions
+
+    def structured_prompt_hash(self, task_name: str, prompt_version: str) -> str:
+        """Hash the exact provider-side instruction without exposing its text."""
+
+        instructions = self._structured_instructions(task_name, prompt_version)
+        return sha256(instructions.encode("utf-8")).hexdigest()
 
     @classmethod
     def _function_arguments(cls, response: Any) -> str | None:
@@ -648,6 +739,7 @@ class OpenAIResponsesLLMProvider:
         *,
         prompt_version: str,
         max_retries_override: int | None = None,
+        structured_attempt: int | None = None,
         **kwargs: Any,
     ) -> Any:
         retries = self.max_retries if max_retries_override is None else max(0, int(max_retries_override))
@@ -660,9 +752,28 @@ class OpenAIResponsesLLMProvider:
                     prompt_version=prompt_version,
                     started=started,
                 )
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "transport",
+                        "structured_attempt": structured_attempt,
+                        "attempt": attempt,
+                        "outcome": "success",
+                    }
+                )
                 return response
             except Exception as exc:
                 kind, recoverable = OpenAICompatibleLLMProvider._classify_remote_error(exc)
+                self.last_attempt_trace.append(
+                    {
+                        "stage": "transport",
+                        "structured_attempt": structured_attempt,
+                        "attempt": attempt,
+                        "outcome": "failure",
+                        "failure_kind": kind.value,
+                        "recoverable": recoverable,
+                        "retry_scheduled": recoverable and attempt <= retries,
+                    }
+                )
                 if recoverable and attempt <= retries:
                     continue
                 self.last_failure_diagnostics = {

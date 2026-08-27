@@ -1,0 +1,56 @@
+# Opt-in v0.4.6 Role-B GLM transport profile; not a shipped UI runtime scenario.
+#
+# This profile is deliberately separate from the verified Ark Responses profile:
+# model/transport compatibility must be proven by the three-call synthetic smoke
+# before any fixed-10 run. Credentials and endpoint remain environment-only.
+workflow_version: enhanced_v2
+runtime_mode: ai_enhanced
+use_mock: false
+enable_verifier: true
+parser: pymupdf
+retriever: keyword
+financial_agent: v03
+financial_extractor: regex
+legal_agent: v03
+business_agent: v03
+market_agent: disabled
+verifier: specialized_v03
+supervisor: v03
+predictor: rule_based
+llm_provider: openai_compatible
+llm_model: glm-5.3
+llm_timeout_seconds: 300
+llm_max_retries: 1
+market_data_provider: unavailable
+ipo_data_provider: catalog
+repository: json
+report_generator: v04
+data_dir: data
+report_dir: reports
+log_level: INFO
+market_context: none
+final_supervisor: none
+pr_f_run_dir: ""
+
+role_b_ablation_profile:
+  profile_version: v046_role_b_ablation_v1
+  default_modes:
+    - offline
+    - shadow
+    - gated
+  transport: openai_compatible_chat_json
+  max_transport_or_validation_attempts: 2
+  max_network_calls_per_task: 2
+  validation_enabled: false
+  blind_2025_enabled: false
+  smoke_required_before_fixed10: true
+  allowed_tasks:
+    - shareholder_rights_extract
+    - litigation_compliance_extract
+    - business_precommercial_commercialization_extract
+    - business_precommercial_core_product_extract
+  prompt_versions:
+    shareholder_rights_extract: legal_shareholder_rights_v1
+    litigation_compliance_extract: legal_litigation_compliance_v1
+    business_precommercial_commercialization_extract: business_precommercial_v1
+    business_precommercial_core_product_extract: business_precommercial_v1

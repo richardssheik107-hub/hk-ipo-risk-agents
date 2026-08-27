@@ -82,6 +82,19 @@ def evidence(text: str = "Synthetic evidence") -> Evidence:
     )
 
 
+def test_compatible_provider_exposes_exact_instruction_hash_without_prompt_text():
+    instance, _ = provider([])
+
+    generic = instance.structured_prompt_hash("generic_task", "generic_v1")
+    legal = instance.structured_prompt_hash(
+        "shareholder_rights_extract", "legal_shareholder_rights_v1"
+    )
+
+    assert len(generic) == 64
+    assert len(legal) == 64
+    assert legal != generic
+
+
 def test_settings_environment_overrides_yaml_and_coerces_integers(tmp_path, monkeypatch):
     config = tmp_path / "settings.yaml"
     config.write_text(
@@ -195,6 +208,16 @@ def test_response_validation_can_recover_within_budget():
     )
     assert result.finding == "ok"
     assert len(client.completions.calls) == 2
+    assert instance.last_attempt_trace == [
+        {
+            "stage": "structured_validation",
+            "attempt": 1,
+            "outcome": "failure",
+            "failure_kind": "response_validation",
+            "retry_scheduled": True,
+        },
+        {"stage": "request", "attempt": 2, "outcome": "success"},
+    ]
 
 
 class RateLimitError(Exception):
@@ -222,6 +245,17 @@ def test_recoverable_http_status_retries(status_code):
     )
     assert instance.complete("hello") == "recovered"
     assert len(client.completions.calls) == 2
+    assert instance.last_attempt_trace == [
+        {
+            "stage": "transport",
+            "attempt": 1,
+            "outcome": "failure",
+            "failure_kind": "transport",
+            "recoverable": True,
+            "retry_scheduled": True,
+        },
+        {"stage": "request", "attempt": 2, "outcome": "success"},
+    ]
 
 
 def test_recoverable_transport_failure_respects_total_attempt_budget():
