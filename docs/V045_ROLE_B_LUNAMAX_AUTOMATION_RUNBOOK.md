@@ -1,8 +1,12 @@
 # v0.4.5 Role-B Lunamax Fixed-10 Automation Runbook
 
+> Current operating status: constrained Runner flow validated locally; latest observed blocker is local `IPO_RISK_PROSPECTUS_ROOT` configuration.
+
 本文档用于把 Role-B fixed-10 真实 LLM Development 迭代收敛成一个低自由度、低上下文、可恢复的自动执行任务。
 
 目标不是让 Lunamax/Codex 重新设计项目，而是让它只做 Runner：冻结/读取 fixed-10，执行现有 runner，读取两份摘要，返回指标后停止。
+
+完整比赛收尾顺序见 `V045_CURRENT_EXECUTION_PLAN.md`。
 
 ## 1. 重要口径
 
@@ -29,22 +33,24 @@ supplier_concentration
 
 生成后保持不变，用于后续纵向比较。Validation 与 2025 Blind 不允许进入该 subset。
 
-## 2. 手工 smoke 参考 10 家
+## 2. 手工 smoke / 历史 benchmark 参考 10 家
 
-以下 10 家曾用于旧版 Role-B real-LLM Development smoke/benchmark，可用于人工核对、环境 smoke 或公司名称映射参考；它们**不覆盖**当前 Metric-v2 自动生成的正式 fixed-10：
+以下 10 家曾用于旧版 Role-B real-LLM Development smoke/benchmark，可用于人工核对、环境 smoke、公司名称映射与历史可比性；它们**不覆盖**当前 Metric-v2 自动生成的正式 fixed-10：
 
-| # | case_id | stock_code | company_name |
-|---:|---|---|---|
-| 1 | `ipo_2020_01167` | `1167.HK` | 加科思─B |
-| 2 | `ipo_2020_01942` | `1942.HK` | MOG Holdings |
-| 3 | `ipo_2020_01961` | `1961.HK` | 九尊数字互娱 |
-| 4 | `ipo_2020_09600` | `9600.HK` | 新纽科技 |
-| 5 | `ipo_2020_09633` | `9633.HK` | 农夫山泉 |
-| 6 | `ipo_2021_09898` | `9898.HK` | 微博─SW |
-| 7 | `ipo_2022_06698` | `6698.HK` | 星空华文 |
-| 8 | `ipo_2022_09863` | `9863.HK` | 零跑汽车 |
-| 9 | `ipo_2023_02451` | `2451.HK` | 绿源集团控股 |
-| 10 | `ipo_2023_02517` | `2517.HK` | 锅圈 |
+| # | case_id | stock_code | company_name | listed_date | industry |
+|---:|---|---|---|---|---|
+| 1 | `ipo_2020_01167` | `1167.HK` | 加科思─B | 2020-12-21 | 生物技术 |
+| 2 | `ipo_2020_01942` | `1942.HK` | MOG Holdings | 2020-04-15 | 支付服务 |
+| 3 | `ipo_2020_01961` | `1961.HK` | 九尊数字互娱 | 2020-03-17 | 游戏软件 |
+| 4 | `ipo_2020_09600` | `9600.HK` | 新纽科技 | 2021-01-06 | 应用软件 |
+| 5 | `ipo_2020_09633` | `9633.HK` | 农夫山泉 | 2020-09-08 | 非酒精饮料 |
+| 6 | `ipo_2021_09898` | `9898.HK` | 微博─SW | 2021-12-08 | 互动媒体及服务 |
+| 7 | `ipo_2022_06698` | `6698.HK` | 星空华文 | 2022-12-29 | 影视娱乐 |
+| 8 | `ipo_2022_09863` | `9863.HK` | 零跑汽车 | 2022-09-29 | 汽车 |
+| 9 | `ipo_2023_02451` | `2451.HK` | 绿源集团控股 | 2023-10-12 | 摩托车及其他 |
+| 10 | `ipo_2023_02517` | `2517.HK` | 锅圈 | 2023-11-02 | 包装食品 |
+
+保留这组作为 smoke 参考，是因为它已有历史 benchmark identity，跨 2020–2023 Development cohort，覆盖不同类型招股书，并且 official master bridge 已有稳定身份映射；其中 1167.HK 已存在真实 provider 全流程成功证据。
 
 如果需要展示当前正式 fixed-10 的公司名称，只允许通过已有：
 
@@ -54,7 +60,44 @@ data/catalog/ipo_official_master_bridge.csv
 
 做 `case_id -> stock_code -> selected_name` 映射。
 
-## 3. Lunamax/Codex 执行原则
+## 3. 当前本地执行状态
+
+2026-08-27 本地 operator 已确认该 constrained prompt + runner 配合能够按预期执行：模型没有扫描全仓、没有擅自修代码，而是在 preflight 遇到真实 blocker 后返回：
+
+```text
+EXECUTION_BLOCKED
+blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+```
+
+这说明当前首要问题是本地授权 PDF 根目录环境变量，不是 runner、LLM 或 evaluator 逻辑错误。
+
+## 4. 环境前置条件
+
+最小检查：
+
+```text
+1. 当前工作目录是 hk-ipo-risk-agents
+2. Python 环境可用
+3. scripts/run_v045_role_b_iteration.py 存在
+4. configs/v045_competition_ai.yaml 存在
+5. IPO_RISK_PROSPECTUS_ROOT 已设置且指向真实目录
+6. LLM provider 环境变量存在
+```
+
+禁止打印 API Key、Secret、Authorization Header、完整请求 Body。
+
+`IPO_RISK_PROSPECTUS_ROOT` 必须指向真实保存授权招股书 PDF 的根目录。不能指向空目录绕过 preflight，本机绝对路径不得提交 Git。
+
+PowerShell 示例：
+
+```powershell
+$env:IPO_RISK_PROSPECTUS_ROOT="D:\path\to\authorized\prospectus_root"
+Test-Path $env:IPO_RISK_PROSPECTUS_ROOT
+```
+
+必须返回 `True`。
+
+## 5. Lunamax/Codex 执行原则
 
 Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 
@@ -75,13 +118,12 @@ Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 
 本轮不自动进入 Fixer。
 
-## 4. 可直接复制给 Lunamax 的提示词
+## 6. 可直接复制给 Lunamax 的 canonical Runner 提示词
 
 ```text
 你现在不是架构师，也不是研究员。
 
-你的角色只有一个：
-执行已有的 fixed-10 Role-B 自动化流程，保存结果，并返回最小必要指标。
+你的角色只有一个：执行已有的 fixed-10 Role-B 自动化流程，保存结果，并返回最小必要指标。
 
 不要重新设计项目。
 不要主动规划新架构。
@@ -96,17 +138,7 @@ Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 2. 冻结或读取 10 个 Development cases；
 3. 顺序运行这 10 家真实 LLM 分析；
 4. 自动执行 Existing-Gold evaluator；
-5. 得到：
-   - M1
-   - M2
-   - Recall@1
-   - Recall@3
-   - Recall@5
-   - Recall@10
-   - Recall@20
-   - case completion
-   - real LLM completion
-   - dominant failure
+5. 得到 M1、M2、Recall@1/@3/@5/@10/@20、case completion、real LLM completion、dominant failure；
 6. 保存全部既有 artifact；
 7. 输出一个简短总结；
 8. 停止。
@@ -115,72 +147,54 @@ Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 
 === 二、严格禁止 ===
 
-- 不要扫描整个仓库；
-- 不要重新理解整个项目；
-- 不要重构架构；
-- 不要新增 Agent；
-- 不要新增 Skill；
-- 不要改 Streamlit；
-- 不要改 Market Agent；
-- 不要改 M5；
-- 不要训练任何模型；
-- 不要做超参数搜索；
-- 不要修改 Existing Gold；
-- 不要新增人工 Gold；
-- 不要打开 2024 Validation；
-- 不要读取 2025 Blind outcome；
-- 不要自行更换 10 家公司；
-- 不要自行修改 metric 定义；
-- 不要为了提高成绩放宽 Evidence scope；
-- 不要为了提高成绩放宽 Verifier；
-- 不要输出 API Key；
-- 不要读取和总结巨量日志；
-- 不要主动创建长篇分析文档。
+- 不扫描整个仓库；
+- 不重新理解整个项目；
+- 不重构架构；
+- 不新增 Agent / Skill；
+- 不改 Streamlit / Market Agent / M5；
+- 不训练模型；
+- 不做超参数搜索；
+- 不修改 Existing Gold；
+- 不新增人工 Gold；
+- 不打开 2024 Validation；
+- 不读取 2025 Blind outcome；
+- 不自行更换 10 家公司；
+- 不自行修改 metric；
+- 不放宽 Evidence scope / Verifier；
+- 不输出 API Key / Secret / Authorization Header；
+- 不读取和总结巨量日志；
+- 不主动创建长篇分析文档；
+- 本轮不自动进入 Fixer。
 
 除非现有 runner 无法启动，否则不允许修改代码。
 
 === 三、正式入口 ===
 
-优先使用现有脚本，不要重新实现 orchestration：
-
 python scripts/run_v045_role_b_iteration.py --subset-only
-
 python scripts/run_v045_role_b_iteration.py --iteration auto
+
+不要重新实现 orchestration。
 
 === 四、Step 1：最小环境检查 ===
 
 只检查：
-
-1. 当前工作目录是 hk-ipo-risk-agents；
-2. Python 环境可用；
-3. scripts/run_v045_role_b_iteration.py 存在；
-4. configs/v045_competition_ai.yaml 存在；
+1. 当前工作目录正确；
+2. Python 可用；
+3. runner 存在；
+4. AI config 存在；
 5. IPO_RISK_PROSPECTUS_ROOT 已设置；
-6. LLM provider 所需环境变量已存在。
+6. LLM provider 所需环境变量存在。
 
-只检查“是否存在”。
-禁止打印 API Key、Secret、Authorization Header、完整请求 Body。
-
-如果环境满足，立即继续。
-不要额外运行大规模测试。
+只检查存在性，不输出 secret。
+如果环境满足，立即继续，不额外运行大规模测试。
 
 === 五、Step 2：冻结 fixed-10 ===
 
 检查：
 reports/v045_role_b/fixed10_development_subset.json
 
-如果文件已经存在：
-- 直接读取；
-- 不要重新生成；
-- 不要替换；
-- 不要重新选择公司。
-
-如果文件不存在：
-执行：
-python scripts/run_v045_role_b_iteration.py --subset-only
-
-然后读取：
-reports/v045_role_b/fixed10_development_subset.json
+如果文件已存在：直接读取，不重新生成、不替换、不重新选公司。
+如果文件不存在：执行 `python scripts/run_v045_role_b_iteration.py --subset-only` 生成一次。
 
 确认：
 case_count = 10
@@ -188,30 +202,19 @@ split = development
 validation_opened = false
 blind_2025_outcome_accessed = false
 
-从现在开始整个任务只处理这 10 家。
-
-fixed-10 的唯一权威来源是：
-reports/v045_role_b/fixed10_development_subset.json
-
-禁止根据行业、公司知名度、PDF 长短、模型表现、Gold 数量或个人判断重新选择公司。
-
-如需公司名称，只通过：
-data/catalog/ipo_official_master_bridge.csv
-做 case_id -> stock_code -> selected_name 映射。
+fixed-10 的唯一权威来源是该 JSON。
+禁止根据行业、知名度、PDF 长短、模型表现、Gold 数量或个人判断重新选公司。
 
 === 六、Step 3：第一轮真实运行 ===
 
 执行：
 python scripts/run_v045_role_b_iteration.py --iteration auto
 
-让命令自身完成。
-不要人为拆成 10 个开放式任务。
-不要让多个 Agent 并发重新规划。
+不要人为拆成 10 个开放式任务，不要让多个 Agent 并发重新规划。
 
 现有 runner 已负责：
 preflight
--> fixed 10 cases
--> sequential real LLM
+-> fixed 10 sequential real LLM
 -> artifact persistence
 -> resume
 -> evaluator
@@ -220,144 +223,100 @@ preflight
 
 你只负责执行。
 
-=== 七、运行过程处理规则 ===
+=== 七、运行中规则 ===
 
 单家公司成功：继续下一家，不停下来分析。
+单家公司失败：由 runner 记录，若支持 resume 则继续，不立刻改代码。
+structured call 失败：本轮只记录，不立刻改 Prompt / Schema / Provider / Parser / Retriever。
+程序中断：优先 resume，不删除已有 artifact。
 
-单家公司失败：如果 runner 已支持 fail-closed / resume，记录失败并继续，不要立刻改代码。
+日志只保留在现有本地日志位置。出现错误时最多提取 error category、case_id、component、return code，不总结巨量日志。
 
-LLM structured call 失败：本轮只记录。不要立即改 Prompt、Schema、Provider、Parser、Retriever。
+=== 八、Step 4：只读两份核心结果 ===
 
-程序中断：优先使用现有 resume 机制继续。不要删除已有 iteration artifact。除非 runner 明确要求，不要从第一家全部重跑。
-
-=== 八、日志规则 ===
-
-不要把完整 stdout/stderr 加入上下文。
-日志保持在 runner 原本指定的位置。
-
-如发生错误，只提取：
-- error category
-- affected case_id
-- affected component
-- return code
-
-最多查看错误附近必要的少量内容。
-不要总结几千行日志。
-
-=== 九、Step 4：只读两份核心结果 ===
-
-找到最新 iteration，例如：
-reports/v045_role_b/iterations/iter_001/
-
-正常情况下只读取：
+最新 iteration 下正常只读取：
 iteration_summary.json
 failure_focus.json
 
-除非这两个文件缺少关键字段，否则不要继续打开大量 artifact。
+提取：
+completed_cases
+real_llm_cases
+failed_cases
+M1
+M2
+Recall@1/@3/@5/@10/@20
+per-risk support / score
+dominant_failure_reason
+failure_count
+affected_case_ids
+affected_risk_codes
 
-从 iteration_summary.json 提取：
-- iteration_id
-- 10 家公司完成数
-- 真实 LLM 成功 case 数
-- M1 official-aligned accuracy
-- M2 Evidence Coverage Recall
-- Recall@1
-- Recall@3
-- Recall@5
-- Recall@10
-- Recall@20
-- per-risk support
-- per-risk score
-- 与上一轮 delta（如有）
+=== 九、停止规则 ===
 
-从 failure_focus.json 提取：
-- dominant_failure_reason
-- failure_count
-- affected_case_ids
-- affected_risk_codes
+第一轮完成后立即停止。
+不要自动修代码、不要进入第二轮、不要自动优化 Prompt/Retriever。
 
-=== 十、不要自动进入 Fixer ===
-
-第一轮完成后停止。
-
-不要看到 M1/M2 不达标后自动修改代码。
-不要继续第二轮。
-不要自己开始优化 Prompt。
-不要自己修 Retriever。
-
-这一轮唯一任务是：
-fixed-10
--> 真实运行
--> evaluator
--> baseline
--> failure 分类
--> 停止
-
-=== 十一、最终输出格式 ===
-
-Fixed-10：
-case_id | stock_code | company_name
-共 10 行。
-
-Runtime：
-completed_cases = x/10
-real_llm_cases = x/10
-failed_cases = x
-
-Metrics：
-M1 = xx.xx%
-M2 = xx.xx%
-Recall@1  = xx.xx%
-Recall@3  = xx.xx%
-Recall@5  = xx.xx%
-Recall@10 = xx.xx%
-Recall@20 = xx.xx%
-
-Main failure：
-dominant_failure_reason =
-affected_cases =
-affected_risks =
-failure_count =
-
-Gate 只允许以下三种：
-
+Gate 只允许：
 READY_FOR_FIXER
-- baseline 正常产生，但指标仍需优化。
-
 FIXED10_TARGET_REACHED
-- fixed-10 M1 >= 80% 且 M2 >= 85%。
-- 这只代表 debug subset 达标，不代表比赛正式 PASS。
-
 EXECUTION_BLOCKED
-- runner 未能产生有效 baseline。
-- 如果 BLOCKED，只额外输出一个最主要 blocker。
 
-=== 十二、成功条件 ===
-
-本任务成功条件只有：
-- fixed-10 成功冻结/读取；
-- 10 家自动化流程执行完成或被 runner 正确记录失败；
-- 真实 LLM 状态被正确记录；
-- Existing-Gold evaluator 执行完成；
-- iteration_summary.json 存在；
-- failure_focus.json 存在；
-- M1/M2/Recall@K 被输出；
-- 没有访问 Validation；
-- 没有访问 Blind；
-- 没有修改 Gold；
-- 没有进行无关重构。
-
-做到这些立即停止。
-不要继续思考还能做什么。
-不要提出新的架构方案。
-不要开始下一阶段工作。
+FIXED10_TARGET_REACHED 仅表示 debug subset M1>=80%、M2>=85%，不代表比赛正式 PASS。
+如果 BLOCKED，只返回第一个 blocker。
 ```
 
-## 5. Runner/Fixer 分离
+## 7. `IPO_RISK_PROSPECTUS_ROOT` blocker 恢复提示词
+
+如果当前状态是：
+
+```text
+EXECUTION_BLOCKED
+IPO_RISK_PROSPECTUS_ROOT is not set
+```
+
+直接使用：
+
+```text
+继续上一次 fixed-10 Role-B baseline 任务。
+
+当前唯一 blocker 已确认：IPO_RISK_PROSPECTUS_ROOT 未设置。
+你的任务仅限于解除这个环境配置 blocker，然后继续原有 runner。
+
+不要修改任何代码。
+不要修改 config。
+不要重新生成 fixed-10。
+不要选择新的公司。
+不要扫描整个仓库。
+不要开始 Fixer。
+不要运行 Validation。
+不要访问 2025 Blind。
+
+1. 找到本机已经存在、并用于本项目的授权港股 IPO 招股书数据根目录；只检查现有项目相关位置，不扫描整个磁盘。
+2. 确认该目录能够提供当前 fixed-10 所需招股书数据。
+3. 在当前 shell/process 中设置 IPO_RISK_PROSPECTUS_ROOT=<实际根目录>。
+4. 验证环境变量非空、路径存在、是目录。
+5. 不修改 repository 文件，不把本机绝对路径提交 Git。
+6. 直接重新执行：python scripts/run_v045_role_b_iteration.py --iteration auto
+7. 让 runner 完整执行 fixed-10 real LLM -> evaluator -> iteration_summary.json -> failure_focus.json。
+8. 完成后只读两份摘要并按原 Runbook 输出指标，然后停止。
+9. 如果仍然 BLOCKED，只返回新的第一个 blocker，不自行修代码。
+```
+
+## 8. Runner/Fixer 分离
 
 本 Runbook 只负责 Runner。
 
-当一轮 baseline 完成后，再单独开启一个短上下文 Fixer 任务。Fixer 只能读取本轮 `failure_focus.json`，只处理 `dominant_failure_reason`，做一个最小修改和 regression test 后停止。
+当一轮 baseline 完成后，再单独开启一个短上下文 Fixer 任务：
+
+```text
+只读取最新 failure_focus.json。
+只处理 dominant_failure_reason。
+只读与该 failure 直接相关的模块和测试。
+做一个最小修改 + regression test 后停止。
+不要运行 Validation。
+不要修改 Existing Gold。
+不要同时处理第二类 failure。
+```
 
 推荐节奏：
 
@@ -371,7 +330,7 @@ Runner
 
 不要把 Runner 与 Fixer 合并到一个长上下文任务中。
 
-## 6. fixed-10 目标与正式比赛 Gate
+## 9. fixed-10 目标与正式比赛 Gate
 
 fixed-10 内部调试目标：
 
