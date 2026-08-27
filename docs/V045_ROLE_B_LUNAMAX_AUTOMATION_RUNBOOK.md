@@ -1,10 +1,10 @@
 # v0.4.5 Role-B Lunamax Fixed-10 Automation Runbook
 
-> Current operating status: constrained Runner flow validated locally; latest observed blocker is local `IPO_RISK_PROSPECTUS_ROOT` configuration.
+> Current operating status: 10/10 real-LLM analysis completed; latest observed blocker was Existing-Gold handoff `governed result missing case_id`, now fixed in runner serialization with an offline recovery path.
 
 本文档用于把 Role-B fixed-10 真实 LLM Development 迭代收敛成一个低自由度、低上下文、可恢复的自动执行任务。
 
-目标不是让 Lunamax/Codex 重新设计项目，而是让它只做 Runner：冻结/读取 fixed-10，执行现有 runner，读取两份摘要，返回指标后停止。
+目标不是让 Lunamax/Codex 重新设计项目，而是让它只做 Runner：冻结/读取 fixed-10，执行现有 runner，读取两份摘要，返回指标后停止。若真实 LLM 已完成而 evaluator/summary 阶段失败，则只做 offline recovery，不重新跑模型。
 
 完整比赛收尾顺序见 `V045_CURRENT_EXECUTION_PLAN.md`。
 
@@ -62,18 +62,36 @@ data/catalog/ipo_official_master_bridge.csv
 
 ## 3. 当前本地执行状态
 
-2026-08-27 本地 operator 已确认该 constrained prompt + runner 配合能够按预期执行：模型没有扫描全仓、没有擅自修代码，而是在 preflight 遇到真实 blocker 后返回：
+2026-08-27 最近一轮 constrained Runner 已完成：
+
+```text
+real-LLM analysis = 10/10 completed
+Validation opened = false
+2025 Blind accessed = false
+```
+
+随后 Existing-Gold evaluator handoff 返回：
 
 ```text
 EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+ValueError: governed result missing case_id
 ```
 
-这说明当前首要问题是本地授权 PDF 根目录环境变量，不是 runner、LLM 或 evaluator 逻辑错误。
+当前已确认根因是 runner serialization，而不是 LLM、Prompt、Retriever、Gold 或 evaluator metric contract。
+
+runner 现在会在 `analysis_results.jsonl` 中显式写入 frozen subset 提供的 canonical `case_id`。如果 `metadata.case_id` 或 top-level `case_id` 已存在但与 expected case 不一致，则 fail closed，不静默覆盖。
+
+对这批已经完成的 10/10 结果，下一步只做 offline recovery：
+
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+```
+
+该恢复路径不会重新调用外部 LLM。
 
 ## 4. 环境前置条件
 
-最小检查：
+新一轮真实 Runner 的最小检查：
 
 ```text
 1. 当前工作目录是 hk-ipo-risk-agents
@@ -97,13 +115,15 @@ Test-Path $env:IPO_RISK_PROSPECTUS_ROOT
 
 必须返回 `True`。
 
+注意：**offline recovery 不需要重新进入 real-LLM preflight**；它只读取已经存在的 iteration artifacts。
+
 ## 5. Lunamax/Codex 执行原则
 
 Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 
 禁止把任务扩展为架构分析、代码重构、模型研究或项目规划。
 
-本轮唯一流程：
+正常新一轮流程：
 
 ```text
 检查最小运行条件
@@ -112,6 +132,18 @@ Lunamax/Codex 在本任务中的角色只有一个：**执行器**。
 -> Existing-Gold evaluator
 -> 读取 iteration_summary.json
 -> 读取 failure_focus.json
+-> 输出 baseline
+-> 停止
+```
+
+已经完成 real-LLM、仅 evaluator/summary 失败时：
+
+```text
+识别 existing iteration
+-> offline recovery
+-> Existing-Gold evaluator
+-> iteration_summary.json
+-> failure_focus.json
 -> 输出 baseline
 -> 停止
 ```
@@ -265,9 +297,70 @@ FIXED10_TARGET_REACHED 仅表示 debug subset M1>=80%、M2>=85%，不代表比�
 如果 BLOCKED，只返回第一个 blocker。
 ```
 
-## 7. `IPO_RISK_PROSPECTUS_ROOT` blocker 恢复提示词
+## 7. `governed result missing case_id` 的固定恢复流程
 
-如果当前状态是：
+如果真实 LLM 已经完成 10/10，但出现：
+
+```text
+EXECUTION_BLOCKED
+ValueError: governed result missing case_id
+```
+
+不要再次执行：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --iteration auto
+```
+
+也不要使用 `--force-case-rerun`。
+
+只执行：
+
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+```
+
+canonical recovery prompt：
+
+```text
+继续上一次 fixed-10 Role-B baseline。
+
+已确认：10/10 real-LLM analysis_result.json 已完成。
+当前问题只在 Existing-Gold evaluator handoff / summary 阶段。
+
+不要重新调用 LLM。
+不要创建新 iteration。
+不要 force rerun。
+不要修改 Existing Gold。
+不要打开 Validation。
+不要访问 2025 Blind。
+
+1. 确认当前 main 已包含 governed result case_id serialization 修复与 recover_v045_role_b_iteration.py。
+2. 找到刚才完成 10/10 的 existing iteration id。
+3. 执行：
+   python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+4. 确认 external_llm_calls_added=0。
+5. 只读取 iteration_summary.json 和 failure_focus.json。
+6. 返回 M1、M2、Recall@1/@3/@5/@10/@20、dominant failure。
+7. 停止，不自动进入下一轮优化。
+```
+
+recovery 必须 fail closed：
+
+```text
+persisted result != 10/10 -> BLOCK
+subset hash mismatch -> BLOCK
+iteration identity mismatch -> BLOCK
+Validation flag != false -> BLOCK
+Blind flag != false -> BLOCK
+case_id conflict -> BLOCK
+```
+
+## 8. `IPO_RISK_PROSPECTUS_ROOT` blocker 恢复提示词
+
+该 blocker 是历史/未来新一轮 Runner 的环境问题，不是当前 10/10 已完成 iteration 的首要问题。
+
+如果新 iteration 输出：
 
 ```text
 EXECUTION_BLOCKED
@@ -302,11 +395,11 @@ IPO_RISK_PROSPECTUS_ROOT is not set
 9. 如果仍然 BLOCKED，只返回新的第一个 blocker，不自行修代码。
 ```
 
-## 8. Runner/Fixer 分离
+## 9. Runner/Fixer 分离
 
-本 Runbook 只负责 Runner。
+本 Runbook 只负责 Runner / Offline Recovery。
 
-当一轮 baseline 完成后，再单独开启一个短上下文 Fixer 任务：
+当 baseline summary 真正生成后，再单独开启一个短上下文 Fixer 任务：
 
 ```text
 只读取最新 failure_focus.json。
@@ -328,9 +421,18 @@ Runner
 -> next Runner iteration
 ```
 
+若 Runner 已完成 real-LLM 但 evaluator handoff 失败：
+
+```text
+Offline Recovery
+-> score
+-> dominant failure
+-> Fixer
+```
+
 不要把 Runner 与 Fixer 合并到一个长上下文任务中。
 
-## 9. fixed-10 目标与正式比赛 Gate
+## 10. fixed-10 目标与正式比赛 Gate
 
 fixed-10 内部调试目标：
 
