@@ -16,6 +16,14 @@ from datetime import date
 import pytest
 
 from ipo_risk.core.config import load_settings
+from ipo_risk.modeling.pr_f_product_handoff import (
+    CHECKSUMMED_PRODUCT_FILES,
+    PRODUCT_CHECKSUMS_NAME,
+    PRODUCT_MANIFEST_NAME,
+    PRODUCT_README,
+    PRODUCT_README_NAME,
+    PRODUCT_SIGNALS_NAME,
+)
 from ipo_risk.schemas import IPOAnalysisRequest, TaskStatus
 from ipo_risk.services.analysis_service import IPOAnalysisService
 from ..v04_market_context_fixture import (
@@ -152,7 +160,7 @@ def test_sanitized_model_handoff_reaches_the_final_supervisor(tmp_path) -> None:
             "shap_value": 0.1,
         }],
     }]
-    signal_path = handoff / "product_case_signals.json"
+    signal_path = handoff / PRODUCT_SIGNALS_NAME
     signal_path.write_text(json.dumps(signals), encoding="utf-8")
     frozen = json.loads(Path("reports/frozen/v04_pr_f_lightgbm_manifest.json").read_text(encoding="utf-8"))
     manifest = {
@@ -165,7 +173,15 @@ def test_sanitized_model_handoff_reaches_the_final_supervisor(tmp_path) -> None:
         "blind_2025_y_accessed": False,
         "score_semantics": "uncalibrated_model_score",
     }
-    (handoff / "product_runtime_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (handoff / PRODUCT_MANIFEST_NAME).write_text(json.dumps(manifest), encoding="utf-8")
+    (handoff / PRODUCT_README_NAME).write_text(PRODUCT_README, encoding="utf-8")
+    checksum_lines = [
+        f"{hashlib.sha256((handoff / name).read_bytes()).hexdigest()}  {name}"
+        for name in CHECKSUMMED_PRODUCT_FILES
+    ]
+    (handoff / PRODUCT_CHECKSUMS_NAME).write_text(
+        "\n".join(checksum_lines) + "\n", encoding="utf-8"
+    )
     feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
     settings = replace(
         load_settings("configs/v04_offline.yaml"),

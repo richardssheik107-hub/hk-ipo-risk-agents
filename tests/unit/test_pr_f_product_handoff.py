@@ -15,6 +15,7 @@ from ipo_risk.modeling.pr_f_product_handoff import (
     PRODUCT_SIGNALS_NAME,
     ProductRuntimeHandoffError,
     read_product_case_signal,
+    validate_product_handoff,
     write_product_handoff,
 )
 from ipo_risk.schemas.canonical_modeling import canonical_hash
@@ -122,6 +123,27 @@ def test_reader_returns_exact_score_and_driver_direction(tmp_path) -> None:
     assert drivers[0].direction == "decreases"
 
 
+def test_complete_package_validator_binds_exact_case_order(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    manifest, signals = validate_product_handoff(
+        output,
+        expected_source_model_result_hash=result_hash,
+        expected_case_ids=["ipo_2024_00001", "ipo_2024_00002"],
+    )
+    assert manifest["case_count"] == 2
+    assert [row["case_id"] for row in signals] == ["ipo_2024_00001", "ipo_2024_00002"]
+
+
+def test_complete_package_rejects_wrong_qualified_case_set(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    with pytest.raises(ProductRuntimeHandoffError, match="qualified handoff set"):
+        validate_product_handoff(
+            output,
+            expected_source_model_result_hash=result_hash,
+            expected_case_ids=["ipo_2024_00002", "ipo_2024_00001"],
+        )
+
+
 def test_source_run_manifest_hash_mismatch_fails(tmp_path) -> None:
     source, result_hash = _source(tmp_path, claimed_hash="0" * 64)
     with pytest.raises(ProductRuntimeHandoffError, match="run manifest"):
@@ -165,6 +187,59 @@ def test_tampered_signal_checksum_fails_closed(tmp_path) -> None:
     output, result_hash = _write(tmp_path)
     (output / PRODUCT_SIGNALS_NAME).write_text("[]", encoding="utf-8")
     with pytest.raises(ProductRuntimeHandoffError, match="checksum"):
+        read_product_case_signal(
+            output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
+        )
+
+
+def test_tampered_readme_checksum_fails_closed(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    (output / PRODUCT_README_NAME).write_text("tampered\n", encoding="utf-8")
+    with pytest.raises(ProductRuntimeHandoffError, match="README"):
+        read_product_case_signal(
+            output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
+        )
+
+
+def test_tampered_checksum_manifest_fails_closed(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    checksum_path = output / PRODUCT_CHECKSUMS_NAME
+    checksum_path.write_text(checksum_path.read_text(encoding="utf-8") + "0" * 64 + "  extra\n")
+    with pytest.raises(ProductRuntimeHandoffError, match="exact contract"):
+        read_product_case_signal(
+            output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
+        )
+
+
+def test_extra_product_file_fails_closed(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    (output / "unexpected.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(ProductRuntimeHandoffError, match="exactly four files"):
+        read_product_case_signal(
+            output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
+        )
+
+
+def test_extra_product_directory_fails_closed(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    (output / "unexpected").mkdir()
+    with pytest.raises(ProductRuntimeHandoffError, match="exactly four files"):
+        read_product_case_signal(
+            output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
+        )
+
+
+def test_manifest_local_absolute_path_fails_closed_even_with_updated_checksum(tmp_path) -> None:
+    output, result_hash = _write(tmp_path)
+    manifest_path = output / PRODUCT_MANIFEST_NAME
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["source_pr_f"]["runtime_dir"] = r"C:\\private\\runtime"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    checksum_path = output / PRODUCT_CHECKSUMS_NAME
+    lines = checksum_path.read_text(encoding="utf-8").splitlines()
+    lines[0] = f"{hashlib.sha256(manifest_path.read_bytes()).hexdigest()}  {PRODUCT_MANIFEST_NAME}"
+    checksum_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ProductRuntimeHandoffError, match="absolute path"):
         read_product_case_signal(
             output, expected_source_model_result_hash=result_hash, case_id="ipo_2024_00001"
         )

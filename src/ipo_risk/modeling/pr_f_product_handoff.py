@@ -21,8 +21,9 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ModelDriver
@@ -34,6 +35,32 @@ PRODUCT_README_NAME = "README_PRODUCT_RUNTIME_HANDOFF.md"
 PRODUCT_MANIFEST_VERSION = "v04_pr_f_product_runtime_handoff_v1"
 PRODUCTION_COHORT = "full_production"
 PRODUCTION_FEATURE_GROUP = "PM"
+
+PRODUCT_FILES = frozenset(
+    {
+        PRODUCT_MANIFEST_NAME,
+        PRODUCT_SIGNALS_NAME,
+        PRODUCT_CHECKSUMS_NAME,
+        PRODUCT_README_NAME,
+    }
+)
+CHECKSUMMED_PRODUCT_FILES = (
+    PRODUCT_MANIFEST_NAME,
+    PRODUCT_SIGNALS_NAME,
+    PRODUCT_README_NAME,
+)
+PRODUCT_README = (
+    "# PR-F Product Runtime Handoff\n\n"
+    "This directory is a deterministic, label-free projection of the frozen PR-F result.\n"
+    "It contains only case identity, the frozen uncalibrated model score, and frozen SHAP "
+    "drivers. It is not a probability, does not retrain or rescore the model, and contains "
+    "no outcome labels or 2025 Blind outcomes.\n"
+)
+_WINDOWS_ABSOLUTE_PATH = re.compile(r"\b[A-Za-z]:[\\/]")
+_UNIX_LOCAL_ABSOLUTE_PATH = re.compile(
+    r"(?<![A-Za-z0-9_])/(?:Users|home|mnt|private|var/folders)/[^\s\"']+"
+)
+_SHA256 = re.compile(r"[0-9a-f]{64}")
 
 _ALLOWED_SIGNAL_KEYS = {"case_id", "score", "drivers"}
 _ALLOWED_DRIVER_KEYS = {"feature", "component", "feature_value", "shap_value"}
@@ -64,6 +91,29 @@ def _read_json(path: Path) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise ProductRuntimeHandoffError(f"invalid JSON: {path.name}") from exc
+
+
+def _has_local_absolute_path(text: str) -> bool:
+    return bool(_WINDOWS_ABSOLUTE_PATH.search(text) or _UNIX_LOCAL_ABSOLUTE_PATH.search(text))
+
+
+def _read_checksums(path: Path) -> dict[str, str]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise ProductRuntimeHandoffError("product checksum manifest is unreadable") from exc
+    checksums: dict[str, str] = {}
+    for line in lines:
+        parts = line.split()
+        if len(parts) != 2 or _SHA256.fullmatch(parts[0]) is None:
+            raise ProductRuntimeHandoffError("product checksum manifest has invalid syntax")
+        name = parts[1]
+        if name in checksums:
+            raise ProductRuntimeHandoffError("product checksum manifest contains duplicate entries")
+        checksums[name] = parts[0]
+    if set(checksums) != set(CHECKSUMMED_PRODUCT_FILES):
+        raise ProductRuntimeHandoffError("product checksum manifest does not cover the exact contract")
+    return checksums
 
 
 def _production_artifact(results: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -195,6 +245,86 @@ def _validate_signal_rows(signals: list[dict[str, Any]]) -> None:
                     raise ProductRuntimeHandoffError(f"product driver {key} is not finite")
 
 
+def validate_product_handoff(
+    run_dir: Path,
+    *,
+    expected_source_model_result_hash: str,
+    expected_case_ids: Sequence[str] | None = None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Validate the complete four-file, label-free product handoff.
+
+    This is deliberately stricter than validating one case signal: consumers
+    reject partial packages, extra files, checksum drift, local path leakage,
+    and a changed final-case set.
+    """
+
+    run_dir = Path(run_dir)
+    if not run_dir.is_dir():
+        raise ProductRuntimeHandoffError("product runtime directory is missing")
+    actual_entries = {path.name for path in run_dir.iterdir()}
+    if actual_entries != PRODUCT_FILES or not all(
+        (run_dir / name).is_file() for name in PRODUCT_FILES
+    ):
+        raise ProductRuntimeHandoffError("product runtime directory must contain exactly four files")
+
+    manifest_path = run_dir / PRODUCT_MANIFEST_NAME
+    signals_path = run_dir / PRODUCT_SIGNALS_NAME
+    readme_path = run_dir / PRODUCT_README_NAME
+    try:
+        manifest_text = manifest_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        raise ProductRuntimeHandoffError("product runtime manifest is unreadable") from exc
+    if _has_local_absolute_path(manifest_text):
+        raise ProductRuntimeHandoffError("product runtime manifest contains a local absolute path")
+    manifest = _read_json(manifest_path)
+    if not isinstance(manifest, dict):
+        raise ProductRuntimeHandoffError("product runtime manifest has incompatible shape")
+    if manifest.get("manifest_version") != PRODUCT_MANIFEST_VERSION:
+        raise ProductRuntimeHandoffError("unsupported product runtime manifest version")
+    if manifest.get("source_model_result_hash") != expected_source_model_result_hash:
+        raise ProductRuntimeHandoffError("product runtime source hash does not match frozen PR-F")
+    if manifest.get("contains_target_labels") is not False:
+        raise ProductRuntimeHandoffError("product runtime manifest does not prove label-free content")
+    if manifest.get("blind_2025_y_accessed") is not False:
+        raise ProductRuntimeHandoffError("product runtime manifest reports blind 2025 access")
+    if manifest.get("score_semantics") != "uncalibrated_model_score":
+        raise ProductRuntimeHandoffError("product runtime score semantics are incompatible")
+    if manifest.get("case_signal_file") != PRODUCT_SIGNALS_NAME:
+        raise ProductRuntimeHandoffError("product case-signal file is missing or unexpected")
+
+    signals = _read_json(signals_path)
+    if not isinstance(signals, list):
+        raise ProductRuntimeHandoffError("product case-signal payload is not a list")
+    _validate_signal_rows(signals)
+    if _sha256_file(signals_path) != manifest.get("case_signal_sha256"):
+        raise ProductRuntimeHandoffError("product case-signal checksum mismatch")
+    try:
+        case_count = int(manifest.get("case_count", -1))
+    except (TypeError, ValueError) as exc:
+        raise ProductRuntimeHandoffError("product case count is invalid") from exc
+    if len(signals) != case_count:
+        raise ProductRuntimeHandoffError("product case count does not match manifest")
+
+    if expected_case_ids is not None:
+        expected = tuple(dict.fromkeys(str(value).strip() for value in expected_case_ids))
+        actual = tuple(str(signal["case_id"]) for signal in signals)
+        if actual != expected:
+            raise ProductRuntimeHandoffError("product case ids do not match the qualified handoff set")
+
+    try:
+        readme = readme_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        raise ProductRuntimeHandoffError("product handoff README is unreadable") from exc
+    if readme != PRODUCT_README:
+        raise ProductRuntimeHandoffError("product handoff README drifted from the contract")
+
+    checksums = _read_checksums(run_dir / PRODUCT_CHECKSUMS_NAME)
+    for name in CHECKSUMMED_PRODUCT_FILES:
+        if _sha256_file(run_dir / name) != checksums[name]:
+            raise ProductRuntimeHandoffError(f"product package checksum mismatch: {name}")
+    return manifest, signals
+
+
 def write_product_handoff(
     source_run_dir: Path,
     output_dir: Path,
@@ -248,22 +378,20 @@ def write_product_handoff(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    readme = (
-        "# PR-F Product Runtime Handoff\n\n"
-        "This directory is a deterministic, label-free projection of the frozen PR-F result.\n"
-        "It contains only case identity, the frozen uncalibrated model score, and frozen SHAP "
-        "drivers. It is not a probability, does not retrain or rescore the model, and contains "
-        "no outcome labels or 2025 Blind outcomes.\n"
-    )
-    (output_dir / PRODUCT_README_NAME).write_text(readme, encoding="utf-8")
+    (output_dir / PRODUCT_README_NAME).write_text(PRODUCT_README, encoding="utf-8")
     checksum_lines = [
         f"{_sha256_file(output_dir / name)}  {name}"
-        for name in (PRODUCT_MANIFEST_NAME, PRODUCT_SIGNALS_NAME, PRODUCT_README_NAME)
+        for name in CHECKSUMMED_PRODUCT_FILES
     ]
     (output_dir / PRODUCT_CHECKSUMS_NAME).write_text(
         "\n".join(checksum_lines) + "\n", encoding="utf-8"
     )
-    return manifest
+    validated, _ = validate_product_handoff(
+        output_dir,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+        expected_case_ids=[signal["case_id"] for signal in signals],
+    )
+    return validated
 
 
 def read_product_case_signal(
@@ -284,32 +412,10 @@ def read_product_case_signal(
     if not manifest_path.is_file():
         return None
 
-    manifest = _read_json(manifest_path)
-    if not isinstance(manifest, dict):
-        raise ProductRuntimeHandoffError("product runtime manifest has incompatible shape")
-    if manifest.get("manifest_version") != PRODUCT_MANIFEST_VERSION:
-        raise ProductRuntimeHandoffError("unsupported product runtime manifest version")
-    if manifest.get("source_model_result_hash") != expected_source_model_result_hash:
-        raise ProductRuntimeHandoffError("product runtime source hash does not match frozen PR-F")
-    if manifest.get("contains_target_labels") is not False:
-        raise ProductRuntimeHandoffError("product runtime manifest does not prove label-free content")
-    if manifest.get("blind_2025_y_accessed") is not False:
-        raise ProductRuntimeHandoffError("product runtime manifest reports blind 2025 access")
-    if manifest.get("score_semantics") != "uncalibrated_model_score":
-        raise ProductRuntimeHandoffError("product runtime score semantics are incompatible")
-
-    signals_path = run_dir / str(manifest.get("case_signal_file") or "")
-    if signals_path.name != PRODUCT_SIGNALS_NAME or not signals_path.is_file():
-        raise ProductRuntimeHandoffError("product case-signal file is missing or unexpected")
-    if _sha256_file(signals_path) != manifest.get("case_signal_sha256"):
-        raise ProductRuntimeHandoffError("product case-signal checksum mismatch")
-
-    signals = _read_json(signals_path)
-    if not isinstance(signals, list):
-        raise ProductRuntimeHandoffError("product case-signal payload is not a list")
-    _validate_signal_rows(signals)
-    if len(signals) != int(manifest.get("case_count", -1)):
-        raise ProductRuntimeHandoffError("product case count does not match manifest")
+    _, signals = validate_product_handoff(
+        run_dir,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+    )
 
     row = next((item for item in signals if item.get("case_id") == case_id), None)
     if row is None:
