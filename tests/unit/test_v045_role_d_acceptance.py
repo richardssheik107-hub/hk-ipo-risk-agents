@@ -36,7 +36,7 @@ def _write_json(path: Path, payload) -> None:
     )
 
 
-def _fixture(tmp_path: Path) -> dict[str, Path]:
+def _fixture(tmp_path: Path, *, invalid_eod_rows: int = 0) -> dict[str, Path]:
     catalog = tmp_path / "catalog"
     raw_root = tmp_path / "raw"
     cache = tmp_path / "cache"
@@ -117,13 +117,40 @@ def _fixture(tmp_path: Path) -> dict[str, Path]:
             }
         )
 
+    for index in range(invalid_eod_rows):
+        invalid_date = listing_date + timedelta(days=60 + index)
+        eod_rows.append(
+            {
+                "OBJECT_ID": f"invalid-price-{index}",
+                "S_INFO_WINDCODE": "0001.HK",
+                "TRADE_DT": invalid_date.strftime("%Y%m%d"),
+                "S_DQ_OPEN": "100",
+                "S_DQ_HIGH": "130",
+                "S_DQ_LOW": "70",
+                "S_DQ_CLOSE": "0",
+                "S_DQ_VOLUME": "1000",
+                "S_DQ_AMOUNT": "10000",
+                "S_DQ_PRECLOSE": "100",
+                "S_DQ_ADJCLOSE": "0",
+            }
+        )
+
     _write_csv(catalog / "ipo_official_master_bridge.csv", list(bridge_rows[0]), bridge_rows)
     _write_csv(catalog / "ipo_prospectus_manifest.csv", ["case_id", "sha256"], prospectus_rows)
     raw_path = raw_root / "hkshareeodprices.csv"
     _write_csv(raw_path, OUTPUT_COLUMNS, eod_rows, encoding="gb18030")
     _write_json(
         catalog / "v04_source_manifest.json",
-        {"entries": [{"logical_id": "ipo_eod", "sha256": sha256_file(raw_path)}]},
+        {
+            "entries": [
+                {
+                    "logical_id": "ipo_eod",
+                    "sha256": sha256_file(raw_path),
+                    "coverage": {"invalid_ohlcv_rows": invalid_eod_rows},
+                    "provenance": {"invalid_row_policy": "exclude_and_report"},
+                }
+            ]
+        },
     )
     build_store(
         data_root=raw_root,
@@ -272,6 +299,30 @@ def test_strict_role_d_acceptance_passes_complete_governed_fixture(tmp_path: Pat
     assert report["verdict"] == "PASS"
     assert report["expected_validation_count"] == 70
     assert all(item["passed"] for item in report["checks"])
+
+
+def test_cataloged_excluded_invalid_eod_rows_are_governed_not_a_false_failure(
+    tmp_path: Path,
+) -> None:
+    report = _check(_fixture(tmp_path, invalid_eod_rows=1))
+    assert report["passed"] is True, report["blockers"]
+    check = next(item for item in report["checks"] if item["name"] == "governed_filtered_eod")
+    assert check["detail"]["invalid_price_rows"] == 1
+    assert check["detail"]["cataloged_invalid_price_rows"] == 1
+    assert check["detail"]["invalid_row_policy"] == "exclude_and_report"
+
+
+def test_cataloged_invalid_eod_row_count_drift_fails_closed(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    source_manifest = paths["catalog"] / "v04_source_manifest.json"
+    payload = json.loads(source_manifest.read_text(encoding="utf-8"))
+    payload["entries"][0]["coverage"]["invalid_ohlcv_rows"] = 1
+    _write_json(source_manifest, payload)
+    report = _check(paths)
+    check = next(item for item in report["checks"] if item["name"] == "governed_filtered_eod")
+    assert check["passed"] is False
+    assert check["detail"]["invalid_price_rows"] == 0
+    assert check["detail"]["cataloged_invalid_price_rows"] == 1
 
 
 def test_missing_fourth_formal_artifact_fails_closed(tmp_path: Path) -> None:

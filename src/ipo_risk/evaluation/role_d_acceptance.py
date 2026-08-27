@@ -151,6 +151,40 @@ def _required_source_hashes(
     }
 
 
+def _cataloged_eod_invalid_row_policy(catalog_dir: Path) -> tuple[int, str]:
+    manifest = _read_json(Path(catalog_dir) / "v04_source_manifest.json")
+    entries = manifest.get("entries")
+    if not isinstance(entries, list):
+        raise RoleDAcceptanceError("v04 source manifest entries are unavailable")
+    matches = [
+        item
+        for item in entries
+        if isinstance(item, dict) and item.get("logical_id") == "ipo_eod"
+    ]
+    if len(matches) != 1:
+        raise RoleDAcceptanceError(
+            "v04 source manifest must contain exactly one ipo_eod entry"
+        )
+    entry = matches[0]
+    coverage = entry.get("coverage")
+    provenance = entry.get("provenance")
+    if not isinstance(coverage, dict) or not isinstance(provenance, dict):
+        raise RoleDAcceptanceError("ipo_eod catalog governance is incomplete")
+    raw_expected = coverage.get("invalid_ohlcv_rows")
+    if isinstance(raw_expected, bool):
+        raise RoleDAcceptanceError("cataloged invalid EOD row count is invalid")
+    try:
+        expected = int(raw_expected)
+    except (TypeError, ValueError) as exc:
+        raise RoleDAcceptanceError("cataloged invalid EOD row count is invalid") from exc
+    if expected < 0 or raw_expected != expected:
+        raise RoleDAcceptanceError("cataloged invalid EOD row count is invalid")
+    policy = provenance.get("invalid_row_policy")
+    if policy != "exclude_and_report":
+        raise RoleDAcceptanceError("cataloged invalid EOD row policy is unsupported")
+    return expected, str(policy)
+
+
 def _metric_values_match(
     actual: Mapping[str, Any], expected: Mapping[str, Any], keys: Sequence[str]
 ) -> bool:
@@ -295,14 +329,20 @@ def check_role_d_acceptance(
         )
         provider_identity = provider.provider_identity
         readiness = provider.readiness_report()
+        expected_invalid_rows, invalid_row_policy = _cataloged_eod_invalid_row_policy(
+            catalog_dir
+        )
         record(
             "governed_filtered_eod",
-            readiness.duplicate_rows == 0 and readiness.invalid_price_rows == 0,
+            readiness.duplicate_rows == 0
+            and readiness.invalid_price_rows == expected_invalid_rows,
             {
                 **provider_identity,
                 "official_case_count": readiness.ipo_total,
                 "duplicate_rows": readiness.duplicate_rows,
                 "invalid_price_rows": readiness.invalid_price_rows,
+                "cataloged_invalid_price_rows": expected_invalid_rows,
+                "invalid_row_policy": invalid_row_policy,
                 "horizon_coverage": dict(readiness.horizon_coverage),
             },
             "governed filtered EOD store failed integrity checks",
