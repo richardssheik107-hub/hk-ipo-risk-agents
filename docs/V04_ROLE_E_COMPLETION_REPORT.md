@@ -252,6 +252,65 @@ configs/v045_competition_ai.yaml   llm_provider: openai_compatible → openai_re
 
 E1 是验收 run，不应跑在没人验证过的 transport 上。
 
+### 3.7 真实 provider 首跑失败的归因与修复
+
+DeepSeek (`openai_compatible` / `deepseek-v4-flash`) 首次真实三案例矩阵：文档通道正常产出
+（2460 从 0 个风险项变为 1 verified + 1 rejected），但 **Final Supervisor 三案全部
+`provider_call_failed`**，报错只有一句 `LLM response failed structured validation`。
+
+逐层排除（每一步都有实测）：
+
+```text
+transport 不支持结构化输出   排除  合成请求通过
+payload 过大 / 被截断        排除  finish_reason=stop，market_context 仅 255 字符
+domain instruction 带偏      排除  用真实 provider 对象发完整请求也通过
+content 为空（reasoning 模型） 排除  content is None: False
+```
+
+相同调用重复 5 次后定位：
+
+```text
+attempt 1  SCHEMA_INVALID  final_explanation: value_error  completion=12397
+attempt 2  OK                                              completion= 7109
+attempt 3  SCHEMA_INVALID  final_explanation: value_error  completion=10873
+attempt 4  SCHEMA_INVALID  final_explanation: value_error  completion= 9460
+attempt 5  SCHEMA_INVALID  final_explanation: value_error  completion= 7174
+                                                           → 4 / 5 失败
+```
+
+本地复现确认报错正是 `supervisory synthesis cannot use prediction vocabulary`——**命中的是
+E 自己的禁用词护栏**：模型在 `final_explanation` 里自然写了 "likelihood" / "probability"。
+
+根因不是模型能力，而是**护栏打在了错误的层**：
+
+```text
+旧：FinalSupervisionJudgement 的 @field_validator（只管 2 个字段）
+    → 在 provider 内部 model_validate 时触发
+    → ValidationError 被 provider 吞成 LLMProviderError
+    → 分类为 provider_call_failed，不可恢复、无诊断
+
+新：交给 _validate_scope（本来就有同一条检查，覆盖所有 prose 字段）
+    → ScopeViolation
+    → 分类为 rejected_out_of_scope，被 attempt accounting 记录
+    → 触发有界纠正重试，并把违规内容反馈给模型
+```
+
+同一条检查此前**重复存在于两层，而早的那层让晚的那层失效**——这本身就是事故成因。
+这也解释了 Ark 为什么能过：Responses 那条路有自己的 validation-feedback 重试，同样的违规会被自动纠正，
+所以差异主要在 transport 的恢复能力，不在模型质量。
+
+三处修改（全部 E lane）：
+
+```text
+prompt v1 → v2   禁令从「不要把模型分数说成概率」改为「这些词不得出现在任何输出字符串中」，
+                 逐词列出；v1 仍注册，历史 trace 的 prompt 身份不失效
+执行点           从 Pydantic field validator 移到 _validate_scope（覆盖面更广、可恢复、被记录）
+纠正反馈         按违规类型给出针对性指令：禁用词 / severity floor / 编造数字 / 越界 id 各不相同
+                 （此前一律回「只能引用 reference_scope 里的 id」，对措辞违规毫无帮助）
+```
+
+`llm_max_retries` 保持 0：恢复由 E 自己的有界纠正承担，不依赖 provider 层的无反馈重摇。
+
 ### 3.4 三案例矩阵暴露的文档覆盖问题（B lane）
 
 2460 与 1318 在离线链路下 **verified / pending / rejected 全部为 0**，即没有任何正式风险项进入报告。
@@ -404,7 +463,8 @@ streamlit run app/streamlit_app.py   # 选择「v0.4.5 比赛版（离线）」�
 per-case 工件写入 `reports/v045_role_e/<case_id>/`（`reports/*` 不入库）。
 
 测试基线：`1783 passed`（首轮新增 86 项）；submission artifacts 增补后 `1879 passed`；
-M4 + exports 增补后 `1919 passed`；scope 纠正可见性 + AI config 对齐后 `1958 passed`。
+M4 + exports 增补后 `1919 passed`；scope 纠正可见性 + AI config 对齐后 `1958 passed`；
+禁用词执行点修复后 `1973 passed`。
 
 M4 表单与聚合：
 
