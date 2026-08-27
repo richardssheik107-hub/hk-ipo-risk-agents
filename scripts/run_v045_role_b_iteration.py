@@ -489,8 +489,24 @@ def _write_results_jsonl(run_dir: Path, case_ids: list[str], destination: Path) 
     rows = []
     for case_id in case_ids:
         result = _load_case_result(run_dir / case_id / "analysis_result.json")
-        if result is not None:
-            rows.append(result)
+        if result is None:
+            continue
+
+        metadata = result.get("metadata")
+        metadata_case_id = (
+            str(metadata.get("case_id") or "") if isinstance(metadata, dict) else ""
+        )
+        top_level_case_id = str(result.get("case_id") or "")
+        for observed_case_id in (metadata_case_id, top_level_case_id):
+            if observed_case_id and observed_case_id != case_id:
+                raise IterationRunnerError(
+                    f"governed result case_id mismatch for expected case {case_id}"
+                )
+
+        row = dict(result)
+        row["case_id"] = case_id
+        rows.append(row)
+
     destination.parent.mkdir(parents=True, exist_ok=True)
     with destination.open("w", encoding="utf-8") as handle:
         for row in rows:

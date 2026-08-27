@@ -8,32 +8,75 @@
 >
 > Current verdict: **NOT YET COMPETITION_READY**
 
-本文件把当前比赛收尾计划、Role-B fixed-10 公司口径、Lunamax/Codex 自动执行方式、已知本地 blocker 与后续 Gate 顺序收敛为一个操作层计划。Gate 的唯一状态源仍是 `V0.4_RELEASE_ACCEPTANCE.md`；指标定义仍以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
+本文件把当前比赛收尾计划、Role-B fixed-10 公司口径、Lunamax/Codex 自动执行方式、已知 blocker 与后续 Gate 顺序收敛为一个操作层计划。Gate 的唯一状态源仍是 `V0.4_RELEASE_ACCEPTANCE.md`；指标定义仍以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
 
 ## 1. 当前执行状态
 
-当前 Role-B 策略已经从“让 Codex 自由分析仓库”切换为“Runner only”。本地 operator 已确认 constrained Lunamax/Codex 提示词可以正常约束执行：模型进入现有 runner、在 preflight 阶段遇到缺失环境变量后按要求返回 `EXECUTION_BLOCKED`，没有擅自重构、改 Gold、打开 Validation 或进入 Fixer。
+当前 Role-B 策略已经从“让 Codex 自由分析仓库”切换为“Runner only”。本地 constrained Lunamax/Codex 已经完成最近一轮 fixed-10 的 10/10 真实 LLM 分析，并保持：
 
-最近一次本地执行状态：
+```text
+Validation opened = false
+2025 Blind accessed = false
+```
+
+当前 blocker 已从此前的本地 PDF 根目录环境问题推进到 evaluator handoff：
 
 ```text
 EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+ValueError: governed result missing case_id
 ```
 
-这不是代码、模型或 fixed-10 选择错误，而是 real-PDF runtime 的本地环境配置前置条件。runner 明确要求 `IPO_RISK_PROSPECTUS_ROOT` 指向真实存在的授权招股书根目录。
+这不是 LLM、Prompt、Retriever、Gold 或 evaluator metric 定义问题。根因是 runner 汇总 `analysis_results.jsonl` 时没有把外层已知的 canonical `case_id` 写入 governed row。
 
-当前立即动作：
+当前代码已修复该 serialization contract：
 
 ```text
-set IPO_RISK_PROSPECTUS_ROOT
--> rerun existing fixed-10 iteration
--> produce baseline
--> read iteration_summary.json / failure_focus.json
+- JSONL row 始终携带 canonical case_id；
+- metadata.case_id / top-level case_id 如已存在，必须与 expected case_id 一致；
+- 不一致时 fail closed；
+- 不修改原始 analysis_result.json；
+- evaluator contract 不放宽。
+```
+
+因为这 10 家真实 LLM 已经完成，当前立即动作不是重新跑模型，而是离线恢复评分：
+
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+```
+
+恢复脚本只复用当前 iteration 下既有：
+
+```text
+run/<case_id>/analysis_result.json
+```
+
+并重建：
+
+```text
+analysis_results.jsonl
+iteration_summary.json
+failure_focus.json
+```
+
+恢复路径约束：
+
+```text
+external_llm_calls_added = 0
+Validation = false
+2025 Blind = false
+```
+
+当前操作顺序：
+
+```text
+pull latest main
+-> identify completed fixed-10 iteration id
+-> offline recover Existing-Gold score
+-> read M1/M2/Recall@K + failure_focus
 -> stop
 ```
 
-不要因为该 blocker 修改代码。
+在 recovery summary 真正生成前，不对 M1/M2 数值做任何宣称。
 
 ## 2. fixed-10 的两个口径必须分开
 
@@ -184,51 +227,77 @@ EXECUTION_BLOCKED
 如果 baseline 正常产生，本轮立即停止，不自动修代码。
 ```
 
-## 4. `IPO_RISK_PROSPECTUS_ROOT` blocker 的固定处理
+## 4. 当前 blocker：case identity handoff 与离线恢复
 
-当输出：
+### 4.1 已修复的 runner contract
+
+`run_v045_role_b_iteration.py` 在写 `analysis_results.jsonl` 时，现在使用外层 frozen subset 的 canonical `case_id` 作为权威 identity。
+
+规则：
+
+```text
+expected_case_id = current fixed-10 case id
+
+if metadata.case_id exists:
+    require metadata.case_id == expected_case_id
+
+if top-level case_id exists:
+    require top-level case_id == expected_case_id
+
+output JSONL row.case_id = expected_case_id
+```
+
+任何冲突都 fail closed，不做静默覆盖。
+
+### 4.2 已完成 10/10 时的 recovery
+
+如果某个 existing iteration 已经有 10/10 `analysis_result.json`，但 evaluator/summary 阶段失败，禁止重新调用真实 LLM。
+
+只执行：
+
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
+```
+
+该命令会：
+
+```text
+verify existing iteration context
+verify frozen subset hash
+verify Validation=false / Blind=false
+verify persisted result count = 10/10
+rebuild governed analysis_results.jsonl with canonical case_id
+run Existing-Gold evaluator
+write iteration_summary.json
+write failure_focus.json
+```
+
+该命令不会调用：
+
+```text
+run_v04_role_e_demo.py
+external LLM provider
+new fixed-10 selection
+Validation
+2025 Blind outcome
+```
+
+期望输出明确包含：
+
+```text
+external_llm_calls_added=0
+```
+
+### 4.3 历史 `IPO_RISK_PROSPECTUS_ROOT` blocker
+
+此前曾出现：
 
 ```text
 EXECUTION_BLOCKED
 IPO_RISK_PROSPECTUS_ROOT is not set
 ```
 
-处理原则：只修环境，不修代码。
-
-Windows PowerShell 示例：
-
-```powershell
-$env:IPO_RISK_PROSPECTUS_ROOT="D:\path\to\authorized\prospectus_root"
-Test-Path $env:IPO_RISK_PROSPECTUS_ROOT
-```
-
-必须确认返回 `True`。该路径应是真实保存授权招股书 PDF 的根目录，不允许指向空目录绕过 preflight。本机绝对路径不得提交 Git。
-
-继续任务时给 Lunamax/Codex：
-
-```text
-继续上一次 fixed-10 Role-B baseline 任务。
-
-当前唯一 blocker 已确认：IPO_RISK_PROSPECTUS_ROOT 未设置。
-
-只解除这个环境配置 blocker，然后继续原有 runner。
-不要修改代码、config、fixed-10、Existing Gold。
-不要扫描整个仓库。
-不要运行 Validation。
-不要访问 2025 Blind。
-
-找到本机已用于本项目的授权招股书根目录；只检查现有项目相关位置，不扫描整个磁盘。
-在当前 shell/process 中设置 IPO_RISK_PROSPECTUS_ROOT。
-验证变量非空、路径存在且是目录。
-不要把本机绝对路径写入 Git。
-
-然后执行：
-python scripts/run_v045_role_b_iteration.py --iteration auto
-
-让 runner 完成 fixed-10 real LLM -> evaluator -> iteration_summary.json -> failure_focus.json。
-完成后只读两份摘要，按原 Runbook 返回指标并停止。
-如果仍 BLOCKED，只返回新的第一个 blocker，不自行修代码。
-```
+该环境 blocker 已不再是当前首要问题，因为最近一轮 10/10 real-LLM analysis 已经完成。未来新 iteration 若再次遇到该问题，仍只修环境、不修代码。
 
 ## 5. Runner / Fixer 必须分离
 
@@ -236,6 +305,15 @@ python scripts/run_v045_role_b_iteration.py --iteration auto
 
 ```text
 Runner
+-> score
+-> dominant failure
+-> STOP
+```
+
+如果 Runner 的 real-LLM analysis 已经完成、仅 evaluator handoff 失败：
+
+```text
+Offline Recovery
 -> score
 -> dominant failure
 -> STOP
@@ -260,8 +338,8 @@ Runner
 ### Phase B1 — fixed-10 baseline（当前）
 
 ```text
-修复 IPO_RISK_PROSPECTUS_ROOT 本地环境
--> run fixed-10
+10/10 real-LLM analysis 已完成
+-> offline recover Existing-Gold evaluator handoff
 -> M1/M2/Recall@K baseline
 -> failure taxonomy
 ```
@@ -392,4 +470,4 @@ E2 explanation quality              OPEN / P1
 A1 final readiness/package          OPEN / P1
 ```
 
-当前最重要的不是增加新功能，而是把 Role-B fixed-10 baseline 跑出来，然后依据 `failure_focus.json` 做最小闭环。
+当前最重要的不是增加新功能，也不是重新跑已经完成的 10 家，而是先离线恢复这批 persisted results 的 M1/M2/Recall@K 与 `failure_focus.json`，然后再依据 dominant failure 做最小闭环。
