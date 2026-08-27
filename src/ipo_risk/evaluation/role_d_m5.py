@@ -30,7 +30,7 @@ from sklearn.metrics import (
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 
 
-ROLE_D_M5_VERSION = "v045_role_d_m5_handoff_v1"
+ROLE_D_M5_VERSION = "v045_role_d_m5_handoff_v2"
 METRIC_PROTOCOL_VERSION = "v045_competition_metric_protocol_v2_existing_gold_only"
 SIGNIFICANT_DROP_5D_THRESHOLD = Decimal("-0.10")
 HORIZON_SESSIONS = {"1d": 1, "5d": 5, "20d": 20, "60d": 60}
@@ -232,9 +232,14 @@ def compile_payloads(
     if not case_predictions:
         raise RoleDM5Error("PR-F production result contains no case predictions")
     drivers = _top_drivers(pr_f)
-    classification_threshold = float(
-        (pr_f.get("classification_metrics") or {}).get("classification_threshold", 0.5)
+    raw_threshold = (pr_f.get("classification_metrics") or {}).get(
+        "classification_threshold"
     )
+    if isinstance(raw_threshold, bool) or not isinstance(raw_threshold, (int, float)):
+        raise RoleDM5Error("frozen PR-F classification threshold is missing")
+    classification_threshold = float(raw_threshold)
+    if not math.isfinite(classification_threshold):
+        raise RoleDM5Error("frozen PR-F classification threshold must be finite")
 
     horizon_rows: list[dict[str, Any]] = []
     prediction_rows: list[dict[str, Any]] = []
@@ -447,8 +452,14 @@ def build_role_d_handoff(
         source_hashes={
             "pr_f_run_manifest_sha256": sha256_file(pr_f_run_dir / "run_manifest.json"),
             "pr_f_model_results_sha256": sha256_file(pr_f_run_dir / "model_results.json"),
+            "pr_f_model_comparison_sha256": sha256_file(
+                pr_f_run_dir / "model_comparison.json"
+            ),
             "pr_e_run_manifest_sha256": sha256_file(pr_e_run_dir / "run_manifest.json"),
             "pr_e_baseline_results_sha256": sha256_file(pr_e_run_dir / "baseline_results.json"),
+            "pr_e_value_diagnostic_sha256": sha256_file(
+                pr_e_run_dir / "value_diagnostic.json"
+            ),
             "pr_f_frozen_manifest_sha256": sha256_file(pr_f_frozen_manifest),
             "pr_e_frozen_manifest_sha256": sha256_file(pr_e_frozen_manifest),
         },

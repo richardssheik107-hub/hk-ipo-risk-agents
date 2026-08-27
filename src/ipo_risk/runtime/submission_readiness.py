@@ -368,6 +368,13 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
     summary = _read_json(role_d_dir / "evaluation_summary.json")
     comparison = _read_json(role_d_dir / "ai_vs_offline_report.json")
     missing_horizons = [name for name in REQUIRED_HORIZONS if name not in horizon_header]
+    summary_status_ok = summary.get("status") == "complete"
+    evaluation_count = summary.get("evaluation_count")
+    exact_validation_count = (
+        evaluation_count == 70 and pred_rows == 70 and horizon_rows == 70
+    )
+    evaluation_split_ok = summary.get("evaluation_split") == "2024_validation"
+    horizon_contract_ok = summary.get("horizons") == ["1D", "5D", "20D", "60D"]
     blind_explicit = _bool_is_false(
         summary,
         "blind_2025_y_accessed",
@@ -377,8 +384,24 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
     protocol_ok = summary.get("metric_protocol_version") == METRIC_PROTOCOL_VERSION
     definition_ok = summary.get("significant_drop_5d_definition") == SIGNIFICANT_DROP_5D_DEFINITION
     no_retuning = summary.get("threshold_or_model_retuned_on_validation") is False
+    score_semantics_ok = (
+        summary.get("score_semantics")
+        == "uncalibrated_model_score_not_probability"
+    )
+    summary_metrics = summary.get("five_day_metrics") or {}
+    comparison_ai = comparison.get("ai_model") or {}
+    comparison_offline = comparison.get("offline_baseline") or {}
     comparison_safe = all(
         (
+            comparison.get("comparison_scope")
+            == "same_2024_validation_full_production_PM",
+            comparison_ai.get("name") == "frozen_lightgbm",
+            comparison_ai.get("score_semantics")
+            == "uncalibrated_model_score_not_probability",
+            comparison_ai.get("metrics") == summary_metrics,
+            comparison_offline.get("name") == "frozen_logistic_regression",
+            comparison.get("interpretation_policy")
+            == "descriptive_only_no_validation_retuning",
             comparison.get("threshold_or_model_retuned_on_validation") is False,
             comparison.get("blind_2025_y_accessed") is False,
         )
@@ -393,35 +416,52 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
         "top_20pct_hit_rate",
         "base_prevalence",
     }
-    metrics_complete = metric_keys <= set(summary.get("five_day_metrics") or {})
+    metrics_complete = metric_keys <= set(summary_metrics)
     prediction_columns_ok = {
         "case_id",
+        "stock_code",
+        "cohort_year",
+        "dataset_split",
+        "model",
+        "feature_group",
         "poor_performer_score",
         "score_semantics",
+        "classification_threshold",
+        "predicted_significant_drop_5d",
+        "predicted_return_5d",
         "actual_significant_drop_5d",
+        "actual_return_5d",
+        "top_shap_drivers_json",
     } <= set(pred_header)
     passed = all(
         (
+            summary_status_ok,
+            exact_validation_count,
+            evaluation_split_ok,
+            horizon_contract_ok,
             not missing_horizons,
-            pred_rows > 0,
-            horizon_rows > 0,
             pred_rows == horizon_rows,
             blind_explicit,
             protocol_ok,
             definition_ok,
             no_retuning,
+            score_semantics_ok,
             comparison_safe,
             metrics_complete,
             prediction_columns_ok,
         )
     )
     blockers: list[str] = []
+    if not summary_status_ok:
+        blockers.append("Role-D evaluation_summary.json status is not complete")
+    if not exact_validation_count:
+        blockers.append("Role-D handoff does not contain exactly 70 frozen 2024 Validation cases")
+    if not evaluation_split_ok:
+        blockers.append("Role-D evaluation split is not 2024_validation")
+    if not horizon_contract_ok:
+        blockers.append("Role-D summary does not declare the exact 1D/5D/20D/60D horizons")
     if missing_horizons:
         blockers.append("multi_horizon_results.csv missing: " + ", ".join(missing_horizons))
-    if pred_rows <= 0:
-        blockers.append("test_predictions.csv has no rows")
-    if horizon_rows <= 0:
-        blockers.append("multi_horizon_results.csv has no rows")
     if not blind_explicit:
         blockers.append("evaluation_summary.json lacks an explicit false 2025 Blind access flag")
     if not protocol_ok:
@@ -429,7 +469,11 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
     if not definition_ok:
         blockers.append("Role-D significant_drop_5d definition drifted from return_5d <= -0.10")
     if not no_retuning or not comparison_safe:
-        blockers.append("Role-D handoff does not attest no Validation retuning and Blind isolation")
+        blockers.append(
+            "Role-D handoff does not preserve the frozen descriptive AI-vs-offline/no-retuning/Blind contract"
+        )
+    if not score_semantics_ok:
+        blockers.append("Role-D summary does not preserve uncalibrated non-probability score semantics")
     if not metrics_complete:
         blockers.append("Role-D five-day metric set is incomplete")
     if not prediction_columns_ok:
@@ -448,11 +492,17 @@ def audit_role_d(role_d_dir: Path) -> GateResult:
             "multi_horizon_columns": horizon_header,
             "missing_required_horizons": missing_horizons,
             "metric_protocol_version": summary.get("metric_protocol_version"),
+            "status": summary.get("status"),
+            "evaluation_split": summary.get("evaluation_split"),
+            "evaluation_count": evaluation_count,
+            "horizons": summary.get("horizons"),
             "significant_drop_5d_definition": summary.get("significant_drop_5d_definition"),
             "threshold_or_model_retuned_on_validation": summary.get(
                 "threshold_or_model_retuned_on_validation"
             ),
-            "five_day_metric_keys": sorted((summary.get("five_day_metrics") or {}).keys()),
+            "score_semantics": summary.get("score_semantics"),
+            "five_day_metric_keys": sorted(summary_metrics.keys()),
+            "ai_vs_offline_contract_passed": comparison_safe,
             "blind_2025_explicitly_protected": blind_explicit,
             "evaluation_summary_keys": sorted(summary),
         },

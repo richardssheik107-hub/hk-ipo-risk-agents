@@ -27,12 +27,12 @@ def _json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _csv(path: Path, fieldnames: list[str], row: dict) -> None:
+def _csv(path: Path, fieldnames: list[str], row: dict | list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerow(row)
+        writer.writerows(row if isinstance(row, list) else [row])
 
 
 def _repo(root: Path) -> None:
@@ -127,21 +127,60 @@ def _role_b(root: Path) -> None:
         {"risk_code": "r", "source_manifest_key": "m", "source_annotation_hash": "ab" * 32},
     )
 def _role_d(root: Path) -> None:
+    case_ids = [f"ipo_2024_{index:05d}" for index in range(1, 71)]
+    prediction_fields = [
+        "case_id",
+        "stock_code",
+        "cohort_year",
+        "dataset_split",
+        "model",
+        "feature_group",
+        "poor_performer_score",
+        "score_semantics",
+        "classification_threshold",
+        "predicted_significant_drop_5d",
+        "predicted_return_5d",
+        "actual_significant_drop_5d",
+        "actual_return_5d",
+        "top_shap_drivers_json",
+    ]
     _csv(
         root / "test_predictions.csv",
-        ["case_id", "poor_performer_score", "score_semantics", "actual_significant_drop_5d"],
-        {
-            "case_id": "c",
-            "poor_performer_score": 0.2,
-            "score_semantics": "uncalibrated_model_score_not_probability",
-            "actual_significant_drop_5d": False,
-        },
+        prediction_fields,
+        [
+            {
+                "case_id": case_id,
+                "stock_code": f"{index:04d}.HK",
+                "cohort_year": 2024,
+                "dataset_split": "validation",
+                "model": "lightgbm",
+                "feature_group": "PM",
+                "poor_performer_score": 0.2,
+                "score_semantics": "uncalibrated_model_score_not_probability",
+                "classification_threshold": 0.5,
+                "predicted_significant_drop_5d": False,
+                "predicted_return_5d": 0.01,
+                "actual_significant_drop_5d": False,
+                "actual_return_5d": 0.02,
+                "top_shap_drivers_json": "[]",
+            }
+            for index, case_id in enumerate(case_ids, start=1)
+        ],
     )
     fields = ["case_id", "return_1d", "return_5d", "return_20d", "return_60d"]
     _csv(
         root / "multi_horizon_results.csv",
         fields,
-        {"case_id": "c", "return_1d": 0.01, "return_5d": 0.02, "return_20d": 0.03, "return_60d": 0.04},
+        [
+            {
+                "case_id": case_id,
+                "return_1d": 0.01,
+                "return_5d": 0.02,
+                "return_20d": 0.03,
+                "return_60d": 0.04,
+            }
+            for case_id in case_ids
+        ],
     )
     _json(
         root / "evaluation_summary.json",
@@ -149,8 +188,12 @@ def _role_d(root: Path) -> None:
             "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
             "blind_2025_y_accessed": False,
             "status": "complete",
+            "role_d_m5_version": "v045_role_d_m5_handoff_v2",
             "evaluation_split": "2024_validation",
+            "evaluation_count": 70,
+            "horizons": ["1D", "5D", "20D", "60D"],
             "significant_drop_5d_definition": "return_5d <= -0.10",
+            "score_semantics": "uncalibrated_model_score_not_probability",
             "threshold_or_model_retuned_on_validation": False,
             "source_hashes": {"market": "cd" * 32},
             "five_day_metrics": {
@@ -168,6 +211,26 @@ def _role_d(root: Path) -> None:
     _json(
         root / "ai_vs_offline_report.json",
         {
+            "comparison_scope": "same_2024_validation_full_production_PM",
+            "ai_model": {
+                "name": "frozen_lightgbm",
+                "score_semantics": "uncalibrated_model_score_not_probability",
+                "metrics": {
+                    "precision": 0.5,
+                    "recall": 0.5,
+                    "f1": 0.5,
+                    "pr_auc": 0.5,
+                    "roc_auc": 0.5,
+                    "top_10pct_hit_rate": 0.5,
+                    "top_20pct_hit_rate": 0.5,
+                    "base_prevalence": 0.5,
+                },
+            },
+            "offline_baseline": {
+                "name": "frozen_logistic_regression",
+                "metrics": {},
+            },
+            "interpretation_policy": "descriptive_only_no_validation_retuning",
             "threshold_or_model_retuned_on_validation": False,
             "blind_2025_y_accessed": False,
         },
@@ -514,6 +577,53 @@ def test_missing_multi_horizon_column_blocks_d(tmp_path: Path) -> None:
     d_gate = next(item for item in readiness["gates"] if item["owner"] == "D")
     assert d_gate["passed"] is False
     assert "return_60d" in " ".join(d_gate["blockers"])
+
+
+def test_missing_ai_vs_offline_report_blocks_d(tmp_path: Path) -> None:
+    repo, b, d, e, a = _ready_tree(tmp_path)
+    (d / "ai_vs_offline_report.json").unlink()
+    readiness, *_ = build_submission_readiness(
+        repo_root=repo, role_b_dir=b, role_d_dir=d, role_e_dir=e, a_output_dir=a
+    )
+    d_gate = next(item for item in readiness["gates"] if item["owner"] == "D")
+    assert d_gate["passed"] is False
+    assert "ai_vs_offline_report.json" in " ".join(d_gate["blockers"])
+
+
+def test_role_d_requires_exact_70_case_validation_handoff(tmp_path: Path) -> None:
+    repo, b, d, e, a = _ready_tree(tmp_path)
+    prediction_path = d / "test_predictions.csv"
+    with prediction_path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        rows = list(reader)[:-1]
+        fieldnames = list(reader.fieldnames or ())
+    _csv(prediction_path, fieldnames, rows)
+    readiness, *_ = build_submission_readiness(
+        repo_root=repo, role_b_dir=b, role_d_dir=d, role_e_dir=e, a_output_dir=a
+    )
+    d_gate = next(item for item in readiness["gates"] if item["owner"] == "D")
+    assert d_gate["passed"] is False
+    assert any("exactly 70" in item for item in d_gate["blockers"])
+
+
+def test_role_d_rejects_probability_semantics_and_incomplete_comparison(
+    tmp_path: Path,
+) -> None:
+    repo, b, d, e, a = _ready_tree(tmp_path)
+    summary_path = d / "evaluation_summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["score_semantics"] = "probability"
+    _json(summary_path, summary)
+    comparison_path = d / "ai_vs_offline_report.json"
+    comparison = json.loads(comparison_path.read_text(encoding="utf-8"))
+    comparison["comparison_scope"] = "different_cases"
+    _json(comparison_path, comparison)
+    readiness, *_ = build_submission_readiness(
+        repo_root=repo, role_b_dir=b, role_d_dir=d, role_e_dir=e, a_output_dir=a
+    )
+    d_gate = next(item for item in readiness["gates"] if item["owner"] == "D")
+    assert d_gate["passed"] is False
+    assert any("non-probability" in item for item in d_gate["blockers"])
 
 
 def test_legacy_role_b_pass_bools_cannot_replace_metric_v2_measurement(tmp_path: Path) -> None:

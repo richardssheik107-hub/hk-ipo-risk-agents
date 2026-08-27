@@ -139,6 +139,20 @@ def test_role_d_rejects_blind_year_or_frozen_five_day_drift() -> None:
         _compile(corrupt_five_day=True)
 
 
+def test_role_d_rejects_missing_frozen_classification_threshold() -> None:
+    pr_f, pr_e, metadata, bars = _fixture()
+    del pr_f[0]["classification_metrics"]["classification_threshold"]
+    with pytest.raises(RoleDM5Error, match="classification threshold is missing"):
+        compile_payloads(
+            pr_f_results=pr_f,
+            pr_e_results=pr_e,
+            metadata_by_case=metadata,
+            bars_for_stock=lambda stock_code, _listing_date: bars[stock_code],
+            market_source={"provider": "governed-test-store"},
+            source_hashes={"pr_f": "a" * 64, "pr_e": "b" * 64},
+        )
+
+
 def test_role_d_writes_exact_submission_files_and_resume_is_safe(tmp_path) -> None:
     payloads = _compile()
     first_hashes = write_payloads(tmp_path, payloads)
