@@ -56,6 +56,17 @@ python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 ```
 
+真实 AI runtime 当前验证配置：
+
+```text
+IPO_RISK_LLM_PROVIDER=openai_responses
+IPO_RISK_LLM_MODEL=ark-code-latest
+IPO_RISK_LLM_TIMEOUT_SECONDS=300
+IPO_RISK_LLM_MAX_RETRIES=0
+```
+
+API Key / Base URL 只能来自本地环境变量，不得提交 Git。修改用户级环境变量后必须重启终端/前端进程。
+
 ## 4. Existing Expert Gold inventory
 
 项目已有 Gold inventory：
@@ -66,7 +77,24 @@ valid annotations      100
 official materialized   98
 ```
 
-注意：98 不是 M1/M2 自动分母。必须先由只读代码统计哪些旧 annotation 对哪些 risk / Evidence 真正可评价。
+只读 audit 已完成：
+
+```text
+evaluable Development cases = 79
+evaluable Validation cases  = 19
+primary positive risk units = 128
+primary evidence units      = 217
+```
+
+Primary support：
+
+```text
+cash_burn_pressure         16
+customer_concentration     32
+redemption_rights          39
+supplier_concentration     41
+related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+```
 
 本阶段禁止：
 
@@ -81,56 +109,115 @@ official materialized   98
 
 ## 5. Role B/A — Existing-Gold coverage audit
 
-在跑正式 M1/M2 前，先生成：
+标准命令：
+
+```bash
+python scripts/audit_v045_existing_gold.py \
+  --output-dir reports/v045_role_b
+```
+
+当前 frozen audit manifest hash：
+
+```text
+fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
+```
+
+输出：
 
 ```text
 reports/v045_role_b/existing_gold_evaluable_manifest.json
+reports/v045_role_b/existing_gold_coverage_summary.json
+reports/v045_role_b/existing_gold_risk_units.csv
+reports/v045_role_b/existing_gold_evidence_units.csv
 ```
 
-至少记录：
+治理必须保持：
 
 ```text
-metric_protocol_version
-source annotation identity/hash
-case_id
-split
-risk support
-Evidence support
-UNJUDGED counts
-NOT_EVALUABLE risk families
 new_manual_annotations_added=false
 existing_gold_modified=false
+blind_2025_outcome_accessed=false
 ```
 
-该步骤只做 read-only deterministic normalization / identity reconciliation / exact duplicate anchor dedupe，不产生新的人工事实。
+19 个 Validation case 在 audit 中被统计不等于打开 Validation evaluator。
 
-## 6. Role B — real-LLM Development optimization loop
+## 6. Role B — fixed-10 real-LLM Development optimization loop
 
-正式优化顺序：
+当前快速开发流程已被固定成单脚本，避免 Codex 每轮扫描仓库、读取大日志或自行改变执行步骤。
+
+第一次固定 10 家：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --subset-only
+```
+
+每轮运行：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --iteration auto
+```
+
+脚本自动执行：
 
 ```text
-1. 从 Existing Development Gold 中固定一个小 debug subset（仅为速度）
-2. 跑真实 provider Document chain
-3. 用 Existing-Gold evaluator 评分
-4. 输出 failure taxonomy
-5. 只在 Development 修改代码 / Retriever / Prompt / extraction / reconciliation / Verifier
-6. 用同一 evaluator 重跑
-7. 达标后跑 ALL evaluable Existing Development Gold
-8. 冻结代码 / Prompt / evaluator / manifest
-9. 再做 Existing Validation Gold one-shot evaluation
+real-runtime preflight
+-> fixed 10 Development cases
+-> sequential real-LLM run
+-> resume-safe per-case persistence
+-> analysis_results.jsonl
+-> Existing-Gold evaluator
+-> M1 / M2 / Recall@K
+-> failure taxonomy
+-> previous-iteration delta
 ```
 
-允许的 failure taxonomy：
+正常迭代只需要关注：
 
 ```text
-retrieval_candidate_miss
-ranking_miss
-semantic_extraction_miss
-schema_normalization_miss
-riskitem_reconciliation_miss
-verifier_rejection
-existing_gold_unjudged_or_unsupported
+iteration_summary.json
+failure_focus.json
 ```
+
+大体量 subprocess output 留在 gitignored 本地日志，不应直接输入 Codex 上下文。
+
+建议 Codex Runner 指令：
+
+```text
+只执行 python scripts/run_v045_role_b_iteration.py --iteration auto。
+不要扫描仓库，不要修改代码，不要分析完整日志。
+完成后只读取 iteration_summary.json 和 failure_focus.json。
+```
+
+建议 Codex Fixer 指令：
+
+```text
+只读取 failure_focus.json。
+只处理 dominant failure。
+只读直接相关模块和测试。
+做一个最小修改 + regression test 后停止。
+不要运行 Validation，不要修改 Existing Gold。
+```
+
+详细 workflow：
+
+```text
+docs/V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md
+```
+
+### 防过拟合节奏
+
+固定 10 家不应无限迭代。建议：
+
+```text
+fixed-10 2-4 rounds
+-> larger Development checkpoint
+-> 若失败模式一致则继续 fixed-10
+-> ALL 79 Development
+-> freeze
+-> one-shot 19 Validation
+```
+
+固定 10 家的 `--case-ids` / debug subset 结果永远不能声称正式比赛 PASS。
 
 ### M1 required output
 
@@ -146,8 +233,6 @@ risk_extraction.evaluable_positive_count
 risk_extraction.correct_positive_count
 risk_extraction.official_aligned_accuracy
 risk_extraction.per_risk
-risk_extraction.precision_status
-risk_extraction.macro_f1_status
 new_manual_annotations_added = false
 existing_gold_modified = false
 blind_2025_outcome_accessed = false
@@ -160,14 +245,6 @@ official_aligned_accuracy >=0.80
 ```
 
 Project target：`>=0.85`。
-
-如果 Existing Gold 不支持可靠 Precision / Macro F1，则对应 status 必须是：
-
-```text
-NOT_AVAILABLE_FROM_EXISTING_GOLD
-```
-
-不得因此补标。
 
 ### M2 required output
 
@@ -190,6 +267,14 @@ Existing-Gold Evidence Coverage Recall >=0.85
 
 Primary 不固定 Top-5。工程诊断目标继续是 Candidate Recall@20 >=0.95、Reranked Recall@10 >=0.90。
 
+### Full Development handoff
+
+固定 10 家稳定后必须跑：
+
+```text
+ALL 79 evaluable Existing Development cases
+```
+
 最终 B handoff：
 
 ```text
@@ -201,6 +286,8 @@ reports/v045_role_b/
   ai_vs_offline_report.json
 ```
 
+Full Development 达标后冻结 code / Prompt / evaluator / manifest / runtime，然后才允许 one-shot 19 Validation。
+
 ## 7. Role D — M5 Multi-horizon handoff
 
 前置条件：
@@ -211,8 +298,7 @@ reports/v04_pr_f/{run_manifest.json,model_results.json,model_comparison.json}
 data/cache/{v04_ipo_eod.csv,v04_ipo_eod.manifest.json}
 ```
 
-PR-E / PR-F runtime 必须逐文件匹配 `reports/frozen/` 中的 SHA-256；EOD 必须由授权的
-`data/competition/hkshareeodprices.csv` 经 governed filtered-store builder 生成，不得换成网络代理行情。
+PR-E / PR-F runtime 必须逐文件匹配 `reports/frozen/` 中的 SHA-256；EOD 必须由授权的 `data/competition/hkshareeodprices.csv` 经 governed filtered-store builder 生成，不得换成网络代理行情。
 
 若 filtered store 尚未生成：
 
@@ -232,8 +318,7 @@ python scripts/build_v045_role_d_m5.py
 python scripts/build_v045_role_d_m5.py --resume
 ```
 
-脚本 fail-closed 检查 2024 Validation、冻结 PR-E/PR-F 哈希、5D return/label 一致性、
-最少 60 个有效交易日，以及 `blind_2025_y_accessed=false`；不会训练、调参、校准或读取 2025 Blind y。
+脚本 fail-closed 检查 2024 Validation、冻结 PR-E/PR-F 哈希、5D return/label 一致性、最少 60 个有效交易日，以及 `blind_2025_y_accessed=false`；不会训练、调参、校准或读取 2025 Blind y。
 
 D 必须输出：
 
@@ -260,8 +345,6 @@ Primary：
 significant_drop_5d = (return_5d <= -0.10)
 ```
 
-报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有给 5D 绝对及格线。
-
 ## 8. 三案例 offline smoke
 
 ```bash
@@ -274,6 +357,8 @@ python scripts/run_v04_role_e_demo.py \
 验收：3 cases executed、PDF integrity PASS、traceability=1.0、Blind=false、outcome labels=false。
 
 ## 9. 三案例真实 AI Final Supervisor / M3
+
+1167.HK 单案例 real-provider smoke 已通过，证明 runtime 可用；最终 E1 仍需 2410 / 2460 / 1318 三案 3/3。
 
 ```bash
 python scripts/run_v04_role_e_demo.py \
@@ -307,7 +392,7 @@ python scripts/build_v045_submission_readiness.py \
   --require-ready
 ```
 
-在 metric-v2 integration PR 合并前，当前 readiness 旧字段不能被误解释成 v2 PASS。最终 A review 必须确认：
+最终 A review 必须确认：
 
 ```text
 metric_protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
@@ -344,8 +429,12 @@ Packager 继续拒绝 PDF、secret/private key、token-like material、本地绝
 ## 16. 最终人工检查
 
 ```text
-[ ] Existing Expert Gold 未新增/未修改
-[ ] Existing-Gold evaluable manifest + source hash 齐全
+[x] Existing Expert Gold 未新增/未修改
+[x] Existing-Gold evaluable manifest + source hash 齐全
+[x] single-case real-provider runtime smoke PASS
+[x] fixed-10 Development iteration tooling available
+[ ] fixed-10 baseline produced
+[ ] ALL 79 Development benchmark produced
 [ ] M1 Existing-Gold Accuracy >=80%
 [ ] M2 Existing-Gold Evidence Coverage Recall >=85%
 [ ] Recall@K 只作为 diagnostics
