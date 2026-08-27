@@ -126,6 +126,26 @@ def _accepted_supervision(**call_overrides) -> dict:
     )
 
 
+def _corrected_supervision() -> dict:
+    """Accepted, but only after the scope guard refused the first response."""
+    supervision = _accepted_supervision()
+    supervision["scope_check"] = {
+        **supervision["scope_check"],
+        "attempts": 2,
+        "scope_corrections": 1,
+        "refused_response_count": 1,
+        "first_attempt_passed": False,
+        "rejected_attempts": [
+            {
+                "attempt": 1,
+                "violation": "supervisory synthesis cited a risk_id that was not supplied",
+                "call": {"provider_name": "openai_responses", "request_id": "req-1111"},
+            }
+        ],
+    }
+    return supervision
+
+
 def _artifacts(**overrides) -> CaseRunArtifacts:
     payload = {
         "case_id": "ipo_2024_02410",
@@ -425,6 +445,62 @@ def test_a_missing_call_trace_field_keeps_the_gate_unmet(field) -> None:
     assert evidence["provider_trace_complete"] is False
     assert field in evidence["missing_provider_trace_fields"]
     assert evidence["satisfied"] is False
+
+
+def test_a_corrected_judgement_is_not_reported_as_a_clean_first_response() -> None:
+    """The whole point: a bounded correction must survive into the evidence."""
+    evidence = build_gate_e1_evidence(_artifacts(supervision_llm=_corrected_supervision()))
+    check = evidence["out_of_scope_reference_check"]
+    assert check["status"] == "passed"
+    assert check["attempts"] == 2
+    assert check["scope_corrections"] == 1
+    assert check["first_attempt_passed"] is False
+    assert check["rejected_attempts"][0]["call"]["request_id"] == "req-1111"
+    assert evidence["scope_corrected"] is True
+    assert any("refused by the scope guard" in item for item in evidence["qualifications"])
+    assert any("not a first-response-clean" in item for item in evidence["qualifications"])
+
+
+def test_a_first_response_clean_run_carries_no_qualification() -> None:
+    evidence = build_gate_e1_evidence(_artifacts(supervision_llm=_accepted_supervision()))
+    assert evidence["scope_corrected"] is False
+    assert evidence["qualifications"] == []
+
+
+def test_a_scope_correction_does_not_silently_flip_the_gate_verdict() -> None:
+    """Whether a corrected run counts as a clean pass is A's Gate policy call.
+
+    This module's job is to make the correction impossible to miss, not to decide
+    the policy on its own; so the case still satisfies, and says why a reader
+    might not want to treat it as equivalent.
+    """
+    evidence = build_gate_e1_evidence(_artifacts(supervision_llm=_corrected_supervision()))
+    assert evidence["satisfied"] is True
+    assert evidence["unmet_conditions"] == []
+    assert evidence["qualifications"], "a qualified pass must state its qualification"
+
+
+def test_the_matrix_verdict_counts_the_corrected_cases() -> None:
+    corrected = build_gate_e1_evidence(_artifacts(supervision_llm=_corrected_supervision()))
+    clean = build_gate_e1_evidence(_artifacts(supervision_llm=_accepted_supervision()))
+    verdict = summarise_gate_e1([corrected, clean, clean], declared_case_count=3)
+    assert verdict["satisfied"] is True
+    assert verdict["cases_requiring_scope_correction"] == 1
+    assert verdict["qualifications"]
+    assert "bounded scope correction" in verdict["verdict"]
+
+
+def test_a_corrected_run_says_so_in_the_report_and_the_log() -> None:
+    artifacts = _artifacts(supervision_llm=_corrected_supervision())
+    log = build_agent_reasoning_log(artifacts)
+    assert log["final_supervision"]["scope_corrections"] == 1
+    assert any(
+        "not a first-response-clean arbitration" in item for item in log["not_demonstrated"]
+    )
+    assert "refused by the scope guard" in render_agent_reasoning_log(log)
+    report = render_case_report(artifacts, log, build_gate_e1_evidence(artifacts))
+    assert "scope corrections: 1" in report
+    assert "the first response cited something out of scope" in report
 
 
 def test_the_matrix_verdict_requires_every_declared_case() -> None:

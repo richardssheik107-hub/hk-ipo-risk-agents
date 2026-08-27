@@ -19,7 +19,11 @@ market_agent: market_intelligence
 verifier: specialized_v03
 supervisor: v03
 predictor: rule_based
-llm_provider: openai_compatible
+# The only real runtime verified end to end on a real prospectus is the
+# Responses transport (openai_responses + ark-code-latest, 1167.HK). Gate E1 is
+# an acceptance run, so it uses the verified path rather than an untested one;
+# openai_compatible stays available for anyone who needs the chat transport.
+llm_provider: openai_responses
 llm_timeout_seconds: 300
 llm_max_retries: 0
 market_data_provider: unavailable

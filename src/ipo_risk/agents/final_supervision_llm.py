@@ -448,12 +448,40 @@ class LLMFinalSupervisor:
             "latency_ms": metadata.latency_ms if metadata else latency_fallback,
         }
 
+    @staticmethod
+    def _attempt_accounting(
+        attempts: int, rejected: Sequence[dict[str, Any]], *, evaluated: bool
+    ) -> dict[str, Any]:
+        """How many times the model was asked, and what the guard refused.
+
+        The bounded scope correction is a legitimate recovery, not something to
+        hide: a Gate reviewer has to be able to see that the first response cited
+        something out of scope, which call produced it and what the violation
+        was, even when the corrected judgement was accepted.
+
+        ``evaluated`` says whether any response actually reached the scope check.
+        A transport failure produced no judgement to check, so its first attempt
+        neither passed nor failed -- reporting it as passed would be the exact
+        overstatement this accounting exists to prevent.
+        """
+
+        return {
+            "attempts": attempts,
+            # Corrections issued, not responses refused: the last refusal of a
+            # fail-closed run is never followed by another correction.
+            "scope_corrections": max(0, attempts - 1),
+            "refused_response_count": len(rejected),
+            "first_attempt_passed": (not rejected) if evaluated else None,
+            "rejected_attempts": list(rejected),
+        }
+
     def _synthesise(self, payload: dict[str, Any], *, case_id: str, run_id: str) -> SynthesisAttempt:
         if self.llm_provider is None:
             reason = "LLM provider is not configured; the deterministic composition is retained in full"
             scope_check = {
                 "status": "not_applicable",
                 "reason": "no provider was configured, so no judgement was produced to check",
+                **self._attempt_accounting(0, (), evaluated=False),
             }
             outcome = SynthesisOutcome.PROVIDER_NOT_CONFIGURED
             return SynthesisAttempt(
@@ -471,6 +499,11 @@ class LLMFinalSupervisor:
                 ),
             )
         started = perf_counter()
+        # Every refused response is kept, with the identity of the call that
+        # produced it.  A judgement the guard accepted only after a correction is
+        # not the same event as one that was in scope first time, and the
+        # acceptance evidence has to be able to tell them apart.
+        rejected_attempts: list[dict[str, Any]] = []
         try:
             scope_payload = payload
             for scope_attempt in range(1, 3):
@@ -484,8 +517,22 @@ class LLMFinalSupervisor:
                     result = FinalSupervisionJudgement.model_validate(result)
                 try:
                     scope_check = self._validate_scope(result, payload)
+                    scope_check.update(
+                        self._attempt_accounting(
+                            scope_attempt, rejected_attempts, evaluated=True
+                        )
+                    )
                     break
                 except ScopeViolation as exc:
+                    rejected_attempts.append(
+                        {
+                            "attempt": scope_attempt,
+                            "violation": str(exc),
+                            "call": self._call_record(
+                                max(0, int((perf_counter() - started) * 1000))
+                            ),
+                        }
+                    )
                     if scope_attempt >= 2:
                         raise
                     scope_payload = {
@@ -514,6 +561,11 @@ class LLMFinalSupervisor:
                     "status": "not_applicable",
                     "reason": "the provider call returned no judgement to check",
                 }
+            )
+            scope_check.update(
+                self._attempt_accounting(
+                    len(rejected_attempts) or 1, rejected_attempts, evaluated=refused
+                )
             )
             return SynthesisAttempt(
                 judgement=None,

@@ -18,6 +18,7 @@ from ipo_risk.core.config import load_settings
 from ipo_risk.core.container import DependencyContainer, default_registry
 from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor
 from ipo_risk.runtime.submission_artifacts import (
+    REAL_LLM_PROVIDERS,
     CaseRunArtifacts,
     build_agent_reasoning_log,
     build_gate_e1_evidence,
@@ -36,6 +37,21 @@ def test_the_competition_configs_build_the_competition_workflow(config: str) -> 
     workflow = container.create_workflow()
     assert isinstance(workflow, V04CompetitionWorkflow)
     assert isinstance(workflow.final_supervisor, LLMFinalSupervisor)
+
+
+def test_the_ai_config_names_the_verified_real_transport() -> None:
+    """Gate E1 is an acceptance run, so it may not ride an unverified transport.
+
+    Only ``openai_responses`` has been proven end to end on a real prospectus
+    (1167.HK, ark-code-latest). Pointing the competition AI config at the other
+    transport would make the E1 evidence describe a path nobody has exercised.
+    """
+    settings = load_settings("configs/v045_competition_ai.yaml")
+    assert settings.llm_provider == "openai_responses"
+    assert settings.llm_provider in REAL_LLM_PROVIDERS
+    # One bounded attempt, as the verified runtime was configured.
+    assert settings.llm_timeout_seconds == 300
+    assert settings.llm_max_retries == 0
 
 
 def test_the_frozen_v04_configs_keep_their_historical_supervisor() -> None:
