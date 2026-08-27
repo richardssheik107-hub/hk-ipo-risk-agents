@@ -22,7 +22,7 @@ Prospectus PDF
 → Rule / optional authentic frozen Model signal
 → Conflict detection
 → one bounded targeted re-check
-→ LLM Final Supervisor with deterministic fallback
+→ LLM Final Supervisor
 → Agent / Tool / Evidence Trace
 → Human Review
 → Streamlit / report / submission artifacts
@@ -65,7 +65,26 @@ valid annotations      100
 official materialized   98
 ```
 
-注意：98 只是 official materialized annotation 数，不意味着每家公司对所有 risk 都有 Gold。实际 M1/M2 support 由只读 evaluator 统计。
+Existing-Gold coverage audit 已完成，当前确定：
+
+```text
+evaluable Development cases = 79
+evaluable Validation cases  = 19
+primary positive risk units = 128
+primary evidence units      = 217
+```
+
+Primary support：
+
+```text
+cash_burn_pressure         16
+customer_concentration     32
+redemption_rights          39
+supplier_concentration     41
+related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+```
+
+128 个 Risk Units / 217 个 Evidence Units 是全部 98 个 Existing-Gold official cases 的总量；固定 10 家与正式 Full Development 的实际分母由 evaluator 按 scope 自动计算。
 
 从现在开始明确：
 
@@ -143,59 +162,93 @@ Primary Gate `>=85%`；Recall@K 用来定位 Retriever / ranking 问题。
 
 三份 PDF 均通过 SHA-256、字节数和物理页数校验；结构化 workflow error 为 0；未读取 outcome label 或 2025 Blind y。
 
-### 2. Role B 仍是第一质量 blocker
+### 2. Existing-Gold audit / evaluator 已落地
 
-当前正式测得的仍是旧 10-case governed offline diagnostic：
+只读 coverage audit 已完成，manifest hash：
 
 ```text
-Risk Precision / Recall / F1      0% / 0% / 0%
-Evidence Recall@1 / @3 / @5       20% / 20% / 20%
-Physical-page correctness         100%
-Real LLM cases                    0
+fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
 ```
 
-下一步不再建新 Gold，而是：
+治理检查：
 
 ```text
-Existing Gold read-only coverage audit
-→ real-LLM Development run
-→ evaluate
+new_manual_annotations_added = false
+existing_gold_modified = false
+blind_2025_outcome_accessed = false
+```
+
+B0 不再是 blocker；剩余 B blocker 是在真实 LLM Development 上把 M1/M2 做到目标。
+
+### 3. 真实火山方舟 LLM runtime 单案例已跑通
+
+`ipo_2020_01167` / 1167.HK 已完成真实 PDF 全流程：
+
+```text
+provider = openai_responses
+model = ark-code-latest
+status = completed
+Final Supervisor = available / accepted
+Gate E1 for this smoke case = PASS
+deterministic fallback = false
+scope guard = PASS
+Validation accessed = false
+2025 Blind accessed = false
+```
+
+当前 AI runtime 冻结配置：
+
+```text
+llm_timeout_seconds = 300
+llm_max_retries = 0
+```
+
+该结果证明真实 provider 工程链路可用，但**不等于**最终 E1 3-case Gate 已关闭，也不等于 M1/M2 达标。
+
+### 4. Role B 固定 10 家自动迭代 runner 已实现
+
+快速开发流程被固定为：
+
+```text
+fixed 10 Development cases
+→ real-LLM run
+→ Existing-Gold evaluator
+→ M1 / M2 / Recall@K
 → failure taxonomy
-→ code / LLM optimization on Development
-→ Full Existing Development Gold benchmark
-→ freeze
-→ Existing Validation Gold one-shot
+→ Development-only targeted fix
+→ next iteration
 ```
 
-### 3. Market Intelligence 主体已实现
+命令：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --subset-only
+python scripts/run_v045_role_b_iteration.py --iteration auto
+```
+
+详细规则见：
+
+```text
+docs/V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md
+```
+
+固定 10 家只用于 debug/快速迭代，不能声称比赛 PASS；正式 B closure 仍需 ALL 79 Development，之后 freeze，再 one-shot 19 Validation。
+
+### 5. Market Intelligence 主体已实现
 
 已实现 governed `MarketContext`、IPOHeatSkill、MarketRegimeSkill、bounded Market LLM、PIT/missingness 与 Trace/Final Supervisor handoff。最终只剩 final 3-case Market state / trace accounting。
 
-### 4. LLM Final Supervisor / Product 已实现，real-provider acceptance 仍 open
+### 6. LLM Final Supervisor / Product 已实现，final real-provider acceptance 仍 open
 
-三案例 offline traceability 均 1.0；reasoning log、case report、machine Gate-E1 evidence 已实现。最终仍需 3/3 real-provider accepted run。
+单案例真实 runtime 已证明 provider path 可用；最终仍需 2410 / 2460 / 1318 三案例真实 provider 3/3 accepted，并满足最终 M3/E1 约束。
 
-### 5. Outcome / Model 生成器已实现，最终行情物化仍待完成
+### 7. Outcome / Model 生成器已实现，最终行情物化仍待完成
 
-D 的 frozen PR-E/PR-F 校验、1D/5D/20D/60D 计算、指标复算、SHAP handoff 和
-AI-vs-Offline 汇总已由 `scripts/build_v045_role_d_m5.py` 实现。最终运行仍需本地授权的
-`hkshareeodprices.csv` 先生成 governed filtered EOD store，随后输出：
-
-```text
-return_1d
-return_5d
-return_20d
-return_60d
-
-test_predictions.csv
-multi_horizon_results.csv
-evaluation_summary.json
-ai_vs_offline_report.json
-```
+D 的 frozen PR-E/PR-F 校验、1D/5D/20D/60D 计算、指标复算、SHAP handoff 和 AI-vs-Offline 汇总已由 `scripts/build_v045_role_d_m5.py` 实现。最终运行仍需本地授权的 `hkshareeodprices.csv` 先生成 governed filtered EOD store。
 
 5D 为 primary business horizon；项目预定义 `significant_drop_5d = return_5d <= -0.10`。赛题没有给 5D 指标绝对及格线。
 
-### 6. A submission tooling 已实现，但需接 metric-v2
+### 8. A submission tooling 已实现，但需接 metric-v2 final handoff
 
 A 已实现 readiness、Blind/provenance/determinism audit、artifact index、Runbook 和 fail-closed packager。最终 readiness 需要消费 Existing-Gold metric-v2 artifacts，并验证 `new_manual_annotations_added=false` / `existing_gold_modified=false`。
 
@@ -211,11 +264,13 @@ A 已实现 readiness、Blind/provenance/determinism audit、artifact index、Ru
 | A readiness / audit / Runbook / packager | PASS implementation |
 | Existing Expert Gold inventory | FROZEN |
 | Metric Protocol v2 Existing-Gold-Only | **FROZEN** |
-| Existing-Gold coverage audit / evaluator | **OPEN / P0** |
+| Existing-Gold coverage audit / evaluator | **PASS** |
+| real-LLM single-case runtime smoke | **PASS** |
+| fixed-10 Development iteration tooling | **PASS implementation** |
 | B M1 real-LLM Existing-Gold Risk benchmark | **OPEN / P0** |
 | B M2 real-LLM Existing-Gold Evidence Recall | **OPEN / P0** |
 | D 1D/5D/20D/60D + 5D evaluation | **OPEN / P0** |
-| E real-provider Final Supervisor | **OPEN / P1** |
+| E final 3-case real-provider Final Supervisor | **OPEN / P1** |
 | C final-matrix Market validation | **OPEN / P1** |
 | Evidence bbox upstream grounding | P2 quality gap |
 | Final audits / bundle / release freeze | **OPEN** |
@@ -227,6 +282,7 @@ A 已实现 readiness、Blind/provenance/determinism audit、artifact index、Ru
 - Metric contract：`docs/COMPETITION_METRIC_PROTOCOL.md`
 - 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
 - 最终提交 Runbook：`docs/SUBMISSION_RUNBOOK.md`
+- 固定 10 家迭代流程：`docs/V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md`
 - 剩余路线：`docs/ROADMAP.md`
 - 五人执行：`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`
 - 赛题映射：`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`
@@ -240,6 +296,9 @@ A 已实现 readiness、Blind/provenance/determinism audit、artifact index、Ru
 ```bash
 pip install -e ".[dev,retrieval-research]"
 python scripts/validate_competition_runtime.py
+python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
+python scripts/run_v045_role_b_iteration.py --subset-only
+python scripts/run_v045_role_b_iteration.py --iteration auto
 ```
 
 最终 `COMPETITION_READY` 只能在 metric-v2 与其余 hard Gate 被真实数据关闭之后使用。

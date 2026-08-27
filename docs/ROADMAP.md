@@ -19,7 +19,10 @@
 - E reasoning log / case report / Gate-E1 renderer；
 - A readiness / Blind / provenance / determinism / artifact index / Runbook / packager；
 - Existing Expert Gold / Oracle annotation inventory 已冻结；
-- `v045_competition_metric_protocol_v2_existing_gold_only` 已定义。
+- `v045_competition_metric_protocol_v2_existing_gold_only` 已定义；
+- Existing-Gold read-only coverage audit / evaluator 已实现并实测；
+- real `openai_responses` runtime 已由 1167.HK 单案例真实 PDF 全流程验证；
+- Role-B 固定 10 家 Development 自动迭代 runner 已实现。
 
 除非出现回归或直接影响比赛 hard Gate，不再扩架构。
 
@@ -44,15 +47,33 @@ Existing Expert Annotation / Oracle Gold only
 - 看模型错误后修改 Gold；
 - 把未标注项当作不存在。
 
-现有 inventory：
+现有 inventory / audit：
 
 ```text
-annotation inventory   101
-valid annotations      100
-official materialized   98
+annotation inventory          101
+valid annotations             100
+official materialized          98
+evaluable Development cases    79
+evaluable Validation cases     19
+primary positive risk units   128
+primary evidence units        217
 ```
 
-实际 M1/M2 support 由只读 coverage audit 统计，不能预先假设 98 家全部对每个 risk 都可评价。
+Primary risk support：
+
+```text
+cash_burn_pressure         16
+customer_concentration     32
+redemption_rights          39
+supplier_concentration     41
+related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+```
+
+Coverage manifest hash：
+
+```text
+fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
+```
 
 ### M1 — Risk Extraction
 
@@ -80,13 +101,7 @@ per-risk support
 per-risk correct / recall
 ```
 
-`Precision` / `Macro F1` 只有旧 Gold 本身提供足够明确的 exhaustive positive/negative judgment 时才报告；否则：
-
-```text
-NOT_AVAILABLE_FROM_EXISTING_GOLD
-```
-
-不得为了得到这些指标再补标。
+`Precision` / `Macro F1` 只有旧 Gold 本身提供足够明确的 exhaustive positive/negative judgment 时才报告；否则不得为了得到这些指标再补标。
 
 ### M2 — Evidence
 
@@ -115,31 +130,47 @@ Reranked Recall@10
 
 这些只用于定位 Retriever/ranking 问题。旧 `Recall@5=20%` 仍只是 legacy offline diagnostic。
 
-### 执行顺序
+### 当前执行顺序
+
+Role B 不再让 Codex 每轮开放式扫描仓库；固定执行：
 
 ```text
-1. 对既有 Expert Gold 做只读 coverage audit
-2. 生成 evaluable-unit manifest + source hash
-3. 从既有 Development Gold 选一个固定小 debug subset（仅为迭代速度）
-4. 跑 real-provider Document chain
-5. 用同一 Existing-Gold evaluator 评分
-6. 自动 failure taxonomy
-7. 只在 Development 优化：Retriever / ranking / Prompt / extraction / normalization / RiskItem reconciliation / Verifier
-8. 重复直到 Full Development Existing-Gold benchmark 达标或时间到
-9. 冻结代码 / Prompt / evaluator / manifest
-10. 对全部可评价 Existing Validation Gold 做一次性确认
+1. 使用已冻结 Existing-Gold manifest
+2. 固定 10 家 Development debug subset
+3. real-provider sequential run
+4. Existing-Gold evaluator 评分
+5. iteration_summary + failure_focus
+6. 只修 dominant Development failure
+7. 用相同 10 家进入下一 iteration
+8. 每 2-4 轮做更大 Development checkpoint
+9. 最后跑 ALL 79 Development
+10. freeze code / Prompt / evaluator / manifest / runtime settings
+11. one-shot ALL 19 Validation
 ```
 
-正式 Development benchmark 不再是“20家”，而是：
+固定 10 家 runner：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --subset-only
+python scripts/run_v045_role_b_iteration.py --iteration auto
+```
+
+详细见：
 
 ```text
-ALL evaluable existing 2020–2023 Expert Gold
+docs/V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md
+```
+
+固定 10 家只用于 debug，永远不能声称比赛 PASS。正式 Development benchmark 是：
+
+```text
+ALL 79 evaluable existing 2020–2023 Expert Gold cases
 ```
 
 Validation：
 
 ```text
-ALL evaluable existing 2024 Expert Gold
+ALL 19 evaluable existing 2024 Expert Gold cases
 ```
 
 不得因 Validation 结果继续调优。
@@ -170,9 +201,11 @@ significant_drop_5d = (return_5d <= -0.10)
 
 ## P1 — E：Real-provider Final Supervisor / M3 / M4
 
-Final 3-case matrix：2410.HK / 2460.HK / 1318.HK。
+1167.HK 单案例真实 runtime 已 PASS，证明 `openai_responses + ark-code-latest` 真实链路可用；这不是最终 E1 closure。
 
-必须：
+Final 3-case matrix 仍为：2410.HK / 2460.HK / 1318.HK。
+
+最终必须：
 
 - real provider；
 - `outcome=accepted`；
