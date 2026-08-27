@@ -202,6 +202,56 @@ unmet                                    real remote provider (provider: unavail
 这是**设计内的诚实降级**，不是 Gate E1 通过。mock provider 即使给出完全合规的结论也被显式拒绝计入
 （`provider_is_real_remote=false`），以免离线演示被误读成真实仲裁。
 
+### 3.6 Scope 纠正的可见性与 AI config 对齐
+
+`fix(v045): stabilize real llm runtime`（跨 lane 合入 E 的 Final Supervisor）加入了**有界 scope 纠正重试**：
+scope guard 拒绝后带纠正指令再问一次，第二次仍越界才 fail closed。逻辑本身正确——校验始终用原
+`payload`、不放宽 scope、两次封顶——但**这次重试原本没有被任何地方记录**，实测：
+
+```text
+provider calls made      : 2      ← 第一次响应被 scope guard 拒绝
+outcome                  : accepted
+scope_check              : {"status": "passed", "out_of_scope_reference_count": 0}
+gate e1 scope check      : passed | fail_closed_fired: False
+anything recording retry : NOTHING
+```
+
+也就是「先越界、纠正后通过」与「一次就干净」在 `gate_e1_evidence.json` 里完全同形，被拒那次的
+request / hash 也丢了。Gate E1 的原文是 *no out-of-scope reference*，真实 provider 上线后这正是必须
+说清楚的一类事件，因此补上 attempt accounting：
+
+```text
+attempts                 实际发问次数
+scope_corrections        发出的纠正轮数（不是被拒次数——fail closed 的最后一次拒绝之后不再纠正）
+refused_response_count   被 guard 拒绝的响应数
+first_attempt_passed     true / false / null（null = 根本没有响应进入过 scope 检查）
+rejected_attempts        每次被拒的 violation + 那次调用的 provider / model / request / hash / latency
+```
+
+五条路径互相可分：
+
+```text
+clean            accepted                 attempts=1 corrections=0 refused=0 first_ok=True
+corrected        accepted                 attempts=2 corrections=1 refused=1 first_ok=False
+fail-closed      rejected_out_of_scope    attempts=2 corrections=1 refused=2 first_ok=False
+transport fail   provider_call_failed     attempts=1 corrections=0 refused=0 first_ok=None
+no provider      provider_not_configured  attempts=0 corrections=0 refused=0 first_ok=None
+```
+
+**`satisfied` 的判定没有被单方面改动**：被纠正过的 run 仍然算通过，但带 `scope_corrected=true` 与
+显式 `qualifications`，矩阵级另有 `cases_requiring_scope_correction`。是否把「需要纠正」视同「不干净」
+属于 A 的 Gate 政策，E 的职责是让它**无法被忽略**，而不是替 A 定政策。case report 与 reasoning log
+同步显示。
+
+AI config 同时对齐到唯一被真实验证过的链路：
+
+```text
+configs/v045_competition_ai.yaml   llm_provider: openai_compatible → openai_responses
+已验证                              openai_responses + ark-code-latest（1167.HK 全流程 smoke）
+```
+
+E1 是验收 run，不应跑在没人验证过的 transport 上。
+
 ### 3.4 三案例矩阵暴露的文档覆盖问题（B lane）
 
 2460 与 1318 在离线链路下 **verified / pending / rejected 全部为 0**，即没有任何正式风险项进入报告。
@@ -354,7 +404,7 @@ streamlit run app/streamlit_app.py   # 选择「v0.4.5 比赛版（离线）」�
 per-case 工件写入 `reports/v045_role_e/<case_id>/`（`reports/*` 不入库）。
 
 测试基线：`1783 passed`（首轮新增 86 项）；submission artifacts 增补后 `1879 passed`；
-M4 + exports 增补后 `1919 passed`。
+M4 + exports 增补后 `1919 passed`；scope 纠正可见性 + AI config 对齐后 `1958 passed`。
 
 M4 表单与聚合：
 

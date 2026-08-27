@@ -173,6 +173,83 @@ def test_one_bounded_scope_correction_can_recover_without_relaxing_scope() -> No
     assert "supervision_input" in correction.text
 
 
+_OUT_OF_SCOPE = _judgement(
+    key_findings=[{"statement": "invalid", "risk_ids": ["risk-unknown"], "evidence_ids": []}]
+)
+
+
+def test_a_bounded_scope_correction_is_recorded_rather_than_absorbed() -> None:
+    """A corrected run must not be indistinguishable from a first-shot clean one.
+
+    Gate E1 asks that the synthesis reference nothing out of scope. The bounded
+    correction is a legitimate recovery, but a reviewer has to be able to see
+    that the model did emit an out-of-scope reference before it, and which call
+    produced it -- otherwise the acceptance evidence quietly overstates the run.
+    """
+    provider = _SequenceProvider([_OUT_OF_SCOPE, _judgement()])
+    bundle = LLMFinalSupervisor(provider).supervise(_inputs())
+
+    assert bundle.status is SupervisionStatus.AVAILABLE
+    check = bundle.scope_check
+    assert check["status"] == "passed"
+    assert check["attempts"] == 2
+    assert check["scope_corrections"] == 1
+    assert check["refused_response_count"] == 1
+    assert check["first_attempt_passed"] is False
+
+    refused = check["rejected_attempts"][0]
+    assert refused["attempt"] == 1
+    assert "risk_id that was not supplied" in refused["violation"]
+    # The refused response came from a real call; its identity is kept too.
+    assert refused["call"]["provider_name"] == "sequence"
+    assert refused["call"]["prompt_version"] == FINAL_SUPERVISION_PROMPT_VERSION
+
+
+def test_an_in_scope_first_response_records_no_correction() -> None:
+    bundle = _supervisor(_judgement()).supervise(_inputs())
+    check = bundle.scope_check
+    assert check["attempts"] == 1
+    assert check["scope_corrections"] == 0
+    assert check["first_attempt_passed"] is True
+    assert check["rejected_attempts"] == []
+
+
+def test_a_fail_closed_run_records_every_refused_response() -> None:
+    provider = _SequenceProvider([_OUT_OF_SCOPE, _OUT_OF_SCOPE])
+    bundle = LLMFinalSupervisor(provider).supervise(_inputs())
+
+    assert bundle.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE
+    check = bundle.scope_check
+    assert check["status"] == "failed"
+    # Two responses were refused, but only one correction was ever issued.
+    assert check["refused_response_count"] == 2
+    assert check["scope_corrections"] == 1
+    assert len(check["rejected_attempts"]) == 2
+
+
+def test_a_run_without_a_provider_claims_no_attempt_at_all() -> None:
+    """Zero attempts must not read as "the first attempt passed"."""
+    bundle = LLMFinalSupervisor(llm_provider=None).supervise(_inputs())
+    check = bundle.scope_check
+    assert check["attempts"] == 0
+    assert check["first_attempt_passed"] is None
+    assert check["rejected_attempts"] == []
+
+
+def test_a_transport_failure_never_claims_its_first_attempt_passed() -> None:
+    """No judgement reached the guard, so nothing about scope was established.
+
+    Reporting an unanswered call as a passed first attempt would be exactly the
+    overstatement this accounting exists to prevent.
+    """
+    bundle = _supervisor(None).supervise(_inputs())
+    assert bundle.outcome is SynthesisOutcome.PROVIDER_CALL_FAILED
+    check = bundle.scope_check
+    assert check["status"] == "not_applicable"
+    assert check["first_attempt_passed"] is None
+    assert check["refused_response_count"] == 0
+
+
 def test_scope_correction_remains_fail_closed_after_one_retry() -> None:
     invalid = _judgement(
         key_findings=[

@@ -223,6 +223,9 @@ def build_agent_reasoning_log(artifacts: CaseRunArtifacts) -> dict[str, Any]:
                 "deterministic_severity_floor"
             ),
             "fail_closed": artifacts.supervision_llm.get("fail_closed"),
+            "scope_corrections": (artifacts.supervision_llm.get("scope_check") or {}).get(
+                "scope_corrections"
+            ),
             "scope_check": artifacts.supervision_llm.get("scope_check", {}),
             "call": artifacts.supervision_llm.get("call", {}),
             "judgement_present": artifacts.supervision_llm.get("judgement") is not None,
@@ -262,6 +265,14 @@ def not_demonstrated(artifacts: CaseRunArtifacts) -> list[str]:
         statements.append(
             f"Model channel is `{model}`: no model score entered this run. No replacement score "
             "was generated (Role D / frozen PR-F handoff)."
+        )
+    scope_check = artifacts.supervision_llm.get("scope_check") or {}
+    if scope_check.get("scope_corrections"):
+        statements.append(
+            f"The supervisory judgement was accepted only after "
+            f"{scope_check['scope_corrections']} bounded scope correction(s): the model's first "
+            "response cited something outside the supplied scope. The accepted judgement cites "
+            "nothing out of scope, but this run is not a first-response-clean arbitration."
         )
     outcome = artifacts.supervision_llm.get("outcome")
     if outcome != "accepted":
@@ -378,6 +389,11 @@ def render_agent_reasoning_log(log: dict[str, Any]) -> str:
         f"- deterministic severity floor: `{supervision['deterministic_severity_floor']}`",
         f"- scope check: `{supervision['scope_check'].get('status', 'not_recorded')}`",
     ]
+    for attempt in supervision["scope_check"].get("rejected_attempts", []) or []:
+        lines.append(
+            f"- attempt {attempt.get('attempt')} was refused by the scope guard: "
+            f"{attempt.get('violation')}"
+        )
     call = supervision.get("call") or {}
     if call:
         lines.append(
@@ -438,6 +454,8 @@ def build_gate_e1_evidence(artifacts: CaseRunArtifacts) -> dict[str, Any]:
         field for field in REQUIRED_CALL_TRACE_FIELDS if call.get(field) in (None, "")
     ]
     accepted = outcome == "accepted" and supervision.get("judgement") is not None
+    rejected_attempts = list(scope_check.get("rejected_attempts", []) or [])
+    corrections = int(scope_check.get("scope_corrections") or 0)
 
     unmet: list[str] = []
     if not accepted:
@@ -474,12 +492,43 @@ def build_gate_e1_evidence(artifacts: CaseRunArtifacts) -> dict[str, Any]:
             "cited_risk_ids": scope_check.get("cited_risk_ids", []),
             "cited_evidence_ids": scope_check.get("cited_evidence_ids", []),
             "cited_conflict_ids": scope_check.get("cited_conflict_ids", []),
+            # A judgement accepted only after a bounded correction is not the
+            # same event as one that was in scope first time.
+            "attempts": scope_check.get("attempts"),
+            "scope_corrections": corrections,
+            "first_attempt_passed": scope_check.get("first_attempt_passed"),
+            "rejected_attempts": rejected_attempts,
         },
+        "scope_corrected": bool(corrections),
+        # Recorded rather than scored: whether a corrected run counts as a clean
+        # E1 pass is a Gate policy call for A, and it cannot be made at all
+        # unless the correction is visible in the first place.
+        "qualifications": _gate_e1_qualifications(rejected_attempts),
         "deterministic_severity_floor": supervision.get("deterministic_severity_floor"),
         "severity_floor_respected": scope_check.get("severity_floor_respected"),
         "satisfied": not unmet,
         "unmet_conditions": unmet,
     }
+
+
+def _gate_e1_qualifications(rejected_attempts: Sequence[dict[str, Any]]) -> list[str]:
+    """Plain statements of anything a reader should not have to infer."""
+
+    statements: list[str] = []
+    for attempt in rejected_attempts:
+        call = attempt.get("call") or {}
+        statements.append(
+            f"attempt {attempt.get('attempt')} was refused by the scope guard "
+            f"({attempt.get('violation')}); provider `{call.get('provider_name') or '—'}` "
+            f"request `{call.get('request_id') or '—'}`"
+        )
+    if statements:
+        statements.append(
+            "The accepted judgement cites nothing out of scope, but the model did emit an "
+            "out-of-scope reference before the bounded correction. This run is not a "
+            "first-response-clean arbitration."
+        )
+    return statements
 
 
 def summarise_gate_e1(
@@ -490,6 +539,7 @@ def summarise_gate_e1(
     arbitrated = [item for item in case_evidence if item.get("successful_llm_arbitration")]
     satisfied_cases = [item for item in case_evidence if item.get("satisfied")]
     fell_back = [item for item in case_evidence if item.get("deterministic_fallback_used")]
+    corrected = [item for item in case_evidence if item.get("scope_corrected")]
     reasons = sorted(
         {reason for item in case_evidence for reason in item.get("unmet_conditions", [])}
     )
@@ -503,10 +553,22 @@ def summarise_gate_e1(
         "cases_with_successful_llm_arbitration": len(arbitrated),
         "cases_satisfying_gate": len(satisfied_cases),
         "cases_on_deterministic_fallback": len(fell_back),
+        "cases_requiring_scope_correction": len(corrected),
+        "qualifications": [
+            statement for item in case_evidence for statement in item.get("qualifications", [])
+        ],
         "satisfied": satisfied,
         "unmet_conditions": reasons,
         "verdict": (
-            "Gate E1 met on the declared matrix"
+            (
+                "Gate E1 met on the declared matrix"
+                + (
+                    f", with {len(corrected)} case(s) accepted only after a bounded scope "
+                    "correction"
+                    if corrected
+                    else ""
+                )
+            )
             if satisfied
             else "Gate E1 NOT met: a deterministic fallback is an honest degradation, "
             "not a successful LLM arbitration"
@@ -618,6 +680,12 @@ def render_case_report(
         f"- LLM synthesis: `{supervision['status']}` / `{supervision['outcome']}` — "
         f"{supervision['reason']}",
         f"- deterministic severity floor: `{supervision['deterministic_severity_floor']}`",
+        f"- scope corrections: {supervision.get('scope_corrections') or 0}"
+        + (
+            " (the first response cited something out of scope)"
+            if supervision.get("scope_corrections")
+            else ""
+        ),
         f"- Gate E1 for this case: "
         f"{'satisfied' if gate_evidence['satisfied'] else 'NOT satisfied'}"
         + (
