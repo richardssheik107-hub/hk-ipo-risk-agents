@@ -401,6 +401,23 @@ class V03FinancialAgent:
                     extraction.period_end.isoformat() if extraction.period_end else None
                 ),
                 "period_months": extraction.period_months,
+                "reconciliation_version": extraction.metadata.get(
+                    "reconciliation_version"
+                ),
+                "candidate_count": extraction.metadata.get("candidate_count"),
+                "selected_candidate_count": extraction.metadata.get(
+                    "selected_candidate_count"
+                ),
+                "governing_candidate_count": extraction.metadata.get(
+                    "governing_candidate_count"
+                ),
+                "value_candidate_count": extraction.metadata.get(
+                    "value_candidate_count"
+                ),
+                "merge_value_basis": extraction.metadata.get("merge_value_basis"),
+                "candidate_diagnostics": extraction.metadata.get(
+                    "candidate_diagnostics", []
+                ),
             }
         return (
             extraction.status,

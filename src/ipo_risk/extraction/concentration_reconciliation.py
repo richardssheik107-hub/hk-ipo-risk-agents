@@ -195,13 +195,6 @@ class _ConcentrationReconciliationMixin:
             else list(facts)
         )
 
-        period_month_values = {
-            item.period_months for item in selected if item.period_months is not None
-        }
-        issues: list[str] = []
-        if len(period_month_values) > 1:
-            issues.append("period_months_conflict")
-
         governing = [
             item
             for item in selected
@@ -210,25 +203,41 @@ class _ConcentrationReconciliationMixin:
             and item.largest_counterparty_pct is not None
             and item.top_five_pct is not None
         ]
+        # A clean, complete candidate governs partial same-date disclosures.
+        # Partial summaries remain auditable Evidence, but a single quoted
+        # percentage must not veto a complete primary reading.  Multiple clean
+        # complete candidates still vote together and therefore fail closed if
+        # their values genuinely disagree.
+        value_candidates = governing or selected
+        period_month_values = {
+            item.period_months
+            for item in value_candidates
+            if item.period_months is not None
+        }
+        issues: list[str] = []
+        if len(period_month_values) > 1:
+            issues.append("period_months_conflict")
         if not governing:
             issues.extend(issue for item in selected for issue in item.issues)
 
         largest_values = {
             item.largest_counterparty_pct
-            for item in selected
+            for item in value_candidates
             if item.largest_counterparty_pct is not None
         }
         top_five_values = {
             item.top_five_pct
-            for item in selected
+            for item in value_candidates
             if item.top_five_pct is not None
         }
         if len(largest_values) > 1 or len(top_five_values) > 1:
             issues.append("conflicting_values_for_same_period")
         if "conflicting_values_for_same_period" in issues and any(
-            item.metadata.get("source_context") == "summary" for item in selected
+            item.metadata.get("source_context") == "summary"
+            for item in value_candidates
         ) and any(
-            item.metadata.get("source_context") == "primary_statement" for item in selected
+            item.metadata.get("source_context") == "primary_statement"
+            for item in value_candidates
         ):
             issues.append("summary_primary_statement_conflict")
 
@@ -245,7 +254,7 @@ class _ConcentrationReconciliationMixin:
         evidence_ids = self._dedupe_strings(
             [evidence_id for item in selected for evidence_id in item.evidence_ids]
         )
-        first = selected[0]
+        first = value_candidates[0]
         selected_months = (
             next(iter(period_month_values)) if len(period_month_values) == 1 else None
         )
@@ -294,6 +303,12 @@ class _ConcentrationReconciliationMixin:
                 "selected_candidate_count": len(selected),
                 "discarded_nonselected_candidate_count": len(discarded),
                 "governing_candidate_count": len(governing),
+                "value_candidate_count": len(value_candidates),
+                "merge_value_basis": (
+                    "clean_complete_governing_candidates"
+                    if governing
+                    else "all_selected_candidates_fail_closed"
+                ),
                 "percentage_semantics": "0_to_100_percent",
                 "candidate_pages": [item.page for item in facts],
                 "selected_candidate_pages": [item.page for item in selected],

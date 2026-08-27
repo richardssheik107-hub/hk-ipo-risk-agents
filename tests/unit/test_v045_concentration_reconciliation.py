@@ -168,6 +168,41 @@ def test_same_date_period_length_disagreement_remains_fail_closed() -> None:
     assert result.period_months is None
 
 
+def test_clean_complete_candidate_governs_same_date_partial_conflict() -> None:
+    extractor = V03FinancialFactExtractor()
+    complete = _fact(
+        period_end=date(2024, 12, 31),
+        period_months=12,
+        largest="35.0",
+        top_five="72.0",
+        page=20,
+        metadata={"source_context": "primary_statement"},
+    )
+    partial = _fact(
+        period_end=date(2024, 12, 31),
+        period_months=6,
+        largest="60.0",
+        top_five=None,
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["incomplete_concentration_values"],
+        metadata={"source_context": "summary"},
+    )
+
+    result = extractor._merge_concentration_facts("customer", [complete, partial])
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_months == 12
+    assert result.largest_counterparty_pct == Decimal("35.0")
+    assert result.top_five_pct == Decimal("72.0")
+    assert result.evidence_ids == ["e-20", "e-21"]
+    assert result.metadata["governing_candidate_count"] == 1
+    assert result.metadata["value_candidate_count"] == 1
+    assert result.metadata["merge_value_basis"] == "clean_complete_governing_candidates"
+    assert len(result.metadata["candidate_diagnostics"]) == 2
+
+
 def test_genuine_same_period_value_conflict_remains_fail_closed() -> None:
     extractor = V03FinancialFactExtractor()
     first = _fact(
