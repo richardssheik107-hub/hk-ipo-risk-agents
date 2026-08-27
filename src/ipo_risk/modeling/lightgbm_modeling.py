@@ -57,6 +57,12 @@ def _classifier() -> lgb.LGBMClassifier:
     )
 
 
+def build_pr_f_classifier() -> lgb.LGBMClassifier:
+    """Return the frozen PR-F classifier for governed diagnostic reuse."""
+
+    return _classifier()
+
+
 def _regressor() -> lgb.LGBMRegressor:
     return lgb.LGBMRegressor(
         objective="regression_l2",
