@@ -16,7 +16,10 @@ import pytest
 
 from ipo_risk.core.config import load_settings
 from ipo_risk.core.container import DependencyContainer, default_registry
-from ipo_risk.agents.final_supervision_llm import LLMFinalSupervisor
+from ipo_risk.agents.final_supervision_llm import (
+    FINAL_SUPERVISION_PROMPT_VERSION,
+    LLMFinalSupervisor,
+)
 from ipo_risk.runtime.submission_artifacts import (
     REAL_LLM_PROVIDERS,
     CaseRunArtifacts,
@@ -262,7 +265,7 @@ def test_a_grounded_llm_judgement_reaches_the_result_metadata(tmp_path) -> None:
     assert synthesis["outcome"] == "accepted"
     assert synthesis["scope_check"]["status"] == "passed"
     assert synthesis["scope_check"]["out_of_scope_reference_count"] == 0
-    assert synthesis["call"]["prompt_version"] == "v04_final_supervision_v1"
+    assert synthesis["call"]["prompt_version"] == FINAL_SUPERVISION_PROMPT_VERSION
 
     # ...and it still cannot satisfy Gate E1, because a mock is not a real provider.
     evidence = build_gate_e1_evidence(_case_artifacts(result))

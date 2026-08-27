@@ -300,11 +300,93 @@ def test_prediction_vocabulary_is_rejected(field, text) -> None:
     assert bundle.status is SupervisionStatus.UNAVAILABLE
 
 
-def test_the_structured_schema_itself_refuses_prediction_vocabulary() -> None:
-    with pytest.raises(ValueError):
-        FinalSupervisionJudgement.model_validate(
-            _judgement(final_explanation="the probability of a first-day break is high")
-        )
+def test_prediction_vocabulary_is_refused_by_the_scope_guard_and_named() -> None:
+    """Enforcement lives at the scope guard, where it is recoverable.
+
+    It used to be a field validator on the model as well, which fired inside the
+    provider's own ``model_validate``: the violation surfaced as an opaque
+    transport error, was classified as an unreachable provider, and pre-empted
+    the bounded correction entirely. Measured against a real model, that turned
+    a fixable phrasing slip into four failed runs out of five. The scope guard
+    covers every prose field rather than two, and names what it refused.
+    """
+    bundle = _supervisor(
+        _judgement(final_explanation="the probability of a first-day break is high")
+    ).supervise(_inputs())
+
+    assert bundle.judgement is None
+    assert bundle.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE
+    assert bundle.scope_check["status"] == "failed"
+    assert "prediction vocabulary" in bundle.scope_check["violation"]
+    # The offending term is named, so the correction can address it.
+    assert "probability" in bundle.scope_check["violation"]
+
+
+def test_the_scope_guard_covers_prose_the_old_field_validator_never_saw() -> None:
+    """A key finding or an uncertainty could smuggle the vocabulary through."""
+    for payload in (
+        _judgement(uncertainties=["the likelihood of dilution is unclear"]),
+        _judgement(
+            key_findings=[
+                {
+                    "statement": "a forecast of continued losses",
+                    "risk_ids": [RISK_ID],
+                    "evidence_ids": [EVIDENCE_ID],
+                }
+            ]
+        ),
+    ):
+        bundle = _supervisor(payload).supervise(_inputs())
+        assert bundle.judgement is None
+        assert bundle.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE
+
+
+def test_a_vocabulary_slip_is_recoverable_within_the_bounded_correction() -> None:
+    """The point of moving enforcement: one slip no longer loses the run."""
+    provider = _SequenceProvider(
+        [_judgement(final_explanation="the likelihood of a break is elevated"), _judgement()]
+    )
+    bundle = LLMFinalSupervisor(provider).supervise(_inputs())
+
+    assert bundle.status is SupervisionStatus.AVAILABLE
+    assert bundle.outcome is SynthesisOutcome.ACCEPTED
+    assert bundle.scope_check["scope_corrections"] == 1
+    assert bundle.scope_check["first_attempt_passed"] is False
+    assert "likelihood" in bundle.scope_check["rejected_attempts"][0]["violation"]
+
+
+def test_the_correction_feedback_addresses_the_rule_that_was_broken() -> None:
+    """Telling a model that used a banned word to fix its ids would help nobody."""
+    provider = _SequenceProvider(
+        [_judgement(final_explanation="the likelihood of a break is elevated"), _judgement()]
+    )
+    LLMFinalSupervisor(provider).supervise(_inputs())
+
+    correction = next(item for item in provider.calls[1] if item.section == "scope_correction")
+    assert "prediction vocabulary" in correction.text
+    assert "likelihood" in correction.text
+    assert "Keep the same findings" in correction.text
+
+
+def test_the_registered_prompt_bans_the_vocabulary_outright() -> None:
+    """The v1 wording only forbade restating a model score that way.
+
+    A model reading it wrote "the likelihood of dilution" and lost the whole
+    judgement, so v2 states the ban as a ban over every string it produces.
+    """
+    instruction = resolve_domain_instruction(
+        FINAL_SUPERVISION_TASK, FINAL_SUPERVISION_PROMPT_VERSION
+    )
+    assert FINAL_SUPERVISION_PROMPT_VERSION == "v04_final_supervision_v2"
+    # Normalised: the instruction is hard-wrapped, so raw substrings would be
+    # asserting about line breaks rather than about the ban.
+    flattened = " ".join(instruction.split())
+    for term in ("probability", "likelihood", "forecast", "概率"):
+        assert term in flattened
+    assert "must not appear anywhere" in flattened
+    assert "rejected in full" in flattened
+    # v1 stays resolvable so historical traces still identify their prompt.
+    assert resolve_domain_instruction(FINAL_SUPERVISION_TASK, "v04_final_supervision_v1")
 
 
 def test_no_provider_degrades_to_the_frozen_composition_and_says_so() -> None:

@@ -155,12 +155,36 @@ _MARKET_PROMPTS = MappingProxyType(
 _MARKET_TASKS = frozenset(task for task, _ in _MARKET_PROMPTS)
 _MARKET_VERSIONS = frozenset(version for _, version in _MARKET_PROMPTS)
 
+FINAL_SUPERVISION_V2_INSTRUCTION = (
+    FINAL_SUPERVISION_V1_INSTRUCTION
+    + """
+
+Output vocabulary is constrained, and this applies to every string you produce,
+not only to statements about a model score. These words and phrases must not
+appear anywhere in overall_risk_rationale, final_explanation, key finding
+statements, conflict assessments, uncertainties or re-check reasons, in any
+casing, even when writing about a document risk rather than a prediction:
+
+probability, likelihood, forecast, expected return, price target, will rise,
+will fall, guaranteed, 概率, 预测收益, 涨幅, 跌幅, 必然.
+
+Say what the supplied channels established and what remains unsettled. Write
+"the risk that X occurs" or "X is not verified", never "the likelihood of X" or
+"the probability of X". A judgement containing any of the listed terms is
+rejected in full, so prefer plain description over probabilistic phrasing."""
+)
+
+
 _SUPERVISION_PROMPTS = MappingProxyType(
     {
         (
             "final_supervision_synthesis",
             "v04_final_supervision_v1",
         ): FINAL_SUPERVISION_V1_INSTRUCTION,
+        (
+            "final_supervision_synthesis",
+            "v04_final_supervision_v2",
+        ): FINAL_SUPERVISION_V2_INSTRUCTION,
     }
 )
 _SUPERVISION_TASKS = frozenset(task for task, _ in _SUPERVISION_PROMPTS)

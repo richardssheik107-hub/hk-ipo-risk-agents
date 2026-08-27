@@ -27,7 +27,7 @@ from enum import StrEnum
 from time import perf_counter
 from typing import Any, Iterable, Literal, Sequence
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from ipo_risk.agents.final_supervisor import V04FinalSupervisor
 from ipo_risk.schemas import Evidence, EvidenceSourceType, RiskItem, RiskLevel
@@ -42,7 +42,7 @@ from ipo_risk.schemas.final_supervision import FinalSupervisionInput, FinalSuper
 
 
 FINAL_SUPERVISION_SCHEMA_VERSION = "v04_final_supervision_v1"
-FINAL_SUPERVISION_PROMPT_VERSION = "v04_final_supervision_v1"
+FINAL_SUPERVISION_PROMPT_VERSION = "v04_final_supervision_v2"
 FINAL_SUPERVISION_TASK = "final_supervision_synthesis"
 FINAL_SUPERVISOR_AGENT = "llm_final_supervisor"
 
@@ -126,13 +126,13 @@ class FinalSupervisionJudgement(BaseModel):
     recheck_targets: tuple[RecheckTarget, ...] = ()
     final_explanation: str = Field(min_length=1)
 
-    @field_validator("overall_risk_rationale", "final_explanation")
-    @classmethod
-    def _no_prediction_vocabulary(cls, value: str) -> str:
-        lowered = value.lower()
-        if any(term in lowered for term in _FORBIDDEN_TERMS):
-            raise ValueError("supervisory synthesis cannot use prediction vocabulary")
-        return value
+    # Prediction vocabulary is refused by ``_validate_scope``, not by a field
+    # validator here.  The two enforced the same rule, but a model validator
+    # fires inside the provider's ``model_validate``, where the failure becomes
+    # an opaque transport error that pre-empts the bounded scope correction --
+    # so a recoverable, classifiable violation was being reported as an
+    # unreachable provider.  The scope guard covers every prose field rather
+    # than these two, and its refusal is recorded and correctable.
 
 
 class SynthesisAttempt(BaseModel):
@@ -449,6 +449,36 @@ class LLMFinalSupervisor:
         }
 
     @staticmethod
+    def _correction_instruction(violation: ScopeViolation) -> str:
+        """Feedback aimed at the rule that was actually broken."""
+
+        message = str(violation)
+        if "prediction vocabulary" in message:
+            return (
+                "The previous judgement was rejected because it used forbidden prediction "
+                f"vocabulary ({message.split(': ', 1)[-1]}). Rewrite every string without those "
+                "words in any casing: describe what the supplied channels established and what "
+                "remains unsettled, never how likely an outcome is. Keep the same findings, "
+                "the same cited IDs and the same overall_risk."
+            )
+        if "severity floor" in message:
+            return (
+                "The previous judgement was rejected because overall_risk was below the supplied "
+                "deterministic_severity_floor. Return the same judgement with overall_risk at or "
+                "above that floor."
+            )
+        if "introduced number" in message:
+            return (
+                "The previous judgement was rejected because it stated a number that was not in "
+                "the supplied payload. Rewrite the prose using only numbers present in the "
+                "payload, or none at all."
+            )
+        return (
+            "Return a corrected judgement using only IDs in reference_scope. Use empty ID lists "
+            "when none apply. Never cite supervision_input transport-envelope IDs."
+        )
+
+    @staticmethod
     def _attempt_accounting(
         attempts: int, rejected: Sequence[dict[str, Any]], *, evaluated: bool
     ) -> dict[str, Any]:
@@ -540,11 +570,7 @@ class LLMFinalSupervisor:
                         "scope_correction": {
                             "previous_result_rejected": True,
                             "violation_type": str(exc),
-                            "instruction": (
-                                "Return a corrected judgement using only IDs in "
-                                "reference_scope. Use empty ID lists when none apply. "
-                                "Never cite supervision_input transport-envelope IDs."
-                            ),
+                            "instruction": self._correction_instruction(exc),
                         },
                     }
         except Exception as exc:
@@ -719,8 +745,11 @@ class LLMFinalSupervisor:
                 f"supervisory synthesis introduced number(s) absent from the supplied payload: {sorted(invented)}"
             )
         lowered = prose.lower()
-        if any(term in lowered for term in _FORBIDDEN_TERMS):
-            raise ScopeViolation("supervisory synthesis used prediction vocabulary")
+        used = sorted(term for term in _FORBIDDEN_TERMS if term in lowered)
+        if used:
+            raise ScopeViolation(
+                "supervisory synthesis used prediction vocabulary: " + ", ".join(used)
+            )
 
         return {
             "status": "passed",
