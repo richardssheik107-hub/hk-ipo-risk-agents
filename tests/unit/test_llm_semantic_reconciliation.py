@@ -5,7 +5,13 @@ import pytest
 from ipo_risk.agents.business_v03 import V03BusinessAgent
 from ipo_risk.providers.mock import MockLLMProvider
 from ipo_risk.providers.prompt_registry import PromptResolutionError, resolve_domain_instruction
-from ipo_risk.schemas import DiagnosticCode, DocumentChunk, Evidence, IPOProfile
+from ipo_risk.schemas import (
+    DiagnosticCode,
+    DocumentChunk,
+    Evidence,
+    IPOProfile,
+    VerificationStatus,
+)
 
 
 class _StaticRetriever:
@@ -96,7 +102,7 @@ def test_equivalent_llm_business_formatting_does_not_create_false_conflict():
     assert diagnostic.metadata["llm_normalization"] == "business_candidate_canonical_v1"
 
 
-def test_true_business_semantic_conflict_still_fails_closed_with_reason():
+def test_true_business_semantic_conflict_discards_llm_but_preserves_deterministic_risk():
     chunk, evidence = _business_case()
     provider = MockLLMProvider(
         responses={
@@ -119,7 +125,13 @@ def test_true_business_semantic_conflict_still_fails_closed_with_reason():
         llm_provider=provider,
     )
 
-    assert agent.analyze(IPOProfile(company_name="Demo"), [chunk]) == []
+    risks = agent.analyze(IPOProfile(company_name="Demo"), [chunk])
+
+    assert len(risks) == 1
+    assert risks[0].verification_status == VerificationStatus.PENDING
+    assert risks[0].metadata["has_product_revenue"] is False
     diagnostic = agent.last_diagnostics[0]
     assert diagnostic.code == DiagnosticCode.CONFLICTING_VALUES
     assert diagnostic.metadata["llm_conflicts"] == ["product_revenue"]
+    assert diagnostic.metadata["llm_augmentation_applied"] is False
+    assert diagnostic.metadata["deterministic_candidate_preserved"] is True

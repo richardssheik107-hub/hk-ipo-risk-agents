@@ -151,7 +151,7 @@ def test_valid_mock_llm_can_fill_missing_product_revenue_fact() -> None:
     assert agent.last_diagnostics[0].metadata["llm_cross_check"] == "consistent"
 
 
-def test_llm_evidence_out_of_scope_is_needs_review() -> None:
+def test_llm_evidence_out_of_scope_preserves_deterministic_risk() -> None:
     item = chunk(POSITIVE)
     provider = MockLLMProvider(
         responses={
@@ -166,8 +166,14 @@ def test_llm_evidence_out_of_scope_is_needs_review() -> None:
         }
     )
     agent = V03BusinessAgent(retriever=StaticRetriever([evidence_for(item)]), llm_provider=provider)
-    assert agent.analyze(IPOProfile(company_name="Demo"), [item]) == []
+    risks = agent.analyze(IPOProfile(company_name="Demo"), [item])
+    assert len(risks) == 1
+    assert risks[0].verification_status == VerificationStatus.PENDING
+    assert risks[0].metadata["has_product_revenue"] is False
     assert agent.last_diagnostics[0].code == DiagnosticCode.NEEDS_REVIEW
+    assert agent.last_diagnostics[0].metadata["issue"] == "evidence_out_of_scope"
+    assert agent.last_diagnostics[0].metadata["llm_augmentation_applied"] is False
+    assert agent.last_diagnostics[0].metadata["deterministic_candidate_preserved"] is True
 
 
 def test_llm_conflict_does_not_override_deterministic_fact() -> None:
@@ -185,8 +191,37 @@ def test_llm_conflict_does_not_override_deterministic_fact() -> None:
         }
     )
     agent = V03BusinessAgent(retriever=StaticRetriever([evidence_for(item)]), llm_provider=provider)
-    assert agent.analyze(IPOProfile(company_name="Demo"), [item]) == []
+    risks = agent.analyze(IPOProfile(company_name="Demo"), [item])
+    assert len(risks) == 1
+    assert risks[0].verification_status == VerificationStatus.PENDING
+    assert risks[0].metadata["has_product_revenue"] is False
     assert agent.last_diagnostics[0].code == DiagnosticCode.CONFLICTING_VALUES
+    assert agent.last_diagnostics[0].metadata["issue"] == "candidate_conflict"
+    assert agent.last_diagnostics[0].metadata["llm_conflicts"] == ["product_revenue"]
+    assert agent.last_diagnostics[0].metadata["llm_augmentation_applied"] is False
+    assert agent.last_diagnostics[0].metadata["deterministic_candidate_preserved"] is True
+
+
+def test_llm_conflict_cannot_turn_deterministic_negative_into_a_risk() -> None:
+    item = chunk(NEGATIVE)
+    provider = MockLLMProvider(
+        responses={
+            "business_precommercial_commercialization_extract": {
+                "product_name": "ABC-101", "development_stage": "phase_iii",
+                "has_product_revenue": False, "evidence_ids": ["e1"],
+            },
+            "business_precommercial_core_product_extract": {
+                "product_name": "ABC-101", "is_core_product": True,
+                "launch_status": "not_launched", "evidence_ids": ["e1"],
+            },
+        }
+    )
+    agent = V03BusinessAgent(retriever=StaticRetriever([evidence_for(item)]), llm_provider=provider)
+
+    assert agent.analyze(IPOProfile(company_name="Demo"), [item]) == []
+    assert agent.last_diagnostics[0].code == DiagnosticCode.NOT_APPLICABLE
+    assert agent.last_diagnostics[0].metadata["issue"] == "candidate_conflict"
+    assert agent.last_diagnostics[0].metadata["deterministic_candidate_preserved"] is True
 
 
 def test_unavailable_llm_does_not_block_sufficient_deterministic_facts() -> None:

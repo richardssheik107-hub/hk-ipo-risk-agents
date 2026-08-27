@@ -94,15 +94,18 @@ class V03BusinessAgent:
             extraction, evidence
         )
         if llm_issue in {"evidence_out_of_scope", "candidate_conflict"}:
-            self._record(
-                DiagnosticCode.NEEDS_REVIEW
-                if llm_issue == "evidence_out_of_scope"
-                else DiagnosticCode.CONFLICTING_VALUES,
-                "LLM candidate could not be safely reconciled.",
-                evidence_ids=[item.evidence_id for item in evidence],
-                metadata={"issue": llm_issue, **llm_metadata},
-            )
-            return []
+            # The LLM is an augmentation layer, not an authority allowed to
+            # erase facts established by the deterministic extractor.  The
+            # enhancer has already returned the unmodified deterministic
+            # candidate for these two fail-closed outcomes.  Preserve it for
+            # the existing rule decision while surfacing the rejected LLM
+            # augmentation through the typed diagnostic below.
+            llm_metadata = {
+                "issue": llm_issue,
+                "llm_augmentation_applied": False,
+                "deterministic_candidate_preserved": True,
+                **llm_metadata,
+            }
 
         return self._decide(extraction, evidence, llm_issue, llm_metadata)
 
@@ -397,9 +400,23 @@ class V03BusinessAgent:
             and extraction.has_product_revenue is False
         ):
             risk = build_precommercial_risk(extraction, evidence)
+            diagnostic_code = (
+                DiagnosticCode.NEEDS_REVIEW
+                if llm_issue == "evidence_out_of_scope"
+                else DiagnosticCode.CONFLICTING_VALUES
+                if llm_issue == "candidate_conflict"
+                else DiagnosticCode.RISK_GENERATED
+            )
+            diagnostic_message = (
+                "Deterministic Business risk was preserved; out-of-scope LLM augmentation was discarded."
+                if llm_issue == "evidence_out_of_scope"
+                else "Deterministic Business risk was preserved; conflicting LLM augmentation was discarded."
+                if llm_issue == "candidate_conflict"
+                else "A pending pre-commercial product risk was generated for Verifier review."
+            )
             self._record(
-                DiagnosticCode.RISK_GENERATED,
-                "A pending pre-commercial product risk was generated for Verifier review.",
+                diagnostic_code,
+                diagnostic_message,
                 evidence_ids=evidence_ids,
                 metadata={**common, "risk_id": risk.risk_id},
             )
