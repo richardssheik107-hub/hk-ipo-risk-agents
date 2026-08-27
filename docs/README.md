@@ -1,6 +1,6 @@
 # Documentation Index and Governance
 
-本文档是仓库文档治理入口。当前状态只能由代码 validator、冻结 manifest、当前 Gate、**Competition Metric Protocol** 与最新实测报告共同确定，不能从历史 completion report 的“next step”或旧 metric 口径推断。
+本文档是仓库文档治理入口。当前状态只能由代码 validator、冻结 manifest、当前 Gate、Competition Metric Protocol 与最新实测报告共同确定，不能从历史 completion report 的“next step”或旧 metric 口径推断。
 
 ## 当前权威文档
 
@@ -9,6 +9,9 @@
 | `../README.md` | 项目入口与当前摘要 |
 | `COMPETITION_METRIC_PROTOCOL.md` | **比赛指标唯一评价口径：M1–M5、Existing Gold、Top-K、5D、split** |
 | `V0.4_RELEASE_ACCEPTANCE.md` | **唯一当前 Gate / blocker 状态源** |
+| `V045_CURRENT_EXECUTION_PLAN.md` | **当前操作层总计划：fixed-10、10 家公司、Lunamax/Codex prompt、blocker 恢复、ALL79/Validation 顺序** |
+| `V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md` | Role-B fixed-10 runner / evaluator / Runner-Fixer workflow |
+| `V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md` | **可直接复制给 Lunamax/Codex 的 constrained Runner prompt 与 blocker recovery prompt** |
 | `ROADMAP.md` | 只记录尚未关闭的执行路线 |
 | `V04_FIVE_PERSON_EXECUTION_PLAN.md` | A/B/C/D/E ownership、handoff、merge boundary |
 | `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` | 赛题要求 → 系统能力 → metric / artifact 验收映射 |
@@ -18,8 +21,8 @@
 | `DATA_SCHEMA.md` | 当前公共/比赛 sidecar schema |
 | `COMPETITION_DATA_OVERVIEW.md` | 数据范围、split、Gold/Validation/Blind 边界 |
 | `research/V04_DATA_READINESS.md` | 数据就绪技术事实 |
-| `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 旧 10-case governed offline diagnostic baseline 实测证据 |
-| `V04_ROLE_E_COMPLETION_REPORT.md` | E 当前实现、3-case matrix 与 submission artifact 实测证据 |
+| `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 历史 governed benchmark 证据 |
+| `V04_ROLE_E_COMPLETION_REPORT.md` | E 实现、3-case matrix 与 submission artifact 实测证据 |
 
 Machine-readable metric freeze：
 
@@ -36,17 +39,16 @@ protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
 
 1. 代码中的 validator / Pydantic / Protocol / fail-closed guard；
 2. `reports/frozen/*.json` 与 hash-bound frozen manifest；
-3. 已冻结 completion report 中的**原始实测事实**；
+3. 已冻结 completion report 中的原始实测事实；
 4. `COMPETITION_METRIC_PROTOCOL.md` 对最终比赛 metric 的定义；
 5. `V0.4_RELEASE_ACCEPTANCE.md` 当前 Gate 状态；
-6. 其他 active docs；
-7. research、历史 completion report、Git history。
+6. `V045_CURRENT_EXECUTION_PLAN.md` 当前操作顺序；
+7. 其他 active docs；
+8. research、历史 completion report、Git history。
 
 历史报告里的 Recall@5、旧 risk set 或旧 target 字段保留原始语义，不因新协议追溯改写。
 
 ## Metric-v2 解释规则
-
-正式比赛表述统一为：
 
 ```text
 M1 Existing-Gold Risk Accuracy >=80%
@@ -54,13 +56,10 @@ M1 Existing-Gold Risk Accuracy >=80%
 
 M2 Existing-Gold Evidence Coverage Recall >=85%
    project target >=88%
-   Recall@1/@3/@5/@10/@20 仅为 diagnostics
+   Recall@1/@3/@5/@10/@20 仅 diagnostics
 
 M3 Traceability =100%
-
-M4 Explanation Quality
-   沿用当前 final product rubric
-
+M4 Explanation Quality = current final product rubric
 M5 1D/5D/20D/60D
    primary 5D significant drop = return_5d <= -10%（项目定义）
 ```
@@ -75,35 +74,58 @@ UNJUDGED != negative
 no manual semantic Evidence regrouping
 ```
 
-现有 inventory：101 annotations / 100 valid / 98 official materialized。实际 evaluable support 由只读代码统计。
+现有 inventory：101 annotations / 100 valid / 98 official materialized。
 
 ## 当前状态快照
 
-- 3 个真实 2024 招股书 offline E2E 3/3 completed，完整性 3/3；
+- 3 个真实 2024 招股书 offline E2E 3/3 completed；
 - 三案例 measured traceability 均为 1.0；
 - Market Intelligence、LLM Final Supervisor、conflict/re-check/Human Review/五工作区均已实现；
-- E 已实现 reasoning log / case report / machine Gate-E1 evidence；
-- A 已实现 submission readiness、Blind/provenance/determinism audit、artifact index、Runbook 与 fail-closed packager；
-- B 旧 10-case offline baseline：Risk P/R/F1=0%，Evidence Recall@5=20%，Real LLM=0；
-- 该 20% 只作为 legacy diagnostic，不等同官方 M2 primary；
-- B/A 下一步不是补 Gold，而是 Existing-Gold coverage audit + evaluator + real-LLM Development optimization；
+- A 已实现 submission readiness、Blind/provenance/determinism audit、artifact index 与 fail-closed packager；
+- Existing-Gold coverage audit：79 Development / 19 Validation；128 primary Risk Units / 217 Evidence Units；
+- 1167.HK 已跑通真实 `openai_responses + ark-code-latest` 全流程；
+- Role-B fixed-10 runner 已实现；
+- Role-B 已切换为 constrained Lunamax/Codex Runner/Fixer 分离；
+- 2026-08-27 最近一次本地 Runner 正确在 `IPO_RISK_PROSPECTUS_ROOT` 缺失处 fail-closed；
+- 当前立即动作是设置真实授权招股书根目录后重新跑 fixed-10 baseline；
 - D 尚需 final 1D/5D/20D/60D + frozen 5D metrics；
-- E 尚需 final 3-case real-provider acceptance；
+- E 尚需 final 2410/2460/1318 real-provider acceptance；
 - 2025 Blind y 仍未访问。
 
 精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
 
-## 历史 / 冻结证据
+## Role-B fixed-10 当前文档口径
 
-以下类型默认保留，不因新 metric 口径重写原始测量：
+正式 Metric-v2 subset：
 
-- PR-A–PR-G completion reports；
-- Oracle v1/v2 completion/evaluation records；
-- `reports/frozen/*`；
-- annotation protocol / receipt / ledger；
-- Retriever、模型、数据源 research notes；
-- `CHANGELOG.md` 历史 release ledger；
-- `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` 中旧 10-case offline P/R/F1 与 Recall@K 数值。
+```text
+reports/v045_role_b/fixed10_development_subset.json
+```
+
+首次不存在时由：
+
+```bash
+python scripts/run_v045_role_b_iteration.py --subset-only
+```
+
+确定性生成；之后不重新选公司。
+
+历史 smoke 参考 10 家：
+
+```text
+1167.HK 加科思─B
+1942.HK MOG Holdings
+1961.HK 九尊数字互娱
+9600.HK 新纽科技
+9633.HK 农夫山泉
+9898.HK 微博─SW
+6698.HK 星空华文
+9863.HK 零跑汽车
+2451.HK 绿源集团控股
+2517.HK 锅圈
+```
+
+该列表不覆盖自动生成的正式 Metric-v2 subset。完整公司表/行业/日期及 canonical prompt 见 `V045_CURRENT_EXECUTION_PLAN.md`。
 
 ## 文档生命周期规则
 
@@ -112,14 +134,15 @@ no manual semantic Evidence regrouping
 - 定义当前唯一 contract / Gate / metric / ownership；
 - 记录不可重建的冻结实测结果；
 - 记录稳定技术设计且仍有当前消费者；
-- 作为 governed research / annotation evidence。
+- 作为 governed research / annotation evidence；
+- 记录当前可重复执行的比赛 closure 操作流程。
 
-`COMPETITION_METRIC_PROTOCOL.md` 与 `SUBMISSION_RUNBOOK.md` 属于正式比赛 contract。
+`COMPETITION_METRIC_PROTOCOL.md`、`V0.4_RELEASE_ACCEPTANCE.md`、`V045_CURRENT_EXECUTION_PLAN.md` 与 `SUBMISSION_RUNBOOK.md` 属于当前正式比赛 contract/operation 文档。
 
 ## 更新责任
 
-- **A**：README、Metric Protocol governance、Existing-Gold evaluator/manifest contract、Gate、Roadmap、release/submission；
-- **B**：real-LLM Document optimization、Risk/Evidence benchmark；
+- **A**：README、Metric Protocol governance、Existing-Gold evaluator/manifest contract、Gate、Roadmap、current execution plan、release/submission；
+- **B**：real-LLM Document optimization、Risk/Evidence benchmark、fixed-10 execution artifacts；
 - **C**：Market technical evidence；
 - **D**：Outcome/model/evaluation artifacts；
 - **E**：Supervisor/Trace/Product / explanation-quality evidence；
