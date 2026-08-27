@@ -1315,14 +1315,15 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             for match in pattern.finditer(target.text)
         )
 
-        values: dict[str, list[Decimal]] = {"largest": [], "top_five": []}
-        raw_percentages: dict[str, list[str]] = {"largest": [], "top_five": []}
-        # The first occurrence of a label is the one the period series was
-        # written against; later occurrences refer back to it.
-        label_starts: dict[str, int] = {}
+        # Keep repeated label occurrences local.  Prospectuses often state the
+        # aggregate track-record series first, then repeat "five largest" above
+        # a detail table.  Concatenating both segments lets a row percentage
+        # overwrite the aggregate top-five value when the latest value is read.
+        occurrence_series: dict[
+            str, list[tuple[int, list[Decimal], list[str], int | None]]
+        ] = {"largest": [], "top_five": []}
         scope_skipped = False
         for label_start, start_after_label, name in matches:
-            label_starts.setdefault(name, label_start)
             end = next(
                 (item for item in boundaries if item >= start_after_label), len(target.text)
             )
@@ -1330,14 +1331,25 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             if self._is_balance_scope_segment(segment):
                 scope_skipped = True
                 continue
+            occurrence_values: list[Decimal] = []
+            occurrence_raw: list[str] = []
             for match in _PERCENT_RE.finditer(segment):
                 raw = match.group("value").replace("−", "-").replace(" ", "")
                 try:
                     value = Decimal(raw)
                 except InvalidOperation:
                     continue
-                values[name].append(value)
-                raw_percentages[name].append(match.group(0))
+                occurrence_values.append(value)
+                occurrence_raw.append(match.group(0))
+            if occurrence_values:
+                occurrence_series[name].append(
+                    (
+                        label_start,
+                        occurrence_values,
+                        occurrence_raw,
+                        self._enumerated_period_count(target.text, label_start),
+                    )
+                )
 
         context = self._context_chunks(target, chunks_by_id)
         periods, period_source, period_issues = self._best_v03_periods(
@@ -1345,6 +1357,65 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             target,
             context,
         )
+        values: dict[str, list[Decimal]] = {"largest": [], "top_five": []}
+        raw_percentages: dict[str, list[str]] = {"largest": [], "top_five": []}
+        selected_enumerated_counts: dict[str, int | None] = {
+            "largest": None,
+            "top_five": None,
+        }
+        occurrence_diagnostics: dict[str, list[dict[str, object]]] = {
+            "largest": [],
+            "top_five": [],
+        }
+        occurrence_selection: dict[str, str | None] = {
+            "largest": None,
+            "top_five": None,
+        }
+        for name, occurrences in occurrence_series.items():
+            selected_index: int | None = None
+            selected_basis: str | None = None
+            for index, (_, occurrence_values, _, enumerated_count) in enumerate(occurrences):
+                if enumerated_count is not None and len(occurrence_values) == enumerated_count:
+                    selected_index = index
+                    selected_basis = "enumerated_period_count"
+                    break
+                if (
+                    enumerated_count is None
+                    and periods
+                    and len(occurrence_values) == len(periods)
+                ):
+                    selected_index = index
+                    selected_basis = "resolved_period_count"
+                    break
+            if selected_index is None and occurrences:
+                # Preserve fail-closed behaviour when no occurrence aligns.  The
+                # existing missing-period/count-mismatch issues stay authoritative;
+                # later occurrences simply cannot silently change the value.
+                selected_index = 0
+                selected_basis = "first_nonempty_fail_closed"
+
+            if selected_index is not None:
+                _, selected_values, selected_raw, selected_count = occurrences[selected_index]
+                values[name] = selected_values
+                raw_percentages[name] = selected_raw
+                selected_enumerated_counts[name] = selected_count
+                occurrence_selection[name] = selected_basis
+
+            occurrence_diagnostics[name] = [
+                {
+                    "label_start": label_start,
+                    "value_count": len(occurrence_values),
+                    "enumerated_period_count": enumerated_count,
+                    "selected": index == selected_index,
+                }
+                for index, (
+                    label_start,
+                    occurrence_values,
+                    _,
+                    enumerated_count,
+                ) in enumerate(occurrences)
+            ]
+
         issues = list(period_issues)
         if self._review_only_context(evidence, target):
             issues.append("summary_or_risk_context_requires_review")
@@ -1354,10 +1425,10 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             issues.append("concentration_percentage_missing")
 
         largest, largest_issue = self._latest_concentration_value(
-            values["largest"], periods, self._enumerated_period_count(target.text, label_starts.get("largest", 0))
+            values["largest"], periods, selected_enumerated_counts["largest"]
         )
         top_five, top_five_issue = self._latest_concentration_value(
-            values["top_five"], periods, self._enumerated_period_count(target.text, label_starts.get("top_five", 0))
+            values["top_five"], periods, selected_enumerated_counts["top_five"]
         )
         issues.extend(largest_issue)
         issues.extend(top_five_issue)
@@ -1399,6 +1470,8 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             context_pages=self._dedupe_ints([item.page for item in context_used]),
             metadata={
                 "raw_percentages": raw_percentages,
+                "percentage_occurrence_selection": occurrence_selection,
+                "percentage_occurrences": occurrence_diagnostics,
                 "source_context": evidence.metadata.get("source_context"),
                 "period_candidates": [
                     {"period_end": item.end.isoformat(), "period_months": item.months}

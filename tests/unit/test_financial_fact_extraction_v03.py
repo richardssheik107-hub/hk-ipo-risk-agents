@@ -661,3 +661,51 @@ def test_a_span_phrase_is_not_counted_as_an_enumeration() -> None:
     assert result.issues == []
     assert result.top_five_pct == Decimal("83.3")
     assert result.largest_counterparty_pct == Decimal("76.8")
+
+
+def test_repeated_detail_label_does_not_overwrite_aggregate_series() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "於2019年、2020年及2021年，五大供應商佔採購總額的"
+            "68.3%、39.9%及34.8%，最大供應商佔採購總額的"
+            "26.2%、17.3%及8.6%。"
+            "五大供應商明細：供應商A佔9.4%，供應商B佔5.0%。"
+        ),
+        header=(
+            "截至2019年12月31日止年度\n截至2020年12月31日止年度\n"
+            "截至2021年12月31日止年度"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("8.6")
+    assert result.top_five_pct == Decimal("34.8")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["top_five"] == (
+        "enumerated_period_count"
+    )
+    assert len(candidate["percentage_occurrences"]["top_five"]) == 2
+
+
+def test_empty_first_label_yields_to_later_aligned_occurrence() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "五大供應商資料。"
+            "於2019年、2020年及2021年，五大供應商佔採購總額的"
+            "68.3%、39.9%及34.8%，最大供應商佔採購總額的"
+            "26.2%、17.3%及8.6%。"
+        ),
+        header=(
+            "截至2019年12月31日止年度\n截至2020年12月31日止年度\n"
+            "截至2021年12月31日止年度"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("8.6")
+    assert result.top_five_pct == Decimal("34.8")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert len(candidate["percentage_occurrences"]["top_five"]) == 1
