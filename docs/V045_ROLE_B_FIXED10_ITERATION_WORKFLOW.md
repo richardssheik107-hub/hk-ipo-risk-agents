@@ -254,3 +254,32 @@ unjudged != negative
 - 伪造 Evidence；
 - 放宽 Schema / Verifier 来掩盖非法输出；
 - 将 debug-subset 成绩包装成正式比赛 PASS。
+
+## 10. Lunamax 自动执行入口
+
+如果本地 Codex/Lunamax 已经跑通，不再给它开放式项目任务。固定使用：
+
+```text
+docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
+```
+
+该 Runbook 已固定以下原则：
+
+```text
+Runner only
+-> 不扫描全仓库
+-> 不重构
+-> 不自动修代码
+-> 不重新选公司
+-> 只运行现有 fixed-10 runner
+-> 只读取 iteration_summary.json / failure_focus.json
+-> 返回 baseline 后停止
+```
+
+当前 Metric-v2 正式 fixed-10 的唯一权威来源继续是本地生成的：
+
+```text
+reports/v045_role_b/fixed10_development_subset.json
+```
+
+Runbook 中列出的旧版 10 家仅用于人工 smoke / 公司名称参考，不覆盖当前自动生成的正式 fixed-10。
