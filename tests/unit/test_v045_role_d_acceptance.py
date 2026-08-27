@@ -450,6 +450,15 @@ def test_extra_file_in_canonical_directory_is_rejected(tmp_path: Path) -> None:
     assert report["checks"][0]["detail"]["extra"] == ["helper.json"]
 
 
+def test_extra_directory_in_canonical_directory_is_rejected(tmp_path: Path) -> None:
+    paths = _fixture(tmp_path)
+    (paths["role_d"] / "helper").mkdir()
+    report = _check(paths)
+    assert report["passed"] is False
+    assert report["checks"][0]["detail"]["extra"] == ["helper"]
+    assert report["checks"][0]["detail"]["non_file_entries"] == ["helper"]
+
+
 def test_checker_cli_failure_returns_nonzero_and_writes_outside_canonical(tmp_path: Path) -> None:
     role_d = tmp_path / "role_d"
     role_d.mkdir()

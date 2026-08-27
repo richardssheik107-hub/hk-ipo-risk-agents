@@ -215,19 +215,28 @@ def check_role_d_acceptance(
         if not passed:
             blockers.append(blocker)
 
+    actual_entries = (
+        {path.name for path in role_d_dir.iterdir()} if role_d_dir.is_dir() else set()
+    )
     actual_files = (
         {path.name for path in role_d_dir.iterdir() if path.is_file()}
         if role_d_dir.is_dir()
         else set()
     )
+    non_file_entries = actual_entries - actual_files
+    canonical_contract_ok = (
+        actual_entries == CANONICAL_ROLE_D_FILES
+        and actual_files == CANONICAL_ROLE_D_FILES
+    )
     record(
         "canonical_four_file_contract",
-        actual_files == CANONICAL_ROLE_D_FILES,
+        canonical_contract_ok,
         {
             "expected": sorted(CANONICAL_ROLE_D_FILES),
-            "actual": sorted(actual_files),
+            "actual": sorted(actual_entries),
             "missing": sorted(CANONICAL_ROLE_D_FILES - actual_files),
-            "extra": sorted(actual_files - CANONICAL_ROLE_D_FILES),
+            "extra": sorted(actual_entries - CANONICAL_ROLE_D_FILES),
+            "non_file_entries": sorted(non_file_entries),
         },
         "Role-D canonical directory must contain exactly the four formal artifacts",
     )
