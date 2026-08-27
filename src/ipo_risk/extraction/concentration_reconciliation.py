@@ -276,6 +276,12 @@ class _ConcentrationReconciliationMixin:
                     "status": item.status.value,
                     "issues": list(item.issues),
                     "source_context": item.metadata.get("source_context"),
+                    "percentage_occurrence_selection": item.metadata.get(
+                        "percentage_occurrence_selection"
+                    ),
+                    "percentage_occurrences": item.metadata.get(
+                        "percentage_occurrences", {}
+                    ),
                     "selected_for_merge": item in selected,
                 }
             )
