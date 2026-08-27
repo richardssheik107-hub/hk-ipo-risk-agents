@@ -97,6 +97,19 @@ def _supervisor(payload: dict | None) -> LLMFinalSupervisor:
     return LLMFinalSupervisor(llm_provider=provider)
 
 
+class _SequenceProvider:
+    name = "sequence"
+    last_call_metadata = None
+
+    def __init__(self, payloads: list[dict]) -> None:
+        self.payloads = list(payloads)
+        self.calls: list[list[Evidence]] = []
+
+    def generate_structured(self, *, task_name, prompt_version, evidence, response_model):
+        self.calls.append(evidence)
+        return response_model.model_validate(self.payloads.pop(0))
+
+
 def test_the_supervision_prompt_identity_is_registered_and_exact() -> None:
     assert resolve_domain_instruction(FINAL_SUPERVISION_TASK, FINAL_SUPERVISION_PROMPT_VERSION)
     with pytest.raises(PromptResolutionError):
@@ -137,6 +150,42 @@ def test_an_out_of_scope_citation_invalidates_the_whole_judgement(payload, reaso
     assert bundle.judgement is None, reason
     assert bundle.status is SupervisionStatus.UNAVAILABLE
     assert "ScopeViolation" in bundle.reason
+
+
+def test_one_bounded_scope_correction_can_recover_without_relaxing_scope() -> None:
+    provider = _SequenceProvider(
+        [
+            _judgement(
+                key_findings=[
+                    {"statement": "invalid", "risk_ids": ["risk-unknown"], "evidence_ids": []}
+                ]
+            ),
+            _judgement(),
+        ]
+    )
+
+    bundle = LLMFinalSupervisor(provider).supervise(_inputs())
+
+    assert bundle.status is SupervisionStatus.AVAILABLE
+    assert len(provider.calls) == 2
+    correction = next(item for item in provider.calls[1] if item.section == "scope_correction")
+    assert "reference_scope" in correction.text
+    assert "supervision_input" in correction.text
+
+
+def test_scope_correction_remains_fail_closed_after_one_retry() -> None:
+    invalid = _judgement(
+        key_findings=[
+            {"statement": "invalid", "risk_ids": ["risk-unknown"], "evidence_ids": []}
+        ]
+    )
+    provider = _SequenceProvider([invalid, invalid])
+
+    bundle = LLMFinalSupervisor(provider).supervise(_inputs())
+
+    assert bundle.status is SupervisionStatus.UNAVAILABLE
+    assert bundle.outcome is SynthesisOutcome.REJECTED_OUT_OF_SCOPE
+    assert len(provider.calls) == 2
 
 
 def test_the_judgement_cannot_go_below_the_verified_severity_floor() -> None:
@@ -202,6 +251,59 @@ def test_conflict_status_counts_are_carried_into_the_result_metadata() -> None:
     counts = bundle.result.metadata["conflict_status_counts"]
     assert counts["unresolved"] == 1
     assert bundle.result.metadata["unresolved_conflict_count"] == 1
+
+
+def test_bounded_payload_keeps_conflict_scope_but_omits_duplicate_provenance() -> None:
+    supervisor = LLMFinalSupervisor(llm_provider=None)
+    inputs = _inputs()
+    composed = V04FinalSupervisor().finalize(inputs)
+    payload = supervisor._payload(
+        composed,
+        inputs,
+        [_conflict()],
+        (),
+        (),
+        "high",
+    )
+
+    projected = payload["conflicts"][0]
+    assert projected["conflict_id"] == _conflict().conflict_id
+    assert projected["risk_ids"] == [RISK_ID]
+    assert "case_id" not in projected
+    assert "run_id" not in projected
+    assert "created_at" not in projected
+    assert "claim_ids" not in projected
+    assert payload["reference_scope"]["allowed_risk_ids"] == [RISK_ID]
+    assert payload["reference_scope"]["allowed_conflict_ids"] == [_conflict().conflict_id]
+
+
+def test_conflict_evidence_is_in_scope_without_becoming_a_risk() -> None:
+    conflict = _conflict().model_copy(update={"evidence_ids": ["conflict-evidence-1"]})
+    supervisor = LLMFinalSupervisor(llm_provider=None)
+    inputs = FinalSupervisionInput(document_supervision=SupervisionResult())
+    composed = V04FinalSupervisor().finalize(inputs)
+    payload = supervisor._payload(composed, inputs, [conflict], (), (), "low")
+    judgement = FinalSupervisionJudgement.model_validate(
+        _judgement(
+            overall_risk="low",
+            key_findings=[
+                {
+                    "statement": "an unresolved conflict remains",
+                    "risk_ids": [],
+                    "evidence_ids": ["conflict-evidence-1"],
+                }
+            ],
+            conflict_assessments=[
+                {"conflict_id": conflict.conflict_id, "assessment": "requires review"}
+            ],
+        )
+    )
+
+    check = supervisor._validate_scope(judgement, payload)
+
+    assert check["status"] == "passed"
+    assert check["supplied_risk_id_count"] == 0
+    assert check["cited_evidence_ids"] == ["conflict-evidence-1"]
 
 
 def test_the_severity_floor_is_the_highest_verified_level() -> None:

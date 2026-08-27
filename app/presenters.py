@@ -108,6 +108,61 @@ def risk_status_counts(result: IPOAnalysisResult) -> dict[str, int]:
     }
 
 
+def _llm_diagnostic_signals(value: object) -> tuple[bool, bool]:
+    """Return whether existing diagnostics prove remote LLM success/failure."""
+
+    if isinstance(value, dict):
+        provider = str(value.get("llm_provider") or value.get("provider_name") or "")
+        failure_kind = value.get("llm_failure_kind")
+        internal_codes = value.get("internal_issue_codes") or []
+        failed = bool(failure_kind) or any(
+            str(code).startswith("llm_") for code in internal_codes
+        )
+        succeeded = provider not in {"", "mock", "unavailable"} and not failed
+        for item in value.values():
+            child_success, child_failure = _llm_diagnostic_signals(item)
+            succeeded = succeeded or child_success
+            failed = failed or child_failure
+        return succeeded, failed
+    if isinstance(value, (list, tuple)):
+        succeeded = failed = False
+        for item in value:
+            child_success, child_failure = _llm_diagnostic_signals(item)
+            succeeded = succeeded or child_success
+            failed = failed or child_failure
+        return succeeded, failed
+    return False, False
+
+
+def runtime_completion_status(result: IPOAnalysisResult) -> str:
+    """Distinguish real-LLM completion from honest deterministic degradation."""
+
+    configuration = result.metadata.get("configuration", {})
+    modes = result.metadata.get("component_modes", {})
+    provider = str(modes.get("llm_provider") or "")
+    if configuration.get("runtime_mode") != "ai_enhanced" or provider in {
+        "",
+        "mock",
+        "unavailable",
+    }:
+        return result.status.value
+
+    diagnostics = result.metadata.get("component_diagnostics", {})
+    synthesis = diagnostics.get("final_supervision_llm") or {}
+    succeeded, failed = _llm_diagnostic_signals(diagnostics)
+    synthesis_available = synthesis.get("status") == "available" and isinstance(
+        synthesis.get("judgement"), dict
+    )
+    synthesis_failed = synthesis.get("status") == "unavailable"
+    succeeded = succeeded or synthesis_available
+    failed = failed or synthesis_failed
+    if synthesis_available and not failed:
+        return "completed_with_real_llm"
+    if succeeded:
+        return "completed_with_partial_llm"
+    return "completed_with_deterministic_fallback"
+
+
 def domain_payload(result: IPOAnalysisResult, domain: str) -> dict[str, object]:
     """Build a domain-specific, audit-friendly display payload."""
 
@@ -151,6 +206,7 @@ def component_statuses(result: IPOAnalysisResult) -> list[dict[str, object]]:
         "legal": "legal_agent",
         "business": "business_agent",
     }
+    llm_status = runtime_completion_status(result)
     for component in components:
         mode = modes.get(mode_aliases.get(component, component), "Unavailable")
         component_diagnostic = diagnostics.get(component, {})
@@ -160,6 +216,10 @@ def component_statuses(result: IPOAnalysisResult) -> list[dict[str, object]]:
         )
         if failed:
             status = "failed"
+        elif component == "llm_provider" and llm_status == "completed_with_partial_llm":
+            status = "partial"
+        elif component == "llm_provider" and llm_status == "completed_with_deterministic_fallback":
+            status = "degraded"
         elif mode == "unavailable":
             status = "unavailable"
         else:
@@ -180,6 +240,7 @@ def result_payload(result: IPOAnalysisResult) -> dict[str, object]:
 
     return {
         "status": result.status.value,
+        "runtime_completion_status": runtime_completion_status(result),
         "profile": profile_payload(result),
         "component_modes": result.metadata.get("component_modes", {}),
         "component_statuses": component_statuses(result),

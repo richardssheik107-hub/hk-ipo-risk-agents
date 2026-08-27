@@ -20,6 +20,8 @@ verifier: specialized_v03
 supervisor: v03
 predictor: rule_based
 llm_provider: openai_compatible
+llm_timeout_seconds: 300
+llm_max_retries: 0
 market_data_provider: unavailable
 ipo_data_provider: catalog
 repository: json

@@ -226,6 +226,8 @@ def _render_sidebar_status(payload: dict[str, object], stages) -> None:
     st.sidebar.markdown(
         f"**{_display_value(profile.get('stock_code'))}** · {_display_value(profile.get('company_name'))}"
     )
+    completion = payload.get("runtime_completion_status") or payload.get("status")
+    st.sidebar.caption(f"运行结果 · {status_label(completion)}")
     for stage in stages:
         status_obj = getattr(stage, "status", "unavailable")
         raw_status = getattr(status_obj, "value", status_obj)

@@ -186,6 +186,9 @@ def test_stage_and_report_copy_preserve_project_terms() -> None:
     assert "PR-F" in (stage_notice_zh(stage) or "")
     assert report_section_title(9, "fallback") == "Final Supervisor 综合结论"
     assert status_label("disabled") == "未启用"
+    assert status_label("completed_with_real_llm") == "真实 LLM 完成"
+    assert status_label("completed_with_partial_llm") == "部分 LLM 完成"
+    assert status_label("completed_with_deterministic_fallback") == "确定性降级完成"
 
 
 def test_future_modules_are_explicitly_planned_and_have_no_fake_metrics() -> None:

@@ -172,6 +172,19 @@ def test_final_supervisor_becomes_available_once_pr_g_channels_run() -> None:
     assert {metric.label: metric.value for metric in stage.metrics}["Channels available"] == "2 of 4"
 
 
+def test_final_supervisor_is_partial_when_real_llm_degraded() -> None:
+    payload = {
+        **_runtime_complete_payload(),
+        "runtime_completion_status": "completed_with_deterministic_fallback",
+    }
+
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
+
+    assert stage.status is StageStatus.PARTIAL
+    assert "LLM Final Supervisor did not complete" in stage.summary
+    assert "provider diagnostics" in stage.blocking_reason
+
+
 def test_final_supervisor_without_the_channel_names_no_retired_gate() -> None:
     stage = {item.stage_id: item for item in resolve_stages(_populated_payload())}["final_supervisor"]
     assert stage.status is StageStatus.PARTIAL

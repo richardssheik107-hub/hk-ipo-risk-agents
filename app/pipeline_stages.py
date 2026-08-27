@@ -177,6 +177,22 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
     if final:
         states = final.get("channel_states", [])
         available = sum(1 for state in states if state.get("status") == "available")
+        completion = payload.get("runtime_completion_status")
+        if completion in {
+            "completed_with_partial_llm",
+            "completed_with_deterministic_fallback",
+        }:
+            return StageView(
+                stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
+                status=StageStatus.PARTIAL,
+                summary="Deterministic cross-channel composition is available, but the LLM Final Supervisor did not complete successfully.",
+                blocking_reason="the real LLM synthesis degraded; inspect the recorded provider diagnostics",
+                metrics=(
+                    Metric("Channels available", f"{available} of {len(states)}"),
+                    Metric("Unresolved conflicts", str(final.get("metadata", {}).get("unresolved_conflict_count", 0))),
+                    Metric("Referenced risks", str(len(final.get("referenced_risk_ids", [])))),
+                ),
+            )
         return StageView(
             stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
             status=StageStatus.AVAILABLE,

@@ -177,6 +177,65 @@ def test_product_payload_exposes_profile_counts_domains_and_component_failures()
     json.dumps(payload)
 
 
+@pytest.mark.parametrize(
+    ("diagnostics", "expected", "component_status"),
+    [
+        (
+            {
+                "final_supervision_llm": {
+                    "status": "available",
+                    "judgement": {},
+                    "call": {"provider_name": "openai_responses"},
+                }
+            },
+            "completed_with_real_llm",
+            "completed",
+        ),
+        (
+            {
+                "business": {"llm_provider": "openai_responses"},
+                "final_supervision_llm": {"status": "unavailable"},
+            },
+            "completed_with_partial_llm",
+            "partial",
+        ),
+        (
+            {
+                "business": {
+                    "llm_provider": "openai_responses",
+                    "llm_failure_kind": "transport",
+                },
+                "final_supervision_llm": {"status": "unavailable"},
+            },
+            "completed_with_deterministic_fallback",
+            "degraded",
+        ),
+    ],
+)
+def test_ai_runtime_completion_distinguishes_real_partial_and_fallback(
+    diagnostics: dict[str, object], expected: str, component_status: str
+) -> None:
+    result = IPOAnalysisResult(
+        request_id="request",
+        company_name="Example",
+        stock_code="1167.HK",
+        workflow_version="enhanced_v2",
+        metadata={
+            "configuration": {"runtime_mode": "ai_enhanced"},
+            "component_modes": {"llm_provider": "openai_responses"},
+            "component_diagnostics": diagnostics,
+        },
+    )
+
+    payload = result_payload(result)
+
+    assert payload["runtime_completion_status"] == expected
+    llm_row = next(
+        row for row in payload["component_statuses"] if row["component"] == "llm_provider"
+    )
+    assert llm_row["status"] == component_status
+
+
 def test_markdown_report_preserves_evidence_verifier_and_section_metadata() -> None:
     risk = _risk(VerificationStatus.VERIFIED)
     result = IPOAnalysisResult(

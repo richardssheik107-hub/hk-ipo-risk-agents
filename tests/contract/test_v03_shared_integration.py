@@ -207,7 +207,10 @@ def test_v03_report_has_stable_governance_sections() -> None:
     assert "owner waiver" in sections[-1].summary
 
 
-def test_v03_configs_select_enhanced_workflow_and_preserve_mvp_default() -> None:
+def test_v03_configs_select_enhanced_workflow_and_preserve_mvp_default(monkeypatch) -> None:
+    # This contract verifies the checked-in YAML profiles, independently of a
+    # developer's real-provider environment used by the competition frontend.
+    monkeypatch.delenv("IPO_RISK_LLM_PROVIDER", raising=False)
     offline = load_settings("configs/v03_offline.yaml")
     ai = load_settings("configs/v03_ai.yaml")
     assert offline.workflow_version == ai.workflow_version == "enhanced_v2"

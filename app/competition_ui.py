@@ -91,6 +91,10 @@ _STATUS_LABELS = {
     "partial": "部分可用",
     "pending_gate": "待 Gate",
     "completed": "已完成",
+    "completed_with_real_llm": "真实 LLM 完成",
+    "completed_with_partial_llm": "部分 LLM 完成",
+    "completed_with_deterministic_fallback": "确定性降级完成",
+    "degraded": "已降级",
     "verified": "已验证",
     "needs_review": "待复核",
     "pending": "待处理",
@@ -459,9 +463,17 @@ def domain_summary_rows(payload: dict[str, Any]) -> list[dict[str, object]]:
 
 def _status_tone(status: object) -> str:
     normalized = str(status or "unavailable").lower()
-    if normalized in {"available", "completed", "verified"}:
+    if normalized in {"available", "completed", "completed_with_real_llm", "verified"}:
         return "status-good"
-    if normalized in {"partial", "needs_review", "pending", "pending_gate"}:
+    if normalized in {
+        "partial",
+        "completed_with_partial_llm",
+        "completed_with_deterministic_fallback",
+        "degraded",
+        "needs_review",
+        "pending",
+        "pending_gate",
+    }:
         return "status-warn"
     if normalized in {"failed", "rejected", "error"}:
         return "status-bad"
@@ -474,7 +486,7 @@ def render_case_header(payload: dict[str, Any]) -> None:
     stock_code = escape(str(profile.get("stock_code") or "不可用"))
     listing_date = escape(str(profile.get("listing_date") or "不可用"))
     industry = escape(str(profile.get("industry") or "不可用"))
-    raw_status = payload.get("status") or "unavailable"
+    raw_status = payload.get("runtime_completion_status") or payload.get("status") or "unavailable"
     st.markdown(
         "<div class='case-shell'><div>"
         f"<div class='case-name'>{company} <span style='opacity:.5;font-weight:620'>· {stock_code}</span></div>"

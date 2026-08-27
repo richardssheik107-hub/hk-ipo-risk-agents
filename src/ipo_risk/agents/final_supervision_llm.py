@@ -290,8 +290,29 @@ class LLMFinalSupervisor:
         """The bounded payload; the model sees this and nothing else."""
 
         verified = list(inputs.document_supervision.verified_risks) if inputs.document_supervision else []
+        risk_groups = (verified, list(unsettled_risks), list(rejected_risks))
+        allowed_risk_ids = sorted({risk.risk_id for group in risk_groups for risk in group})
+        allowed_evidence_ids = sorted(
+            {
+                evidence.evidence_id
+                for group in risk_groups
+                for risk in group
+                for evidence in risk.evidence
+            }
+            | {
+                evidence_id
+                for conflict in conflicts
+                for evidence_id in conflict.evidence_ids
+            }
+        )
+        allowed_conflict_ids = sorted(conflict.conflict_id for conflict in conflicts)
         return {
             "deterministic_severity_floor": floor,
+            "reference_scope": {
+                "allowed_risk_ids": allowed_risk_ids,
+                "allowed_evidence_ids": allowed_evidence_ids,
+                "allowed_conflict_ids": allowed_conflict_ids,
+            },
             "document_summary": composed.summary,
             "verified_risks": [
                 {
@@ -317,7 +338,9 @@ class LLMFinalSupervisor:
             "channel_states": [state.model_dump(mode="json") for state in composed.channel_states],
             "composite_findings": [finding.model_dump(mode="json") for finding in composed.composite_findings],
             "market_context": (
-                inputs.market_context.model_dump(mode="json") if inputs.market_context is not None else None
+                self._market_context_summary(inputs.market_context)
+                if inputs.market_context is not None
+                else None
             ),
             "model_prediction": (
                 inputs.model_prediction.model_dump(mode="json") if inputs.model_prediction is not None else None
@@ -332,8 +355,46 @@ class LLMFinalSupervisor:
                 if inputs.rule_prediction is not None
                 else None
             ),
-            "conflicts": [conflict.model_dump(mode="json") for conflict in conflicts],
+            "conflicts": [self._conflict_summary(conflict) for conflict in conflicts],
             "uncertainty_statement": composed.uncertainty_statement,
+        }
+
+    @staticmethod
+    def _market_context_summary(market_context: Any) -> dict[str, Any]:
+        """Keep governed market facts while omitting duplicate audit provenance.
+
+        The full provenance remains in the runtime artifacts and trace.  The Final
+        Supervisor only needs channel availability and the already-governed
+        observations; sending the same manifest provenance again adds latency but
+        no supervisory fact.
+        """
+
+        return {
+            "status": market_context.status.value,
+            "reason": market_context.reason,
+            "blocking_gate": market_context.blocking_gate,
+            "observations": [item.model_dump(mode="json") for item in market_context.observations],
+            "feature_manifest_hash": market_context.feature_manifest_hash,
+        }
+
+    @staticmethod
+    def _conflict_summary(conflict: CompetitionConflict) -> dict[str, Any]:
+        """Project a conflict to the facts the synthesis and scope guard need.
+
+        Case/run timestamps and claim bookkeeping are already retained by the
+        conflict artifact.  Excluding them here avoids asking the model to reason
+        over duplicate provenance while preserving every governed identifier it
+        may legitimately cite.
+        """
+
+        return {
+            "conflict_id": conflict.conflict_id,
+            "status": conflict.status.value,
+            "summary": conflict.summary,
+            "resolution_note": conflict.resolution_note,
+            "involved_agents": list(conflict.involved_agents),
+            "risk_ids": list(conflict.risk_ids),
+            "evidence_ids": list(conflict.evidence_ids),
         }
 
     @staticmethod
@@ -411,15 +472,34 @@ class LLMFinalSupervisor:
             )
         started = perf_counter()
         try:
-            result = self.llm_provider.generate_structured(
-                task_name=FINAL_SUPERVISION_TASK,
-                prompt_version=self.prompt_version,
-                evidence=self._bounded_evidence(payload),
-                response_model=FinalSupervisionJudgement,
-            )
-            if not isinstance(result, FinalSupervisionJudgement):
-                result = FinalSupervisionJudgement.model_validate(result)
-            scope_check = self._validate_scope(result, payload)
+            scope_payload = payload
+            for scope_attempt in range(1, 3):
+                result = self.llm_provider.generate_structured(
+                    task_name=FINAL_SUPERVISION_TASK,
+                    prompt_version=self.prompt_version,
+                    evidence=self._bounded_evidence(scope_payload),
+                    response_model=FinalSupervisionJudgement,
+                )
+                if not isinstance(result, FinalSupervisionJudgement):
+                    result = FinalSupervisionJudgement.model_validate(result)
+                try:
+                    scope_check = self._validate_scope(result, payload)
+                    break
+                except ScopeViolation as exc:
+                    if scope_attempt >= 2:
+                        raise
+                    scope_payload = {
+                        **payload,
+                        "scope_correction": {
+                            "previous_result_rejected": True,
+                            "violation_type": str(exc),
+                            "instruction": (
+                                "Return a corrected judgement using only IDs in "
+                                "reference_scope. Use empty ID lists when none apply. "
+                                "Never cite supervision_input transport-envelope IDs."
+                            ),
+                        },
+                    }
         except Exception as exc:
             latency = max(0, int((perf_counter() - started) * 1000))
             refused = isinstance(exc, ScopeViolation)
@@ -538,17 +618,10 @@ class LLMFinalSupervisor:
         measured statement about this run rather than an assertion about the code.
         """
 
-        risk_groups = ("verified_risks", "unsettled_risks", "rejected_risks")
-        allowed_risks = {
-            risk["risk_id"] for group in risk_groups for risk in payload[group]
-        }
-        allowed_evidence = {
-            evidence_id
-            for group in risk_groups
-            for risk in payload[group]
-            for evidence_id in risk["evidence_ids"]
-        }
-        allowed_conflicts = {conflict["conflict_id"] for conflict in payload["conflicts"]}
+        reference_scope = payload["reference_scope"]
+        allowed_risks = set(reference_scope["allowed_risk_ids"])
+        allowed_evidence = set(reference_scope["allowed_evidence_ids"])
+        allowed_conflicts = set(reference_scope["allowed_conflict_ids"])
 
         cited_risks = {
             risk_id
