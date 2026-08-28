@@ -2,7 +2,7 @@
 
 > 初始审计基线：`a2d1f16f6e72e5520881b362e356bdf2d09e2809`
 >
-> 已同步最新 main：`2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33`
+> 当前能力基线：merged PR #153（Evidence audit）、PR #154（统一治理）与 PR #155（Role-D v2 决议）
 
 ## 1. 目标
 
@@ -36,9 +36,9 @@ docs/SUBMISSION_RUNBOOK.md
 
 新增：`COMPETITION_CLOSURE_PLAN.md`、`ROLE_B_M1_M2_PLAN.md`、`ROLE_D_MODEL_DECISION.md` 和本文档。
 
-## 4. 最新 main 纳入情况
+## 4. 最新能力纳入情况
 
-PR #153 的 read-only Evidence auditor 与测试已保留在分支；其过期单案例状态报告没有恢复。当前计划将 auditor 视为已实现工具，同时仍将 Candidate/LLM/Builder lifecycle trace 列为待补缺口。
+PR #153 的 read-only Evidence auditor 与测试已经合并进 `main`。当前计划将 auditor 视为已实现工具，同时仍将 Candidate/LLM/Builder lifecycle trace 列为待补缺口；过期的单案例完成报告没有恢复。
 
 Role-D v2 candidate 已纳入当前计划，但仍保持 research candidate；正式 receipt 与 handoff 继续绑定 frozen PR-F，直到 A 创建 promotion record。
 
