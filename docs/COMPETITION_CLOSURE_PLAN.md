@@ -2,7 +2,7 @@
 
 > 状态日期：`2026-08-28`
 >
-> 当前 main：`2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33`
+> 版本锚点：以本文件所在提交为准
 >
 > 当前结论：**NOT COMPETITION_READY**
 
