@@ -12,6 +12,7 @@
 | `COMPETITION_METRIC_PROTOCOL.md` | M1–M5、Existing Gold、Top-K、5D、split 的唯一指标口径 |
 | `V0.4_RELEASE_ACCEPTANCE.md` | **唯一当前 Gate / blocker 状态源** |
 | `V045_CURRENT_EXECUTION_PLAN.md` | 当前操作顺序：B Runner/Fixer、D release revalidation、C/E closure、A package |
+| `V045_ROLE_D_FINAL_CLOSURE.md` | **Role-D 三层证据、机器 receipt、live strict rerun 与 D→E handoff 边界** |
 | `V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md` | Role-B fixed-10 runner / evaluator workflow |
 | `V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md` | constrained Runner / blocker recovery prompt |
 | `ROADMAP.md` | 尚未关闭的执行路线 |
@@ -33,6 +34,15 @@ configs/v045_competition_metric_protocol.json
 protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
 ```
 
+Role-D recorded materialization evidence：
+
+```text
+reports/frozen/v045_role_d_m5_materialization_receipt.json
+python scripts/validate_v045_role_d_receipt.py
+```
+
+该 receipt 绑定 frozen PR-E/PR-F manifest、Metric Protocol、四个正式 artifact 哈希和治理声明，并由 CI 做网络无关校验。它记录一次已完成的外部治理物化，不替代持有授权 EOD 与完整 frozen runtime 时必须执行的 `check_v045_role_d_m5.py` live strict revalidation。
+
 `AGENTS.md` 是跨版本工程治理规则，优先级高于叙述性文档。
 
 ## Source-of-truth hierarchy
@@ -40,7 +50,7 @@ protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
 出现冲突时按以下顺序裁定：
 
 1. 代码中的 validator / Pydantic / Protocol / fail-closed guard；
-2. `reports/frozen/*.json` 与 hash-bound frozen manifest；
+2. `reports/frozen/*.json` 与 hash-bound frozen manifest / receipt；
 3. 已冻结报告或 PR 中不可重建的原始实测事实；
 4. `COMPETITION_METRIC_PROTOCOL.md`；
 5. `V0.4_RELEASE_ACCEPTANCE.md`；
@@ -83,6 +93,7 @@ no manual semantic Evidence regrouping
 - B fixed-10 `iter_004` = 10/10 real-LLM，M1=23.33%、M2=18.75%；
 - D governed M5 builder、strict checker、label-free product handoff 与 A four-file readiness contract 已实现；
 - PR #141 已记录 D 的 70-case 2024 Validation M5 PASS、四文件 hashes 与 deterministic resume PASS；
+- D 的历史物化现已由 committed hash-bound receipt、network-free validator 与 CI 绑定到 frozen manifests；
 - D runtime、授权 EOD 与完整 PR-E/PR-F research runtime 未提交，发布前仍需 current-main strict revalidation；
 - D→E final-three package 仍需在持有 frozen runtime 的本地环境物化；
 - D v2 high-recall output 仍为 research candidate，未替换 frozen PR-F；
@@ -92,6 +103,14 @@ no manual semantic Evidence regrouping
 精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
 
 ## Role D 当前可重复操作
+
+网络无关的 recorded receipt 校验：
+
+```bash
+python scripts/validate_v045_role_d_receipt.py
+```
+
+持有完整外部不可变输入时的 live build / strict check / final-three handoff：
 
 ```bash
 python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
@@ -104,7 +123,7 @@ python scripts/build_v04_pr_f_product_handoff.py \
   --output-dir reports/v045_pr_f_product_handoff_final3
 ```
 
-这些命令要求本地存在 SHA 完全匹配的 frozen PR-E/PR-F runtime 与合法 governed EOD。缺失时不得训练或下载替代输入。
+后面三条命令要求本地存在 SHA 完全匹配的 frozen PR-E/PR-F runtime 与合法 governed EOD。缺失时不得训练或下载替代输入。
 
 ## 文档生命周期规则
 

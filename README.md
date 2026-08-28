@@ -141,6 +141,15 @@ Base prevalence    0.3286
 - label-free PR-F product handoff 与完整 package validator；
 - A readiness 对四个 Role-D 正式文件的 fail-closed 检查。
 
+历史物化现在有一份可在 CI 中验证的哈希绑定机器凭据：
+
+```text
+reports/frozen/v045_role_d_m5_materialization_receipt.json
+python scripts/validate_v045_role_d_receipt.py
+```
+
+该 receipt 会绑定冻结 PR-E/PR-F manifest、Metric Protocol、四个正式 artifact 哈希与治理声明；它是**已记录外部物化证据**，不替代持有授权 EOD 与完整 frozen runtime 时必须执行的 current-main strict rerun。
+
 Runtime、授权 EOD 与完整 PR-E/PR-F research runtime 按规则未提交，因此最终发布前仍需在持有这些不可变输入的环境中进行一次 **current-main strict revalidation**，并物化 `2410/2460/1318` 的 D→E label-free package。当前 v2 high-recall 模型仍是 research candidate，未替换 frozen PR-F。
 
 ### Role C / E — final matrix
@@ -165,6 +174,7 @@ M4 human reviews = 0/6
 | B ALL 79 Development M1/M2 | **OPEN / P0** |
 | D M5 builder / strict checker / product handoff | **PASS implementation** |
 | D1 70-case formal materialization | **PASS RECORDED；current-main release revalidation pending** |
+| D recorded receipt / CI validation | **PASS** |
 | D→E final-three label-free package | **PENDING LOCAL FROZEN RUNTIME** |
 | C final-matrix Market validation | **BLOCKED: strict C1 1/3** |
 | E final 3-case real-provider Supervisor | **BLOCKED: accepted 2/3** |
@@ -176,6 +186,7 @@ M4 human reviews = 0/6
 
 - 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
 - 当前执行总计划：`docs/V045_CURRENT_EXECUTION_PLAN.md`
+- Role-D 收口与证据边界：`docs/V045_ROLE_D_FINAL_CLOSURE.md`
 - Metric contract：`docs/COMPETITION_METRIC_PROTOCOL.md`
 - Role-B Runner：`docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md`
 - 最终提交 Runbook：`docs/SUBMISSION_RUNBOOK.md`
@@ -188,13 +199,14 @@ M4 human reviews = 0/6
 ```bash
 pip install -e ".[dev,retrieval-research]"
 python scripts/validate_competition_runtime.py
+python scripts/validate_v045_role_d_receipt.py
 
 # Role B
 python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
 python scripts/run_v045_role_b_iteration.py --subset-only
 python scripts/run_v045_role_b_iteration.py --iteration auto
 
-# Role D：需要本地完整 frozen PR-E/PR-F runtime 与 governed EOD
+# Role D：以下 live build/check 需要本地完整 frozen PR-E/PR-F runtime 与 governed EOD
 python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
 python scripts/check_v045_role_d_m5.py \
   --role-d-dir reports/v045_role_d \

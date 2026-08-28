@@ -31,7 +31,10 @@ python -m compileall -q app src scripts
 python scripts/validate_project.py
 python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
+python scripts/validate_v045_role_d_receipt.py
 ```
+
+最后一条命令是网络无关的 Role-D 历史物化凭据校验：它验证已记录结果与 frozen manifests / Metric Protocol 未漂移，但不替代需要授权 EOD 与完整 frozen runtime 的 live strict rerun。
 
 真实 AI runtime：
 
@@ -133,6 +136,19 @@ dominant failure = semantic_extraction_miss
 ### 6.1 历史证据边界
 
 PR #141 已记录 2026-08-27 的 70-case M5 PASS、四文件 hashes 与 deterministic resume PASS。该记录证明正式物化曾完成；它不代替 current-main release 环境的 strict revalidation，因为完整 runtime 与授权行情未提交 Git。
+
+提交内的 hash-bound receipt 与校验命令：
+
+```text
+reports/frozen/v045_role_d_m5_materialization_receipt.json
+docs/V045_ROLE_D_FINAL_CLOSURE.md
+```
+
+```bash
+python scripts/validate_v045_role_d_receipt.py
+```
+
+必须看到 `passed=true` / `verdict=PASS`。Receipt validator 会绑定 frozen PR-E/PR-F hashes、Metric Protocol、四个正式 artifact hashes、70-case/horizon/metric scope 与治理标志，并拒绝本地绝对路径或 secret-like values。它仍不能证明当前机器拥有原始不可变输入，也不能代替本节后续 live build/check。
 
 ### 6.2 必需不可变输入
 
@@ -298,6 +314,7 @@ python -m compileall -q app src scripts
 python scripts/validate_project.py
 python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
+python scripts/validate_v045_role_d_receipt.py
 ```
 
 只有 `submission_readiness.json.competition_ready=true` 才允许：
@@ -320,6 +337,7 @@ Packager 必须拒绝 PDF、secret/private key、token-like material、licensed 
 [x] Existing-Gold audit/evaluator
 [x] Role-D M5 implementation / strict checker / product handoff
 [x] Role-D 70-case formal materialization recorded
+[x] Role-D hash-bound receipt / validator / CI
 [x] M3 offline/final traceability evidence =1.0
 
 [ ] B ALL 79 Development
