@@ -12,6 +12,7 @@ from typing import Any
 
 import streamlit as st
 
+from competition_ui import render_state_panel, section_header
 from competition_runtime_view import machine_vs_human_rows, review_targets
 from ipo_risk.services.human_review_service import HumanReviewService, HumanReviewStoreError
 from ipo_risk.schemas.competition_runtime import HumanReviewDecision
@@ -30,15 +31,19 @@ def render_human_review(
     run_id: str,
     service: HumanReviewService,
 ) -> None:
-    st.markdown("### 人机复核")
-    st.caption(
-        "人工结论与机器结论分开存储：本页写入的是独立的 reviewer sidecar，"
-        "不会修改任何 RiskItem、Evidence 或分析结果文件。"
+    section_header(
+        "人机复核",
+        "人工结论写入独立 reviewer sidecar，与机器结论并列保留；不会修改 RiskItem、Evidence 或分析结果文件。",
+        "Human oversight",
     )
 
     targets = review_targets(payload)
     if not targets:
-        st.info("本次运行没有可供复核的风险项或未解决冲突。")
+        render_state_panel(
+            "暂无复核对象",
+            "unavailable",
+            "本次运行没有可供复核的风险项或未解决冲突。",
+        )
         return
 
     try:
@@ -73,7 +78,7 @@ def render_human_review(
                 "关联 Evidence（可选）", ["（不指定）", *evidence_ids]
             )
             evidence_id = None if evidence_id == "（不指定）" else evidence_id
-        submitted = st.form_submit_button("提交复核结论", type="primary", use_container_width=True)
+        submitted = st.form_submit_button("提交复核结论", type="primary", width="stretch")
 
     if submitted:
         if not reviewer_id.strip():
@@ -98,8 +103,8 @@ def render_human_review(
                 st.success("复核结论已写入独立的人工复核记录。")
                 st.rerun()
 
-    st.markdown("#### 机器结论 vs 人工结论")
-    st.dataframe(machine_vs_human_rows(payload, latest), hide_index=True, use_container_width=True)
+    section_header("机器结论 vs 人工结论", "两套结论始终并列展示，不自动合并或改写。", "Decision ledger")
+    st.dataframe(machine_vs_human_rows(payload, latest), hide_index=True, width="stretch")
 
     with st.expander(f"人工复核历史 · {len(history)} 条", expanded=False):
         if history:
