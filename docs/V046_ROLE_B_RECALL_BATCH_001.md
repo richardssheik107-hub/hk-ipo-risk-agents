@@ -1,6 +1,6 @@
 # v0.4.6 Role-B Recall Batch 001
 
-> Status: **IMPLEMENTED AND CI-GREEN ON FEATURE BRANCH — FIXED-10 RERUN REQUIRED**
+> Status: **IMPLEMENTATION MERGED — TRACE CONTRACT CORRECTED — FIXED-10 RERUN REQUIRED**
 >
 > Branch: `fix/v046-role-b-recall-batch-001`
 >
@@ -10,18 +10,35 @@
 
 ## 1. Forensic input
 
-The frozen `forensic_011` report records:
+The original `forensic_011` artifact records:
 
 ```text
 fixed-10 cases = 10
 M1 = 8 / 30 = 26.67%
 M2 = 11 / 48 = 22.92%
 Parser expected-page preservation = 38 / 48 = 79.17%
-Candidate Recall@20 = 21 / 48 = 43.75%
+Candidate exact-anchor Recall@20 = 21 / 48 = 43.75% (trace-invalid)
 structured-plus-scope-valid rate = 33 / 35 = 94.29%
 ```
 
-Proven earliest failures:
+The original earliest-failure table was subsequently found to contain a
+measurement defect: the runtime risk-pool call records `query_intent` as
+`cash_runway`, but the post-run trace join accepted only the two legacy
+free-text intents. It discarded all cash-runway candidates and produced the
+artificial `0/11` family value. A deterministic no-LLM replay using the same
+forensic-base Parser and Retriever established the corrected pre-batch
+diagnostic baseline:
+
+```text
+cash-runway expected-page Recall@20 = 11 / 11 = 100%
+cash-runway exact-anchor Recall@20  =  9 / 11 = 81.82%
+overall expected-page Recall@20     = 38 / 48 = 79.17%
+overall exact-anchor Recall@20      = 30 / 48 = 62.50%
+```
+
+Official `M1=8/30` and `M2=11/48` remain unchanged. The original trace-derived
+root-cause table is retained below as historical input, but its cash-runway
+candidate-miss rows are not valid causal evidence:
 
 | Root cause | M1 units | M2 units |
 |---|---:|---:|
@@ -159,7 +176,8 @@ python scripts/audit_v046_role_b_forensics.py \
 Accept this batch only when all are true:
 
 ```text
-Candidate Recall@20 > 43.75%
+Expected-page Recall@20 >= 79.17%
+Exact-anchor Recall@20 >= 62.50%
 M1 >= 26.67%
 M2 >= 22.92%
 no supported risk family regresses without a proven trade-off
@@ -172,9 +190,10 @@ Validation remains closed
 A more useful success target for this broad batch is:
 
 ```text
-Parser expected-page preservation materially above 79.17%
-Candidate Recall@20 materially above 43.75%
-Cash-runway Candidate Recall@20 above 0/11
+Parser/expected-page preservation remains at least 79.17%
+Exact-anchor Recall@20 materially above 62.50%
+Cash-runway expected-page Recall@20 remains 11/11
+Cash-runway exact-anchor Recall@20 remains at least 9/11
 M1 and M2 both improve, not only candidate diagnostics
 ```
 
