@@ -70,6 +70,7 @@ from ipo_risk.reporting.mock import MockReportGenerator
 from ipo_risk.reporting.v03 import V03ReportGenerator
 from ipo_risk.reporting.v04 import V04ReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
+from ipo_risk.retrieval.hybrid_bm25 import HybridBM25DocumentRetriever
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.mock import MockDocumentRetriever
 from ipo_risk.modeling.frozen_model_evidence import (
@@ -122,6 +123,7 @@ def default_registry() -> ComponentRegistry:
         "retriever": {
             "mock": MockDocumentRetriever,
             "keyword": KeywordDocumentRetriever,
+            "hybrid_bm25": HybridBM25DocumentRetriever,
         },
         "financial_agent": {
             "mock": MockFinancialAgent,

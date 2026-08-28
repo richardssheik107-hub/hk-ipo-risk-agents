@@ -1,0 +1,77 @@
+{
+  "benchmark": "current_fixed10_offline_zip_v1",
+  "blind_2025_outcome_accessed": false,
+  "case_ids": [
+    "ipo_2021_02190",
+    "ipo_2020_00368",
+    "ipo_2021_06628",
+    "ipo_2020_01961",
+    "ipo_2021_01024",
+    "ipo_2023_01274",
+    "ipo_2020_09600",
+    "ipo_2022_06610",
+    "ipo_2023_02105",
+    "ipo_2023_06682"
+  ],
+  "config_sha256": "b30f0002d202a93961adf6fdd9106fe51482565ee80f802cdd72345e4c1d4e3c",
+  "gold_used_for_prediction": false,
+  "llm_provider": "unavailable",
+  "nested_year_archives_persisted": 0,
+  "network_llm_calls": 0,
+  "retriever": "hybrid_bm25",
+  "statuses": [
+    {
+      "case_id": "ipo_2020_00368",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2020_09600",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2021_02190",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2023_02105",
+      "error_type": "",
+      "status": "completed"
+    },
+    {
+      "case_id": "ipo_2023_06682",
+      "error_type": "",
+      "status": "completed"
+    }
+  ],
+  "successful_case_count": 10,
+  "temporary_pdf_remaining": false,
+  "validation_opened": false
+}

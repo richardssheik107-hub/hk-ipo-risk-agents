@@ -1,0 +1,41 @@
+{
+  "benchmark": "Retriever V3 frozen 50-case Development feature table",
+  "case_count": 50,
+  "task_count": 400,
+  "all_positive_evidence_rows": 625,
+  "historical_required_evidence_units": 576,
+  "gold_definition": "gold_evidence.requirement == required",
+  "current_hybrid": {
+    "recall_at_5": 0.5416666666666666,
+    "recall_at_10": 0.6371527777777778,
+    "recall_at_20": 0.7274305555555556,
+    "recall_at_50": 0.8559027777777778,
+    "mrr": 0.38573722148049416,
+    "oracle_at_20": 0.7604166666666666,
+    "oracle_at_50": 0.8680555555555556
+  },
+  "historical_v3_ltr_c": {
+    "recall_at_5": 0.6302083333333334,
+    "recall_at_10": 0.7326388888888888,
+    "recall_at_20": 0.8090277777777778,
+    "recall_at_50": 0.890625,
+    "mrr": 0.4741505159107182,
+    "oracle_at_20": 0.859375,
+    "oracle_at_50": 0.9392361111111112
+  },
+  "current_components": [
+    "V1 keyword",
+    "BM25-B",
+    "equal RRF",
+    "keyword-only cash_runway/litigation"
+  ],
+  "historical_components": [
+    "V1",
+    "V2",
+    "V2.1",
+    "BM25-B",
+    "Table",
+    "LTR-C"
+  ],
+  "leakage_policy": "Development OOF LTR predictions; locked Validation excluded"
+}

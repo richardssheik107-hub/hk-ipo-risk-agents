@@ -1,0 +1,114 @@
+{
+  "blind_2025_outcome_accessed": false,
+  "case_count": 10,
+  "cases": [
+    {
+      "case_id": "ipo_2021_02190",
+      "positive_primary_families": [
+        "cash_burn_pressure",
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 8,
+      "stock_code": "2190.HK"
+    },
+    {
+      "case_id": "ipo_2020_00368",
+      "positive_primary_families": [
+        "cash_burn_pressure",
+        "customer_concentration",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 8,
+      "stock_code": "0368.HK"
+    },
+    {
+      "case_id": "ipo_2021_06628",
+      "positive_primary_families": [
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 6,
+      "stock_code": "6628.HK"
+    },
+    {
+      "case_id": "ipo_2020_01961",
+      "positive_primary_families": [
+        "cash_burn_pressure",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 5,
+      "stock_code": "1961.HK"
+    },
+    {
+      "case_id": "ipo_2021_01024",
+      "positive_primary_families": [
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 5,
+      "stock_code": "1024.HK"
+    },
+    {
+      "case_id": "ipo_2023_01274",
+      "positive_primary_families": [
+        "cash_burn_pressure",
+        "customer_concentration",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 4,
+      "stock_code": "1274.HK"
+    },
+    {
+      "case_id": "ipo_2020_09600",
+      "positive_primary_families": [
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 3,
+      "stock_code": "9600.HK"
+    },
+    {
+      "case_id": "ipo_2022_06610",
+      "positive_primary_families": [
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 3,
+      "stock_code": "6610.HK"
+    },
+    {
+      "case_id": "ipo_2023_02105",
+      "positive_primary_families": [
+        "customer_concentration",
+        "redemption_rights",
+        "supplier_concentration"
+      ],
+      "primary_evidence_unit_count": 3,
+      "stock_code": "2105.HK"
+    },
+    {
+      "case_id": "ipo_2023_06682",
+      "positive_primary_families": [
+        "cash_burn_pressure",
+        "redemption_rights"
+      ],
+      "primary_evidence_unit_count": 3,
+      "stock_code": "6682.HK"
+    }
+  ],
+  "debug_subset_only": true,
+  "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
+  "selection_algorithm": "balanced_positive_primary_families_v1",
+  "source_coverage_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "split": "development",
+  "subset_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "subset_version": "v045_role_b_fixed10_subset_v1",
+  "validation_opened": false
+}
