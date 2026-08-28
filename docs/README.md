@@ -1,146 +1,88 @@
 # Documentation Index and Governance
 
-> Status date: `2026-08-28`
+> 状态日期：`2026-08-28`
 
-本文档是仓库文档治理入口。当前状态只能由代码 validator、冻结 manifest、当前 Gate、Competition Metric Protocol 与最新实测证据共同确定，不能从历史 completion report 的旧 “next step” 推断。
+仓库文档已经收敛为“一套指标、一套 Gate、一套总计划”。历史 PR 完成报告和一次性运行提示词不再作为当前状态源；需要时从 Git 历史或对应 PR 查询。
 
-## 当前权威文档
+## 1. 当前权威文档
 
 | 文档 | 作用 |
 |---|---|
-| `../README.md` | 项目入口与当前摘要 |
-| `COMPETITION_METRIC_PROTOCOL.md` | M1–M5、Existing Gold、Top-K、5D、split 的唯一指标口径 |
-| `V0.4_RELEASE_ACCEPTANCE.md` | **唯一当前 Gate / blocker 状态源** |
-| `V045_CURRENT_EXECUTION_PLAN.md` | 当前操作顺序：B Runner/Fixer、D release revalidation、C/E closure、A package |
-| `V045_ROLE_D_FINAL_CLOSURE.md` | **Role-D 三层证据、机器 receipt、live strict rerun 与 D→E handoff 边界** |
-| `V045_ROLE_B_FIXED10_ITERATION_WORKFLOW.md` | Role-B fixed-10 runner / evaluator workflow |
-| `V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md` | constrained Runner / blocker recovery prompt |
-| `ROADMAP.md` | 尚未关闭的执行路线 |
-| `V04_FIVE_PERSON_EXECUTION_PLAN.md` | A/B/C/D/E ownership、handoff、merge boundary |
-| `COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md` | 赛题要求 → 系统能力 → metric/artifact 验收 |
-| `SUBMISSION_RUNBOOK.md` | 安装、benchmark、3-case、readiness、打包与 freeze |
-| `PROJECT_SPEC.md` | 产品边界与不可破坏原则 |
-| `ARCHITECTURE.md` | 当前 runtime 架构 |
-| `DATA_SCHEMA.md` | 公共/比赛 sidecar schema |
-| `COMPETITION_DATA_OVERVIEW.md` | 数据范围、split、Gold/Validation/Blind 边界 |
-| `research/V04_DATA_READINESS.md` | 数据就绪技术事实 |
-| `V045_ROLE_B_REAL_BENCHMARK_REPORT.md` | B 历史 governed benchmark 证据 |
-| `V04_ROLE_E_COMPLETION_REPORT.md` | E 实现与 3-case artifact 实测证据 |
+| `../README.md` | 项目入口、最新数字与 6 阶段摘要 |
+| `COMPETITION_METRIC_PROTOCOL.md` | M1–M5、Gold、split 与 evaluator 的唯一指标口径 |
+| `V0.4_RELEASE_ACCEPTANCE.md` | 唯一实时 Gate / blocker 状态源 |
+| `COMPETITION_CLOSURE_PLAN.md` | 唯一统一执行计划、依赖关系和退出条件 |
+| `ROADMAP.md` | 剩余路线的短版视图 |
+| `ROLE_B_M1_M2_PLAN.md` | B 线 forensic、ablation、修复和 Full Development 计划 |
+| `V045_ROLE_D_FINAL_CLOSURE.md` | D 线正式物化、receipt、strict revalidation 边界 |
+| `SUBMISSION_RUNBOOK.md` | 从本地复验到 final bundle 的操作手册 |
+| `PROJECT_SPEC.md` | 产品范围、赛题覆盖与不可破坏原则 |
+| `ARCHITECTURE.md` | 当前 runtime 与 v0.4.6 B 线诊断架构 |
+| `DATA_SCHEMA.md` | runtime、诊断、评测和交付 artifact contract |
+| `COMPETITION_DATA_OVERVIEW.md` | 数据、Development / Validation / Blind 边界 |
+| `DOCUMENT_AUDIT_20260828.md` | 本轮保留、更新和删除记录 |
 
-Machine-readable metric freeze：
+## 2. 仍保留的技术与冻结合同
 
-```text
-configs/v045_competition_metric_protocol.json
-protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
-```
+- `V04_PR_D_INPUT_BINDING.md`；
+- `V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md`；
+- `V04_ORACLE_GOLD_COVERAGE_AUDIT.md`；
+- `V04_ORACLE_REFRESH_GOVERNANCE.md`；
+- `V04_ORACLE_V2_COMPLETION_REPORT.md`；
+- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：仅 research candidate；
+- `annotation/`、`research/` 中仍有明确消费者的材料。
 
-Role-D recorded materialization evidence：
+这些文件不是当前路线图，但仍承担 contract、provenance 或 research 证据角色。
 
-```text
-reports/frozen/v045_role_d_m5_materialization_receipt.json
-python scripts/validate_v045_role_d_receipt.py
-```
-
-该 receipt 绑定 frozen PR-E/PR-F manifest、Metric Protocol、四个正式 artifact 哈希和治理声明，并由 CI 做网络无关校验。它记录一次已完成的外部治理物化，不替代持有授权 EOD 与完整 frozen runtime 时必须执行的 `check_v045_role_d_m5.py` live strict revalidation。
-
-`AGENTS.md` 是跨版本工程治理规则，优先级高于叙述性文档。
-
-## Source-of-truth hierarchy
+## 3. Source-of-truth hierarchy
 
 出现冲突时按以下顺序裁定：
 
-1. 代码中的 validator / Pydantic / Protocol / fail-closed guard；
-2. `reports/frozen/*.json` 与 hash-bound frozen manifest / receipt；
-3. 已冻结报告或 PR 中不可重建的原始实测事实；
-4. `COMPETITION_METRIC_PROTOCOL.md`；
-5. `V0.4_RELEASE_ACCEPTANCE.md`；
-6. `V045_CURRENT_EXECUTION_PLAN.md`；
-7. 其他 active docs；
-8. research、历史 completion report、Git history。
+1. 代码 validator、Pydantic、Protocol 和 fail-closed guard；
+2. `reports/frozen/*.json`、hash-bound manifest / receipt；
+3. `COMPETITION_METRIC_PROTOCOL.md`；
+4. `V0.4_RELEASE_ACCEPTANCE.md`；
+5. `COMPETITION_CLOSURE_PLAN.md`；
+6. 当前 lane 文档和 Runbook；
+7. research、历史 PR、Git history。
 
-历史报告中的旧 Recall@K、旧 risk set 或旧 target 保留原始语义，不因新协议追溯改写。
+文档中的“PASS implementation”不等于最终比赛 Gate 已通过；必须存在对应 runtime evidence。
 
-## Metric-v2 解释规则
-
-```text
-M1 Existing-Gold Risk Accuracy >=80%; target >=85%
-M2 Existing-Gold Evidence Coverage Recall >=85%; target >=88%
-Recall@1/@3/@5/@10/@20 = diagnostics only
-M3 Traceability =100%
-M4 Explanation Quality = current human-review rubric
-M5 1D/5D/20D/60D
-primary significant drop = return_5d <= -0.10（项目定义）
-```
-
-M1/M2 Gold policy：
+## 4. 当前状态摘要
 
 ```text
-Existing Expert Annotation / Oracle Gold only
-no new manual annotation
-no existing Gold modification
-UNJUDGED != negative
-no manual semantic Evidence regrouping
+B fixed-10 M1 = 23.33%
+B fixed-10 M2 = 18.75%
+B v0.4.6 diagnostics = implemented, full measured run pending
+D M5 artifacts / receipt = recorded
+D business-quality claim = not closed
+C strict contract = 1/3
+E accepted real-provider = 2/3
+M3 = 3/3 exactly 1.0
+M4 = 0/6
+overall = NOT COMPETITION_READY
 ```
 
-## 当前状态快照
+## 5. 文档生命周期
 
-- 3 个真实 2024 招股书 offline E2E 3/3 completed，PDF integrity 3/3；
-- E final AI matrix：2410/1318 accepted，2460 scope-blocked honest fallback，E1=2/3；
-- M3 measured traceability = 3/3 exactly 1.0；
-- C strict observation contract = 1/3；
-- M4 human reviews = 0/6；
-- Existing-Gold audit = 79 Development / 19 Validation / 128 Risk Units / 217 Evidence Units；
-- B fixed-10 `iter_004` = 10/10 real-LLM，M1=23.33%、M2=18.75%；
-- D governed M5 builder、strict checker、label-free product handoff 与 A four-file readiness contract 已实现；
-- PR #141 已记录 D 的 70-case 2024 Validation M5 PASS、四文件 hashes 与 deterministic resume PASS；
-- D 的历史物化现已由 committed hash-bound receipt、network-free validator 与 CI 绑定到 frozen manifests；
-- D runtime、授权 EOD 与完整 PR-E/PR-F research runtime 未提交，发布前仍需 current-main strict revalidation；
-- D→E final-three package 仍需在持有 frozen runtime 的本地环境物化；
-- D v2 high-recall output 仍为 research candidate，未替换 frozen PR-F；
-- 2025 Blind y 仍未访问；
-- 整体仍未 `COMPETITION_READY`。
+长期保留的文档必须至少满足一项：
 
-精确 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
+- 当前唯一状态源、计划或可重复 Runbook；
+- 被代码、CI 或 validator 直接消费的合同；
+- 不可重建的冻结测量或 provenance；
+- 仍有明确消费者的 research / annotation 证据。
 
-## Role D 当前可重复操作
+以下内容不再长期保留在 `docs/` 根目录：
 
-网络无关的 recorded receipt 校验：
+- 一次性 Codex 提示词；
+- 已解除的 blocker；
+- 旧角色排期；
+- PR completion report；
+- 与当前 Metric-v2 身份不一致的 benchmark 叙述；
+- 被新计划完整取代的重复文档。
 
-```bash
-python scripts/validate_v045_role_d_receipt.py
-```
+## 6. 治理边界
 
-持有完整外部不可变输入时的 live build / strict check / final-three handoff：
+可以移除的只是流程冗余，例如固定迭代轮数、Runner-only 和绝对禁止检索实验。
 
-```bash
-python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
-python scripts/check_v045_role_d_m5.py \
-  --role-d-dir reports/v045_role_d \
-  --output reports/v045_role_d_acceptance/acceptance.json
-python scripts/build_v04_pr_f_product_handoff.py \
-  --source-pr-f-dir reports/v04_pr_f \
-  --case-list configs/v045_demo_cases.json \
-  --output-dir reports/v045_pr_f_product_handoff_final3
-```
-
-后面三条命令要求本地存在 SHA 完全匹配的 frozen PR-E/PR-F runtime 与合法 governed EOD。缺失时不得训练或下载替代输入。
-
-## 文档生命周期规则
-
-新文档只有在满足至少一个条件时长期保留：
-
-- 定义当前唯一 contract / Gate / metric / ownership；
-- 记录不可重建的冻结实测结果；
-- 记录稳定技术设计且仍有当前消费者；
-- 作为 governed research / annotation evidence；
-- 记录当前可重复执行的比赛 closure 流程。
-
-## 更新责任
-
-- **A**：README、Metric Protocol governance、Gate、Roadmap、execution plan、release/submission；
-- **B**：real-LLM Document optimization、Risk/Evidence benchmark、fixed-10 artifacts；
-- **C**：Market technical evidence；
-- **D**：Outcome/model/evaluation artifacts 与 release revalidation evidence；
-- **E**：Supervisor/Trace/Product/explanation-quality evidence；
-- Existing Expert Gold 在收尾阶段不得由任何 lane 修改；
-- shared architecture/schema/metric contract 变更必须由 A 做 cross-lane review。
+不能移除：Existing Gold immutable、Validation one-shot、Blind 隔离、Evidence scope、PIT、Trace、deterministic calculation、Secret/PDF/raw data 安全边界。
