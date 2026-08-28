@@ -7,10 +7,10 @@ workflow_version: enhanced_v2
 runtime_mode: ai_enhanced
 use_mock: false
 enable_verifier: true
-parser: pymupdf
-retriever: keyword
+parser: pymupdf_role_b_recall
+retriever: role_b_v046_financial_high_recall
 financial_agent: v03
-financial_extractor: regex
+financial_extractor: table
 legal_agent: v03
 business_agent: v03
 market_agent: disabled
@@ -33,7 +33,7 @@ final_supervisor: none
 pr_f_run_dir: ""
 
 role_b_ablation_profile:
-  profile_version: v046_role_b_ablation_v1
+  profile_version: v046_role_b_ablation_v3_recall_batch_001
   default_modes:
     - offline
     - shadow

@@ -46,6 +46,7 @@ from ipo_risk.extraction.financial import (
 from ipo_risk.parsers.mock import AlternateMockDocumentParser, MockDocumentParser
 from ipo_risk.parsers.pymupdf_parser import (
     PyMuPDFDocumentParser,
+    PyMuPDFRoleBRecallParser,
     PyMuPDFTableDocumentParser,
 )
 from ipo_risk.predictors.fault import FaultPredictor
@@ -69,8 +70,8 @@ from ipo_risk.reporting.mock import MockReportGenerator
 from ipo_risk.reporting.v03 import V03ReportGenerator
 from ipo_risk.reporting.v04 import V04ReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
-from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.hybrid_bm25 import HybridBM25DocumentRetriever
+from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.mock import MockDocumentRetriever
 from ipo_risk.modeling.frozen_model_evidence import (
     FrozenModelPredictionProvider,
@@ -108,16 +109,37 @@ NO_COMPONENT = "none"
 def default_registry() -> ComponentRegistry:
     registry = ComponentRegistry()
     registrations = {
-        "parser": {"mock": MockDocumentParser, "mock_alt": AlternateMockDocumentParser, "pymupdf": PyMuPDFDocumentParser, "pymupdf_table": PyMuPDFTableDocumentParser},
-        "financial_extractor": {"regex": V03FinancialFactExtractor, "table": TableAwareV03FinancialFactExtractor},
+        "parser": {
+            "mock": MockDocumentParser,
+            "mock_alt": AlternateMockDocumentParser,
+            "pymupdf": PyMuPDFDocumentParser,
+            "pymupdf_table": PyMuPDFTableDocumentParser,
+            "pymupdf_role_b_recall": PyMuPDFRoleBRecallParser,
+        },
+        "financial_extractor": {
+            "regex": V03FinancialFactExtractor,
+            "table": TableAwareV03FinancialFactExtractor,
+        },
         "retriever": {
             "mock": MockDocumentRetriever,
             "keyword": KeywordDocumentRetriever,
             "hybrid_bm25": HybridBM25DocumentRetriever,
         },
-        "financial_agent": {"mock": MockFinancialAgent, "cash_runway": CashRunwayFinancialAgent, "v03": V03FinancialAgent},
-        "legal_agent": {"mock": MockLegalAgent, "disabled": DisabledLegalAgent, "v03": LegalAgent},
-        "business_agent": {"mock": MockBusinessAgent, "disabled": DisabledBusinessAgent, "v03": V03BusinessAgent},
+        "financial_agent": {
+            "mock": MockFinancialAgent,
+            "cash_runway": CashRunwayFinancialAgent,
+            "v03": V03FinancialAgent,
+        },
+        "legal_agent": {
+            "mock": MockLegalAgent,
+            "disabled": DisabledLegalAgent,
+            "v03": LegalAgent,
+        },
+        "business_agent": {
+            "mock": MockBusinessAgent,
+            "disabled": DisabledBusinessAgent,
+            "v03": V03BusinessAgent,
+        },
         "market_agent": {
             "mock": MockMarketAgent,
             "disabled": DisabledMarketAgent,
@@ -132,9 +154,20 @@ def default_registry() -> ComponentRegistry:
             "openai_responses": OpenAIResponsesLLMProvider,
             "unavailable": UnavailableLLMProvider,
         },
-        "market_data_provider": {"mock": MockMarketDataProvider, "unavailable": UnavailableMarketDataProvider},
-        "ipo_data_provider": {"mock": MockIPODataProvider, "request": RequestIPODataProvider, "catalog": CatalogIPODataProvider},
-        "report_generator": {"mock": MockReportGenerator, "v03": V03ReportGenerator, "v04": V04ReportGenerator},
+        "market_data_provider": {
+            "mock": MockMarketDataProvider,
+            "unavailable": UnavailableMarketDataProvider,
+        },
+        "ipo_data_provider": {
+            "mock": MockIPODataProvider,
+            "request": RequestIPODataProvider,
+            "catalog": CatalogIPODataProvider,
+        },
+        "report_generator": {
+            "mock": MockReportGenerator,
+            "v03": V03ReportGenerator,
+            "v04": V04ReportGenerator,
+        },
         # PR-G channels. Settings default to "none", so only a config that names
         # one of these reaches them; every pre-v0.4 config builds nothing.
         "market_context": {
@@ -169,9 +202,24 @@ class DependencyContainer:
         retriever = self.registry.create("retriever", self.settings.retriever)
         llm_provider = self.create_llm_provider()
         agents = [
-            self._create_agent("financial_agent", self.settings.financial_agent, retriever, llm_provider),
-            self._create_agent("legal_agent", self.settings.legal_agent, retriever, llm_provider),
-            self._create_agent("business_agent", self.settings.business_agent, retriever, llm_provider),
+            self._create_agent(
+                "financial_agent",
+                self.settings.financial_agent,
+                retriever,
+                llm_provider,
+            ),
+            self._create_agent(
+                "legal_agent",
+                self.settings.legal_agent,
+                retriever,
+                llm_provider,
+            ),
+            self._create_agent(
+                "business_agent",
+                self.settings.business_agent,
+                retriever,
+                llm_provider,
+            ),
         ]
         market_intelligence_agent = None
         if self.settings.market_agent == "market_intelligence":
@@ -187,7 +235,9 @@ class DependencyContainer:
         else:
             # Legacy mock/disabled Market Agents keep the historical Agent
             # protocol and remain inside the ordinary agent loop.
-            agents.append(self.registry.create("market_agent", self.settings.market_agent))
+            agents.append(
+                self.registry.create("market_agent", self.settings.market_agent)
+            )
 
         arguments = (
             self.registry.create("parser", self.settings.parser),
@@ -196,24 +246,34 @@ class DependencyContainer:
             self.registry.create("verifier", self.settings.verifier),
             self.registry.create("supervisor", self.settings.supervisor),
             self.registry.create("predictor", self.settings.predictor),
-            self.registry.create("report_generator", self.settings.report_generator),
-            self.registry.create("market_data_provider", self.settings.market_data_provider),
-            self.registry.create("ipo_data_provider", self.settings.ipo_data_provider),
+            self.registry.create(
+                "report_generator", self.settings.report_generator
+            ),
+            self.registry.create(
+                "market_data_provider", self.settings.market_data_provider
+            ),
+            self.registry.create(
+                "ipo_data_provider", self.settings.ipo_data_provider
+            ),
         )
         # Keyword-only with None defaults: callers that construct a workflow with
         # the historical nine positional arguments keep working unchanged.
         channels = {
-            "market_context": self._create_channel("market_context", self.settings.market_context),
+            "market_context": self._create_channel(
+                "market_context", self.settings.market_context
+            ),
             "model_prediction_provider": self._model_prediction_provider(),
             "final_supervisor": self._create_channel(
-                "final_supervisor", self.settings.final_supervisor, llm_provider=llm_provider
+                "final_supervisor",
+                self.settings.final_supervisor,
+                llm_provider=llm_provider,
             ),
         }
         if self.settings.workflow_version == "mvp_v1":
             return MVPWorkflow(*arguments, **channels)
         if self.settings.workflow_version == "enhanced_v2":
             # The competition workflow adds conflict detection, one targeted
-            # re-check and trace assembly.  It is selected by the Final
+            # re-check and trace assembly. It is selected by the Final
             # Supervisor identity, so a config that does not ask for LLM
             # synthesis keeps exactly its historical workflow class.
             if self.settings.final_supervisor == "llm":
@@ -243,7 +303,11 @@ class DependencyContainer:
             # The LLM Supervisor keeps the frozen PR-G composition as its spine;
             # an unavailable provider degrades to exactly that composition.
             return LLMFinalSupervisor(
-                llm_provider=llm_provider if llm_provider is not None else self.create_llm_provider(),
+                llm_provider=(
+                    llm_provider
+                    if llm_provider is not None
+                    else self.create_llm_provider()
+                ),
                 cohort_evidence=self._frozen_cohort_evidence(),
             )
         if kind == "market_context" and name == "governed_pr_b_core":
@@ -259,7 +323,9 @@ class DependencyContainer:
     def _frozen_cohort_evidence(self):
         """Tier-1 frozen PR-F evidence; absent manifest degrades, never crashes."""
         try:
-            return load_frozen_cohort_evidence(Path(self.settings.report_dir) / "frozen")
+            return load_frozen_cohort_evidence(
+                Path(self.settings.report_dir) / "frozen"
+            )
         except FrozenModelEvidenceError:
             return None
 
@@ -296,12 +362,19 @@ class DependencyContainer:
 
         remote_providers = {"openai_compatible", "openai_responses"}
         if self.settings.llm_provider not in remote_providers:
-            return self.registry.create("llm_provider", self.settings.llm_provider)
+            return self.registry.create(
+                "llm_provider", self.settings.llm_provider
+            )
         if not all(
-            (self.settings.llm_api_key, self.settings.llm_base_url, self.settings.llm_model)
+            (
+                self.settings.llm_api_key,
+                self.settings.llm_base_url,
+                self.settings.llm_model,
+            )
         ):
             provider_label = (
-                "Responses API" if self.settings.llm_provider == "openai_responses"
+                "Responses API"
+                if self.settings.llm_provider == "openai_responses"
                 else "OpenAI-compatible LLM"
             )
             return self.registry.create(

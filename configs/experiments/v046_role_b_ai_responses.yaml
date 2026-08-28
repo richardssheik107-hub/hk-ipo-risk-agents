@@ -1,17 +1,17 @@
 # Opt-in v0.4.6 Role-B ablation profile; not a shipped UI runtime scenario.
 #
-# This file is intentionally isolated from the competition runtime.  Market and
+# This file is intentionally isolated from the competition runtime. Market and
 # Final-Supervisor LLM channels are disabled so only the four frozen Role-B
-# structured tasks may be routed by the ablation harness.  Credentials and the
+# structured tasks may be routed by the ablation harness. Credentials and the
 # licensed prospectus root remain environment-only.
 workflow_version: enhanced_v2
 runtime_mode: ai_enhanced
 use_mock: false
 enable_verifier: true
-parser: pymupdf
+parser: pymupdf_role_b_recall
 retriever: role_b_v046_financial_high_recall
 financial_agent: v03
-financial_extractor: regex
+financial_extractor: table
 legal_agent: v03
 business_agent: v03
 market_agent: disabled
@@ -36,7 +36,7 @@ pr_f_run_dir: ""
 # load_settings intentionally ignores this machine-readable experiment block;
 # the opt-in v0.4.6 runner consumes it when binding journal identity/provenance.
 role_b_ablation_profile:
-  profile_version: v046_role_b_ablation_v1
+  profile_version: v046_role_b_ablation_v3_recall_batch_001
   default_modes:
     - offline
     - shadow
