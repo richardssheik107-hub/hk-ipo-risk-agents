@@ -1,0 +1,67 @@
+{
+  "diagnostics": {
+    "agent_consumed_recall": 0.4166666666666667,
+    "candidate_recall_at_1": 0.16666666666666666,
+    "candidate_recall_at_10": 0.4166666666666667,
+    "candidate_recall_at_20": 0.4375,
+    "candidate_recall_at_3": 0.3125,
+    "candidate_recall_at_5": 0.375,
+    "conditional_on_consumed": 0.55,
+    "conditional_on_final_positive": 0.6470588235294118,
+    "final_evidence_coverage": 0.22916666666666666
+  },
+  "non_official_diagnostic": true,
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "waterfall": [
+    {
+      "conditional_rate": 1.0,
+      "count": 48,
+      "stage": "gold_evidence_units"
+    },
+    {
+      "conditional_rate": 0.7916666666666666,
+      "count": 38,
+      "stage": "parser_expected_page_anchor_preserved"
+    },
+    {
+      "conditional_rate": 0.5526315789473685,
+      "count": 21,
+      "stage": "candidate_top20_anchor_hit"
+    },
+    {
+      "conditional_rate": 0.9523809523809523,
+      "count": 20,
+      "stage": "agent_consumed_anchor"
+    },
+    {
+      "conditional_rate": 0.65,
+      "count": 13,
+      "stage": "candidate_risk_created"
+    },
+    {
+      "conditional_rate": 0.9230769230769231,
+      "count": 12,
+      "stage": "final_positive_risk_retained"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 12,
+      "stage": "evidence_retained"
+    },
+    {
+      "conditional_rate": 0.9166666666666666,
+      "count": 11,
+      "stage": "page_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 11,
+      "stage": "text_anchor_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 11,
+      "stage": "m2_covered"
+    }
+  ]
+}

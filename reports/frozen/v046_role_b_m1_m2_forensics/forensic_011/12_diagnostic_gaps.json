@@ -1,0 +1,21 @@
+{
+  "evidence_proven_rate": 1.0,
+  "evidence_units": {
+    "inferred": 0,
+    "proven": 48,
+    "unavailable": 0
+  },
+  "known_gaps": [
+    "raw LLM semantic fields are intentionally absent from persisted journal",
+    "reconciliation has no per-candidate durable event",
+    "smoke gate covers three of four allow-listed tasks"
+  ],
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "risk_proven_rate": 1.0,
+  "risk_units": {
+    "inferred": 0,
+    "proven": 30,
+    "unavailable": 0
+  },
+  "target_met": true
+}

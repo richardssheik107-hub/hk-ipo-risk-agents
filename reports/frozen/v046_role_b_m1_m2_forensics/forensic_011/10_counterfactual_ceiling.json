@@ -1,0 +1,14 @@
+{
+  "m1_if_all_currently_present_positive_passed_attributes": 0.3333333333333333,
+  "m1_if_only_calculation_fixed": 0.26666666666666666,
+  "m1_if_only_evidence_binding_fixed": 0.3,
+  "m1_if_only_level_fixed": 0.3,
+  "m1_if_only_status_fixed": 0.26666666666666666,
+  "m2_if_all_candidate_top20_anchors_consumed": 0.4375,
+  "m2_if_all_consumed_anchors_retained": 0.4166666666666667,
+  "m2_if_all_page_matched_preserved_anchor": 0.2708333333333333,
+  "m2_if_all_retained_evidence_had_correct_page": 0.4166666666666667,
+  "observed_anchor_match_ceiling": 0.25,
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "status": "NON_OFFICIAL_COUNTERFACTUAL"
+}

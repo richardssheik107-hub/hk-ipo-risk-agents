@@ -4,11 +4,11 @@
 >
 > Gate: `D1_multi_horizon_evaluation`
 >
-> Current status: **RECORDED PASS — live independent rerun still requires external immutable inputs**
+> Current status: **CURRENT-MAIN STRICT REVALIDATION PASS — A MODEL DECISION PENDING**
 
-Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and one governed 70-case materialization are complete. The licensed EOD archive and the complete PR-E/PR-F research runtimes remain intentionally outside Git, so the repository records their successful run as a hash-bound receipt rather than pretending the runtime can be rebuilt from committed files alone.
+Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and governed 70-case materialization are complete. On 2026-08-28 the exact frozen PR-E/PR-F runtime and governed filtered EOD store were recovered and the current `main` base (`8211cc4a59e07529ad39faaa47ab3fcb35f565f5`) passed a fresh strict rerun. The licensed raw EOD archive and complete research runtimes remain intentionally outside Git; both historical and current-main runs are therefore recorded as hash-bound receipts.
 
-## 1. Three evidence layers
+## 1. Four evidence layers
 
 ### Layer A — committed implementation
 
@@ -81,6 +81,25 @@ python scripts/check_v045_role_d_m5.py \
 
 A successful shell exit from the builder is not sufficient; the strict checker must return `passed=true`.
 
+### Layer D — current-main strict revalidation receipt
+
+The 2026-08-28 rerun is recorded in:
+
+```text
+reports/frozen/v045_role_d_current_main_revalidation_receipt.json
+```
+
+Validate its frozen bindings, canonical artifact hashes, deterministic rebuild
+evidence, final-three handoff and model-decision boundary without licensed data:
+
+```bash
+python scripts/validate_v045_role_d_revalidation_receipt.py
+```
+
+The strict checker returned `PASS` for all 12 checks. A same-directory
+`--resume` and an independent fresh-directory rebuild produced byte-identical
+four-file outputs.
+
 ## 2. Recorded D1 result
 
 Source evidence:
@@ -113,6 +132,18 @@ Canonical artifact hashes:
 | `multi_horizon_results.csv` | `f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725` |
 | `evaluation_summary.json` | `6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63` |
 | `ai_vs_offline_report.json` | `3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94` |
+
+Current-main revalidation hashes preserve the two CSV hashes exactly. The two
+JSON hashes changed because the current contract is `v2` and adds complete
+portable PR-E/PR-F source hashes; the strict checker independently accepted
+them:
+
+| Artifact | Current-main SHA-256 |
+|---|---|
+| `test_predictions.csv` | `8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a` |
+| `multi_horizon_results.csv` | `f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725` |
+| `evaluation_summary.json` | `9eb0568a9253c410c30f2183e1fa58606313620954b88500f1d3f7104cc073c2` |
+| `ai_vs_offline_report.json` | `e5fc17b93cc535fcd966bf78ef1aea4b74fa3c79da9577beb90ac76c7f25e197` |
 
 Five-day descriptive metrics:
 
@@ -149,13 +180,16 @@ python scripts/build_v04_pr_f_product_handoff.py \
 
 The builder verifies the frozen `model_result_hash` and writes an exact four-file, checksum-bound package containing only case identity, the frozen uncalibrated score and frozen SHAP drivers. It excludes actual returns and target labels.
 
-Current status:
+Current status after the current-main rerun:
 
 ```text
 handoff implementation = COMPLETE
 governed final-three manifest support = COMPLETE
-final-three package materialized in Git = false
-reason = complete frozen PR-F research runtime is intentionally external
+final-three package strict validation = PASS
+case IDs = ipo_2024_02410 / ipo_2024_02460 / ipo_2024_01318
+label or realized-return fields = absent
+package materialized in Git = false
+reason = package remains a generated frozen-runtime deliverable
 ```
 
 Role E must keep Model Channel unavailable until a valid package is supplied. It must not consume a reconstructed model or a hand-edited signal.
@@ -183,18 +217,25 @@ strict D acceptance checker
 four-file contract
 frozen PR-E/PR-F binding
 recorded 70-case materialization receipt
+current-main strict revalidation receipt and validator
 network-free receipt validator and tests
 CI receipt validation
 governed final-three demo-case manifest support
+validated label-free final-three package evidence
+deterministic resume and fresh-directory rebuild evidence
 D closure documentation
 ```
 
 The following cannot be honestly completed from committed files alone:
 
 ```text
-new live 70-case materialization
-fresh-directory byte-identical proof for the historical run
-materialized final-three product package
+A-owned promote/retain decision for v2
+v2 freeze and re-materialization if A selects promotion
+committing the licensed EOD archive or external frozen research runtime
 ```
 
-Those items require the original external immutable inputs. Their absence does not authorize downloading substitute market data, retraining PR-F, changing the frozen manifests, or fabricating runtime files.
+The live frozen-baseline revalidation and generated product package now exist as
+validated, hash-bound external-runtime evidence. They remain outside Git by
+design. They do not settle A's v2 promote/retain decision and do not authorize
+retraining PR-F, changing frozen manifests, retuning on 2024 Validation, or
+letting E consume v2 without a separate promotion record.

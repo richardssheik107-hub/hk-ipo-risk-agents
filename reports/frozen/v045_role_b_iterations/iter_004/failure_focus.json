@@ -1,0 +1,61 @@
+{
+  "dominant_failure_reason": "semantic_extraction_miss",
+  "failure_reasons": [
+    {
+      "case_ids": [
+        "ipo_2020_00368",
+        "ipo_2020_01961",
+        "ipo_2020_09600",
+        "ipo_2021_01024",
+        "ipo_2021_02190",
+        "ipo_2021_06628",
+        "ipo_2022_06610",
+        "ipo_2023_01274",
+        "ipo_2023_02105",
+        "ipo_2023_06682"
+      ],
+      "count": 16,
+      "reason": "semantic_extraction_miss",
+      "risk_codes": [
+        "cash_runway",
+        "customer_concentration",
+        "supplier_concentration"
+      ]
+    },
+    {
+      "case_ids": [
+        "ipo_2021_02190",
+        "ipo_2023_01274",
+        "ipo_2023_06682"
+      ],
+      "count": 3,
+      "reason": "evidence_not_retained_in_final_risk",
+      "risk_codes": [
+        "customer_concentration",
+        "redemption_rights"
+      ]
+    },
+    {
+      "case_ids": [
+        "ipo_2020_01961",
+        "ipo_2022_06610",
+        "ipo_2023_02105"
+      ],
+      "count": 3,
+      "reason": "verifier_rejection",
+      "risk_codes": [
+        "redemption_rights"
+      ]
+    },
+    {
+      "case_ids": [
+        "ipo_2021_02190"
+      ],
+      "count": 1,
+      "reason": "schema_normalization_or_riskitem_reconciliation_miss",
+      "risk_codes": [
+        "supplier_concentration"
+      ]
+    }
+  ]
+}

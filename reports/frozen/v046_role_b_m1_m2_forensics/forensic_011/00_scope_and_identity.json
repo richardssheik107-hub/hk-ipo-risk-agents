@@ -1,0 +1,30 @@
+{
+  "artifact_git_head": "8ae09505b3b31ad88e6d5dc2b1f3faea526475aa",
+  "authoritative_run": "main_candidate_real",
+  "base_sha": "65fb2ea4e3969583c20ff2f68eeff6905b97169e",
+  "blind_2025_outcome_accessed": false,
+  "branch": "diagnostic/v046-role-b-m1-m2-forensics",
+  "case_count": 10,
+  "documentation_drift": {
+    "authoritative_m1": 0.26666666666666666,
+    "authoritative_m2": 0.22916666666666666,
+    "documented_iter_004_m1": 0.23333333333333334,
+    "documented_iter_004_m2": 0.1875,
+    "reason": "different_code_identity; iter_004 is retained as historical evidence"
+  },
+  "evaluator_version": "v045_existing_gold_evaluator_v1",
+  "gold_join_stage": "post_run_only",
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
+  "model": "ark-code-latest",
+  "prompt_set_hash": "a2e1419bcb4139753d3dd38a333de670a55c7aeb94f55108415b428723202311",
+  "provider": "openai_responses",
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "role_b_runtime_tree_diff": [],
+  "role_b_runtime_tree_identical_to_current_head": true,
+  "runtime_config_hash": "d4f9d7f094526c980039cb7147f2b6b07ece9f0b8262b71586c622eabed93109",
+  "schema_set_hash": "da2e46d94770548e92dedc356a69296e835ba28a271ca6febb2f353a3c6e8e99",
+  "subset_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "transport": "responses",
+  "validation_opened": false
+}

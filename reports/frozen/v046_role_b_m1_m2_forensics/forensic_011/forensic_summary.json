@@ -1,0 +1,264 @@
+{
+  "base_sha": "65fb2ea4e3969583c20ff2f68eeff6905b97169e",
+  "baseline": {
+    "case_count": 10,
+    "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+    "m1": 0.26666666666666666,
+    "m1_denominator": 30,
+    "m1_numerator": 8,
+    "m2": 0.22916666666666666,
+    "m2_denominator": 48,
+    "m2_numerator": 11,
+    "model": "ark-code-latest",
+    "prompt_set_hash": "a2e1419bcb4139753d3dd38a333de670a55c7aeb94f55108415b428723202311",
+    "provider": "openai_responses"
+  },
+  "branch": "diagnostic/v046-role-b-m1-m2-forensics",
+  "final_status": "FORENSICS_COMPLETE",
+  "first_blocker": null,
+  "governance": {
+    "blind_accessed": false,
+    "evaluator_modified": false,
+    "existing_gold_modified": false,
+    "fixed10_modified": false,
+    "runtime_received_gold": false,
+    "secrets_persisted": false,
+    "validation_opened": false
+  },
+  "m1_waterfall": [
+    {
+      "conditional_rate": 1.0,
+      "count": 30,
+      "stage": "gold_positive_units"
+    },
+    {
+      "conditional_rate": 0.43333333333333335,
+      "count": 13,
+      "stage": "final_risk_present"
+    },
+    {
+      "conditional_rate": 0.7692307692307693,
+      "count": 10,
+      "stage": "final_positive"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 10,
+      "stage": "status_matched"
+    },
+    {
+      "conditional_rate": 0.9,
+      "count": 9,
+      "stage": "level_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 9,
+      "stage": "calculation_matched"
+    },
+    {
+      "conditional_rate": 0.8888888888888888,
+      "count": 8,
+      "stage": "evidence_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 8,
+      "stage": "m1_correct"
+    }
+  ],
+  "m2_waterfall": [
+    {
+      "conditional_rate": 1.0,
+      "count": 48,
+      "stage": "gold_evidence_units"
+    },
+    {
+      "conditional_rate": 0.7916666666666666,
+      "count": 38,
+      "stage": "parser_expected_page_anchor_preserved"
+    },
+    {
+      "conditional_rate": 0.5526315789473685,
+      "count": 21,
+      "stage": "candidate_top20_anchor_hit"
+    },
+    {
+      "conditional_rate": 0.9523809523809523,
+      "count": 20,
+      "stage": "agent_consumed_anchor"
+    },
+    {
+      "conditional_rate": 0.65,
+      "count": 13,
+      "stage": "candidate_risk_created"
+    },
+    {
+      "conditional_rate": 0.9230769230769231,
+      "count": 12,
+      "stage": "final_positive_risk_retained"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 12,
+      "stage": "evidence_retained"
+    },
+    {
+      "conditional_rate": 0.9166666666666666,
+      "count": 11,
+      "stage": "page_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 11,
+      "stage": "text_anchor_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 11,
+      "stage": "m2_covered"
+    }
+  ],
+  "mode_comparison": [
+    {
+      "candidate_recall_at_20": 0.4375,
+      "m1": 0.16666666666666666,
+      "m2": 0.14583333333333334,
+      "mode": "offline",
+      "structured_valid_rate": null
+    },
+    {
+      "candidate_recall_at_20": 0.4375,
+      "m1": 0.16666666666666666,
+      "m2": 0.14583333333333334,
+      "mode": "shadow",
+      "structured_valid_rate": 0.9428571428571428
+    },
+    {
+      "candidate_recall_at_20": 0.4375,
+      "m1": 0.26666666666666666,
+      "m2": 0.22916666666666666,
+      "mode": "gated",
+      "structured_valid_rate": 0.9428571428571428
+    }
+  ],
+  "most_important_finding": {
+    "affected_m1_units": 6,
+    "affected_m2_units": 16,
+    "combined_units": 22,
+    "root_cause": "retrieval_candidate_miss"
+  },
+  "next_action": "STOP_FOR_HUMAN_FIX_SELECTION",
+  "recommended_first_fix": {
+    "expected_recoverable_m1_units": 5,
+    "expected_recoverable_m2_units": 14,
+    "expected_recoverable_units_note": "Cross-metric counts are not additive because one upstream failure can affect both metrics.",
+    "module": "src/ipo_risk/retrieval/role_b_financial_v046.py",
+    "regression_risks": "Existing-Gold overfitting, candidate noise, and canonical-output drift.",
+    "root_cause": "retrieval_candidate_miss",
+    "smallest_change": "Select one generic bounded fix after human review; do not combine modules."
+  },
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "run_id": "forensic_011",
+  "top_proven_root_causes": [
+    {
+      "affected_m1_units": 6,
+      "affected_m2_units": 16,
+      "combined_units": 22,
+      "root_cause": "retrieval_candidate_miss"
+    },
+    {
+      "affected_m1_units": 5,
+      "affected_m2_units": 10,
+      "combined_units": 15,
+      "root_cause": "parser_text_missing"
+    },
+    {
+      "affected_m1_units": 0,
+      "affected_m2_units": 7,
+      "combined_units": 7,
+      "root_cause": "risk_absent_caused_evidence_miss"
+    },
+    {
+      "affected_m1_units": 4,
+      "affected_m2_units": 0,
+      "combined_units": 4,
+      "root_cause": "deterministic_extraction_miss"
+    },
+    {
+      "affected_m1_units": 1,
+      "affected_m2_units": 1,
+      "combined_units": 2,
+      "root_cause": "retrieval_ranking_or_topk_miss"
+    },
+    {
+      "affected_m1_units": 2,
+      "affected_m2_units": 0,
+      "combined_units": 2,
+      "root_cause": "wrong_period_selection"
+    },
+    {
+      "affected_m1_units": 1,
+      "affected_m2_units": 0,
+      "combined_units": 1,
+      "root_cause": "builder_not_applicable_misclassification"
+    },
+    {
+      "affected_m1_units": 1,
+      "affected_m2_units": 0,
+      "combined_units": 1,
+      "root_cause": "final_evidence_not_retained"
+    },
+    {
+      "affected_m1_units": 0,
+      "affected_m2_units": 1,
+      "combined_units": 1,
+      "root_cause": "final_evidence_page_mismatch"
+    },
+    {
+      "affected_m1_units": 1,
+      "affected_m2_units": 0,
+      "combined_units": 1,
+      "root_cause": "level_mismatch"
+    },
+    {
+      "affected_m1_units": 1,
+      "affected_m2_units": 0,
+      "combined_units": 1,
+      "root_cause": "llm_abstention_with_sufficient_evidence"
+    },
+    {
+      "affected_m1_units": 0,
+      "affected_m2_units": 1,
+      "combined_units": 1,
+      "root_cause": "retrieved_page_anchor_truncated"
+    },
+    {
+      "affected_m1_units": 0,
+      "affected_m2_units": 1,
+      "combined_units": 1,
+      "root_cause": "risk_rejected_caused_evidence_miss"
+    }
+  ],
+  "trace_coverage": {
+    "evidence_proven_rate": 1.0,
+    "evidence_units": {
+      "inferred": 0,
+      "proven": 48,
+      "unavailable": 0
+    },
+    "known_gaps": [
+      "raw LLM semantic fields are intentionally absent from persisted journal",
+      "reconciliation has no per-candidate durable event",
+      "smoke gate covers three of four allow-listed tasks"
+    ],
+    "report_version": "v046_role_b_m1_m2_forensics_v1",
+    "risk_proven_rate": 1.0,
+    "risk_units": {
+      "inferred": 0,
+      "proven": 30,
+      "unavailable": 0
+    },
+    "target_met": true
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "blind_2025_outcome_accessed": false,
+  "gated_extra_network_calls": 0,
+  "journal_identity_reused": true,
+  "model": "ark-code-latest",
+  "provider": "openai_responses",
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "smoke_gate_contract_modified": false,
+  "smoke_task_coverage_gap": [
+    "business_precommercial_core_product_extract"
+  ],
+  "task_rows": [
+    {
+      "abstention_count": "UNAVAILABLE_WITHOUT_RAW_SEMANTIC_TRACE",
+      "actual_call_count": 10,
+      "authentication_failure_count": 0,
+      "expected_call_count": 10,
+      "not_invoked_count": 0,
+      "request_failure_count": 0,
+      "response_validation_failure_count": 0,
+      "retry_count": 0,
+      "scope_rejection_count": 0,
+      "scope_valid_count": 10,
+      "structured_correction_count": 0,
+      "structured_valid_count": 10,
+      "success_count": 10,
+      "task_name": "shareholder_rights_extract",
+      "transport_failure_count": 0
+    },
+    {
+      "abstention_count": "UNAVAILABLE_WITHOUT_RAW_SEMANTIC_TRACE",
+      "actual_call_count": 10,
+      "authentication_failure_count": 0,
+      "expected_call_count": 10,
+      "not_invoked_count": 0,
+      "request_failure_count": 0,
+      "response_validation_failure_count": 1,
+      "retry_count": 0,
+      "scope_rejection_count": 0,
+      "scope_valid_count": 9,
+      "structured_correction_count": 4,
+      "structured_valid_count": 9,
+      "success_count": 9,
+      "task_name": "litigation_compliance_extract",
+      "transport_failure_count": 0
+    },
+    {
+      "abstention_count": "UNAVAILABLE_WITHOUT_RAW_SEMANTIC_TRACE",
+      "actual_call_count": 8,
+      "authentication_failure_count": 0,
+      "expected_call_count": 10,
+      "not_invoked_count": 2,
+      "request_failure_count": 0,
+      "response_validation_failure_count": 0,
+      "retry_count": 0,
+      "scope_rejection_count": 1,
+      "scope_valid_count": 7,
+      "structured_correction_count": 0,
+      "structured_valid_count": 8,
+      "success_count": 7,
+      "task_name": "business_precommercial_commercialization_extract",
+      "transport_failure_count": 0
+    },
+    {
+      "abstention_count": "UNAVAILABLE_WITHOUT_RAW_SEMANTIC_TRACE",
+      "actual_call_count": 7,
+      "authentication_failure_count": 0,
+      "expected_call_count": 10,
+      "not_invoked_count": 3,
+      "request_failure_count": 0,
+      "response_validation_failure_count": 0,
+      "retry_count": 0,
+      "scope_rejection_count": 0,
+      "scope_valid_count": 7,
+      "structured_correction_count": 1,
+      "structured_valid_count": 7,
+      "success_count": 7,
+      "task_name": "business_precommercial_core_product_extract",
+      "transport_failure_count": 0
+    }
+  ],
+  "validation_opened": false
+}

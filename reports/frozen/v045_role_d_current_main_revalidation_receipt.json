@@ -1,0 +1,81 @@
+{
+  "artifact_sha256": {
+    "ai_vs_offline_report.json": "e5fc17b93cc535fcd966bf78ef1aea4b74fa3c79da9577beb90ac76c7f25e197",
+    "evaluation_summary.json": "9eb0568a9253c410c30f2183e1fa58606313620954b88500f1d3f7104cc073c2",
+    "multi_horizon_results.csv": "f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725",
+    "test_predictions.csv": "8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a"
+  },
+  "determinism": {
+    "fresh_directory_rebuild_byte_identical": true,
+    "same_directory_resume_byte_identical": true
+  },
+  "evaluation": {
+    "acceptance_check_count": 12,
+    "acceptance_pass_count": 12,
+    "case_count": 70,
+    "gate": "D1_multi_horizon_evaluation",
+    "horizons": [1, 5, 20, 60],
+    "significant_drop_5d_definition": "return_5d <= -0.10",
+    "split": "2024_validation",
+    "verdict": "PASS"
+  },
+  "governance": {
+    "blind_2025_y_accessed": false,
+    "classification_threshold_changed": false,
+    "pr_e_retrained": false,
+    "pr_f_retrained": false,
+    "score_calibrated": false,
+    "score_direction_inverted": false,
+    "validation_retuning_performed": false
+  },
+  "input_bindings": {
+    "filtered_eod_manifest_sha256": "f23c4433329b7954ab76fc922335634eb866f000c35ccee258292104885ed20d",
+    "filtered_eod_store_sha256": "73599d60818eeecfadc556453386d1dabc819138049c047cceb5ccc3a737cd1a",
+    "metric_protocol_sha256": "c54baac00edea7917ea2231d62ce3af503d039c0eab99704d261bb86fa0514f5",
+    "pr_e_frozen_manifest_sha256": "6570dc891395402ed497ad85068ae219d925733fcc5ab23dbbb8bfb8fab5170d",
+    "pr_e_runtime": {
+      "baseline_results.json": "4444ea914295ecd9544e8f2d2db126e541b6dc1da60e5b05e648c49a3f9f659e",
+      "run_manifest.json": "f60cc143d7710ae45978cfb07cb74968089ccffe687a673f2faa248c5d8508c4",
+      "value_diagnostic.json": "c0d1882773863d1fcd6fa6155a9a09f02001e39ad60a5c92f2a87d33c286b863"
+    },
+    "pr_f_frozen_manifest_sha256": "f62eeb513d74998ace1ed2a1deb8a450d7114c73d4ab412af060faaf63fdb97a",
+    "pr_f_runtime": {
+      "model_comparison.json": "c033c4f8ed849255eb4369ecfe413a384ab9f1d8a20f4b6899f45683785efd27",
+      "model_results.json": "d6b4cae7d4cb8b78430b6b9beb25a866d4709e19c41fc9b6c60b6a07a6e4f41f",
+      "run_manifest.json": "dcaa27ff64d3268e85f7f46fa16fac8621107a420297a6059d4824866e97c035"
+    },
+    "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152"
+  },
+  "model_decision": {
+    "decision_owner": "A",
+    "frozen_pr_f_retained_until_decision": true,
+    "recommended_review_option": "promote_v2",
+    "status": "pending_a_owned_promotion_review",
+    "v2_candidate": {
+      "alert_count": 34,
+      "f1": 0.42105263157894735,
+      "pr_auc": 0.3811961298633645,
+      "precision": 0.35294117647058826,
+      "recall": 0.5217391304347826,
+      "roc_auc": 0.48751156336725254
+    }
+  },
+  "product_handoff": {
+    "case_ids": ["ipo_2024_02410", "ipo_2024_02460", "ipo_2024_01318"],
+    "file_sha256": {
+      "README_PRODUCT_RUNTIME_HANDOFF.md": "1a35d8e530aa8c56c7c9c4f7324ca4a02141bccb0b32cc9c6e7d74038987eeba",
+      "SHA256SUMS.txt": "c951a908621ad7431721bc44063604360f5c808f85457ac642febe2a720bed85",
+      "product_case_signals.json": "96bdb58c9a9c8a1fa603550ee0fab1bf7febef24f9fd298c4f0e75196f3437b0",
+      "product_runtime_manifest.json": "42a4b40f25bda4e9cab56297fb90704121c08480b76fdcfb456fd1a594df7a76"
+    },
+    "label_free": true,
+    "validated": true
+  },
+  "receipt_version": "v045_role_d_current_main_revalidation_receipt_v1",
+  "recorded_at": "2026-08-28",
+  "source": {
+    "base_main_commit": "8211cc4a59e07529ad39faaa47ab3fcb35f565f5",
+    "repository": "richardssheik107-hub/hk-ipo-risk-agents"
+  },
+  "status": "current_main_strict_revalidation_pass"
+}
