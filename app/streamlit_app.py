@@ -56,6 +56,7 @@ from competition_runtime_view import (
 )
 from evidence_viewer import render_evidence_viewer
 from human_review_ui import render_human_review
+from ipo_risk.runtime.review_projection import resolve_identity
 from pipeline_stages import resolve_stages
 from presenters import (
     DOMAINS,
@@ -697,13 +698,17 @@ def _render_agent_trace(payload: dict[str, object], stages) -> None:
 
 def _render_review_and_report(payload: dict[str, object], result, stages_by_id) -> None:
     section_header("审计工作区", "人工复核与机器最终报告并列，结论互不覆盖。")
+    # Resolved through the shared projection so a decision recorded here is filed
+    # under the same case_id/run_id the review API uses, and the two surfaces stay
+    # joinable.
+    _review_case_id, _review_run_id = resolve_identity(payload)
     review_col, report_col = st.columns((0.88, 1.32), gap="large")
     with review_col:
         render_human_review(
             payload,
             analysis_id=result.analysis_id,
-            case_id=str((payload.get("profile") or {}).get("stock_code") or result.stock_code or "unknown_case"),
-            run_id=result.request_id,
+            case_id=_review_case_id,
+            run_id=_review_run_id,
             service=HumanReviewService(),
         )
     with report_col:
