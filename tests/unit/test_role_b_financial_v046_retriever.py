@@ -8,7 +8,7 @@ from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.retrieval.role_b_financial_v046 import (
     RoleBFinancialHighRecallRetriever,
 )
-from ipo_risk.schemas import DocumentChunk
+from ipo_risk.schemas import DocumentChunk, Evidence, EvidenceSourceType
 
 
 def test_unknown_query_is_identical_to_released_keyword() -> None:
@@ -100,6 +100,38 @@ def test_bm25_window_lane_recovers_non_exact_loss_language() -> None:
     assert "bm25_window" in observed[0].metadata["retrieval_lanes"]
     assert observed[0].chunk_id == chunk.chunk_id
     assert observed[0].page == 12
+
+
+def test_balanced_fusion_keeps_a_bm25_only_page_in_the_top_results() -> None:
+    def candidate(page: int, lane: str) -> Evidence:
+        return Evidence(
+            evidence_id=f"{lane}:{page}",
+            document_id="doc",
+            chunk_id=f"doc:page:{page}",
+            page=page,
+            section="financial",
+            text=f"candidate page {page}",
+            source_type=EvidenceSourceType.PROSPECTUS,
+            relevance_score=0.5,
+            metadata={"retrieval_lane": lane},
+        )
+
+    domain = [candidate(page, "domain_v21") for page in range(1, 61)]
+    bm25 = [candidate(999, "bm25_window")]
+
+    observed = RoleBFinancialHighRecallRetriever()._fuse(
+        "cash_runway",
+        domain,
+        bm25,
+        limit=20,
+    )
+    pages = [item.page for item in observed]
+
+    assert pages[:2] == [1, 999]
+    recovered = observed[1]
+    assert recovered.metadata["retrieval_lane"] == "balanced_rrf_fusion"
+    assert recovered.metadata["domain_rank"] is None
+    assert recovered.metadata["bm25_rank"] == 1
 
 
 def test_legal_query_uses_high_recall_lane_without_minting_chunk_identity() -> None:
