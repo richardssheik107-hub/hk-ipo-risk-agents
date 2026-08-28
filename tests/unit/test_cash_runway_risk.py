@@ -89,7 +89,8 @@ def test_builds_pending_cash_runway_risk_with_complete_traceability() -> None:
     assert result.status == CashRunwayBuildStatus.BUILT
     assert result.calculation is not None
     assert result.risk_item is not None
-    assert result.calculation.result == "2.76"
+    assert result.calculation.result == str(Decimal("77208") * Decimal("3") / Decimal("83918"))
+    assert result.risk_item.metadata["runway_months_rounded"] == "2.76"
     assert result.calculation.evidence_ids == ["cash-e", "ocf-e"]
     assert [item.evidence_id for item in result.risk_item.evidence] == ["cash-e", "ocf-e"]
     assert result.risk_item.risk_code == "cash_runway"
@@ -256,7 +257,7 @@ def test_builder_consumes_skill_output_instead_of_reimplementing_formula(monkeyp
     monkeypatch.setattr("ipo_risk.domain.cash_runway.cash_runway_from_operating_cash_flow", fake_skill)
     result = CashRunwayRiskBuilder().build(extraction, evidence)
     assert result.calculation is not None
-    assert result.calculation.result == "7.50"
+    assert result.calculation.result == "7.5"
     assert result.risk_item is not None
     assert result.risk_item.level == RiskLevel.MEDIUM
     assert result.risk_item.metadata["monthly_burn"] == "2"

@@ -133,7 +133,9 @@ class CashRunwayRiskBuilder:
                 "operating_cash_flow_period_end": cash_flow.period_end.isoformat(),
             },
             formula="cash / (abs(operating_cash_flow) / period_months)",
-            result=str(rounded_runway),
+            # Persist the exact deterministic value for machine comparison.
+            # Rounded output remains available in metadata and the conclusion.
+            result=str(exact_runway),
             unit="months",
             evidence_ids=evidence_ids,
             success=True,

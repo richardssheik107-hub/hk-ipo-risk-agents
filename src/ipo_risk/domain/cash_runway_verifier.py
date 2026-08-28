@@ -227,7 +227,7 @@ class CashRunwayRiskVerifier:
             rounded = self._decimal(skill_result.metadata.get("rounded_months"))
             monthly_burn = self._decimal(skill_result.metadata.get("monthly_burn"))
             result_value = self._decimal(calculation.result if calculation else None)
-            record("calculation_result", result_value == rounded, "calculation_result_mismatch")
+            record("calculation_result", result_value == exact, "calculation_result_mismatch")
             record(
                 "monthly_burn",
                 parsed.get("monthly_burn") == monthly_burn,

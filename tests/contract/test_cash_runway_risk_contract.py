@@ -86,7 +86,11 @@ def test_calculation_inputs_are_json_safe_decimal_strings() -> None:
     assert result.calculation.inputs["cash"] == "77208"
     assert result.calculation.inputs["operating_cash_flow"] == "-83918"
     assert Decimal(result.calculation.inputs["monthly_burn"]) > 0
-    assert result.calculation.result == "2.76"
+    assert result.calculation.result == str(
+        Decimal("77208") * Decimal("3") / Decimal("83918")
+    )
+    assert result.risk_item is not None
+    assert result.risk_item.metadata["runway_months_rounded"] == "2.76"
 
 
 def test_result_collection_defaults_are_not_shared() -> None:
