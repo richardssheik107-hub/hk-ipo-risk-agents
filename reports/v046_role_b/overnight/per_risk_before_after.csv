@@ -1,0 +1,5 @@
+risk,m1_baseline,m1_fixed_journal,m1_fresh,m2_baseline,m2_fixed_journal,m2_fresh,primary_remaining_failure
+cash_runway,0/5,1/5,1/5,0/11,2/11,2/11,wrong_period_selection_and_parser_or_numeric_extraction
+customer_concentration,3/8,3/8,3/8,3/13,3/13,3/13,period_selection_and_deterministic_extraction
+supplier_concentration,2/9,2/9,2/9,4/13,4/13,4/13,parser_text_and_fact_conversion
+redemption_rights,4/8,4/8,3/8,5/11,5/11,4/11,llm_evidence_variance_and_verifier_or_binding

@@ -1,0 +1,32 @@
+{
+  "accepted": [
+    {
+      "fix": "failed_listing_restoration_normalization",
+      "root_cause": "LLM_RESPONSE_VARIANCE",
+      "official_delta_vs_forensic_012": {"m1": 0, "m2": 0},
+      "stability_effect": "restored 09600 under the saved 013 response and preserved the 012 Redemption floor under fixed-journal replay",
+      "commit": "dc3a20b"
+    },
+    {
+      "fix": "exact_cash_runway_calculation_result",
+      "root_cause": "rounded deterministic result persisted as audit result",
+      "official_delta_in_fixed_012_journal": {"m1": 1, "m2": 0},
+      "commit": "1eab9cb"
+    },
+    {
+      "fix": "zero_network_fixed_journal_replay",
+      "root_cause": "slow and variance-confounded feedback loop",
+      "official_delta": {"m1": 0, "m2": 0},
+      "targeted_replay_minutes": 2.69,
+      "full_fixed10_replay_minutes": 13.07,
+      "commit": "9e1f44d"
+    },
+    {
+      "fix": "human_review_append_order",
+      "root_cause": "equal wall-clock timestamps used UUID ordering",
+      "official_delta": {"m1": 0, "m2": 0},
+      "ci_effect": "removed a reproducible unrelated full-suite flake",
+      "commit": "2f9d68a"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+case_id,gold_status,risk_created,final_status,final_level,calculation_match,evidence_hit,m1_correct,m1_root,m2_covered,m2_support
+ipo_2020_00368,verified,false,absent,none,false,false,false,wrong_period_selection,0,2
+ipo_2020_09600,verified,false,absent,none,false,false,false,deterministic_extraction_miss,0,1
+ipo_2021_01024,needs_review,false,absent,none,false,false,false,wrong_period_selection,0,2
+ipo_2021_02190,verified,true,verified,high,true,true,true,correct,1,2
+ipo_2021_06628,verified,true,verified,high,true,true,true,correct,1,3
+ipo_2022_06610,verified,false,absent,none,false,false,false,parser_text_missing,0,1
+ipo_2023_01274,verified,true,verified,high,true,true,true,correct,1,1
+ipo_2023_02105,needs_review,false,absent,none,false,false,false,deterministic_extraction_miss,0,1

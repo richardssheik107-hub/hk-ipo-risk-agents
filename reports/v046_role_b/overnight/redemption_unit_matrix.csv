@@ -1,0 +1,9 @@
+case_id,gold_status,risk_created,final_status,final_level,calculation_match,evidence_hit,m1_correct,m1_root,m2_covered,m2_support
+ipo_2020_01961,needs_review,true,rejected,none,false,false,false,retrieval_ranking_or_topk_miss,0,1
+ipo_2020_09600,needs_review,true,needs_review,medium,true,true,true,correct,1,1
+ipo_2021_01024,needs_review,false,absent,none,false,false,false,builder_not_applicable_misclassification,0,2
+ipo_2021_02190,needs_review,true,needs_review,medium,true,true,true,correct,2,2
+ipo_2021_06628,needs_review,true,needs_review,medium,true,true,true,correct,1,2
+ipo_2022_06610,needs_review,true,rejected,none,false,false,false,parser_text_missing,0,1
+ipo_2023_02105,needs_review,true,rejected,none,false,false,false,verifier_rejection,0,1
+ipo_2023_06682,needs_review,true,needs_review,medium,true,false,false,final_evidence_not_retained,0,1

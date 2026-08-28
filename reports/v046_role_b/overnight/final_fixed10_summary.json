@@ -1,0 +1,29 @@
+{
+  "run_id": "overnight_final_001",
+  "case_count": 10,
+  "real_llm_case_count": 10,
+  "real_llm_calls": 40,
+  "structured_valid": [37, 40],
+  "transport_failures": 0,
+  "scope_rejections": 0,
+  "fallback_count": 3,
+  "m1": [9, 30],
+  "m2": [13, 48],
+  "candidate_anchor_top20": [35, 48],
+  "monotonicity": true,
+  "fresh_run_minutes": 23.91,
+  "per_risk": {
+    "cash_runway": {"m1": [1, 5], "m2": [2, 11]},
+    "customer_concentration": {"m1": [3, 8], "m2": [3, 13]},
+    "supplier_concentration": {"m1": [2, 9], "m2": [4, 13]},
+    "redemption_rights": {"m1": [3, 8], "m2": [4, 11]}
+  },
+  "governance": {
+    "gold_modified": false,
+    "evaluator_modified": false,
+    "validation_opened": false,
+    "blind_2025_accessed": false,
+    "runtime_received_gold": false,
+    "secrets_persisted": false
+  }
+}

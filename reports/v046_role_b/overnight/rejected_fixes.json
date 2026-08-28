@@ -1,0 +1,22 @@
+{
+  "rejected_or_deferred": [
+    {
+      "fix": "automatic_redemption_evidence_expansion",
+      "reason": "Evidence clause identity was not proven; expansion could bind unrelated legal clauses",
+      "regression": "possible out-of-scope Evidence retention",
+      "code_changed": false
+    },
+    {
+      "fix": "broad_cash_period_or_parser_rewrite",
+      "reason": "remaining failures span period selection, parser preservation and numeric extraction; no atomic general rule was proven",
+      "regression": "possible period pairing and parser-order regressions",
+      "code_changed": false
+    },
+    {
+      "fix": "fresh_result_driven_tuning",
+      "reason": "forbidden after the frozen final fresh run",
+      "regression": "Gold/LLM variance overfitting",
+      "code_changed": false
+    }
+  ]
+}

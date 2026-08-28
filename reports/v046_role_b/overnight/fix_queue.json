@@ -1,0 +1,47 @@
+{
+  "queue_version": "v046_overnight_fix_queue_v1",
+  "items": [
+    {
+      "id": "redemption-restoration-normalization",
+      "root_cause": "llm_response_variance",
+      "risk_family": "redemption_rights",
+      "affected_M1_units": 1,
+      "affected_M2_units": 1,
+      "proof": "forensic_012/013 call identity equal; restoration boolean varied",
+      "status": "accepted",
+      "before": "013 response replay classified 09600 not_applicable",
+      "after": "generic failed-listing restoration clause builds without issuer-specific logic",
+      "commit": "dc3a20b"
+    },
+    {
+      "id": "cash-exact-calculation-result",
+      "root_cause": "rounded_result_persisted_in_calculation",
+      "risk_family": "cash_runway",
+      "affected_M1_units": 1,
+      "affected_M2_units": 0,
+      "proof": "06682 status, level and Evidence matched while rounded calculation did not",
+      "status": "accepted",
+      "before": "Calculation.result stored rounded display value",
+      "after": "Calculation.result stores exact deterministic value; rounded display remains metadata",
+      "commit": "1eab9cb"
+    },
+    {
+      "id": "redemption-evidence-expansion",
+      "root_cause": "llm_evidence_subset_variance",
+      "risk_family": "redemption_rights",
+      "affected_M1_units": 1,
+      "affected_M2_units": 1,
+      "status": "deferred_not_implemented",
+      "reason": "generic clause-identity expansion was not proven safe; regression risk exceeded bounded evidence"
+    },
+    {
+      "id": "cash-period-parser-package",
+      "root_cause": "wrong_period_selection_and_parser_text_missing",
+      "risk_family": "cash_runway",
+      "affected_M1_units": 4,
+      "affected_M2_units": 9,
+      "status": "deferred_not_implemented",
+      "reason": "no single bounded issuer-agnostic patch was proven within this sprint"
+    }
+  ]
+}

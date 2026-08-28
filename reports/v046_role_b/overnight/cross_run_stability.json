@@ -1,0 +1,22 @@
+{
+  "audit_version": "v046_cross_run_stability_safe_v1",
+  "classification": "LLM_RESPONSE_VARIANCE",
+  "network_calls": 0,
+  "licensed_text_persisted": false,
+  "identity_mismatch_count": 0,
+  "regression_call_inputs_equal": true,
+  "structured_payload_variance_case_count": 10,
+  "regressed_m1_cases": ["ipo_2020_09600", "ipo_2023_06682"],
+  "run_012": {"redemption_m1": [4, 8], "redemption_m2": [5, 11]},
+  "run_013": {"redemption_m1": [2, 8], "redemption_m2": [3, 11]},
+  "findings": {
+    "ipo_2020_09600": "identical bounded Evidence input; restoration boolean varied and changed deterministic builder applicability",
+    "ipo_2023_06682": "identical bounded Evidence input; structured citation subset varied and downstream final Evidence binding missed"
+  },
+  "governance": {
+    "gold_runtime_input": false,
+    "validation_opened": false,
+    "blind_2025_accessed": false,
+    "raw_structured_responses_included": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "baseline": {
+    "run_id": "forensic_012",
+    "gold_risk_units": 30,
+    "gold_evidence_units": 48,
+    "parser_preserved": 38,
+    "candidate_anchor_top20": 35,
+    "agent_consumed_evidence": 30,
+    "candidate_risk_created_evidence": 14,
+    "final_positive_evidence": 13,
+    "page_and_anchor_matched": 12,
+    "m1": [9, 30],
+    "m2": [12, 48]
+  },
+  "fresh_final": {
+    "run_id": "overnight_final_001",
+    "gold_risk_units": 30,
+    "gold_evidence_units": 48,
+    "parser_preserved": 38,
+    "candidate_anchor_top20": 35,
+    "agent_consumed_evidence": 34,
+    "candidate_risk_created_evidence": 18,
+    "final_positive_evidence": 17,
+    "evidence_retained": 17,
+    "page_and_anchor_matched": 13,
+    "m1": [9, 30],
+    "m2": [13, 48]
+  },
+  "delta": {"m1_units": 0, "m2_units": 1, "agent_consumed_evidence": 4, "candidate_risk_created_evidence": 4}
+}
