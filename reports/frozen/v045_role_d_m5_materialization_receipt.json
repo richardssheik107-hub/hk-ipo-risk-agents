@@ -1,0 +1,103 @@
+{
+  "artifact_sha256": {
+    "test_predictions.csv": "8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a",
+    "multi_horizon_results.csv": "f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725",
+    "evaluation_summary.json": "6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63",
+    "ai_vs_offline_report.json": "3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94"
+  },
+  "evidence_class": "recorded_external_materialization_receipt",
+  "evaluation": {
+    "case_count": 70,
+    "gate": "D1_multi_horizon_evaluation",
+    "horizons": [
+      1,
+      5,
+      20,
+      60
+    ],
+    "primary_horizon": 5,
+    "significant_drop_5d_definition": "return_5d <= -0.10",
+    "split": "2024_validation",
+    "verdict": "PASS"
+  },
+  "five_day_metrics": {
+    "precision": 0.3333,
+    "recall": 0.0435,
+    "f1": 0.0769,
+    "pr_auc": 0.3364,
+    "roc_auc": 0.4246,
+    "top_10pct_hit_rate": 0.4286,
+    "top_20pct_hit_rate": 0.2857,
+    "base_prevalence": 0.3286
+  },
+  "governance": {
+    "blind_2025_y_accessed": false,
+    "validation_retuning_performed": false,
+    "pr_e_retrained": false,
+    "pr_f_retrained": false,
+    "score_direction_inverted": false,
+    "score_calibrated": false,
+    "score_called_probability": false,
+    "substitute_market_data_used": false,
+    "missing_market_data_fake_filled": false,
+    "runtime_artifacts_committed": false,
+    "licensed_eod_committed": false,
+    "deterministic_resume": "passed_byte_identical"
+  },
+  "input_bindings": {
+    "governed_eod": {
+      "filtered_store_row_count": 433776,
+      "source_filename": "hkshareeodprices.csv",
+      "source_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+      "target_ipo_count": 438
+    },
+    "metric_protocol": {
+      "path": "configs/v045_competition_metric_protocol.json",
+      "protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only"
+    },
+    "pr_e": {
+      "development_count": 354,
+      "diagnostic_hash": "18b4f21ef691614705ae884a64c1791e749c9ecf9acb98efce518eb7dc3e3faa",
+      "execution_revision": "dddd517061e625b9920913885ca66e9585fbe01e",
+      "manifest_path": "reports/frozen/v04_pr_e_baseline_manifest.json",
+      "results_hash": "d9082d43c651615851dd2451a15f4c47a5253b0b83410a9ba747ad5236c9fbe3",
+      "runtime_outputs": {
+        "run_manifest.json": "f60cc143d7710ae45978cfb07cb74968089ccffe687a673f2faa248c5d8508c4",
+        "baseline_results.json": "4444ea914295ecd9544e8f2d2db126e541b6dc1da60e5b05e648c49a3f9f659e",
+        "value_diagnostic.json": "c0d1882773863d1fcd6fa6155a9a09f02001e39ad60a5c92f2a87d33c286b863"
+      },
+      "validation_count": 70
+    },
+    "pr_f": {
+      "development_count": 354,
+      "execution_revision": "854294769cd8162bb989d019addf10d653e663e8",
+      "manifest_path": "reports/frozen/v04_pr_f_lightgbm_manifest.json",
+      "model_result_hash": "7d5a6747b39739ea57e90a00c7b364fd7e1c55cf44e916b1285c075c3a9e7bc3",
+      "runtime_outputs": {
+        "run_manifest.json": "dcaa27ff64d3268e85f7f46fa16fac8621107a420297a6059d4824866e97c035",
+        "model_results.json": "d6b4cae7d4cb8b78430b6b9beb25a866d4709e19c41fc9b6c60b6a07a6e4f41f",
+        "model_comparison.json": "c033c4f8ed849255eb4369ecfe413a384ab9f1d8a20f4b6899f45683785efd27"
+      },
+      "score_semantics": "uncalibrated_model_score_not_probability",
+      "validation_count": 70
+    }
+  },
+  "limitations": {
+    "evidence_is_recorded_not_live_rerun": true,
+    "external_immutable_inputs_required_for_live_rerun": true,
+    "receipt_substitutes_for_strict_checker": false,
+    "fresh_directory_rebuild_recorded": false,
+    "final_three_product_handoff_materialized": false,
+    "v2_candidate_promoted": false
+  },
+  "receipt_version": "v045_role_d_m5_materialization_receipt_v1",
+  "recorded_at": "2026-08-27T12:15:03Z",
+  "source": {
+    "evidence_comment_id": 5438960640,
+    "evidence_url": "https://github.com/richardssheik107-hub/hk-ipo-risk-agents/pull/141#issuecomment-5438960640",
+    "merge_commit": "2eb4bea6104e47c6472848d826e2572018909094",
+    "pull_request": 141,
+    "repository": "richardssheik107-hub/hk-ipo-risk-agents"
+  },
+  "status": "recorded_external_materialization_pass"
+}

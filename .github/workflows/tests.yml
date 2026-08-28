@@ -26,6 +26,8 @@ jobs:
         run: python scripts/validate_competition_data.py
       - name: Competition runtime contract validation
         run: python scripts/validate_competition_runtime.py
+      - name: Role-D recorded materialization receipt
+        run: python scripts/validate_v045_role_d_receipt.py
       - name: Submission readiness fail-closed smoke
         run: >-
           python scripts/build_v045_submission_readiness.py
