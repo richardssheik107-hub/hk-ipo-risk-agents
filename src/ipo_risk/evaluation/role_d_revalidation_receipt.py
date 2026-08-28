@@ -10,7 +10,7 @@ from typing import Any, Mapping
 
 RECEIPT_VERSION = "v045_role_d_current_main_revalidation_receipt_v1"
 RECEIPT_STATUS = "current_main_strict_revalidation_pass"
-EXPECTED_BASE_MAIN = "34553ebcd230b34417775359133761b27e49e204"
+EXPECTED_BASE_MAIN = "8211cc4a59e07529ad39faaa47ab3fcb35f565f5"
 EXPECTED_ARTIFACT_SHA256 = {
     "test_predictions.csv": (
         "8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a"

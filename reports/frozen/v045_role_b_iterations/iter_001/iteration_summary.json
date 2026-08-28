@@ -1,0 +1,203 @@
+{
+  "all_cases_have_results": true,
+  "all_cases_real_llm": true,
+  "analysis_result_count": 10,
+  "blind_2025_outcome_accessed": false,
+  "case_count": 10,
+  "case_statuses": [
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2021_02190",
+      "elapsed_seconds": 170.344,
+      "ordinal": 1,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2020_00368",
+      "elapsed_seconds": 80.5,
+      "ordinal": 2,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2021_06628",
+      "elapsed_seconds": 75.406,
+      "ordinal": 3,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2020_01961",
+      "elapsed_seconds": 96.703,
+      "ordinal": 4,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2021_01024",
+      "elapsed_seconds": 134.891,
+      "ordinal": 5,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2023_01274",
+      "elapsed_seconds": 106.61,
+      "ordinal": 6,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2020_09600",
+      "elapsed_seconds": 131.062,
+      "ordinal": 7,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2022_06610",
+      "elapsed_seconds": 112.203,
+      "ordinal": 8,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2023_02105",
+      "elapsed_seconds": 120.703,
+      "ordinal": 9,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    },
+    {
+      "analysis_result_present": true,
+      "analysis_status": "completed",
+      "case_id": "ipo_2023_06682",
+      "elapsed_seconds": 129.375,
+      "ordinal": 10,
+      "real_external_llm": true,
+      "reused": false,
+      "subprocess_returncode": 0
+    }
+  ],
+  "code_state": {
+    "code_fingerprint": "77060952b7ab320dc80ac42b3750630ef90e16f914cbaac42160b3a035c2d2c0",
+    "git_dirty": false,
+    "git_head": "1c41860db41597b14937f2e16eb2e9d963b1527d"
+  },
+  "competition_pass_claim_eligible": false,
+  "debug_subset_only": true,
+  "existing_gold_modified": false,
+  "failure_taxonomy": {
+    "evidence_not_retained_in_final_risk": 3,
+    "schema_normalization_or_riskitem_reconciliation_miss": 1,
+    "semantic_extraction_miss": 23,
+    "verifier_rejection": 3
+  },
+  "iteration_id": "iter_001",
+  "iteration_version": "v045_role_b_fixed10_iteration_v1",
+  "m1": 0.0,
+  "m1_delta_vs_previous": null,
+  "m1_official_threshold": 0.8,
+  "m1_project_target": 0.85,
+  "m2": 0.041666666666666664,
+  "m2_delta_vs_previous": null,
+  "m2_official_threshold": 0.85,
+  "m2_project_target": 0.88,
+  "new_manual_annotations_added": false,
+  "per_risk": {
+    "cash_burn_pressure": {
+      "correct": 0,
+      "existence_f1": 0.0,
+      "existence_precision": 0.0,
+      "existence_recall": 0.0,
+      "official_aligned_accuracy": 0.0,
+      "status": "EVALUABLE_FROM_EXISTING_GOLD",
+      "support": 5
+    },
+    "customer_concentration": {
+      "correct": 0,
+      "existence_f1": 0.4,
+      "existence_precision": 1.0,
+      "existence_recall": 0.25,
+      "official_aligned_accuracy": 0.0,
+      "status": "EVALUABLE_FROM_EXISTING_GOLD",
+      "support": 8
+    },
+    "redemption_rights": {
+      "correct": 0,
+      "existence_f1": 0.4,
+      "existence_precision": 1.0,
+      "existence_recall": 0.25,
+      "official_aligned_accuracy": 0.0,
+      "status": "EVALUABLE_FROM_EXISTING_GOLD",
+      "support": 8
+    },
+    "related_party_transaction": {
+      "correct": 0,
+      "f1": null,
+      "precision": null,
+      "recall": null,
+      "status": "NOT_EVALUABLE_FROM_EXISTING_GOLD",
+      "support": 0
+    },
+    "supplier_concentration": {
+      "correct": 0,
+      "existence_f1": 0.0,
+      "existence_precision": 0.0,
+      "existence_recall": 0.0,
+      "official_aligned_accuracy": 0.0,
+      "status": "EVALUABLE_FROM_EXISTING_GOLD",
+      "support": 9
+    }
+  },
+  "previous_iteration_id": null,
+  "real_external_llm_case_count": 10,
+  "retrieval_diagnostics": {
+    "candidate_retrieval_recall_at_20": "NOT_AVAILABLE_WITHOUT_CANDIDATE_TRACE",
+    "recall_at_1": 0.020833333333333332,
+    "recall_at_10": 0.041666666666666664,
+    "recall_at_20": 0.041666666666666664,
+    "recall_at_3": 0.041666666666666664,
+    "recall_at_5": 0.041666666666666664,
+    "reranked_recall_at_10": "NOT_AVAILABLE_WITHOUT_RERANK_TRACE"
+  },
+  "runtime": {
+    "api_key_present": true,
+    "base_url_present": true,
+    "effective_model": "ark-code-latest",
+    "effective_provider": "openai_responses",
+    "effective_timeout_seconds": 300,
+    "effective_transport_retries": 0,
+    "prospectus_root_present": true
+  },
+  "source_coverage_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "subset_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "validation_opened": false
+}

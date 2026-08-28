@@ -1,0 +1,227 @@
+{
+  "independent_primary_failures": {
+    "builder_not_applicable_misclassification": 1,
+    "deterministic_extraction_miss": 4,
+    "final_evidence_not_retained": 1,
+    "level_mismatch": 1,
+    "llm_abstention_with_sufficient_evidence": 1,
+    "parser_text_missing": 5,
+    "retrieval_candidate_miss": 6,
+    "retrieval_ranking_or_topk_miss": 1,
+    "wrong_period_selection": 2
+  },
+  "non_official_diagnostic": true,
+  "per_risk": {
+    "cash_runway": [
+      {
+        "conditional_rate": 1.0,
+        "count": 5,
+        "stage": "gold_positive_units"
+      },
+      {
+        "conditional_rate": 0.0,
+        "count": 0,
+        "stage": "final_risk_present"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "final_positive"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "status_matched"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "level_matched"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "calculation_matched"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "evidence_matched"
+      },
+      {
+        "conditional_rate": null,
+        "count": 0,
+        "stage": "m1_correct"
+      }
+    ],
+    "customer_concentration": [
+      {
+        "conditional_rate": 1.0,
+        "count": 8,
+        "stage": "gold_positive_units"
+      },
+      {
+        "conditional_rate": 0.375,
+        "count": 3,
+        "stage": "final_risk_present"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "final_positive"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "status_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "level_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "calculation_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "evidence_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "m1_correct"
+      }
+    ],
+    "redemption_rights": [
+      {
+        "conditional_rate": 1.0,
+        "count": 8,
+        "stage": "gold_positive_units"
+      },
+      {
+        "conditional_rate": 0.875,
+        "count": 7,
+        "stage": "final_risk_present"
+      },
+      {
+        "conditional_rate": 0.5714285714285714,
+        "count": 4,
+        "stage": "final_positive"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 4,
+        "stage": "status_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 4,
+        "stage": "level_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 4,
+        "stage": "calculation_matched"
+      },
+      {
+        "conditional_rate": 0.75,
+        "count": 3,
+        "stage": "evidence_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "m1_correct"
+      }
+    ],
+    "supplier_concentration": [
+      {
+        "conditional_rate": 1.0,
+        "count": 9,
+        "stage": "gold_positive_units"
+      },
+      {
+        "conditional_rate": 0.3333333333333333,
+        "count": 3,
+        "stage": "final_risk_present"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "final_positive"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 3,
+        "stage": "status_matched"
+      },
+      {
+        "conditional_rate": 0.6666666666666666,
+        "count": 2,
+        "stage": "level_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 2,
+        "stage": "calculation_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 2,
+        "stage": "evidence_matched"
+      },
+      {
+        "conditional_rate": 1.0,
+        "count": 2,
+        "stage": "m1_correct"
+      }
+    ]
+  },
+  "report_version": "v046_role_b_m1_m2_forensics_v1",
+  "waterfall": [
+    {
+      "conditional_rate": 1.0,
+      "count": 30,
+      "stage": "gold_positive_units"
+    },
+    {
+      "conditional_rate": 0.43333333333333335,
+      "count": 13,
+      "stage": "final_risk_present"
+    },
+    {
+      "conditional_rate": 0.7692307692307693,
+      "count": 10,
+      "stage": "final_positive"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 10,
+      "stage": "status_matched"
+    },
+    {
+      "conditional_rate": 0.9,
+      "count": 9,
+      "stage": "level_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 9,
+      "stage": "calculation_matched"
+    },
+    {
+      "conditional_rate": 0.8888888888888888,
+      "count": 8,
+      "stage": "evidence_matched"
+    },
+    {
+      "conditional_rate": 1.0,
+      "count": 8,
+      "stage": "m1_correct"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 >
 > Current status: **CURRENT-MAIN STRICT REVALIDATION PASS — A MODEL DECISION PENDING**
 
-Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and governed 70-case materialization are complete. On 2026-08-28 the exact frozen PR-E/PR-F runtime and governed filtered EOD store were recovered and the current `main` base (`34553ebcd230b34417775359133761b27e49e204`) passed a fresh strict rerun. The licensed raw EOD archive and complete research runtimes remain intentionally outside Git; both historical and current-main runs are therefore recorded as hash-bound receipts.
+Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and governed 70-case materialization are complete. On 2026-08-28 the exact frozen PR-E/PR-F runtime and governed filtered EOD store were recovered and the current `main` base (`8211cc4a59e07529ad39faaa47ab3fcb35f565f5`) passed a fresh strict rerun. The licensed raw EOD archive and complete research runtimes remain intentionally outside Git; both historical and current-main runs are therefore recorded as hash-bound receipts.
 
 ## 1. Four evidence layers
 

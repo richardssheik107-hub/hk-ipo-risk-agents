@@ -1,0 +1,112 @@
+{
+  "blind_2025_outcome_accessed": false,
+  "coverage_manifest_version": "v045_existing_gold_evaluable_manifest_v1",
+  "evaluable_development_case_count": 79,
+  "evaluable_validation_case_count": 19,
+  "evaluated_case_count": 10,
+  "evaluation_scope": "debug_subset",
+  "evaluator_version": "v045_existing_gold_evaluator_v1",
+  "evidence_coverage": {
+    "coverage_recall": 0.125,
+    "covered_existing_gold_count": 6,
+    "evaluable_existing_gold_count": 48,
+    "official_threshold": 0.85,
+    "official_threshold_met": false,
+    "project_target": 0.88,
+    "project_target_met": false
+  },
+  "existing_gold_modified": false,
+  "existing_gold_source": "frozen Expert Annotation / Oracle v2 source inventory",
+  "existing_gold_source_hash_or_manifest": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "expected_case_count_for_split": 10,
+  "external_llm_called": true,
+  "failure_taxonomy": {
+    "evidence_not_retained_in_final_risk": 3,
+    "schema_normalization_or_riskitem_reconciliation_miss": 1,
+    "semantic_extraction_miss": 21,
+    "verifier_rejection": 1
+  },
+  "measurement_gate": {
+    "all_expected_cases_present": true,
+    "competition_pass_claim_eligible": false,
+    "full_split_scope": false,
+    "official_m1_pass": false,
+    "official_m2_pass": false,
+    "real_llm_measurement_present": true
+  },
+  "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
+  "missing_case_ids": [],
+  "new_manual_annotations_added": false,
+  "real_llm_cases": 10,
+  "retrieval_diagnostics": {
+    "candidate_retrieval_recall_at_20": "NOT_AVAILABLE_WITHOUT_CANDIDATE_TRACE",
+    "recall_at_1": 0.0625,
+    "recall_at_10": 0.125,
+    "recall_at_20": 0.125,
+    "recall_at_3": 0.10416666666666667,
+    "recall_at_5": 0.125,
+    "reranked_recall_at_10": "NOT_AVAILABLE_WITHOUT_RERANK_TRACE"
+  },
+  "risk_extraction": {
+    "correct_positive_count": 4,
+    "evaluable_positive_count": 30,
+    "existence_f1": 0.4210526315789474,
+    "existence_precision": 1.0,
+    "existence_recall": 0.26666666666666666,
+    "macro_f1": 0.35757575757575755,
+    "macro_f1_status": "AVAILABLE_FOR_EXISTING_GOLD_MAPPED_FAMILIES",
+    "official_aligned_accuracy": 0.13333333333333333,
+    "official_threshold": 0.8,
+    "official_threshold_met": false,
+    "per_risk": {
+      "cash_burn_pressure": {
+        "correct": 0,
+        "existence_f1": 0.0,
+        "existence_precision": 0.0,
+        "existence_recall": 0.0,
+        "official_aligned_accuracy": 0.0,
+        "status": "EVALUABLE_FROM_EXISTING_GOLD",
+        "support": 5
+      },
+      "customer_concentration": {
+        "correct": 0,
+        "existence_f1": 0.4,
+        "existence_precision": 1.0,
+        "existence_recall": 0.25,
+        "official_aligned_accuracy": 0.0,
+        "status": "EVALUABLE_FROM_EXISTING_GOLD",
+        "support": 8
+      },
+      "redemption_rights": {
+        "correct": 3,
+        "existence_f1": 0.6666666666666666,
+        "existence_precision": 1.0,
+        "existence_recall": 0.5,
+        "official_aligned_accuracy": 0.375,
+        "status": "EVALUABLE_FROM_EXISTING_GOLD",
+        "support": 8
+      },
+      "related_party_transaction": {
+        "correct": 0,
+        "f1": null,
+        "precision": null,
+        "recall": null,
+        "status": "NOT_EVALUABLE_FROM_EXISTING_GOLD",
+        "support": 0
+      },
+      "supplier_concentration": {
+        "correct": 1,
+        "existence_f1": 0.3636363636363636,
+        "existence_precision": 1.0,
+        "existence_recall": 0.2222222222222222,
+        "official_aligned_accuracy": 0.1111111111111111,
+        "status": "EVALUABLE_FROM_EXISTING_GOLD",
+        "support": 9
+      }
+    },
+    "precision_status": "AVAILABLE_FROM_EXPLICIT_EXISTING_GOLD_JUDGMENTS",
+    "project_target": 0.85,
+    "project_target_met": false
+  },
+  "split": "development"
+}

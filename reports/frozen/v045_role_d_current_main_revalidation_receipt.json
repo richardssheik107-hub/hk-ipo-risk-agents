@@ -74,7 +74,7 @@
   "receipt_version": "v045_role_d_current_main_revalidation_receipt_v1",
   "recorded_at": "2026-08-28",
   "source": {
-    "base_main_commit": "34553ebcd230b34417775359133761b27e49e204",
+    "base_main_commit": "8211cc4a59e07529ad39faaa47ab3fcb35f565f5",
     "repository": "richardssheik107-hub/hk-ipo-risk-agents"
   },
   "status": "current_main_strict_revalidation_pass"

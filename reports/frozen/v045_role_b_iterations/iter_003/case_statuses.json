@@ -1,0 +1,102 @@
+[
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2021_02190",
+    "elapsed_seconds": 99.571,
+    "ordinal": 1,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2020_00368",
+    "elapsed_seconds": 84.393,
+    "ordinal": 2,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2021_06628",
+    "elapsed_seconds": 104.149,
+    "ordinal": 3,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2020_01961",
+    "elapsed_seconds": 75.5,
+    "ordinal": 4,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2021_01024",
+    "elapsed_seconds": 84.114,
+    "ordinal": 5,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2023_01274",
+    "elapsed_seconds": 83.61,
+    "ordinal": 6,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2020_09600",
+    "elapsed_seconds": 87.118,
+    "ordinal": 7,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2022_06610",
+    "elapsed_seconds": 73.682,
+    "ordinal": 8,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2023_02105",
+    "elapsed_seconds": 98.244,
+    "ordinal": 9,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  },
+  {
+    "analysis_result_present": true,
+    "analysis_status": "completed",
+    "case_id": "ipo_2023_06682",
+    "elapsed_seconds": 88.203,
+    "ordinal": 10,
+    "real_external_llm": true,
+    "reused": false,
+    "subprocess_returncode": 0
+  }
+]

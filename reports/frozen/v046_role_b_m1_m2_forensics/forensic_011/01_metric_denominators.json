@@ -1,0 +1,62 @@
+{
+  "m1_correct_count": 8,
+  "m1_evaluable_positive_risk_unit_count": 30,
+  "m1_incorrect_count": 22,
+  "m2_covered_count": 11,
+  "m2_evaluable_evidence_unit_count": 48,
+  "m2_uncovered_count": 37,
+  "non_official_diagnostics": {
+    "calculation_match_rate": 0.3333333333333333,
+    "evidence_hit_rate": 0.3,
+    "level_match_rate": 0.3,
+    "m1_units_only_calculation_mismatch": 0,
+    "m1_units_only_evidence_mismatch": 1,
+    "m2_missing_after_risk_present": 6,
+    "m2_missing_because_corresponding_risk_absent": 7,
+    "risk_existence_recall": 0.43333333333333335,
+    "risk_positive_bucket_rate": 0.3333333333333333,
+    "risk_present_level_mismatch": 4,
+    "risk_present_status_mismatch": 3,
+    "status": "NON_OFFICIAL_DIAGNOSTIC",
+    "status_match_rate": 0.3333333333333333
+  },
+  "per_risk": {
+    "cash_runway": {
+      "correct": 0,
+      "evidence_covered": 0,
+      "evidence_uncovered": 11,
+      "evidence_unit_count": 11,
+      "incorrect": 5,
+      "official_aligned_accuracy": 0.0,
+      "support": 5
+    },
+    "customer_concentration": {
+      "correct": 3,
+      "evidence_covered": 3,
+      "evidence_uncovered": 10,
+      "evidence_unit_count": 13,
+      "incorrect": 5,
+      "official_aligned_accuracy": 0.375,
+      "support": 8
+    },
+    "redemption_rights": {
+      "correct": 3,
+      "evidence_covered": 4,
+      "evidence_uncovered": 7,
+      "evidence_unit_count": 11,
+      "incorrect": 5,
+      "official_aligned_accuracy": 0.375,
+      "support": 8
+    },
+    "supplier_concentration": {
+      "correct": 2,
+      "evidence_covered": 4,
+      "evidence_uncovered": 9,
+      "evidence_unit_count": 13,
+      "incorrect": 7,
+      "official_aligned_accuracy": 0.2222222222222222,
+      "support": 9
+    }
+  },
+  "report_version": "v046_role_b_m1_m2_forensics_v1"
+}
