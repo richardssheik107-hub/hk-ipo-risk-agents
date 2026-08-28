@@ -1,11 +1,11 @@
 """Opt-in multi-lane high-recall retrieval for Role-B v0.4.6.
 
 The forensic fixed-10 showed that parser preservation and candidate generation,
-not general LLM validity, are the largest proven first failures.  This adapter
-therefore combines the frozen DomainAware V2.1 lane, parser-provided alternate
-text views, a case-local window BM25 lane, and bounded page-level rank fusion.
+not general LLM validity, are the largest proven first failures. This adapter
+combines the frozen DomainAware V2.1 lane, parser-provided alternate text views,
+a case-local window BM25 lane, and balanced page-level reciprocal-rank fusion.
 
-Unknown queries still use the released keyword retriever unchanged.  The hybrid
+Unknown queries still use the released keyword retriever unchanged. The hybrid
 lane accepts no issuer, security, case, page, or Gold-derived rule and always
 maps candidates back to the original physical-page chunk identity.
 """
@@ -88,6 +88,18 @@ class _FusedPage:
     domain_rank: int | None
     bm25_rank: int | None
 
+    @property
+    def lane_count(self) -> int:
+        return int(self.domain_rank is not None) + int(self.bm25_rank is not None)
+
+    @property
+    def best_rank(self) -> int:
+        return min(
+            rank
+            for rank in (self.domain_rank, self.bm25_rank)
+            if rank is not None
+        )
+
 
 @dataclass(slots=True)
 class _SearchCorpus:
@@ -100,10 +112,10 @@ class _SearchCorpus:
 class RoleBFinancialHighRecallRetriever:
     """Opt-in hybrid retrieval while preserving generic keyword semantics."""
 
-    # Keep the public name stable for existing v0.4.6 configs.  The version is
+    # Keep the public name stable for existing v0.4.6 configs. The version is
     # the behaviour identity used by Evidence provenance and journal hashes.
     name = "role_b_v046_financial_high_recall"
-    version = "role_b_v046_hybrid_high_recall_v2"
+    version = "role_b_v046_hybrid_high_recall_v3"
 
     def __init__(self) -> None:
         self._keyword = KeywordDocumentRetriever()
@@ -153,12 +165,10 @@ class RoleBFinancialHighRecallRetriever:
             if corpus is None:
                 corpus = self._build_corpus(chunks)
                 self._corpus_cache[fingerprint] = corpus
-            domain = self._domain_candidates(corpus, risk_code)
-            bm25 = self._bm25_candidates(corpus, risk_code)
             values = self._fuse(
                 risk_code,
-                domain,
-                bm25,
+                self._domain_candidates(corpus, risk_code),
+                self._bm25_candidates(corpus, risk_code),
                 limit=_FUSION_DEPTH,
             )
             self._result_cache[cache_key] = values
@@ -342,9 +352,7 @@ class RoleBFinancialHighRecallRetriever:
                             "snippet_start": start,
                             "snippet_end": end,
                             "source_text_length": len(source.text),
-                            "context_truncated": (
-                                start > 0 or end < len(source.text)
-                            ),
+                            "context_truncated": start > 0 or end < len(source.text),
                         },
                     }
                 )
@@ -488,7 +496,7 @@ class RoleBFinancialHighRecallRetriever:
             bm25_rank = bm25_by_page.get(page, (None, None))[0]
             score = 0.0
             if domain_rank is not None:
-                score += 2.0 / (_RRF_K + domain_rank)
+                score += 1.0 / (_RRF_K + domain_rank)
             if bm25_rank is not None:
                 score += 1.0 / (_RRF_K + bm25_rank)
             fused.append(
@@ -502,6 +510,8 @@ class RoleBFinancialHighRecallRetriever:
         fused.sort(
             key=lambda item: (
                 -item.score,
+                -item.lane_count,
+                item.best_rank,
                 item.domain_rank or 9999,
                 item.bm25_rank or 9999,
                 item.page,
@@ -553,14 +563,14 @@ class RoleBFinancialHighRecallRetriever:
                             **base.metadata,
                             "retriever": self.name,
                             "retriever_version": self.version,
-                            "retrieval_lane": "weighted_rrf_fusion",
+                            "retrieval_lane": "balanced_rrf_fusion",
                             "retrieval_lanes": lanes,
                             "query_intent": risk_code,
                             "query_family": risk_code,
                             "final_rank": final_rank,
                             "domain_rank": row.domain_rank,
                             "bm25_rank": row.bm25_rank,
-                            "weighted_rrf_score": row.score,
+                            "balanced_rrf_score": row.score,
                             "context_adapter": self.version,
                             "merged_context": len(lanes) > 1,
                             "merged_text_sha256": text_hash,
