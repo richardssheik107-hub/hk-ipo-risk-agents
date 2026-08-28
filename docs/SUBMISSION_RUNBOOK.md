@@ -1,48 +1,24 @@
 # v0.4.5 Competition Submission Runbook
 
-本 Runbook 是最终提交阶段的可复现操作手册。当前状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` / `configs/v045_competition_metric_protocol.json` 为准；当前操作层顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
+> Status date: `2026-08-28`
+
+本 Runbook 是最终提交阶段的可复现操作手册。当前状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 与 `configs/v045_competition_metric_protocol.json` 为准；操作顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
 
 ## 1. 基本原则
 
 - `COMPETITION_READY` 只能由实测 Gate 得出；
-- final metric artifact 必须记录 `metric_protocol_version=v045_competition_metric_protocol_v2_existing_gold_only`；
-- M1/M2 只允许使用比赛收尾前已经存在并冻结的 Expert Annotation / Oracle Gold；
-- 不新增人工 Gold，不修改旧 Gold，不把 `UNJUDGED` 当 negative；
+- final metric artifact 必须绑定 Metric-v2；
+- M1/M2 只使用收尾前已存在并冻结的 Expert Annotation / Oracle Gold；
+- 不新增/修改 Gold，不把 `UNJUDGED` 当 negative；
 - 2024 Validation 不做 post-hoc tuning；2025 Blind y 未授权前不得访问；
-- LLM 只负责语义/综合，精确计算由 deterministic Skill/Python 完成；
-- PR-F authentic handoff 不存在时 Model Channel 保持 `unavailable`；
-- Market 缺失显式 missing，不补零、不造 proxy；
-- 授权 PDF、API Key、本地绝对路径不得进入 Git 或 submission bundle；
-- legacy-only `Recall@5` 不得被解释成 Evidence official PASS；
-- Role-B 当前只使用 constrained Runner/Fixer 分离，不给 Codex 开放式全仓优化任务。
+- uncalibrated model score 不称为 probability；
+- PR-F authentic runtime 不存在时 Model Channel = unavailable；
+- Market missing 不补零、不造 proxy；
+- 授权 PDF、raw EOD、model/cache、API Key、本地绝对路径不得进入 Git 或 bundle；
+- Role-B 保持 Runner/Fixer 分离；
+- Role-D 保持 frozen PR-E/PR-F、无重训、无 score inversion。
 
-## 2. Metric Protocol freeze check
-
-确认：
-
-```text
-docs/COMPETITION_METRIC_PROTOCOL.md
-configs/v045_competition_metric_protocol.json
-```
-
-Protocol ID：
-
-```text
-v045_competition_metric_protocol_v2_existing_gold_only
-```
-
-M1/M2：
-
-```text
-M1 Existing-Gold Risk Accuracy >=0.80
-   project target >=0.85
-
-M2 Existing-Gold Evidence Coverage Recall >=0.85
-   project target >=0.88
-   Recall@1/@3/@5/@10/@20 diagnostics only
-```
-
-## 3. 环境安装与基础校验
+## 2. 安装与基础校验
 
 ```bash
 python -m venv .venv
@@ -57,79 +33,53 @@ python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 ```
 
-真实 AI runtime 当前验证配置：
+真实 AI runtime：
 
 ```text
 IPO_RISK_LLM_PROVIDER=openai_responses
 IPO_RISK_LLM_MODEL=ark-code-latest
 IPO_RISK_LLM_TIMEOUT_SECONDS=300
 IPO_RISK_LLM_MAX_RETRIES=0
-```
-
-Role-B real-PDF runner 还要求：
-
-```text
 IPO_RISK_PROSPECTUS_ROOT=<AUTHORIZED_PROSPECTUS_ROOT>
 ```
 
-该变量必须指向真实存在的授权招股书根目录。API Key / Base URL / 本机绝对路径只来自本地环境，不得提交 Git。
+Secret 与绝对路径只存在本地环境。
 
-PowerShell 临时设置示例：
-
-```powershell
-$env:IPO_RISK_PROSPECTUS_ROOT="D:\path\to\authorized\prospectus_root"
-Test-Path $env:IPO_RISK_PROSPECTUS_ROOT
-```
-
-必须返回 `True`。
-
-## 4. Existing Expert Gold inventory
+## 3. Metric Protocol freeze
 
 ```text
-annotation inventory   101
-valid annotations      100
-official materialized   98
-
-evaluable Development cases = 79
-evaluable Validation cases  = 19
-primary positive risk units = 128
-primary evidence units      = 217
+protocol = v045_competition_metric_protocol_v2_existing_gold_only
+M1 >=0.80; target >=0.85
+M2 >=0.85; target >=0.88
+M3 =1.0
+M4 human-review rubric
+M5 =1D/5D/20D/60D
+significant_drop_5d = return_5d <= -0.10
 ```
 
-Primary support：
+确认：
 
 ```text
-cash_burn_pressure         16
-customer_concentration     32
-redemption_rights          39
-supplier_concentration     41
-related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+docs/COMPETITION_METRIC_PROTOCOL.md
+configs/v045_competition_metric_protocol.json
 ```
 
-禁止：新人工标注、补 risk family、补 negative case、人工重做 Evidence Group、修改专家旧答案、把未标注项当 negative。
-
-## 5. Role B/A — Existing-Gold coverage audit
+## 4. Existing-Gold audit
 
 ```bash
 python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
 ```
 
-当前 frozen audit manifest hash：
+当前 frozen inventory：
 
 ```text
-fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
+101 annotations / 100 valid / 98 official
+79 evaluable Development / 19 Validation
+128 primary Risk Units / 217 Evidence Units
+manifest_hash = fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c
 ```
 
-输出：
-
-```text
-reports/v045_role_b/existing_gold_evaluable_manifest.json
-reports/v045_role_b/existing_gold_coverage_summary.json
-reports/v045_role_b/existing_gold_risk_units.csv
-reports/v045_role_b/existing_gold_evidence_units.csv
-```
-
-治理必须保持：
+必须保持：
 
 ```text
 new_manual_annotations_added=false
@@ -137,175 +87,159 @@ existing_gold_modified=false
 blind_2025_outcome_accessed=false
 ```
 
-## 6. Role B — fixed-10 real-LLM Development loop
+## 5. Role B — Development loop
 
-### 6.1 当前本地状态
-
-2026-08-27 本地 `iter_004` 已完成 frozen fixed-10 10/10 real-LLM 与 Existing-Gold debug 评分：
-
-```text
-M1 = 23.33%
-M2 = 18.75%
-dominant failure = semantic_extraction_miss
-Validation opened = false
-2025 Blind accessed = false
-```
-
-招股书根目录与 governed `case_id` serialization blocker 已解除。该结果未达到 fixed-10 内部目标，也不是 ALL 79 Development 正式 PASS；下一轮仍保持 Runner/Fixer 分离和单一 dominant-failure 归因。
-
-### 6.2 正式 fixed-10 source of truth
+Frozen fixed-10：
 
 ```text
 reports/v045_role_b/fixed10_development_subset.json
 ```
 
-第一次且仅第一次需要生成：
+不存在时只生成一次：
 
 ```bash
 python scripts/run_v045_role_b_iteration.py --subset-only
 ```
 
-如果 subset JSON 已存在，不重新生成、不重新选择公司。
-
-### 6.3 每轮运行
+每轮：
 
 ```bash
 python scripts/run_v045_role_b_iteration.py --iteration auto
 ```
 
-脚本自动执行：
+已有 10/10 persisted results、仅 evaluator/summary 失败时：
 
-```text
-real-runtime preflight
--> fixed 10 Development cases
--> sequential real-LLM run
--> resume-safe persistence
--> analysis_results.jsonl
--> Existing-Gold evaluator
--> M1 / M2 / Recall@K
--> failure taxonomy
--> previous-iteration delta
+```bash
+python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
 ```
 
-正常只读：
+Recovery 必须 `external_llm_calls_added=0`。
+
+当前 debug baseline：
 
 ```text
-iteration_summary.json
-failure_focus.json
+iter_004 = 10/10 real-LLM
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
 ```
 
-### 6.4 历史 smoke 参考公司
+执行：Runner → dominant failure → STOP → one short Fixer → one minimal patch/test → STOP → next Runner。达到 fixed-10 内部目标后进入 larger Development、ALL 79、freeze、one-shot ALL 19 Validation。
 
-以下只用于环境 smoke/人工核对，不覆盖当前 Metric-v2 自动生成 subset：
+完整 prompt：`V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md`。
+
+## 6. Role D — current-main M5 release revalidation
+
+### 6.1 历史证据边界
+
+PR #141 已记录 2026-08-27 的 70-case M5 PASS、四文件 hashes 与 deterministic resume PASS。该记录证明正式物化曾完成；它不代替 current-main release 环境的 strict revalidation，因为完整 runtime 与授权行情未提交 Git。
+
+### 6.2 必需不可变输入
 
 ```text
-1167.HK 加科思─B
-1942.HK MOG Holdings
-1961.HK 九尊数字互娱
-9600.HK 新纽科技
-9633.HK 农夫山泉
-9898.HK 微博─SW
-6698.HK 星空华文
-9863.HK 零跑汽车
-2451.HK 绿源集团控股
-2517.HK 锅圈
+reports/v04_pr_e/run_manifest.json
+reports/v04_pr_e/baseline_results.json
+reports/v04_pr_e/value_diagnostic.json
+
+reports/v04_pr_f/run_manifest.json
+reports/v04_pr_f/model_results.json
+reports/v04_pr_f/model_comparison.json
+
+data/cache/v04_ipo_eod.csv
+data/cache/v04_ipo_eod.manifest.json
 ```
 
-完整公司表与行业信息见 `V045_CURRENT_EXECUTION_PLAN.md`。
+每个 runtime 文件必须与 `reports/frozen/` manifest SHA 完全一致。不得通过重训恢复。
 
-### 6.5 Runner prompt
-
-Runner 只做执行：
-
-```text
-执行现有 fixed-10 runner。
-不要扫描仓库，不要修改代码，不要重构，不要自动进入 Fixer。
-完成后只读取 iteration_summary.json 和 failure_focus.json。
-返回 M1/M2/Recall@K、completed/real_llm/failed、dominant failure 后停止。
-如果 BLOCKED，只返回第一个 blocker。
-```
-
-完整可复制版本及 `IPO_RISK_PROSPECTUS_ROOT` 恢复 prompt：
-
-```text
-docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
-```
-
-### 6.6 Runner/Fixer 分离
-
-```text
-Runner
--> score
--> dominant failure
--> STOP
--> Fixer: one dominant failure + one minimal patch + regression test
--> STOP
--> next Runner iteration
-```
-
-不要在同一长任务里边跑边调。
-
-### 6.7 防过拟合节奏
-
-```text
-fixed-10 baseline
--> 2-4 targeted rounds maximum
--> larger Development checkpoint
--> ALL 79 Development
--> freeze
--> one-shot ALL 19 Validation
-```
-
-fixed-10 内部目标 M1>=0.80 / M2>=0.85，只是 debug target，不是比赛 PASS。
-
-### 6.8 Full Development handoff
-
-ALL 79 Development 达标后冻结 code / Prompt / evaluator / manifest / runtime，然后才允许 one-shot 19 Validation。
-
-最终 B handoff 至少：
-
-```text
-existing_gold_evaluable_manifest.json
-document_benchmark_summary.json
-risk_benchmark.csv
-evidence_benchmark.csv
-ai_vs_offline_report.json
-```
-
-## 7. Role D — M5 Multi-horizon handoff
-
-前置：
-
-```text
-reports/v04_pr_e/{run_manifest.json,baseline_results.json,value_diagnostic.json}
-reports/v04_pr_f/{run_manifest.json,model_results.json,model_comparison.json}
-data/cache/{v04_ipo_eod.csv,v04_ipo_eod.manifest.json}
-```
-
-若 filtered store 尚未生成：
+若合法 filtered EOD 尚未生成，但存在 catalog-bound 授权 raw EOD：
 
 ```bash
 python scripts/build_v04_ipo_eod_store.py
 ```
 
-生成：
+缺授权输入时停止为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得联网替代。
+
+### 6.3 构建 canonical four-file handoff
 
 ```bash
-python scripts/build_v045_role_d_m5.py
+python scripts/build_v045_role_d_m5.py \
+  --pr-f-run-dir reports/v04_pr_f \
+  --pr-e-run-dir reports/v04_pr_e \
+  --filtered-eod-store data/cache/v04_ipo_eod.csv \
+  --filtered-eod-manifest data/cache/v04_ipo_eod.manifest.json \
+  --catalog-dir data/catalog \
+  --output-dir reports/v045_role_d
 ```
 
-输出：
+Canonical 目录必须恰好包含：
 
 ```text
-reports/v045_role_d/test_predictions.csv
-reports/v045_role_d/multi_horizon_results.csv
-reports/v045_role_d/evaluation_summary.json
-reports/v045_role_d/ai_vs_offline_report.json
+test_predictions.csv
+multi_horizon_results.csv
+evaluation_summary.json
+ai_vs_offline_report.json
 ```
 
-必须包含 `return_1d/5d/20d/60d`，primary `significant_drop_5d = return_5d <= -0.10`。
+### 6.4 严格验收
 
-## 8. 三案例 offline smoke
+```bash
+python scripts/check_v045_role_d_m5.py \
+  --role-d-dir reports/v045_role_d \
+  --pr-f-run-dir reports/v04_pr_f \
+  --pr-e-run-dir reports/v04_pr_e \
+  --filtered-eod-store data/cache/v04_ipo_eod.csv \
+  --filtered-eod-manifest data/cache/v04_ipo_eod.manifest.json \
+  --catalog-dir data/catalog \
+  --output reports/v045_role_d_acceptance/acceptance.json
+```
+
+必须确认：
+
+```text
+verdict = PASS
+passed = true
+expected_validation_count = 70
+Blind = false
+validation_retuning = false
+score_direction_inverted = false
+```
+
+不能只看 builder exit code、文件存在或 CSV 非空。
+
+### 6.5 Determinism
+
+同一目录：
+
+```bash
+python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d --resume
+```
+
+随后在一个新的空目录用同一输入重建。两次的四文件必须 byte-identical；记录 SHA，不把 runtime bulk 提交 Git。
+
+### 6.6 D→E final-three label-free package
+
+CLI 可直接读取 canonical demo manifest：
+
+```bash
+python scripts/build_v04_pr_f_product_handoff.py \
+  --source-pr-f-dir reports/v04_pr_f \
+  --case-list configs/v045_demo_cases.json \
+  --output-dir reports/v045_pr_f_product_handoff_final3
+```
+
+必须恰好含：
+
+```text
+ipo_2024_02410
+ipo_2024_02460
+ipo_2024_01318
+```
+
+Package 必须只有 case identity、frozen uncalibrated score、frozen SHAP drivers；不得含 actual return、label、`poor_performer_5d` 或 Blind outcome。E 本地运行时将 `IPO_RISK_PR_F_RUN_DIR` 指向该 package。
+
+Role-D v2 high-recall output 仍是 research candidate，未经 A 审批不得替换 frozen PR-F。
+
+## 7. 三案例 offline smoke
 
 ```bash
 python scripts/run_v04_role_e_demo.py \
@@ -314,11 +248,9 @@ python scripts/run_v04_role_e_demo.py \
   --output-dir reports/v045_role_e_offline_final
 ```
 
-验收：3 cases executed、PDF integrity PASS、traceability=1.0、Blind=false、outcome labels=false。
+验收：3 cases executed、PDF integrity 3/3、traceability=1.0、Blind=false、outcome labels=false。
 
-## 9. 三案例真实 AI Final Supervisor / M3
-
-1167.HK 单案例 real-provider smoke 已通过。最终 E1 仍需 2410 / 2460 / 1318 三案 3/3：
+## 8. 三案例真实 AI Final Supervisor / M3
 
 ```bash
 python scripts/run_v04_role_e_demo.py \
@@ -327,19 +259,19 @@ python scripts/run_v04_role_e_demo.py \
   --output-dir reports/v045_role_e_ai_final
 ```
 
-E1：real remote provider + accepted + complete call trace + scope PASS + severity floor respected。
+E1：real remote provider + accepted + complete call trace + scope PASS + severity floor respected，3/3。Fallback 不计 success。
 
-M3：final real-provider matrix 每案 `overall_traceability=1.0`。
+M3：每案 `overall_traceability=1.0`。
 
-## 10. Role E — M4 Explanation Quality
+## 9. M4 Explanation Quality
 
-沿用当前 E/A final explanation-quality 方案，不增加新的 M1/M2 人工标注任务。
+每案至少两名独立 human reviewer；当前 0/6。LLM reviewer 只能 advisory。
 
-## 11. C — final Market trace validation
+## 10. C final Market validation
 
-最终 AI matrix 必须有 explicit market channel state，并且每个 Market event 有 governed namespaced Evidence/Calculation 或 explicit no-evidence reason。真实 missing 合法，zero/proxy 不合法。
+每个 Market event 必须有 governed namespaced Evidence/Calculation 或 explicit no-evidence reason；unavailable observation 仍需完整 unit / derivation。真实 missing 合法，zero/proxy 不合法。
 
-## 12. A — final readiness / audit / artifact index
+## 11. A final readiness
 
 所有 handoff 到齐后：
 
@@ -354,27 +286,19 @@ python scripts/build_v045_submission_readiness.py \
   --require-ready
 ```
 
-`--latest-main-ci-passed` 只能在本节要求的 latest-main CI 与基础 validators 已真实通过后使用；它是显式 freeze attestation，不能用于普通 dry run 或绕过失败测试。
+`--latest-main-ci-passed` 只能在 latest-main CI 与 validators 实际通过后使用。
 
-必须确认：
+A 在 final package review 中还必须检查 D 的 strict acceptance JSON 与 final-three product package；通用 readiness 的结构检查不能替代 D 的独立 raw-input revalidation。
 
-```text
-metric_protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
-new_manual_annotations_added = false
-existing_gold_modified = false
-M1 >=0.80
-M2 >=0.85
+## 12. Final CI / package
+
+```bash
+pytest -q
+python -m compileall -q app src scripts
+python scripts/validate_project.py
+python scripts/validate_competition_data.py
+python scripts/validate_competition_runtime.py
 ```
-
-## 13. Determinism
-
-不要求 remote LLM 文本 byte-for-byte deterministic；要求 prospectus identity、request identity、governed deterministic facets、provider/model/prompt/request/response hash 可审计。
-
-## 14. 最终 CI
-
-最终 freeze 必须 latest-main GitHub Actions green，并重新运行基础 validators。
-
-## 15. 生成 submission bundle
 
 只有 `submission_readiness.json.competition_ready=true` 才允许：
 
@@ -387,31 +311,30 @@ python scripts/package_v045_submission.py \
   --output-zip dist/hk_ipo_risk_agents_v045_submission.zip
 ```
 
-Packager 继续拒绝 PDF、secret/private key、token-like material、本地绝对路径。
+Packager 必须拒绝 PDF、secret/private key、token-like material、licensed raw data、本地绝对路径。
 
-## 16. 最终人工检查
+## 13. Final checklist
 
 ```text
-[x] Existing Expert Gold 未新增/未修改
-[x] Existing-Gold manifest + source hash 齐全
-[x] single-case real-provider smoke PASS
-[x] fixed-10 runner available
-[x] constrained Runner operating procedure documented
+[x] Existing Expert Gold frozen
+[x] Existing-Gold audit/evaluator
+[x] Role-D M5 implementation / strict checker / product handoff
+[x] Role-D 70-case formal materialization recorded
+[x] M3 offline/final traceability evidence =1.0
 
-[x] IPO_RISK_PROSPECTUS_ROOT configured for measured fixed-10 run
-[x] fixed-10 debug baseline produced
-[ ] ALL 79 Development benchmark produced
+[ ] B ALL 79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
 [ ] Validation one-shot only
-[ ] M3 real final traceability =100%
-[ ] M4 explanation-quality PASS
-[ ] M5 1D/5D/20D/60D complete
-[ ] C final Market trace valid
+[ ] D current-main strict revalidation PASS
+[ ] D resume + fresh-directory byte-identical
+[ ] D→E final-three package PASS
+[ ] C strict final Market validation 3/3
 [ ] E real-provider 3/3 accepted
+[ ] M4 human review PASS
 [ ] Blind / provenance / determinism PASS
-[ ] main CI green
-[ ] bundle contains no PDF / secret / local path
+[ ] latest-main CI green
+[ ] bundle contains no PDF / secret / licensed raw data / local path
 [ ] README / Acceptance / Protocol 与真实结果一致
 ```
 

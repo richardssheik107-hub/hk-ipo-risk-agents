@@ -1,336 +1,217 @@
 # v0.4.5 Five-Person Execution Plan
 
-本文件定义 A/B/C/D/E 的稳定 ownership、handoff 和完成标准。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；比赛指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准；当前操作层顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
+> Status date: `2026-08-28`
+
+本文件定义 A/B/C/D/E 的稳定 ownership、handoff 与完成标准。当前 Gate 以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准；操作顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
 
 ## 全队共同约束
 
-- `RiskItem` 必须有真实 Evidence；需要精确计算时必须有 `Calculation`；
+- `RiskItem` 必须有真实 Evidence；精确计算必须有 `Calculation`；
 - LLM 只做语义与综合，不是权威计算器；
-- Market 数值只能来自 PIT-governed 输入；缺失显式 missing；
+- Market 数值只能来自 PIT-governed 输入，missing 不补零；
 - 2024 Validation 不作为调参集；2025 Blind y 未授权前不访问；
-- frozen PR-A–PR-G 不为比赛展示而回写；
-- PR-F authentic handoff 不存在时 Model Channel = unavailable；
+- frozen PR-A–PR-G 不为展示而回写；
+- authentic PR-F handoff 不存在时 Model Channel = unavailable；
 - shared contract 只允许兼容式扩展；
 - 指标定义不得由各 lane 私自改写；
-- 每个 PR 小而可验证，不允许五个人同时“全仓提分”；
-- Role-B 当前只采用 Runner/Fixer 分离，不允许 Codex/Lunamax 开放式扫描全仓。
+- 每个 PR 小而可验证；
+- 不提交 licensed data、PDF bulk、model/cache、credential 或 absolute path。
 
 ## Competition Metric v2 — Existing-Gold-Only
 
-Protocol：
-
 ```text
-v045_competition_metric_protocol_v2_existing_gold_only
+protocol = v045_competition_metric_protocol_v2_existing_gold_only
+M1 official >=0.80; target >=0.85
+M2 official >=0.85; target >=0.88
+M3 =1.0
+M4 current human-review rubric
+M5 horizons =1D/5D/20D/60D
+primary significant_drop_5d = return_5d <= -0.10
 ```
 
-M1/M2 只使用此前已有 Expert Annotation / Oracle Gold：
+M1/M2 只使用此前已有的 Expert Annotation / Oracle Gold；不新增人工 Gold、不修改 Existing Gold、不把 `UNJUDGED` 当 negative。
+
+## A — Tech Lead / Integration / Release
+
+### Owns
 
 ```text
-annotation inventory   101
-valid annotations      100
-official materialized   98
+public contracts
+GitHub / branch / PR / CI
+readiness / Blind / provenance / determinism
+artifact index / security audit / submission package
+final COMPETITION_READY decision
 ```
 
-**不新增人工 Gold，不补 risk family，不把 UNJUDGED 当 negative，不人工重做 Evidence Group。**
+### 当前剩余
 
-共同目标：
+- review B/C/D/E final handoff；
+- latest-main CI；
+- final-three AI smoke；
+- consume D strict current-main revalidation evidence；
+- run final audits and package only after every hard Gate passes。
 
-```text
-M1 Existing-Gold Risk Extraction Accuracy
- official >=0.80
- project target >=0.85
+### 禁区
 
-M2 Existing-Gold Evidence Coverage Recall
- official >=0.85
- project target >=0.88
- Recall@K = diagnostics only
+A 不替 B 调语义模型，不替 C 发明市场数据，不替 D 重训/翻转 PR-F，不替 E 造 Supervisor 结果。
 
-M3 Traceability =1.0
-M4 Explanation Quality = current E/A rubric
-M5 1D / 5D / 20D / 60D complete
-Primary significant_drop_5d = return_5d <= -0.10
-```
-
-## A — Tech Lead / Integration / Release / Submission
-
-### 已完成
-
-- competition runtime contracts；
-- conflict/recheck/trace/human-review boundary；
-- provider observability；
-- network-free CI gate；
-- Market / Final Supervisor integration；
-- 3-case runner；
-- documentation governance；
-- readiness / Blind / provenance / determinism audit；
-- SHA-256 artifact index；
-- Submission Runbook；
-- fail-closed packager；
-- Metric Protocol governance + machine-readable config；
-- Existing-Gold coverage audit / evaluator；
-- fixed-10 runner 与 current execution documentation governance。
-
-### 当前职责
-
-A 负责尺子、治理和最终集成，不替 B 改语义模型：
-
-```text
-Existing-Gold manifest / evaluator governance
-metric-v2 artifact contract
-failure taxonomy contract
-readiness integration
-documentation source-of-truth consistency
-```
-
-### 最终剩余
-
-- review/merge B/C/D/E final handoff；
-- 保护 metric protocol；
-- latest-main CI + final 3-case AI smoke；
-- Blind / provenance / determinism actual PASS；
-- final metric dashboard / artifact index / release note / bundle；
-- 决定 `COMPETITION_READY`。
-
-### A 禁区
-
-不替 B 改语义阈值，不替 C 发明市场数据，不替 D 重训/翻转 PR-F，不替 E 造 Supervisor 结果，不新增 M1/M2 Gold，不在看到 Validation 后改 metric protocol。
-
-## B — LLM Document Intelligence / M1-M2 quality owner
+## B — LLM Document Intelligence / M1-M2
 
 ### 当前状态
 
-B 是当前 P0 质量主线。操作方式已经收敛为 constrained Lunamax/Codex Runner。
+```text
+fixed-10 iter_004 = 10/10 real-LLM
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
+```
 
-2026-08-27 最近一次本地运行：
+### 唯一优化循环
 
 ```text
-EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+Runner → score → dominant failure → STOP
+one short Fixer → one minimal patch + regression test → STOP
+next Runner
 ```
 
-这不是代码 blocker；只设置本地授权招股书根目录后继续现有 runner。
-
-### Gold policy
-
-B 不再承担“补 Gold”的任务，只消费既有 Expert Gold 的只读 evaluator 结果。
-
-Competition-priority mapping：
+### Closure
 
 ```text
-redemption_rights
-related_party_transaction
-customer_concentration
-supplier_concentration
-cash_burn_pressure
+bounded fixed-10 iterations
+→ larger Development checkpoint
+→ ALL 79 Development
+→ freeze
+→ one-shot ALL 19 Validation
 ```
 
-当前 support：
-
-```text
-cash_burn_pressure         16
-customer_concentration     32
-redemption_rights          39
-supplier_concentration     41
-related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
-```
-
-### fixed-10 source of truth
-
-```text
-reports/v045_role_b/fixed10_development_subset.json
-```
-
-不存在时只运行一次：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --subset-only
-```
-
-每轮：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --iteration auto
-```
-
-Runner 完成后只读：
-
-```text
-iteration_summary.json
-failure_focus.json
-```
-
-然后停止。
-
-### 历史 smoke 参考 10 家
-
-```text
-1167.HK 加科思─B
-1942.HK MOG Holdings
-1961.HK 九尊数字互娱
-9600.HK 新纽科技
-9633.HK 农夫山泉
-9898.HK 微博─SW
-6698.HK 星空华文
-9863.HK 零跑汽车
-2451.HK 绿源集团控股
-2517.HK 锅圈
-```
-
-这组仅用于旧 benchmark / smoke / 人工核对，不覆盖当前自动生成的 Metric-v2 fixed-10。
-
-完整公司表、Runner prompt、blocker 恢复模板：
-
-```text
-docs/V045_CURRENT_EXECUTION_PLAN.md
-docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
-```
-
-### B 的唯一优化循环
-
-```text
-Runner
--> score
--> dominant failure
--> STOP
--> one short Fixer
--> one minimal patch + regression test
--> STOP
--> next Runner
-```
-
-允许优化：Retriever candidate retrieval、reranking、LLM Prompt、structured extraction、schema normalization、Candidate→RiskItem reconciliation、Verifier。
-
-禁止：新增人工标注、补低 support risk、人工重做 Evidence Group、修改旧专家答案、把未标注项当 negative、反复用 Validation 调 Prompt。
-
-### M1 closure
-
-```text
-Existing-Gold official-aligned Accuracy >=0.80
-Project target >=0.85
-```
-
-### M2 closure
-
-```text
-Existing-Gold Evidence Coverage Recall >=0.85
-Project target >=0.88
-```
-
-同时输出 Recall@1/@3/@5/@10/@20、Candidate Recall@20、Reranked Recall@10 做诊断。
-
-### Benchmark scope / 顺序
-
-```text
-fixed-10 baseline
--> max 2-4 targeted rounds
--> larger Development checkpoint
--> ALL 79 Development
--> freeze
--> one-shot ALL 19 Validation
-```
-
-fixed-10 M1>=0.80 / M2>=0.85 只代表 debug target，不代表比赛 PASS。
-
-### Handoff → E/A
-
-```text
-existing_gold_evaluable_manifest.json
-document_benchmark_summary.json
-risk_benchmark.csv
-evidence_benchmark.csv
-ai_vs_offline_report.json
-```
-
-所有 artifact 必须记录 source identity/hash，并声明：
-
-```text
-new_manual_annotations_added=false
-existing_gold_modified=false
-blind_2025_outcome_accessed=false
-```
+不得新增/修改 Gold、打开 Validation 调 Prompt、做 broad Retriever rewrite。
 
 ## C — Market Intelligence
 
 ### 已完成主体
 
 - governed MarketContext；
-- IPOHeatSkill；
-- MarketRegimeSkill；
+- IPOHeatSkill / MarketRegimeSkill；
 - bounded Market LLM；
-- PIT/missingness；
-- trace/final-supervisor handoff；
-- AI runtime wiring；
-- real-provider Market path validation。
+- PIT / missingness；
+- trace / Final Supervisor handoff。
 
 ### 剩余
 
-只做 final-matrix acceptance：Core 可读、Core-only 不 crash、Extended 真实才启用、industry 缺失继续 PIT-blocked、Market LLM 不造数字、trace accounting 完整。
+只做 final-three strict acceptance：Core 可读、Core-only 不 crash、Extended 真实才启用、unavailable observation 仍含完整 unit/derivation、Market LLM 不造数字、trace accounting 完整。
 
-### C 禁区
+### 禁区
 
-不为提高 M5 临时新增不可证明 PIT 的 market proxy，不做 ComparableIPOSkill。
+不为提高 M5 临时新增不可证明 PIT 的 proxy，不做 ComparableIPOSkill。
 
-## D — Outcome / Model / Evaluation / Metric M5 owner
+## D — Outcome / Model / Evaluation / M5
 
-D 继续产出：
+### 已完成实现
 
 ```text
-return_1d
-return_5d
-return_20d
-return_60d
+frozen PR-E / PR-F runtime verification
+1D / 5D / 20D / 60D outcome builder
+70-case prediction and horizon tables
+frozen AI-vs-offline descriptive comparison
+strict read-only M5 acceptance checker
+label-free PR-F product handoff
+complete product-package validator
+A readiness four-file contract
+```
 
+### 已记录正式物化
+
+PR #141 于 2026-08-27 记录：
+
+```text
+2024 Validation IPOs = 70
+D1_multi_horizon_evaluation = PASS
+blind_2025_y_accessed = false
+deterministic --resume = PASS
+```
+
+正式四文件：
+
+```text
 test_predictions.csv
 multi_horizon_results.csv
 evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-Primary：
+赛题没有绝对 5D 模型合格线。记录指标较弱不构成重训、反转 score、改 threshold 或 calibration 的许可。
+
+### 当前唯一剩余
+
+在持有完整 frozen PR-E/PR-F runtime 与授权 governed EOD 的本地环境：
 
 ```text
-significant_drop_5d = (return_5d <= -0.10)
+current-main rebuild
+→ strict checker PASS
+→ same-directory resume byte-identical
+→ fresh-directory byte-identical
+→ read configs/v045_demo_cases.json
+→ materialize 2410/2460/1318 label-free product package
+→ validate complete package
+→ handoff evidence to A/E
 ```
 
-报告 Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有绝对 5D 合格线，不为过 Gate 事后改阈值。
+若不可变输入不可恢复，状态必须是 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得训练替代品。
 
-如 authentic PR-F handoff 不可恢复，ModelSignal 明确 unavailable，不重训替代。
+### v2 candidate
 
-## E — LLM Final Supervisor / Multi-Agent / Product / M3-M4 owner
+Role-D v2 high-recall output 仍是 research candidate / A review required，未替换 frozen PR-F。
+
+### 禁区
+
+```text
+broad model search
+2024 Validation retuning
+score inversion
+threshold change
+calibration
+substitute market data
+2025 Blind outcome access
+```
+
+## E — Final Supervisor / Product / M3-M4
 
 ### 已完成主体
 
-- Final Supervisor；
+- LLM Final Supervisor；
 - conflict policy；
 - bounded re-check；
 - Verifier challenge；
 - Trace / Human Review；
 - Evidence Viewer / Streamlit；
 - 3/3 offline matrix；
-- offline traceability 1.0；
-- reasoning log / case report / Gate-E1 evidence。
+- M3 traceability 3/3 = 1.0。
 
 ### 剩余
 
-- final 2410 / 2460 / 1318 real-provider synthesis；
-- 3/3 `gate_e1.satisfied=true`；
-- provider/model/prompt/request/hash/latency；
-- scope fail-closed；
-- severity floor preserved；
-- final real-provider traceability =1.0；
-- current explanation quality artifact。
+```text
+2410 / 2460 / 1318 real-provider accepted 3/3
+complete provider/model/prompt/request/hash/latency
+scope fail-closed
+severity floor preserved
+M4 two independent human reviewers per case
+```
+
+2460 当前 honest fallback 不算 successful arbitration。
 
 ## Handoff graph
 
 ```text
-Existing Expert Gold ──read-only──> A evaluator/manifest
-                                  └> B fixed-10 -> ALL79 real-LLM loop
+Existing Expert Gold ─read-only─> A evaluator / B benchmark
 
-B M1/M2 + Risk/Evidence ┐
-C MarketContext           ├→ E Final Supervisor / Trace / Product
-D M5 Outcome/ModelSignal ┘
+B Risk/Evidence ┐
+C MarketContext ├→ E Final Supervisor / Trace / Product
+D ModelSignal   ┘
 
-B/C/D/E final handoffs ─────────────→ A readiness / audits / package / release
+D full research runtime ─D-only evaluation─> M5 artifacts
+D label-free projection ────────────────> E Model Channel
+
+B/C/D/E final evidence ────────────────> A readiness / audits / package
 ```
 
 ## Team completion condition
@@ -339,10 +220,11 @@ B/C/D/E final handoffs ─────────────→ A readiness / 
 M1 >=80%
 AND M2 >=85%
 AND M3 =100%
-AND M4 current rubric PASS
-AND M5 complete/frozen 5D evaluation
-AND C final Market validation
-AND E real-provider final matrix
-AND A final readiness/audits/CI/package
--> COMPETITION_READY
+AND M4 PASS
+AND D current-main M5 strict revalidation PASS
+AND D→E final-three label-free package PASS
+AND C final Market validation PASS
+AND E real-provider final matrix PASS
+AND A final readiness/audits/CI/package PASS
+→ COMPETITION_READY
 ```

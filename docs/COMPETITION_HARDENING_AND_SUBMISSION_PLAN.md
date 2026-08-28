@@ -1,221 +1,189 @@
 # Competition Hardening and Submission Plan
 
-本文件把赛题要求映射到当前系统能力、Metric Protocol 与最终验收产物。当前状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准；当前操作层执行顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
+> Status date: `2026-08-28`
+
+本文件把赛题要求映射到当前系统能力、Metric Protocol 与最终验收产物。当前状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准；操作顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
 
 ## 1. 官方要求 → Project Metric v2
 
-赛题原文件要求：
-
 ```text
-关键风险要素抽取准确率 >=80%
-关键证据片段召回率 >=85%
-Agent / role / tool / evidence traceability =100%
-逻辑解释有效性高
-1D / 5D / 20D / 60D 上市后验证
-5D 显著下跌识别更高权重
+protocol = v045_competition_metric_protocol_v2_existing_gold_only
 ```
-
-项目协议：
-
-```text
-v045_competition_metric_protocol_v2_existing_gold_only
-```
-
-核心 scope freeze：
-
-> **M1/M2 只使用比赛收尾前已经存在并冻结的 Expert Annotation / Oracle Gold。此后不补标、不扩样、不修改旧 Gold、不人工重做 Evidence Group。提升 M1/M2 的唯一手段是 Development 上的代码与真实 LLM 链路优化。**
-
-当前正式口径：
 
 | Metric | Primary | Threshold / rule |
 |---|---|---|
-| M1 Risk | Existing-Gold positive Risk Unit Accuracy | official >=0.80，project target >=0.85 |
-| M2 Evidence | Existing-Gold Evidence Coverage Recall | official >=0.85，project target >=0.88 |
+| M1 Risk | Existing-Gold positive Risk Unit Accuracy | official >=0.80；target >=0.85 |
+| M2 Evidence | Existing-Gold Evidence Coverage Recall | official >=0.85；target >=0.88 |
 | M2 diagnostics | Recall@1/@3/@5/@10/@20 | secondary only |
 | M3 Trace | accounted traceability | =1.0 |
-| M4 Explanation | current final product rubric | no new Gold work |
+| M4 Explanation | final product human-review rubric | two human reviewers per case |
 | M5 Outcome | 1D/5D/20D/60D + primary 5D | `return_5d <= -0.10` project definition |
+
+M1/M2 scope 已冻结：Existing Expert Gold only，不补标、不扩样、不改旧 Gold、不把 `UNJUDGED` 当 negative。
 
 ## 2. CH-1 — M5 Multi-horizon validation
 
-**Owner：D；Status：OPEN / P0**
+**Owner：D；Status：PASS RECORDED / CURRENT-MAIN RELEASE REVALIDATION OPEN**
 
-最低交付：
+### 已完成实现
 
 ```text
-return_1d
-return_5d
-return_20d
-return_60d
-significant_drop_5d = (return_5d <= -0.10)
+M5 governed builder
+strict read-only acceptance checker
+exact 70-case Validation contract
+independent session/return/label/metric recomputation
+frozen PR-E / PR-F verification
+AI-vs-offline descriptive comparison
+label-free PR-F product handoff
+complete package checksum validator
+A readiness four-file requirement
 ```
 
-结果文件：
+### 已记录正式运行
+
+PR #141 于 2026-08-27 记录：
+
+```text
+2024 Validation IPOs = 70
+governed filtered EOD = 433,776 rows / 438 IPOs
+D1_multi_horizon_evaluation = PASS
+blind_2025_y_accessed = false
+deterministic --resume = PASS
+```
+
+Artifact hashes：
 
 ```text
 test_predictions.csv
+8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a
+
 multi_horizon_results.csv
+f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725
+
 evaluation_summary.json
+6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63
+
 ai_vs_offline_report.json
+3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94
 ```
 
-至少报告 5D Precision / Recall / F1 / PR-AUC / ROC-AUC / Top-10% / Top-20% hit rate / base prevalence。赛题没有给绝对 5D 及格线，不为了过 Gate 事后创造阈值。
+五日描述性指标：
+
+```text
+Precision 0.3333
+Recall 0.0435
+F1 0.0769
+PR-AUC 0.3364
+ROC-AUC 0.4246
+Top-10% 0.4286
+Top-20% 0.2857
+Base prevalence 0.3286
+```
+
+### 发布前剩余
+
+Runtime 与授权行情不进入 Git，因此 A 最终打包前必须：
+
+```text
+restore immutable frozen PR-E / PR-F runtime
+restore governed EOD
+current-main rebuild
+strict checker PASS
+resume byte-identical
+fresh-directory byte-identical
+materialize final-three label-free product package from configs/v045_demo_cases.json
+validate exact package
+```
+
+这不是重新优化模型。禁止 broad search、Validation retuning、score inversion、threshold change、calibration 或 substitute market data。
+
+Role-D v2 high-recall output 仍是 research candidate，未经 A 治理决议不得替换 frozen PR-F。
 
 ## 3. CH-2 — M1/M2 Document Intelligence benchmark
 
-**Owner：B + A evaluator governance；Status：OPEN / P0；当前 fixed-10 execution active**
+**Owner：B + A evaluator governance；Status：OPEN / P0**
 
-### 3.1 Existing-Gold-only
-
-`UNJUDGED` 不当 negative、不进入 M1 分母。
-
-Competition-priority risk mapping：
+当前 fixed-10：
 
 ```text
-redemption_rights
-related_party_transaction
-customer_concentration
-supplier_concentration
-cash_burn_pressure
+10/10 real-LLM
+M1 = 23.33%
+M2 = 18.75%
+dominant failure = semantic_extraction_miss
 ```
 
-Existing Gold 当前 support：
+执行顺序：
 
 ```text
-cash_burn_pressure         16
-customer_concentration     32
-redemption_rights          39
-supplier_concentration     41
-related_party_transaction   0 -> NOT_EVALUABLE_FROM_EXISTING_GOLD
+one dominant-failure Fixer
+→ bounded fixed-10 rerun
+→ larger Development checkpoint
+→ ALL 79 Development
+→ freeze
+→ one-shot ALL 19 Validation
 ```
 
-不再为了补齐五类新增 annotation。
-
-### 3.2 当前 fixed-10 操作模式
-
-Role B 已停止开放式 Codex 工作流，固定使用 constrained Lunamax/Codex Runner。
-
-最近一次本地执行状态：
+正式 artifact：
 
 ```text
-EXECUTION_BLOCKED
-blocker = IPO_RISK_PROSPECTUS_ROOT is not set
+existing_gold_evaluable_manifest.json
+document_benchmark_summary.json
+risk_benchmark.csv
+evidence_benchmark.csv
 ```
 
-这属于本地环境前置条件，不是代码 defect。只设置授权招股书根目录后重试现有 runner。
-
-正式 Metric-v2 debug subset 权威来源：
+必须声明：
 
 ```text
-reports/v045_role_b/fixed10_development_subset.json
+new_manual_annotations_added = false
+existing_gold_modified = false
+blind_2025_outcome_accessed = false
 ```
-
-首次不存在时：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --subset-only
-```
-
-每轮：
-
-```bash
-python scripts/run_v045_role_b_iteration.py --iteration auto
-```
-
-Runner 只读 `iteration_summary.json` / `failure_focus.json` 后停止；Fixer 必须另开短任务，只处理一个 dominant failure。
-
-### 3.3 历史 smoke 参考 10 家
-
-```text
-1167.HK 加科思─B
-1942.HK MOG Holdings
-1961.HK 九尊数字互娱
-9600.HK 新纽科技
-9633.HK 农夫山泉
-9898.HK 微博─SW
-6698.HK 星空华文
-9863.HK 零跑汽车
-2451.HK 绿源集团控股
-2517.HK 锅圈
-```
-
-这组只作为旧 benchmark / smoke / 人工核对参考，不覆盖当前自动生成的正式 fixed-10。详细公司信息与完整 prompt 见：
-
-```text
-docs/V045_CURRENT_EXECUTION_PLAN.md
-docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
-```
-
-### 3.4 M1 evaluator
-
-```text
-Existing-Gold Official-aligned Accuracy
-= correct evaluable positive Existing-Gold Risk Units
-  / all evaluable positive Existing-Gold Risk Units
-```
-
-PASS `>=80%`；project target `>=85%`。
-
-### 3.5 M2 evaluator
-
-```text
-Existing-Gold Evidence Coverage Recall
-= covered evaluable existing Evidence Units
-  / all evaluable existing Evidence Units
-```
-
-PASS `>=85%`；project target `>=88%`。
-
-Recall@1/@3/@5/@10/@20 继续作为 diagnostics。历史 `Recall@5=20%` 只是旧 offline diagnostic。
-
-### 3.6 Execution order
-
-```text
-Existing Gold read-only audit [DONE]
--> set IPO_RISK_PROSPECTUS_ROOT locally
--> fixed-10 baseline
--> max 2-4 targeted Runner/Fixer rounds
--> larger Development checkpoint
--> ALL 79 Existing Development benchmark
--> freeze code/prompt/evaluator/manifest/runtime
--> one-shot ALL 19 Existing Validation
-```
-
-不得因 Validation 结果继续调优。
 
 ## 4. CH-3 — Market Intelligence
 
-**Owner：C；Status：IMPLEMENTATION CLOSED / FINAL-MATRIX VALIDATION REMAINS**
+**Owner：C；Status：IMPLEMENTATION CLOSED / FINAL-MATRIX VALIDATION OPEN**
 
-最终只确认 Core/Extended governed behavior、PIT missingness、Market LLM no fabricated numbers、Market trace accounting。无可靠 source 时保持 unavailable，不新增 proxy。
+最终只确认：
+
+- 3/3 explicit governed Market state；
+- unavailable observation 仍有完整 unit / derivation；
+- Core-only 不 crash；
+- Extended 真实才启用；
+- Market LLM 不造数字；
+- trace accounting 完整。
+
+无可靠 source 时保持 unavailable，不新增 proxy。
 
 ## 5. CH-4 — Multi-Agent / M3 / M4
 
 **Owner：E；Status：IMPLEMENTATION CLOSED / FINAL ACCEPTANCE OPEN**
 
-现有链：
-
 ```text
 Agent outputs
--> deterministic conflict detection
--> one bounded targeted re-check
--> retriever / verifier challenge
--> LLM Final Supervisor
--> deterministic fallback
--> TraceEvent
+→ deterministic conflict detection
+→ one bounded targeted re-check
+→ retriever / verifier challenge
+→ LLM Final Supervisor
+→ deterministic fallback
+→ TraceEvent
 ```
 
-M3：final real-provider traceability 必须 1.0。
+当前：
 
-E1：只有 real provider + accepted + complete call trace + scope passed 才成功；mock/fallback 不算。
+```text
+E1 real-provider accepted = 2/3
+M3 traceability = 3/3 exactly 1.0
+M4 human reviews = 0/6
+```
 
-M4：沿用当前 explanation-quality 方案。
+E1 只有 real provider + accepted + complete call trace + scope PASS + severity floor preserved 才成功。Mock/fallback 不算。
 
 ## 6. CH-5 — Product / Evidence / Human Review
 
 **Owner：E；Status：CLOSED AS PRODUCT IMPLEMENTATION**
 
-五个比赛工作区继续保留。page grounding 可用；bbox 为 P2，不优先于 M1/M2/M5/E1。
+Evidence Viewer、Human Review 与五个比赛工作区继续保留。page grounding 可用；bbox 为 P2，不优先于 M1/M2/C1/E1/M4/D release evidence。
 
 ## 7. CH-6 — Formal evaluation / freeze
 
@@ -224,31 +192,25 @@ M4：沿用当前 explanation-quality 方案。
 最终 handoff：
 
 ```text
-B: Existing-Gold manifest + M1/M2 real-LLM results
-C: final matrix market trace
-D: 1D/5D/20D/60D + frozen 5D metrics
-E: 3-case real-provider + explanation-quality artifact
+B: Existing-Gold manifest + ALL79 M1/M2 real-LLM results
+C: final-three governed Market trace
+D: current-main strict M5 acceptance + deterministic evidence
+D→E: final-three label-free frozen ModelSignal package
+E: 3-case accepted real-provider + explanation-quality artifact
 A: Blind / provenance / determinism / readiness / artifact index / package
 ```
 
-B artifact 必须声明：
-
-```text
-metric_protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
-new_manual_annotations_added = false
-existing_gold_modified = false
-```
-
-最终产物至少包括：
+最终 bundle 至少包括：
 
 ```text
 existing_gold_evaluable_manifest.json
 risk_benchmark.csv/json
 evidence_benchmark.csv/json
-ai_vs_offline_report.json
 test_predictions.csv
 multi_horizon_results.csv
 evaluation_summary.json
+ai_vs_offline_report.json
+role_d strict acceptance evidence
 explanation_quality.json
 agent_reasoning_logs
 Evidence / Human Review exports
@@ -266,33 +228,31 @@ submission bundle + manifest + SHA-256
 允许强调：
 
 - Existing Expert Gold 在比赛收尾前已存在并冻结；
-- 评价只读、分母固定；
-- 不通过补标改变成绩；
-- 提升来自真实 LLM / Retriever / extraction / Verifier 代码优化；
-- Evidence-first、deterministic calculations、PIT Market facts、real conflict/re-check、measured traceability、Human Review；
-- Role-B 使用可恢复、低自由度、可审计的 fixed-10 Runner/Fixer 自动化闭环。
+- 提升来自真实 LLM / Retriever / extraction / Verifier 代码；
+- Evidence-first、deterministic calculations、PIT Market facts；
+- real conflict/re-check、measured traceability、Human Review；
+- D 使用冻结 PR-E/PR-F 与 governed EOD 做可复验的 post-listing evaluation；
+- D 产品链只接收 label-free frozen score/SHAP projection。
 
 禁止宣称：
 
-- 旧 Recall@5=20% 等于官方 Evidence Recall 当前值；
-- 未标注 risk 是 negative；
-- 98 个 official materialized annotation 等于全部 risk 都有 Gold；
-- 为了比赛补过 Gold；
+- fixed-10 debug 达标等于比赛 PASS；
 - uncalibrated score 是 probability；
 - 5D -10% 是命题方官方阈值；
-- fallback 是 successful remote LLM arbitration；
-- fixed-10 debug 达标等于比赛正式 PASS。
+- D v2 candidate 已替换 frozen PR-F；
+- fallback 是 successful remote arbitration；
+- runtime 未复验时 current-main release evidence 已完整；
+- 整体已 `COMPETITION_READY`。
 
 ## 9. Scope freeze
 
-提交前明确不做：
+提交前不做：
 
-- 任何新的 M1/M2 人工标注、Gold 扩样或 Evidence 人工重组；
-- broad model search；
+- 新的 M1/M2 人工标注或 Gold 扩样；
+- broad model search / PR-F replacement training；
+- score inversion / Validation tuning；
 - full Retriever redesign；
-- historical industry mapping research；
+- historical industry PIT research；
 - full 438-case LLM；
 - presentation-only expansion；
-- PR-F 替代训练。
-
-任何新代码都必须直接提高/验证 Existing-Gold M1/M2，或关闭 C/D/E/A final hard Gate。
+- 无 PIT 证据的 market proxy。

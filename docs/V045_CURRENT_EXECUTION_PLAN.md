@@ -1,6 +1,6 @@
-# v0.4.5 Current Execution Plan — Fixed-10 to Competition Closure
+# v0.4.5 Current Execution Plan — Competition Closure
 
-> Status date: 2026-08-27
+> Status date: `2026-08-28`
 >
 > Competition runtime: `v0.4.5`
 >
@@ -8,404 +8,286 @@
 >
 > Current verdict: **NOT YET COMPETITION_READY**
 
-本文件把当前比赛收尾计划、Role-B fixed-10 公司口径、Lunamax/Codex 自动执行方式、已知 blocker 与后续 Gate 顺序收敛为一个操作层计划。Gate 的唯一状态源仍是 `V0.4_RELEASE_ACCEPTANCE.md`；指标定义仍以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
+本文件定义当前操作顺序。Gate 唯一状态源是 `V0.4_RELEASE_ACCEPTANCE.md`；指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准。
 
-## 1. 当前执行状态
-
-当前 Role-B 策略已经从“让 Codex 自由分析仓库”切换为“Runner only”。本地 `iter_004` 已完成 frozen fixed-10 的 10/10 真实 LLM 与 Existing-Gold debug 评分：
+## 1. 当前快照
 
 ```text
-M1 = 23.33%
-M2 = 18.75%
-dominant failure = semantic_extraction_miss
-Validation opened = false
-2025 Blind accessed = false
-```
+B fixed-10 iter_004 = 10/10 real-LLM
+B M1 = 23.33%
+B M2 = 18.75%
+B dominant failure = semantic_extraction_miss
 
-招股书根目录与 governed `case_id` serialization blocker 均已解除。该 debug baseline 远低于 fixed-10 内部目标，且不能代替 ALL 79 Development 正式 benchmark。
+D 70-case M5 materialization = PASS recorded
+D strict checker / product handoff = PASS implementation
+D current-main release revalidation = pending local immutable inputs
+D→E final-three package = pending materialization
 
-```text
-B formal ALL 79 handoff = missing
-D multi-horizon / AI-vs-offline handoff = missing
-E1 final accepted = 2/3; 2460 scope-blocked
+E1 accepted = 2/3; 2460 scope-blocked
 C1 strict observation contract = 1/3
 M3 traceability = 3/3 exactly 1.0
 M4 human reviews = 0/6
 ```
 
-当前操作顺序：
+当前主顺序：
 
 ```text
-B: use iter_004 failure_focus -> one bounded Fixer -> fixed-10 rerun
-D: deliver governed M5 and AI-vs-offline artifacts
+B: one dominant-failure Fixer → bounded fixed-10 rerun → ALL 79 Development
+D: no new modeling；restore immutable inputs → strict current-main revalidation → final-three handoff
 C/E: close strict C1, E1 and M4 without weakening contracts
-A: rerun readiness/audits -> package only when every hard Gate passes
+A: rerun readiness/audits → package only when every hard Gate passes
 ```
 
-## 2. fixed-10 的两个口径必须分开
+## 2. Role B — constrained Runner / Fixer
 
-### 2.1 Metric-v2 正式 debug subset
-
-当前 Metric-v2 fixed-10 的唯一权威来源是本地生成文件：
+### 2.1 frozen fixed-10 source
 
 ```text
 reports/v045_role_b/fixed10_development_subset.json
 ```
 
-若不存在，由当前 `main` 的确定性选择器生成：
+不存在时只生成一次：
 
 ```bash
 python scripts/run_v045_role_b_iteration.py --subset-only
 ```
 
-选择器只从 Existing-Gold Development 中选择 10 家，并优先平衡：
+正常一轮：
 
-```text
-cash_burn_pressure
-customer_concentration
-redemption_rights
-supplier_concentration
-```
-
-生成后不再重选。Validation 与 2025 Blind 不允许进入该 subset。
-
-### 2.2 手工 smoke / 历史 benchmark 参考 10 家
-
-下列 10 家是此前 Role-B real-LLM Development benchmark 已冻结使用过的参考集合。它们用于环境 smoke、人工核对、公司名映射和历史可比性；**不覆盖**当前 Metric-v2 本地自动生成的 fixed-10。
-
-| # | case_id | stock_code | company_name | listed_date | industry |
-|---:|---|---|---|---|---|
-| 1 | `ipo_2020_01167` | `1167.HK` | 加科思─B | 2020-12-21 | 生物技术 |
-| 2 | `ipo_2020_01942` | `1942.HK` | MOG Holdings | 2020-04-15 | 支付服务 |
-| 3 | `ipo_2020_01961` | `1961.HK` | 九尊数字互娱 | 2020-03-17 | 游戏软件 |
-| 4 | `ipo_2020_09600` | `9600.HK` | 新纽科技 | 2021-01-06 | 应用软件 |
-| 5 | `ipo_2020_09633` | `9633.HK` | 农夫山泉 | 2020-09-08 | 非酒精饮料 |
-| 6 | `ipo_2021_09898` | `9898.HK` | 微博─SW | 2021-12-08 | 互动媒体及服务 |
-| 7 | `ipo_2022_06698` | `6698.HK` | 星空华文 | 2022-12-29 | 影视娱乐 |
-| 8 | `ipo_2022_09863` | `9863.HK` | 零跑汽车 | 2022-09-29 | 汽车 |
-| 9 | `ipo_2023_02451` | `2451.HK` | 绿源集团控股 | 2023-10-12 | 摩托车及其他 |
-| 10 | `ipo_2023_02517` | `2517.HK` | 锅圈 | 2023-11-02 | 包装食品 |
-
-保留它们作为 smoke 参考的理由是：
-
-```text
-- 已存在历史 frozen benchmark identity；
-- 跨 2020–2023 Development cohort；
-- 覆盖软件、生物科技、消费、媒体、汽车等不同招股书形态；
-- official master bridge 已有稳定 case_id / stock_code / company_name 映射；
-- 1167.HK 已有真实 provider 全流程成功证据。
-```
-
-再次强调：正式 fixed-10 仍以本地 `fixed10_development_subset.json` 为准。
-
-## 3. canonical Lunamax/Codex Runner 提示词
-
-以下提示词是当前默认 Runner prompt。它的设计目标不是“让模型更聪明”，而是降低自由度，让模型只执行已有自动化。
-
-```text
-你现在不是架构师，也不是研究员。
-
-你的角色只有一个：执行已有的 fixed-10 Role-B 自动化流程，保存结果，并返回最小必要指标。
-
-不要重新设计项目。
-不要主动规划新架构。
-不要扩展任务范围。
-不要为了“做得更完整”修改无关代码。
-
-唯一目标：
-1. 确认当前 main 已有 fixed-10 runner 可用；
-2. 冻结或读取 10 个 Development cases；
-3. 顺序运行这 10 家真实 LLM 分析；
-4. 自动执行 Existing-Gold evaluator；
-5. 输出 M1、M2、Recall@1/@3/@5/@10/@20、case completion、real-LLM completion、dominant failure；
-6. 保存已有 artifact；
-7. 输出简短总结；
-8. 停止。
-
-严格禁止：
-- 不扫描整个仓库；
-- 不重构架构；
-- 不新增 Agent / Skill；
-- 不改 Streamlit / Market / M5；
-- 不训练模型；
-- 不做超参数搜索；
-- 不修改 Existing Gold；
-- 不新增人工 Gold；
-- 不打开 2024 Validation；
-- 不读取 2025 Blind outcome；
-- 不自行更换 10 家公司；
-- 不自行修改 metric；
-- 不放宽 Evidence scope / Verifier；
-- 不输出 API Key / Secret / Authorization Header；
-- 不读取和总结巨量日志；
-- 本轮不自动进入 Fixer。
-
-正式入口：
-python scripts/run_v045_role_b_iteration.py --subset-only
+```bash
 python scripts/run_v045_role_b_iteration.py --iteration auto
-
-最小环境检查只包括：
-1. 当前目录正确；
-2. Python 可用；
-3. runner 存在；
-4. AI config 存在；
-5. IPO_RISK_PROSPECTUS_ROOT 已设置；
-6. LLM provider 所需环境变量存在。
-
-fixed-10 唯一权威来源：
-reports/v045_role_b/fixed10_development_subset.json
-
-如文件存在，直接读取，不重新生成、不重新选择公司。
-如文件不存在，执行 --subset-only 生成一次。
-
-第一轮执行：
-python scripts/run_v045_role_b_iteration.py --iteration auto
-
-runner 已负责：
-preflight
--> fixed 10 sequential real LLM
--> artifact persistence
--> resume
--> evaluator
--> metrics
--> failure taxonomy
-
-你只负责执行。
-
-运行后只读取：
-iteration_summary.json
-failure_focus.json
-
-最终只输出：
-Fixed-10 company table
-completed_cases / real_llm_cases / failed_cases
-M1 / M2 / Recall@1/@3/@5/@10/@20
-dominant_failure_reason / affected_cases / affected_risks / failure_count
-
-Gate 只允许：
-READY_FOR_FIXER
-FIXED10_TARGET_REACHED
-EXECUTION_BLOCKED
-
-如果 BLOCKED，只返回第一个 blocker。
-如果 baseline 正常产生，本轮立即停止，不自动修代码。
 ```
 
-## 4. 已解除的 runner blocker 与保留的恢复路径
-
-### 4.1 已修复的 runner contract
-
-`run_v045_role_b_iteration.py` 在写 `analysis_results.jsonl` 时，现在使用外层 frozen subset 的 canonical `case_id` 作为权威 identity。
-
-规则：
-
-```text
-expected_case_id = current fixed-10 case id
-
-if metadata.case_id exists:
-    require metadata.case_id == expected_case_id
-
-if top-level case_id exists:
-    require top-level case_id == expected_case_id
-
-output JSONL row.case_id = expected_case_id
-```
-
-任何冲突都 fail closed，不做静默覆盖。
-
-### 4.2 已完成 10/10 时的 recovery
-
-如果某个 existing iteration 已经有 10/10 `analysis_result.json`，但 evaluator/summary 阶段失败，禁止重新调用真实 LLM。
-
-只执行：
+已经完成 10/10 real-LLM、仅 evaluator/summary 失败时：
 
 ```bash
 python scripts/recover_v045_role_b_iteration.py --iteration <existing_iteration_id>
 ```
 
-该命令会：
+恢复不得增加外部 LLM 调用，期望：
 
 ```text
-verify existing iteration context
-verify frozen subset hash
-verify Validation=false / Blind=false
-verify persisted result count = 10/10
-rebuild governed analysis_results.jsonl with canonical case_id
-run Existing-Gold evaluator
-write iteration_summary.json
-write failure_focus.json
+external_llm_calls_added = 0
 ```
 
-该命令不会调用：
+完整 Runner prompt 与历史 smoke 参考公司见：
 
 ```text
-run_v04_role_e_demo.py
-external LLM provider
-new fixed-10 selection
-Validation
-2025 Blind outcome
+docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
 ```
 
-期望输出明确包含：
-
-```text
-external_llm_calls_added=0
-```
-
-### 4.3 历史 `IPO_RISK_PROSPECTUS_ROOT` blocker
-
-此前曾出现：
-
-```text
-EXECUTION_BLOCKED
-IPO_RISK_PROSPECTUS_ROOT is not set
-```
-
-该环境 blocker 已不再是当前首要问题，因为最近一轮 10/10 real-LLM analysis 已经完成。未来新 iteration 若再次遇到该问题，仍只修环境、不修代码。
-
-## 5. Runner / Fixer 必须分离
-
-第一轮 baseline 只测量，不边跑边修。
+### 2.2 唯一允许的优化循环
 
 ```text
 Runner
--> score
--> dominant failure
--> STOP
+→ score
+→ dominant failure
+→ STOP
+→ one short Fixer
+→ one minimal patch + regression test
+→ STOP
+→ next Runner
 ```
 
-如果 Runner 的 real-LLM analysis 已经完成、仅 evaluator handoff 失败：
+固定要求：
+
+- 不新增 Gold；
+- 不修改旧专家答案；
+- 不把 `UNJUDGED` 当 negative；
+- 不同时修多类 failure；
+- 不打开 2024 Validation；
+- 不访问 2025 Blind outcome；
+- 不做 broad Retriever rewrite。
+
+### 2.3 B closure
 
 ```text
-Offline Recovery
--> score
--> dominant failure
--> STOP
-```
-
-下一次单独启动短上下文 Fixer：
-
-```text
-只读取最新 failure_focus.json。
-只处理 dominant_failure_reason。
-只读与该 failure 直接相关的模块和测试。
-做一个最小修改 + regression test 后停止。
-不要运行 Validation。
-不要修改 Existing Gold。
-不要同时修第二类问题。
-```
-
-之后再进入下一 Runner iteration。
-
-## 6. 当前比赛收尾顺序
-
-### Phase B1 — fixed-10 baseline（已物化，未达标）
-
-```text
-10/10 real-LLM analysis 已完成
--> M1=23.33% / M2=18.75%
--> dominant failure=semantic_extraction_miss
--> Validation=false / Blind=false
-```
-
-### Phase B2 — fixed-10 targeted optimization
-
-最多快速迭代 2–4 轮：
-
-```text
-Runner
--> dominant failure
--> one minimal Fixer
--> Runner
-```
-
-fixed-10 内部目标：
-
-```text
+fixed-10 internal target:
 M1 >=0.80
 M2 >=0.85
+
+formal Development:
+ALL 79 evaluable cases
+M1 official >=0.80; target >=0.85
+M2 official >=0.85; target >=0.88
 ```
 
-达到目标只表示 debug subset 稳定，不表示比赛 PASS。
+完成 ALL 79 后冻结 code、Prompt、Retriever config、schema、Verifier、evaluator、Existing-Gold manifest、provider/model settings；随后只允许一次 ALL 19 Validation。
 
-### Phase B3 — Full Development
+## 3. Role D — release revalidation, not model development
+
+### 3.1 已完成
+
+PR #141 在 2026-08-27 记录：
 
 ```text
-ALL 79 evaluable Existing Development cases
+2024 Validation = 70 IPOs
+governed EOD = 433,776 rows / 438 target IPOs
+D1_multi_horizon_evaluation = PASS
+blind_2025_y_accessed = false
+deterministic --resume = PASS
 ```
 
-正式 Development 目标：
+正式四文件：
 
 ```text
-M1 official >=0.80
-M1 project target >=0.85
-M2 official >=0.85
-M2 project target >=0.88
-```
-
-Full Development 后冻结：
-
-```text
-code SHA
-Prompt version
-Retriever config
-schema / normalization
-Verifier rules
-evaluator version
-Existing-Gold manifest hash
-provider / model runtime settings
-```
-
-### Phase B4 — Validation one-shot
-
-冻结后仅允许：
-
-```text
-ALL 19 evaluable Existing Validation cases
-```
-
-Validation 结果不得用于回头调 Prompt、Retriever、Verifier 或 metric。
-
-### Parallel P0 — Role D M5
-
-必须物化：
-
-```text
-return_1d
-return_5d
-return_20d
-return_60d
 test_predictions.csv
 multi_horizon_results.csv
 evaluation_summary.json
 ai_vs_offline_report.json
 ```
 
-### P1 — C/E final matrix
-
-完成：
+记录哈希：
 
 ```text
-C: final governed Market trace
-E: 2410.HK / 2460.HK / 1318.HK real-provider 3/3 accepted
-M3 final traceability =1.0
-M4 current explanation-quality Gate
+8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a
+f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725
+6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63
+3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94
 ```
 
-### Final — A readiness / package
+当前 main 已有：
 
 ```text
-latest-main CI
-Blind / provenance / determinism
-metric dashboard
-artifact index
-security audit
-submission bundle
-release freeze
--> COMPETITION_READY
+M5 builder
+strict read-only acceptance checker
+exact-four-file / exact-70-case validation
+independent return / label / metric recomputation
+source provenance validation
+complete label-free PR-F product package validator
+A readiness four-file contract
 ```
 
-## 7. 当前明确不做
+### 3.2 当前唯一执行路径
+
+在持有完整不可变输入的环境中：
+
+```bash
+python scripts/build_v045_role_d_m5.py \
+  --pr-f-run-dir reports/v04_pr_f \
+  --pr-e-run-dir reports/v04_pr_e \
+  --filtered-eod-store data/cache/v04_ipo_eod.csv \
+  --filtered-eod-manifest data/cache/v04_ipo_eod.manifest.json \
+  --catalog-dir data/catalog \
+  --output-dir reports/v045_role_d
+
+python scripts/check_v045_role_d_m5.py \
+  --role-d-dir reports/v045_role_d \
+  --pr-f-run-dir reports/v04_pr_f \
+  --pr-e-run-dir reports/v04_pr_e \
+  --filtered-eod-store data/cache/v04_ipo_eod.csv \
+  --filtered-eod-manifest data/cache/v04_ipo_eod.manifest.json \
+  --catalog-dir data/catalog \
+  --output reports/v045_role_d_acceptance/acceptance.json
+```
+
+验收必须读取 JSON verdict，不能只看文件存在或 builder 退出码。
+
+随后执行两次确定性复验：
+
+```text
+same-directory --resume byte-identical
+fresh-directory rebuild byte-identical
+```
+
+### 3.3 D→E final-three handoff
+
+脚本可直接读取 canonical demo manifest：
+
+```bash
+python scripts/build_v04_pr_f_product_handoff.py \
+  --source-pr-f-dir reports/v04_pr_f \
+  --case-list configs/v045_demo_cases.json \
+  --output-dir reports/v045_pr_f_product_handoff_final3
+```
+
+必须恰好包含：
+
+```text
+ipo_2024_02410
+ipo_2024_02460
+ipo_2024_01318
+```
+
+Package 只允许 frozen score、case identity 与 frozen SHAP drivers；不得含 `raw_return_5d`、`poor_performer_5d`、actual return/label 或 2025 Blind outcome。
+
+若完整 PR-E / PR-F runtime 或授权 EOD 不可恢复：
+
+```text
+BLOCKED_EXTERNAL_IMMUTABLE_INPUTS
+```
+
+不得重训、重建、联网替代行情、改 frozen manifest 或 fake-fill。
+
+### 3.4 v2 candidate
+
+Role-D v2 high-recall output 仍是 research candidate，等待 A 治理决策。它不能静默替换 frozen PR-F，也不影响当前 D1 记录口径。
+
+## 4. Role C / E final matrix
+
+### C
+
+只关闭 final-three strict Market contract：
+
+- explicit market state；
+- governed trace；
+- unavailable observation 仍有完整 unit / derivation；
+- Market LLM 不造数字；
+- 不新增不可证明 PIT 的 proxy。
+
+### E
+
+最终要求：
+
+```text
+2410.HK / 2460.HK / 1318.HK
+real provider
+accepted 3/3
+gate_e1.satisfied = true 3/3
+scope PASS
+severity floor preserved
+provider/model/prompt/request/hash/latency complete
+M3 = 1.0 3/3
+M4 human review PASS
+```
+
+当前 2460 两次 scope violation 后 honest fallback，不计 E1 success。
+
+## 5. Role A final integration
+
+只有以下全部满足后才运行 final package：
+
+```text
+B ALL 79 M1/M2 PASS
+D strict current-main revalidation PASS
+D→E final-three package PASS
+C1 3/3
+E1 3/3
+M3 3/3 = 1.0
+M4 PASS
+latest-main CI green
+Blind / provenance / determinism PASS
+artifact index / security audit PASS
+```
+
+A 不得因 D 已有历史 PASS 记录而跳过 current-main release revalidation，也不得因其他 lane 未完成而把 D 重新描述成“实现缺失”。
+
+## 6. 当前 hard Gate
+
+```text
+B0 Existing-Gold audit              PASS
+B1 M1 real-LLM Development          OPEN / P0
+B2 M2 Evidence Coverage             OPEN / P0
+D1 M5 materialization               PASS RECORDED
+D1 current-main release revalidation PENDING LOCAL IMMUTABLE INPUTS
+D→E final-three product package     PENDING LOCAL IMMUTABLE INPUTS
+C1 final Market validation          OPEN / P1
+E1 final 3-case real provider       OPEN / P1
+E2 explanation quality              OPEN / P1
+A1 final readiness/package          OPEN / P1
+```
+
+## 7. 明确不做
 
 ```text
 任何新的 M1/M2 人工 Gold
@@ -414,24 +296,9 @@ Validation tuning
 2025 Blind outcome access
 full 438-case LLM run
 broad model search
-full Retriever rewrite
 PR-F replacement training
+score inversion or calibration
 ComparableIPOSkill
-presentation-only UI expansion
+presentation-only expansion
 无 PIT 证据的 market proxy
 ```
-
-## 8. 当前 hard Gate 摘要
-
-```text
-B0 Existing-Gold audit              PASS
-B1 M1 real-LLM Development          OPEN / P0
-B2 M2 Evidence Coverage             OPEN / P0
-D1 M5 multi-horizon                 OPEN / P0
-C1 final Market validation          OPEN / P1
-E1 final 3-case real provider       OPEN / P1
-E2 explanation quality              OPEN / P1
-A1 final readiness/package          OPEN / P1
-```
-
-当前最重要的是依据 `iter_004` 的 dominant failure 做单一、最小、可归因的修复，并行补齐 D/C/E 正式 handoff；A 只在全部 hard Gate 真实通过后打包。
