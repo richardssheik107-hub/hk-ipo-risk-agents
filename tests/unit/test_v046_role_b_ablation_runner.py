@@ -746,3 +746,21 @@ def test_shadow_and_gated_cannot_run_without_ordered_offline_capture() -> None:
             modes=("offline", "gated"),
             execute_mode=lambda *_: _result(),
         )
+
+
+def test_explicit_fixed_journal_replay_allows_offline_and_gated_without_shadow() -> None:
+    calls: list[str] = []
+
+    def execute(mode, _case, _baseline):
+        calls.append(mode)
+        return _result()
+
+    results = orchestrate_case_modes(
+        case=_case(),
+        modes=("offline", "gated"),
+        execute_mode=execute,
+        allow_gated_without_shadow=True,
+    )
+
+    assert tuple(results) == ("offline", "gated")
+    assert calls == ["offline", "gated"]

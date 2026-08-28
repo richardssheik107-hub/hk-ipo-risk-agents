@@ -839,6 +839,7 @@ def orchestrate_case_modes(
     case: CaseInputs,
     modes: Sequence[str],
     execute_mode: ModeExecutor,
+    allow_gated_without_shadow: bool = False,
 ) -> dict[str, IPOAnalysisResult]:
     """Order modes and enforce shadow canonical equality for real and fake tests."""
 
@@ -848,7 +849,11 @@ def orchestrate_case_modes(
         raise RoleBAblationRunnerError(f"unknown ablation modes:{sorted(unknown)}")
     if any(mode in requested for mode in ("shadow", "gated")) and "offline" not in requested:
         raise RoleBAblationRunnerError("shadow/gated require the same-run offline baseline")
-    if "gated" in requested and "shadow" not in requested:
+    if (
+        "gated" in requested
+        and "shadow" not in requested
+        and not allow_gated_without_shadow
+    ):
         raise RoleBAblationRunnerError("gated requires shadow journal capture in the same run")
 
     results: dict[str, IPOAnalysisResult] = {}
@@ -1412,6 +1417,12 @@ def main() -> int:
         help="required before any PDF analysis or remote Role-B call",
     )
     parser.add_argument("--prospectus-root", type=Path, default=None)
+    parser.add_argument(
+        "--replay-journal",
+        type=Path,
+        default=None,
+        help="use an existing immutable journal for zero-network offline,gated replay",
+    )
     args = parser.parse_args()
 
     root = args.root.resolve()
@@ -1423,6 +1434,9 @@ def main() -> int:
     catalog_path = resolved(args.catalog)
     smoke_summary_path = resolved(args.smoke_summary)
     output_root = resolved(args.output_root) / args.run_id
+    replay_journal_root = (
+        resolved(args.replay_journal) if args.replay_journal is not None else None
+    )
 
     coverage = _ensure_coverage(root, coverage_path)
     subset = _load_or_create_subset(subset_path, coverage, size=args.subset_size)
@@ -1450,6 +1464,10 @@ def main() -> int:
     settings = load_settings(str(config_path))
     profile = _read_profile(config_path)
     modes = tuple(args.modes)
+    if replay_journal_root is not None and "shadow" in modes:
+        raise RoleBAblationRunnerError("fixed-journal replay cannot include shadow mode")
+    if replay_journal_root is not None and "gated" not in modes:
+        raise RoleBAblationRunnerError("fixed-journal replay requires gated mode")
     preflight = _preflight(
         config_path=config_path,
         settings=settings,
@@ -1492,13 +1510,38 @@ def main() -> int:
     runtime_cases = _runtime_cases(runtime_cases_path)
     catalog = _read_catalog(catalog_path, "case_id")
     bridge = _read_catalog(bridge_path, "case_id")
-    journal = LocalLLMJournal(output_root / "journal")
+    journal = LocalLLMJournal(replay_journal_root or (output_root / "journal"))
+    journal_identity_runtime_hash = runtime_hash
+    if replay_journal_root is not None:
+        replay_manifest = _journal_manifest(journal)
+        replay_hashes = {
+            str(item.get("runtime_config_hash") or "")
+            for item in replay_manifest.get("records", [])
+        }
+        if len(replay_hashes) != 1 or "" in replay_hashes:
+            raise RoleBAblationRunnerError(
+                "replay journal does not have one durable runtime identity"
+            )
+        journal_identity_runtime_hash = next(iter(replay_hashes))
+        _safe_json_write(
+            output_root / "replay_source.json",
+            {
+                "journal_root_name": replay_journal_root.name,
+                "journal_hash": replay_manifest.get("journal_hash"),
+                "record_count": replay_manifest.get("record_count"),
+                "journal_runtime_config_hash": journal_identity_runtime_hash,
+                "current_runtime_config_hash": runtime_hash,
+                "network_calls": 0,
+                "validation_opened": False,
+                "blind_2025_outcome_accessed": False,
+            },
+        )
     prompt_hashes = _prompt_hashes(profile, settings.llm_provider)
     execute_mode, diagnostics = _case_executor(
         settings=settings,
         profile=profile,
         prompt_hashes=prompt_hashes,
-        runtime_config_hash=runtime_hash,
+        runtime_config_hash=journal_identity_runtime_hash,
         output_root=output_root,
         journal=journal,
     )
@@ -1515,6 +1558,7 @@ def main() -> int:
             case=case,
             modes=modes,
             execute_mode=execute_mode,
+            allow_gated_without_shadow=replay_journal_root is not None,
         )
         for mode, result in results.items():
             destination = output_root / mode / "run" / case.case_id / "analysis_result.json"
