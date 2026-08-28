@@ -169,3 +169,23 @@ Fixer should be selected until that corrected stage trace is reviewed.
 
 Detailed matrices remain local and gitignored under
 `reports/v046_role_b/forensics/forensic_011/`.
+
+## Batch 002 follow-up status
+
+Financial Conversion Batch 002 is recorded separately in
+`docs/V046_ROLE_B_FINANCIAL_CONVERSION_BATCH_002.md`. Its no-LLM deterministic
+replay recovered two Evidence units (`M2 7/48 -> 9/48`) and generated three
+cash facts/risks where the prior replay generated none, while deterministic M1
+remained `5/30`. The formal `forensic_012` baseline (`M1=9/30`, `M2=12/48`)
+remains authoritative.
+
+The receipt failure was a proven Windows CRLF portability defect and was fixed
+without changing any frozen expected hash or artifact. Full pytest returned to
+`2157 passed` and the structured smoke passed `3/3`.
+
+The single authorized `forensic_013` then completed. Candidate Anchor@20 stayed
+`35/48`, Agent consumption rose to `34/48`, and candidate risks rose to `18/48`.
+However, gated M1 regressed from `9/30` to `7/30`, while M2 stayed `12/48`.
+Cash recovered two Evidence units, but redemption rights lost two M1 and two
+M2 units. Batch 002 is therefore `BATCH002_REJECTED_REGRESSION`; no post-result
+code adjustment or `forensic_014` is permitted.

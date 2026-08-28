@@ -87,7 +87,7 @@ def test_cash_agent_uses_one_bounded_risk_specific_pool() -> None:
 
     agent.analyze(IPOProfile(company_name="Demo"), financial_chunks())
 
-    assert retriever.calls == [("cash_runway", 10)]
+    assert retriever.calls == [("cash_runway", 20)]
 
 
 def test_real_financial_agent_reports_retriever_no_result() -> None:
@@ -183,10 +183,9 @@ def test_builder_exception_updates_component_failure_diagnostics() -> None:
 
     assert agent.last_diagnostics.status == CashRunwayAgentStatus.COMPONENT_FAILURE
     assert agent.last_diagnostics.issues == ["risk_builder_failure"]
-    assert agent.last_diagnostics.metadata == {
-        "component": "risk_builder",
-        "error_type": "RuntimeError",
-    }
+    assert agent.last_diagnostics.metadata["component"] == "risk_builder"
+    assert agent.last_diagnostics.metadata["error_type"] == "RuntimeError"
+    assert agent.last_diagnostics.metadata["financial_conversion"]["cash"]["status"] == "extracted"
     assert agent.last_diagnostics.extraction_status == {
         "cash_and_cash_equivalents": "extracted",
         "operating_cash_flow": "extracted",

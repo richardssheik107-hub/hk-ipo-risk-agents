@@ -100,6 +100,46 @@ def test_builds_pending_cash_runway_risk_with_complete_traceability() -> None:
     assert result.risk_item.metadata["score_is_probability"] is False
 
 
+def test_one_page_can_support_both_cash_and_operating_cash_flow() -> None:
+    extraction, evidence = inputs()
+    combined = evidence["cash-e"].model_copy(
+        update={
+            "evidence_id": "combined-e",
+            "text": "cash 77208; operating cash flow (83918)",
+        }
+    )
+    cash = extraction.cash_and_cash_equivalents.model_copy(
+        update={
+            "evidence_id": "combined-e",
+            "chunk_id": combined.chunk_id,
+            "page": combined.page,
+        }
+    )
+    cash_flow = extraction.operating_cash_flow.model_copy(
+        update={
+            "evidence_id": "combined-e",
+            "chunk_id": combined.chunk_id,
+            "page": combined.page,
+        }
+    )
+
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(
+            update={
+                "cash_and_cash_equivalents": cash,
+                "operating_cash_flow": cash_flow,
+            }
+        ),
+        {"combined-e": combined},
+    )
+
+    assert result.status == CashRunwayBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert [item.evidence_id for item in result.risk_item.evidence] == ["combined-e"]
+    assert result.calculation is not None
+    assert result.calculation.evidence_ids == ["combined-e"]
+
+
 @pytest.mark.parametrize("field", ["cash_and_cash_equivalents", "operating_cash_flow"])
 @pytest.mark.parametrize("status", [ExtractionStatus.NEEDS_REVIEW, ExtractionStatus.NOT_FOUND])
 def test_non_extracted_metric_never_builds(field: str, status: ExtractionStatus) -> None:

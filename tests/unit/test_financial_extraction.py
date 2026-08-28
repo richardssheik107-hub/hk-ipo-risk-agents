@@ -316,6 +316,86 @@ def test_selects_best_complete_candidate_from_top_five() -> None:
     assert result.normalized_value == Decimal("2")
 
 
+def test_shared_cash_runway_query_intent_is_valid_for_both_metrics() -> None:
+    cash = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120",
+        page=30,
+    )
+    ocf = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(60)",
+        page=31,
+    )
+    items = [
+        evidence(cash).model_copy(update={"metadata": {"query_intent": "cash_runway"}}),
+        evidence(ocf).model_copy(update={"metadata": {"query_intent": "cash_runway"}}),
+    ]
+
+    result = FinancialEvidenceExtractor().extract(
+        items,
+        items,
+        {item.chunk_id: item for item in (cash, ocf)},
+    )
+
+    assert result.cash_and_cash_equivalents.status == ExtractionStatus.EXTRACTED
+    assert result.operating_cash_flow.status == ExtractionStatus.EXTRACTED
+    assert result.cash_and_cash_equivalents.period_end == date(2024, 6, 30)
+    assert result.operating_cash_flow.period_months == 6
+    assert result.cash_and_cash_equivalents.metadata["pair_selection"] == (
+        "latest_common_compatible_period"
+    )
+
+
+def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
+    cash_latest = chunk(
+        "截至2024年9月30日止九個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n90",
+        page=40,
+    )
+    cash_common = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120",
+        page=41,
+    )
+    ocf_common = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(60)",
+        page=42,
+    )
+    cash_evidence = [evidence(cash_latest), evidence(cash_common)]
+    ocf_evidence = [evidence(ocf_common)]
+
+    result = FinancialEvidenceExtractor().extract(
+        cash_evidence,
+        ocf_evidence,
+        {item.chunk_id: item for item in (cash_latest, cash_common, ocf_common)},
+    )
+
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("120")
+    assert result.cash_and_cash_equivalents.period_end == date(2024, 6, 30)
+    assert result.operating_cash_flow.period_end == date(2024, 6, 30)
+
+
+def test_bounded_extractor_can_use_clean_candidate_beyond_old_top_five() -> None:
+    noise = [
+        chunk(f"不相關披露 {index}", page=50 + index) for index in range(5)
+    ]
+    target = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(60)",
+        page=60,
+    )
+    candidates = [evidence(item) for item in [*noise, target]]
+
+    result = FinancialEvidenceExtractor().extract(
+        [], candidates, {item.chunk_id: item for item in [*noise, target]}
+    ).operating_cash_flow
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.page == 60
+
+
 def test_same_period_conflicting_complete_values_require_review() -> None:
     first = chunk("截至3月31日止三個月\n2024年\n人民幣千元\n現金流量表所述現金及現金等價物\n100", page=10)
     second = chunk("截至3月31日止三個月\n2024年\n人民幣千元\n現金流量表所述現金及現金等價物\n200", page=20)

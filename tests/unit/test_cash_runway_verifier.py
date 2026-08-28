@@ -106,6 +106,29 @@ def test_valid_cash_runway_is_independently_verified() -> None:
     assert all(result.checks.values())
 
 
+def test_one_evidence_item_can_support_both_cash_metrics() -> None:
+    risk, evidence = valid_case()
+    combined = evidence["cash-e"].model_copy(
+        update={
+            "evidence_id": "combined-e",
+            "text": "Cash 77,208; net cash used in operating activities (83,918)",
+        }
+    )
+    assert risk.calculation is not None
+    risk = risk.model_copy(
+        update={
+            "evidence": [combined],
+            "calculation": risk.calculation.model_copy(
+                update={"evidence_ids": ["combined-e"]}
+            ),
+        }
+    )
+
+    result = CashRunwayRiskVerifier().verify(risk, {"combined-e": combined})
+
+    assert result.status == CashRunwayVerificationStatus.VERIFIED
+
+
 def test_calculation_missing_needs_review() -> None:
     risk, evidence = valid_case()
     assert_needs_review(risk.model_copy(update={"calculation": None}), evidence)

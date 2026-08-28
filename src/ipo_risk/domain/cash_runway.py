@@ -94,7 +94,7 @@ class CashRunwayRiskBuilder:
                 },
             )
 
-        evidence_ids = [cash.evidence_id, cash_flow.evidence_id]
+        evidence_ids = list(dict.fromkeys([cash.evidence_id, cash_flow.evidence_id]))
         skill_result = cash_runway_from_operating_cash_flow(
             cash.normalized_value,
             cash_flow.normalized_value,
@@ -270,7 +270,8 @@ class CashRunwayRiskBuilder:
             if evidence.source_type != EvidenceSourceType.PROSPECTUS:
                 issues.append("evidence_source_type_invalid")
                 continue
-            resolved.append(evidence)
+            if all(item.evidence_id != evidence.evidence_id for item in resolved):
+                resolved.append(evidence)
         if len(resolved) == 2 and resolved[0].document_id != resolved[1].document_id:
             issues.append("evidence_document_mismatch")
         return resolved, issues

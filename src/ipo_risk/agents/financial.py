@@ -64,7 +64,7 @@ class CashRunwayFinancialAgent:
             retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
             if callable(retrieve_for_risk):
                 shared_candidates = list(
-                    retrieve_for_risk(chunks, "cash_runway", limit=10)
+                    retrieve_for_risk(chunks, "cash_runway", limit=20)
                 )
                 cash_evidence = shared_candidates
                 cash_flow_evidence = shared_candidates
@@ -119,6 +119,12 @@ class CashRunwayFinancialAgent:
             "cash_and_cash_equivalents": extraction.cash_and_cash_equivalents.status.value,
             "operating_cash_flow": extraction.operating_cash_flow.status.value,
         }
+        extraction_trace = {
+            "cash": self._metric_trace(extraction.cash_and_cash_equivalents),
+            "operating_cash_flow": self._metric_trace(
+                extraction.operating_cash_flow
+            ),
+        }
         extraction_issues = list(
             dict.fromkeys(
                 [
@@ -138,6 +144,7 @@ class CashRunwayFinancialAgent:
                 status=CashRunwayAgentStatus.EXTRACTION_NEEDS_REVIEW,
                 extraction_status=extraction_status,
                 issues=extraction_issues,
+                metadata={"financial_conversion": extraction_trace},
                 **counts,
             )
             return []
@@ -163,6 +170,7 @@ class CashRunwayFinancialAgent:
                 metadata={
                     "component": "risk_builder",
                     "error_type": type(exc).__name__,
+                    "financial_conversion": extraction_trace,
                 },
                 **counts,
             )
@@ -175,6 +183,10 @@ class CashRunwayFinancialAgent:
                 issues=built.issues,
                 evidence_ids=evidence_ids,
                 pages=pages,
+                metadata={
+                    "financial_conversion": extraction_trace,
+                    "builder": built.model_dump(mode="json", exclude={"risk_item", "calculation"}),
+                },
                 **counts,
             )
             return []
@@ -186,6 +198,10 @@ class CashRunwayFinancialAgent:
                 issues=built.issues,
                 evidence_ids=evidence_ids,
                 pages=pages,
+                metadata={
+                    "financial_conversion": extraction_trace,
+                    "builder": built.model_dump(mode="json", exclude={"risk_item", "calculation"}),
+                },
                 **counts,
             )
             return []
@@ -196,6 +212,33 @@ class CashRunwayFinancialAgent:
             builder_status=built.status.value,
             evidence_ids=evidence_ids,
             pages=pages,
+            metadata={
+                "financial_conversion": extraction_trace,
+                "builder": {
+                    "status": built.status.value,
+                    "issues": built.issues,
+                    "calculation_created": built.calculation is not None,
+                    "risk_created": built.risk_item is not None,
+                },
+            },
             **counts,
         )
         return [built.risk_item]
+
+    @staticmethod
+    def _metric_trace(metric: Any) -> dict[str, Any]:
+        return {
+            "status": metric.status.value,
+            "issues": list(metric.issues),
+            "value": str(metric.normalized_value) if metric.normalized_value is not None else None,
+            "currency": metric.currency,
+            "unit": metric.unit,
+            "period_end": metric.period_end.isoformat() if metric.period_end else None,
+            "period_months": metric.period_months,
+            "evidence_id": metric.evidence_id,
+            "page": metric.page,
+            "pair_selection": metric.metadata.get("pair_selection"),
+            "evaluated_candidate_count": metric.metadata.get(
+                "evaluated_candidate_count"
+            ),
+        }

@@ -319,7 +319,11 @@ class V03FinancialAgent:
         retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
         if callable(retrieve_for_risk):
             try:
-                candidates = list(retrieve_for_risk(chunks, risk_code, limit=10))
+                limit = 20 if risk_code in {
+                    "customer_concentration",
+                    "supplier_concentration",
+                } else 10
+                candidates = list(retrieve_for_risk(chunks, risk_code, limit=limit))
                 if any(not isinstance(item, Evidence) for item in candidates):
                     raise TypeError("retriever_item_type_invalid")
                 return _RetrievalResult(candidates, [])

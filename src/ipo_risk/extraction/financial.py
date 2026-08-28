@@ -240,13 +240,22 @@ class FinancialEvidenceExtractor:
     ) -> FinancialExtractionResult:
         """Extract the latest complete value for cash and operating cash flow."""
 
+        cash = self._extract_metric(
+            "cash_and_cash_equivalents", cash_evidence_candidates, chunks_by_id
+        )
+        cash_flow = self._extract_metric(
+            "operating_cash_flow", operating_cash_flow_candidates, chunks_by_id
+        )
+        compatible = self._latest_compatible_pair(
+            cash_evidence_candidates,
+            operating_cash_flow_candidates,
+            chunks_by_id,
+        )
+        if compatible is not None:
+            cash, cash_flow = compatible
         return FinancialExtractionResult(
-            cash_and_cash_equivalents=self._extract_metric(
-                "cash_and_cash_equivalents", cash_evidence_candidates, chunks_by_id
-            ),
-            operating_cash_flow=self._extract_metric(
-                "operating_cash_flow", operating_cash_flow_candidates, chunks_by_id
-            ),
+            cash_and_cash_equivalents=cash,
+            operating_cash_flow=cash_flow,
         )
 
     def _extract_metric(
@@ -256,7 +265,7 @@ class FinancialEvidenceExtractor:
         chunks_by_id: Mapping[str, DocumentChunk],
     ) -> FinancialMetricValue:
         candidates: list[_Candidate] = []
-        for rank, evidence in enumerate(evidence_candidates[:5]):
+        for rank, evidence in enumerate(evidence_candidates[:20]):
             result = self._extract_candidate(metric_name, evidence, chunks_by_id)
             if result.status != ExtractionStatus.NOT_FOUND:
                 intent_priority = self._intent_priority(metric_name, evidence)
@@ -278,7 +287,7 @@ class FinancialEvidenceExtractor:
             return FinancialMetricValue(
                 metric_name=metric_name,
                 status=ExtractionStatus.NOT_FOUND,
-                issues=["top_5_evidence_contains_no_supported_target_row"],
+                issues=["bounded_evidence_contains_no_supported_target_row"],
             )
 
         candidates.sort(key=self._candidate_sort_key)
@@ -338,6 +347,107 @@ class FinancialEvidenceExtractor:
         ]
         chosen.metadata["evaluated_candidate_count"] = len(candidates)
         return chosen
+
+    def _latest_compatible_pair(
+        self,
+        cash_evidence_candidates: Sequence[Evidence],
+        operating_cash_flow_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[FinancialMetricValue, FinancialMetricValue] | None:
+        """Select the latest clean cash/OCF pair sharing governed semantics.
+
+        Cash is a point-in-time balance while OCF is an interval.  Selecting
+        each independently can combine two different reporting dates.  This
+        method searches the already-retrieved bounded pool for the latest
+        common date with matching document, currency and unit.  It does not
+        infer a missing field or weaken conflict checks.
+        """
+
+        def collect(
+            metric_name: str, evidence_candidates: Sequence[Evidence]
+        ) -> list[_Candidate]:
+            collected: list[_Candidate] = []
+            for rank, evidence in enumerate(evidence_candidates[:20]):
+                result = self._extract_candidate(metric_name, evidence, chunks_by_id)
+                priority = self._intent_priority(metric_name, evidence)
+                if result.status != ExtractionStatus.EXTRACTED or priority > 1:
+                    continue
+                collected.append(
+                    _Candidate(
+                        result=result,
+                        rank=rank,
+                        relevance=evidence.relevance_score,
+                        intent_priority=priority,
+                        context_strength=self._context_strength(evidence),
+                    )
+                )
+            return collected
+
+        cash_candidates = collect(
+            "cash_and_cash_equivalents", cash_evidence_candidates
+        )
+        flow_candidates = collect(
+            "operating_cash_flow", operating_cash_flow_candidates
+        )
+        pairs: list[tuple[_Candidate, _Candidate]] = []
+        for cash in cash_candidates:
+            for flow in flow_candidates:
+                cash_value = cash.result
+                flow_value = flow.result
+                if (
+                    cash_value.period_end is None
+                    or cash_value.period_end != flow_value.period_end
+                    or cash_value.document_id != flow_value.document_id
+                    or cash_value.currency is None
+                    or cash_value.currency != flow_value.currency
+                    or cash_value.unit is None
+                    or cash_value.unit != flow_value.unit
+                    or flow_value.period_months not in {3, 6, 9, 12}
+                ):
+                    continue
+                pairs.append((cash, flow))
+        if not pairs:
+            return None
+
+        pairs.sort(
+            key=lambda pair: (
+                -pair[0].result.period_end.toordinal(),
+                pair[0].intent_priority + pair[1].intent_priority,
+                pair[0].rank + pair[1].rank,
+                -pair[0].context_strength - pair[1].context_strength,
+                -pair[0].relevance - pair[1].relevance,
+            )
+        )
+        selected_cash, selected_flow = pairs[0]
+
+        # Multiple clean readings for the selected date must agree.  A latest
+        # compatible pair is not permission to hide a genuine disclosure
+        # conflict.
+        for selected, candidates in (
+            (selected_cash, cash_candidates),
+            (selected_flow, flow_candidates),
+        ):
+            for candidate in candidates:
+                if (
+                    candidate is selected
+                    or candidate.result.period_end != selected.result.period_end
+                ):
+                    continue
+                if self._financial_fact_conflicts(selected.result, candidate.result):
+                    return None
+
+        pair_metadata = {
+            "pair_selection": "latest_common_compatible_period",
+            "compatible_pair_count": len(pairs),
+            "pair_period_end": selected_cash.result.period_end.isoformat(),
+        }
+        cash_result = selected_cash.result.model_copy(
+            update={"metadata": {**selected_cash.result.metadata, **pair_metadata}}
+        )
+        flow_result = selected_flow.result.model_copy(
+            update={"metadata": {**selected_flow.result.metadata, **pair_metadata}}
+        )
+        return cash_result, flow_result
 
     @staticmethod
     def _candidate_sort_key(candidate: _Candidate) -> tuple[object, ...]:
@@ -399,6 +509,11 @@ class FinancialEvidenceExtractor:
         actual = evidence.metadata.get("query_intent")
         if actual == expected:
             return 0
+        if actual == "cash_runway":
+            # The v0.4.6 retriever deliberately returns one shared, bounded
+            # candidate pool for both metrics.  It is a valid neutral intent,
+            # not evidence that a cash row was queried as OCF (or vice versa).
+            return 1
         return 1 if not actual else 2
 
     @staticmethod

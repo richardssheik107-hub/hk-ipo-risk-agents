@@ -52,8 +52,8 @@ def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
     assert retriever.calls == [
         ("continuous_loss", 10),
         ("revenue_growth", 10),
-        ("customer_concentration", 10),
-        ("supplier_concentration", 10),
+        ("customer_concentration", 20),
+        ("supplier_concentration", 20),
     ]
 
 

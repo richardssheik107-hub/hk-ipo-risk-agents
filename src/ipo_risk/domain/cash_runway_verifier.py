@@ -87,9 +87,12 @@ class CashRunwayRiskVerifier:
 
         embedded = list(risk.evidence)
         embedded_ids = [item.evidence_id for item in embedded]
+        expected_evidence_count = (
+            len(set(calculation.evidence_ids)) if calculation is not None else len(embedded)
+        )
         record(
             "evidence_count",
-            len(embedded) == 2,
+            1 <= len(embedded) <= 2 and len(embedded) == expected_evidence_count,
             "risk_evidence_count_invalid",
         )
         record(
@@ -230,16 +233,23 @@ class CashRunwayRiskVerifier:
                 parsed.get("monthly_burn") == monthly_burn,
                 "monthly_burn_mismatch",
             )
-            if len(resolved) >= 2:
+            required_evidence_count = len(set(calculation.evidence_ids))
+            if resolved and len(resolved) == required_evidence_count:
                 record(
                     "cash_evidence_value",
-                    self._text_supports_amount(resolved[0].text, parsed["cash"]),
+                    any(
+                        self._text_supports_amount(item.text, parsed["cash"])
+                        for item in resolved
+                    ),
                     "cash_evidence_value_mismatch",
                 )
                 record(
                     "operating_cash_flow_evidence_value",
-                    self._text_supports_amount(
-                        resolved[1].text, parsed["operating_cash_flow"]
+                    any(
+                        self._text_supports_amount(
+                            item.text, parsed["operating_cash_flow"]
+                        )
+                        for item in resolved
                     ),
                     "operating_cash_flow_evidence_value_mismatch",
                 )
@@ -280,9 +290,14 @@ class CashRunwayRiskVerifier:
 
         issues = list(dict.fromkeys(issues))
         pending_issue_codes = {"evidence_id_missing"}
-        if len(embedded) < 2 and "risk_evidence_count_invalid" in issues:
+        if not embedded and "risk_evidence_count_invalid" in issues:
             pending_issue_codes.add("risk_evidence_count_invalid")
             pending_issue_codes.add("calculation_evidence_ids_mismatch")
+        if calculation is not None and len(set(calculation.evidence_ids)) > len(embedded):
+            if set(calculation.evidence_ids) <= set(available_evidence):
+                pending_issue_codes.update(
+                    {"risk_evidence_count_invalid", "calculation_evidence_ids_mismatch"}
+                )
         pending_only = bool(issues) and all(
             issue in pending_issue_codes or issue.endswith("_evidence_unavailable")
             for issue in issues
