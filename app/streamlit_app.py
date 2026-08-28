@@ -599,7 +599,7 @@ def _render_supervisor_judgement(payload: dict[str, object]) -> None:
         st.markdown(f"**关键发现 · {len(findings)}**")
         for finding in findings:
             st.markdown(
-                f"- {finding.get('statement', '')}  \n"
+                f"- {finding.get('statement', '')}  \\n"
                 f"  <span class='risk-chip'>risk {len(finding.get('risk_ids') or [])}</span> "
                 f"<span class='risk-chip'>evidence {len(finding.get('evidence_ids') or [])}</span>",
                 unsafe_allow_html=True,
@@ -716,6 +716,93 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 apply_competition_theme()
+
+# Minimal, presentation-only Hero motion enhancement. This intentionally lives
+# after the base design system so it only overrides the landing Hero visuals.
+st.markdown(
+    """
+    <style>
+    .landing-hero-v3 {
+      background:
+        radial-gradient(circle at 77% 36%,rgba(54,214,205,.17),transparent 30%),
+        radial-gradient(circle at 62% 88%,rgba(54,126,173,.13),transparent 38%),
+        linear-gradient(128deg,#0a2238 0%,#103849 52%,#0b6067 100%) !important;
+      box-shadow:0 24px 50px rgba(13,42,62,.20);
+    }
+    .landing-hero-v3:before {
+      width:420px!important;
+      height:420px!important;
+      right:-92px!important;
+      top:-126px!important;
+      border-radius:50%!important;
+      background:
+        radial-gradient(circle at 38% 34%,rgba(145,231,226,.22) 0 4%,rgba(53,156,163,.13) 23%,rgba(12,52,70,.08) 52%,rgba(7,29,44,0) 72%) !important;
+      border:1px solid rgba(134,216,212,.12);
+      box-shadow:
+        0 0 0 58px rgba(92,187,186,.035),
+        0 0 0 120px rgba(92,187,186,.02);
+      filter:none!important;
+      opacity:.82!important;
+      transform:translate3d(0,0,0) scale(1)!important;
+      animation:hero-orbit-drift 15s cubic-bezier(.42,0,.28,1) infinite alternate!important;
+    }
+    .landing-hero-v3:after {
+      inset:-8%!important;
+      background:
+        radial-gradient(circle at 68% 18%,rgba(164,226,222,.38) 0 1px,transparent 1.8px),
+        radial-gradient(circle at 82% 31%,rgba(133,211,208,.28) 0 1px,transparent 1.7px),
+        radial-gradient(circle at 90% 57%,rgba(231,192,104,.32) 0 1.1px,transparent 1.9px),
+        radial-gradient(circle at 73% 72%,rgba(149,219,216,.28) 0 1px,transparent 1.8px),
+        linear-gradient(128deg,transparent 0 47%,rgba(139,226,221,.15) 48%,rgba(139,226,221,.04) 49%,transparent 50%),
+        linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px)!important;
+      background-size:auto,auto,auto,auto,180px 90px,42px 42px,42px 42px!important;
+      background-position:0 0,0 0,0 0,0 0,74% 16%,0 0,0 0!important;
+      background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat!important;
+      opacity:.74!important;
+      transform:translate3d(0,0,0)!important;
+      animation:hero-star-drift 18s linear infinite!important;
+    }
+    .risk-flow-visual:before {
+      background:radial-gradient(circle,rgba(39,209,198,.18),rgba(65,170,174,.07) 42%,transparent 66%)!important;
+      opacity:.84!important;
+      animation-duration:14s!important;
+    }
+    .risk-flow-visual svg {
+      width:105%!important;
+      max-height:370px!important;
+      margin-left:-1%!important;
+    }
+    .hero-canvas-bg {
+      transform-box:fill-box;
+      transform-origin:center;
+      animation:
+        hero-layer-in 620ms var(--ease-product) 330ms forwards,
+        hero-canvas-drift 14s ease-in-out 1.1s infinite alternate!important;
+    }
+    @keyframes hero-orbit-drift {
+      0% {opacity:.72;transform:translate3d(-10px,6px,0) scale(.97) rotate(-2deg)}
+      55% {opacity:.88;transform:translate3d(16px,-8px,0) scale(1.035) rotate(2deg)}
+      100% {opacity:.78;transform:translate3d(28px,7px,0) scale(1.01) rotate(4deg)}
+    }
+    @keyframes hero-star-drift {
+      0% {opacity:.58;background-position:0 0,0 0,0 0,0 0,74% 16%,0 0,0 0}
+      45% {opacity:.78;background-position:4px -3px,-5px 4px,3px 5px,-4px -2px,65% 31%,10px -7px,-7px 10px}
+      100% {opacity:.64;background-position:-3px 4px,6px -5px,-4px -3px,5px 3px,52% 54%,22px -14px,-14px 22px}
+    }
+    @keyframes hero-canvas-drift {
+      from {transform:translate3d(-3px,2px,0) scale(.995)}
+      to {transform:translate3d(6px,-4px,0) scale(1.01)}
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .landing-hero-v3:before,
+      .landing-hero-v3:after,
+      .hero-canvas-bg {animation:none!important;transform:none!important}
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.sidebar.markdown(
     "<div class='sidebar-brand'><div class='sidebar-brand-title'>IPO Risk Intelligence</div>"
