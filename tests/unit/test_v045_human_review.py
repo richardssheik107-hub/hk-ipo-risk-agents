@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -77,6 +78,28 @@ def test_the_latest_decision_per_target_is_resolvable(tmp_path) -> None:
     second = _record(service, decision=HumanReviewDecision.REJECT)
     latest = service.latest_by_target("analysis-1")
     assert latest["r1"].review_id == second.review_id
+
+
+def test_append_order_breaks_equal_review_timestamp_ties(tmp_path) -> None:
+    store = JsonHumanReviewStore(tmp_path / "human_review")
+    reviewed_at = datetime(2026, 8, 29, tzinfo=timezone.utc)
+    first = HumanReview(
+        review_id="z-first", case_id="c", run_id="r", target_id="r1",
+        original_machine_status="verified", decision=HumanReviewDecision.ACCEPT,
+        post_review_status="human_accepted", reviewer_id="analyst_e",
+        reviewed_at=reviewed_at,
+    )
+    second = first.model_copy(
+        update={
+            "review_id": "a-second",
+            "decision": HumanReviewDecision.REJECT,
+            "post_review_status": "human_rejected",
+        }
+    )
+    store.append("analysis-1", first)
+    store.append("analysis-1", second)
+
+    assert store.latest_by_target("analysis-1")["r1"].review_id == "a-second"
 
 
 def test_an_unsigned_review_is_refused(tmp_path) -> None:

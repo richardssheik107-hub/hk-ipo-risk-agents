@@ -74,6 +74,10 @@ class JsonHumanReviewStore:
         """The most recent decision per target; earlier ones remain in the file."""
 
         latest: dict[str, HumanReview] = {}
-        for review in sorted(self.list(analysis_id), key=lambda item: (item.reviewed_at, item.review_id)):
+        # The sidecar is an append-only journal, so persisted order is the
+        # authoritative decision order.  Sorting by wall-clock timestamps is
+        # not safe on Windows: consecutive records can receive the same clock
+        # tick, at which point the UUID tie-breaker makes "latest" random.
+        for review in self.list(analysis_id):
             latest[review.target_id] = review
         return latest
