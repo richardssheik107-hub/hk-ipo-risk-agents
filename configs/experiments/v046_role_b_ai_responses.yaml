@@ -36,7 +36,7 @@ pr_f_run_dir: ""
 # load_settings intentionally ignores this machine-readable experiment block;
 # the opt-in v0.4.6 runner consumes it when binding journal identity/provenance.
 role_b_ablation_profile:
-  profile_version: v046_role_b_ablation_v2_recall_batch_001
+  profile_version: v046_role_b_ablation_v3_recall_batch_001
   default_modes:
     - offline
     - shadow
