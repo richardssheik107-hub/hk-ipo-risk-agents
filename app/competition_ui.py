@@ -508,6 +508,16 @@ def apply_competition_theme() -> None:
         .product-nav-links a:after {content:"";position:absolute;left:8%;right:8%;bottom:0;height:4px;border-radius:999px;background:#16a6a1;transform:scaleX(0);transform-origin:left center;transition:transform var(--motion-standard) var(--ease-product);}
         .product-nav-links a.nav-active {color:#0f6471;font-weight:650;}
         .product-nav-links a.nav-active:after {transform:scaleX(1);}
+        .result-breadcrumb {display:flex;align-items:center;gap:.62rem;min-width:0;margin:1.15rem 0 .3rem;font-size:.76rem;line-height:1.5;color:#81909d;}
+        .result-breadcrumb a {color:#687b8b;text-decoration:none;transition:color var(--motion-fast) ease;}
+        .result-breadcrumb a:hover {color:#183047;}
+        .result-breadcrumb-separator {color:#a8b2bb;}
+        .result-breadcrumb-current {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650;color:#304b5e;}
+        .stTabs:has([role="tab"]:nth-child(5)) {margin-top:.35rem;}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"] {gap:clamp(1rem,2.8vw,2.4rem);padding:0;background:transparent;border:0;border-bottom:1px solid #d8e0e6;border-radius:0;}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab"],.stTabs:has([role="tab"]:nth-child(5)) [role="tab"] {min-width:0;padding:.72rem .05rem .68rem;border-radius:0;background:transparent;color:#71808d;font-size:.8rem;font-weight:650;}
+        .stTabs:has([role="tab"]:nth-child(5)) [aria-selected="true"] {background:transparent;color:#183047;box-shadow:none;}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-highlight"] {height:3px;background:#16a6a1!important;border-radius:3px 3px 0 0;}
         .landing-hero-v3 {position:relative;isolation:isolate;min-height:410px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(420px,.9fr);align-items:center;gap:1.5rem;overflow:hidden;padding:2.25rem 2.45rem;border-radius:18px;background:radial-gradient(circle at 82% 48%,rgba(43,151,153,.08),transparent 36%),linear-gradient(128deg,#102d44 0%,#123b4d 56%,#0e5962 100%);box-shadow:0 22px 44px rgba(17,45,65,.18);animation:hero-mask var(--motion-enter) var(--ease-product) both;}
         .landing-hero-v3:before {content:"";position:absolute;z-index:-2;width:76%;height:138%;right:-8%;top:-24%;border-radius:50%;background:radial-gradient(circle at 42% 43%,rgba(26,167,161,.16),transparent 48%),radial-gradient(circle at 72% 60%,rgba(103,190,198,.11),transparent 44%),radial-gradient(circle at 52% 82%,rgba(12,42,63,.24),transparent 58%);filter:blur(22px);opacity:.62;transform:translate3d(-18px,-10px,0) scale(.96);will-change:transform,opacity;animation:hero-mesh-drift-a 20s cubic-bezier(.42,0,.28,1) infinite alternate;pointer-events:none;}
         .landing-hero-v3:after {content:"";position:absolute;z-index:-1;inset:-12%;background:radial-gradient(circle at 66% 25%,rgba(149,211,210,.08) 0 1px,transparent 1.8px),radial-gradient(circle at 78% 38%,rgba(149,211,210,.075) 0 1.2px,transparent 2px),radial-gradient(circle at 91% 57%,rgba(216,177,90,.07) 0 1px,transparent 1.8px),radial-gradient(circle at 72% 72%,rgba(149,211,210,.065) 0 1px,transparent 1.8px),radial-gradient(circle at 57% 84%,rgba(149,211,210,.06) 0 1px,transparent 1.8px),radial-gradient(ellipse at 82% 54%,rgba(72,172,175,.075),transparent 38%),radial-gradient(ellipse at 34% 12%,rgba(8,31,50,.22),transparent 45%);opacity:.72;transform:translate3d(12px,8px,0) scale(1);will-change:transform,opacity;animation:hero-mesh-drift-b 24s cubic-bezier(.42,0,.28,1) infinite alternate;pointer-events:none;}
@@ -611,20 +621,31 @@ def _asset_png_data_uri(relative_path: str) -> str:
     return f"data:image/png;base64,{encoded}"
 
 
-def render_product_navigation() -> None:
+def render_product_navigation(*, result_mode: bool = False) -> None:
     """Render page-level section navigation below the Streamlit header."""
 
+    if result_mode:
+        links_html = (
+            "<a class='nav-active' aria-current='location' href='#result-overview'>首页</a>"
+            "<a href='#new-analysis'>新建分析</a>"
+            "<a href='#case-workspace'>案例工作台</a>"
+        )
+        brand_target = "#result-overview"
+    else:
+        links_html = (
+            "<a class='nav-active' aria-current='location' data-section='overview' href='#overview'>概览</a>"
+            "<a data-section='new-analysis' href='#new-analysis'>新建分析</a>"
+            "<a data-section='workflow' href='#workflow'>研究流程</a>"
+            "<a data-section='capabilities' href='#capabilities'>核心能力</a>"
+            "<a data-section='runtime' href='#runtime'>运行环境</a>"
+        )
+        brand_target = "#overview"
     st.markdown(
         "<nav class='product-nav' aria-label='产品导航'>"
-        f"<a class='product-nav-brand' data-section='overview' href='#overview' aria-label='返回概览'>"
+        f"<a class='product-nav-brand' href='{brand_target}' aria-label='返回首页'>"
         f"<img class='product-nav-logo' src='{_asset_png_data_uri('ipo_risk_logo.png')}' alt='IPO Risk'></a>"
         "<div class='product-nav-links'>"
-        "<a class='nav-active' aria-current='location' data-section='overview' href='#overview'>概览</a>"
-        "<a data-section='new-analysis' href='#new-analysis'>新建分析</a>"
-        "<a data-section='workflow' href='#workflow'>研究流程</a>"
-        "<a data-section='capabilities' href='#capabilities'>核心能力</a>"
-        "<a data-section='runtime' href='#runtime'>运行环境</a>"
-        "</div></nav>",
+        f"{links_html}</div></nav>",
         unsafe_allow_html=True,
     )
 
@@ -814,7 +835,7 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
         for label, state, value in indicators
     )
     st.markdown(
-        "<div class='ipo-hero'><div class='ipo-hero-row'><div>"
+        "<div id='result-overview' class='ipo-hero landing-section-anchor'><div class='ipo-hero-row'><div>"
         "<div class='ipo-kicker'>HK IPO Risk Intelligence</div>"
         "<div class='ipo-title'>港股 IPO 风险分析工作台</div>"
         "<div class='ipo-subtitle'>Evidence-driven Multi-Agent IPO Risk Intelligence · "
@@ -1116,6 +1137,21 @@ def render_trace_timeline(rows: Iterable[dict[str, object]]) -> None:
             "</div>"
         )
     st.markdown("<div class='trace-list'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
+
+
+def render_case_breadcrumb(payload: dict[str, Any]) -> None:
+    """Render the result workspace hierarchy without changing case state."""
+
+    profile = payload.get("profile") or {}
+    company = escape(str(profile.get("company_name") or "不可用"))
+    stock_code = escape(str(profile.get("stock_code") or "不可用"))
+    st.markdown(
+        "<nav id='case-workspace' class='result-breadcrumb landing-section-anchor' aria-label='面包屑导航'>"
+        "<a href='#result-overview'>IPO Risk Review</a><span class='result-breadcrumb-separator'>›</span>"
+        "<span>IPO 分析</span><span class='result-breadcrumb-separator'>›</span>"
+        f"<span class='result-breadcrumb-current' aria-current='page'>{company} · {stock_code}</span></nav>",
+        unsafe_allow_html=True,
+    )
 
 
 def render_case_header(payload: dict[str, Any]) -> None:

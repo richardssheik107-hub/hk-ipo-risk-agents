@@ -17,6 +17,7 @@ from competition_ui import (
     domain_summary_rows,
     localize_market_observation_rows,
     render_case_header,
+    render_case_breadcrumb,
     render_channel_grid,
     render_empty_state,
     executive_supervisor_view,
@@ -821,7 +822,8 @@ scenario = st.sidebar.selectbox(
 )
 config_path, needs_pdf = SCENARIOS[scenario]
 
-render_product_navigation()
+has_existing_result = st.session_state.get("analysis_result") is not None
+render_product_navigation(result_mode=has_existing_result)
 header_slot = st.container()
 
 st.sidebar.markdown("<div class='sidebar-section-label'>Configuration</div>", unsafe_allow_html=True)
@@ -834,7 +836,6 @@ st.sidebar.markdown(
 st.sidebar.caption("当前正式 Gate · PR-H 完整受治理 E2E 集成")
 clear_result_slot = st.sidebar.empty()
 
-has_existing_result = st.session_state.get("analysis_result") is not None
 if not has_existing_result:
     st.markdown(
         "<section id='new-analysis' class='landing-section-head landing-section-anchor section-reveal'>"
@@ -920,20 +921,21 @@ else:
     stages_by_id = {stage.stage_id: stage for stage in stages}
 
     _render_sidebar_status(payload, stages)
-    render_case_header(payload)
-    render_channel_grid(payload)
+    render_case_breadcrumb(payload)
     # Five workspaces, one job each: decide, verify, contextualise, audit, sign off.
     workspace_tabs = st.tabs(
         [
-            "风险指挥中心",
-            "Evidence 与 AI 分析",
+            "案例概览",
+            "Evidence",
             "市场与模型",
-            "Agent 协作轨迹",
+            "Agent 协作",
             "人机复核与最终报告",
         ]
     )
 
     with workspace_tabs[0]:
+        render_case_header(payload)
+        render_channel_grid(payload)
         _render_command_center(payload, stages)
 
     with workspace_tabs[1]:
