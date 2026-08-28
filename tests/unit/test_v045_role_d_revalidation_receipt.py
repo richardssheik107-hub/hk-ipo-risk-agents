@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from ipo_risk.evaluation.role_d_revalidation_receipt import (
+    _canonical_text_sha256,
     validate_role_d_revalidation_receipt,
 )
 
@@ -33,6 +34,27 @@ def test_committed_current_main_revalidation_receipt_passes() -> None:
     assert result["verdict"] == "PASS"
     assert result["blockers"] == []
     assert all(result["checks"].values())
+
+
+def test_canonical_text_hash_treats_lf_and_crlf_as_equivalent(
+    tmp_path: Path,
+) -> None:
+    lf = tmp_path / "lf.json"
+    crlf = tmp_path / "crlf.json"
+    logical_text = '{\n  "status": "frozen"\n}\n'
+    lf.write_bytes(logical_text.encode("utf-8"))
+    crlf.write_bytes(logical_text.replace("\n", "\r\n").encode("utf-8"))
+
+    assert _canonical_text_sha256(lf) == _canonical_text_sha256(crlf)
+
+
+def test_canonical_text_hash_rejects_content_mutation(tmp_path: Path) -> None:
+    original = tmp_path / "original.json"
+    mutated = tmp_path / "mutated.json"
+    original.write_text('{"status":"frozen"}\n', encoding="utf-8")
+    mutated.write_text('{"status":"changed"}\n', encoding="utf-8")
+
+    assert _canonical_text_sha256(original) != _canonical_text_sha256(mutated)
 
 
 def test_revalidation_receipt_rejects_artifact_drift(tmp_path: Path) -> None:

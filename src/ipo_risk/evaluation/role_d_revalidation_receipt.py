@@ -42,6 +42,21 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _canonical_text_sha256(path: Path) -> str:
+    """Hash committed UTF-8 text independently of checkout newlines.
+
+    The frozen receipt was created from Git's LF-canonical text.  Windows may
+    materialize the same JSON files with CRLF, so hashing working-tree bytes
+    would incorrectly report binding drift.  This helper is intentionally
+    limited to the three committed JSON/text bindings below; binary and other
+    frozen artifacts retain raw-byte hashing semantics.
+    """
+
+    text = path.read_text(encoding="utf-8")
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
 def _mapping(value: Any) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
@@ -135,9 +150,15 @@ def validate_role_d_revalidation_receipt(
     bindings = _mapping(receipt.get("input_bindings"))
     try:
         local_hashes = {
-            "pr_f_frozen_manifest_sha256": _sha256(pr_f_manifest_path),
-            "pr_e_frozen_manifest_sha256": _sha256(pr_e_manifest_path),
-            "metric_protocol_sha256": _sha256(metric_protocol_path),
+            "pr_f_frozen_manifest_sha256": _canonical_text_sha256(
+                pr_f_manifest_path
+            ),
+            "pr_e_frozen_manifest_sha256": _canonical_text_sha256(
+                pr_e_manifest_path
+            ),
+            "metric_protocol_sha256": _canonical_text_sha256(
+                metric_protocol_path
+            ),
         }
     except OSError as exc:
         blockers.append(f"cannot read a committed binding: {exc}")
