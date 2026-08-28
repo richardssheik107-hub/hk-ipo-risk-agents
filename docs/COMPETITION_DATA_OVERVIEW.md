@@ -19,7 +19,7 @@
 - 2025 Blind 输入与 outcome 不再用于缺陷定位或参数选择；
 - 正式 Blind 推理只在冻结和授权后运行。
 
-历史 `CHANGELOG.md` 保留了一次使用 2025 Blind 文档定位解析缺陷的记录。该记录不表示 outcome/y 被访问，但意味着不能再宣称 Blind 输入从未被观察。最终治理报告应如实披露；从本规则生效起停止任何 Blind-input optimization。
+历史 `CHANGELOG.md` 保留了一次使用 2025 Blind 文档定位解析缺陷的记录。该记录不表示 Blind outcome/y 被访问，但意味着不能再宣称 Blind 输入从未被观察。最终治理报告应如实披露；从本规则生效起停止任何 Blind-input optimization。
 
 ## 2. Existing Gold
 
@@ -51,6 +51,8 @@ primary Evidence Units = 217
 
 输入完整不等于 M1/M2 达标。
 
+最新 main 已有 read-only Evidence auditor，可消费 persisted `IPOAnalysisResult` 与可选 PDF，检查 Evidence 唯一性、页码/文本、bbox、Calculation linkage、Evidence Index、Supervisor invention、provenance、leakage 与 determinism。它不调用 Agent、Retriever 或模型。
+
 ## 4. Risk / Evidence evaluation
 
 M1：正确 positive Existing-Gold Risk Units / 全部可评价 positive units。
@@ -75,11 +77,31 @@ Validation = 70
 
 已有 1D / 5D / 20D / 60D 正式物化和 hash-bound receipt。完整 frozen runtime 与授权 EOD 不进入 Git，发布前需 live strict revalidation。
 
-当前 5D 结果业务效果弱，不能仅凭 artifact PASS 宣称预警有效。
+Frozen PR-F：
+
+```text
+Recall = 0.0435
+F1 = 0.0769
+PR-AUC = 0.3364
+ROC-AUC = 0.4246
+```
+
+Development-selected v2 candidate：
+
+```text
+Recall = 0.5217
+F1 = 0.4211
+PR-AUC = 0.3812
+ROC-AUC = 0.4875
+```
+
+v2 使用 expanding Development folds 选择并在 2024 一次评价，尚未晋升。正式 D receipt 与产品 handoff 仍绑定 frozen PR-F。
 
 ## 7. Oracle / model data
 
-Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。Authentic frozen PR-F handoff 不可用时 Model Channel = unavailable，不训练替代品冒充正式模型。
+Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。Authentic frozen handoff 不可用时 Model Channel = unavailable。
+
+A 必须对 v2 做一次 promote/retain 决策；若晋升，创建新 freeze、四文件和 final-three handoff。不得继续根据 2024 调参。
 
 ## 8. Final-three data
 
@@ -107,7 +129,7 @@ Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。Authentic
 
 1. v0.4.6 B full forensic run；
 2. ALL 79 Development results；
-3. D current-main strict revalidation；
+3. D model promotion decision 与 current-main strict revalidation；
 4. C final-three strict metadata；
 5. Evidence bbox / screenshot manifest；
 6. one-shot Validation 与 final submission artifacts。

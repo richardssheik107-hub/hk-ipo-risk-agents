@@ -47,6 +47,20 @@ python scripts/run_v046_role_b_ablation.py \
 
 要求：matching provider/model/Prompt/Schema smoke 通过；offline/shadow/gated 同身份；shadow 不改变 canonical result；gated 无额外网络调用。
 
+对 persisted case result 可运行 read-only Evidence audit：
+
+```bash
+python scripts/audit_v04_pr_h_document_evidence.py \
+  --analysis-json <analysis_result.json> \
+  --case-id <case_id> \
+  --stock-code <stock_code> \
+  --pdf <authorized_prospectus.pdf> \
+  --expected-pdf-sha256 <sha256> \
+  --output <evidence_audit.json>
+```
+
+该 CLI 按单案例运行；final-three 由 E/A 汇总。它不替代 Candidate/LLM/Builder lifecycle trace。
+
 在进入优化前补齐 Risk/Evidence root-cause matrix。完整规则见 `ROLE_B_M1_M2_PLAN.md`。
 
 ## 4. Role-B Development closure
@@ -59,15 +73,27 @@ python scripts/run_v046_role_b_ablation.py \
 
 冻结清单：code SHA、Gold/subset manifest、Prompt、Retriever、Schema、normalization、reconciliation、Verifier、Evaluator、provider/model/transport/config。
 
-## 5. Role-D release revalidation
+## 5. Role-D model decision and release revalidation
 
-先验证 recorded receipt：
+先读：
+
+```text
+docs/ROLE_D_MODEL_DECISION.md
+docs/V045_ROLE_D_FINAL_CLOSURE.md
+```
+
+A 只能做一次 promote/retain 决议：
+
+- promote v2：创建新 freeze/decision record，之后不得按 2024 调参；
+- retain PR-F：保留弱辅助信号定位与现有 receipt。
+
+随后验证 recorded receipt：
 
 ```bash
 python scripts/validate_v045_role_d_receipt.py
 ```
 
-持有 SHA 匹配的 frozen PR-E/PR-F runtime 与授权 EOD 时：
+持有与正式决议匹配的 frozen runtime 与授权 EOD 时：
 
 ```bash
 python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
@@ -75,6 +101,8 @@ python scripts/check_v045_role_d_m5.py \
   --role-d-dir reports/v045_role_d \
   --output reports/v045_role_d_acceptance/acceptance.json
 ```
+
+若晋升 v2，必须先完成对应 builder/checker/frozen binding 的 versioned 支持；不得把 v2 内容手工写进 frozen PR-F artifact。
 
 再验证 `--resume` 与新空目录重建 byte-identical。
 
@@ -87,9 +115,9 @@ python scripts/build_v04_pr_f_product_handoff.py \
   --output-dir reports/v045_pr_f_product_handoff_final3
 ```
 
-缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
+若晋升 v2，使用其 versioned handoff builder/identity。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
 
-D 的最终报告必须同时给出性能、基准和限制，不把文件齐全等同于业务效果强。
+D 的最终报告必须同时给出性能、基准、alert 工作量和限制。
 
 ## 6. Final-three offline / AI / Market / M3
 
@@ -117,17 +145,9 @@ python scripts/run_v04_role_e_demo.py \
 
 每案至少两名独立真人，共 6 份。LLM reviewer 只能 advisory。
 
-评审材料至少包含 case report、Agent log、Evidence、Conflict/Recheck、Final Supervisor、Market/Model status。
-
 ## 8. Competition capability cases
 
-为以下能力准备真实案例和可审计产物：
-
-- core pipeline progress；
-- text embellishment；
-- related-party transaction；
-- comparable IPO valuation；
-- Evidence screenshot。
+为 core pipeline progress、text embellishment、related-party transaction、comparable IPO valuation 和 Evidence screenshot 准备真实案例与可审计产物。
 
 无正式 Gold 时标为 qualitative demonstration，不混入 M1/M2。
 
@@ -150,15 +170,7 @@ one execution under frozen identity
 
 ## 11. Final readiness
 
-所有 lane artifact 到齐后运行现有 readiness builder，并检查：
-
-- B M1/M2；
-- D strict acceptance / final-three；
-- C/E/M3/M4；
-- capability cases / screenshots；
-- latest-main CI；
-- Blind / provenance / determinism / security；
-- artifact index。
+所有 lane artifact 到齐后运行现有 readiness builder，并检查：B M1/M2、D model decision/strict acceptance/final-three、C/E/M3/M4、capability cases/screenshots、CI 和 audits。
 
 `--latest-main-ci-passed` 只能在 CI 实际通过时使用。
 
@@ -166,16 +178,7 @@ one execution under frozen identity
 
 只有 `submission_readiness.json.competition_ready=true` 才运行 packager。
 
-Bundle 必须包含：
-
-- source / environment / run scripts；
-- runnable prototype or API；
-- prediction table；
-- Agent logs；
-- Evidence / screenshot manifest；
-- three case reports；
-- M4 reviews；
-- metrics / audits / artifact index / release note。
+Bundle 必须包含 source/environment/scripts、prototype/API、prediction table、Agent logs、Evidence/screenshots、three case reports、M4 reviews、metrics/audits/index/release note。
 
 Bundle 必须拒绝 PDF、raw licensed data、Secret/private key/token、本机路径、raw journal、未授权模型和 reviewer 私有工作文件。
 
@@ -186,8 +189,8 @@ Bundle 必须拒绝 PDF、raw licensed data、Secret/private key/token、本机�
 [ ] ALL 79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
+[ ] D A-owned model decision
 [ ] D strict revalidation / determinism / final-three
-[ ] D business-value conclusion
 [ ] C strict 3/3
 [ ] E accepted 3/3
 [ ] M3 =100%
