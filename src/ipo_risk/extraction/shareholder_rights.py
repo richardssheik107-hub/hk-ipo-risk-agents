@@ -61,6 +61,27 @@ _EXPLICITLY_INACTIVE_TERMS = (
     "已失效", "已終止", "已终止", "不再有效", "ceased to be exercisable",
     "have terminated", "has terminated", "were terminated", "expired as of",
 )
+_FAILED_LISTING_TERMS = (
+    "listing is terminated",
+    "listing is withdrawn",
+    "listing application is withdrawn",
+    "listing fails",
+    "listing failure",
+    "listing lapses",
+    "listing application lapses",
+    "上市失败",
+    "上市失敗",
+    "上市申请失效",
+    "上市申請失效",
+    "上市申请撤回",
+    "上市申請撤回",
+    "上市终止",
+    "上市終止",
+)
+_RESTORATIVE_RIGHT_ACTION_TERMS = (
+    "require", "repurchase", "purchase their shares", "buy back", "buyback", "redeem",
+    "要求", "购回", "購回", "回购", "回購", "赎回", "贖回",
+)
 
 
 def _compact(value: str) -> str:
@@ -75,6 +96,14 @@ def _key(value: str) -> str:
 def _contains(value: str, terms: Sequence[str]) -> bool:
     normalized = _compact(value).lower()
     return any(_compact(term).lower() in normalized for term in terms)
+
+
+def _describes_failed_listing_restoration(value: str) -> bool:
+    """Recognize an explicit contingent right, not generic listing termination."""
+
+    return _contains(value, _FAILED_LISTING_TERMS) and _contains(
+        value, _RESTORATIVE_RIGHT_ACTION_TERMS
+    )
 
 
 class ShareholderRightsExtractor:
@@ -153,10 +182,21 @@ class ShareholderRightsExtractor:
         termination_timing = self._termination_timing(candidate.termination_timing, legacy_clause)
         restoration_condition = _compact(candidate.restoration_condition)
         restoration_clause = candidate.restoration_clause
+        restoration_inferred_from_legacy_clause = False
         if restoration_clause is None and (
             restoration_condition or _contains(legacy_clause, _RESTORATION_TERMS)
         ):
             restoration_clause = True
+        if restoration_clause is False and _describes_failed_listing_restoration(
+            legacy_clause
+        ):
+            # The typed boolean occasionally contradicts the same structured
+            # candidate's explicit contingent repurchase clause.  Canonicalize
+            # only this narrow, issuer-agnostic combination; a generic right
+            # that merely terminates on listing remains non-restorable.
+            restoration_clause = True
+            restoration_condition = legacy_clause
+            restoration_inferred_from_legacy_clause = True
         if restoration_clause and not restoration_condition:
             if _contains(legacy_clause, _RESTORATION_TERMS):
                 restoration_condition = legacy_clause
@@ -217,6 +257,9 @@ class ShareholderRightsExtractor:
                 "survives_listing": candidate.survives_listing,
                 "retrieved_evidence_count": len(evidence),
                 "unknown_evidence_ids": unknown_evidence_ids,
+                "restoration_inferred_from_legacy_clause": (
+                    restoration_inferred_from_legacy_clause
+                ),
             },
         )
 

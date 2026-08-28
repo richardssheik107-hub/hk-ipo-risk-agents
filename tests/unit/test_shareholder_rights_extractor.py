@@ -70,6 +70,50 @@ def test_currently_effective_right_that_ends_at_listing_is_not_a_status_conflict
     assert "conflicting_effectiveness_status" not in result.issues
 
 
+def test_explicit_failed_listing_repurchase_overrides_false_restoration_boolean() -> None:
+    result = _extract(
+        {
+            "right_type": "redemption_right",
+            "holder": "Pre-IPO investors",
+            "is_effective": True,
+            "survives_listing": False,
+            "termination_event": "completion of listing",
+            "termination_timing": "upon listing",
+            "restoration_clause": False,
+            "trigger_or_termination": (
+                "If the listing is terminated or lapses, the investors may require "
+                "the founders to purchase their shares; the right terminates upon listing."
+            ),
+            "evidence_ids": ["e-rights"],
+        }
+    )
+
+    assert result.restoration_clause is True
+    assert "listing is terminated" in result.restoration_condition
+    assert result.metadata["restoration_inferred_from_legacy_clause"] is True
+    assert result.status == ExtractionStatus.EXTRACTED
+
+
+def test_generic_on_listing_termination_does_not_infer_restoration() -> None:
+    result = _extract(
+        {
+            "right_type": "redemption_right",
+            "holder": "Pre-IPO investors",
+            "is_effective": True,
+            "survives_listing": False,
+            "termination_event": "listing",
+            "termination_timing": "upon listing",
+            "restoration_clause": False,
+            "trigger_or_termination": "The redemption right terminates upon listing.",
+            "evidence_ids": ["e-rights"],
+        }
+    )
+
+    assert result.restoration_clause is False
+    assert result.metadata["restoration_inferred_from_legacy_clause"] is False
+    assert result.status == ExtractionStatus.EXTRACTED
+
+
 def test_explicitly_terminated_right_without_restoration_is_a_complete_fact() -> None:
     result = _extract(
         {
