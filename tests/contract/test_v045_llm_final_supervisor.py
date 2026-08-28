@@ -17,6 +17,7 @@ from ipo_risk.agents.final_supervision_llm import (
     LLMFinalSupervisor,
     SupervisionStatus,
     SynthesisOutcome,
+    _numbers,
     severity_floor,
 )
 from ipo_risk.agents.final_supervisor import V04FinalSupervisor
@@ -536,3 +537,42 @@ def test_the_result_carries_no_probability_field() -> None:
     bundle = _supervisor(_judgement()).supervise(_inputs())
     for name in type(bundle.result).model_fields:
         assert not any(token in name for token in ("prob", "likelihood", "forecast"))
+
+
+# --- number tokenisation ---------------------------------------------------
+#
+# A ``-`` inside a date is a separator, not a minus sign.  Reading it as a sign
+# meant a supplied ``2024-08-20`` contributed ``2024``/``-08``/``-20`` and never
+# the plain ``08``/``20``, so restating that same supplied date in any other
+# format was rejected as an invented number.
+
+
+def test_a_hyphen_inside_a_date_is_a_separator_not_a_sign() -> None:
+    assert _numbers("2024-08-20") == {"2024", "8", "20"}
+
+
+def test_a_real_negative_number_is_still_read_as_negative() -> None:
+    assert "-5.2" in _numbers("the margin moved by -5.2 points")
+
+
+def test_the_same_value_spelled_differently_is_one_number() -> None:
+    assert _numbers("08") == _numbers("8")
+    assert _numbers("2,000") == _numbers("2000")
+    assert _numbers("1.50") == _numbers("1.5")
+
+
+def test_zero_is_still_a_number_that_can_be_invented() -> None:
+    assert _numbers("0") == {"0"}
+    assert _numbers("-0") == {"0"}
+
+
+def test_restating_a_supplied_date_in_another_format_is_not_an_invented_number() -> None:
+    """The 2026-08-27 spurious rejection: the model restated a date and was refused."""
+    supplied = _numbers('{"listing_date": "2024-08-20"}')
+    assert _numbers("listed on 2024年8月20日") - supplied == set()
+
+
+def test_a_date_absent_from_the_payload_is_still_an_invented_number() -> None:
+    """Loosening the tokeniser must not stop the guard from firing."""
+    supplied = _numbers('{"listing_date": "2024-08-20"}')
+    assert _numbers("listed on 2021-01-11") - supplied == {"2021", "1", "11"}

@@ -49,7 +49,12 @@ FINAL_SUPERVISOR_AGENT = "llm_final_supervisor"
 _RISK_ORDER = (RiskLevel.LOW, RiskLevel.MEDIUM, RiskLevel.HIGH, RiskLevel.CRITICAL)
 _RISK_RANK = {level.value: index for index, level in enumerate(_RISK_ORDER)}
 
-_NUMBER = re.compile(r"[-+]?\d[\d,]*(?:\.\d+)?")
+# A ``-`` that directly follows a digit is a separator, not a sign: it appears
+# inside dates, identifiers and ranges.  Reading it as a sign made
+# ``2021-01-11`` tokenise as ``2021``/``-01``/``-11``, so the payload never
+# contributed the plain ``01``/``11`` and any restatement of a supplied date in
+# another format was rejected as an invented number.
+_NUMBER = re.compile(r"(?<![\d.])[-+]?\d[\d,]*(?:\.\d+)?")
 # Vocabulary that would turn a supervisory synthesis into a prediction.  Both
 # languages are listed because the product surface is bilingual.
 _FORBIDDEN_TERMS = (
@@ -178,8 +183,30 @@ def severity_floor(risks: Iterable[RiskItem]) -> str:
     return max(levels, key=lambda level: _RISK_RANK[level])
 
 
+def _normalise_number(token: str) -> str:
+    """One canonical spelling per value, so a restatement is not a new number.
+
+    ``08`` and ``8``, ``2,000`` and ``2000``, ``1.50`` and ``1.5`` are the same
+    figure.  Only the spelling is folded -- never the value -- so this cannot let
+    a genuinely invented number through.
+    """
+
+    cleaned = token.replace(",", "")
+    sign = ""
+    if cleaned[:1] in {"+", "-"}:
+        sign = "-" if cleaned[0] == "-" else ""
+        cleaned = cleaned[1:]
+    whole, dot, fraction = cleaned.partition(".")
+    whole = whole.lstrip("0") or "0"
+    fraction = fraction.rstrip("0") if dot else ""
+    cleaned = f"{whole}.{fraction}" if fraction else whole
+    # ``-0`` and ``0`` are one value; zero itself is still a number and is kept,
+    # so an invented "0" is caught like any other.
+    return cleaned if cleaned == "0" else sign + cleaned
+
+
 def _numbers(text: str) -> set[str]:
-    return {match.group(0).replace(",", "") for match in _NUMBER.finditer(text)}
+    return {_normalise_number(match.group(0)) for match in _NUMBER.finditer(text)}
 
 
 class LLMFinalSupervisor:
