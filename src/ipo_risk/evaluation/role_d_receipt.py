@@ -1,11 +1,11 @@
 """Validate the recorded Role-D M5 materialization receipt.
 
 The licensed EOD archive and the full frozen PR-E/PR-F research runtimes are
-intentionally not committed.  The receipt records the immutable evidence from
-the governed external materialization, while this validator binds that record
-to the committed frozen manifests and metric protocol.
+intentionally not committed. The receipt records immutable evidence from the
+governed external materialization, while this validator binds that record to
+the committed frozen manifests and metric protocol.
 
-A passing receipt is historical release evidence.  It is not a substitute for
+A passing receipt is historical release evidence. It is not a substitute for
 ``check_v045_role_d_m5.py`` when the external immutable inputs are available.
 """
 
@@ -14,13 +14,13 @@ from __future__ import annotations
 import json
 import math
 import re
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping
 
 RECEIPT_VERSION = "v045_role_d_m5_materialization_receipt_v1"
 RECEIPT_STATUS = "recorded_external_materialization_pass"
 EVIDENCE_CLASS = "recorded_external_materialization_receipt"
+EXPECTED_RECORDED_AT = "2026-08-27T12:15:03Z"
 EXPECTED_REPOSITORY = "richardssheik107-hub/hk-ipo-risk-agents"
 EXPECTED_PULL_REQUEST = 141
 EXPECTED_MERGE_COMMIT = "2eb4bea6104e47c6472848d826e2572018909094"
@@ -29,22 +29,30 @@ EXPECTED_EVIDENCE_URL = (
     "https://github.com/richardssheik107-hub/hk-ipo-risk-agents/"
     "pull/141#issuecomment-5438960640"
 )
-EXPECTED_ARTIFACTS = (
-    "test_predictions.csv",
-    "multi_horizon_results.csv",
-    "evaluation_summary.json",
-    "ai_vs_offline_report.json",
-)
-EXPECTED_METRICS = (
-    "precision",
-    "recall",
-    "f1",
-    "pr_auc",
-    "roc_auc",
-    "top_10pct_hit_rate",
-    "top_20pct_hit_rate",
-    "base_prevalence",
-)
+EXPECTED_ARTIFACT_SHA256 = {
+    "test_predictions.csv": (
+        "8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a"
+    ),
+    "multi_horizon_results.csv": (
+        "f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725"
+    ),
+    "evaluation_summary.json": (
+        "6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63"
+    ),
+    "ai_vs_offline_report.json": (
+        "3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94"
+    ),
+}
+EXPECTED_FIVE_DAY_METRICS = {
+    "precision": 0.3333,
+    "recall": 0.0435,
+    "f1": 0.0769,
+    "pr_auc": 0.3364,
+    "roc_auc": 0.4246,
+    "top_10pct_hit_rate": 0.4286,
+    "top_20pct_hit_rate": 0.2857,
+    "base_prevalence": 0.3286,
+}
 EXPECTED_HORIZONS = (1, 5, 20, 60)
 EXPECTED_CASE_COUNT = 70
 EXPECTED_EOD_ROWS = 433_776
@@ -81,27 +89,22 @@ def _mapping(value: Any) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
 
-def _recorded_at_is_valid(value: Any) -> bool:
-    if not isinstance(value, str) or not value.endswith("Z"):
-        return False
-    try:
-        parsed = datetime.fromisoformat(value[:-1] + "+00:00")
-    except ValueError:
-        return False
-    return parsed.tzinfo is not None
-
-
 def _valid_sha256(value: Any) -> bool:
     return isinstance(value, str) and _SHA256.fullmatch(value) is not None
 
 
-def _finite_unit_interval(value: Any) -> bool:
-    return (
-        not isinstance(value, bool)
-        and isinstance(value, (int, float))
-        and math.isfinite(float(value))
-        and 0.0 <= float(value) <= 1.0
-    )
+def _exact_metric_map(actual: Mapping[str, Any]) -> bool:
+    if set(actual) != set(EXPECTED_FIVE_DAY_METRICS):
+        return False
+    for name, expected in EXPECTED_FIVE_DAY_METRICS.items():
+        value = actual.get(name)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return False
+        if not math.isfinite(float(value)) or not math.isclose(
+            float(value), expected, rel_tol=0.0, abs_tol=1e-12
+        ):
+            return False
+    return True
 
 
 def _has_local_absolute_path(value: str) -> bool:
@@ -111,11 +114,7 @@ def _has_local_absolute_path(value: str) -> bool:
     )
 
 
-def _walk_payload(
-    value: Any,
-    *,
-    path: str = "$",
-) -> tuple[list[str], list[str]]:
+def _walk_payload(value: Any, *, path: str = "$") -> tuple[list[str], list[str]]:
     absolute_paths: list[str] = []
     secret_values: list[str] = []
     if isinstance(value, Mapping):
@@ -209,8 +208,8 @@ def validate_role_d_materialization_receipt(
     )
     check(
         "recorded_at",
-        _recorded_at_is_valid(receipt.get("recorded_at")),
-        "Role-D receipt recorded_at must be an RFC3339 UTC timestamp",
+        receipt.get("recorded_at") == EXPECTED_RECORDED_AT,
+        "Role-D receipt timestamp does not match the recorded evidence comment",
     )
 
     source = _mapping(receipt.get("source"))
@@ -295,6 +294,7 @@ def validate_role_d_materialization_receipt(
     pr_f_binding = _mapping(bindings.get("pr_f"))
     pr_f_cohort = _mapping(_mapping(pr_f.get("cohorts")).get("full_production"))
     pr_f_semantics = _mapping(pr_f.get("formal_conclusion")).get("score_semantics")
+    normalized_pr_f = _normalized_pr_f_runtime_outputs(pr_f)
     check(
         "pr_f_manifest_state",
         pr_f.get("status") == "complete_frozen"
@@ -307,22 +307,26 @@ def validate_role_d_materialization_receipt(
         pr_f_binding.get("manifest_path") == "reports/frozen/v04_pr_f_lightgbm_manifest.json"
         and pr_f_binding.get("execution_revision") == pr_f.get("execution_revision")
         and pr_f_binding.get("development_count") == pr_f_cohort.get("development") == 354
-        and pr_f_binding.get("validation_count") == pr_f_cohort.get("validation") == EXPECTED_CASE_COUNT
-        and pr_f_binding.get("score_semantics") == pr_f_semantics
+        and pr_f_binding.get("validation_count")
+        == pr_f_cohort.get("validation")
+        == EXPECTED_CASE_COUNT
+        and pr_f_binding.get("score_semantics")
+        == pr_f_semantics
         == "uncalibrated_model_score_not_probability"
         and pr_f_binding.get("model_result_hash") == pr_f.get("model_result_hash")
-        and pr_f_binding.get("runtime_outputs") == _normalized_pr_f_runtime_outputs(pr_f),
+        and pr_f_binding.get("runtime_outputs") == normalized_pr_f,
         "Role-D receipt PR-F binding does not match the frozen manifest",
     )
     check(
         "pr_f_hash_shapes",
         _valid_sha256(pr_f.get("model_result_hash"))
-        and all(_valid_sha256(value) for value in _normalized_pr_f_runtime_outputs(pr_f).values()),
+        and all(_valid_sha256(value) for value in normalized_pr_f.values()),
         "PR-F frozen hashes are malformed",
     )
 
     pr_e_binding = _mapping(bindings.get("pr_e"))
     pr_e_cohort = _mapping(_mapping(pr_e.get("cohorts")).get("full_production"))
+    normalized_pr_e = _normalized_pr_e_runtime_outputs(pr_e)
     check(
         "pr_e_manifest_state",
         pr_e.get("status") == "complete_frozen"
@@ -335,17 +339,19 @@ def validate_role_d_materialization_receipt(
         pr_e_binding.get("manifest_path") == "reports/frozen/v04_pr_e_baseline_manifest.json"
         and pr_e_binding.get("execution_revision") == pr_e.get("execution_revision")
         and pr_e_binding.get("development_count") == pr_e_cohort.get("development") == 354
-        and pr_e_binding.get("validation_count") == pr_e_cohort.get("validation") == EXPECTED_CASE_COUNT
+        and pr_e_binding.get("validation_count")
+        == pr_e_cohort.get("validation")
+        == EXPECTED_CASE_COUNT
         and pr_e_binding.get("results_hash") == pr_e.get("results_hash")
         and pr_e_binding.get("diagnostic_hash") == pr_e.get("diagnostic_hash")
-        and pr_e_binding.get("runtime_outputs") == _normalized_pr_e_runtime_outputs(pr_e),
+        and pr_e_binding.get("runtime_outputs") == normalized_pr_e,
         "Role-D receipt PR-E binding does not match the frozen manifest",
     )
     check(
         "pr_e_hash_shapes",
         _valid_sha256(pr_e.get("results_hash"))
         and _valid_sha256(pr_e.get("diagnostic_hash"))
-        and all(_valid_sha256(value) for value in _normalized_pr_e_runtime_outputs(pr_e).values()),
+        and all(_valid_sha256(value) for value in normalized_pr_e.values()),
         "PR-E frozen hashes are malformed",
     )
 
@@ -362,18 +368,17 @@ def validate_role_d_materialization_receipt(
     artifacts = _mapping(receipt.get("artifact_sha256"))
     check(
         "artifact_contract",
-        set(artifacts) == set(EXPECTED_ARTIFACTS)
-        and all(_valid_sha256(artifacts.get(name)) for name in EXPECTED_ARTIFACTS),
-        "Role-D receipt must bind exactly four canonical artifact SHA-256 values",
+        dict(artifacts) == EXPECTED_ARTIFACT_SHA256
+        and all(_valid_sha256(value) for value in artifacts.values()),
+        "Role-D receipt artifact hashes do not exactly match the recorded external evidence",
     )
 
     metrics = _mapping(receipt.get("five_day_metrics"))
     check(
         "metric_contract",
-        set(metrics) == set(EXPECTED_METRICS)
-        and required_metrics == EXPECTED_METRICS
-        and all(_finite_unit_interval(metrics.get(name)) for name in EXPECTED_METRICS),
-        "Role-D receipt metric set or value range is invalid",
+        required_metrics == tuple(EXPECTED_FIVE_DAY_METRICS)
+        and _exact_metric_map(metrics),
+        "Role-D receipt metrics do not exactly match the recorded external evidence",
     )
 
     governance = _mapping(receipt.get("governance"))

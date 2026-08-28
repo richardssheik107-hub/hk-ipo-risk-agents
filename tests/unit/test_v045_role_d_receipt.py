@@ -60,6 +60,18 @@ def test_receipt_rejects_missing_fourth_artifact(tmp_path: Path) -> None:
     assert result["checks"]["artifact_contract"] is False
 
 
+def test_receipt_rejects_recorded_artifact_or_metric_tampering(tmp_path: Path) -> None:
+    def mutate(payload) -> None:
+        payload["artifact_sha256"]["test_predictions.csv"] = "0" * 64
+        payload["five_day_metrics"]["roc_auc"] = 0.9999
+
+    result = _validate(_mutated_receipt(tmp_path, mutate))
+
+    assert result["passed"] is False
+    assert result["checks"]["artifact_contract"] is False
+    assert result["checks"]["metric_contract"] is False
+
+
 def test_receipt_rejects_pr_f_hash_drift(tmp_path: Path) -> None:
     path = _mutated_receipt(
         tmp_path,
