@@ -18,7 +18,13 @@ from typing import Any, Sequence
 import streamlit as st
 
 from competition_runtime_view import evidence_catalog, evidence_label
-from competition_ui import risk_level_label
+from competition_ui import (
+    render_profile_grid,
+    render_state_panel,
+    risk_level_label,
+    section_header,
+    status_badge,
+)
 
 PAGE_RENDER_DPI = 130
 _HIGHLIGHT = (0.85, 0.16, 0.16)
@@ -72,21 +78,52 @@ def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> 
     """Draw the two-pane Evidence Viewer for the current analysis."""
 
     catalog = evidence_catalog(payload)
-    st.markdown("### Evidence Viewer")
-    st.caption(
-        "左侧为招股书原页与 bbox 高亮，右侧为该 Evidence 支撑的风险结论、结构化事实、"
-        "确定性 Calculation 与 Verifier 判定。页码与 bbox 来自解析器，界面不做任何修补。"
+    section_header(
+        "Evidence Viewer",
+        "招股书原页与 bbox 高亮和风险结论并排核验；页码、坐标与 Evidence 身份均来自解析器，界面不做修补。",
+        "Source verification",
     )
     if not catalog:
-        st.info("本次运行没有任何附着在风险项上的 Evidence，因此没有可展示的证据页。")
+        render_state_panel(
+            "Evidence 不可用",
+            "unavailable",
+            "本次运行没有任何附着在风险项上的 Evidence，因此没有可展示的证据页。",
+        )
         return
 
     labels = [evidence_label(item) for item in catalog]
-    chosen = st.selectbox("选择 Evidence", range(len(catalog)), format_func=lambda index: labels[index])
+    chosen = st.selectbox("风险 / Evidence 清单", range(len(catalog)), format_func=lambda index: labels[index])
     item = catalog[chosen]
 
-    left, right = st.columns((1.15, 1))
+    st.markdown(
+        "<div style='display:flex;justify-content:space-between;align-items:center;gap:.75rem;"
+        "flex-wrap:wrap;margin:.25rem 0 .7rem'>"
+        f"<strong>{item.get('risk_code') or '未命名风险'}</strong>"
+        f"{status_badge(item.get('verification_status'))}</div>",
+        unsafe_allow_html=True,
+    )
+
+    left, right = st.columns((0.82, 1.38), gap="large")
     with left:
+        section_header("风险与验证", "结论、身份与 Verifier 判定。")
+        render_profile_grid(
+            (
+                ("风险等级", risk_level_label(item.get("risk_level"))),
+                ("产出 Agent", _display(item.get("agent_name"))),
+                ("验证状态", _display(item.get("verification_status"))),
+                ("Evidence ID", item["evidence_id"]),
+                ("PDF 页码", _display(item.get("page"))),
+                ("检索相关度", _display(item.get("relevance_score"))),
+            )
+        )
+        st.markdown("**结论**")
+        st.write(item.get("risk_conclusion") or "该风险项没有结论文本。")
+        notes = item.get("verification_notes")
+        if notes:
+            st.caption(f"Verifier 复核说明 · {notes}")
+
+    with right:
+        section_header("证据原文", "PDF 原页、定位框与被引用文本。")
         page = item.get("page")
         if pdf_bytes is None:
             st.warning(
@@ -101,38 +138,24 @@ def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> 
             except PageRenderError as exc:
                 st.error(f"该页无法渲染：{exc}")
             else:
-                st.image(image, caption=f"招股书第 {page} 页", use_container_width=True)
+                st.image(image, caption=f"招股书第 {page} 页", width="stretch")
                 if item.get("bbox") is None:
                     st.caption("该条 Evidence 没有 bbox，页面按原样展示，未绘制高亮框。")
         with st.expander("Evidence 原文", expanded=True):
             st.write(item.get("text") or "该条 Evidence 没有可展示的原文。")
 
-    with right:
-        st.markdown(f"#### {item.get('risk_code') or '未命名风险'}")
-        st.markdown(
-            f"- 风险等级：**{risk_level_label(item.get('risk_level'))}**\n"
-            f"- 产出 Agent：`{_display(item.get('agent_name'))}`\n"
-            f"- Verifier 判定：`{_display(item.get('verification_status'))}`\n"
-            f"- Evidence ID：`{item['evidence_id']}`\n"
-            f"- 章节：{_display(item.get('section'))}\n"
-            f"- 检索相关度：{_display(item.get('relevance_score'))}"
-        )
-        st.markdown("**风险结论**")
-        st.write(item.get("risk_conclusion") or "该风险项没有结论文本。")
-        notes = item.get("verification_notes")
-        if notes:
-            st.caption(f"Verifier 复核说明 · {notes}")
+    section_header("审计明细", "Calculation、metadata 与来源定位保持完整可见。")
+    calculation = item.get("calculation")
+    with st.expander("确定性 Calculation", expanded=calculation is not None):
+        if calculation:
+            st.json(calculation)
+        else:
+            st.write("该风险项没有关联确定性计算；其结论不依赖数值计算。")
 
-        calculation = item.get("calculation")
-        with st.expander("确定性 Calculation", expanded=calculation is not None):
-            if calculation:
-                st.json(calculation)
-            else:
-                st.write("该风险项没有关联确定性计算；其结论不依赖数值计算。")
-
-        metadata = item.get("risk_metadata") or {}
-        with st.expander("LLM 结构化事实 / metadata", expanded=False):
-            if metadata:
-                st.json(metadata)
-            else:
-                st.write("该风险项没有结构化事实记录。")
+    metadata = item.get("risk_metadata") or {}
+    with st.expander("Metadata / Diagnostics", expanded=False):
+        st.markdown(f"**章节** · {_display(item.get('section'))}")
+        if metadata:
+            st.json(metadata)
+        else:
+            st.write("该风险项没有结构化事实记录。")
