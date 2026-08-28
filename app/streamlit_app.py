@@ -599,7 +599,7 @@ def _render_supervisor_judgement(payload: dict[str, object]) -> None:
         st.markdown(f"**关键发现 · {len(findings)}**")
         for finding in findings:
             st.markdown(
-                f"- {finding.get('statement', '')}  \\n"
+                f"- {finding.get('statement', '')}  \n"
                 f"  <span class='risk-chip'>risk {len(finding.get('risk_ids') or [])}</span> "
                 f"<span class='risk-chip'>evidence {len(finding.get('evidence_ids') or [])}</span>",
                 unsafe_allow_html=True,
