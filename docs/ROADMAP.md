@@ -1,201 +1,118 @@
-# Roadmap — Competition Closure Only
+# Roadmap — 从当前状态到 Competition Ready
 
-> Status date: `2026-08-28`
+> 状态日期：`2026-08-28`
+>
+> 详细版：`COMPETITION_CLOSURE_PLAN.md`
 
-本 Roadmap 只记录尚未完成的工作。当前 Gate 状态以 `V0.4_RELEASE_ACCEPTANCE.md` 为准，指标定义以 `COMPETITION_METRIC_PROTOCOL.md` 为准，操作顺序以 `V045_CURRENT_EXECUTION_PLAN.md` 为准。
+当前不是“再补几个小 Gate”就能提交，而是还剩 **4 个实质工作流 + 2 个收尾阶段**。
 
-## 当前立即动作
-
-```text
-B: one dominant-failure Fixer → bounded fixed-10 rerun → ALL 79 Development
-D: restore immutable inputs → current-main strict revalidation → final-three label-free handoff
-C: complete unavailable-observation unit / derivation metadata
-E: restore 3/3 accepted real-provider output and collect 6 human reviews
-A: rerun readiness/audits; package only after every Gate passes
-```
-
-当前 measured status：
+## 当前数字
 
 ```text
-B fixed-10 = 10/10 real-LLM; M1 23.33%; M2 18.75%
-D M5 70-case formal materialization = PASS recorded
-D strict checker / product handoff = PASS implementation
-D release revalidation / final-three package = pending local immutable inputs
-C1 strict contract = 1/3
-E1 accepted = 2/3
+B fixed-10 M1 = 23.33%
+B fixed-10 M2 = 18.75%
+B v0.4.6 forensic/ablation = implementation ready; measured closure pending
+D 70-case M5 artifacts = recorded; current-main revalidation pending
+D 5D Recall = 0.0435; ROC-AUC = 0.4246
+C strict Market contract = 1/3
+E real-provider accepted = 2/3
 M3 = 3/3 exactly 1.0
-M4 = 0/6 human reviews
+M4 = 0/6
 ```
 
-## 已关闭，不再扩展
+## 阶段 1 — B 全链路取证
 
-- competition runtime contracts / CI gate；
-- governed MarketContext；
-- IPOHeatSkill / MarketRegimeSkill；
-- bounded Market LLM wiring；
-- LLM Final Supervisor implementation；
-- deterministic conflict detection；
-- one bounded targeted re-check；
-- Agent / Tool / Evidence Trace implementation；
-- Human Review / Streamlit workspaces；
-- 3 real prospectus offline E2E；
-- 3-case measured traceability = 1.0；
-- A readiness / Blind / provenance / determinism / artifact index / packager；
-- Existing Expert Gold inventory 与 Metric-v2；
-- Existing-Gold read-only evaluator；
-- Role-B constrained Runner/Fixer tooling；
-- Role-D governed M5 builder；
-- Role-D strict read-only acceptance checker；
-- Role-D exact-four-file / exact-70-case / independent metric validation；
-- Role-D label-free PR-F product handoff 与 package validator；
-- Role-D 70-case formal materialization evidence record。
+- 跑通 matching structured smoke；
+- 同一运行比较 offline / shadow / gated；
+- 补齐 parser、retrieval、LLM、builder、reconciliation、verifier、binding trace；
+- 逐 Risk Unit / Evidence Unit 定位最早失败阶段；
+- 形成按可恢复单元数排序的修复优先级。
 
-除非出现回归或直接影响 hard Gate，不再扩架构。
+完成标准：至少 90% 单元有 `PROVEN` 根因，且下一修复点唯一明确。
 
-## P0 — B/A：M1/M2 Existing-Gold closure
+## 阶段 2 — B 指标与 Full Development
 
-### Scope freeze
+- 允许通用 Retriever、Prompt、Schema、non-destructive merge、reconciliation、Verifier 修复；
+- 每个修复包必须有测试和消融；
+- fixed-10 只是快速反馈，不设固定迭代次数；
+- 达标后运行 ALL 79 Development 并冻结。
+
+完成标准：
 
 ```text
-Existing Expert Annotation / Oracle Gold only
-+ read-only deterministic normalization
-+ real-LLM/code optimization
+M1 >=0.80
+M2 >=0.85
+real_llm_cases = 79
+Validation=false
+Blind input/outcome not used for optimization
 ```
 
-禁止新增 annotation、补 negative、人工重组 Evidence、修改旧 Gold、把未标注项当 negative。
+## 阶段 3 — D / C / E 并行闭环
 
-### Gate
+### D
 
-```text
-M1 official >=0.80; target >=0.85
-M2 official >=0.85; target >=0.88
-```
+- current-main strict revalidation；
+- resume / fresh-directory determinism；
+- final-three label-free handoff；
+- 对当前弱 5D 表现给出改进结果或诚实业务边界。
 
-### 执行顺序
+### C / E
 
-```text
-1. read iter_004 failure_focus
-2. one minimal semantic-extraction Fixer
-3. bounded fixed-10 rerun
-4. max 2-4 targeted rounds
-5. larger Development checkpoint
-6. ALL 79 Development
-7. freeze code / Prompt / evaluator / runtime
-8. one-shot ALL 19 Validation
-```
+- Market strict observation contract 3/3；
+- Final Supervisor real-provider accepted 3/3；
+- M3 保持 1.0；
+- M4 完成 6 份独立真人评审。
 
-详细操作：
+## 阶段 4 — 赛题能力与产品交付
 
-```text
-docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md
-docs/V045_CURRENT_EXECUTION_PLAN.md
-```
+- 核心管线进度案例；
+- 文本粉饰度切片案例；
+- 关联交易案例；
+- 同行估值比对 Skill 或可审计替代；
+- Evidence bbox / 精确高亮截图；
+- 单家与批量报告、API/UI 人机复核；
+- 三个典型案例的演示脚本和静态备份。
 
-## Release evidence — D：bounded revalidation only
+这些能力不强行混入 Existing-Gold M1/M2；无正式 Gold 时作为 qualitative capability demonstration。
 
-D 不再承担新模型开发。PR #141 已记录 70 个 2024 Validation IPO 的正式 M5 PASS、四个 artifact hashes 与 deterministic resume PASS。
+## 阶段 5 — Freeze 与一次性 Validation
 
-发布前剩余：
+- 冻结 B 代码、Prompt、Retriever、Schema、Verifier、Evaluator；
+- one-shot ALL 19 Validation；
+- D/C/E final artifact 固化；
+- latest-main CI；
+- Blind、provenance、determinism、security 审计。
 
-```text
-1. restore exact frozen PR-E runtime
-2. restore exact frozen PR-F runtime
-3. restore authorized governed EOD
-4. rebuild Role-D artifacts on current main
-5. strict checker PASS
-6. resume byte-identical
-7. fresh-directory byte-identical
-8. build final-three package from configs/v045_demo_cases.json
-9. validate package and hand off to E/A
-```
+Validation 之后不再调参。
 
-输入缺失时状态为：
+## 阶段 6 — Submission
 
-```text
-BLOCKED_EXTERNAL_IMMUTABLE_INPUTS
-```
+- 源码与环境配置；
+- 可运行原型或 API；
+- 测试集预测表；
+- Agent Trace；
+- Evidence 与截图；
+- 典型案例报告；
+- 指标总表与 artifact index；
+- 安全通过的 ZIP 和 SHA-256 manifest。
 
-不得：
+## 去掉的旧限制
 
-- 重训或重建 PR-F；
-- 使用替代行情；
-- 反转 score；
-- 改 threshold；
-- calibration；
-- 把 score 称为 probability；
-- 访问 2025 Blind outcome。
+- 固定最多 2–4 轮；
+- Runner-only；
+- Codex 只能看两个 summary；
+- 全面禁止 Retriever / model / transport 对照；
+- Evidence screenshot 只是 optional P2。
 
-Role-D v2 high-recall output 仍是 research candidate，等待 A 决议。
+## 保留的硬边界
 
-## P1 — C：Final Market validation
+- Gold 不改、不泄漏；
+- Validation 不调参；
+- 2025 Blind 不用于后续优化；
+- Evidence / Trace / PIT / Calculation fail closed；
+- 无公司、case、页码特判；
+- 无 Secret、PDF、raw EOD、绝对路径进入 Git 或 bundle。
 
-Final-three 只验证：
+## Competition Ready
 
-```text
-explicit governed Market state
-complete unavailable-observation metadata
-no fabricated numbers
-trace accounting
-Core-only no crash
-```
-
-不新增 ComparableIPOSkill，不补造 industry/PIT proxy。
-
-## P1 — E：Real-provider Final Supervisor / M4
-
-```text
-2410.HK / 2460.HK / 1318.HK
-accepted real-provider arbitration = 3/3
-scope PASS
-severity floor preserved
-provider call trace complete
-M3 =1.0
-M4 two independent human reviewers per case
-```
-
-当前 2460 honest fallback 不算 accepted；M4 仍为 0/6。
-
-## P1 — A：Integration / release freeze
-
-A 剩余：
-
-1. review B/C/D/E final evidence；
-2. verify D strict acceptance and final-three package；
-3. latest-main full CI；
-4. final-three AI smoke；
-5. Blind / provenance / determinism actual PASS；
-6. metric dashboard / artifact index；
-7. submission ZIP security audit；
-8. hard Gate 全绿后 `COMPETITION_READY`。
-
-## P2 — Evidence bbox
-
-保持 optional。只有在不影响 P0/P1 时处理。
-
-## 明确停止的工作
-
-- 新的 M1/M2 人工 Gold；
-- broad model tuning / new model families；
-- PR-F replacement training；
-- score inversion / Validation retuning；
-- full Retriever redesign；
-- historical industry PIT research；
-- broad new market acquisition；
-- full 438-case LLM；
-- presentation-only expansion；
-- proxy/zero fill unavailable market facts。
-
-## Completion condition
-
-```text
-M1 >=80%
-+ M2 >=85%
-+ M3 =100%
-+ M4 PASS
-+ D current-main strict M5 revalidation PASS
-+ D→E final-three label-free package PASS
-+ C final Market validation PASS
-+ E final real-provider acceptance PASS
-+ A final readiness/audit/CI/package PASS
-= v0.4.5 COMPETITION_READY
-```
+只有 M1、M2、M3、M4、M5、Market、Final Supervisor、产品交付、one-shot Validation、CI 和 final package 全部真实通过，才能标记 `COMPETITION_READY`。
