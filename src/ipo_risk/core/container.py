@@ -70,6 +70,7 @@ from ipo_risk.reporting.v03 import V03ReportGenerator
 from ipo_risk.reporting.v04 import V04ReportGenerator
 from ipo_risk.repositories.json_repository import JsonAnalysisRepository
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
+from ipo_risk.retrieval.hybrid_bm25 import HybridBM25DocumentRetriever
 from ipo_risk.retrieval.mock import MockDocumentRetriever
 from ipo_risk.modeling.frozen_model_evidence import (
     FrozenModelPredictionProvider,
@@ -109,7 +110,11 @@ def default_registry() -> ComponentRegistry:
     registrations = {
         "parser": {"mock": MockDocumentParser, "mock_alt": AlternateMockDocumentParser, "pymupdf": PyMuPDFDocumentParser, "pymupdf_table": PyMuPDFTableDocumentParser},
         "financial_extractor": {"regex": V03FinancialFactExtractor, "table": TableAwareV03FinancialFactExtractor},
-        "retriever": {"mock": MockDocumentRetriever, "keyword": KeywordDocumentRetriever},
+        "retriever": {
+            "mock": MockDocumentRetriever,
+            "keyword": KeywordDocumentRetriever,
+            "hybrid_bm25": HybridBM25DocumentRetriever,
+        },
         "financial_agent": {"mock": MockFinancialAgent, "cash_runway": CashRunwayFinancialAgent, "v03": V03FinancialAgent},
         "legal_agent": {"mock": MockLegalAgent, "disabled": DisabledLegalAgent, "v03": LegalAgent},
         "business_agent": {"mock": MockBusinessAgent, "disabled": DisabledBusinessAgent, "v03": V03BusinessAgent},
