@@ -1,21 +1,24 @@
 # v0.4.6 Role-B Recall Batch 001
 
-> Status: **IMPLEMENTED ON FEATURE BRANCH — FIXED-10 RERUN REQUIRED**
+> Status: **IMPLEMENTED AND CI-GREEN ON FEATURE BRANCH — FIXED-10 RERUN REQUIRED**
 >
 > Branch: `fix/v046-role-b-recall-batch-001`
 >
-> Base: `34553ebcd230b34417775359133761b27e49e204`
+> Initial base: `34553ebcd230b34417775359133761b27e49e204`
+>
+> The branch has since merged the current-main forensic evidence and tooling.
 
 ## 1. Forensic input
 
-The local `forensic_011` report supplied for this batch records:
+The frozen `forensic_011` report records:
 
 ```text
 fixed-10 cases = 10
 M1 = 8 / 30 = 26.67%
 M2 = 11 / 48 = 22.92%
-Candidate Recall@20 = 43.75%
-structured-valid rate = 94.29%
+Parser expected-page preservation = 38 / 48 = 79.17%
+Candidate Recall@20 = 21 / 48 = 43.75%
+structured-plus-scope-valid rate = 33 / 35 = 94.29%
 ```
 
 Proven earliest failures:
@@ -28,9 +31,13 @@ Proven earliest failures:
 | deterministic extraction miss | 4 | 0 |
 | retrieval ranking / top-K miss | 1 | 1 |
 
-This branch does not reinterpret those counts as additive gains. It implements a
-single broad, testable hypothesis: improve the text and candidate substrate
-before changing prompts, Gold, the evaluator, or risk thresholds.
+Additional isolated M1 failures include wrong-period selection, one Legal
+abstention, one builder-not-applicable result, one level mismatch, and one final
+Evidence-retention miss. The counts are not additive ceilings.
+
+The batch implements one broad, testable hypothesis: improve the text and
+candidate substrate before changing prompts, Gold, the evaluator, frozen
+thresholds, or Verifier policy.
 
 ## 2. Changes
 
@@ -48,8 +55,8 @@ reconstructed financial-table rows
 ```
 
 A page blank only in the default view is retained from the first non-empty
-alternate view. No OCR, Gold anchor, issuer rule, stock code, or page rule is
-used.
+native PyMuPDF view. No OCR, Gold anchor, issuer rule, stock code, case ID, or
+page rule is used.
 
 ### Hybrid candidate generation
 
@@ -59,18 +66,26 @@ The opt-in Role-B retriever now combines:
 DomainAware V2.1 exact/family lane
 + parser alternate views
 + case-local overlapping-window BM25
-+ weighted page-level reciprocal-rank fusion
++ balanced page-level reciprocal-rank fusion
 ```
+
+The two retrieval lanes use equal RRF weights. A prior weighted implementation
+gave the Domain lane weight `2` at depth `60`; consequently even BM25-only rank
+1 scored below Domain-only rank 60 and could be truncated from the 60-page
+union. The balanced implementation makes a BM25-only rank-1 page enter ahead of
+Domain-only rank 2 while still strongly promoting pages found by both lanes. A
+regression test pins this property.
 
 The released keyword behaviour remains unchanged for unknown queries. The
 Role-B lane applies to the five Financial risks, Redemption Rights,
-litigation/compliance, and the two precommercial-product query intents.
+litigation/compliance, and the precommercial-product query intents.
 
 Every returned candidate is mapped back to the original document/chunk/physical
 page. Context is capped at 6,000 characters and Evidence IDs remain
-deterministic.
+deterministic. The corpus and BM25 index are reused across risk queries within a
+case.
 
-### Table-aware deterministic extraction
+### Table-aware deterministic extraction and bounded transport recovery
 
 Both v0.4.6 provider profiles now use:
 
@@ -78,9 +93,14 @@ Both v0.4.6 provider profiles now use:
 parser = pymupdf_role_b_recall
 financial_extractor = table
 retriever = role_b_v046_financial_high_recall
+llm_max_retries = 1
+profile_version = v046_role_b_ablation_v3_recall_batch_001
 ```
 
-The change is opt-in and does not alter the shipped competition UI runtime.
+This lets table/period/value extraction and Legal/Business structured analysis
+consume a fuller, page-stable context without changing decision thresholds or
+accepting out-of-scope Evidence. The change is opt-in and does not alter the
+shipped competition UI runtime.
 
 ## 3. Expected effects
 
@@ -97,10 +117,44 @@ It does not claim that all recovered candidates become correct risks. Builder,
 normalization, reconciliation, Verifier, status, level, and calculation checks
 remain unchanged and fail closed.
 
-## 4. Acceptance gate
+## 4. Engineering validation
 
-Run a new identity-bound fixed-10 measurement, for example `forensic_012`, with
-fresh journal/config identity.
+The initial implementation produced one real test failure: merged context was
+`6001` characters because the newline separator was not included in the budget.
+The implementation was corrected to enforce the full 6,000-character bound.
+
+After that correction, and again after merging the latest `main` and frozen
+forensic artifacts, the complete repository workflows passed, including:
+
+- unit and integration tests;
+- byte compilation;
+- project, competition-data, and competition-runtime validators;
+- submission-readiness fail-closed smoke;
+- Golden manifest and Role-D receipt validation;
+- annotation-governance and deterministic-correction checks.
+
+Engineering CI proves contract safety, not M1/M2 improvement.
+
+## 5. Fixed-10 rerun
+
+Run a fresh identity-bound measurement, for example `forensic_012`, with a new
+smoke summary and journal/config identity:
+
+```bash
+python scripts/check_v046_role_b_structured_smoke.py
+
+python scripts/run_v046_role_b_ablation.py \
+  --config configs/experiments/v046_role_b_ai_responses.yaml \
+  --run-id forensic_012 \
+  --modes all \
+  --execute \
+  --prospectus-root "$IPO_RISK_PROSPECTUS_ROOT"
+
+python scripts/audit_v046_role_b_forensics.py \
+  --run-root reports/v046_role_b/ablation/forensic_012 \
+  --prospectus-root "$IPO_RISK_PROSPECTUS_ROOT" \
+  --output-dir reports/v046_role_b/forensics/forensic_012
+```
 
 Accept this batch only when all are true:
 
@@ -115,11 +169,20 @@ Validation remains closed
 2025 Blind input/outcome is not used
 ```
 
+A more useful success target for this broad batch is:
+
+```text
+Parser expected-page preservation materially above 79.17%
+Candidate Recall@20 materially above 43.75%
+Cash-runway Candidate Recall@20 above 0/11
+M1 and M2 both improve, not only candidate diagnostics
+```
+
 If Candidate Recall improves but M1/M2 do not, the next iteration must use the
 new lifecycle trace to isolate extraction, Builder, reconciliation, Verifier, or
 Evidence-binding loss. Do not broaden retrieval again without that evidence.
 
-## 5. Governance
+## 6. Governance
 
 Unchanged:
 
@@ -132,4 +195,4 @@ Unchanged:
 - PIT/Blind/secret/licensed-data protections.
 
 The competition target remains ALL 79 Development M1 >= 80% and M2 >= 85%; this
-fixed-10 batch is only the first measured remediation step.
+fixed-10 batch is the first measured remediation step, not a competition PASS.
