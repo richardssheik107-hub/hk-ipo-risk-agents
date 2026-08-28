@@ -199,7 +199,11 @@ def test_real_v03_agent_builds_all_five_pending_financial_risks() -> None:
     assert all(item.calculation and item.calculation.success for item in risks)
     assert [item.risk_code for item in agent.last_diagnostics] == [item.risk_code for item in risks]
     assert all(item.code == DiagnosticCode.RISK_GENERATED for item in agent.last_diagnostics)
-    assert risk_by_code(risks, "cash_runway").calculation.result == "2.76"
+    cash_runway = risk_by_code(risks, "cash_runway")
+    assert cash_runway.calculation.result == str(
+        Decimal("77208") * Decimal("3") / Decimal("83918")
+    )
+    assert cash_runway.metadata["runway_months_rounded"] == "2.76"
 
 
 def test_agent_protocol_empty_input_returns_empty_list_and_five_diagnostics() -> None:

@@ -54,7 +54,10 @@ def test_real_financial_agent_builds_pending_cash_runway() -> None:
     assert risk.risk_code == "cash_runway"
     assert risk.verification_status == VerificationStatus.PENDING
     assert risk.calculation is not None
-    assert risk.calculation.result == "2.76"
+    assert risk.calculation.result == str(
+        Decimal("77208") * Decimal("3") / Decimal("83918")
+    )
+    assert risk.metadata["runway_months_rounded"] == "2.76"
     assert agent.last_diagnostics.status == CashRunwayAgentStatus.BUILT
     assert agent.last_diagnostics.pages == [2, 1]
 

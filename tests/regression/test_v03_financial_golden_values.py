@@ -217,5 +217,7 @@ def test_2410_cash_runway_remains_2_76_months_and_verified() -> None:
     risk = verify(cash_risk())
     assert risk.verification_status == VerificationStatus.VERIFIED
     assert risk.level == RiskLevel.CRITICAL
-    assert risk.calculation.result == "2.76"
+    assert risk.calculation.result == str(
+        Decimal("77208") * Decimal("3") / Decimal("83918")
+    )
     assert risk.metadata["runway_months_rounded"] == "2.76"

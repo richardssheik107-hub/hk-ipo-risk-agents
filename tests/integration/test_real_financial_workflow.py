@@ -1,4 +1,5 @@
 from dataclasses import replace
+from decimal import Decimal
 
 from ipo_risk.core.config import Settings
 from ipo_risk.core.container import DependencyContainer, default_registry
@@ -95,7 +96,10 @@ def test_real_service_produces_verified_cash_runway_and_persists(tmp_path) -> No
     cash_runway = next(risk for risk in result.verified_risks if risk.risk_code == "cash_runway")
     assert cash_runway.verification_status == VerificationStatus.VERIFIED
     assert cash_runway.calculation is not None
-    assert cash_runway.calculation.result == "2.76"
+    assert cash_runway.calculation.result == str(
+        Decimal("77208") * Decimal("3") / Decimal("83918")
+    )
+    assert cash_runway.metadata["runway_months_rounded"] == "2.76"
     assert result.prediction is not None
     assert result.prediction.risk_score == 90
     assert result.prediction.probabilities == {}
