@@ -14,6 +14,7 @@
 | `COMPETITION_CLOSURE_PLAN.md` | 唯一统一执行计划、依赖关系和退出条件 |
 | `ROADMAP.md` | 剩余路线的短版视图 |
 | `ROLE_B_M1_M2_PLAN.md` | B 线 forensic、ablation、修复和 Full Development 计划 |
+| `ROLE_D_MODEL_DECISION.md` | frozen PR-F 与 v2 candidate 的治理晋升决策 |
 | `V045_ROLE_D_FINAL_CLOSURE.md` | D 线正式物化、receipt、strict revalidation 边界 |
 | `SUBMISSION_RUNBOOK.md` | 从本地复验到 final bundle 的操作手册 |
 | `PROJECT_SPEC.md` | 产品范围、赛题覆盖与不可破坏原则 |
@@ -29,7 +30,7 @@
 - `V04_ORACLE_GOLD_COVERAGE_AUDIT.md`；
 - `V04_ORACLE_REFRESH_GOVERNANCE.md`；
 - `V04_ORACLE_V2_COMPLETION_REPORT.md`；
-- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：仅 research candidate；
+- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：原始 research candidate 报告；
 - `annotation/`、`research/` 中仍有明确消费者的材料。
 
 这些文件不是当前路线图，但仍承担 contract、provenance 或 research 证据角色。
@@ -53,9 +54,9 @@
 ```text
 B fixed-10 M1 = 23.33%
 B fixed-10 M2 = 18.75%
-B v0.4.6 diagnostics = implemented, full measured run pending
-D M5 artifacts / receipt = recorded
-D business-quality claim = not closed
+B v0.4.6 diagnostics + read-only Evidence auditor = implemented; full measured run pending
+D frozen M5 artifacts / receipt = recorded
+D v2 candidate Recall = 52.17%; F1 = 42.11%; not promoted
 C strict contract = 1/3
 E accepted real-provider = 2/3
 M3 = 3/3 exactly 1.0

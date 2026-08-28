@@ -26,23 +26,24 @@
 |---|---|---|
 | M1 风险抽取 | fixed-10 `23.33%` | ALL 79 Development `>=80%` |
 | M2 证据召回 | fixed-10 `18.75%` | ALL 79 Development `>=85%` |
-| B 线诊断 | v0.4.6 offline / shadow / gated、journal、waterfall 已实现 | 完整 fixed-10 实测与逐单元根因矩阵 |
+| B 线诊断 | v0.4.6 三路对照、journal、waterfall + read-only Evidence audit 已实现 | 完整 fixed-10 实测与逐单元根因矩阵 |
 | M3 Traceability | 三案例 `3/3 = 1.0` | 保持 100% 并进入 final bundle |
 | Final Supervisor | real-provider accepted `2/3` | `3/3` accepted，fallback 不计成功 |
 | Market strict contract | `1/3` | `3/3`，无伪造数值、缺失元数据完整 |
 | M4 | `0/6` 真人评审 | 每案两名独立评审并通过 rubric |
-| M5 | 70-case 四文件物化与 receipt 已记录 | current-main strict revalidation；业务价值结论可信 |
+| M5 formal | 70-case 四文件物化与 receipt 已记录 | current-main strict revalidation |
+| M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，未晋升 | A governance decision + 新 freeze/handoff |
 | 产品 | UI、Report、Trace、Human Review 已存在 | Evidence 高亮截图、典型案例、预测表和安全封包齐全 |
 
-Role-D 当前已有可审计的多周期物化，但五日 Recall `0.0435`、ROC-AUC `0.4246`，不能据此宣称预警模型已具备强业务效果。该线仍需完成 current-main 复验，并由业务价值负责人决定改进方案或诚实限定结论。
+Frozen PR-F 的五日 Recall 仅 `4.35%`、ROC-AUC `0.4246`，不能据此宣称强业务效果。仓库已有一个完全按 expanding Development folds 选择、在 2024 一次评估的 v2 候选，将 Recall 提升到 `52.17%`、F1 提升到 `42.11%`，但 ROC-AUC 仍为 `0.4875`，且尚未完成 A-owned 晋升决议。正式产品仍不能直接消费它。
 
 ## 距离比赛还剩 6 个阶段
 
 1. **B 全链路取证**：把 Parser、Retrieval、LLM、Builder、Reconciliation、Verifier、Evidence binding 分开测量；
 2. **B 指标闭环**：通用修复 → fixed-10 → ALL 79 Development → freeze；
-3. **C/E 三案例闭环**：Market strict 3/3、Final Supervisor accepted 3/3、M4 6 份评审；
+3. **D/C/E 并行闭环**：D 模型晋升决策与复验，Market strict 3/3，Final Supervisor accepted 3/3，M4 6 份评审；
 4. **赛题能力补齐**：核心管线、文本粉饰度、关联交易、同行估值、Evidence 截图；
-5. **复验与一次性 Validation**：D strict rerun、B one-shot ALL 19 Validation、CI/audits；
+5. **冻结与一次性 Validation**：D final artifacts、B one-shot ALL 19 Validation、CI/audits；
 6. **最终交付**：源码、运行脚本、预测表、Trace、Evidence、案例报告、API/UI、submission ZIP。
 
 完整计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)。
@@ -64,13 +65,14 @@ Prospectus PDF
 → M1–M5 evaluation / readiness / package
 ```
 
-Role-B v0.4.6 额外提供：
+Role-B v0.4.6 提供：
 
 ```text
 offline baseline
 + real-LLM shadow probe
 + journal-replayed gated result
-→ monotonicity / retrieval waterfall / LLM quality diagnostics
++ read-only persisted-result Evidence audit
+→ monotonicity / retrieval waterfall / LLM quality / provenance diagnostics
 ```
 
 ## 指标与治理
@@ -124,6 +126,7 @@ python scripts/run_v046_role_b_ablation.py --run-id <RUN_ID> --modes all --execu
 - 当前统一计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)
 - 当前 Gate：[`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
 - B 线计划：[`docs/ROLE_B_M1_M2_PLAN.md`](docs/ROLE_B_M1_M2_PLAN.md)
+- D 模型决议：[`docs/ROLE_D_MODEL_DECISION.md`](docs/ROLE_D_MODEL_DECISION.md)
 - 指标协议：[`docs/COMPETITION_METRIC_PROTOCOL.md`](docs/COMPETITION_METRIC_PROTOCOL.md)
 - 最终提交：[`docs/SUBMISSION_RUNBOOK.md`](docs/SUBMISSION_RUNBOOK.md)
 - 文档审计：[`docs/DOCUMENT_AUDIT_20260828.md`](docs/DOCUMENT_AUDIT_20260828.md)

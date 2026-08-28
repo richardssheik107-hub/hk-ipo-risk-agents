@@ -4,16 +4,17 @@
 >
 > 详细版：`COMPETITION_CLOSURE_PLAN.md`
 
-当前不是“再补几个小 Gate”就能提交，而是还剩 **4 个实质工作流 + 2 个收尾阶段**。
+当前还剩 **4 个实质工作流 + 2 个收尾阶段**。
 
 ## 当前数字
 
 ```text
 B fixed-10 M1 = 23.33%
 B fixed-10 M2 = 18.75%
-B v0.4.6 forensic/ablation = implementation ready; measured closure pending
-D 70-case M5 artifacts = recorded; current-main revalidation pending
-D 5D Recall = 0.0435; ROC-AUC = 0.4246
+B v0.4.6 forensic/ablation + Evidence auditor = implementation ready; measured closure pending
+D frozen PR-F: Recall 4.35%, F1 7.69%, ROC-AUC 0.4246
+D v2 candidate: Recall 52.17%, F1 42.11%, PR-AUC 0.3812, ROC-AUC 0.4875
+D v2 promotion = pending A review
 C strict Market contract = 1/3
 E real-provider accepted = 2/3
 M3 = 3/3 exactly 1.0
@@ -24,7 +25,8 @@ M4 = 0/6
 
 - 跑通 matching structured smoke；
 - 同一运行比较 offline / shadow / gated；
-- 补齐 parser、retrieval、LLM、builder、reconciliation、verifier、binding trace；
+- 复用 read-only Evidence auditor检查 Evidence ID、页码、文本、Calculation、Index 与 provenance；
+- 补齐 parser、retrieval、LLM、builder、reconciliation、verifier、binding lifecycle trace；
 - 逐 Risk Unit / Evidence Unit 定位最早失败阶段；
 - 形成按可恢复单元数排序的修复优先级。
 
@@ -51,10 +53,12 @@ Blind input/outcome not used for optimization
 
 ### D
 
+- A 审核 frozen PR-F 与 v2 candidate；
+- 若晋升 v2，创建 freeze/decision record，禁止再用 2024 调参；
 - current-main strict revalidation；
 - resume / fresh-directory determinism；
 - final-three label-free handoff；
-- 对当前弱 5D 表现给出改进结果或诚实业务边界。
+- 给出准确的业务价值和局限。
 
 ### C / E
 
@@ -73,11 +77,12 @@ Blind input/outcome not used for optimization
 - 单家与批量报告、API/UI 人机复核；
 - 三个典型案例的演示脚本和静态备份。
 
-这些能力不强行混入 Existing-Gold M1/M2；无正式 Gold 时作为 qualitative capability demonstration。
+无正式 Gold 时作为 qualitative capability demonstration，不混入 M1/M2。
 
 ## 阶段 5 — Freeze 与一次性 Validation
 
 - 冻结 B 代码、Prompt、Retriever、Schema、Verifier、Evaluator；
+- 冻结 D 正式模型与 alert policy；
 - one-shot ALL 19 Validation；
 - D/C/E final artifact 固化；
 - latest-main CI；
