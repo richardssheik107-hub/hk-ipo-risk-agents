@@ -77,6 +77,30 @@ runway, `7/13` for customer concentration, `7/11` for redemption rights, and
 `7/13` for supplier concentration. The financial high-recall adapter does not
 apply to redemption rights; the latter still uses the ordinary keyword path.
 
+### Cash-runway trace correction
+
+The preceding `21/48` figure is retained as the original `forensic_011`
+artifact value, but it is **not a valid full fixed-10 Candidate Recall@20**.
+The tracing wrapper recorded risk-pool calls with intent `cash_runway`, while
+the post-run join accepted only the legacy free-text intents
+`cash_flow_ending_cash` and `operating_cash_flow`. It therefore discarded all
+cash-runway candidates before scoring and produced the artificial `0/11`.
+
+A deterministic, no-LLM replay repaired that trace contract and ran the same
+`RoleBFinancialHighRecallRetriever` and PyMuPDF parser used at the forensic
+base (both files remain byte-identical to `65fb2ea4...`). Gold text/page was
+joined only after retrieval. Across the 11 cash-runway Evidence units in five
+fixed-10 Development cases, page Recall@20 is `11/11 = 100%` and exact-anchor
+Recall@20 is `9/11 = 81.82%`. The two anchor misses are both in
+`ipo_2020_01961`; their expected pages still rank 3 and 4. No prospectus or
+Gold text, local path, Validation data, Blind data, or LLM output was persisted.
+
+Combining the unaffected non-cash trace with this isolated replay gives a
+corrected diagnostic view of `38/48 = 79.17%` expected-page Recall@20 and
+`30/48 = 62.50%` exact-anchor Recall@20. This combined number is diagnostic,
+not a replacement for official M1/M2. The official `M1=8/30` and `M2=11/48`
+remain unchanged.
+
 Offline and shadow are canonically equal and both score `M1=5/30`, `M2=7/48`.
 Gated scores `M1=8/30`, `M2=11/48`; it reuses the same journal and performs no
 extra network call. Structured-plus-scope validity is `33/35 = 94.29%`.
@@ -86,18 +110,16 @@ The gate contract was not changed.
 
 ## Earliest proven root causes
 
-All 30 Risk Units and all 48 Evidence Units have a directly supported earliest
-classification (`PROVEN=100%`, `INFERRED=0`, `UNAVAILABLE=0`). This does not
-mean every internal semantic field is observable: raw LLM semantics and
-per-candidate reconciliation events are intentionally not persisted. It means
-the first stage needed to explain each official pass/fail is observable before
-those gaps.
+The original report's claim that all 30 Risk Units and all 48 Evidence Units
+had a supported earliest classification is withdrawn. Cash-runway trace rows
+were filtered by the intent mismatch above, so their original earliest-stage
+labels are not valid even though the final evaluator outcomes remain valid.
 
-For the 22 incorrect M1 units, the primary roots are:
+For the 22 incorrect M1 units, the corrected status is:
 
 | Root cause | M1 units |
 |---|---:|
-| retrieval candidate miss | 6 |
+| retrieval candidate miss (non-cash trace-valid units only) | 2 |
 | parser text missing under exact-anchor audit | 5 |
 | deterministic extraction miss | 4 |
 | wrong period selection | 2 |
@@ -106,31 +128,34 @@ For the 22 incorrect M1 units, the primary roots are:
 | LLM abstention with sufficient consumed Gold support | 1 |
 | level mismatch | 1 |
 | final Evidence not retained | 1 |
+| cash-runway downstream stage not classified by this retrieval-only replay | 4 |
 
-For the 37 uncovered M2 units, `16` fail first at candidate generation, `10`
-at parser exact-text preservation, `7` after the corresponding risk remains
-absent, and one each at ranking/top-K, snippet truncation, rejected-risk
-binding, and final page matching.
+Of the original 16 M2 candidate-generation classifications, nine cash-runway
+rows were trace-invalid. The supported non-cash candidate-generation count is
+therefore seven M2 Evidence units. Parser exact-text preservation still
+accounts for ten M2 units. Downstream cash-runway stage attribution requires a
+full corrected pipeline trace and is intentionally not inferred from retrieval
+replay alone. Together with those nine unclassified cash-runway rows, the
+corrected M2 accounting still covers all 37 uncovered units without pretending
+that the replay observed downstream Agent stages.
 
 Therefore the existing evaluator label `semantic_extraction_miss` is not a
-proven semantic diagnosis. The most common directly proven first failure is
-candidate generation: it affects six M1 Risk Units and sixteen M2 Evidence
-Units. These counts must not be added as independent failures because one
-upstream miss can affect both metrics.
+proven semantic diagnosis, but neither is the earlier claim that candidate
+generation is the dominant proven failure. The corrected evidence shows that
+cash-runway retrieval itself is strong; the largest currently supported M1
+group is parser exact-text absence (`5` units), ahead of trace-valid non-cash
+candidate generation (`2` units). These cross-metric counts must not be added
+as independent failures because one upstream miss can affect both metrics.
 
 ## Recommended first Fixer
 
-Only one next module is recommended:
-`src/ipo_risk/retrieval/role_b_financial_v046.py`. The smallest acceptable
-change is a bounded, issuer-agnostic financial candidate-recall fix followed by
-the same fixed-10 regression. It has a mechanical ceiling of five M1 Risk Units
-and fourteen M2 Evidence Units within the dominant root-cause group; those
-cross-metric counts are not additive. The two redemption-rights Evidence misses
-and one redemption-rights M1 miss are deferred rather than combining Legal and
-Financial retrieval changes. The Fixer must not use Gold text/page at runtime
-and must preserve candidate-noise, canonical-output, and Validation/Blind
-guards. Parser, extraction, Prompt, reconciliation, and Verifier changes are
-also deferred until this single Fixer is reviewed.
+The previous recommendation to change
+`src/ipo_risk/retrieval/role_b_financial_v046.py` first is withdrawn. The audit
+does not justify a cash-runway candidate-recall change: all 11 expected pages
+are already present in Top-20. The next investigation should preserve the
+retriever and separate (a) parser exact-anchor absence, (b) cash-runway
+deterministic extraction, and (c) downstream candidate/risk retention. No
+Fixer should be selected until that corrected stage trace is reviewed.
 
 ## Known limits
 

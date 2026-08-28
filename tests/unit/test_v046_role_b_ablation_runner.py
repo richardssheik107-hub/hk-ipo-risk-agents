@@ -242,6 +242,41 @@ def test_tracing_retriever_records_actual_financial_risk_pool() -> None:
     assert sink[0]["diagnostic_candidates"][0]["evidence_id"] == "ev-20"
 
 
+def test_cash_runway_risk_pool_survives_pipeline_trace_join() -> None:
+    sink: list[dict] = []
+    retriever = _TracingRetriever(_RiskPoolDelegate(), sink)
+    retriever.retrieve_for_risk([], "cash_runway", limit=10)
+    unit_id = _digest("cash evidence unit")
+
+    trace = _retrieval_pipeline_trace(
+        coverage={
+            "evidence_units": [
+                {
+                    "evidence_unit_id": unit_id,
+                    "case_id": "ipo_2020_00001",
+                    "source_risk_code": "cash_runway",
+                    "page": 1,
+                    "exact_text": "bounded financial evidence",
+                }
+            ]
+        },
+        evidence_rows=[
+            {
+                "evidence_unit_id": unit_id,
+                "case_id": "ipo_2020_00001",
+                "source_risk_code": "cash_runway",
+            }
+        ],
+        calls_by_case={"ipo_2020_00001": sink},
+    )
+
+    assert trace[0]["candidate_count"] == 1
+    assert trace[0]["first_gold_page_rank"] == 1
+    assert trace[0]["first_gold_rank"] == 1
+    assert trace[0]["agent_consumed"] is True
+    assert trace[0]["retrieval_query_family"] == ["cash_runway"]
+
+
 def test_experiment_registry_exposes_financial_high_recall_only_opt_in() -> None:
     observed = _experiment_registry().create(
         "retriever", "role_b_v046_financial_high_recall"

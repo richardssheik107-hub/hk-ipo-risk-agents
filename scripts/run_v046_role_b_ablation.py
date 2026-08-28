@@ -137,7 +137,13 @@ MODE_ORDER = (
 )
 _MIN_ANCHOR_CHARS = 12
 _RISK_QUERY_INTENTS = {
-    "cash_runway": frozenset({"cash_flow_ending_cash", "operating_cash_flow"}),
+    # ``retrieve_for_risk`` records the governed pool under the canonical risk
+    # code, while the legacy free-text path records its two component intents.
+    # Accept both so the measurement-only trace cannot discard a valid cash
+    # candidate solely because the caller used the risk-pool API.
+    "cash_runway": frozenset(
+        {"cash_runway", "cash_flow_ending_cash", "operating_cash_flow"}
+    ),
     "customer_concentration": frozenset({"customer_concentration"}),
     "supplier_concentration": frozenset({"supplier_concentration"}),
     "redemption_rights": frozenset({"redemption_rights"}),
