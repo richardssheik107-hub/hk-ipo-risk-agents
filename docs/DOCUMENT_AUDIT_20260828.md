@@ -1,6 +1,8 @@
 # Documentation Audit — 2026-08-28
 
-> 审计基线：`a2d1f16f6e72e5520881b362e356bdf2d09e2809`
+> 初始审计基线：`a2d1f16f6e72e5520881b362e356bdf2d09e2809`
+>
+> 已同步最新 main：`2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33`
 
 ## 1. 目标
 
@@ -10,12 +12,13 @@
 
 ```text
 README.md
- docs/README.md
- docs/V0.4_RELEASE_ACCEPTANCE.md
- docs/COMPETITION_CLOSURE_PLAN.md
- docs/ROADMAP.md
- docs/ROLE_B_M1_M2_PLAN.md
- docs/SUBMISSION_RUNBOOK.md
+docs/README.md
+docs/V0.4_RELEASE_ACCEPTANCE.md
+docs/COMPETITION_CLOSURE_PLAN.md
+docs/ROADMAP.md
+docs/ROLE_B_M1_M2_PLAN.md
+docs/ROLE_D_MODEL_DECISION.md
+docs/SUBMISSION_RUNBOOK.md
 ```
 
 ## 3. 本轮重写
@@ -31,23 +34,26 @@ README.md
 - `COMPETITION_DATA_OVERVIEW.md`；
 - `SUBMISSION_RUNBOOK.md`。
 
-新增：
+新增：`COMPETITION_CLOSURE_PLAN.md`、`ROLE_B_M1_M2_PLAN.md`、`ROLE_D_MODEL_DECISION.md` 和本文档。
 
-- `COMPETITION_CLOSURE_PLAN.md`；
-- `ROLE_B_M1_M2_PLAN.md`；
-- 本审计文件。
+## 4. 最新 main 纳入情况
 
-## 4. 已核验并保留，不追溯改写
+PR #153 的 read-only Evidence auditor 与测试已保留在分支；其过期单案例状态报告没有恢复。当前计划将 auditor 视为已实现工具，同时仍将 Candidate/LLM/Builder lifecycle trace 列为待补缺口。
+
+Role-D v2 candidate 已纳入当前计划，但仍保持 research candidate；正式 receipt 与 handoff 继续绑定 frozen PR-F，直到 A 创建 promotion record。
+
+## 5. 已核验并保留，不追溯改写
 
 - `COMPETITION_METRIC_PROTOCOL.md`：冻结指标合同；
-- `V045_ROLE_D_FINAL_CLOSURE.md`：最新 D 证据边界；
+- `V045_ROLE_D_FINAL_CLOSURE.md`：正式 D 证据边界；
+- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：原始候选报告；
 - `V04_PR_D_INPUT_BINDING.md`；
 - `V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md`；
 - Oracle audit / governance / completion docs；
-- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：research candidate；
-- `CHANGELOG.md`：历史事实记录，不因新计划清洗。
+- `CHANGELOG.md`：历史事实记录；
+- annotation / research 中仍有消费者的材料。
 
-## 5. 删除的过期/重复文件
+## 6. 删除的过期/重复文件
 
 ```text
 COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md
@@ -69,25 +75,20 @@ V04_PR_H_COMPLETION_REPORT.md
 V04_ROLE_E_COMPLETION_REPORT.md
 ```
 
-删除原因：旧 blocker/next step、v0.4.5 Runner-only、重复角色排期、历史 benchmark 身份混淆、PR completion report 冒充当前状态。内容仍可从 Git 历史恢复。
+内容仍可从 Git 历史恢复。
 
-## 6. 流程限制调整
+## 7. 流程限制调整
 
 删除：固定 2–4 轮、Runner-only、只能读两个 summary、绝对禁止 Retriever/model/transport Development 实验、Screenshot optional P2。
 
 保留：Gold immutable、Validation one-shot、Blind 隔离、Evidence scope、PIT、Calculation、Trace、Secret/PDF/raw-data 安全。
 
-## 7. 发现的治理不一致
+## 8. 发现的治理不一致
 
-`CHANGELOG.md` 当前保留了一条“使用 2025 Blind 文档定位缺陷并确认结果”的历史记录。它没有说明 Blind outcome/y 被访问，但说明 Blind 输入曾被观察，因此旧文档中笼统的 `Blind accessed=false` 不能再解释为“输入和标签均从未接触”。
+`CHANGELOG.md` 保留了一条使用 2025 Blind 文档定位缺陷的历史记录。它没有说明 outcome/y 被访问，但说明 Blind 输入曾被观察，因此旧文档中笼统的 `Blind accessed=false` 不能解释为“输入和标签均从未接触”。
 
-处理：
+处理：历史记录保留；当前文档使用精确表述；从本规则生效起不再使用 Blind 输入或 outcome 优化；最终治理报告如实披露。
 
-- 历史记录保留，不删除；
-- 当前文档统一使用精确表述 `Blind outcome/y not accessed`；
-- 从本规则生效起，2025 Blind 输入也不得用于优化；
-- 最终治理报告如实披露该历史输入检查。
-
-## 8. 文档生命周期
+## 9. 文档生命周期
 
 长期文档必须是当前状态/计划/Runbook、代码/CI 消费的合同、不可重建 provenance，或仍有明确消费者的 research/annotation 材料。
