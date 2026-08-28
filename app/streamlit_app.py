@@ -834,7 +834,7 @@ else:
 
     _render_sidebar_status(payload, stages)
     render_case_header(payload)
-
+    render_channel_grid(payload)
     # Five workspaces, one job each: decide, verify, contextualise, audit, sign off.
     workspace_tabs = st.tabs(
         [
