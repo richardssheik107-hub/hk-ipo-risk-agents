@@ -2,7 +2,7 @@
 
 > 状态日期：`2026-08-28`
 >
-> 当前 main：`2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33`
+> 更新基线：merged PR #153（Evidence audit）与 PR #154（统一治理）
 >
 > 当前结论：**NOT COMPETITION_READY**
 
