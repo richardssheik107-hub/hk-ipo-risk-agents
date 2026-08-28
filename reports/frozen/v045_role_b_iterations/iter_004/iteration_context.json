@@ -1,0 +1,22 @@
+{
+  "blind_2025_outcome_accessed": false,
+  "code_state": {
+    "code_fingerprint": "5ce852ae673b081b23163629b9ae97b7bb9715ee70c6084daef33c69803a1af2",
+    "git_dirty": false,
+    "git_head": "5f1d5d8fe90adbf93e72a4ffec5eed174d9cf781"
+  },
+  "iteration_id": "iter_004",
+  "iteration_version": "v045_role_b_fixed10_iteration_v1",
+  "runtime": {
+    "api_key_present": true,
+    "base_url_present": true,
+    "effective_model": "ark-code-latest",
+    "effective_provider": "openai_responses",
+    "effective_timeout_seconds": 300,
+    "effective_transport_retries": 0,
+    "prospectus_root_present": true
+  },
+  "source_coverage_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "subset_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "validation_opened": false
+}
