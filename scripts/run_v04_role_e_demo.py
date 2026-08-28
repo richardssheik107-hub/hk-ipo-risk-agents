@@ -36,6 +36,7 @@ import csv
 import hashlib
 import json
 import os
+import subprocess
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
@@ -76,6 +77,58 @@ def _sha(payload: object) -> str:
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
+
+
+def _file_sha256(path: Path) -> str | None:
+    """SHA-256 over the file's bytes, or ``None`` when it cannot be read.
+
+    ``None`` is deliberate: an input we could not hash is reported as absent so
+    the provenance audit stays blocked, rather than being given a placeholder
+    that would let the matrix claim an identity it cannot prove.
+    """
+
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
+
+
+def resolve_code_base_sha(repo_root: Path) -> tuple[str | None, bool | None]:
+    """The git commit this matrix ran from, and whether its tree was dirty.
+
+    Returns ``(None, None)`` when git cannot answer -- outside a checkout, or
+    with no git binary.  The identity is then absent rather than guessed, which
+    leaves the readiness provenance/determinism audits blocked instead of
+    asserting a code provenance we have no evidence for.
+
+    A dirty tree still reports its ``HEAD`` sha, paired with ``dirty=True``.
+    The commit alone would misdescribe what actually ran, so the two are always
+    written together and never collapsed into a single clean-looking field.
+    """
+
+    def _git(*args: str) -> str | None:
+        try:
+            completed = subprocess.run(
+                ("git", *args),
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if completed.returncode != 0:
+            return None
+        return completed.stdout.strip()
+
+    head = _git("rev-parse", "HEAD")
+    if not head:
+        return None, None
+    status = _git("status", "--porcelain")
+    if status is None:
+        return head, None
+    return head, bool(status.strip())
 
 
 def _read_catalog(path: Path, key: str) -> dict[str, dict[str, str]]:
@@ -345,11 +398,19 @@ def main() -> int:
         for case in cases
     ]
     executed = [item for item in results if item.get("traceability") is not None]
+    code_base_sha, code_base_dirty = resolve_code_base_sha(Path(__file__).resolve().parents[1])
     summary = {
         "demo_version": DEMO_VERSION,
         "config": arguments.config,
         "cases_manifest": str(arguments.cases),
         "cases_manifest_version": manifest.get("manifest_version"),
+        # Matrix identity: which code, which case list and which config produced
+        # this run.  The provenance and determinism audits refuse the matrix
+        # without all three, and a dirty tree is reported rather than hidden.
+        "code_base_sha": code_base_sha,
+        "code_base_dirty": code_base_dirty,
+        "cases_manifest_sha256": _file_sha256(arguments.cases),
+        "config_sha256": _file_sha256(Path(arguments.config)),
         "prospectus_root_supplied": root is not None,
         "declared_case_count": len(cases),
         "executed_case_count": len(executed),
