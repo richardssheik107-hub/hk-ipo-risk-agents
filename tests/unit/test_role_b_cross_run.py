@@ -7,6 +7,12 @@ from pathlib import Path
 from ipo_risk.evaluation.role_b_cross_run import compare_cross_run
 
 
+SENSITIVE_CLAUSE = (
+    "Confidential prospectus wording: investors may require a repurchase "
+    "if the listing application fails."
+)
+
+
 def _record(case_id: str, restoration: bool) -> dict[str, object]:
     evidence_ids = ["e-1", "e-2"]
     return {
@@ -33,7 +39,7 @@ def _record(case_id: str, restoration: bool) -> dict[str, object]:
             "termination_event": "listing",
             "termination_timing": "upon listing",
             "restoration_clause": restoration,
-            "restoration_condition": "listing application fails" if restoration else "",
+            "restoration_condition": SENSITIVE_CLAUSE if restoration else "",
             "evidence_ids": ["e-1"],
         },
     }
@@ -84,4 +90,16 @@ def test_identical_inputs_with_payload_change_are_llm_response_variance(tmp_path
     assert result["cases"][0]["run_a_replay"]["builder_status"] == "built"
     assert result["cases"][0]["run_b_replay"]["builder_status"] == "not_applicable"
     assert result["network_calls"] == 0
+    assert result["raw_structured_payload_persisted"] is False
 
+    serialized = json.dumps(result, ensure_ascii=False, sort_keys=True)
+    assert SENSITIVE_CLAUSE not in serialized
+    differences = {
+        item["field"]: item for item in result["cases"][0]["payload_differences"]
+    }
+    assert differences["restoration_clause"]["run_a"] is True
+    assert differences["restoration_clause"]["run_b"] is False
+    assert differences["restoration_condition"]["run_a"]["character_count"] == len(
+        SENSITIVE_CLAUSE
+    )
+    assert differences["restoration_condition"]["run_a"]["sha256"]
