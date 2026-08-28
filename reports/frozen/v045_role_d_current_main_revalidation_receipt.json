@@ -14,12 +14,7 @@
     "acceptance_pass_count": 12,
     "case_count": 70,
     "gate": "D1_multi_horizon_evaluation",
-    "horizons": [
-      1,
-      5,
-      20,
-      60
-    ],
+    "horizons": [1, 5, 20, 60],
     "significant_drop_5d_definition": "return_5d <= -0.10",
     "split": "2024_validation",
     "verdict": "PASS"
@@ -51,55 +46,22 @@
     },
     "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152"
   },
-  "optimization": {
-    "deterministic_repeat_byte_identical": true,
-    "formal_release_decision": "retain_frozen_d1_and_request_a_review_for_v2_high_recall_candidate",
-    "output_sha256": {
-      "alert_policy_summary.json": "eaa63d46c51e8900d89cee51c3d2df0f9fe008391e7bebb455a7d4685cd3e30d",
-      "development_feature_comparison.csv": "8caf5e0d5bb261f6cd1b0feaed756652256252a236366f3051b17e3343c02fe6",
-      "role_d_v2_classifier.txt": "05106af2d3432f768553df35976dea7af23a7666c82ff98570b98b56e4cc758b",
-      "role_d_v3_classifier.txt": "bcdd5a0838464d3b06b2d9e35560bb14e3d2052329ebc16c358e25ade17ca82b",
-      "test_predictions_alert_policy.csv": "882d80f89f0edb781343ed531cbce393e08a37c01fd7619606c615fa6b6af229",
-      "test_predictions_v2.csv": "ab58750390c8e06e634261f25c68cd66933a6572b9500be8803c3b44aa590110",
-      "test_predictions_v3.csv": "99227de131a1da0ec44755ae1a8fd995bc752e3091dae43704f25cd19b549926",
-      "v2_model_summary.json": "c4041c9e1e20b1d7cc24854dcc882e44d4eca7a2ebd9f011dccd22f53403f989",
-      "v3_model_summary.json": "cfbba6ed53f017a3626829dd9a0d812e36509aad9d4c597297e0cdbc9fb83720"
-    },
-    "v2": {
+  "model_decision": {
+    "decision_owner": "A",
+    "frozen_pr_f_retained_until_decision": true,
+    "recommended_review_option": "promote_v2",
+    "status": "pending_a_owned_promotion_review",
+    "v2_candidate": {
       "alert_count": 34,
       "f1": 0.42105263157894735,
       "pr_auc": 0.3811961298633645,
       "precision": 0.35294117647058826,
       "recall": 0.5217391304347826,
-      "roc_auc": 0.48751156336725254,
-      "status": "recommended_high_recall_candidate_pending_a_review"
-    },
-    "v3": {
-      "alert_count": 35,
-      "development_macro_forward_year_pr_auc": 0.4064887991292801,
-      "development_minimum_forward_year_pr_auc": 0.3160995311155878,
-      "f1": 0.3448275862068966,
-      "pr_auc": 0.41218778177023274,
-      "precision": 0.2857142857142857,
-      "recall": 0.43478260869565216,
-      "roc_auc": 0.4893617021276595,
-      "selected_feature_count": 5,
-      "selected_feature_names": [
-        "ipo_count_30d",
-        "ipo_count_60d",
-        "recent_ipo_break_rate",
-        "recent_ipo_return_5d",
-        "same_industry_recent_break_rate"
-      ],
-      "status": "research_result_not_promoted_due_to_lower_recall"
+      "roc_auc": 0.48751156336725254
     }
   },
   "product_handoff": {
-    "case_ids": [
-      "ipo_2024_02410",
-      "ipo_2024_02460",
-      "ipo_2024_01318"
-    ],
+    "case_ids": ["ipo_2024_02410", "ipo_2024_02460", "ipo_2024_01318"],
     "file_sha256": {
       "README_PRODUCT_RUNTIME_HANDOFF.md": "1a35d8e530aa8c56c7c9c4f7324ca4a02141bccb0b32cc9c6e7d74038987eeba",
       "SHA256SUMS.txt": "c951a908621ad7431721bc44063604360f5c808f85457ac642febe2a720bed85",
@@ -112,7 +74,7 @@
   "receipt_version": "v045_role_d_current_main_revalidation_receipt_v1",
   "recorded_at": "2026-08-28",
   "source": {
-    "base_main_commit": "2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33",
+    "base_main_commit": "34553ebcd230b34417775359133761b27e49e204",
     "repository": "richardssheik107-hub/hk-ipo-risk-agents"
   },
   "status": "current_main_strict_revalidation_pass"

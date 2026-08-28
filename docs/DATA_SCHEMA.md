@@ -1,12 +1,10 @@
-# Data Schema — Current Contracts
+# Data Schema — Runtime, Evaluation and Submission Contracts
 
-本文件描述当前代码中的 runtime contract，并补充 Metric Protocol v2 的**evaluation artifact boundary**。Pydantic/Protocol 源码仍是 runtime 最终权威；Metric Protocol 不得被误解为偷偷改公共 runtime schema。
+源码中的 Pydantic / Protocol 是 runtime 最终权威。本文件描述当前跨 lane artifact 形状，不允许用文档字段绕过代码校验。
 
-## 1. Core document contracts
+## 1. Core runtime
 
 ### Evidence
-
-核心语义：
 
 ```text
 evidence_id
@@ -18,277 +16,221 @@ text
 source_type
 relevance_score
 optional bbox
-```
-
-约束：
-
-- Evidence 必须来自本次真实文档/受治理 source；
-- page identity 不在 UI 修补；
-- bbox 缺失就保持缺失；
-- LLM 只能引用输入 Evidence ID 子集。
-
-Metric-v2 的 Existing-Gold Evidence Unit 是**evaluation object**，不是 runtime `Evidence` 替代物。它只能来自比赛收尾前已经存在的 Expert Annotation / valid audit overlay；不新增人工 Evidence，也不人工重做 semantic group。
-
-### Calculation
-
-精确数值计算的 deterministic provenance object。Financial 风险需要数值推导时，应引用 Calculation，而不是把 LLM 文本当计算依据。
-
-### RiskItem
-
-正式风险结论。风险码必须属于注册表/owner 的 versioned extension；RiskItem 与 Evidence/Calculation 的关系由 Verifier 和治理测试约束。
-
-Competition-priority `cash_burn_pressure` 仍可作为 evaluation mapping 到既有 `cash_runway`/cash-burn Calculation，但只有 Existing Gold 有明确可评价事实时才进入 M1。
-
-`related_party_transaction` 若 runtime 需要支持，仍必须 additive/versioned sidecar；但 Metric-v2 不为其新增人工 Gold。Existing Gold support=0 时仅报告 `NOT_EVALUABLE_FROM_EXISTING_GOLD`。
-
-## 2. Competition runtime sidecar
-
-代码位置：`src/ipo_risk/schemas/competition_runtime.py`
-
-当前版本：
-
-```text
-competition_runtime_v1
-```
-
-所有 competition sidecar model 使用 `extra="forbid"`，未知跨 lane 字段默认 fail closed。
-
-### CompetitionRuntimeIdentity
-
-```text
-schema_version
-case_id
-stock_code
-listing_date
-run_id
-provider_name
-model_name
-prompt_version
-provenance
-```
-
-### AgentResultEnvelope
-
-```text
-case_id
-run_id
-agent_name
-status
-risk_ids[]
-evidence_ids[]
-calculation_ids[]
-provider_name
-model_name
-prompt_version
-warnings[]
 metadata
 ```
 
-### CompetitionConflict
+约束：Evidence 来自本次真实 source；page/bbox 不在 UI 猜测；LLM 只引用 allowed ID。
+
+### Calculation
 
 ```text
-conflict_id
+skill_name / version
+inputs
+formula
+result
+unit
+evidence_ids
+success / error
+```
+
+精确财务与 outcome 计算必须可重放。
+
+### RiskItem
+
+```text
+risk_id / risk_code
+category / level / score
+conclusion
+Evidence[]
+optional Calculation
+agent / confidence
+verification status / notes
+metadata
+```
+
+Formal risk 必须通过 owner、Evidence 与 Verifier contract。
+
+## 2. Competition runtime sidecars
+
+保留：
+
+- `CompetitionRuntimeIdentity`；
+- `AgentResultEnvelope`；
+- `CompetitionConflict`；
+- `RecheckRequest`；
+- `TraceEvent`；
+- `HumanReview`。
+
+Relevant trace event 必须有 actor/action/tool，并绑定 Evidence、Calculation 或 explicit `no_evidence_reason`。远程 LLM 额外记录 provider、model、Prompt、request identity、response hash 和 latency。
+
+## 3. Role-B v0.4.6 diagnostic artifacts
+
+### Baseline manifest
+
+```text
+code_fingerprint
+subset_hash
+gold_manifest_hash
+metric_protocol_version
+provider / model / transport
+prompt_hashes
+schema_set_hash
+runtime_config_hash
+modes
+validation_opened=false
+blind_outcome_accessed=false
+```
+
+### LLM journal identity
+
+```text
 case_id
-run_id
-involved_agents[]
-risk_ids[]
-claim_ids[]
-summary
-evidence_ids[]
-status
-resolution_note
-created_at
+dataset_split
+task_name
+provider / model / transport
+prompt_version / prompt_hash
+response_schema_hash
+ordered_allowed_evidence_ids
+evidence_content_hash
+runtime_config_hash
 ```
 
-`status`：detected / rechecking / resolved / partially_resolved / unresolved。
+Journal 不持久化 API Key、Base URL、完整 Prompt、完整 raw response 或本机路径。
 
-### RecheckRequest
+### Retrieval waterfall
 
 ```text
-recheck_id
-conflict_id
 case_id
-run_id
-requested_by
-targets[]
-reason
-evidence_ids[]
-max_attempts
-status
-created_at
+risk_code
+gold_unit_id
+candidate_count
+first_gold_page_rank
+first_gold_rank
+top1 / 3 / 5 / 10 / 20
+agent_consumed
+candidate_generation_miss
+ranking_miss
 ```
 
-`max_attempts=1`。
+Gold 只在分析完成后的 evaluator-side join 使用。
 
-### TraceEvent
-
-```text
-event_id
-case_id
-run_id
-event_type
-status
-agent_name
-action
-tool_or_skill
-provider_name
-model_name
-prompt_version
-evidence_ids[]
-calculation_ids[]
-conflict_id
-recheck_id
-latency_ms
-request_id
-raw_response_hash
-occurred_at
-details
-```
-
-M3 evaluation 只统计真实 trace。relevant event 必须有 Evidence/Calculation 或 explicit `no_evidence_reason`；remote LLM event 需要 provider/model/prompt/request/hash/latency。
-
-### HumanReview
-
-```text
-review_id
-case_id
-run_id
-target_id
-original_machine_status
-decision
-post_review_status
-reviewer_id
-reviewer_note
-evidence_id
-page
-bbox
-reviewed_at
-```
-
-HumanReview 是 sidecar，不修改机器生成 RiskItem/Evidence。
-
-## 3. Final Supervisor boundary
-
-公共 competition sidecar 没有为了比赛 metric 强行替换成新 `SupervisorDecision` schema。现有 FinalSupervisionResult / internal bundle 继续作为 runtime truth；Metric-v2 只消费其已记录 output/trace。
-
-## 4. Market boundary
-
-- available observation 必须有真实 value/provenance；
-- unavailable observation 有明确 missing reason；
-- Market LLM 只做定性解释，不拥有数值事实；
-- namespaced market references 可以进 Trace，但不伪装成 prospectus Evidence。
-
-## 5. Model signal boundary
-
-```text
-score
-score_semantics = uncalibrated_model_score
-calibration_status
-model / run identity
-optional signed drivers
-availability / missing reason
-```
-
-缺 authentic PR-F handoff 时必须 unavailable，不生成替代 score。
-
-## 6. Outcome boundary
-
-已有 foundation 定义 1D/5D/20D/60D horizon。项目预先定义：
-
-```text
-significant_drop_5d = (return_5d <= -0.10)
-```
-
-这属于 evaluation definition，不改变原始 `return_5d` 数据。赛题没有给绝对 5D pass threshold。
-
-## 7. Metric-v2 Existing-Gold evaluation artifact boundary
-
-Machine-readable protocol：
-
-```text
-configs/v045_competition_metric_protocol.json
-protocol_version = v045_competition_metric_protocol_v2_existing_gold_only
-```
-
-这些字段属于 final evaluation handoff，不是公共 runtime Pydantic schema。
-
-### Existing-Gold evaluable manifest
-
-Role B/A 必须先生成只读：
-
-```text
-existing_gold_evaluable_manifest.json
-```
+### Risk pipeline waterfall
 
 目标字段：
 
 ```text
-metric_protocol_version
-existing_gold_source
-source_manifest_or_hash
-case_id
-split
-risk_support
-Evidence_support
-UNJUDGED_counts
-NOT_EVALUABLE_families
-new_manual_annotations_added=false
-existing_gold_modified=false
+deterministic_candidate_present
+llm_request_attempted / success
+llm_structured_valid / scope_valid
+llm_candidate_present / abstained
+extraction_status
+builder_status
+normalization_success
+reconciliation_success
+candidate_after_reconciliation
+verifier_outcome
+final bucket / Evidence IDs
+first_failure_stage
+proof_level
 ```
 
-`UNJUDGED` 不等于 negative。
+缺 trace 必须写 `NOT_AVAILABLE`，不得猜测。
 
-### Role B summary target shape
+### Root-cause matrix
+
+每个 Risk/Evidence Unit 记录 earliest proven failure、secondary observations、proof artifact、`PROVEN|INFERRED|UNAVAILABLE`。
+
+## 4. Existing-Gold evaluation
+
+Runtime `Evidence` / `RiskItem` 与 Existing-Gold Unit 是不同对象。
+
+M1 summary：
 
 ```text
-metric_protocol_version
-existing_gold_source
-existing_gold_source_hash_or_manifest
-
-risk_extraction.evaluable_positive_count
-risk_extraction.correct_positive_count
-risk_extraction.official_aligned_accuracy
-risk_extraction.per_risk
-risk_extraction.precision_status
-risk_extraction.macro_f1_status
-
-evidence_coverage.evaluable_existing_gold_count
-evidence_coverage.covered_existing_gold_count
-evidence_coverage.coverage_recall
-retrieval_diagnostics.recall_at_1
-retrieval_diagnostics.recall_at_3
-retrieval_diagnostics.recall_at_5
-retrieval_diagnostics.recall_at_10
-retrieval_diagnostics.recall_at_20
-
-new_manual_annotations_added=false
-existing_gold_modified=false
-blind_2025_outcome_accessed=false
+evaluable_positive_count
+correct_positive_count
+official_aligned_accuracy
+per_risk
+status / level / calculation / evidence diagnostics
 ```
 
-`Precision` / `Macro F1` 只有 Existing Gold 本身提供足够 exhaustive positive/negative judgments 时才可以有数值；否则 status 必须 `NOT_AVAILABLE_FROM_EXISTING_GOLD`。
-
-Legacy `risk_target_at_least_80_percent` / `evidence_target_at_least_85_percent` bool 若仍存在，只是 compatibility 字段，不能单独证明 Metric-v2 PASS。
-
-### Role D evaluation summary target shape
+M2 summary：
 
 ```text
-metric_protocol_version
-significant_drop_5d_definition
-five_day_metrics.precision
-five_day_metrics.recall
-five_day_metrics.f1
-five_day_metrics.pr_auc
-five_day_metrics.roc_auc
-five_day_metrics.top_10pct_hit_rate
-five_day_metrics.top_20pct_hit_rate
-five_day_metrics.base_prevalence
-blind_2025_y_accessed
+evaluable_existing_gold_count
+covered_existing_gold_count
+coverage_recall
+Recall@1 / 3 / 5 / 10 / 20
 ```
 
-### Role E explanation-quality target shape
+Existing Gold immutable；`UNJUDGED` 不等于 negative。
 
-沿用当前 E/A final explanation-quality artifact；本次 Existing-Gold-only M1/M2 政策不新增其人工 Gold 任务。
+## 5. Market / Model / Outcome
+
+Market observation：value 或 missing reason、unit、source、derivation、PIT cutoff、provenance。
+
+Model signal：
+
+```text
+score
+score_semantics=uncalibrated_model_score
+model / run identity
+availability / missing reason
+optional signed drivers
+```
+
+Role-D canonical directory 恰好四文件：
+
+```text
+test_predictions.csv
+multi_horizon_results.csv
+evaluation_summary.json
+ai_vs_offline_report.json
+```
+
+Outcome horizons：1D / 5D / 20D / 60D。`significant_drop_5d = return_5d <= -0.10` 是项目冻结定义，不是命题方给定阈值。
+
+## 6. Evidence screenshot contract
+
+每条截图 manifest 至少记录：
+
+```text
+case_id / stock_code
+risk_id / evidence_id
+source_pdf_sha256
+physical_page_1based
+internal_page_index_0based
+quote_sha256
+bbox
+bbox_source
+match_count
+screenshot_relative_path
+screenshot_sha256
+exact_highlight_available
+unavailable_reason
+exporter_version
+```
+
+`bbox_source` 只允许：upstream parser bbox、exact unique quote search、unavailable。多重匹配不得画假框。
+
+## 7. Final submission artifacts
+
+至少包括：
+
+```text
+metric dashboard
+prediction table
+Agent reasoning logs
+Evidence / screenshot manifests
+3 case reports
+M4 review artifact
+Blind / provenance / determinism / security audits
+artifact index
+release note
+submission ZIP / SHA-256 manifest
+```
+
+所有路径使用相对路径；bundle 不含 Secret、PDF、raw EOD、raw journal、本机路径或未授权模型。
 
 ## 8. Identity rules
 
@@ -299,10 +241,8 @@ case_id
 stock_code
 listing_date
 run_id
+code / config / Prompt / Schema identity
+source / artifact hashes
 ```
 
-Existing-Gold evaluator 另外必须保留 source annotation identity/hash，防止比赛收尾阶段悄悄替换标准答案。
-
-LLM trace 进一步保留 provider_name / model_name / prompt_version / request_id / raw_response_hash / latency_ms。
-
-任何 cross-lane join 优先稳定 identity/hash，不用公司名称 fuzzy join 作为正式绑定。
+正式 join 不使用公司名称 fuzzy match。

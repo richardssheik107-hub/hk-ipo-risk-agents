@@ -80,38 +80,3 @@ deterministic repeat hashes                         PASS
 
 Formal promotion requires A review. Until promotion, product code must continue
 to describe this as a candidate rather than a replacement frozen PR-F signal.
-
-## Bounded v3 follow-up
-
-A bounded backward-elimination follow-up was run from the seven v2 features.
-Every removal decision used only 2021–2023 expanding-year Development OOF
-predictions; the frozen LightGBM parameters and 2025 Blind boundary were kept.
-The selected five features are:
-
-```text
-ipo_count_30d
-ipo_count_60d
-recent_ipo_break_rate
-recent_ipo_return_5d
-same_industry_recent_break_rate
-```
-
-Development macro forward-year PR-AUC improved from `0.3711` to `0.4065` and
-minimum-year PR-AUC improved from `0.2579` to `0.3161`. Its one-time 2024 result
-is compared below.
-
-| Metric | v2 candidate | bounded v3 |
-|---|---:|---:|
-| ROC-AUC | 0.4875 | **0.4894** |
-| PR-AUC | 0.3812 | **0.4122** |
-| Brier | 0.2502 | **0.2463** |
-| Precision | **0.3529** | 0.2857 |
-| Recall | **0.5217** | 0.4348 |
-| F1 | **0.4211** | 0.3448 |
-| Alert count | 34 | 35 |
-
-The v3 ranking gain does not compensate for its lower high-recall operating
-result. It is therefore a recorded research result, not the recommended
-promotion candidate. V2 remains the Role-D recommendation for A review.
-Because 2024 Validation had already been observed during v2 work, neither
-candidate may be described as newly validated on a fresh unseen holdout.

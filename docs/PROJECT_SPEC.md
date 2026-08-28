@@ -1,239 +1,83 @@
-# Project Specification — v0.4.5 Competition Runtime
+# Project Specification — Competition Scope
 
-## 1. Product objective
+## 1. 产品目标
 
-从真实港股 IPO 招股书与受治理的上市前市场数据出发，产出可解释、可复核、可追溯的风险分析，并用上市后多周期结果验证预警价值。
+从港股 IPO 招股书、上市前受治理市场数据和冻结模型信号出发，输出方向性风险预警、财务/法务/业务/市场归因、原 PDF Evidence、Agent Trace、上市后多周期验证和可运行原型。
 
-系统不是“让一个大模型读完整 PDF 后自由写报告”，而是受约束的 Agentic AI 工作流：
+系统是受约束的 Agentic AI 工作流：
 
 ```text
-PDF → Evidence → specialized analysis → verification
-+ governed market context
+PDF → governed Evidence → specialized analysis → verification
++ governed market context / Skills
 + optional authentic frozen model signal
 → conflict / re-check / final supervision
 → trace / human review / report
-→ Existing-Gold metric evaluation / submission gate
+→ M1–M5 evaluation / submission gate
 ```
 
-## 2. Non-negotiable invariants
+## 2. 赛题能力范围
 
-### Evidence
+### 文档风险
 
-- 正式风险必须引用本次运行真实 Evidence；
-- LLM 不得引用输入作用域外的 Evidence ID；
-- Evidence identity / page / bbox 不在 UI 层修补；
-- 未检索到证据不能伪造“无风险”；
-- final M2 primary metric 不固定 Top-5，而按 Existing-Gold Evidence coverage 评价。
+当前正式主链覆盖 cash runway、continuous loss、revenue growth、customer/supplier concentration、redemption rights、material litigation/compliance 和 precommercial product。
 
-### Calculation
+比赛展示还需补齐 core pipeline progress、text embellishment、related-party transaction 和 comparable IPO valuation。无 Existing Gold 的新增能力作为 versioned capability 与 qualitative demonstration，不混入 M1/M2 分母。
 
-- 精确财务数值、比率、runway 等由 deterministic Python 计算；
-- LLM 只能解释 Calculation，不应成为权威计算来源。
+### 多智能体与产品
 
-### Market / PIT
+Financial、Legal、Business、Market、Final Supervisor、Skills、conflict/re-check、Human Review、单家/批量分析、Evidence Viewer、Trace、report、Screenshot、API/Streamlit 与 submission artifacts。
 
-- 市场事实只能来自 listing date 之前可得的 governed source；
-- 缺失值保持 null + missing reason；
-- 禁止 listing-day/future rows、静态未来分类、zero/proxy 伪装 PIT。
+## 3. 不可破坏原则
 
-### Model
+- 正式风险引用真实 Evidence；LLM 不能越 scope；page/bbox 不由 UI 猜；
+- 财务数值、比率、runway 和 outcome 由 deterministic Python 计算；
+- Market 只使用 PIT-safe facts，missing 不补零或 proxy；
+- frozen score 只能称 `uncalibrated_model_score`；
+- Existing Gold immutable，Gold 不进 runtime，`UNJUDGED` 不当 negative；
+- Validation freeze 后 one-shot；从现在起 Blind 输入和 outcome 都不用于优化。
 
-- frozen PR-F 分数语义为 `uncalibrated_model_score`；
-- 不得称 probability；
-- authentic per-case runtime/handoff 缺失时明确 unavailable；
-- 不允许为了前端完整而重训、重构或翻转分数。
-
-### Split / Blind
+## 4. 指标
 
 ```text
-2020–2023  Development
-2024       Validation
-2025       Blind
+M1 Existing-Gold Risk Accuracy >=0.80
+M2 Existing-Gold Evidence Coverage Recall >=0.85
+M3 Traceability =1.0
+M4 human-review explanation rubric
+M5 1D / 5D / 20D / 60D；5D 重点
 ```
 
-- Development 可以诊断与 targeted remediation；
-- Validation 不做 post-hoc tuning；
-- Blind outcome 未授权前不得访问；
-- metric definition / Existing-Gold source manifest / threshold / evaluator 必须在 Validation 重评前冻结。
+Recall@K 是诊断，不是官方额外门槛。
 
-### Existing Gold
-
-M1/M2 只使用比赛收尾之前已经存在并冻结的 Expert Annotation / Oracle Gold：
-
-```text
-annotation inventory   101
-valid annotations      100
-official materialized   98
-```
-
-禁止新增 M1/M2 人工 Gold、修改旧 Gold、把 UNJUDGED 当 negative、人工重做 Evidence Group。
-
-## 3. Competition Metric Protocol v2
-
-最终比赛评价采用：
-
-```text
-v045_competition_metric_protocol_v2_existing_gold_only
-```
-
-权威文档：`COMPETITION_METRIC_PROTOCOL.md`。
-
-### M1 Risk extraction
-
-Competition-priority mapping：
-
-```text
-redemption_rights
-related_party_transaction
-customer_concentration
-supplier_concentration
-cash_burn_pressure
-```
-
-但只有 Existing Gold 真正有 support 时才评价；support=0 时 `NOT_EVALUABLE_FROM_EXISTING_GOLD`，不补标。
-
-Primary：
-
-```text
-Existing-Gold Official-aligned Accuracy
-= correct evaluable positive Existing-Gold Risk Units
-  / all evaluable positive Existing-Gold Risk Units
-```
-
-Official pass `>=0.80`，project target `>=0.85`。
-
-Precision / Macro F1 只有 Existing Gold 本身足够 exhaustive 时才正式报告，否则 `NOT_AVAILABLE_FROM_EXISTING_GOLD`。
-
-### M2 Evidence
-
-Primary：
-
-```text
-Existing-Gold Evidence Coverage Recall >=0.85
-```
-
-Project target `>=0.88`。Recall@1/@3/@5/@10/@20 仅为 diagnostics。旧 offline `Recall@5=20%` 不直接代表官方 M2 当前值。
-
-M2 只使用旧 annotation 已存在的 Evidence/page/span/table/anchor；允许 deterministic normalization 和 exact duplicate dedupe，不新增人工 Evidence。
-
-### M3 Traceability
-
-```text
-=1.0
-```
-
-Development real-LLM 与 final 3-case real-provider 都必须达到 1.0。
-
-### M4 Explanation Quality
-
-沿用当前 final product explanation-quality 方案。本次 Existing-Gold-only 决策不增加 M1/M2 人工标注工作。
-
-### M5 Outcome
-
-必须完成：
-
-```text
-return_1d
-return_5d
-return_20d
-return_60d
-```
-
-Primary 5D：
-
-```text
-significant_drop_5d = (return_5d <= -0.10)
-```
-
-赛题没有给 5D 绝对指标及格线，项目不虚构“官方 xx%”。
-
-## 4. Frozen formal risk scope
-
-冻结 formal baseline 仍是 8 个 risk codes：
-
-Financial：`cash_runway`、`continuous_loss`、`revenue_growth`、`customer_concentration`、`supplier_concentration`。
-
-Legal：`redemption_rights`、`material_litigation_compliance`。
-
-Business：`precommercial_product`。
-
-Competition-priority related-party / cash-burn 只作为 metric mapping / additive sidecar 语义，不静默改变 frozen baseline identity，也不为了比赛补新 Gold。
-
-## 5. Current runtime components
+## 5. 当前 runtime 与诊断
 
 ### Document
 
-- PyMuPDF / table-aware parser；
-- bounded retrieval；
-- Financial deterministic-first；
-- Legal structured LLM；
-- Business hybrid deterministic + structured LLM；
-- specialized Verifier；
-- deterministic Document Supervisor。
+PyMuPDF/table-aware parser、keyword/domain-aware retrieval、Financial deterministic-first、Legal structured LLM、Business hybrid、Verifier、Document Supervisor。
 
-### Market
+### B v0.4.6
 
-- frozen PR-B Market-X Core；
-- optional governed Extended；
-- IPOHeatSkill；
-- MarketRegimeSkill；
-- bounded Market LLM interpretation。
+Offline/shadow/gated、LLM journal、structured smoke、Financial high-recall、waterfall、monotonicity，以及 persisted-result read-only Evidence auditor。该 lane 显式 opt-in，不静默替换 production runtime。
 
-### Competition supervision
+### Market / Supervision
 
-- deterministic conflict detection；
-- one bounded targeted re-check；
-- Verifier challenge；
-- LLM Final Supervisor；
-- deterministic fail-closed fallback；
-- Agent / Tool / Evidence trace；
-- Human Review sidecar。
+Governed MarketContext、IPOHeatSkill/MarketRegimeSkill、bounded Market LLM、optional authentic model signal、conflict/re-check、Final Supervisor、Trace、Human Review、Report/UI。
 
-### Product
+### D model tracks
 
-五个 Streamlit workspaces：Risk Command Center、Evidence & AI Analysis、Market & Model、Agent Collaboration Trace、Human Review & Final Report。
+- frozen PR-F：正式 receipt 和 product identity；
+- v2 candidate：Development-selected、2024 one-shot evaluated、未晋升。
 
-## 6. Measured current state
+若晋升 v2，必须创建新的 freeze/decision/artifact/handoff，不能覆盖 frozen PR-F 身份。
 
-### E2E engineering
+## 6. 当前限制
 
-3 个真实 2024 PDF：2410.HK / 2460.HK / 1318.HK，3/3 integrity verified、0 structured workflow errors、offline traceability 1.0。
+- fixed-10 M1/M2 远低于门槛；
+- v0.4.6 尚缺完整测量与 lifecycle trace；
+- Market strict 1/3、Final accepted 2/3、M4 0/6；
+- parser bbox / Evidence screenshot 未闭环；
+- 管线、粉饰、关联、同行估值缺少完整展示；
+- D v2 有明显高召回改善，但 ROC-AUC 仍低于 0.5，且 promotion 未决。
 
-### Document quality
+## 7. 完成定义
 
-旧 10-case governed offline Development diagnostic：
-
-```text
-Risk P/R/F1 = 0%
-Evidence Recall@5 = 20%
-Real LLM = 0
-```
-
-它不是 metric-v2 final benchmark，也不是 real-LLM benchmark。
-
-下一步不是补 Gold，而是 Existing-Gold coverage audit → real-LLM Development run → code/Prompt optimization → Full Existing Development Gold benchmark。
-
-### Market
-
-Market Agent 已实现并接入 AI runtime；real-provider Market interpretation 已在真实 IPO 上验证。industry return 无可靠 PIT mapping 时继续 unavailable。
-
-### Evaluation
-
-multi-horizon foundation 已存在，但 final M5 artifacts 尚未关闭。
-
-## 7. Completion definition
-
-`COMPETITION_READY` 需要：
-
-- Existing-Gold source / evaluable manifest frozen；
-- M1 Existing-Gold Risk Accuracy >=80%；
-- M2 Existing-Gold Evidence Coverage Recall >=85%；
-- M3 real final traceability=100%；
-- M4 current explanation-quality Gate；
-- M5 1D/5D/20D/60D + frozen 5D evaluation；
-- C final-matrix Market validation；
-- E real-provider final matrix；
-- final CI / Blind / provenance / determinism；
-- reproducible Runbook / artifact index / submission package。
-
-详细状态见 `V0.4_RELEASE_ACCEPTANCE.md`。
+完整条件见 `V0.4_RELEASE_ACCEPTANCE.md` 和 `COMPETITION_CLOSURE_PLAN.md`。fixed-10 达标、某个实现存在、候选指标更好或某份文件名含 PASS，都不能单独证明 `COMPETITION_READY`。

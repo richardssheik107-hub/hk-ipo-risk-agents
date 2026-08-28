@@ -1,220 +1,134 @@
 # HK IPO Risk Agents
 
-面向港股 IPO 招股书风险识别、市场环境解释与可审计多 Agent 决策的比赛型原型系统。
+面向东吴证券港股 IPO 赛题的多智能体风险分析与上市后预警原型。
 
-> 当前 package checkpoint：`v0.4.0`
+> Package checkpoint：`v0.4.0`
 >
-> 当前比赛 runtime：`v0.4.5`
+> Competition runtime：`v0.4.5`
+>
+> Role-B diagnostic track：`v0.4.6`
 >
 > 状态日期：`2026-08-28`
 >
-> 当前状态：**Competition closure in progress — 尚未标记 `COMPETITION_READY`**
+> 当前结论：**NOT COMPETITION_READY**
 
-## 系统能力
+## 赛题目标
+
+项目需要同时完成三件事：
+
+1. 对数百页港股招股书进行防幻觉解析，抽取财务、法务和业务隐性风险；
+2. 让 Financial、Legal、Business、Market 与 Final Supervisor 协作、冲突查证并保留完整 Trace；
+3. 输出带原 PDF 页码、段落和证据截图的风险报告，并用上市后 1D / 5D / 20D / 60D 表现验证业务参考价值。
+
+## 当前状态
+
+| 维度 | 当前事实 | 赛题关闭标准 |
+|---|---|---|
+| M1 风险抽取 | fixed-10 `23.33%` | ALL 79 Development `>=80%` |
+| M2 证据召回 | fixed-10 `18.75%` | ALL 79 Development `>=85%` |
+| B 线诊断 | v0.4.6 三路对照、journal、waterfall + read-only Evidence audit 已实现 | 完整 fixed-10 实测与逐单元根因矩阵 |
+| M3 Traceability | 三案例 `3/3 = 1.0` | 保持 100% 并进入 final bundle |
+| Final Supervisor | real-provider accepted `2/3` | `3/3` accepted，fallback 不计成功 |
+| Market strict contract | `1/3` | `3/3`，无伪造数值、缺失元数据完整 |
+| M4 | `0/6` 真人评审 | 每案两名独立评审并通过 rubric |
+| M5 formal | 70-case 四文件物化与 receipt 已记录 | current-main strict revalidation |
+| M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，未晋升 | A governance decision + 新 freeze/handoff |
+| 产品 | UI、Report、Trace、Human Review 已存在 | Evidence 高亮截图、典型案例、预测表和安全封包齐全 |
+
+Frozen PR-F 的五日 Recall 仅 `4.35%`、ROC-AUC `0.4246`，不能据此宣称强业务效果。仓库已有一个完全按 expanding Development folds 选择、在 2024 一次评估的 v2 候选，将 Recall 提升到 `52.17%`、F1 提升到 `42.11%`，但 ROC-AUC 仍为 `0.4875`，且尚未完成 A-owned 晋升决议。正式产品仍不能直接消费它。
+
+## 距离比赛还剩 6 个阶段
+
+1. **B 全链路取证**：把 Parser、Retrieval、LLM、Builder、Reconciliation、Verifier、Evidence binding 分开测量；
+2. **B 指标闭环**：通用修复 → fixed-10 → ALL 79 Development → freeze；
+3. **D/C/E 并行闭环**：D 模型晋升决策与复验，Market strict 3/3，Final Supervisor accepted 3/3，M4 6 份评审；
+4. **赛题能力补齐**：核心管线、文本粉饰度、关联交易、同行估值、Evidence 截图；
+5. **冻结与一次性 Validation**：D final artifacts、B one-shot ALL 19 Validation、CI/audits；
+6. **最终交付**：源码、运行脚本、预测表、Trace、Evidence、案例报告、API/UI、submission ZIP。
+
+完整计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)。
+
+## 系统架构
 
 ```text
 Prospectus PDF
 → Parser / Retriever / Evidence
 → Financial deterministic analysis
-→ Legal / Business structured LLM analysis
+→ Legal / Business structured LLM
 → Verifier / Document Supervisor
-→ governed Market-X
-→ IPOHeatSkill / MarketRegimeSkill
-→ bounded Market LLM interpretation
-→ Rule / optional authentic frozen Model signal
-→ Conflict detection
-→ one bounded targeted re-check
-→ LLM Final Supervisor
+→ governed Market Context + Skills
+→ optional frozen model signal
+→ Conflict / bounded re-check
+→ LLM Final Supervisor + deterministic fallback
 → Agent / Tool / Evidence Trace
-→ Human Review
-→ Streamlit / report / submission artifacts
-→ A-owned readiness / Blind / provenance / determinism / package gate
+→ Human Review / Report / UI
+→ M1–M5 evaluation / readiness / package
 ```
 
-核心治理原则：
-
-- LLM 负责语义理解与综合，不负责权威数值计算；
-- 精确计算由 Python `Calculation` 完成；
-- 正式 `RiskItem` 必须有真实 `Evidence`；
-- LLM 只能引用输入作用域内的 Evidence / Risk / Conflict；
-- 市场事实必须来自 PIT-governed Market-X，缺失不得补零或造代理；
-- 未校准模型分数只能称 `uncalibrated_model_score`；
-- 2024 Validation 不做 post-hoc tuning；
-- 2025 Blind outcome 未授权前不访问；
-- frozen PR-A–PR-G 不因比赛展示需要而重写。
-
-## Competition Metric Protocol v2
-
-当前协议：
+Role-B v0.4.6 提供：
 
 ```text
-v045_competition_metric_protocol_v2_existing_gold_only
+offline baseline
++ real-LLM shadow probe
++ journal-replayed gated result
++ read-only persisted-result Evidence audit
+→ monotonicity / retrieval waterfall / LLM quality / provenance diagnostics
 ```
 
-| Metric | Official requirement | Project definition |
-|---|---:|---|
-| M1 Risk extraction | >=80% | Existing-Gold positive Risk Unit Accuracy；target >=85% |
-| M2 Evidence recall | >=85% | Existing-Gold Evidence Coverage Recall；target >=88% |
-| M2 Recall@K | 官方未指定 | Recall@1/@3/@5/@10/@20 仅作诊断 |
-| M3 Traceability | 100% | accounted Agent/Tool/Evidence-or-reason trace |
-| M4 Explanation | “高” | final product human-review rubric |
-| M5 Post-listing | 1D/5D/20D/60D | 5D primary；`return_5d <= -0.10` 为预先冻结的项目定义 |
-
-M1/M2 只使用比赛收尾前已存在并冻结的 Expert Annotation / Oracle Gold：
+## 指标与治理
 
 ```text
-annotation inventory             101
-valid annotations                100
-official materialized             98
-evaluable Development cases       79
-evaluable Validation cases        19
-primary positive risk units      128
-primary evidence units           217
+M1 Existing-Gold Risk Accuracy >=0.80
+M2 Existing-Gold Evidence Coverage Recall >=0.85
+M3 Traceability =1.0
+M4 Explanation Quality = human-review rubric
+M5 = 1D / 5D / 20D / 60D，5D 重点
 ```
 
-禁止新增 Gold、修改旧专家答案、把 `UNJUDGED` 当 negative，或人工重组 Evidence Group。
+继续保留的硬边界：
 
-## 最新实测状态
+- Existing Gold 不新增、不修改，`UNJUDGED` 不当 negative；
+- Gold 不进入 runtime Retriever、Prompt 或 Agent；
+- Validation 冻结后一次性运行，不用于调参；
+- 未来优化不再使用 2025 Blind 输入或 outcome；
+- LLM 不得创造越界 Evidence；
+- 精确财务数值由 deterministic `Calculation` 负责；
+- Market 必须 PIT-safe，缺失不补零、不造 proxy；
+- 不提交 Secret、授权 PDF、raw EOD、本地绝对路径或未授权模型。
 
-### Role B — Development quality closure
+流程上的旧限制已经移除：不再固定最多 2–4 轮，不再 Runner-only，也不再绝对禁止 Development-only 的 Retriever 或模型/transport 对照。
 
-2026-08-27 本地 frozen fixed-10 `iter_004`：
-
-```text
-completed real-LLM cases = 10/10
-M1 = 23.33%
-M2 = 18.75%
-dominant failure = semantic_extraction_miss
-Validation opened = false
-2025 Blind accessed = false
-```
-
-该结果是 Development debug baseline，不是正式比赛 PASS。B 仍需 bounded Fixer 迭代、ALL 79 Development、冻结后一次性 ALL 19 Validation。
-
-### Role D — M5 已物化，发布复验仍需本地不可变输入
-
-PR #141 在 2026-08-27 记录了一次授权数据上的正式 Role-D 物化：
-
-```text
-evaluation split = 2024 Validation
-evaluated IPOs = 70
-governed filtered EOD = 433,776 rows / 438 target IPOs
-D1_multi_horizon_evaluation = PASS
-blind_2025_y_accessed = false
-deterministic --resume = PASS
-```
-
-正式四文件及记录哈希：
-
-```text
-test_predictions.csv
-8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a
-
-multi_horizon_results.csv
-f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725
-
-evaluation_summary.json
-6d542b025e5a9c52285a80fcdde198282c389ebc55773b40b644ccf0b74f7a63
-
-ai_vs_offline_report.json
-3aab6fc39f75f1c350f92ab329df97c97ca48105235d906f5ef213731f180c94
-```
-
-五日描述性指标：
-
-```text
-Precision          0.3333
-Recall             0.0435
-F1                 0.0769
-PR-AUC             0.3364
-ROC-AUC            0.4246
-Top-10% hit rate   0.4286
-Top-20% hit rate   0.2857
-Base prevalence    0.3286
-```
-
-当前 `main` 已具备：
-
-- governed M5 builder；
-- 独立只读 strict acceptance checker；
-- exact-four-file、70-case、session/return/label/metric/provenance 校验；
-- label-free PR-F product handoff 与完整 package validator；
-- A readiness 对四个 Role-D 正式文件的 fail-closed 检查。
-
-历史物化现在有一份可在 CI 中验证的哈希绑定机器凭据：
-
-```text
-reports/frozen/v045_role_d_m5_materialization_receipt.json
-python scripts/validate_v045_role_d_receipt.py
-```
-
-该 receipt 会绑定冻结 PR-E/PR-F manifest、Metric Protocol、四个正式 artifact 哈希与治理声明；它是**已记录外部物化证据**，不替代持有授权 EOD 与完整 frozen runtime 时必须执行的 current-main strict rerun。
-
-Runtime、授权 EOD 与完整 PR-E/PR-F research runtime 按规则未提交，因此最终发布前仍需在持有这些不可变输入的环境中进行一次 **current-main strict revalidation**，并物化 `2410/2460/1318` 的 D→E label-free package。当前 v2 high-recall 模型仍是 research candidate，未替换 frozen PR-F。
-
-### Role C / E — final matrix
-
-```text
-2410.HK / 2460.HK / 1318.HK offline E2E = 3/3
-M3 traceability = 3/3 exactly 1.0
-E1 real-provider accepted = 2/3
-C1 strict observation contract = 1/3
-M4 human reviews = 0/6
-```
-
-2460 的 Final Supervisor 两次越界引用均被 scope guard 拒绝并 honest fallback；C 的 2460/1318 仍有 unavailable observation metadata 缺口。
-
-## 当前比赛 Gate
-
-| Gate | Status |
-|---|---|
-| competition runtime contracts | PASS |
-| Existing Expert Gold inventory / Metric-v2 | FROZEN |
-| Existing-Gold evaluator | PASS implementation |
-| B ALL 79 Development M1/M2 | **OPEN / P0** |
-| D M5 builder / strict checker / product handoff | **PASS implementation** |
-| D1 70-case formal materialization | **PASS RECORDED；current-main release revalidation pending** |
-| D recorded receipt / CI validation | **PASS** |
-| D→E final-three label-free package | **PENDING LOCAL FROZEN RUNTIME** |
-| C final-matrix Market validation | **BLOCKED: strict C1 1/3** |
-| E final 3-case real-provider Supervisor | **BLOCKED: accepted 2/3** |
-| M3 final traceability | **PASS: 3/3 = 1.0** |
-| M4 explanation-quality human review | **OPEN: 0/6** |
-| Final audits / bundle / release freeze | **NOT READY** |
-
-## 文档入口
-
-- 当前 Gate：`docs/V0.4_RELEASE_ACCEPTANCE.md`
-- 当前执行总计划：`docs/V045_CURRENT_EXECUTION_PLAN.md`
-- Role-D 收口与证据边界：`docs/V045_ROLE_D_FINAL_CLOSURE.md`
-- Metric contract：`docs/COMPETITION_METRIC_PROTOCOL.md`
-- Role-B Runner：`docs/V045_ROLE_B_LUNAMAX_AUTOMATION_RUNBOOK.md`
-- 最终提交 Runbook：`docs/SUBMISSION_RUNBOOK.md`
-- 剩余路线：`docs/ROADMAP.md`
-- 五人执行：`docs/V04_FIVE_PERSON_EXECUTION_PLAN.md`
-- 赛题映射：`docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md`
-
-## 快速运行
+## 快速入口
 
 ```bash
 pip install -e ".[dev,retrieval-research]"
+python -m compileall -q app src scripts
+pytest -q
+python scripts/validate_project.py
+python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
-
-# Role B
-python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
-python scripts/run_v045_role_b_iteration.py --subset-only
-python scripts/run_v045_role_b_iteration.py --iteration auto
-
-# Role D：以下 live build/check 需要本地完整 frozen PR-E/PR-F runtime 与 governed EOD
-python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
-python scripts/check_v045_role_d_m5.py \
-  --role-d-dir reports/v045_role_d \
-  --output reports/v045_role_d_acceptance/acceptance.json
-python scripts/build_v04_pr_f_product_handoff.py \
-  --source-pr-f-dir reports/v04_pr_f \
-  --case-list configs/v045_demo_cases.json \
-  --output-dir reports/v045_pr_f_product_handoff_final3
 ```
 
-最终 `COMPETITION_READY` 只能在 B/C/D/E 的 release evidence、latest-main CI、Blind/provenance/determinism、artifact index 与 submission package 全部真实通过后使用。
+Role-B：
+
+```bash
+python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
+python scripts/run_v046_role_b_ablation.py --subset-only
+python scripts/check_v046_role_b_structured_smoke.py
+python scripts/run_v046_role_b_ablation.py --run-id <RUN_ID> --modes all --execute
+```
+
+真实运行需要本地授权招股书目录与 provider 凭证；不得使用 mock 冒充 real-LLM。
+
+## 文档入口
+
+- 当前统一计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)
+- 当前 Gate：[`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
+- B 线计划：[`docs/ROLE_B_M1_M2_PLAN.md`](docs/ROLE_B_M1_M2_PLAN.md)
+- D 模型决议：[`docs/ROLE_D_MODEL_DECISION.md`](docs/ROLE_D_MODEL_DECISION.md)
+- 指标协议：[`docs/COMPETITION_METRIC_PROTOCOL.md`](docs/COMPETITION_METRIC_PROTOCOL.md)
+- 最终提交：[`docs/SUBMISSION_RUNBOOK.md`](docs/SUBMISSION_RUNBOOK.md)
+- 文档审计：[`docs/DOCUMENT_AUDIT_20260828.md`](docs/DOCUMENT_AUDIT_20260828.md)
+
+`COMPETITION_READY` 只能在全部真实 Gate、one-shot Validation、CI、Blind/provenance/determinism、安全审计和最终封包通过后使用。

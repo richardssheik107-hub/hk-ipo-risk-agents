@@ -28,7 +28,6 @@ from ipo_risk.modeling.alert_policy import (
 )
 from ipo_risk.modeling.lightgbm_modeling import build_pr_f_classifier
 from ipo_risk.modeling.role_d_v2_candidate import run_role_d_v2_candidate
-from ipo_risk.modeling.role_d_v3_candidate import run_role_d_v3_candidate
 
 
 EXPECTED_DEVELOPMENT_COUNT = 354
@@ -277,27 +276,6 @@ def build_alert_policy(
     (output_dir / "role_d_v2_classifier.txt").write_text(
         v2_study.model_text, encoding="utf-8"
     )
-    v3_study = run_role_d_v3_candidate(
-        case_ids=[row["case_id"] for row in all_rows],
-        years=[row["cohort_year"] for row in all_rows],
-        feature_names=data["feature_names"],
-        feature_values=[row["feature_values"] for row in all_rows],
-        labels=[row["label"] for row in all_rows],
-        raw_returns=[row["raw_return_5d"] for row in all_rows],
-        frozen_pr_f_metrics=frozen["classification_metrics"],
-    )
-    with (output_dir / "test_predictions_v3.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
-        writer = csv.DictWriter(
-            handle, fieldnames=list(v3_study.prediction_rows[0])
-        )
-        writer.writeheader()
-        writer.writerows(v3_study.prediction_rows)
-    _write_json(output_dir / "v3_model_summary.json", v3_study.summary)
-    (output_dir / "role_d_v3_classifier.txt").write_text(
-        v3_study.model_text, encoding="utf-8"
-    )
     comparison_rows = []
     selected_group = v2_study.summary["selection_protocol"][
         "selected_feature_group"
@@ -385,8 +363,7 @@ def build_alert_policy(
             ),
             (
                 "The 2024 ROC-AUC remains weak; this policy improves the "
-                "operating-point recall but does not manufacture better "
-                "ranking quality."
+                "operating-point recall but does not manufacture better ranking quality."
             ),
         ],
         "optimized_v2_candidate": {
@@ -399,19 +376,6 @@ def build_alert_policy(
             ],
             "validation": v2_study.summary["validation"],
             "ranking_metric_deltas": v2_study.summary["ranking_metric_deltas"],
-            "validation_labels_used_for_selection": False,
-        },
-        "bounded_v3_candidate": {
-            "policy_version": v3_study.summary["policy_version"],
-            "selected_feature_count": v3_study.summary["selection_protocol"][
-                "selected_feature_count"
-            ],
-            "selected_feature_names": v3_study.summary["selection_protocol"][
-                "selected_feature_names"
-            ],
-            "validation": v3_study.summary["validation"],
-            "ranking_metric_deltas": v3_study.summary["ranking_metric_deltas"],
-            "promotion": v3_study.summary["promotion"],
             "validation_labels_used_for_selection": False,
         },
         "pr_f_results_sha256": _sha256_file(pr_f_results_path),

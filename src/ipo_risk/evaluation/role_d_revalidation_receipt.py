@@ -10,7 +10,7 @@ from typing import Any, Mapping
 
 RECEIPT_VERSION = "v045_role_d_current_main_revalidation_receipt_v1"
 RECEIPT_STATUS = "current_main_strict_revalidation_pass"
-EXPECTED_BASE_MAIN = "2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33"
+EXPECTED_BASE_MAIN = "34553ebcd230b34417775359133761b27e49e204"
 EXPECTED_ARTIFACT_SHA256 = {
     "test_predictions.csv": (
         "8521dabe3f976e5c532f55fe1571294eb9555ae644a32d524233680af74fa93a"
@@ -80,12 +80,14 @@ def validate_role_d_revalidation_receipt(
             "blockers": ["current-main revalidation receipt must be an object"],
         }
 
+    source = _mapping(receipt.get("source"))
     check(
         "identity",
         receipt.get("receipt_version") == RECEIPT_VERSION
         and receipt.get("status") == RECEIPT_STATUS
-        and _mapping(receipt.get("source")).get("base_main_commit")
-        == EXPECTED_BASE_MAIN,
+        and source.get("repository")
+        == "richardssheik107-hub/hk-ipo-risk-agents"
+        and source.get("base_main_commit") == EXPECTED_BASE_MAIN,
         "receipt identity or base-main binding drifted",
     )
     evaluation = _mapping(receipt.get("evaluation"))
@@ -146,31 +148,14 @@ def validate_role_d_revalidation_receipt(
         and all(bindings.get(name) == value for name, value in local_hashes.items()),
         "receipt does not match committed PR-E/PR-F/protocol bindings",
     )
-    optimization = _mapping(receipt.get("optimization"))
-    v2 = _mapping(optimization.get("v2"))
-    v3 = _mapping(optimization.get("v3"))
-    optimization_hashes = _mapping(optimization.get("output_sha256"))
+    decision = _mapping(receipt.get("model_decision"))
     check(
-        "promotion_boundary",
-        optimization.get("formal_release_decision")
-        == "retain_frozen_d1_and_request_a_review_for_v2_high_recall_candidate"
-        and optimization.get("deterministic_repeat_byte_identical") is True
-        and v2.get("status")
-        == "recommended_high_recall_candidate_pending_a_review"
-        and v3.get("status") == "research_result_not_promoted_due_to_lower_recall",
-        "optimization promotion boundary drifted",
-    )
-    check(
-        "optimization_outputs",
-        len(optimization_hashes) == 9
-        and all(
-            _SHA256.fullmatch(str(value))
-            for value in optimization_hashes.values()
-        )
-        and v3.get("selected_feature_count")
-        == len(v3.get("selected_feature_names") or ())
-        == 5,
-        "optimization output hashes or selected-feature contract drifted",
+        "model_decision_boundary",
+        decision.get("decision_owner") == "A"
+        and decision.get("status") == "pending_a_owned_promotion_review"
+        and decision.get("recommended_review_option") == "promote_v2"
+        and decision.get("frozen_pr_f_retained_until_decision") is True,
+        "receipt overstates or changes the A-owned model decision",
     )
     check(
         "portable_receipt",

@@ -4,9 +4,9 @@
 >
 > Gate: `D1_multi_horizon_evaluation`
 >
-> Current status: **CURRENT-MAIN STRICT REVALIDATION PASS — A RELEASE REVIEW PENDING**
+> Current status: **CURRENT-MAIN STRICT REVALIDATION PASS — A MODEL DECISION PENDING**
 
-Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and governed 70-case materialization are complete. On 2026-08-28 the exact frozen PR-E/PR-F runtime and governed filtered EOD store were recovered and the current `main` base (`2b266a2d2ad67ace2635b11c4bae8ccd8c26ae33`) passed a fresh strict rerun. The licensed raw EOD archive and complete research runtimes remain intentionally outside Git; both historical and current-main runs are therefore recorded as hash-bound receipts.
+Role D owns the governed post-listing outcome/evaluation lane. The implementation, strict acceptance checker, frozen bindings and governed 70-case materialization are complete. On 2026-08-28 the exact frozen PR-E/PR-F runtime and governed filtered EOD store were recovered and the current `main` base (`34553ebcd230b34417775359133761b27e49e204`) passed a fresh strict rerun. The licensed raw EOD archive and complete research runtimes remain intentionally outside Git; both historical and current-main runs are therefore recorded as hash-bound receipts.
 
 ## 1. Four evidence layers
 
@@ -90,7 +90,7 @@ reports/frozen/v045_role_d_current_main_revalidation_receipt.json
 ```
 
 Validate its frozen bindings, canonical artifact hashes, deterministic rebuild
-evidence, final-three handoff and promotion boundary without licensed data:
+evidence, final-three handoff and model-decision boundary without licensed data:
 
 ```bash
 python scripts/validate_v045_role_d_revalidation_receipt.py
@@ -194,7 +194,7 @@ reason = package remains a generated frozen-runtime deliverable
 
 Role E must keep Model Channel unavailable until a valid package is supplied. It must not consume a reconstructed model or a hand-edited signal.
 
-## 4. Optimized high-recall candidates
+## 4. v2 high-recall candidate
 
 The Role-D v2 high-recall work remains a research candidate. It has not replaced the frozen PR-F model and is not used by the D1 receipt or the D-to-E product handoff.
 
@@ -206,22 +206,6 @@ validation_retuning_performed = false
 ```
 
 Any promotion decision belongs to A-owned governance and requires a separate frozen decision record.
-
-The bounded v3 study removes two v2 features using only 2021–2023 expanding
-Development folds. It improves 2024 ranking/calibration (`PR-AUC 0.4122`,
-`ROC-AUC 0.4894`, `Brier 0.2463`) but reduces the high-recall operating point to
-`Recall 0.4348` and `F1 0.3448`. Therefore v3 is recorded but not recommended as
-the high-recall replacement. The v2 candidate remains the stronger operating
-result (`Recall 0.5217`, `F1 0.4211`, 12/23 drops identified).
-
-Formal Role-D release decision for A review:
-
-```text
-frozen D1 result = RETAIN AS OFFICIAL REPRODUCED BASELINE
-v2 high-recall candidate = RECOMMEND FOR A PROMOTION REVIEW
-v3 bounded pruning = RECORD AS RESEARCH; DO NOT PROMOTE
-fresh unseen holdout after v2 observation = unavailable
-```
 
 ## 5. Closure boundary
 
@@ -245,11 +229,13 @@ D closure documentation
 The following cannot be honestly completed from committed files alone:
 
 ```text
-A-owned promotion of v2 or any model replacement
+A-owned promote/retain decision for v2
+v2 freeze and re-materialization if A selects promotion
 committing the licensed EOD archive or external frozen research runtime
 ```
 
-The live revalidation and generated product package now exist as validated,
-hash-bound external-runtime evidence. They remain outside Git by design. This
-does not authorize retraining PR-F, changing frozen manifests, retuning on 2024
-Validation, or declaring v2/v3 promoted without A's separate decision record.
+The live frozen-baseline revalidation and generated product package now exist as
+validated, hash-bound external-runtime evidence. They remain outside Git by
+design. They do not settle A's v2 promote/retain decision and do not authorize
+retraining PR-F, changing frozen manifests, retuning on 2024 Validation, or
+letting E consume v2 without a separate promotion record.

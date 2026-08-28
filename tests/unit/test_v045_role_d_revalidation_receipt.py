@@ -26,14 +26,6 @@ def _validate(path: Path = RECEIPT) -> dict:
     )
 
 
-def _mutate(tmp_path: Path, key: str, value) -> Path:
-    payload = json.loads(RECEIPT.read_text(encoding="utf-8"))
-    payload[key] = value
-    path = tmp_path / "receipt.json"
-    path.write_text(json.dumps(payload), encoding="utf-8")
-    return path
-
-
 def test_committed_current_main_revalidation_receipt_passes() -> None:
     result = _validate()
 
@@ -44,7 +36,12 @@ def test_committed_current_main_revalidation_receipt_passes() -> None:
 
 
 def test_revalidation_receipt_rejects_artifact_drift(tmp_path: Path) -> None:
-    result = _validate(_mutate(tmp_path, "artifact_sha256", {}))
+    payload = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    payload["artifact_sha256"] = {}
+    path = tmp_path / "receipt.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = _validate(path)
 
     assert result["passed"] is False
     assert result["checks"]["artifact_hashes"] is False
