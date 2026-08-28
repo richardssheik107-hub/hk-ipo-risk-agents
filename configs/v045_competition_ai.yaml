@@ -11,7 +11,7 @@ runtime_mode: ai_enhanced
 use_mock: false
 enable_verifier: true
 parser: pymupdf
-retriever: keyword
+retriever: hybrid_bm25
 financial_agent: v03
 legal_agent: v03
 business_agent: v03

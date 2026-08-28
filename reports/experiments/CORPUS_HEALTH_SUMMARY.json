@@ -1,0 +1,18 @@
+{
+  "compressed_size": 6487199980,
+  "exceptions": {},
+  "max_pages": 2834,
+  "median_pages": 614,
+  "nested_archive_count": 6,
+  "outer_member_count": 29,
+  "page_images_persisted": false,
+  "parse_failure": 0,
+  "parse_success": 565,
+  "pdf_total": 565,
+  "pdfs_extracted": 0,
+  "suspicious_pdf_count": 0,
+  "suspicious_pdfs": [],
+  "text_persisted": false,
+  "uncompressed_size": 7776164822,
+  "zero_page": 0
+}

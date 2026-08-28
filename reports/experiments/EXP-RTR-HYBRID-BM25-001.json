@@ -1,0 +1,276 @@
+{
+  "experiment_id": "EXP-RTR-HYBRID-BM25-001",
+  "hypothesis": "case-local BM25 candidate recovery improves the keyword ceiling without replacing deterministic extraction",
+  "dataset": "Retriever V3 frozen 50-case development feature table",
+  "locked_cases_read": false,
+  "pdfs_read": 0,
+  "llm_calls": 0,
+  "gold_rows": 625,
+  "required_gold_rows": 503,
+  "policy": {
+    "fusion": "equal RRF, keyword-rank tie break",
+    "bm25": "frozen BM25-B",
+    "keyword_only_risks": [
+      "cash_runway",
+      "material_litigation_compliance"
+    ]
+  },
+  "before": {
+    "recall_at_5": 0.4768,
+    "recall_at_10": 0.5328,
+    "recall_at_20": 0.5968,
+    "recall_at_50": 0.6768,
+    "mrr": 0.322774804599629,
+    "required_at_5": 0.5049701789264414,
+    "required_at_10": 0.558648111332008,
+    "required_at_20": 0.6182902584493042,
+    "required_at_50": 0.6878727634194831
+  },
+  "after": {
+    "recall_at_5": 0.5296,
+    "recall_at_10": 0.632,
+    "recall_at_20": 0.7328,
+    "recall_at_50": 0.8848,
+    "mrr": 0.3772859385185407,
+    "required_at_5": 0.5666003976143141,
+    "required_at_10": 0.6620278330019881,
+    "required_at_20": 0.757455268389662,
+    "required_at_50": 0.8946322067594433
+  },
+  "delta": {
+    "recall_at_5": 0.05279999999999996,
+    "recall_at_10": 0.09919999999999995,
+    "recall_at_20": 0.136,
+    "recall_at_50": 0.20800000000000007,
+    "mrr": 0.054511133918911714,
+    "required_at_5": 0.06163021868787277,
+    "required_at_10": 0.1033797216699801,
+    "required_at_20": 0.13916500994035785,
+    "required_at_50": 0.2067594433399602
+  },
+  "candidate_oracle": {
+    "before": {
+      "oracle_at_20": 0.5968,
+      "oracle_at_50": 0.6768
+    },
+    "after": {
+      "oracle_at_20": 0.7712,
+      "oracle_at_50": 0.896
+    }
+  },
+  "retrieval_misses_at_20": {
+    "before": 252,
+    "after": 167
+  },
+  "per_risk": {
+    "cash_runway": {
+      "gold": 95,
+      "before": {
+        "recall_at_5": 0.8210526315789474,
+        "recall_at_10": 0.8736842105263158,
+        "recall_at_20": 0.9157894736842105,
+        "recall_at_50": 0.9263157894736842,
+        "mrr": 0.46744227994228005,
+        "required_at_5": 0.8636363636363636,
+        "required_at_10": 0.8863636363636364,
+        "required_at_20": 0.9204545454545454,
+        "required_at_50": 0.9204545454545454
+      },
+      "after": {
+        "recall_at_5": 0.8210526315789474,
+        "recall_at_10": 0.8736842105263158,
+        "recall_at_20": 0.9157894736842105,
+        "recall_at_50": 0.9263157894736842,
+        "mrr": 0.46744227994228005,
+        "required_at_5": 0.8636363636363636,
+        "required_at_10": 0.8863636363636364,
+        "required_at_20": 0.9204545454545454,
+        "required_at_50": 0.9204545454545454
+      }
+    },
+    "continuous_loss": {
+      "gold": 52,
+      "before": {
+        "recall_at_5": 0.28846153846153844,
+        "recall_at_10": 0.4423076923076923,
+        "recall_at_20": 0.5,
+        "recall_at_50": 0.5384615384615384,
+        "mrr": 0.1567451769627883,
+        "required_at_5": 0.28846153846153844,
+        "required_at_10": 0.4423076923076923,
+        "required_at_20": 0.5,
+        "required_at_50": 0.5384615384615384
+      },
+      "after": {
+        "recall_at_5": 0.5769230769230769,
+        "recall_at_10": 0.8076923076923077,
+        "recall_at_20": 0.9038461538461539,
+        "recall_at_50": 0.9807692307692307,
+        "mrr": 0.41830098727294784,
+        "required_at_5": 0.5769230769230769,
+        "required_at_10": 0.8076923076923077,
+        "required_at_20": 0.9038461538461539,
+        "required_at_50": 0.9807692307692307
+      }
+    },
+    "customer_concentration": {
+      "gold": 82,
+      "before": {
+        "recall_at_5": 0.573170731707317,
+        "recall_at_10": 0.6097560975609756,
+        "recall_at_20": 0.6219512195121951,
+        "recall_at_50": 0.6341463414634146,
+        "mrr": 0.3702341126282076,
+        "required_at_5": 0.5571428571428572,
+        "required_at_10": 0.6,
+        "required_at_20": 0.6142857142857143,
+        "required_at_50": 0.6285714285714286
+      },
+      "after": {
+        "recall_at_5": 0.573170731707317,
+        "recall_at_10": 0.6707317073170732,
+        "recall_at_20": 0.7804878048780488,
+        "recall_at_50": 0.9024390243902439,
+        "mrr": 0.4293835759707403,
+        "required_at_5": 0.5571428571428572,
+        "required_at_10": 0.6714285714285714,
+        "required_at_20": 0.8,
+        "required_at_50": 0.9142857142857143
+      }
+    },
+    "material_litigation_compliance": {
+      "gold": 119,
+      "before": {
+        "recall_at_5": 0.4789915966386555,
+        "recall_at_10": 0.5462184873949579,
+        "recall_at_20": 0.680672268907563,
+        "recall_at_50": 0.8571428571428571,
+        "mrr": 0.33159589230528147,
+        "required_at_5": 0.5263157894736842,
+        "required_at_10": 0.5789473684210527,
+        "required_at_20": 0.7105263157894737,
+        "required_at_50": 0.8421052631578947
+      },
+      "after": {
+        "recall_at_5": 0.4789915966386555,
+        "recall_at_10": 0.5462184873949579,
+        "recall_at_20": 0.680672268907563,
+        "recall_at_50": 0.8571428571428571,
+        "mrr": 0.33159589230528147,
+        "required_at_5": 0.5263157894736842,
+        "required_at_10": 0.5789473684210527,
+        "required_at_20": 0.7105263157894737,
+        "required_at_50": 0.8421052631578947
+      }
+    },
+    "precommercial_product": {
+      "gold": 65,
+      "before": {
+        "recall_at_5": 0.046153846153846156,
+        "recall_at_10": 0.06153846153846154,
+        "recall_at_20": 0.1076923076923077,
+        "recall_at_50": 0.18461538461538463,
+        "mrr": 0.02950694786348908,
+        "required_at_5": 0.05660377358490566,
+        "required_at_10": 0.07547169811320754,
+        "required_at_20": 0.11320754716981132,
+        "required_at_50": 0.20754716981132076
+      },
+      "after": {
+        "recall_at_5": 0.1076923076923077,
+        "recall_at_10": 0.15384615384615385,
+        "recall_at_20": 0.26153846153846155,
+        "recall_at_50": 0.6307692307692307,
+        "mrr": 0.09027545257285907,
+        "required_at_5": 0.11320754716981132,
+        "required_at_10": 0.16981132075471697,
+        "required_at_20": 0.2641509433962264,
+        "required_at_50": 0.6226415094339622
+      }
+    },
+    "redemption_rights": {
+      "gold": 86,
+      "before": {
+        "recall_at_5": 0.3372093023255814,
+        "recall_at_10": 0.4186046511627907,
+        "recall_at_20": 0.45348837209302323,
+        "recall_at_50": 0.45348837209302323,
+        "mrr": 0.26531482083807667,
+        "required_at_5": 0.42592592592592593,
+        "required_at_10": 0.5370370370370371,
+        "required_at_20": 0.5740740740740741,
+        "required_at_50": 0.5740740740740741
+      },
+      "after": {
+        "recall_at_5": 0.4186046511627907,
+        "recall_at_10": 0.5581395348837209,
+        "recall_at_20": 0.7209302325581395,
+        "recall_at_50": 0.872093023255814,
+        "mrr": 0.36122301035432836,
+        "required_at_5": 0.5370370370370371,
+        "required_at_10": 0.6296296296296297,
+        "required_at_20": 0.7777777777777778,
+        "required_at_50": 0.9444444444444444
+      }
+    },
+    "revenue_growth": {
+      "gold": 57,
+      "before": {
+        "recall_at_5": 0.24561403508771928,
+        "recall_at_10": 0.2807017543859649,
+        "recall_at_20": 0.45614035087719296,
+        "recall_at_50": 0.8070175438596491,
+        "mrr": 0.23913483839433247,
+        "required_at_5": 0.25,
+        "required_at_10": 0.28846153846153844,
+        "required_at_20": 0.46153846153846156,
+        "required_at_50": 0.7884615384615384
+      },
+      "after": {
+        "recall_at_5": 0.3684210526315789,
+        "recall_at_10": 0.543859649122807,
+        "recall_at_20": 0.6491228070175439,
+        "recall_at_50": 0.9473684210526315,
+        "mrr": 0.2520643602859727,
+        "required_at_5": 0.38461538461538464,
+        "required_at_10": 0.5576923076923077,
+        "required_at_20": 0.6730769230769231,
+        "required_at_50": 0.9423076923076923
+      }
+    },
+    "supplier_concentration": {
+      "gold": 69,
+      "before": {
+        "recall_at_5": 0.7971014492753623,
+        "recall_at_10": 0.8115942028985508,
+        "recall_at_20": 0.8115942028985508,
+        "recall_at_50": 0.8115942028985508,
+        "mrr": 0.5940821256038648,
+        "required_at_5": 0.7758620689655172,
+        "required_at_10": 0.7931034482758621,
+        "required_at_20": 0.7931034482758621,
+        "required_at_50": 0.7931034482758621
+      },
+      "after": {
+        "recall_at_5": 0.7971014492753623,
+        "recall_at_10": 0.8840579710144928,
+        "recall_at_20": 0.9130434782608695,
+        "recall_at_50": 0.9855072463768116,
+        "mrr": 0.6329699620788451,
+        "required_at_5": 0.7758620689655172,
+        "required_at_10": 0.8620689655172413,
+        "required_at_20": 0.896551724137931,
+        "required_at_50": 0.9827586206896551
+      }
+    }
+  },
+  "case_regressions_at_20": [
+    {
+      "case_id": "ipo_2020_08489",
+      "before_recall_at_20": 0.6428571428571429,
+      "after_recall_at_20": 0.5714285714285714,
+      "delta": -0.07142857142857151
+    }
+  ],
+  "decision": "KEEP_OPT_IN"
+}
