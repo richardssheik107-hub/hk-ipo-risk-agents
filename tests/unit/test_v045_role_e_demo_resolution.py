@@ -142,3 +142,43 @@ def test_the_case_list_carries_no_local_path() -> None:
     text = (REPO_ROOT / "configs" / "v045_demo_cases.json").read_text(encoding="utf-8")
     assert "data/local" not in text
     assert ".pdf" not in text
+
+
+# --- matrix identity -------------------------------------------------------
+#
+# The provenance and determinism audits refuse the matrix unless the summary
+# says which code, which case list and which config produced it.  Nothing was
+# emitting those fields, so both audits failed on a missing identity rather
+# than on anything the run actually got wrong.
+
+
+def test_the_case_manifest_and_config_are_identified_by_their_own_bytes(tmp_path) -> None:
+    target = tmp_path / "cases.json"
+    target.write_bytes(b"{}\n")
+    assert demo._file_sha256(target) == hashlib.sha256(b"{}\n").hexdigest()
+
+
+def test_an_unreadable_input_reports_no_hash_rather_than_a_placeholder(tmp_path) -> None:
+    """A hash we could not take must leave the audit blocked, not satisfied."""
+    assert demo._file_sha256(tmp_path / "absent.json") is None
+
+
+def test_the_frozen_case_manifest_and_config_both_hash(tmp_path) -> None:
+    manifest_sha = demo._file_sha256(REPO_ROOT / "configs" / "v045_demo_cases.json")
+    config_sha = demo._file_sha256(REPO_ROOT / "configs" / "v045_competition_ai.yaml")
+    for value in (manifest_sha, config_sha):
+        assert value is not None and len(value) == 64
+
+
+def test_the_code_base_sha_is_the_commit_the_run_came_from() -> None:
+    sha, dirty = demo.resolve_code_base_sha(REPO_ROOT)
+    assert sha is not None and len(sha) == 40
+    assert int(sha, 16) >= 0  # a real hex commit id, not a label
+    assert isinstance(dirty, bool)
+
+
+def test_outside_a_checkout_the_code_identity_is_absent_not_guessed(tmp_path) -> None:
+    """Fail closed: no git answer means no identity, so readiness stays blocked."""
+    sha, dirty = demo.resolve_code_base_sha(tmp_path)
+    assert sha is None
+    assert dirty is None

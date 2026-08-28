@@ -13,6 +13,10 @@ from __future__ import annotations
 from typing import Any
 
 from competition_ui import risk_level_label
+from ipo_risk.runtime.review_projection import (
+    conflicts,
+    review_targets as _review_targets,
+)
 
 RESOLUTION_LABELS = {
     "detected": "已检出",
@@ -60,10 +64,6 @@ def supervision_synthesis(payload: dict[str, Any]) -> dict[str, Any]:
 
 def judgement(payload: dict[str, Any]) -> dict[str, Any] | None:
     return supervision_synthesis(payload).get("judgement")
-
-
-def conflicts(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    return list((_diagnostics(payload).get("conflict_detection") or {}).get("conflicts") or [])
 
 
 def recheck_outcomes(payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -201,40 +201,42 @@ def evidence_label(item: dict[str, Any]) -> str:
     return f"{item.get('risk_code', '')} · {page_text} · {item['evidence_id'][:8]}"
 
 
-def review_targets(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    """Everything a reviewer may rule on: each risk, and each unresolved conflict."""
+# The neutral ``kind`` the domain projection reports, in reviewer-facing Chinese.
+TARGET_KIND_LABELS = {
+    "verified_risk": "已验证风险",
+    "pending_risk": "待复核风险",
+    "rejected_risk": "已驳回风险",
+}
 
-    targets: list[dict[str, Any]] = []
-    for bucket, label in (
-        ("verified_risks", "已验证风险"),
-        ("pending_risks", "待复核风险"),
-        ("rejected_risks", "已驳回风险"),
-    ):
-        for risk in payload.get(bucket) or []:
-            targets.append(
-                {
-                    "target_id": risk["risk_id"],
-                    "kind": label,
-                    "title": f"{risk.get('risk_code', '')} · {risk_level_label(risk.get('level'))}",
-                    "machine_status": risk.get("verification_status", ""),
-                    "detail": risk.get("conclusion", ""),
-                    "evidence_ids": [item["evidence_id"] for item in risk.get("evidence") or []],
-                }
-            )
-    for conflict in conflicts(payload):
-        if conflict.get("status") == "resolved":
-            continue
-        targets.append(
+
+def review_targets(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """Everything a reviewer may rule on, labelled for the console.
+
+    Which items are reviewable is decided once, in
+    ``ipo_risk.runtime.review_projection``, and shared with the review API.
+    This wrapper only adds display strings, so the two surfaces can never
+    disagree about what was open for review.
+    """
+
+    labelled: list[dict[str, Any]] = []
+    for target in _review_targets(payload):
+        if target["kind"] == "conflict":
+            kind = f"冲突 · {RESOLUTION_LABELS.get(target['machine_status'], target['machine_status'])}"
+            title = " ↔ ".join(target["involved_agents"])
+        else:
+            kind = TARGET_KIND_LABELS[target["kind"]]
+            title = f"{target['risk_code']} · {risk_level_label(target['risk_level'])}"
+        labelled.append(
             {
-                "target_id": conflict["conflict_id"],
-                "kind": f"冲突 · {RESOLUTION_LABELS.get(conflict.get('status', ''), conflict.get('status', ''))}",
-                "title": " ↔ ".join(conflict.get("involved_agents", [])),
-                "machine_status": conflict.get("status", ""),
-                "detail": conflict.get("summary", ""),
-                "evidence_ids": list(conflict.get("evidence_ids") or []),
+                "target_id": target["target_id"],
+                "kind": kind,
+                "title": title,
+                "machine_status": target["machine_status"],
+                "detail": target["detail"],
+                "evidence_ids": target["evidence_ids"],
             }
         )
-    return targets
+    return labelled
 
 
 def machine_vs_human_rows(
