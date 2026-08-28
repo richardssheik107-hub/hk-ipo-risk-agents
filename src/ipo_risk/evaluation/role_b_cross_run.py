@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 from collections.abc import Mapping
 from pathlib import Path
@@ -62,12 +63,42 @@ def _load_redemption_evidence_rows(path: Path) -> list[dict[str, str]]:
         ]
 
 
+def _payload_fingerprint(field: str, value: Any) -> Any:
+    """Return a diagnostic value without persisting structured response text."""
+
+    if field == "evidence_ids" and isinstance(value, list):
+        return [str(item) for item in value]
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+
+    canonical = json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    summary: dict[str, Any] = {
+        "type": type(value).__name__,
+        "sha256": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
+    }
+    if isinstance(value, str):
+        summary.update({"present": bool(value), "character_count": len(value)})
+    elif isinstance(value, (list, tuple, set, dict)):
+        summary["item_count"] = len(value)
+    return summary
+
+
 def _changed_fields(left: Mapping[str, Any], right: Mapping[str, Any]) -> list[dict[str, Any]]:
     changes: list[dict[str, Any]] = []
     for field in sorted(set(left) | set(right)):
         if left.get(field) != right.get(field):
             changes.append(
-                {"field": field, "run_a": left.get(field), "run_b": right.get(field)}
+                {
+                    "field": field,
+                    "run_a": _payload_fingerprint(field, left.get(field)),
+                    "run_b": _payload_fingerprint(field, right.get(field)),
+                }
             )
     return changes
 
@@ -197,9 +228,10 @@ def compare_cross_run(
         else "UNKNOWN"
     )
     return {
-        "audit_version": "v046_cross_run_stability_v1",
+        "audit_version": "v046_cross_run_stability_v2",
         "network_calls": 0,
         "licensed_text_persisted": False,
+        "raw_structured_payload_persisted": False,
         "task_name": _TASK,
         "case_count": len(comparisons),
         "official_redemption_risk_unit_count": len(rows_a),
