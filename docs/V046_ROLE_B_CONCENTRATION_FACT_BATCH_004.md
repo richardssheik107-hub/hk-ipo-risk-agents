@@ -54,6 +54,27 @@ The replay runner forbids `shadow` together with `--replay-journal`; therefore
 formal offline/shadow/gated monotonicity is recorded as `NOT_PROVEN` for this
 zero-network replay rather than reported as a false PASS.
 
+## Fresh checkpoint
+
+One committed-code fresh fixed-10 checkpoint was run after the deterministic
+Gate passed. It was a measurement, not a retry-until-pass loop.
+
+```text
+offline M1/M2 = 8/30, 12/48
+shadow M1/M2  = 8/30, 12/48
+gated M1/M2   = 10/30, 15/48
+monotonicity  = PASS
+structured valid = 37/40
+transport failures = 0
+scope rejections = 0
+fresh journal hash = fb7e1504391ec11483ac24968db443448295ed0d752bff3efb2d91d329ef258e
+```
+
+Compared with the previous fresh checkpoint (`9/30`, `13/48`), this is +1 M1
+unit and +2 M2 units. The gap to the fixed journal (`12/30`, `17/48`) remains
+classified as runtime LLM/Evidence variance; it does not invalidate the
+deterministic concentration fix.
+
 ## Validation
 
 ```text
