@@ -5,7 +5,11 @@ from decimal import Decimal
 
 import pytest
 
-from ipo_risk.extraction import ExtractionStatus, FinancialEvidenceExtractor
+from ipo_risk.extraction import (
+    ExtractionStatus,
+    FinancialEvidenceExtractor,
+    TableAwareV03FinancialFactExtractor,
+)
 from ipo_risk.schemas import DocumentChunk, Evidence
 
 
@@ -116,6 +120,59 @@ def test_extracts_latest_operating_cash_flow_and_period_length() -> None:
     assert result.normalized_value == Decimal("-83918")
     assert result.period_end == date(2024, 3, 31)
     assert result.period_months == 3
+
+
+def test_chinese_word_periods_and_explicit_note_column_form_compatible_pair() -> None:
+    header = (
+        "截至十二月三十一日止年度\n"
+        "二零一七年\n二零一八年\n二零一九年\n附註\n"
+        "千港元\n千港元\n千港元\n"
+    )
+    cash = chunk(
+        header
+        + "年末現金及現金等價物\n21\n(357)\n(6,998)\n9,529",
+        page=20,
+    )
+    flow = chunk(
+        header
+        + "經營所得╱（所用）現金淨額\n74,086\n31,362\n(58,342)",
+        page=21,
+    )
+    candidates = [evidence(cash), evidence(flow)]
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        candidates,
+        candidates,
+        {cash.chunk_id: cash, flow.chunk_id: flow},
+    )
+
+    assert result.cash_and_cash_equivalents.status == ExtractionStatus.EXTRACTED
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("9529")
+    assert result.cash_and_cash_equivalents.period_end == date(2019, 12, 31)
+    assert result.cash_and_cash_equivalents.metadata["ignored_note_reference"] == "21"
+    assert result.operating_cash_flow.status == ExtractionStatus.EXTRACTED
+    assert result.operating_cash_flow.normalized_value == Decimal("-58342")
+    assert result.operating_cash_flow.period_end == date(2019, 12, 31)
+    assert result.operating_cash_flow.period_months == 12
+    assert result.cash_and_cash_equivalents.metadata["pair_selection"] == (
+        "latest_common_compatible_period"
+    )
+
+
+def test_extra_leading_value_without_note_header_remains_fail_closed() -> None:
+    source = chunk(
+        "截至十二月三十一日止年度\n"
+        "二零一七年\n二零一八年\n二零一九年\n千港元\n"
+        "年末現金及現金等價物\n21\n(357)\n(6,998)\n9,529"
+    )
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        [evidence(source)], [], {source.chunk_id: source}
+    ).cash_and_cash_equivalents
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "period_value_column_count_mismatch" in result.issues
+    assert result.metadata["ignored_note_reference"] is None
 
 
 def test_prefers_specific_cash_flow_reconciliation_label_over_earlier_broad_row() -> None:
