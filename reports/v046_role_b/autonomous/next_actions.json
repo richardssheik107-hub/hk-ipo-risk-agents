@@ -1,8 +1,9 @@
 {
   "version": "v046_autonomous_next_actions_v1",
   "actions": [
-    "audit bounded parser-preservation failures on Development only",
-    "do not perform a broad Parser rewrite",
+    "audit deterministic fact conversion on already-consumed Development Evidence",
+    "keep retrieval candidate misses separate from extraction fixes",
+    "do not modify Parser without a proven preservation failure",
     "keep concentration severity-policy mismatch deferred",
     "do not open Validation until all 79 Development pass the B gate"
   ]
