@@ -183,6 +183,32 @@ snippet 行在该页出现多于一次即判 ambiguous 并记录 `matched_page_l
 落回 parser 的 `page_text_union` 时按页级粒度标注，两者都不得冒充精确 snippet 框。
 PDF 与运行时记录的 SHA-256 不一致则整案拒绝渲染。
 
+## 9.1 演示静态备份与回放
+
+把一次已记录的矩阵运行打包成自带哈希的离线备份（**不联网、不需要凭证、不需要 PDF**）：
+
+```bash
+python scripts/build_v045_demo_bundle.py \
+  --source-dir reports/v045_role_e_ai_final \
+  --output-dir reports/v045_demo_bundle
+```
+
+产出 `demo_manifest.json`（逐文件 SHA-256）与 `DEMO_SCRIPT.md`（按真实产物生成的演示脚本，
+包含必须照实说的通道缺失、Gate 状态与「未复核 ≠ 已认可」）。
+
+上台前在演示机上先校验，不通过就不要演：
+
+```bash
+python scripts/build_v045_demo_bundle.py --output-dir reports/v045_demo_bundle --verify
+```
+
+界面侧栏「Demo replay」载入案例即可回放；顶部固定显示回放标识与来源运行的 config、
+code_base_sha、招股书 SHA-256。回放的 Evidence 原页用的是导出的截图产物并标注粒度与图像哈希；
+导出拒绝过的 Evidence 在回放里同样没有图，不会用别的页面顶替。
+默认目录 `reports/v045_demo_bundle`，可用 `IPO_RISK_DEMO_BUNDLE` 覆盖。
+
+回放不重跑分析，也不会产生那次运行没有产生的结论；演示时必须说明这是已记录运行。
+
 ## 10. One-shot Validation
 
 只有 B Full Development 通过且完整 freeze 后：

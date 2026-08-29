@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import date
 from html import escape
+from pathlib import Path
 import json
+import os
 
 import streamlit as st
 
@@ -56,6 +58,11 @@ from competition_runtime_view import (
 )
 from evidence_viewer import render_evidence_viewer
 from human_review_ui import render_human_review
+from ipo_risk.runtime.demo_replay import (
+    available_recorded_cases,
+    load_recorded_case,
+    replay_screenshots,
+)
 from ipo_risk.runtime.review_projection import resolve_identity
 from pipeline_stages import resolve_stages
 from presenters import (
@@ -67,14 +74,22 @@ from presenters import (
     temporary_pdf,
     validate_pdf_upload,
 )
+from ipo_risk.schemas import IPOAnalysisResult
 from ipo_risk.core.config import load_settings
 from ipo_risk.services.human_review_service import HumanReviewService
 from ipo_risk.services.analysis_service import IPOAnalysisService
 
 
+# Where the offline demonstration bundle is looked for. A bundle is a recorded
+# run copied by scripts/build_v045_demo_bundle.py; replaying it needs no network,
+# no provider credentials and no prospectus PDF.
+DEMO_BUNDLE_ENV = "IPO_RISK_DEMO_BUNDLE"
+DEFAULT_DEMO_BUNDLE = Path("reports/v045_demo_bundle")
+
 SCENARIO_COMPETITION_OFFLINE = "v0.4.5 比赛版（离线）"
 SCENARIO_COMPETITION_AI = "v0.4.5 比赛版（AI）"
 SCENARIO_PREDICTOR_FAILURE = "预测器故障降级演示"
+SCENARIO_REPLAY = "已记录运行回放"
 SCENARIO_V04_OFFLINE = "v0.4 离线模式 + Final Supervisor"
 SCENARIO_V04_OFFLINE_TABLE = "v0.4 离线模式（表格）+ Final Supervisor"
 SCENARIO_V04_AI_TABLE = "v0.4 AI 模式（表格）+ Final Supervisor"
@@ -104,6 +119,76 @@ def _clear_result() -> None:
     st.session_state.pop("analysis_result", None)
     st.session_state.pop("analysis_scenario", None)
     st.session_state.pop("prospectus_bytes", None)
+    # A replay must never outlive the result it belongs to: a stale replay
+    # banner on a live run, or stale screenshots under a new run, would both
+    # misattribute what is on screen.
+    st.session_state.pop("replay_provenance", None)
+    st.session_state.pop("replay_screenshots", None)
+
+
+def _demo_bundle_dir() -> Path:
+    configured = os.getenv(DEMO_BUNDLE_ENV)
+    return Path(configured) if configured else DEFAULT_DEMO_BUNDLE
+
+
+def _load_replay(case_dir: Path) -> None:
+    """Put one recorded case on screen, labelled as the recording it is."""
+
+    matrix_path = case_dir.parent / "summary.json"
+    matrix = {}
+    if matrix_path.is_file():
+        try:
+            matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            matrix = {}
+    case = load_recorded_case(case_dir, matrix)
+    _clear_result()
+    # Validated through the same schema the service produces, so every workspace
+    # reads a recorded run exactly as it reads a live one.
+    st.session_state["analysis_result"] = IPOAnalysisResult.model_validate(case.result)
+    st.session_state["analysis_scenario"] = SCENARIO_REPLAY
+    st.session_state["replay_provenance"] = case.provenance
+    st.session_state["replay_screenshots"] = replay_screenshots(case)
+
+
+def _render_replay_banner(provenance: dict) -> None:
+    """State, above everything, that this is a recording rather than a run."""
+
+    st.warning(
+        f"**回放模式** · {provenance.get('statement')}\n\n"
+        f"- 来源案例 `{provenance.get('case_id')}` · 分析标识 `{provenance.get('analysis_id') or '—'}`\n"
+        f"- 运行配置 `{provenance.get('config') or '—'}` · 代码版本 "
+        f"`{provenance.get('code_base_sha') or '—'}`"
+        + ("（工作树有未提交改动）" if provenance.get("code_base_dirty") else "")
+        + "\n"
+        f"- 招股书 SHA-256 `{provenance.get('prospectus_sha256') or '—'}`"
+    )
+
+
+def _render_replay_picker() -> None:
+    """The sidebar entry into the offline bundle, or why there is none."""
+
+    bundle = _demo_bundle_dir()
+    st.sidebar.markdown(
+        "<div class='sidebar-section-label'>Demo replay</div>", unsafe_allow_html=True
+    )
+    cases = available_recorded_cases(bundle)
+    if not cases:
+        st.sidebar.caption(
+            f"未找到演示备份（{bundle}）。先运行 scripts/build_v045_demo_bundle.py 生成，"
+            f"或用 {DEMO_BUNDLE_ENV} 指定目录。"
+        )
+        return
+    labels = {path.name: path for path in cases}
+    chosen = st.sidebar.selectbox("已记录运行", list(labels), key="replay_case_choice")
+    if st.sidebar.button("载入回放", width="stretch"):
+        try:
+            _load_replay(labels[chosen])
+        except (FileNotFoundError, ValueError) as exc:
+            st.sidebar.error(f"该记录无法回放：{exc}")
+        else:
+            st.rerun()
+    st.sidebar.caption("回放不联网、不调用模型、不需要 PDF；界面顶部会标明这是已记录运行。")
 
 
 def _friendly_error(message: str) -> str:
@@ -753,6 +838,7 @@ st.sidebar.markdown(
 )
 st.sidebar.caption("当前正式 Gate · PR-H 完整受治理 E2E 集成")
 clear_result_slot = st.sidebar.empty()
+_render_replay_picker()
 
 if not has_existing_result:
     st.markdown(
@@ -814,6 +900,10 @@ if submitted:
     except Exception as exc:  # UI boundary: fail visibly instead of blanking the app.
         st.error(f"分析未完成，系统已安全停止：{exc}")
     else:
+        # A fresh run replaces any replay outright; a leftover replay banner or
+        # its screenshots would describe a different run than the one on screen.
+        st.session_state.pop("replay_provenance", None)
+        st.session_state.pop("replay_screenshots", None)
         st.session_state["analysis_result"] = result
         st.session_state["analysis_scenario"] = scenario
         # Repaint immediately into the dense result workbench; the governed
@@ -821,9 +911,15 @@ if submitted:
         st.rerun()
 
 result = st.session_state.get("analysis_result")
+replay_provenance = st.session_state.get("replay_provenance")
 header_payload = result_payload(result) if result is not None else None
 with header_slot:
-    render_product_header(header_payload, runtime_label=scenario)
+    render_product_header(
+        header_payload,
+        runtime_label=SCENARIO_REPLAY if replay_provenance else scenario,
+    )
+    if replay_provenance:
+        _render_replay_banner(replay_provenance)
 if result is not None:
     if clear_result_slot.button("清除当前结果", width="stretch"):
         _clear_result()
@@ -862,7 +958,11 @@ else:
             with st.container(key="evidence_section_shell"):
                 _render_risks_and_evidence(payload)
                 st.divider()
-                render_evidence_viewer(payload, st.session_state.get("prospectus_bytes"))
+                render_evidence_viewer(
+                    payload,
+                    st.session_state.get("prospectus_bytes"),
+                    st.session_state.get("replay_screenshots"),
+                )
 
         with workspace_tabs[2]:
             with st.container(key="market_model_section_shell"):
