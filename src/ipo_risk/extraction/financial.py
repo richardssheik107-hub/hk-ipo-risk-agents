@@ -1091,7 +1091,10 @@ class FinancialEvidenceExtractor:
 
     @staticmethod
     def _period_months(line: str) -> int | None:
-        chinese = re.search(r"(?:止|為|为|共)\s*([一二三四五六七八九十0-9]+)\s*[個个]?月", line)
+        chinese = re.search(
+            r"(?:止|為|为|共)\s*([一二三四五六七八九十兩两0-9]+)\s*[個个]?月",
+            line,
+        )
         if chinese:
             values = {
                 "一": 1,
@@ -1106,6 +1109,8 @@ class FinancialEvidenceExtractor:
                 "十": 10,
                 "十一": 11,
                 "十二": 12,
+                "兩": 2,
+                "两": 2,
             }
             return values.get(chinese.group(1), int(chinese.group(1)) if chinese.group(1).isdigit() else None)
         english = re.search(r"(3|6|9|12|three|six|nine|twelve)\s+months?", line, re.I)
@@ -1578,6 +1583,10 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             "largest": None,
             "top_five": None,
         }
+        selected_label_starts: dict[str, int | None] = {
+            "largest": None,
+            "top_five": None,
+        }
         for name, occurrences in occurrence_series.items():
             selected_index: int | None = None
             selected_basis: str | None = None
@@ -1602,7 +1611,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 selected_basis = "first_nonempty_fail_closed"
 
             if selected_index is not None:
-                _, selected_values, selected_raw, selected_count, selected_local_period = (
+                selected_start, selected_values, selected_raw, selected_count, selected_local_period = (
                     occurrences[selected_index]
                 )
                 values[name] = selected_values
@@ -1610,6 +1619,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 selected_enumerated_counts[name] = selected_count
                 occurrence_selection[name] = selected_basis
                 selected_local_periods[name] = selected_local_period
+                selected_label_starts[name] = selected_start
 
             occurrence_diagnostics[name] = [
                 {
@@ -1637,6 +1647,21 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             for period in selected_local_periods.values()
             if period is not None
         }
+        selected_counts = {
+            count for count in selected_enumerated_counts.values() if count is not None
+        }
+        selected_starts = [
+            start for start in selected_label_starts.values() if start is not None
+        ]
+        shared_value_count = len(values["largest"])
+        companion_series_period_aligned = (
+            shared_value_count >= 2
+            and shared_value_count == len(values["top_five"])
+            and selected_counts == {shared_value_count}
+            and len(local_period_values) == 1
+            and len(selected_starts) == 2
+            and max(selected_starts) - min(selected_starts) <= 1200
+        )
         label_local_period_aligned = (
             len(local_period_values) == 1
             and all(period is not None for period in selected_local_periods.values())
@@ -1646,7 +1671,12 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             == len(values["largest"])
             == len(values["top_five"])
         )
-        if label_local_period_aligned:
+        if companion_series_period_aligned and not label_local_period_aligned:
+            for name, count in selected_enumerated_counts.items():
+                if count is None:
+                    selected_enumerated_counts[name] = shared_value_count
+                    occurrence_selection[name] = "companion_series_period_count"
+        if label_local_period_aligned or companion_series_period_aligned:
             periods = [next(iter(local_period_values))]
             period_source = target
             period_issues = []
@@ -1717,7 +1747,11 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 "concentration_period_selection": (
                     "aligned_label_local_period"
                     if label_local_period_aligned
-                    else "best_available_period_context"
+                    else (
+                        "companion_series_label_local_period"
+                        if companion_series_period_aligned
+                        else "best_available_period_context"
+                    )
                 ),
                 # Records that a receivable/payable share was read and discarded,
                 # so a dropped segment is auditable rather than silently absent.
