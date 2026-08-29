@@ -290,6 +290,45 @@ def test_later_out_of_range_fragment_cannot_displace_plausible_pair() -> None:
     assert result.metadata["value_candidate_count"] == 1
 
 
+def test_equivalent_undated_pair_is_retained_only_as_supporting_evidence() -> None:
+    extractor = V03FinancialFactExtractor()
+    governing = _fact(
+        period_end=date(2020, 12, 31),
+        period_months=12,
+        largest="27.0",
+        top_five="71.0",
+        page=20,
+    )
+    equivalent = _fact(
+        period_end=date(2019, 12, 31),
+        period_months=None,
+        largest="27.0",
+        top_five="71.0",
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["missing_period"],
+    )
+    contradictory = _fact(
+        period_end=date(2019, 12, 31),
+        period_months=None,
+        largest="28.0",
+        top_five="71.0",
+        page=22,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["missing_period"],
+    )
+
+    result = extractor._merge_concentration_facts(
+        "customer", [governing, equivalent, contradictory]
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end == date(2020, 12, 31)
+    assert result.evidence_ids == ["e-20", "e-21"]
+    assert result.metadata["equivalent_supporting_candidate_count"] == 1
+    assert result.metadata["equivalent_supporting_candidate_pages"] == [21]
+
+
 def test_same_date_period_length_disagreement_remains_fail_closed() -> None:
     extractor = V03FinancialFactExtractor()
     annual = _fact(

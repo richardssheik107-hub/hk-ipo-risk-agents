@@ -302,8 +302,23 @@ class _ConcentrationReconciliationMixin:
             issues.append("largest_percentage_exceeds_top_five")
 
         issues = self._dedupe_strings(issues)
+        equivalent_supporting = (
+            [
+                item
+                for item in facts
+                if item not in selected
+                and item.largest_counterparty_pct == largest
+                and item.top_five_pct == top_five
+                and not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(
+                    item.issues
+                )
+            ]
+            if largest is not None and top_five is not None
+            else []
+        )
+        evidence_facts = [*selected, *equivalent_supporting]
         evidence_ids = self._dedupe_strings(
-            [evidence_id for item in selected for evidence_id in item.evidence_ids]
+            [evidence_id for item in evidence_facts for evidence_id in item.evidence_ids]
         )
         first = value_candidates[0]
         selected_months = (
@@ -356,10 +371,10 @@ class _ConcentrationReconciliationMixin:
             status=ExtractionStatus.EXTRACTED if not issues else ExtractionStatus.NEEDS_REVIEW,
             issues=issues,
             context_chunk_ids=self._dedupe_strings(
-                [chunk_id for item in selected for chunk_id in item.context_chunk_ids]
+                [chunk_id for item in evidence_facts for chunk_id in item.context_chunk_ids]
             ),
             context_pages=self._dedupe_ints(
-                [page for item in selected for page in item.context_pages]
+                [page for item in evidence_facts for page in item.context_pages]
             ),
             metadata={
                 "candidate_count": len(facts),
@@ -390,6 +405,10 @@ class _ConcentrationReconciliationMixin:
                     )
                     for item in facts
                 ),
+                "equivalent_supporting_candidate_count": len(equivalent_supporting),
+                "equivalent_supporting_candidate_pages": [
+                    item.page for item in equivalent_supporting
+                ],
                 "reconciliation_version": _RECONCILIATION_VERSION,
                 "candidate_diagnostics": candidate_diagnostics,
             },
