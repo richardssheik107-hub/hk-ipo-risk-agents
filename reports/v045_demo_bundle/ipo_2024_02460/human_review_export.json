@@ -1,0 +1,11 @@
+{
+  "schema_version": "v045_role_e_human_review_export_v1",
+  "case_id": "ipo_2024_02460",
+  "analysis_id": "a8b0f43e-e2a1-4265-9fc8-b28976d0eef3",
+  "review_count": 0,
+  "reviewed": false,
+  "decision_counts": {},
+  "distinct_reviewers": [],
+  "statement": "No human review was recorded for this case. This is an absence of review, not an approval.",
+  "reviews": []
+}

@@ -1,0 +1,681 @@
+{
+  "composition": {
+    "summary": "Supervised 2 risks into 2 unique risks; 0 unresolved conflict(s) and 0 supervisory finding(s).",
+    "channel_states": [
+      {
+        "channel": "document",
+        "status": "available",
+        "reason": "v0.3 document supervision result passed through unchanged",
+        "blocking_gate": null
+      },
+      {
+        "channel": "market",
+        "status": "available",
+        "reason": "validated frozen PR-B Market-X Core projection",
+        "blocking_gate": null
+      },
+      {
+        "channel": "model",
+        "status": "available",
+        "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+        "blocking_gate": null
+      },
+      {
+        "channel": "rule",
+        "status": "available",
+        "reason": "deterministic rule score",
+        "blocking_gate": null
+      }
+    ],
+    "referenced_risk_ids": [],
+    "referenced_evidence_ids": [],
+    "composite_findings": [],
+    "conflicts": [],
+    "market_context": {
+      "status": "available",
+      "reason": "validated frozen PR-B Market-X Core projection",
+      "blocking_gate": null,
+      "observations": [
+        {
+          "name": "ipo_count_30d",
+          "value": 4.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "ipo_count_60d",
+          "value": 6.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "log_prior_ipo_funds_raised_30d",
+          "value": 21.322183555066594,
+          "unit": "log_currency",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "log_prior_ipo_funds_raised_60d",
+          "value": 24.34993519625966,
+          "unit": "log_currency",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "prior_ipo_funds_raised_30d_sample_count",
+          "value": 4.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "prior_ipo_funds_raised_60d_sample_count",
+          "value": 6.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_break_rate",
+          "value": 0.6666666666666666,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_return_5d",
+          "value": -0.2503000744621902,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_1d_sample_count",
+          "value": 6.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_5d_sample_count",
+          "value": 6.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_ipo_count_180d",
+          "value": 0.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_break_rate",
+          "value": null,
+          "unit": "ratio",
+          "availability": "unavailable",
+          "missing_reason": "insufficient_governed_prelisting_history",
+          "derivation": "share of governed recent same-industry IPOs closing below offer on day one",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_return_5d",
+          "value": null,
+          "unit": "ratio",
+          "availability": "unavailable",
+          "missing_reason": "insufficient_governed_prelisting_history",
+          "derivation": "mean five-session return of governed recent same-industry IPOs",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_1d_sample_count",
+          "value": 0.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_5d_sample_count",
+          "value": 0.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        }
+      ],
+      "feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+      "provenance": {
+        "feature_pipeline": "governed_pr_b_core",
+        "runtime_path": "frozen",
+        "frozen_artifact_read_attempted": true,
+        "case_id": "ipo_2024_02460",
+        "stock_code": "2460.HK",
+        "listing_date": "2024-10-23",
+        "dataset_split": "validation",
+        "artifact_content_hash": "fb7f79db7e52db1d08037989483d19f5fb8e8df1da05c6a88e034512e00d1716",
+        "cutoff_semantics": "strictly_before_target_listing_date",
+        "source_provenance": {
+          "ipo_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+          "official_bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
+          "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
+          "prior_ipo_history_start_date": "2020-02-14"
+        },
+        "extended_readiness_sha256": null,
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "market_intelligence": {
+          "market_regime": "INSUFFICIENT_DATA",
+          "risk_level": "medium",
+          "risk_scope": "market_side_only",
+          "ipo_heat": "COLD",
+          "liquidity_condition": "UNAVAILABLE",
+          "key_drivers": [
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is high_pressure.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is weak.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "uncertainties": [
+            "Market turnover is unavailable."
+          ],
+          "source_feature_ids": [
+            "ipo_count_30d",
+            "ipo_count_60d",
+            "log_prior_ipo_funds_raised_30d",
+            "log_prior_ipo_funds_raised_60d",
+            "prior_ipo_funds_raised_30d_sample_count",
+            "prior_ipo_funds_raised_60d_sample_count",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "same_industry_ipo_count_180d",
+            "same_industry_recent_break_rate",
+            "same_industry_recent_return_5d",
+            "same_industry_recent_1d_sample_count",
+            "same_industry_recent_5d_sample_count"
+          ],
+          "missing_reasons": {
+            "same_industry_recent_break_rate": "insufficient_governed_prelisting_history",
+            "same_industry_recent_return_5d": "insufficient_governed_prelisting_history"
+          },
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "market_regime_policy_version": "v04_market_regime_skill_v1"
+        },
+        "llm_market_interpretation": {
+          "summary": "The governed market context points to a cold new-issue environment. Recent listings have shown elevated break pressure and weak early returns, while overall issuance counts and funds raised remain subdued. No same-industry IPOs have occurred in the recent long horizon, so industry-level aftermarket evidence is unavailable. Broad market regime and liquidity cannot be determined, as turnover is unavailable and the deterministic regime state is insufficient. Market-side risk is judged medium.",
+          "market_regime_interpretation": "Market regime is insufficient given the data: broad market conditions cannot be determined from the supplied evidence. Same-industry listing history is effectively empty, so industry-specific precedents for pricing or aftermarket behavior are unavailable. Risk is medium on the market side only, driven by cold IPO conditions and elevated break pressure rather than broad-market signals.",
+          "ipo_heat_interpretation": "IPO heat is cold. Recent IPO break pressure is high and recent IPO returns are weak, indicating a hostile aftermarket for new listings. Prior IPO activity and funds raised over recent horizons show subdued issuance intensity, reinforcing the cold environment. Comparable same-industry IPO evidence is unavailable due to insufficient governed prelisting history, and no same-industry IPOs were observed over the recent long horizon, limiting peer-based judgment.",
+          "liquidity_interpretation": "Liquidity condition is unavailable. Market turnover data is missing, so no qualitative assessment of overall market liquidity can be made. Liquidity conditions for the new listing should be treated as uncertain pending additional evidence.",
+          "key_drivers": [
+            {
+              "statement": "Recent IPO break pressure is elevated, with a majority of recent listings trading below their offering price shortly after debut.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "statement": "Recent IPO early aftermarket returns are negative and weak, signaling soft demand and poor post-listing performance among comparable recent deals.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            },
+            {
+              "statement": "Overall IPO issuance activity is subdued, with few recent deals, consistent with a cold new-issue market.",
+              "source_feature_ids": [
+                "ipo_count_30d",
+                "ipo_count_60d",
+                "prior_ipo_funds_raised_30d_sample_count",
+                "prior_ipo_funds_raised_60d_sample_count"
+              ]
+            },
+            {
+              "statement": "No same-industry IPO activity is observed in the recent longer horizon, so industry-level listing precedents are unavailable for benchmarking.",
+              "source_feature_ids": [
+                "same_industry_ipo_count_180d",
+                "same_industry_recent_1d_sample_count",
+                "same_industry_recent_5d_sample_count"
+              ]
+            }
+          ],
+          "uncertainties": [
+            "Market turnover is unavailable, so liquidity conditions cannot be assessed.",
+            "Market regime is insufficient given the available data.",
+            "Same-industry recent break rate and return are unavailable due to insufficient governed prelisting history.",
+            "No same-industry IPOs in the recent long horizon, so industry precedent is absent rather than measured as weak."
+          ]
+        },
+        "llm_market_interpretation_status": "available"
+      }
+    },
+    "model_prediction": {
+      "status": "available",
+      "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+      "blocking_gate": null,
+      "model_name": "lightgbm",
+      "model_version": "v04_pr_f_lightgbm_explainability_v1",
+      "score": 0.3067750827673298,
+      "score_semantics": "uncalibrated_model_score",
+      "calibration_status": "uncalibrated",
+      "calibration_provenance_id": null,
+      "drivers": [
+        {
+          "feature": "market_core__log_prior_ipo_funds_raised_30d",
+          "component": "market_core",
+          "feature_value": 21.322183555066594,
+          "shap_value": 0.535619578478979,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__ipo_count_60d",
+          "component": "market_core",
+          "feature_value": 6.0,
+          "shap_value": 0.44813375623757884,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__recent_ipo_return_5d",
+          "component": "market_core",
+          "feature_value": -0.2503000744621902,
+          "shap_value": -0.39011719124472155,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__ipo_count_30d",
+          "component": "market_core",
+          "feature_value": 4.0,
+          "shap_value": 0.26138451613125624,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__log_prior_ipo_funds_raised_60d",
+          "component": "market_core",
+          "feature_value": 24.34993519625966,
+          "shap_value": -0.2415113884315871,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_return_5d",
+          "component": "market_core",
+          "feature_value": null,
+          "shap_value": -0.1745181789995021,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__prior_ipo_funds_raised_60d_sample_count",
+          "component": "market_core",
+          "feature_value": 6.0,
+          "shap_value": 0.11368006420731852,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_1d_sample_count",
+          "component": "market_core",
+          "feature_value": 0.0,
+          "shap_value": 0.037115194388944873,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__prior_ipo_funds_raised_30d_sample_count",
+          "component": "market_core",
+          "feature_value": 4.0,
+          "shap_value": 0.03171965893248466,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_5d_sample_count",
+          "component": "market_core",
+          "feature_value": 0.0,
+          "shap_value": 0.021559520836891905,
+          "direction": "increases"
+        }
+      ]
+    },
+    "uncertainty_statement": "model score is uncalibrated and must not be read as a probability; frozen model cohort evidence: the frozen LightGBM policy gave the production document features no split and no gain, so the document-plus-market and market-only arms are prediction-equivalent (not validated at this sample size); frozen model cohort evidence: the expert-gold ceiling arm differs from market-only by less than its own bootstrap interval spans, on a 19-case validation intersection (not validated at this sample size)",
+    "metadata": {
+      "classification": "SUPERVISORY_SYNTHESIS",
+      "creates_no_new_risk": true,
+      "probability_claimed": false,
+      "blocking_gates": [],
+      "unresolved_conflict_count": 5,
+      "frozen_model_evidence_available": true,
+      "final_supervision_llm": {
+        "schema_version": "v04_final_supervision_v1",
+        "prompt_version": "v04_final_supervision_v3",
+        "status": "available",
+        "outcome": "accepted",
+        "reason": "grounded supervisory synthesis available",
+        "fail_closed": false,
+        "scope_check": {
+          "status": "passed",
+          "cited_risk_ids": [
+            "0ee16791-3f11-517d-9c23-07a7494b3972",
+            "99fc3643-e475-5d1b-83f5-db6aa7aa895a"
+          ],
+          "cited_evidence_ids": [
+            "035450d8-a3df-53fd-8582-defabfeabf20",
+            "3c391ba0-70b2-58e2-ba54-3fb23f114038",
+            "875d87cb-296c-5e3e-b700-e2fca67a71dc",
+            "b8f67a9c-bd9a-5faf-adb4-0d9df3830caa",
+            "cad0036c-8ff4-51da-a34c-601a6c491afd",
+            "f2557d42-5e1a-594c-84db-5d5f70a058d4",
+            "f72f6042-0e4c-505a-802b-ff7a765f7e34",
+            "fee28867-afec-55ce-bd6d-d72fa5bea233"
+          ],
+          "cited_conflict_ids": [
+            "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+            "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+            "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+            "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+            "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth"
+          ],
+          "supplied_risk_id_count": 2,
+          "supplied_evidence_id_count": 8,
+          "supplied_conflict_id_count": 5,
+          "out_of_scope_reference_count": 0,
+          "deterministic_severity_floor": "low",
+          "overall_risk": "medium",
+          "severity_floor_respected": true,
+          "invented_number_count": 0,
+          "prediction_vocabulary_used": false,
+          "attempts": 1,
+          "scope_corrections": 0,
+          "refused_response_count": 0,
+          "first_attempt_passed": true,
+          "rejected_attempts": []
+        },
+        "call": {
+          "provider_name": "openai_responses",
+          "model_name": "ark-code-latest",
+          "prompt_version": "v04_final_supervision_v3",
+          "request_id": "021787981080905b6ab61b028b46eec1be4b86a7f38a82bcf6ac0",
+          "raw_response_hash": "42293fa67ddab3b11fcaeacfc067e1e0ec0111c2e3a99c6d67d4c59669d3f4a7",
+          "latency_ms": 21104
+        },
+        "deterministic_severity_floor": "low",
+        "judgement": {
+          "overall_risk": "medium",
+          "overall_risk_rationale": "Floor is low and the rule channel is low, but the document channel supplies two medium-level legal risks in needs_review (unsettled_risks) whose verification failed; this warrants escalation above the floor. The uncalibrated model channel cannot support a further escalation.",
+          "key_findings": [
+            {
+              "statement": "Two medium legal risks (material_litigation_compliance and redemption_rights) remain in needs_review; the verifier found the underlying assertions not established by the supplied evidence.",
+              "risk_ids": [
+                "99fc3643-e475-5d1b-83f5-db6aa7aa895a",
+                "0ee16791-3f11-517d-9c23-07a7494b3972"
+              ],
+              "evidence_ids": [
+                "3c391ba0-70b2-58e2-ba54-3fb23f114038",
+                "035450d8-a3df-53fd-8582-defabfeabf20",
+                "fee28867-afec-55ce-bd6d-d72fa5bea233"
+              ]
+            },
+            {
+              "statement": "Financial claims on continuous_loss and revenue_growth remain partially resolved with conflicting values and newly surfaced evidence routed to human review; no clean facts were established.",
+              "risk_ids": [],
+              "evidence_ids": [
+                "875d87cb-296c-5e3e-b700-e2fca67a71dc",
+                "b8f67a9c-bd9a-5faf-adb4-0d9df3830caa",
+                "f72f6042-0e4c-505a-802b-ff7a765f7e34",
+                "f2557d42-5e1a-594c-84db-5d5f70a058d4",
+                "cad0036c-8ff4-51da-a34c-601a6c491afd"
+              ]
+            },
+            {
+              "statement": "The uncalibrated model channel's strongest driver direction diverges from the document channel's reported risk picture, and this cross-channel conflict is carried forward unresolved; same-industry prelisting comparables are unavailable.",
+              "risk_ids": [],
+              "evidence_ids": []
+            }
+          ],
+          "conflict_assessments": [
+            {
+              "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+              "assessment": "Partially resolved: legal's material_litigation_compliance risk (99fc3643-e475-5d1b-83f5-db6aa7aa895a) remains needs_review; material impact, actual matter, closure status and remediation metadata are not established by the verifier."
+            },
+            {
+              "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+              "assessment": "Partially resolved: legal's redemption_rights risk (0ee16791-3f11-517d-9c23-07a7494b3972) remains needs_review; the verifier states the holder is not supported by the evidence."
+            },
+            {
+              "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+              "assessment": "Partially resolved: financial's continuous_loss claim reported conflicting values that could not be mapped to clean facts, and re-retrieved evidence is routed to human review; nothing is settled."
+            },
+            {
+              "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth",
+              "assessment": "Partially resolved: financial's revenue_growth claim reported conflicting values that could not be mapped to clean facts, and re-retrieved evidence is routed to human review; nothing is settled."
+            },
+            {
+              "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+              "assessment": "Unresolved: the uncalibrated model's strongest driver direction disagrees with the document channel, and no document re-retrieval can settle this cross-channel divergence; it is carried forward unsetted."
+            }
+          ],
+          "uncertainties": [
+            "Model score is uncalibrated and cohort evidence is not validated at this sample size; arms are prediction-equivalent with no split or gain on document features.",
+            "Same-industry prelisting break rate and 5-day return are unavailable due to insufficient governed prelisting history; same-industry sample counts are zero.",
+            "Five conflicts remain partially resolved or unresolved, including the cross-channel document-model divergence carried to this supervisor unsetted.",
+            "Verification status for both supplied legal risk IDs is needs_review, with verifier noting manual legal judgment required for material_litigation_compliance."
+          ],
+          "recheck_required": true,
+          "recheck_targets": [
+            {
+              "target": "legal material_litigation_compliance risk item 99fc3643-e475-5d1b-83f5-db6aa7aa895a",
+              "reason": "Verifier left material impact, matter, closure status and remediation metadata unestablished; a bounded human legal review could settle the medium risk.",
+              "risk_ids": [
+                "99fc3643-e475-5d1b-83f5-db6aa7aa895a"
+              ]
+            },
+            {
+              "target": "legal redemption_rights risk item 0ee16791-3f11-517d-9c23-07a7494b3972",
+              "reason": "Verifier states the holder is not supported by evidence; a bounded re-check of the redemption rights evidence could settle the medium risk.",
+              "risk_ids": [
+                "0ee16791-3f11-517d-9c23-07a7494b3972"
+              ]
+            }
+          ],
+          "final_explanation": "All four channels are available and the deterministic rule level is low, but the document channel carries two medium legal risks in needs_review and five conflicts remain partially resolved or unresolved, including a cross-channel model-document divergence. The model score is uncalibrated and its cohort validation is not established at this sample size, so it cannot justify either escalation or downgrade. Overall risk is medium, driven by the unsettled medium legal risks; a bounded recheck of those named targets plus the financial claims routed to human review could change the judgement."
+        }
+      },
+      "conflict_status_counts": {
+        "detected": 0,
+        "rechecking": 0,
+        "resolved": 0,
+        "partially_resolved": 4,
+        "unresolved": 1
+      }
+    }
+  },
+  "llm_synthesis": {
+    "status": "available",
+    "outcome": "accepted",
+    "reason": "grounded supervisory synthesis available",
+    "fail_closed": false,
+    "scope_check": {
+      "status": "passed",
+      "cited_risk_ids": [
+        "0ee16791-3f11-517d-9c23-07a7494b3972",
+        "99fc3643-e475-5d1b-83f5-db6aa7aa895a"
+      ],
+      "cited_evidence_ids": [
+        "035450d8-a3df-53fd-8582-defabfeabf20",
+        "3c391ba0-70b2-58e2-ba54-3fb23f114038",
+        "875d87cb-296c-5e3e-b700-e2fca67a71dc",
+        "b8f67a9c-bd9a-5faf-adb4-0d9df3830caa",
+        "cad0036c-8ff4-51da-a34c-601a6c491afd",
+        "f2557d42-5e1a-594c-84db-5d5f70a058d4",
+        "f72f6042-0e4c-505a-802b-ff7a765f7e34",
+        "fee28867-afec-55ce-bd6d-d72fa5bea233"
+      ],
+      "cited_conflict_ids": [
+        "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+        "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+        "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+        "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+        "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth"
+      ],
+      "supplied_risk_id_count": 2,
+      "supplied_evidence_id_count": 8,
+      "supplied_conflict_id_count": 5,
+      "out_of_scope_reference_count": 0,
+      "deterministic_severity_floor": "low",
+      "overall_risk": "medium",
+      "severity_floor_respected": true,
+      "invented_number_count": 0,
+      "prediction_vocabulary_used": false,
+      "attempts": 1,
+      "scope_corrections": 0,
+      "refused_response_count": 0,
+      "first_attempt_passed": true,
+      "rejected_attempts": []
+    },
+    "call": {
+      "provider_name": "openai_responses",
+      "model_name": "ark-code-latest",
+      "prompt_version": "v04_final_supervision_v3",
+      "request_id": "021787981080905b6ab61b028b46eec1be4b86a7f38a82bcf6ac0",
+      "raw_response_hash": "42293fa67ddab3b11fcaeacfc067e1e0ec0111c2e3a99c6d67d4c59669d3f4a7",
+      "latency_ms": 21104
+    },
+    "deterministic_severity_floor": "low",
+    "judgement": {
+      "overall_risk": "medium",
+      "overall_risk_rationale": "Floor is low and the rule channel is low, but the document channel supplies two medium-level legal risks in needs_review (unsettled_risks) whose verification failed; this warrants escalation above the floor. The uncalibrated model channel cannot support a further escalation.",
+      "key_findings": [
+        {
+          "statement": "Two medium legal risks (material_litigation_compliance and redemption_rights) remain in needs_review; the verifier found the underlying assertions not established by the supplied evidence.",
+          "risk_ids": [
+            "99fc3643-e475-5d1b-83f5-db6aa7aa895a",
+            "0ee16791-3f11-517d-9c23-07a7494b3972"
+          ],
+          "evidence_ids": [
+            "3c391ba0-70b2-58e2-ba54-3fb23f114038",
+            "035450d8-a3df-53fd-8582-defabfeabf20",
+            "fee28867-afec-55ce-bd6d-d72fa5bea233"
+          ]
+        },
+        {
+          "statement": "Financial claims on continuous_loss and revenue_growth remain partially resolved with conflicting values and newly surfaced evidence routed to human review; no clean facts were established.",
+          "risk_ids": [],
+          "evidence_ids": [
+            "875d87cb-296c-5e3e-b700-e2fca67a71dc",
+            "b8f67a9c-bd9a-5faf-adb4-0d9df3830caa",
+            "f72f6042-0e4c-505a-802b-ff7a765f7e34",
+            "f2557d42-5e1a-594c-84db-5d5f70a058d4",
+            "cad0036c-8ff4-51da-a34c-601a6c491afd"
+          ]
+        },
+        {
+          "statement": "The uncalibrated model channel's strongest driver direction diverges from the document channel's reported risk picture, and this cross-channel conflict is carried forward unresolved; same-industry prelisting comparables are unavailable.",
+          "risk_ids": [],
+          "evidence_ids": []
+        }
+      ],
+      "conflict_assessments": [
+        {
+          "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+          "assessment": "Partially resolved: legal's material_litigation_compliance risk (99fc3643-e475-5d1b-83f5-db6aa7aa895a) remains needs_review; material impact, actual matter, closure status and remediation metadata are not established by the verifier."
+        },
+        {
+          "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+          "assessment": "Partially resolved: legal's redemption_rights risk (0ee16791-3f11-517d-9c23-07a7494b3972) remains needs_review; the verifier states the holder is not supported by the evidence."
+        },
+        {
+          "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+          "assessment": "Partially resolved: financial's continuous_loss claim reported conflicting values that could not be mapped to clean facts, and re-retrieved evidence is routed to human review; nothing is settled."
+        },
+        {
+          "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth",
+          "assessment": "Partially resolved: financial's revenue_growth claim reported conflicting values that could not be mapped to clean facts, and re-retrieved evidence is routed to human review; nothing is settled."
+        },
+        {
+          "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+          "assessment": "Unresolved: the uncalibrated model's strongest driver direction disagrees with the document channel, and no document re-retrieval can settle this cross-channel divergence; it is carried forward unsetted."
+        }
+      ],
+      "uncertainties": [
+        "Model score is uncalibrated and cohort evidence is not validated at this sample size; arms are prediction-equivalent with no split or gain on document features.",
+        "Same-industry prelisting break rate and 5-day return are unavailable due to insufficient governed prelisting history; same-industry sample counts are zero.",
+        "Five conflicts remain partially resolved or unresolved, including the cross-channel document-model divergence carried to this supervisor unsetted.",
+        "Verification status for both supplied legal risk IDs is needs_review, with verifier noting manual legal judgment required for material_litigation_compliance."
+      ],
+      "recheck_required": true,
+      "recheck_targets": [
+        {
+          "target": "legal material_litigation_compliance risk item 99fc3643-e475-5d1b-83f5-db6aa7aa895a",
+          "reason": "Verifier left material impact, matter, closure status and remediation metadata unestablished; a bounded human legal review could settle the medium risk.",
+          "risk_ids": [
+            "99fc3643-e475-5d1b-83f5-db6aa7aa895a"
+          ]
+        },
+        {
+          "target": "legal redemption_rights risk item 0ee16791-3f11-517d-9c23-07a7494b3972",
+          "reason": "Verifier states the holder is not supported by evidence; a bounded re-check of the redemption rights evidence could settle the medium risk.",
+          "risk_ids": [
+            "0ee16791-3f11-517d-9c23-07a7494b3972"
+          ]
+        }
+      ],
+      "final_explanation": "All four channels are available and the deterministic rule level is low, but the document channel carries two medium legal risks in needs_review and five conflicts remain partially resolved or unresolved, including a cross-channel model-document divergence. The model score is uncalibrated and its cohort validation is not established at this sample size, so it cannot justify either escalation or downgrade. Overall risk is medium, driven by the unsettled medium legal risks; a bounded recheck of those named targets plus the financial claims routed to human review could change the judgement."
+    },
+    "agent_result": {
+      "case_id": "ipo_2024_02460",
+      "run_id": "798a33cd-a52f-5827-a375-59f68e51dc52",
+      "agent_name": "llm_final_supervisor",
+      "status": "available",
+      "risk_ids": [],
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "provider_name": "openai_responses",
+      "model_name": null,
+      "prompt_version": "v04_final_supervision_v3",
+      "warnings": [],
+      "metadata": {
+        "task": "synthesise governed channels into a supervisory judgement",
+        "deterministic_severity_floor": "low",
+        "conflict_count": 5,
+        "creates_no_new_risk": true,
+        "probability_claimed": false
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+name: Team demo runtime
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  offline-final-three-replay:
+    name: Offline final-three replay is clone-ready
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev,retrieval-research]"
+      - name: Verify canonical replay and release evidence
+        run: python scripts/check_v045_team_clone_ready.py
+      - name: Verify bundle hashes independently
+        run: python scripts/build_v045_demo_bundle.py --output-dir reports/v045_demo_bundle --verify
+      - name: Replay and pipeline contracts
+        run: >-
+          pytest -q
+          tests/unit/test_v045_demo_replay.py
+          tests/unit/test_v045_team_clone_ready.py
+          tests/unit/test_competition_ui.py

@@ -1,0 +1,184 @@
+{
+  "policy_version": "v04_e_conflict_policy_v1",
+  "conflict_count": 7,
+  "conflicts": [
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "legal",
+        "verifier"
+      ],
+      "risk_ids": [
+        "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+      ],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:agent_verifier_disagreement",
+        "risk_code:material_litigation_compliance"
+      ],
+      "summary": "legal produced 1 material_litigation_compliance risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+        "3e93f271-5a36-5924-aadc-1d99c51471be",
+        "eb278ae4-1d79-5064-bf30-ae73ff921376"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "legal",
+        "verifier"
+      ],
+      "risk_ids": [
+        "14ccf843-0a53-525c-95b7-b2f103f6f248"
+      ],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:agent_verifier_disagreement",
+        "risk_code:redemption_rights"
+      ],
+      "summary": "legal produced 1 redemption_rights risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9",
+        "8afccf34-f0d3-580a-b4f9-a6ddd77eee9e",
+        "a5f61ec2-42f7-5215-ac51-572c3954c5f9"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 2 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "business",
+        "document_supervisor"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:precommercial_product",
+        "diagnostic_code:conflicting_values"
+      ],
+      "summary": "business held 9 bounded Evidence item(s) for precommercial_product and reported conflicting_values, while the document channel asserts nothing about precommercial_product: Commercialization or revenue facts conflict.",
+      "evidence_ids": [
+        "9f3a3673-deeb-5cbc-90d3-83714ae72f07",
+        "66e4689a-fa58-50ac-8561-dab2b385e791",
+        "0bff4571-a092-546f-b924-98f09c477301",
+        "3afd419f-9c96-58db-84be-efbf2cf65335",
+        "65af1b06-37da-54d1-8275-df3a2daf958e",
+        "e99aefdc-85ab-5c24-8d8b-42bed2111723",
+        "cd3038ac-addd-5716-859a-257af1448f24",
+        "d6d31fd6-ed62-578e-92af-59d29affadd2",
+        "2e852299-5679-545c-bda1-e4a13cab95b5"
+      ],
+      "status": "unresolved",
+      "resolution_note": "targeted re-retrieval found no in-scope Evidence beyond what the agent already held, so the gap is in extraction rather than retrieval; the machine asserts no risk for this code",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "document_supervisor",
+        "financial"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:continuous_loss",
+        "diagnostic_code:conflicting_values"
+      ],
+      "summary": "financial held 3 bounded Evidence item(s) for continuous_loss and reported conflicting_values, while the document channel asserts nothing about continuous_loss: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "d53e14d4-b195-5709-87d0-4d4aa023b170",
+        "3d054086-c4d4-5f8a-9f67-42a3bbb448d1",
+        "34257bf3-5045-548e-8239-36cae77f4cd0"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "document_supervisor",
+        "financial"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:customer_concentration",
+        "diagnostic_code:needs_review"
+      ],
+      "summary": "financial held 1 bounded Evidence item(s) for customer_concentration and reported needs_review, while the document channel asserts nothing about customer_concentration: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "c32c80fc-1992-5344-a3cc-bc6f2b063585"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "document_supervisor",
+        "financial"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:revenue_growth",
+        "diagnostic_code:conflicting_values"
+      ],
+      "summary": "financial held 2 bounded Evidence item(s) for revenue_growth and reported conflicting_values, while the document channel asserts nothing about revenue_growth: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "73bf1877-803b-5bbd-8121-42da74c745dc",
+        "ea097835-4165-555a-b684-68fac0f8fe62"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "involved_agents": [
+        "document_supervisor",
+        "frozen_model_channel"
+      ],
+      "risk_ids": [
+        "69066732-91e7-5238-850d-b162104dcab9"
+      ],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:document_model_divergence",
+        "model_feature:market_core__log_prior_ipo_funds_raised_30d",
+        "model_driver_direction:decreases"
+      ],
+      "summary": "The frozen model's strongest driver market_core__log_prior_ipo_funds_raised_30d decreases risk while the document channel reports 1 high or critical verified document risk(s); the uncalibrated score direction disagrees with the document.",
+      "evidence_ids": [],
+      "status": "unresolved",
+      "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+      "created_at": "2026-08-29T05:23:28.771231Z"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "artifact_version": "v046_role_b_batch009_fixed_journal_summary_v1",
+  "base_main": "f6f78e275075ae6a5955c6ace331a287b919ca0e",
+  "branch": "feat/v046-role-b-wide-sprint-009",
+  "accepted_commit": "8743724a3509715ea3b83e4dd58f56dcf97ffe24",
+  "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "journal_hash": "8d5cb474aaf6db3dcc504b9b7f926ac5948834709d9798dd2bf11252e0dce5e2",
+  "network_calls": 0,
+  "baseline": {
+    "offline_m1": "9/30",
+    "offline_m2": "15/48",
+    "gated_m1": "13/30",
+    "gated_m2": "20/48"
+  },
+  "accepted_legal_lifecycle": {
+    "offline_m1": "9/30",
+    "offline_m2": "15/48",
+    "gated_m1": "14/30",
+    "gated_m2": "21/48",
+    "redemption_m1": "5/8",
+    "decision": "ACCEPT"
+  },
+  "rejected_ranked_table": {
+    "gated_m1": "14/30",
+    "gated_m2": "21/48",
+    "supplier_correct": "3/9",
+    "supplier_existence_f1_before": 0.875,
+    "supplier_existence_f1_after": 0.8,
+    "decision": "REJECT_AND_FULLY_REVERT"
+  },
+  "governance": {
+    "development_only": true,
+    "validation_opened": false,
+    "blind_2025_outcome_accessed": false,
+    "existing_gold_modified": false,
+    "runtime_received_gold": false,
+    "raw_provider_response_persisted": false
+  }
+}

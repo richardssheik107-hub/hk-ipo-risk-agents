@@ -1,0 +1,391 @@
+{
+  "schema_version": "v045_role_e_demo_bundle_v1",
+  "status": "bundled",
+  "source_dir_name": "v045_role_e_ai_v3_final",
+  "matrix_identity": {
+    "config": "configs/v045_competition_ai.yaml",
+    "demo_version": "v045_role_e_demo_v2",
+    "code_base_sha": "3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d",
+    "code_base_dirty": false,
+    "cases_manifest_sha256": "e07b8ff5fc64da01c82641b513949938147bd8089ff06f0642da13523eea3659",
+    "config_sha256": "eb5ad1034dadff08274227bd844c7c6444cbeb73d0a0d7f19aabbb0547a221d8"
+  },
+  "case_count": 3,
+  "replayable_case_count": 3,
+  "file_count": 66,
+  "total_byte_size": 7528749,
+  "requires_network": false,
+  "requires_provider_credentials": false,
+  "requires_prospectus_pdf": false,
+  "statement": "Every file here was written by the recorded run. Opening this bundle replays that run; it does not re-analyse anything, and it cannot produce a result the run did not already produce.",
+  "cases": [
+    {
+      "case_id": "ipo_2024_01318",
+      "company_name": "毛戈平化妆品股份有限公司",
+      "stock_code": "1318.HK",
+      "status": "completed",
+      "verified_risk_count": 0,
+      "pending_risk_count": 2,
+      "screenshot_count": 6,
+      "screenshot_manifest_status": "rendered",
+      "replayable": true,
+      "missing_files": []
+    },
+    {
+      "case_id": "ipo_2024_02410",
+      "company_name": "浙江同源康医药股份有限公司",
+      "stock_code": "2410.HK",
+      "status": "completed",
+      "verified_risk_count": 1,
+      "pending_risk_count": 2,
+      "screenshot_count": 8,
+      "screenshot_manifest_status": "rendered",
+      "replayable": true,
+      "missing_files": []
+    },
+    {
+      "case_id": "ipo_2024_02460",
+      "company_name": "华润饮料控股有限公司",
+      "stock_code": "2460.HK",
+      "status": "completed",
+      "verified_risk_count": 0,
+      "pending_risk_count": 2,
+      "screenshot_count": 3,
+      "screenshot_manifest_status": "rendered",
+      "replayable": true,
+      "missing_files": []
+    }
+  ],
+  "files": [
+    {
+      "logical_path": "ipo_2024_01318/analysis_result.json",
+      "sha256": "fd1c447f407d7f6e569b27fc1019be388a007d5ea777b5b38e5b964cbc134dbb",
+      "byte_size": 748336
+    },
+    {
+      "logical_path": "ipo_2024_01318/final_supervision.json",
+      "sha256": "bf31c093335e7f6760c1c4b58506c501a4a35e2acdc67620f8c4d423a5551003",
+      "byte_size": 32785
+    },
+    {
+      "logical_path": "ipo_2024_01318/conflicts.json",
+      "sha256": "95e176ffcf8c6f97c6ee7feef7a0a5b680fd8b1ec65a6c39904314f718d0172e",
+      "byte_size": 6104
+    },
+    {
+      "logical_path": "ipo_2024_01318/rechecks.json",
+      "sha256": "1aac13965e3b245dc58fc5178f0c81baf795652995fd187307082a00dd9c1896",
+      "byte_size": 4261
+    },
+    {
+      "logical_path": "ipo_2024_01318/trace_sidecar.json",
+      "sha256": "2b08a215c83165d3e16c593c22f2edab2c5a0b03f945782cca315f9adff840ee",
+      "byte_size": 131121
+    },
+    {
+      "logical_path": "ipo_2024_01318/traceability.json",
+      "sha256": "b51cfd8f3a89ff4f7fbb625d8045069c691da755f861cfcb53899cee92c601f7",
+      "byte_size": 398
+    },
+    {
+      "logical_path": "ipo_2024_01318/prospectus_verification.json",
+      "sha256": "de6ac71aa641c17853502f336db37e80551dee2b5fd50539e6c12fd5608fa294",
+      "byte_size": 399
+    },
+    {
+      "logical_path": "ipo_2024_01318/agent_reasoning_log.json",
+      "sha256": "c4b6c094e2b48ce8d821e0c93cd7744e0810f918cb7fde3aaa87c83915b6bc11",
+      "byte_size": 44771
+    },
+    {
+      "logical_path": "ipo_2024_01318/agent_reasoning_log.md",
+      "sha256": "68e2b84abb0610a56483501d3d8020b59cb9757dc11094337798f8a5a5c3624b",
+      "byte_size": 12332
+    },
+    {
+      "logical_path": "ipo_2024_01318/case_report.md",
+      "sha256": "7a6a4fc27cf3eb01cd7064bd8ca4fb807953b9d2e17e92594caccc00fafa3a92",
+      "byte_size": 4329
+    },
+    {
+      "logical_path": "ipo_2024_01318/gate_e1_evidence.json",
+      "sha256": "afdb6255acbd03570c628368d9e4b3055cc6a23218f8431a13cb647d6e4e5053",
+      "byte_size": 2263
+    },
+    {
+      "logical_path": "ipo_2024_01318/evidence_export.json",
+      "sha256": "b9a69a930ffe194e3e2a8dc0ee25ac4406089fa0c43a88a27fd57aa60cac4582",
+      "byte_size": 8038
+    },
+    {
+      "logical_path": "ipo_2024_01318/evidence_export.csv",
+      "sha256": "d934398ae5a391b097c1befa3bc344a751c589834c536a633aec4120b6269f73",
+      "byte_size": 5391
+    },
+    {
+      "logical_path": "ipo_2024_01318/human_review_export.json",
+      "sha256": "d491742601b75fae44c6531b1c34e9793188bd3a80cbd0c97d5c7d35bebb3bf1",
+      "byte_size": 379
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshot_manifest.json",
+      "sha256": "deb080ceaaf90a7dc616d775703aaeb883bd74079fb464a6a50e3da5ba2b3813",
+      "byte_size": 20076
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0020_1e0bb211-ce86-5c24-a1d8-9c0c873edb8b.png",
+      "sha256": "489b982d74ea03559e97dd0bb50e02935de91dde6a40910bffd52f05e1640efc",
+      "byte_size": 241381
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0076_522d7f33-bb28-5954-a241-eb084d13cd82.png",
+      "sha256": "ea7be36c5d98597101244269b57da4e11938262094fc5f85e24f94fa52a56b27",
+      "byte_size": 305813
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0263_f08e8780-872d-5ddb-be4b-2a7a10d50be4.png",
+      "sha256": "2877dafd54a18b5c48e9b54de7b297a0dafcfb48e6b7cc48610deb990bf827f5",
+      "byte_size": 148386
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0268_046cb1a1-309f-5139-a574-59947d4d60aa.png",
+      "sha256": "d2c6e82a717fd33d6440f3e6a606ff30a0c019ea53c2f7989309ff54abebb008",
+      "byte_size": 275803
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0273_be673ef8-d819-50c4-90f7-0902bee50b2a.png",
+      "sha256": "03b46da221fd8ddc77be6d6590c3791a91e0141090d565007563b57a1e222f5f",
+      "byte_size": 269348
+    },
+    {
+      "logical_path": "ipo_2024_01318/screenshots/page0274_7a94777b-08aa-53e8-a759-fdad8487f6ec.png",
+      "sha256": "f1903110ae3bb56b073439fe2eee95bf8e6c803c921962bda920e1ecf68afeda",
+      "byte_size": 259183
+    },
+    {
+      "logical_path": "ipo_2024_02410/analysis_result.json",
+      "sha256": "4c472c6cda13dd4ebdc731575258c28826e34682ba4354fb57b02d8d707535b2",
+      "byte_size": 876085
+    },
+    {
+      "logical_path": "ipo_2024_02410/final_supervision.json",
+      "sha256": "44e04d87e1c251807c09b0f7e3a11bd4a8731ace2558e9df3029440bdc9e104d",
+      "byte_size": 33298
+    },
+    {
+      "logical_path": "ipo_2024_02410/conflicts.json",
+      "sha256": "152909218930b9e8d08561aa389b6482eb957aac67910027b10692081b18c3aa",
+      "byte_size": 8975
+    },
+    {
+      "logical_path": "ipo_2024_02410/rechecks.json",
+      "sha256": "15597eda914011495356f4a92b7c60ebca9d94cfd174df535d11b59cbbd647c4",
+      "byte_size": 5623
+    },
+    {
+      "logical_path": "ipo_2024_02410/trace_sidecar.json",
+      "sha256": "7d5f7b9dd6dbc15c85a3a6b9d1fd6083ee9e8590d8ccce8bfe11a625053daf24",
+      "byte_size": 144392
+    },
+    {
+      "logical_path": "ipo_2024_02410/traceability.json",
+      "sha256": "67c5ae81d88be66936e6e884b21391a53d470eb7653a2a1b21bd3991dc438129",
+      "byte_size": 400
+    },
+    {
+      "logical_path": "ipo_2024_02410/prospectus_verification.json",
+      "sha256": "1b62d3deb1dcf28f63bf0421b672f7fbaed4c33465af663e2b2cc5e1e7934651",
+      "byte_size": 422
+    },
+    {
+      "logical_path": "ipo_2024_02410/agent_reasoning_log.json",
+      "sha256": "c798b0bcdceb30b5bd7da30596c9e1072032f8914b1287ebc7d2b26a68bed355",
+      "byte_size": 52395
+    },
+    {
+      "logical_path": "ipo_2024_02410/agent_reasoning_log.md",
+      "sha256": "1d4f6b74dd7537c6b8167e4a35a6077b86f64879802a564c030633ef93175b73",
+      "byte_size": 14311
+    },
+    {
+      "logical_path": "ipo_2024_02410/case_report.md",
+      "sha256": "73a230c187cfdc6894117b2ed00ab656ae4321bda37c940719b3315582062329",
+      "byte_size": 5781
+    },
+    {
+      "logical_path": "ipo_2024_02410/gate_e1_evidence.json",
+      "sha256": "b51877d7c38314c7d934220a956c90bb35f8147e60824a70d8cf0f55fb831c4f",
+      "byte_size": 2721
+    },
+    {
+      "logical_path": "ipo_2024_02410/evidence_export.json",
+      "sha256": "a4aadc3c559bd3267be1ccf5cd4cfdb2c9ab02652b9357920422f80a9f515216",
+      "byte_size": 9672
+    },
+    {
+      "logical_path": "ipo_2024_02410/evidence_export.csv",
+      "sha256": "58a2e701b6620017df0151451d5c0feba1f945970f5ac48e21fbe900197e2398",
+      "byte_size": 6307
+    },
+    {
+      "logical_path": "ipo_2024_02410/human_review_export.json",
+      "sha256": "d4d52732d19c173b7a8a4b460fd6f09fbc02cf5908b0555ab562dc66972c0b46",
+      "byte_size": 379
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshot_manifest.json",
+      "sha256": "9981eed63cd3749b3c9457a67fec89432ea51bb811eb17e79342d277ec39c203",
+      "byte_size": 26118
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0107_3e93f271-5a36-5924-aadc-1d99c51471be.png",
+      "sha256": "9c2855a494d89ac579d849f66a9756b3e1b13b65755fe5aa824c483918da7142",
+      "byte_size": 335312
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0108_eb278ae4-1d79-5064-bf30-ae73ff921376.png",
+      "sha256": "df8e2d7b727b864db654357a04e83a1da2ada60dcad644dca7b17e89f6b5c2a0",
+      "byte_size": 348554
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0250_8afccf34-f0d3-580a-b4f9-a6ddd77eee9e.png",
+      "sha256": "f1479f83c78d0cd03881fa234ec8b09b6651fe8ed2bfe0f142ad9345face713a",
+      "byte_size": 310631
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0251_a5f61ec2-42f7-5215-ac51-572c3954c5f9.png",
+      "sha256": "c55c784379e1bfbf71eda987d0b578851f3804e46b043f92e399ff77100ad2dd",
+      "byte_size": 265594
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0402_03c484d9-ee14-56cf-b8e8-228a5cfe4cf0.png",
+      "sha256": "ce7e32425975d08f8b291d66394f659e709d597d8ff3819d9189de317e8d2516",
+      "byte_size": 298259
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0562_60dd7129-941a-5d23-a86a-a6cdf7467397.png",
+      "sha256": "148dbdb44152034a1bd9f9f6e708a71adb93f776c9678931d64d1627af2195fd",
+      "byte_size": 197732
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0563_67ef7838-6af2-5ebd-8a5c-7a46c39bb804.png",
+      "sha256": "023e872f2e31136d04fbbb9ae3bb3e65efe2454ad6806776e3913ae4cae721e4",
+      "byte_size": 153077
+    },
+    {
+      "logical_path": "ipo_2024_02410/screenshots/page0604_f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9.png",
+      "sha256": "f52519fb9ecb0eebdec4ba05aa01ed46170a0d1888f835abe0ab645e44e07d60",
+      "byte_size": 171995
+    },
+    {
+      "logical_path": "ipo_2024_02460/analysis_result.json",
+      "sha256": "2ac009f0ffb8ae7453728ccc74e92c0675918ba93360f830bcbb6326bb6a1fd8",
+      "byte_size": 678119
+    },
+    {
+      "logical_path": "ipo_2024_02460/final_supervision.json",
+      "sha256": "284a94a1d87e7338560074e569f57d21ce6fd8f3949bc9fe4c834877d795b901",
+      "byte_size": 35270
+    },
+    {
+      "logical_path": "ipo_2024_02460/conflicts.json",
+      "sha256": "0f5b6fffd3a8ee52caa76d06990ba48ced23b4ff55de055fc54d7cfe8808a681",
+      "byte_size": 5991
+    },
+    {
+      "logical_path": "ipo_2024_02460/rechecks.json",
+      "sha256": "2289bb0846bec8b92822788a6bc731461e2b4cca1ded7625bd794999e958b9ad",
+      "byte_size": 4189
+    },
+    {
+      "logical_path": "ipo_2024_02460/trace_sidecar.json",
+      "sha256": "5c9bb535efe02b468aea965632f491c514bc6402487cf4f1e247398ef4810796",
+      "byte_size": 133025
+    },
+    {
+      "logical_path": "ipo_2024_02460/traceability.json",
+      "sha256": "8ec903a906e3c1035c476d8577a68771bcb0b3da6f3a51962d1092c7053666b1",
+      "byte_size": 398
+    },
+    {
+      "logical_path": "ipo_2024_02460/prospectus_verification.json",
+      "sha256": "e52f1f2caed447cd5a780b2a380d569741724d6c11f33eb2c49ac1c982a1d365",
+      "byte_size": 402
+    },
+    {
+      "logical_path": "ipo_2024_02460/agent_reasoning_log.json",
+      "sha256": "c253371777f446cf164ff633473eddcc3edebde92a2cbc81e0ec158942055f3e",
+      "byte_size": 44491
+    },
+    {
+      "logical_path": "ipo_2024_02460/agent_reasoning_log.md",
+      "sha256": "27f78b4ad7f57c4873389a3b2717a9969ae9066bee18dd80fc84adfc056d2a16",
+      "byte_size": 12089
+    },
+    {
+      "logical_path": "ipo_2024_02460/case_report.md",
+      "sha256": "5f780428d689cbcf31d733897e1b25944d39810c68f78a1d7cb4698ac7415e19",
+      "byte_size": 4412
+    },
+    {
+      "logical_path": "ipo_2024_02460/gate_e1_evidence.json",
+      "sha256": "afd7034a35fabac9039fb5e60017a68c28f66c8746f2ecfe44cf5bdd80deadd9",
+      "byte_size": 2635
+    },
+    {
+      "logical_path": "ipo_2024_02460/evidence_export.json",
+      "sha256": "466b36e8d25f022ac379254879899992b55e7ec5f507f914601c0b1365464ca6",
+      "byte_size": 4027
+    },
+    {
+      "logical_path": "ipo_2024_02460/evidence_export.csv",
+      "sha256": "2589839412c832fefd6666e7d27772e612033a523ca04471f57ab956327075cc",
+      "byte_size": 2465
+    },
+    {
+      "logical_path": "ipo_2024_02460/human_review_export.json",
+      "sha256": "65a4b8b933322d6442c7dd1db18096fb3999a046bd0a03f421f600addf757dc6",
+      "byte_size": 379
+    },
+    {
+      "logical_path": "ipo_2024_02460/screenshot_manifest.json",
+      "sha256": "868adf4632af1806b80ce7b2655cf188ee48abb7bb2ee9b767f97bd381c7e649",
+      "byte_size": 10480
+    },
+    {
+      "logical_path": "ipo_2024_02460/screenshots/page0159_035450d8-a3df-53fd-8582-defabfeabf20.png",
+      "sha256": "d1c68a93d48a9e013c3fcad8ceb8ee734c12db9f261b93f69c6ad9edb894db2f",
+      "byte_size": 214574
+    },
+    {
+      "logical_path": "ipo_2024_02460/screenshots/page0160_fee28867-afec-55ce-bd6d-d72fa5bea233.png",
+      "sha256": "3865ea021cbdf09cad2b68594f45a0f20eb057788ff495c4d350675321e3e760",
+      "byte_size": 291821
+    },
+    {
+      "logical_path": "ipo_2024_02460/screenshots/page0269_3c391ba0-70b2-58e2-ba54-3fb23f114038.png",
+      "sha256": "7e86f5f01707515074ec3345b55a97cdb80fb7cd4bea88d480b43b8613c3c8bd",
+      "byte_size": 262700
+    },
+    {
+      "logical_path": "summary.json",
+      "sha256": "7d1f564f1aaa1ba3d65e4cc0523ac306cc41f8ea681bbf3c690cae3b041c7c52",
+      "byte_size": 17393
+    },
+    {
+      "logical_path": "batch_report.json",
+      "sha256": "67ccfac105315c233283c5b49256378e114f586e40ce540e572e41a80a43aada",
+      "byte_size": 9196
+    },
+    {
+      "logical_path": "batch_report.md",
+      "sha256": "a6330ca56c3b78656f7a60e704db49fa6a5fe1123edc5f9d73bf62f2d256131f",
+      "byte_size": 4665
+    },
+    {
+      "logical_path": "screenshot_summary.json",
+      "sha256": "9efb775bcdb361c4c53f6db00d3249c15284935104c945f9df198f49f9e56475",
+      "byte_size": 1098
+    }
+  ]
+}

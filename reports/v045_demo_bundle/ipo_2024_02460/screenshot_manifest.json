@@ -1,0 +1,306 @@
+{
+  "schema_version": "v045_role_e_evidence_screenshot_manifest_v1",
+  "case_id": "ipo_2024_02460",
+  "stock_code": "2460.HK",
+  "status": "rendered",
+  "statement": "Each image is one physical prospectus page as it is, with the located region outlined; the manifest binds it to the source PDF hash, the page, the geometry and the image hash.",
+  "render_dpi": 130,
+  "render_engine": "pymupdf",
+  "source_pdf": {
+    "sha256": "036c61af76dc6e9e4aad070e8643e9c735c020f514cd3a3682ad2e6a43346485",
+    "byte_size": 8504745,
+    "expected_sha256": "036c61af76dc6e9e4aad070e8643e9c735c020f514cd3a3682ad2e6a43346485",
+    "sha256_matches_expected": true,
+    "path_recorded": false
+  },
+  "cited_evidence_count": 3,
+  "screenshot_count": 3,
+  "precise_localisation_count": 3,
+  "page_level_fallback_count": 0,
+  "no_geometry_count": 0,
+  "unrendered_count": 0,
+  "ambiguous_anchor_count": 0,
+  "granularity_counts": {
+    "snippet_line_match": 3
+  },
+  "granularity_note": "snippet_line_match / keyword_match are PDF coordinates PyMuPDF found for text that is in the retrieved snippet. page_text_union is the parser's page-level region and is never reported as a snippet box. unavailable means the page was rendered with no box drawn.",
+  "items": [
+    {
+      "evidence_id": "035450d8-a3df-53fd-8582-defabfeabf20",
+      "risk_ids": [
+        "0ee16791-3f11-517d-9c23-07a7494b3972"
+      ],
+      "risk_codes": [
+        "redemption_rights"
+      ],
+      "page": 159,
+      "recorded_bbox": [
+        85.01748657226562,
+        29.519702911376953,
+        510.29974365234375,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.01748657226562,
+            406.88323974609375,
+            510.2115173339844,
+            421.062255859375
+          ],
+          [
+            85.01748657226562,
+            388.8872375488281,
+            510.21136474609375,
+            403.0662536621094
+          ],
+          [
+            85.03939819335938,
+            208.90533447265625,
+            510.2224426269531,
+            223.08433532714844
+          ]
+        ],
+        "bbox": [
+          85.01748657226562,
+          208.90533447265625,
+          510.2224426269531,
+          421.062255859375
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "與本公司存在或可能存在競爭關係的企業。Plateau由Plateau Consu…",
+            "char_length": 56,
+            "sha256": "6f20f8dec857b527af0a29fe7de3dcf479e300725ba56ba4befb1ee0bc72875c",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "的投資控股。Plateau Holding Limited主要投資於消費及醫療保…",
+            "char_length": 50,
+            "sha256": "c5972aecc95c9bfb5f94c6f8a91e434f75ef4fb94869c6ba84d1d4a6039b3ed2",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "協議（包括上述Plateau的特殊權利）將於上市時終止。於2024年4月21日，…",
+            "char_length": 45,
+            "sha256": "95565ace413a34da0b97bc708ac9183c7fbec0ac94ce46190dbd0d4aa9de5db6",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0159_035450d8-a3df-53fd-8582-defabfeabf20.png",
+        "sha256": "d1c68a93d48a9e013c3fcad8ceb8ee734c12db9f261b93f69c6ad9edb894db2f",
+        "byte_size": 214574,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "fee28867-afec-55ce-bd6d-d72fa5bea233",
+      "risk_ids": [
+        "0ee16791-3f11-517d-9c23-07a7494b3972"
+      ],
+      "risk_codes": [
+        "redemption_rights"
+      ],
+      "page": 160,
+      "recorded_bbox": [
+        85.01681518554688,
+        29.519702911376953,
+        514.7838134765625,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.02777099609375,
+            284.8600769042969,
+            510.22174072265625,
+            299.0390930175781
+          ],
+          [
+            85.02777099609375,
+            302.8560791015625,
+            510.23272705078125,
+            317.03509521484375
+          ],
+          [
+            85.02780151367188,
+            266.86407470703125,
+            510.2217712402344,
+            281.0430908203125
+          ]
+        ],
+        "bbox": [
+          85.02777099609375,
+          266.86407470703125,
+          510.23272705078125,
+          317.03509521484375
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "Consumer Fund, L.P.的主要有限合夥人。除了Plateau Ca…",
+            "char_length": 67,
+            "sha256": "7261feb27e8a99c6208507e4f453c9fcf47ca86113886a439347a1af6e01110f",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "Limited由Dong Yi女士全資擁有外，Plateau Consumer …",
+            "char_length": 58,
+            "sha256": "17fcafde148b7d54cf9daf2ae6a86d77de22c416b07cba40d6fced96111185ba",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "有Plateau Consumer Fund, L.P.的20%或以上有限合夥權…",
+            "char_length": 57,
+            "sha256": "b12ab39aaaca828c1a12d8a59918a6319164e180c120187564f3566da9ebf571",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0160_fee28867-afec-55ce-bd6d-d72fa5bea233.png",
+        "sha256": "3865ea021cbdf09cad2b68594f45a0f20eb057788ff495c4d350675321e3e760",
+        "byte_size": 291821,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "3c391ba0-70b2-58e2-ba54-3fb23f114038",
+      "risk_ids": [
+        "99fc3643-e475-5d1b-83f5-db6aa7aa895a"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 269,
+      "recorded_bbox": [
+        85.01681518554688,
+        29.519702911376953,
+        510.3536376953125,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.02778625488281,
+            302.86712646484375,
+            510.2769775390625,
+            317.046142578125
+          ],
+          [
+            85.01681518554688,
+            284.8711242675781,
+            510.2766418457031,
+            299.0501403808594
+          ],
+          [
+            85.02780151367188,
+            266.8751220703125,
+            510.2218322753906,
+            281.05413818359375
+          ]
+        ],
+        "bbox": [
+          85.01681518554688,
+          266.8751220703125,
+          510.2769775390625,
+          317.046142578125
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "際總產量的2.3%、2.0%、1.7%、1.9%及1.1%；(ii)倘我們被勒令…",
+            "char_length": 49,
+            "sha256": "27a991a2bc980f1c6a626ff4391c294d8a96bdf9190da8f42dc25914a8d26151",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "噸、8.27萬公噸、7.74萬公噸、2.37萬公噸及2.18萬公噸，分別佔同期我…",
+            "char_length": 46,
+            "sha256": "f31fae0f29564db07eb4641ed286a98471a4a76e2b60fe4c46edbd5d7663fe6d",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "年以及截至2023年及2024年4月30日止四個月，永隆工廠的實際產量分別為8.…",
+            "char_length": 44,
+            "sha256": "62b2ac3a2d450039b460af9947fd3db06fdad35c9cccecc20ad8223307f05c30",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0269_3c391ba0-70b2-58e2-ba54-3fb23f114038.png",
+        "sha256": "7e86f5f01707515074ec3345b55a97cdb80fb7cd4bea88d480b43b8613c3c8bd",
+        "byte_size": 262700,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    }
+  ],
+  "screenshot_dir": "screenshots"
+}

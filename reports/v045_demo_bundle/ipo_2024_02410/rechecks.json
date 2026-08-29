@@ -1,0 +1,108 @@
+{
+  "policy_version": "v04_e_recheck_policy_v2",
+  "attempted": 7,
+  "outcomes": [
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "material_litigation_compliance"
+      ],
+      "new_evidence_ids": [
+        "79919088-61e4-5c8c-8324-7e57e3dbf8fe",
+        "0b740c07-93d2-5f0e-ac23-de858aae3853",
+        "edae948a-9411-5db7-92e5-5aa62dd02ea7"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 2 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "redemption_rights"
+      ],
+      "new_evidence_ids": [
+        "3f213b32-ade6-5605-a0c8-e359c03ddd75",
+        "f38a47b7-f3f2-55c5-b0b1-fae8ad36ccd2"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+      "status": "unresolved",
+      "resolution_note": "targeted re-retrieval found no in-scope Evidence beyond what the agent already held, so the gap is in extraction rather than retrieval; the machine asserts no risk for this code",
+      "targets": [
+        "precommercial_product"
+      ],
+      "new_evidence_ids": [],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "continuous_loss"
+      ],
+      "new_evidence_ids": [
+        "4425d555-92cb-5d00-a864-26f44e74eac5",
+        "7d01a4ba-e327-53f3-b208-9d1deda9cbcd",
+        "77462795-0c3c-5d4c-a5f9-4e4a3f5445e3",
+        "c79031a9-6fe8-5f6f-b257-31d8434cfb3b",
+        "3dfd2491-a90f-54cf-8e0d-177997dfb890"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "customer_concentration"
+      ],
+      "new_evidence_ids": [
+        "d36650e4-d4cb-534f-9762-997605aaa474",
+        "b188ff6c-9c8c-5a06-878a-92ef0589196a",
+        "834c0353-c6c3-53b4-ad43-2825a031d9d1",
+        "08b996a2-321b-5ef7-8b55-598c02f87212",
+        "951b01fd-edd6-5c24-8b42-330c90c24536"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "revenue_growth"
+      ],
+      "new_evidence_ids": [
+        "595ffbe3-7c76-515c-9e4c-46f27d7cb6c3",
+        "57eb844d-9216-584a-9529-ad1590e1aaad",
+        "8475e363-6f5e-500d-93fe-7ab423d597de",
+        "1df61cb4-8933-5291-8052-aaa6e07bd021",
+        "24a6a435-ef1d-5ad6-9861-13fb0e4ef430"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "recheck_id": "recheck:conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "status": "unresolved",
+      "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+      "targets": [
+        "cash_runway"
+      ],
+      "new_evidence_ids": [],
+      "revised_risk_ids": []
+    }
+  ]
+}

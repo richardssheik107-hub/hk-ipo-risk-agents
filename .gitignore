@@ -22,6 +22,10 @@ data/competition/*
 !data/competition/.gitignore
 !data/competition/README.md
 reports/*
+!reports/v045_demo_bundle/
+!reports/v045_demo_bundle/**
+!reports/final_status/
+!reports/final_status/**
 !reports/retrieval_40_baseline/
 !reports/retrieval_40_baseline/**
 !reports/retriever_v3/
@@ -53,3 +57,5 @@ scripts/run_jingfa_full_demo.py
 # Local Oracle/modeling caches and ephemeral test workdirs.
 .pytest-oracle-*/
 data/cache/
+# Licensed/local prospectuses are never repository artifacts.
+data/local/

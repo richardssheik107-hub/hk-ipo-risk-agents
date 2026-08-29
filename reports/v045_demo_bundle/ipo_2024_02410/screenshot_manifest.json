@@ -1,0 +1,766 @@
+{
+  "schema_version": "v045_role_e_evidence_screenshot_manifest_v1",
+  "case_id": "ipo_2024_02410",
+  "stock_code": "2410.HK",
+  "status": "rendered",
+  "statement": "Each image is one physical prospectus page as it is, with the located region outlined; the manifest binds it to the source PDF hash, the page, the geometry and the image hash.",
+  "render_dpi": 130,
+  "render_engine": "pymupdf",
+  "source_pdf": {
+    "sha256": "6c8179a58ac265d5a729895ef30db910dc15cee0a53ce653e866d487d29655cb",
+    "byte_size": 7668322,
+    "expected_sha256": "6c8179a58ac265d5a729895ef30db910dc15cee0a53ce653e866d487d29655cb",
+    "sha256_matches_expected": true,
+    "path_recorded": false
+  },
+  "cited_evidence_count": 8,
+  "screenshot_count": 8,
+  "precise_localisation_count": 8,
+  "page_level_fallback_count": 0,
+  "no_geometry_count": 0,
+  "unrendered_count": 0,
+  "ambiguous_anchor_count": 0,
+  "granularity_counts": {
+    "snippet_line_match": 8
+  },
+  "granularity_note": "snippet_line_match / keyword_match are PDF coordinates PyMuPDF found for text that is in the retrieved snippet. page_text_union is the parser's page-level region and is never reported as a snippet box. unavailable means the page was rendered with no box drawn.",
+  "items": [
+    {
+      "evidence_id": "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+      "risk_ids": [
+        "69066732-91e7-5238-850d-b162104dcab9"
+      ],
+      "risk_codes": [
+        "cash_runway"
+      ],
+      "page": 563,
+      "recorded_bbox": [
+        84.98663330078125,
+        29.519702911376953,
+        513.1593627929688,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03939819335938,
+            394.715576171875,
+            254.21939086914062,
+            408.89459228515625
+          ],
+          [
+            85.03939819335938,
+            454.7336730957031,
+            254.21939086914062,
+            468.9126892089844
+          ],
+          [
+            85.03057861328125,
+            433.7205810546875,
+            254.2105712890625,
+            447.89959716796875
+          ]
+        ],
+        "bbox": [
+          85.03057861328125,
+          394.715576171875,
+          254.21939086914062,
+          468.9126892089844
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "融資活動所得淨現金流量. . . . . . . . . . . . . . .",
+            "char_length": 40,
+            "sha256": "c56ae44019a9721ba177c5a8d8f1e76cc22812b3b417d9feb35fe7425010091d",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "外匯匯率變動的影響淨額. . . . . . . . . . . . . . .",
+            "char_length": 40,
+            "sha256": "114e1b686f233746822fc3c19a7fe1dbfb8e19989e05b1fd1b340d6600d00932",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "年初╱期初現金及現金等價物 . . . . . . . . . .",
+            "char_length": 33,
+            "sha256": "9cf23282ea3d5446fe262d5ebd7ae5a25961f13a3ffdf65f82d43eb138904200",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0563_67ef7838-6af2-5ebd-8a5c-7a46c39bb804.png",
+        "sha256": "023e872f2e31136d04fbbb9ae3bb3e65efe2454ad6806776e3913ae4cae721e4",
+        "byte_size": 153077,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "60dd7129-941a-5d23-a86a-a6cdf7467397",
+      "risk_ids": [
+        "69066732-91e7-5238-850d-b162104dcab9"
+      ],
+      "risk_codes": [
+        "cash_runway"
+      ],
+      "page": 562,
+      "recorded_bbox": [
+        85.01309204101562,
+        29.519702911376953,
+        513.159423828125,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03060913085938,
+            539.824462890625,
+            254.2105255126953,
+            554.0034790039062
+          ],
+          [
+            94.04801940917969,
+            500.8154296875,
+            254.20797729492188,
+            514.9944458007812
+          ],
+          [
+            94.04792785644531,
+            464.8153991699219,
+            254.20790100097656,
+            478.9944152832031
+          ]
+        ],
+        "bbox": [
+          85.03060913085938,
+          464.8153991699219,
+          254.2105255126953,
+          554.0034790039062
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "合同成本減少. . . . . . . . . . . . . . . . . …",
+            "char_length": 53,
+            "sha256": "c5868a96e6ec2b619b54992ed036d0026151816eaaded88db4ff7460565f2619",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "政府資金利息開支 . . . . . . . . . . . . . . . .…",
+            "char_length": 44,
+            "sha256": "e9819adfb240ad2acaacd9fd69302f2eea6ad6375f94cbbb00edc80f7402c203",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "終止租賃合同的收益 . . . . . . . . . . . . . . . …",
+            "char_length": 41,
+            "sha256": "7d613f0d390bd794e43e40d3510cebd751a71b90ddc97f27676d9137ca2211a0",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0562_60dd7129-941a-5d23-a86a-a6cdf7467397.png",
+        "sha256": "148dbdb44152034a1bd9f9f6e708a71adb93f776c9678931d64d1627af2195fd",
+        "byte_size": 197732,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9",
+      "risk_ids": [
+        "14ccf843-0a53-525c-95b7-b2f103f6f248"
+      ],
+      "risk_codes": [
+        "redemption_rights"
+      ],
+      "page": 604,
+      "recorded_bbox": [
+        85.0303955078125,
+        29.519702911376953,
+        510.3797607421875,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03041076660156,
+            195.28256225585938,
+            510.2083740234375,
+            206.88357543945312
+          ],
+          [
+            85.0303955078125,
+            181.27853393554688,
+            510.32977294921875,
+            192.87954711914062
+          ],
+          [
+            85.0303955078125,
+            167.27450561523438,
+            510.2354431152344,
+            178.87551879882812
+          ]
+        ],
+        "bbox": [
+          85.0303955078125,
+          167.27450561523438,
+          510.32977294921875,
+          206.88357543945312
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "以其他方式終止上市申請審核程序或(iii) 貴公司未能自向聯交所提交申請日期起計…",
+            "char_length": 50,
+            "sha256": "2c01bfb6272ebbf8cae78f5387acabf528c70d5bc19c5e8fd07e5eb4675bfca1",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "其公開發售申請、(ii)聯交所、證監會或任何主管證券監管機構決定不批准或拒絕 貴…",
+            "char_length": 48,
+            "sha256": "b9d89dff4e974cdea4cc760ce69b4efb6a905509142685c2f0f447968c7f712a",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "上市的首次上市申請表格日期的前一日起失效，而所有其他特殊權利於上市後失效，惟(i…",
+            "char_length": 47,
+            "sha256": "6228664b18ac7b8a1fcf54b3d22033cde3e84ec12530aea091f67e60c841ceae",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0604_f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9.png",
+        "sha256": "f52519fb9ecb0eebdec4ba05aa01ed46170a0d1888f835abe0ab645e44e07d60",
+        "byte_size": 171995,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "8afccf34-f0d3-580a-b4f9-a6ddd77eee9e",
+      "risk_ids": [
+        "14ccf843-0a53-525c-95b7-b2f103f6f248"
+      ],
+      "risk_codes": [
+        "redemption_rights"
+      ],
+      "page": 250,
+      "recorded_bbox": [
+        85.00357818603516,
+        29.519702911376953,
+        510.3542175292969,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            113.39859008789062,
+            447.318603515625,
+            510.21759033203125,
+            458.91961669921875
+          ],
+          [
+            113.37155151367188,
+            419.31060791015625,
+            510.24456787109375,
+            430.91162109375
+          ],
+          [
+            113.3985595703125,
+            433.3146057128906,
+            510.2535705566406,
+            444.9156188964844
+          ]
+        ],
+        "bbox": [
+          113.37155151367188,
+          419.31060791015625,
+          510.2535705566406,
+          458.91961669921875
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "試驗的IND批准；(c)就開展TY-1054治療實體瘤的臨床試驗向FDA提交了I…",
+            "char_length": 53,
+            "sha256": "a187d5d7581895d32c1f0574fe284d8fdbf91cc3098565f44db423a46e2d2565",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "突變晚期或轉移性NSCLC的註冊性III期臨床試驗；(b)於2024年3月獲得國…",
+            "char_length": 51,
+            "sha256": "311bd9e4cc3ae51eebdc970aef6b6c3c5c088233ca2d597e768e1febf7279cbe",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "9591聯合培美曲塞及順鉑或卡鉑作為一線治療EGFR突變晚期或轉移性NSCLC的…",
+            "char_length": 50,
+            "sha256": "b79cb2283de2618b3c42d68b40fe29e8bde1ee2aad8e36b6e7aedee80fd62651",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0250_8afccf34-f0d3-580a-b4f9-a6ddd77eee9e.png",
+        "sha256": "f1479f83c78d0cd03881fa234ec8b09b6651fe8ed2bfe0f142ad9345face713a",
+        "byte_size": 310631,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "a5f61ec2-42f7-5215-ac51-572c3954c5f9",
+      "risk_ids": [
+        "14ccf843-0a53-525c-95b7-b2f103f6f248"
+      ],
+      "risk_codes": [
+        "redemption_rights"
+      ],
+      "page": 251,
+      "recorded_bbox": [
+        83.2679672241211,
+        29.519702911376953,
+        510.365234375,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.02838134765625,
+            212.89825439453125,
+            510.2553405761719,
+            227.07725524902344
+          ],
+          [
+            85.03939819335938,
+            86.90436553955078,
+            510.23345947265625,
+            101.08336639404297
+          ],
+          [
+            85.03939819335938,
+            68.90839385986328,
+            510.2336120605469,
+            83.08739471435547
+          ]
+        ],
+        "bbox": [
+          85.02838134765625,
+          68.90839385986328,
+          510.2553405761719,
+          227.07725524902344
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "期前28個整日以上及於上市日期前不少於120個整日予以結算；及(ii)授予首次公…",
+            "char_length": 42,
+            "sha256": "99a34d09ebd69a9e8dce263518b544efa222631a02e2a9248f697d179441b30b",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "或拒絕本公司的上市申請或以其他方式終止上市申請審核程序或(iii)本公司未能自向…",
+            "char_length": 41,
+            "sha256": "bb941835d7eb81fd39fa30b6e0bac0d58e1bce2704d20a38cfd4932d6a45a7ca",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "本公司撤回其公開發售申請、(ii)聯交所、證監會或任何主管證券監管機構決定不批准",
+            "char_length": 40,
+            "sha256": "9a7660111cdc52d144368a9094c679e6c01589613fc63f9fb6d7e2261a2f92bd",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0251_a5f61ec2-42f7-5215-ac51-572c3954c5f9.png",
+        "sha256": "c55c784379e1bfbf71eda987d0b578851f3804e46b043f92e399ff77100ad2dd",
+        "byte_size": 265594,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+      "risk_ids": [
+        "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 402,
+      "recorded_bbox": [
+        85.01687622070312,
+        29.519702911376953,
+        510.3536376953125,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03880310058594,
+            428.8612060546875,
+            510.22088623046875,
+            443.04022216796875
+          ],
+          [
+            85.02786254882812,
+            554.84423828125,
+            510.3031311035156,
+            569.0232543945312
+          ],
+          [
+            85.02786254882812,
+            446.8572082519531,
+            510.21087646484375,
+            461.0362243652344
+          ]
+        ],
+        "bbox": [
+          85.02786254882812,
+          428.8612060546875,
+          510.3031311035156,
+          569.0232543945312
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "法院頒令強制執行。於2022年、2023年及截至2024年3月31日止三個月，我…",
+            "char_length": 44,
+            "sha256": "84408a8b385f53e24eedc75b728d5e1a25fac522b5aff154fd60dc10785bc99a",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "的確認函；及(iii)鄭州航空港經濟綜合實驗區人力資源和社會保障局出具的確認函（…",
+            "char_length": 41,
+            "sha256": "19a1685cd118b6768622984273058e2df3cd66dcfb589a5e91829ee5701280ad",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "保險及住房公積金供款的總欠繳金額分別約為人民幣2.1百萬元、人民幣2.0百萬元及",
+            "char_length": 40,
+            "sha256": "601fce98215a6bc2dd1b50842a5fb6847ed43e7f48f2c42a3a445f689fc4ba47",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0402_03c484d9-ee14-56cf-b8e8-228a5cfe4cf0.png",
+        "sha256": "ce7e32425975d08f8b291d66394f659e709d597d8ff3819d9189de317e8d2516",
+        "byte_size": 298259,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "3e93f271-5a36-5924-aadc-1d99c51471be",
+      "risk_ids": [
+        "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 107,
+      "recorded_bbox": [
+        85.0064697265625,
+        29.519702911376953,
+        510.36346435546875,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03939819335938,
+            248.879150390625,
+            510.2159423828125,
+            263.05816650390625
+          ],
+          [
+            85.0064697265625,
+            302.86712646484375,
+            510.2115783691406,
+            317.046142578125
+          ],
+          [
+            85.0174560546875,
+            266.8751220703125,
+            510.2004699707031,
+            281.05413818359375
+          ]
+        ],
+        "bbox": [
+          85.0064697265625,
+          248.879150390625,
+          510.2159423828125,
+          317.046142578125
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "關中國法院頒令強制執行。於2022年、2023年及截至2024年3月31日止三個…",
+            "char_length": 44,
+            "sha256": "d417c259e6163c9bdb00a8a9b6bb771e0a0f05c72762cec82e62cdaf1b3c879e",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "不會對我們的業務產生重大不利影響。此外，考慮到(1)根據(i)上海市及浙江省人民…",
+            "char_length": 41,
+            "sha256": "093af6dcf784e194fe7eeea67a3c95851f621c6262e4c4fea30717d1e352f599",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "的社會保險及住房公積金供款的欠繳總額分別約為人民幣2.1百萬元、人民幣2.0百萬",
+            "char_length": 40,
+            "sha256": "0a4c00131dde3a08994db386ab690b84e625387a69b2498c38523cf226d85ef9",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0107_3e93f271-5a36-5924-aadc-1d99c51471be.png",
+        "sha256": "9c2855a494d89ac579d849f66a9756b3e1b13b65755fe5aa824c483918da7142",
+        "byte_size": 335312,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "eb278ae4-1d79-5064-bf30-ae73ff921376",
+      "risk_ids": [
+        "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 108,
+      "recorded_bbox": [
+        85.03880310058594,
+        29.519702911376953,
+        510.3536376953125,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03880310058594,
+            86.90436553955078,
+            510.2550048828125,
+            101.01736450195312
+          ],
+          [
+            85.03880310058594,
+            104.90033721923828,
+            510.2550048828125,
+            119.01333618164062
+          ],
+          [
+            85.03880310058594,
+            122.89630889892578,
+            510.2550048828125,
+            137.00930786132812
+          ]
+        ],
+        "bbox": [
+          85.03880310058594,
+          86.90436553955078,
+          510.2550048828125,
+          137.00930786132812
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "及住房公積金供款，主要是由於該等僱員傾向於在其居留地參加當地的社會保險及住",
+            "char_length": 37,
+            "sha256": "2c609e16673dbeadf4ff11b8a81cc60af6be98a8af29b4ed8acd68a89e7206be",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "房公積金計劃，而我們於該等地方並無設立機構。根據有關第三方人力資源機構與我",
+            "char_length": 37,
+            "sha256": "c0d7402d4599472e128cfe154c5bde96e5c124a265da1343dc816b772c8fa746",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "們訂立的合同，有關機構有義務為我們的相關僱員繳納社會保險及住房公積金供款。",
+            "char_length": 37,
+            "sha256": "5ef65c87340bf583b627e0b23fb2e23af80e0494bf5e364088d643d6ce871d4a",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0108_eb278ae4-1d79-5064-bf30-ae73ff921376.png",
+        "sha256": "df8e2d7b727b864db654357a04e83a1da2ada60dcad644dca7b17e89f6b5c2a0",
+        "byte_size": 348554,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    }
+  ],
+  "screenshot_dir": "screenshots"
+}

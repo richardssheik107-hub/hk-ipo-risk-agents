@@ -1,0 +1,668 @@
+{
+  "composition": {
+    "summary": "Supervised 3 risks into 3 unique risks; 0 unresolved conflict(s) and 0 supervisory finding(s).",
+    "channel_states": [
+      {
+        "channel": "document",
+        "status": "available",
+        "reason": "v0.3 document supervision result passed through unchanged",
+        "blocking_gate": null
+      },
+      {
+        "channel": "market",
+        "status": "available",
+        "reason": "validated frozen PR-B Market-X Core projection",
+        "blocking_gate": null
+      },
+      {
+        "channel": "model",
+        "status": "available",
+        "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+        "blocking_gate": null
+      },
+      {
+        "channel": "rule",
+        "status": "available",
+        "reason": "deterministic rule score",
+        "blocking_gate": null
+      }
+    ],
+    "referenced_risk_ids": [
+      "69066732-91e7-5238-850d-b162104dcab9"
+    ],
+    "referenced_evidence_ids": [
+      "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+      "60dd7129-941a-5d23-a86a-a6cdf7467397"
+    ],
+    "composite_findings": [],
+    "conflicts": [],
+    "market_context": {
+      "status": "available",
+      "reason": "validated frozen PR-B Market-X Core projection",
+      "blocking_gate": null,
+      "observations": [
+        {
+          "name": "ipo_count_30d",
+          "value": 2.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "ipo_count_60d",
+          "value": 15.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "log_prior_ipo_funds_raised_30d",
+          "value": 20.97254486264461,
+          "unit": "log_currency",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "log_prior_ipo_funds_raised_60d",
+          "value": 22.745091032524854,
+          "unit": "log_currency",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "prior_ipo_funds_raised_30d_sample_count",
+          "value": 2.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "prior_ipo_funds_raised_60d_sample_count",
+          "value": 15.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_break_rate",
+          "value": 0.6,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_return_5d",
+          "value": -0.09228013788280481,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_1d_sample_count",
+          "value": 15.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "recent_ipo_5d_sample_count",
+          "value": 15.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_ipo_count_180d",
+          "value": 3.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_break_rate",
+          "value": 0.0,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_return_5d",
+          "value": -0.11053310886644219,
+          "unit": "ratio",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_1d_sample_count",
+          "value": 3.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        },
+        {
+          "name": "same_industry_recent_5d_sample_count",
+          "value": 3.0,
+          "unit": "count",
+          "availability": "available",
+          "missing_reason": null,
+          "derivation": "frozen PR-B point-in-time Market-X Core feature",
+          "source": "pr_b_market_x_core"
+        }
+      ],
+      "feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+      "provenance": {
+        "feature_pipeline": "governed_pr_b_core",
+        "runtime_path": "frozen",
+        "frozen_artifact_read_attempted": true,
+        "case_id": "ipo_2024_02410",
+        "stock_code": "2410.HK",
+        "listing_date": "2024-08-20",
+        "dataset_split": "validation",
+        "artifact_content_hash": "8bc00e3404f750582018e8b48a21062772d8ad8c31b558083bc160825baab1c5",
+        "cutoff_semantics": "strictly_before_target_listing_date",
+        "source_provenance": {
+          "ipo_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+          "official_bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
+          "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
+          "prior_ipo_history_start_date": "2020-02-14"
+        },
+        "extended_readiness_sha256": null,
+        "market_intelligence_schema_version": "v04_market_intelligence_v1",
+        "market_intelligence": {
+          "market_regime": "INSUFFICIENT_DATA",
+          "risk_level": "medium",
+          "risk_scope": "market_side_only",
+          "ipo_heat": "COLD",
+          "liquidity_condition": "UNAVAILABLE",
+          "key_drivers": [
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is high_pressure.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is weak.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "uncertainties": [
+            "Market turnover is unavailable."
+          ],
+          "source_feature_ids": [
+            "ipo_count_30d",
+            "ipo_count_60d",
+            "log_prior_ipo_funds_raised_30d",
+            "log_prior_ipo_funds_raised_60d",
+            "prior_ipo_funds_raised_30d_sample_count",
+            "prior_ipo_funds_raised_60d_sample_count",
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count",
+            "same_industry_ipo_count_180d",
+            "same_industry_recent_break_rate",
+            "same_industry_recent_return_5d",
+            "same_industry_recent_1d_sample_count",
+            "same_industry_recent_5d_sample_count"
+          ],
+          "missing_reasons": {},
+          "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+          "market_regime_policy_version": "v04_market_regime_skill_v1"
+        },
+        "llm_market_interpretation_status": "unavailable",
+        "llm_market_interpretation_reason": "LLM market interpretation unavailable: ValueError"
+      }
+    },
+    "model_prediction": {
+      "status": "available",
+      "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+      "blocking_gate": null,
+      "model_name": "lightgbm",
+      "model_version": "v04_pr_f_lightgbm_explainability_v1",
+      "score": 0.09722022630014981,
+      "score_semantics": "uncalibrated_model_score",
+      "calibration_status": "uncalibrated",
+      "calibration_provenance_id": null,
+      "drivers": [
+        {
+          "feature": "market_core__log_prior_ipo_funds_raised_30d",
+          "component": "market_core",
+          "feature_value": 20.97254486264461,
+          "shap_value": -0.5682985962982943,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__log_prior_ipo_funds_raised_60d",
+          "component": "market_core",
+          "feature_value": 22.745091032524854,
+          "shap_value": -0.24816379472026523,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_return_5d",
+          "component": "market_core",
+          "feature_value": -0.11053310886644219,
+          "shap_value": 0.18402454311301383,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__recent_ipo_return_5d",
+          "component": "market_core",
+          "feature_value": -0.09228013788280481,
+          "shap_value": -0.1690382687248994,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_break_rate",
+          "component": "market_core",
+          "feature_value": 0.0,
+          "shap_value": 0.12222578969374771,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_1d_sample_count",
+          "component": "market_core",
+          "feature_value": 3.0,
+          "shap_value": -0.10708608498349576,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__ipo_count_30d",
+          "component": "market_core",
+          "feature_value": 2.0,
+          "shap_value": -0.0775667765529897,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__same_industry_recent_5d_sample_count",
+          "component": "market_core",
+          "feature_value": 3.0,
+          "shap_value": 0.0757758103666658,
+          "direction": "increases"
+        },
+        {
+          "feature": "market_core__same_industry_ipo_count_180d",
+          "component": "market_core",
+          "feature_value": 3.0,
+          "shap_value": -0.06463834493606695,
+          "direction": "decreases"
+        },
+        {
+          "feature": "market_core__recent_ipo_1d_sample_count",
+          "component": "market_core",
+          "feature_value": 15.0,
+          "shap_value": 0.05125028056090488,
+          "direction": "increases"
+        }
+      ]
+    },
+    "uncertainty_statement": "model score is uncalibrated and must not be read as a probability; frozen model cohort evidence: the frozen LightGBM policy gave the production document features no split and no gain, so the document-plus-market and market-only arms are prediction-equivalent (not validated at this sample size); frozen model cohort evidence: the expert-gold ceiling arm differs from market-only by less than its own bootstrap interval spans, on a 19-case validation intersection (not validated at this sample size)",
+    "metadata": {
+      "classification": "SUPERVISORY_SYNTHESIS",
+      "creates_no_new_risk": true,
+      "probability_claimed": false,
+      "blocking_gates": [],
+      "unresolved_conflict_count": 7,
+      "frozen_model_evidence_available": true,
+      "final_supervision_llm": {
+        "schema_version": "v04_final_supervision_v1",
+        "prompt_version": "v04_final_supervision_v3",
+        "status": "available",
+        "outcome": "accepted",
+        "reason": "grounded supervisory synthesis available",
+        "fail_closed": false,
+        "scope_check": {
+          "status": "passed",
+          "cited_risk_ids": [
+            "14ccf843-0a53-525c-95b7-b2f103f6f248",
+            "69066732-91e7-5238-850d-b162104dcab9",
+            "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+          ],
+          "cited_evidence_ids": [
+            "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+            "60dd7129-941a-5d23-a86a-a6cdf7467397",
+            "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+            "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9"
+          ],
+          "cited_conflict_ids": [
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+            "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth"
+          ],
+          "supplied_risk_id_count": 3,
+          "supplied_evidence_id_count": 23,
+          "supplied_conflict_id_count": 7,
+          "out_of_scope_reference_count": 0,
+          "deterministic_severity_floor": "critical",
+          "overall_risk": "critical",
+          "severity_floor_respected": true,
+          "invented_number_count": 0,
+          "prediction_vocabulary_used": false,
+          "attempts": 1,
+          "scope_corrections": 0,
+          "refused_response_count": 0,
+          "first_attempt_passed": true,
+          "rejected_attempts": []
+        },
+        "call": {
+          "provider_name": "openai_responses",
+          "model_name": "ark-code-latest",
+          "prompt_version": "v04_final_supervision_v3",
+          "request_id": "02178798101318847c8075984f4c09bb3b0ca9abced541e5dbdb1",
+          "raw_response_hash": "6fb46af5da9d14e037c398a5a7b2a2e204f1cb72eb8eecc2634d9959220a2811",
+          "latency_ms": 21274
+        },
+        "deterministic_severity_floor": "critical",
+        "judgement": {
+          "overall_risk": "critical",
+          "overall_risk_rationale": "The deterministic severity floor is critical, and the Rule channel returned a critical risk level supported by the verified cash_runway risk; no channel supports going below the floor.",
+          "key_findings": [
+            {
+              "statement": "A critical cash_runway risk was verified with an independently recalculated deterministic calculation based on supplied financial evidence, and the Rule channel's risk level was critical.",
+              "risk_ids": [
+                "69066732-91e7-5238-850d-b162104dcab9"
+              ],
+              "evidence_ids": [
+                "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+                "60dd7129-941a-5d23-a86a-a6cdf7467397"
+              ]
+            },
+            {
+              "statement": "Two medium legal risks (material_litigation_compliance and redemption_rights) remain needs_review, with verifier non-verification on litigation closure/pending status and on the redemption-rights holder.",
+              "risk_ids": [
+                "b890f18b-fa20-5af5-bd72-111b8fe2a56a",
+                "14ccf843-0a53-525c-95b7-b2f103f6f248"
+              ],
+              "evidence_ids": [
+                "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+                "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9"
+              ]
+            },
+            {
+              "statement": "The Model channel is available but uncalibrated, and its strongest driver direction diverges from the verified document risk, leaving that cross-channel disagreement unresolved.",
+              "risk_ids": [
+                "69066732-91e7-5238-850d-b162104dcab9"
+              ],
+              "evidence_ids": []
+            }
+          ],
+          "conflict_assessments": [
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+              "assessment": "Partially resolved: legal's material_litigation_compliance risk remains needs_review (closure and pending status not supported by evidence; manual legal judgment required). What remains unsettled is whether the litigation exposure is material and its status."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+              "assessment": "Partially resolved: legal's redemption_rights risk remains needs_review with holder_not_supported_by_evidence; the disputed holder and scope of redemption rights are unsettled."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+              "assessment": "Unresolved: the frozen model's strongest driver decreases risk while the document channel reports verified high/critical document risk, and no document re-retrieval can settle this cross-channel divergence; direction disagreement is carried to this supervisor unsettled."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+              "assessment": "Unresolved: business reported conflicting values across 9 evidence items while the document channel asserts nothing; targeted re-retrieval found no further in-scope evidence, so the commercialization/revenue gap is in extraction, not retrieval, and remains unsettled."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+              "assessment": "Partially resolved: financial reported conflicting values and re-retrieval surfaced unused in-scope evidence, routed to human review; the mapping to clean facts remains unsettled."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+              "assessment": "Partially resolved: needs_review assertion with unused in-scope evidence routed to human review; customer concentration is not established by the document channel and remains unsettled."
+            },
+            {
+              "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth",
+              "assessment": "Partially resolved: conflicting values with unused in-scope evidence routed to human review; revenue growth remains unsettled."
+            }
+          ],
+          "uncertainties": [
+            "Model score is uncalibrated and must not be read as descriptive governance wording; frozen cohort arms were not validated at this sample size.",
+            "Business financial and precommercial extraction conflicts remain unsettled, with unused in-scope evidence routed to human review.",
+            "Verifier non-verification leaves litigation closure/pending status and the redemption-rights holder unsupported by evidence.",
+            "The document-model divergence on market_core__log_prior_ipo_funds_raised_30d is carried unresolved and cannot be settled by document re-retrieval."
+          ],
+          "recheck_required": true,
+          "recheck_targets": [
+            {
+              "target": "material_litigation_compliance legal evidence and verifier",
+              "reason": "A bounded verifier or human legal recheck of the litigation closure/pending status could settle the needs_review material_litigation_compliance risk.",
+              "risk_ids": [
+                "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+              ]
+            },
+            {
+              "target": "redemption_rights legal evidence and verifier",
+              "reason": "A bounded recheck of the redemption-rights holder evidence could settle the needs_review redemption_rights risk.",
+              "risk_ids": [
+                "14ccf843-0a53-525c-95b7-b2f103f6f248"
+              ]
+            },
+            {
+              "target": "precommercial_product business evidence extraction",
+              "reason": "Extraction-level re-examination of the business agent's 9 held evidence items could resolve the unresolved commercialization/revenue conflict, which re-retrieval cannot address.",
+              "risk_ids": []
+            }
+          ],
+          "final_explanation": "All four governed channels are available, but the Rule channel returned a critical risk level and a verified cash-runway calculation of roughly 2.76 months, while the deterministic severity floor is critical. Legal's litigation and redemption risks remain needs_review, business/financial extraction gaps and the model-document divergence are unsettled, and the model score is uncalibrated and cohort-unvalidated. Overall risk is therefore critical, driven by verified financial and rule-channel evidence, with material unresolved legal and extraction uncertainties."
+        }
+      },
+      "conflict_status_counts": {
+        "detected": 0,
+        "rechecking": 0,
+        "resolved": 0,
+        "partially_resolved": 5,
+        "unresolved": 2
+      }
+    }
+  },
+  "llm_synthesis": {
+    "status": "available",
+    "outcome": "accepted",
+    "reason": "grounded supervisory synthesis available",
+    "fail_closed": false,
+    "scope_check": {
+      "status": "passed",
+      "cited_risk_ids": [
+        "14ccf843-0a53-525c-95b7-b2f103f6f248",
+        "69066732-91e7-5238-850d-b162104dcab9",
+        "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+      ],
+      "cited_evidence_ids": [
+        "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+        "60dd7129-941a-5d23-a86a-a6cdf7467397",
+        "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+        "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9"
+      ],
+      "cited_conflict_ids": [
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+        "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth"
+      ],
+      "supplied_risk_id_count": 3,
+      "supplied_evidence_id_count": 23,
+      "supplied_conflict_id_count": 7,
+      "out_of_scope_reference_count": 0,
+      "deterministic_severity_floor": "critical",
+      "overall_risk": "critical",
+      "severity_floor_respected": true,
+      "invented_number_count": 0,
+      "prediction_vocabulary_used": false,
+      "attempts": 1,
+      "scope_corrections": 0,
+      "refused_response_count": 0,
+      "first_attempt_passed": true,
+      "rejected_attempts": []
+    },
+    "call": {
+      "provider_name": "openai_responses",
+      "model_name": "ark-code-latest",
+      "prompt_version": "v04_final_supervision_v3",
+      "request_id": "02178798101318847c8075984f4c09bb3b0ca9abced541e5dbdb1",
+      "raw_response_hash": "6fb46af5da9d14e037c398a5a7b2a2e204f1cb72eb8eecc2634d9959220a2811",
+      "latency_ms": 21274
+    },
+    "deterministic_severity_floor": "critical",
+    "judgement": {
+      "overall_risk": "critical",
+      "overall_risk_rationale": "The deterministic severity floor is critical, and the Rule channel returned a critical risk level supported by the verified cash_runway risk; no channel supports going below the floor.",
+      "key_findings": [
+        {
+          "statement": "A critical cash_runway risk was verified with an independently recalculated deterministic calculation based on supplied financial evidence, and the Rule channel's risk level was critical.",
+          "risk_ids": [
+            "69066732-91e7-5238-850d-b162104dcab9"
+          ],
+          "evidence_ids": [
+            "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+            "60dd7129-941a-5d23-a86a-a6cdf7467397"
+          ]
+        },
+        {
+          "statement": "Two medium legal risks (material_litigation_compliance and redemption_rights) remain needs_review, with verifier non-verification on litigation closure/pending status and on the redemption-rights holder.",
+          "risk_ids": [
+            "b890f18b-fa20-5af5-bd72-111b8fe2a56a",
+            "14ccf843-0a53-525c-95b7-b2f103f6f248"
+          ],
+          "evidence_ids": [
+            "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+            "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9"
+          ]
+        },
+        {
+          "statement": "The Model channel is available but uncalibrated, and its strongest driver direction diverges from the verified document risk, leaving that cross-channel disagreement unresolved.",
+          "risk_ids": [
+            "69066732-91e7-5238-850d-b162104dcab9"
+          ],
+          "evidence_ids": []
+        }
+      ],
+      "conflict_assessments": [
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+          "assessment": "Partially resolved: legal's material_litigation_compliance risk remains needs_review (closure and pending status not supported by evidence; manual legal judgment required). What remains unsettled is whether the litigation exposure is material and its status."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+          "assessment": "Partially resolved: legal's redemption_rights risk remains needs_review with holder_not_supported_by_evidence; the disputed holder and scope of redemption rights are unsettled."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+          "assessment": "Unresolved: the frozen model's strongest driver decreases risk while the document channel reports verified high/critical document risk, and no document re-retrieval can settle this cross-channel divergence; direction disagreement is carried to this supervisor unsettled."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+          "assessment": "Unresolved: business reported conflicting values across 9 evidence items while the document channel asserts nothing; targeted re-retrieval found no further in-scope evidence, so the commercialization/revenue gap is in extraction, not retrieval, and remains unsettled."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+          "assessment": "Partially resolved: financial reported conflicting values and re-retrieval surfaced unused in-scope evidence, routed to human review; the mapping to clean facts remains unsettled."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+          "assessment": "Partially resolved: needs_review assertion with unused in-scope evidence routed to human review; customer concentration is not established by the document channel and remains unsettled."
+        },
+        {
+          "conflict_id": "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth",
+          "assessment": "Partially resolved: conflicting values with unused in-scope evidence routed to human review; revenue growth remains unsettled."
+        }
+      ],
+      "uncertainties": [
+        "Model score is uncalibrated and must not be read as descriptive governance wording; frozen cohort arms were not validated at this sample size.",
+        "Business financial and precommercial extraction conflicts remain unsettled, with unused in-scope evidence routed to human review.",
+        "Verifier non-verification leaves litigation closure/pending status and the redemption-rights holder unsupported by evidence.",
+        "The document-model divergence on market_core__log_prior_ipo_funds_raised_30d is carried unresolved and cannot be settled by document re-retrieval."
+      ],
+      "recheck_required": true,
+      "recheck_targets": [
+        {
+          "target": "material_litigation_compliance legal evidence and verifier",
+          "reason": "A bounded verifier or human legal recheck of the litigation closure/pending status could settle the needs_review material_litigation_compliance risk.",
+          "risk_ids": [
+            "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+          ]
+        },
+        {
+          "target": "redemption_rights legal evidence and verifier",
+          "reason": "A bounded recheck of the redemption-rights holder evidence could settle the needs_review redemption_rights risk.",
+          "risk_ids": [
+            "14ccf843-0a53-525c-95b7-b2f103f6f248"
+          ]
+        },
+        {
+          "target": "precommercial_product business evidence extraction",
+          "reason": "Extraction-level re-examination of the business agent's 9 held evidence items could resolve the unresolved commercialization/revenue conflict, which re-retrieval cannot address.",
+          "risk_ids": []
+        }
+      ],
+      "final_explanation": "All four governed channels are available, but the Rule channel returned a critical risk level and a verified cash-runway calculation of roughly 2.76 months, while the deterministic severity floor is critical. Legal's litigation and redemption risks remain needs_review, business/financial extraction gaps and the model-document divergence are unsettled, and the model score is uncalibrated and cohort-unvalidated. Overall risk is therefore critical, driven by verified financial and rule-channel evidence, with material unresolved legal and extraction uncertainties."
+    },
+    "agent_result": {
+      "case_id": "ipo_2024_02410",
+      "run_id": "8b7ac065-d42c-5d64-a180-2bfe10f41900",
+      "agent_name": "llm_final_supervisor",
+      "status": "available",
+      "risk_ids": [
+        "69066732-91e7-5238-850d-b162104dcab9"
+      ],
+      "evidence_ids": [
+        "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+        "60dd7129-941a-5d23-a86a-a6cdf7467397"
+      ],
+      "calculation_ids": [],
+      "provider_name": "openai_responses",
+      "model_name": null,
+      "prompt_version": "v04_final_supervision_v3",
+      "warnings": [],
+      "metadata": {
+        "task": "synthesise governed channels into a supervisory judgement",
+        "deterministic_severity_floor": "critical",
+        "conflict_count": 7,
+        "creates_no_new_risk": true,
+        "probability_claimed": false
+      }
+    }
+  }
+}

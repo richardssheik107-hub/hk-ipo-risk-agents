@@ -1,0 +1,26 @@
+{
+  "schema_version": "v045_role_e_evidence_screenshot_manifest_v1",
+  "case_count": 3,
+  "cases_with_screenshots": 3,
+  "cited_evidence_count": 17,
+  "screenshot_count": 17,
+  "precise_localisation_count": 17,
+  "precise_localisation_rate": 1.0,
+  "page_level_fallback_count": 0,
+  "no_geometry_count": 0,
+  "unrendered_count": 0,
+  "case_statuses": {
+    "ipo_2024_01318": "rendered",
+    "ipo_2024_02410": "rendered",
+    "ipo_2024_02460": "rendered"
+  },
+  "statement": "Rendered screenshots cover the Evidence the risks cite. The precise count is the subset located from snippet text; the rest keep the parser's page-level region and are labelled as such.",
+  "input_dir": "reports\\v045_role_e_ai_v3_final",
+  "prospectus_root_supplied": true,
+  "images_written": true,
+  "manifest_sha256": {
+    "ipo_2024_01318": "b10044db51de1f10ded4442eb1555be2f9d1b85e88d520f702c3b56e2f2f4034",
+    "ipo_2024_02410": "0de6a0501dd7e996119c93e7ac49b775a40d54d7c9bd61fa6165691fc5c47a55",
+    "ipo_2024_02460": "60352ff8d526a6798e83d30202a43c7614f32470248f0427bc4f79237cfe6d0d"
+  }
+}

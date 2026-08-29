@@ -175,6 +175,37 @@ rejected in full, so prefer plain description over probabilistic phrasing."""
 )
 
 
+FINAL_SUPERVISION_V3_INSTRUCTION = """\
+Synthesise the supplied governed channel outputs into one supervisory judgement
+for an investment-research reader. You are a composition layer: weigh, explain
+and prioritise only what the Document, Market, Model and Rule channels already
+established.
+
+Use descriptive, evidence-grounded supervisory language. Describe what the
+supplied channels established, what remains unresolved, what is unavailable and
+which governed risks drive the categorical overall risk. Treat Model and Rule
+channels as bounded inputs: describe only their availability, categorical state
+and supplied driver directions, without restating their numeric scores. Do not
+make forward-looking market claims, outcome estimates, price-movement claims or
+statements of certainty about future events. When describing uncertainty, use factual states such as
+"unverified", "unresolved", "not established", "unavailable" or
+"insufficient governed evidence".
+
+Cite only supplied risk_ids, evidence_ids and conflict_ids. Every key finding
+must name at least one supplied risk_id when the payload supplies risks. Never
+introduce a risk, evidence item, market fact, model score, identifier or number
+that is absent from the supplied payload.
+
+overall_risk must not be lower than deterministic_severity_floor. It may be
+raised only when a supplied channel supports the escalation, and the rationale
+must identify that channel. Report every unresolved or partially resolved
+conflict using only supplied conflict_ids and state plainly what remains
+unsettled. Set recheck_required only when another bounded check of a named,
+supplied target could change the judgement. Treat channel absence, verifier
+non-verification and governed missingness as uncertainties; never resolve them
+by assumption."""
+
+
 _SUPERVISION_PROMPTS = MappingProxyType(
     {
         (
@@ -185,6 +216,10 @@ _SUPERVISION_PROMPTS = MappingProxyType(
             "final_supervision_synthesis",
             "v04_final_supervision_v2",
         ): FINAL_SUPERVISION_V2_INSTRUCTION,
+        (
+            "final_supervision_synthesis",
+            "v04_final_supervision_v3",
+        ): FINAL_SUPERVISION_V3_INSTRUCTION,
     }
 )
 _SUPERVISION_TASKS = frozenset(task for task, _ in _SUPERVISION_PROMPTS)

@@ -1,0 +1,14 @@
+{
+  "schema_version": "v04_e_agent_trace_v1",
+  "event_count": 33,
+  "agent_identified_count": 33,
+  "tool_identified_count": 33,
+  "evidence_accounted_count": 33,
+  "referenced_evidence_count": 120,
+  "resolved_evidence_count": 120,
+  "unresolved_evidence_ids": [],
+  "agent_traceability": 1.0,
+  "tool_traceability": 1.0,
+  "evidence_traceability": 1.0,
+  "overall_traceability": 1.0
+}

@@ -42,7 +42,7 @@ from ipo_risk.schemas.final_supervision import FinalSupervisionInput, FinalSuper
 
 
 FINAL_SUPERVISION_SCHEMA_VERSION = "v04_final_supervision_v1"
-FINAL_SUPERVISION_PROMPT_VERSION = "v04_final_supervision_v2"
+FINAL_SUPERVISION_PROMPT_VERSION = "v04_final_supervision_v3"
 FINAL_SUPERVISION_TASK = "final_supervision_synthesis"
 FINAL_SUPERVISOR_AGENT = "llm_final_supervisor"
 
@@ -61,6 +61,7 @@ _FORBIDDEN_TERMS = (
     "probability", "likelihood", "forecast", "expected return", "price target",
     "will rise", "will fall", "guaranteed", "概率", "预测收益", "涨幅", "跌幅", "必然",
 )
+_PROMPT_NEUTRAL_REPLACEMENT = "descriptive governance wording"
 
 
 class SupervisionStatus(StrEnum):
@@ -89,7 +90,18 @@ class SynthesisOutcome(StrEnum):
 
 
 class ScopeViolation(ValueError):
-    """The model cited something it was not given."""
+    """A refused judgement with separate machine and audit identities."""
+
+    def __init__(self, message: str, *, code: "ScopeViolationCode") -> None:
+        super().__init__(message)
+        self.code = code
+
+
+class ScopeViolationCode(StrEnum):
+    REFERENCE_SCOPE_VIOLATION = "REFERENCE_SCOPE_VIOLATION"
+    SEVERITY_FLOOR_NOT_MET = "SEVERITY_FLOOR_NOT_MET"
+    UNGOVERNED_NUMBER_NOT_ALLOWED = "UNGOVERNED_NUMBER_NOT_ALLOWED"
+    FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED = "FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED"
 
 
 class SupervisionFinding(BaseModel):
@@ -118,7 +130,7 @@ class RecheckTarget(BaseModel):
 
 
 class FinalSupervisionJudgement(BaseModel):
-    """The bounded structured output; it carries no score and no probability."""
+    """A bounded, descriptive judgement over supplied governed facts."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -207,6 +219,46 @@ def _normalise_number(token: str) -> str:
 
 def _numbers(text: str) -> set[str]:
     return {_normalise_number(match.group(0)) for match in _NUMBER.finditer(text)}
+
+
+def _prompt_safe_payload(value: Any, *, field_name: str = "") -> Any:
+    """Project governed facts without feeding guard trigger terms to the model.
+
+    The original payload remains the only input to ``_validate_scope`` and the
+    audit trace.  This projection changes no identifiers, numbers, levels or
+    channel states; it only neutralises wording in free-text fields and omits
+    governance-only keys whose names contain a guarded term.
+    """
+
+    if isinstance(value, dict):
+        projected: dict[str, Any] = {}
+        for key, item in value.items():
+            lowered_key = str(key).casefold()
+            if any(term.casefold() in lowered_key for term in _FORBIDDEN_TERMS):
+                continue
+            if field_name == "model_prediction" and key == "score":
+                continue
+            if field_name == "rule_prediction" and key in {"risk_score", "explanation"}:
+                continue
+            if field_name == "drivers" and key in {"feature_value", "shap_value"}:
+                continue
+            projected[key] = _prompt_safe_payload(item, field_name=str(key))
+        return projected
+    if isinstance(value, (list, tuple)):
+        return [_prompt_safe_payload(item, field_name=field_name) for item in value]
+    if not isinstance(value, str):
+        return value
+    if field_name.endswith("_id") or field_name.endswith("_ids"):
+        return value
+    projected_text = value
+    for term in sorted(_FORBIDDEN_TERMS, key=len, reverse=True):
+        projected_text = re.sub(
+            re.escape(term),
+            _PROMPT_NEUTRAL_REPLACEMENT,
+            projected_text,
+            flags=re.IGNORECASE,
+        )
+    return projected_text
 
 
 class LLMFinalSupervisor:
@@ -479,26 +531,26 @@ class LLMFinalSupervisor:
     def _correction_instruction(violation: ScopeViolation) -> str:
         """Feedback aimed at the rule that was actually broken."""
 
-        message = str(violation)
-        if "prediction vocabulary" in message:
+        if violation.code is ScopeViolationCode.FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED:
             return (
-                "The previous judgement was rejected because it used forbidden prediction "
-                f"vocabulary ({message.split(': ', 1)[-1]}). Rewrite every string without those "
-                "words in any casing: describe what the supplied channels established and what "
-                "remains unsettled, never how likely an outcome is. Keep the same findings, "
-                "the same cited IDs and the same overall_risk."
+                "Violation code FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED. Rewrite all narrative "
+                "fields using only descriptive, evidence-grounded language about established "
+                "or unresolved facts. Do not discuss future outcomes or interpret a model score "
+                "as a calibrated real-world estimate. Keep all cited IDs and overall_risk unchanged."
             )
-        if "severity floor" in message:
+        if violation.code is ScopeViolationCode.SEVERITY_FLOOR_NOT_MET:
             return (
                 "The previous judgement was rejected because overall_risk was below the supplied "
                 "deterministic_severity_floor. Return the same judgement with overall_risk at or "
                 "above that floor."
             )
-        if "introduced number" in message:
+        if violation.code is ScopeViolationCode.UNGOVERNED_NUMBER_NOT_ALLOWED:
             return (
-                "The previous judgement was rejected because it stated a number that was not in "
-                "the supplied payload. Rewrite the prose using only numbers present in the "
-                "payload, or none at all."
+                "Violation code UNGOVERNED_NUMBER_NOT_ALLOWED. Rewrite all narrative fields "
+                "using descriptive, evidence-grounded language about established or unresolved "
+                "facts. Omit numeric Model and Rule scores. Use another number only when its exact "
+                "form is necessary and present in the supplied evidence. Keep all cited IDs and "
+                "overall_risk unchanged."
             )
         return (
             "Return a corrected judgement using only IDs in reference_scope. Use empty ID lists "
@@ -562,7 +614,7 @@ class LLMFinalSupervisor:
         # acceptance evidence has to be able to tell them apart.
         rejected_attempts: list[dict[str, Any]] = []
         try:
-            scope_payload = payload
+            scope_payload = _prompt_safe_payload(payload)
             for scope_attempt in range(1, 3):
                 result = self.llm_provider.generate_structured(
                     task_name=FINAL_SUPERVISION_TASK,
@@ -584,6 +636,8 @@ class LLMFinalSupervisor:
                     rejected_attempts.append(
                         {
                             "attempt": scope_attempt,
+                            "violation_code": exc.code.value,
+                            "audit_violation_detail": str(exc),
                             "violation": str(exc),
                             "call": self._call_record(
                                 max(0, int((perf_counter() - started) * 1000))
@@ -596,7 +650,7 @@ class LLMFinalSupervisor:
                         **payload,
                         "scope_correction": {
                             "previous_result_rejected": True,
-                            "violation_type": str(exc),
+                            "violation_code": exc.code.value,
                             "instruction": self._correction_instruction(exc),
                         },
                     }
@@ -609,7 +663,12 @@ class LLMFinalSupervisor:
             )
             reason = f"LLM final supervision unavailable: {type(exc).__name__}: {exc}"
             scope_check = (
-                {"status": "failed", "violation": str(exc)} if refused
+                {
+                    "status": "failed",
+                    "violation_code": exc.code.value,
+                    "audit_violation_detail": str(exc),
+                    "violation": str(exc),
+                } if refused
                 else {
                     "status": "not_applicable",
                     "reason": "the provider call returned no judgement to check",
@@ -734,24 +793,37 @@ class LLMFinalSupervisor:
             for risk_id in finding.risk_ids
         } | {risk_id for target in judgement.recheck_targets for risk_id in target.risk_ids}
         if not cited_risks <= allowed_risks:
-            raise ScopeViolation("supervisory synthesis cited a risk_id that was not supplied")
+            raise ScopeViolation(
+                "supervisory synthesis cited a risk_id that was not supplied",
+                code=ScopeViolationCode.REFERENCE_SCOPE_VIOLATION,
+            )
         if allowed_risks and not cited_risks:
-            raise ScopeViolation("supervisory synthesis cited no risk although this run produced risks")
+            raise ScopeViolation(
+                "supervisory synthesis cited no risk although this run produced risks",
+                code=ScopeViolationCode.REFERENCE_SCOPE_VIOLATION,
+            )
 
         cited_evidence = {
             evidence_id for finding in judgement.key_findings for evidence_id in finding.evidence_ids
         }
         if not cited_evidence <= allowed_evidence:
-            raise ScopeViolation("supervisory synthesis cited an evidence_id that was not supplied")
+            raise ScopeViolation(
+                "supervisory synthesis cited an evidence_id that was not supplied",
+                code=ScopeViolationCode.REFERENCE_SCOPE_VIOLATION,
+            )
 
         cited_conflicts = {item.conflict_id for item in judgement.conflict_assessments}
         if not cited_conflicts <= allowed_conflicts:
-            raise ScopeViolation("supervisory synthesis assessed a conflict_id that was not supplied")
+            raise ScopeViolation(
+                "supervisory synthesis assessed a conflict_id that was not supplied",
+                code=ScopeViolationCode.REFERENCE_SCOPE_VIOLATION,
+            )
 
         floor = payload["deterministic_severity_floor"]
         if _RISK_RANK[judgement.overall_risk] < _RISK_RANK[floor]:
             raise ScopeViolation(
-                f"overall_risk {judgement.overall_risk!r} is below the deterministic severity floor {floor!r}"
+                f"overall_risk {judgement.overall_risk!r} is below the deterministic severity floor {floor!r}",
+                code=ScopeViolationCode.SEVERITY_FLOOR_NOT_MET,
             )
 
         supplied = json.dumps(payload, ensure_ascii=False, sort_keys=True)
@@ -769,13 +841,15 @@ class LLMFinalSupervisor:
         invented = _numbers(prose) - supplied_numbers
         if invented:
             raise ScopeViolation(
-                f"supervisory synthesis introduced number(s) absent from the supplied payload: {sorted(invented)}"
+                f"supervisory synthesis introduced number(s) absent from the supplied payload: {sorted(invented)}",
+                code=ScopeViolationCode.UNGOVERNED_NUMBER_NOT_ALLOWED,
             )
         lowered = prose.lower()
         used = sorted(term for term in _FORBIDDEN_TERMS if term in lowered)
         if used:
             raise ScopeViolation(
-                "supervisory synthesis used prediction vocabulary: " + ", ".join(used)
+                "supervisory synthesis used prediction vocabulary: " + ", ".join(used),
+                code=ScopeViolationCode.FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED,
             )
 
         return {
@@ -805,6 +879,7 @@ __all__ = [
     "LLMFinalSupervisor",
     "RecheckTarget",
     "ScopeViolation",
+    "ScopeViolationCode",
     "SupervisionFinding",
     "SupervisionStatus",
     "SynthesisAttempt",

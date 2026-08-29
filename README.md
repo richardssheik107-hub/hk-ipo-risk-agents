@@ -1,130 +1,159 @@
 # HK IPO Risk Agents
 
-面向东吴证券港股 IPO 赛题的多智能体风险分析与上市后预警原型。
+面向东吴证券港股 IPO 赛题的多智能体风险分析与上市后预警系统。
 
-> Package checkpoint：`v0.4.0`
->
-> Competition runtime：`v0.4.5`
->
-> Role-B diagnostic track：`v0.4.6`
->
-> 状态日期：`2026-08-29`
->
+> Competition runtime：`v0.4.5`  
+> Role-B optimization：`v0.4.6`  
+> Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`  
+> 状态日期：`2026-08-29`  
 > 当前结论：**NOT COMPETITION_READY**
 
-## 当前冲刺模式
+## 当前五项主任务
 
-项目已切换到 **Frontend-First Parallel Submission Sprint**：
+当前 final-three 已经是稳定、可 fresh-clone 的完整演示基线。现在不再围绕“把三个案例跑通”安排工作，而是按五条主线并行冲刺：
 
-```text
-当前案例阶段真实跑完 → 前端可以绿色“已完成”
-可选 Market / Model / real-LLM 缺失 → 在绿色阶段内部明确 unavailable / fallback
-最终 M1/M2/M4/D/C/E/Validation Gate → 继续严格保留，只卡最终提交宣称
-```
-
-这意味着团队不再按旧 Gate 串行排队。B/C/D/E、UI/API、Report、Trace、Evidence、capability demo 可以并行补齐；普通安全 PR 不需要等待所有最终比赛指标先通过。
-
-## 赛题目标
-
-1. 对数百页港股招股书进行防幻觉解析，抽取财务、法务和业务隐性风险；
-2. 让 Financial、Legal、Business、Market 与 Final Supervisor 协作、冲突查证并保留完整 Trace；
-3. 输出带原 PDF 页码、Evidence / bbox / 截图的风险报告，并用上市后 1D / 5D / 20D / 60D 表现验证业务参考价值。
-
-## 最新状态
-
-| 维度 | 当前已合入事实 | 最终关闭标准 |
+| 主任务 | 核心目标 | 优先级 |
 |---|---|---|
-| B M1 | fixed-journal `12/30 = 40.00%` | ALL 79 Development `>=80%` |
-| B M2 | fixed-journal `17/48 = 35.42%` | ALL 79 Development `>=85%` |
-| B fresh gated | `10/30` M1、`15/48` M2；37/40 structured valid | 继续 Development 泛化 |
-| M3 Traceability | 三案例 `3/3 = 1.0` | 保持 100% 并进入 final bundle |
-| Final Supervisor | latest current-main real-provider `3/3` | final evidence 稳定；fallback 不计 remote success |
-| Market | final-three receipt-bound Core runtime `3/3 available`；全量 438 案例可由授权 ZIP 一键重建 | 保持 PIT / provenance 合同 |
-| Evidence bbox | truthful PyMuPDF `page_text_union` bbox 已合入 | 精确 quote/snippet screenshot/export manifest |
-| M4 | `0/6` 真人评审 | 每案 2 名独立评审并通过 rubric |
-| M5 formal | current-main 70-case 四文件与 receipt 哈希一致；D1 `12/12 PASS` | 保持 deterministic / Blind 边界 |
-| M5 V2 promotion | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，版本化 freeze/receipt/handoff 已完成 | A 审核并合并 promotion PR |
-| 产品 | final-three Market / frozen Model `3/3 available`，UI 不再因资产缺失显示未启用 | real PDF/LLM case matrix + capability demos + final bundle |
+| **M1 / M2 文档智能优化** | ALL79 Development：M1 `>=80%`、M2 `>=85%` | **P0** |
+| **前端 / 产品展示** | 把真实系统做成答辩级最终 UI | **P0/P1** |
+| **Market-X 动态泛化** | 任意合法新 IPO 得到真实 Market-X，数据不足时诚实降级 | **P0** |
+| **Model / Prediction / SHAP 动态化** | 不再只支持 final-three handoff；满足 feature contract 的案例真实 frozen-model inference + native SHAP | **P0** |
+| **最终集成、验收、文档和提交包** | Freeze → one-shot Validation → audits → fresh clone → secure ZIP | **P1 → 最后 P0** |
 
-旧 Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 不足以宣称强预测效果。V2 把 Recall 提升至 `52.17%`，定位为未校准的高召回初筛信号；其 promotion package 不覆盖旧 PR-F，并由 A-owned merge 使决议生效。
+唯一当前总计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)。五条执行线：[`docs/team/README.md`](docs/team/README.md)。唯一实时 Release Gate：[`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)。
 
-## 当前优先级
+## 当前稳定产品基线
 
-### P0 — 尽快看到完整产品结果
-
-让一个真实 current-case 直接走通：
+以下能力已经进入 regression-protection 状态：
 
 ```text
-Document Analysis
-→ Document Risk Features
-→ Market Features
-→ Prediction
-→ Evidence / Explainability
-→ Final Supervisor
-→ Final Risk Report
+Final Supervisor E1 = 3/3
+real-provider first-attempt accepted = 3/3
+M3 = 1.0 x 3
+Market final-three = 3/3
+Frozen Model final-three = 3/3
+recheck = 17/17; budget-skipped = 0
+seven-stage = 21/21
+Evidence screenshots = 17/17 precise
+canonical replay = 3 cases / 66 files
+fresh clone / Streamlit smoke / team-ready checks = PASS
 ```
 
-阶段绿色只表示本次产品步骤真实完成；Market/Model/LLM 等可选通道若缺失，继续在页面内诚实显示 unavailable/fallback。
+final-three 是答辩 fallback 和回归基线，不是系统能力上限。
 
-### 并行推进
+## Role-B 最新正式 checkpoint
 
-- **B**：Parser / retrieval / extraction / fact conversion / LLM stability / binding → ALL 79 Development；
-- **C**：Market final-three strict runtime、comparable IPO / valuation；
-- **D**：model decision、strict revalidation、final-three handoff、prediction table；
-- **E**：Supervisor 稳定性、Human Review、case reports；
-- **Product**：pipeline/text embellishment/related-party/valuation cases、精确 Evidence screenshot、API/UI、演示备份。
-
-完整计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)。
-
-## 系统架构
+PR #189 已把 Batch008/009 的 accepted production fixes 和固定 journal 测量纳入 main：
 
 ```text
-Prospectus PDF
-→ Parser / Retriever / Evidence
-→ Financial deterministic analysis
-→ Legal / Business structured LLM
-→ Verifier / Document Supervisor
-→ governed Market Context + Skills
-→ optional authentic model signal
-→ Conflict / bounded re-check
-→ LLM Final Supervisor + explicit deterministic fallback
-→ Agent / Tool / Evidence Trace
-→ Human Review / Report / UI
-→ M1–M5 evaluation / readiness / package
+Batch005 fixed-journal gated  M1 = 12/30   M2 = 18/48
+Batch008 fixed-journal gated  M1 = 13/30   M2 = 20/48
+Batch009 fixed-journal gated  M1 = 14/30   M2 = 21/48
+
+Batch009 offline              M1 = 9/30    M2 = 15/48
 ```
 
-Role-B v0.4.6 提供：
+Batch009 当前正式 fixed-journal 比例：
 
 ```text
-offline baseline
-+ real-LLM shadow probe
-+ journal-replayed gated result
-+ read-only persisted-result Evidence audit
-→ monotonicity / retrieval waterfall / LLM quality / provenance diagnostics
+M1 = 14/30 = 46.67%
+M2 = 21/48 = 43.75%
 ```
 
-## 指标与治理
+最后一个真实 fresh-provider checkpoint 仍是 Batch005：
 
 ```text
-M1 Existing-Gold Risk Accuracy >=0.80
-M2 Existing-Gold Evidence Coverage Recall >=0.85
-M3 Traceability =1.0
-M4 Explanation Quality = human-review rubric
-M5 = 1D / 5D / 20D / 60D，5D 重点
+fresh gated M1 = 11/30
+fresh gated M2 = 17/48
+structured valid = 38/40
+fallback = 2
+transport failures = 0
+scope rejections = 0
 ```
 
-提交期加速不改变硬边界：
+因此 **`14/30, 21/48` 是 zero-network immutable-journal 结果，不是新的 fresh-provider 结果。**
+
+已接受：
+
+- Batch008：legacy Chinese cash statement / explicit Notes-column deterministic compatibility；
+- Batch009：generalized Legal redemption/restoration lifecycle recognition，redemption-rights M1 `4/8 → 5/8`。
+
+已拒绝并回滚：direct ranked concentration-table candidate；它未提高 canonical M1/M2，并使 supplier existence F1 `0.875 → 0.80`。后续不得直接恢复该实现。
+
+Role-B 当前优先级：
+
+```text
+retrieval candidate generation / ranking
+→ exact page / anchor Evidence binding
+→ remaining deterministic / numeric extraction
+→ genuine conflict fail-closed
+→ fixed-vs-fresh LLM / Evidence variance
+```
+
+执行模式允许 multi-root wide sprint：同时处理多个已经证明且兼容的 root，子修复独立 commit，bundle 统一评测，出现回归只撤问题子项；有 meaningful gain 后尽快从 fixed10 扩到更大 Development，最终必须 ALL79。
+
+## Dynamic Market-X
+
+目标 runtime：
+
+```text
+issuer / listing identity
+→ validated governed cache / frozen artifact
+   or governed dynamic PIT source
+→ Market-X builder
+→ schema / identity / provenance / hash validation
+→ MarketContext
+→ Market Skills / Supervisor / UI
+```
+
+合法历史不足时允许 `PARTIAL / UNAVAILABLE`，但必须给出真实 reason。禁止 post-listing leakage、missing→0、复制 final-three 数值或无来源 proxy。
+
+## Dynamic Model / Prediction / SHAP
+
+当前 final-three receipt-bound handoff继续保留为稳定 baseline，但最终泛化路径必须是：
+
+```text
+governed feature vector
++ final frozen model artifact/hash
+→ runtime inference (no retraining)
+→ uncalibrated_model_score
+→ frozen alert/classification policy
+→ native SHAP / signed drivers
+→ ModelSignal
+→ Final Supervisor / UI
+```
+
+同时必须完成 `PROMOTE_V2` 或 `RETAIN_FROZEN_PR_F` 正式治理决议。任何 promotion 都建立新的 versioned freeze / receipt，不覆盖历史 PR-F 身份，也不得根据 2024 Validation 继续调参。V2 promotion package（versioned freeze、strict receipt、checker、final-three label-free handoff）已实现，A 审核并合并 promotion PR 即 `PROMOTE_V2` 生效。
+
+## 前端 / 产品
+
+最终 UI 明确支持：
+
+```text
+1. Offline Demo Replay
+2. Historical Governed IPO
+3. Fresh New-IPO Analysis
+```
+
+并把 Risk/Evidence、Market、Model/SHAP、Conflict/Recheck、Final Supervisor、Report/Trace 做成评委一眼能理解的研究/风控工作台。
+
+发行人输入已支持 official catalog-backed 快速匹配；所有 `AVAILABLE / PARTIAL / UNAVAILABLE` 必须来自真实 runtime contract，前端不自己补 Market/Model/Evidence。
+
+## 治理边界
+
+任何冲刺都不能改变：
 
 - Existing Gold immutable，`UNJUDGED != negative`；
 - Gold 不进入 runtime Retriever / Prompt / Agent；
-- Validation 只能 freeze 后 one-shot；
+- 2024 Validation 只允许 freeze 后 one-shot；
 - 2025 Blind 不用于优化；
-- LLM 不得创造越界 Evidence / market fact；
-- 精确财务数值由 deterministic `Calculation` 支撑；
-- Market PIT-safe，缺失不补零、不造 proxy；
-- fallback 不冒充 real-provider accepted；
-- UI 不伪造 Market / Model / Evidence / bbox；
-- 不提交 Secret、授权 PDF、raw EOD、本地绝对路径或未授权模型。
+- 不按公司、股票、case、页码、Gold 文本 hardcode；
+- LLM 不 invent Evidence / market fact；
+- exact numeric claim 由 deterministic Calculation 支撑；
+- Market PIT-safe，missing 不等于 zero；
+- model score 不称 probability；
+- fallback 不冒充 real-provider success；
+- Secret、授权 PDF、raw EOD、raw journal、本地绝对路径不进入 Git / submission bundle。
 
 ## 快速入口
 
@@ -137,33 +166,28 @@ python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
 python scripts/check_v045_product_runtime.py
+python scripts/check_v045_team_clone_ready.py
 ```
 
-使用授权行情 ZIP 重建完整 438 案例 Market-X（CSV 会在系统临时目录解压，
-不会写入 Git checkout）：
+离线答辩基线：
 
 ```bash
-python scripts/prepare_v045_market_runtime.py --eod-archive <hkshareeodprices.zip>
+python scripts/check_v045_team_clone_ready.py
+# Windows
+START_DEMO.bat
+# macOS / Linux
+./start_demo.sh
 ```
-
-Role-B：
-
-```bash
-python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
-python scripts/run_v046_role_b_ablation.py --subset-only
-python scripts/check_v046_role_b_structured_smoke.py
-python scripts/run_v046_role_b_ablation.py --run-id <RUN_ID> --modes all --execute
-```
-
-真实运行需要本地授权招股书目录与 provider 凭证；不得使用 mock 冒充 real-LLM。
 
 ## 文档入口
 
-- 当前统一计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)
-- 最终 Release Gate：[`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
-- B 线计划：[`docs/ROLE_B_M1_M2_PLAN.md`](docs/ROLE_B_M1_M2_PLAN.md)
-- D 模型决议：[`docs/ROLE_D_MODEL_DECISION.md`](docs/ROLE_D_MODEL_DECISION.md)
-- 指标协议：[`docs/COMPETITION_METRIC_PROTOCOL.md`](docs/COMPETITION_METRIC_PROTOCOL.md)
-- 最终提交：[`docs/SUBMISSION_RUNBOOK.md`](docs/SUBMISSION_RUNBOOK.md)
+- [`docs/README.md`](docs/README.md) — 文档索引 / source-of-truth 规则
+- [`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md) — **唯一当前总计划**
+- [`docs/team/README.md`](docs/team/README.md) — 五条并行工作线
+- [`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md) — **唯一实时 Release Gate**
+- [`docs/COMPETITION_METRIC_PROTOCOL.md`](docs/COMPETITION_METRIC_PROTOCOL.md) — 冻结指标协议
+- [`docs/V046_ROLE_B_EXPERIMENT_LEDGER.md`](docs/V046_ROLE_B_EXPERIMENT_LEDGER.md) — Role-B 历史实验总账，不是当前计划
+- [`docs/ROLE_D_MODEL_DECISION.md`](docs/ROLE_D_MODEL_DECISION.md) — D promote/retain 决策入口
+- [`docs/SUBMISSION_RUNBOOK.md`](docs/SUBMISSION_RUNBOOK.md) — freeze / Validation / 打包 Runbook
 
-`COMPETITION_READY` 只能在全部真实 Release Gates、one-shot Validation、CI、Blind/provenance/determinism/security 与最终封包通过后使用。
+历史单批实验不再作为当前计划入口；需要追溯时使用 machine-readable `reports/` artifacts 和 Git history。
