@@ -1,11 +1,11 @@
 {
-  "version": "v046_autonomous_next_actions_v2",
+  "version": "v046_autonomous_next_actions_v3",
   "actions": [
-    "stop execution at the owner-requested Batch009 checkpoint",
-    "preserve 8743724a3509715ea3b83e4dd58f56dcf97ffe24 as BEST_KNOWN_GOOD",
-    "replan retrieval candidate/ranking and exact Evidence binding as the next compatible bundle",
-    "do not revive the rejected ranked-table grammar without candidate-context controls",
-    "run a cheap larger-Development retrieval funnel before the next fresh provider checkpoint",
+    "preserve 1d73c5157048d7ea8d322ec4fe938f71cefa3301 as BEST_KNOWN_GOOD",
+    "expand the governed Development funnel from 20 to 40 before ALL79",
+    "prioritize numeric extraction and risk conversion units whose candidate Evidence is already consumed",
+    "keep ranked-table parsing evidence-only; do not convert it directly into a clean policy fact",
+    "use the immutable journal for fixed10 gated comparisons and zero-network wider-set runs",
     "do not open Validation until all 79 Development satisfy the formal gate",
     "never access 2025 Blind outcomes during tuning"
   ]

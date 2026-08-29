@@ -39,6 +39,17 @@
       "fixed_journal_m2": "21/48",
       "network_calls": 0,
       "gain": "redemption_rights +1 M1 / +1 M2"
+    },
+    {
+      "id": "batch010_ranked_table_evidence_preservation",
+      "commit": "1d73c5157048d7ea8d322ec4fe938f71cefa3301",
+      "type": "accepted_production_fix",
+      "fixed_journal_m1": "15/30",
+      "fixed_journal_m2": "24/48",
+      "development20_offline_m1": "14/50",
+      "development20_offline_m2": "28/98",
+      "network_calls": 0,
+      "gain": "ranked concentration tables +1 M1 / +3 M2"
     }
   ]
 }

@@ -1,31 +1,30 @@
 {
-  "controller_version": "v046_autonomous_closure_v2",
+  "controller_version": "v046_autonomous_campaign_v3",
   "campaign_started_at": "2026-08-29",
   "current_main_sha": "f6f78e275075ae6a5955c6ace331a287b919ca0e",
   "current_branch": "feat/v046-role-b-wide-sprint-009",
-  "best_commit": "8743724a3509715ea3b83e4dd58f56dcf97ffe24",
-  "best_fixed_journal_m1": {"correct": 14, "support": 30, "rate": 0.4666666666666667},
-  "best_fixed_journal_m2": {"correct": 21, "support": 48, "rate": 0.4375},
+  "best_commit": "1d73c5157048d7ea8d322ec4fe938f71cefa3301",
+  "best_fixed_journal_m1": {"correct": 15, "support": 30, "rate": 0.5},
+  "best_fixed_journal_m2": {"correct": 24, "support": 48, "rate": 0.5},
   "best_fresh_m1": {"correct": 11, "support": 30, "rate": 0.36666666666666664},
   "best_fresh_m2": {"correct": 17, "support": 48, "rate": 0.3541666666666667},
+  "current_development20_m1": {"correct": 14, "support": 50, "rate": 0.28},
+  "current_development20_m2": {"correct": 28, "support": 98, "rate": 0.2857142857142857},
   "current_full_development_m1": "NOT_AVAILABLE",
   "current_full_development_m2": "NOT_AVAILABLE",
-  "accepted_fix_count": 5,
+  "accepted_fix_count": 6,
   "rejected_hypothesis_count": 5,
   "last_fresh_run_identity": "batch005_fresh_checkpoint:da2361fd34f88d1402be85ed75c87ef6fb32ba2dd755265642599330b35dbeb4",
-  "last_full_pytest_sha": "8743724a3509715ea3b83e4dd58f56dcf97ffe24",
-  "last_full_pytest_result": "2294 passed, 2 skipped, 3 external Windows line-ending checksum failures, 3 warnings",
+  "last_full_pytest_sha": "1d73c5157048d7ea8d322ec4fe938f71cefa3301",
+  "last_full_pytest_result": "2304 passed, 2 skipped, 3 warnings",
   "validation_opened": false,
   "blind_used": false,
-  "active_root": "PAUSED_FOR_OWNER_REPLAN_AFTER_BATCH009",
+  "active_root": "numeric_extraction_and_risk_conversion",
   "next_ranked_roots": [
     "retrieval_candidate_and_ranking_miss",
     "numeric_extraction",
     "final_evidence_binding",
     "llm_evidence_stability"
   ],
-  "external_blockers": [
-    "m4_human_review",
-    "Windows checkout CRLF changes frozen PR-F artifact byte hashes"
-  ]
+  "external_blockers": ["m4_human_review"]
 }
