@@ -1680,6 +1680,40 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 ) in enumerate(occurrences)
             ]
 
+        # If one label selected a short period-count occurrence but its nearby
+        # companion label exposes a unique, equally-sized aggregate series,
+        # prefer that structurally paired occurrence.  This repairs repeated
+        # detail labels without truncating values or guessing a period.  Ties
+        # remain fail-closed.
+        for name, companion in (("largest", "top_five"), ("top_five", "largest")):
+            companion_count = len(values[companion])
+            companion_start = selected_label_starts[companion]
+            if (
+                companion_count < 2
+                or len(values[name]) == companion_count
+                or companion_start is None
+            ):
+                continue
+            aligned = [
+                (index, occurrence)
+                for index, occurrence in enumerate(occurrence_series[name])
+                if len(occurrence[1]) == companion_count
+                and occurrence[3] in {None, companion_count}
+                and abs(occurrence[0] - companion_start) <= 1200
+            ]
+            if len(aligned) != 1:
+                continue
+            selected_index, occurrence = aligned[0]
+            selected_start, selected_values, selected_raw, selected_count, selected_local_period = occurrence
+            values[name] = selected_values
+            raw_percentages[name] = selected_raw
+            selected_enumerated_counts[name] = selected_count
+            occurrence_selection[name] = "companion_series_count_match"
+            selected_local_periods[name] = selected_local_period
+            selected_label_starts[name] = selected_start
+            for index, diagnostic in enumerate(occurrence_diagnostics[name]):
+                diagnostic["selected"] = index == selected_index
+
         # A concentration sentence can enumerate several bare years and one
         # final full date while the adjacent page contains a newer, unrelated
         # date.  When both percentage series independently align to that same
@@ -1734,7 +1768,8 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             for name, count in selected_enumerated_counts.items():
                 if count is None:
                     selected_enumerated_counts[name] = shared_value_count
-                    occurrence_selection[name] = "companion_series_period_count"
+                    if occurrence_selection[name] != "companion_series_count_match":
+                        occurrence_selection[name] = "companion_series_period_count"
         if label_local_period_aligned or companion_series_period_aligned:
             periods = [next(iter(local_period_values))]
             period_source = target

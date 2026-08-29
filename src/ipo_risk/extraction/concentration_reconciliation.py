@@ -31,7 +31,7 @@ from ipo_risk.extraction.models import ConcentrationFact, ExtractionStatus
 from ipo_risk.schemas import DocumentChunk, Evidence
 
 
-_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v1"
+_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v2"
 _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES = frozenset(
     {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
 )
@@ -131,19 +131,37 @@ class _ConcentrationReconciliationMixin:
             "top_five": top_five_count,
         }
 
-        can_reconcile_count = (
-            "value_period_count_mismatch" in issues
+        occurrence_selection = metadata.get("percentage_occurrence_selection", {})
+        companion_occurrence_aligned = (
+            isinstance(occurrence_selection, Mapping)
+            and "companion_series_count_match" in occurrence_selection.values()
             and fact.largest_counterparty_pct is not None
             and fact.top_five_pct is not None
             and largest_count == top_five_count
             and largest_count >= 2
-            and largest_count <= len(periods)
-            and len(periods) - largest_count <= 1
+        )
+        can_reconcile_count = (
+            "value_period_count_mismatch" in issues
+            and fact.largest_counterparty_pct is not None
+            and fact.top_five_pct is not None
+            and (
+                (
+                    largest_count == top_five_count
+                    and largest_count >= 2
+                    and largest_count <= len(periods)
+                    and len(periods) - largest_count <= 1
+                )
+                or companion_occurrence_aligned
+            )
         )
         if can_reconcile_count:
             issues = [item for item in issues if item != "value_period_count_mismatch"]
             metadata["value_period_count_reconciled"] = True
-            metadata["value_period_alignment"] = "dual_series_to_latest_period_suffix"
+            metadata["value_period_alignment"] = (
+                "companion_occurrence_to_latest_period"
+                if companion_occurrence_aligned
+                else "dual_series_to_latest_period_suffix"
+            )
         else:
             metadata["value_period_count_reconciled"] = False
 

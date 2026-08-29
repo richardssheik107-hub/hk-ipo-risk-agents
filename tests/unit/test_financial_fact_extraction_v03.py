@@ -825,6 +825,27 @@ def test_repeated_detail_label_does_not_overwrite_aggregate_series() -> None:
     assert len(candidate["percentage_occurrences"]["top_five"]) == 2
 
 
+def test_companion_series_selects_unique_equal_length_aggregate_occurrence() -> None:
+    result = concentration(
+        "customer",
+        (
+            "截至2020年12月31日止年度，"
+            "五大客戶佔收益65.2%、60.2%及71.0%，"
+            "五大客戶中的客戶A佔收益5.0%，"
+            "最大客戶佔收益17.2%、19.5%及27.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("27.0")
+    assert result.top_five_pct == Decimal("71.0")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["top_five"] == (
+        "companion_series_count_match"
+    )
+
+
 def test_empty_first_label_yields_to_later_aligned_occurrence() -> None:
     result = concentration(
         "supplier",

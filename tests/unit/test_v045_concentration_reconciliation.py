@@ -115,6 +115,39 @@ def test_value_period_mismatch_stays_fail_closed_when_gap_is_larger_than_one() -
     assert result.metadata["value_period_count_reconciled"] is False
 
 
+def test_companion_occurrence_match_can_reconcile_missing_period_labels() -> None:
+    fact = _fact(
+        period_end=date(2020, 12, 31),
+        period_months=12,
+        largest="27.0",
+        top_five="71.0",
+        page=20,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["value_period_count_mismatch"],
+        metadata={
+            "raw_percentages": {
+                "largest": ["17.2%", "19.5%", "27.0%"],
+                "top_five": ["65.2%", "60.2%", "71.0%"],
+            },
+            "percentage_occurrence_selection": {
+                "largest": "first_nonempty_fail_closed",
+                "top_five": "companion_series_count_match",
+            },
+            "period_candidates": [
+                {"period_end": "2020-12-31", "period_months": 12},
+            ],
+        },
+    )
+
+    result = V03FinancialFactExtractor._reconcile_concentration_candidate(fact)
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.metadata["value_period_alignment"] == (
+        "companion_occurrence_to_latest_period"
+    )
+
+
 def test_known_period_months_govern_duplicate_same_date_null_candidate() -> None:
     fact = _fact(
         period_end=date(2020, 6, 30),
