@@ -1,8 +1,8 @@
 {
   "version": "v046_autonomous_fix_priority_v1",
-  "active": "deterministic_fact_missing",
+  "active": "PAUSED_FOR_OWNER_REPLAN",
   "ranked": [
-    {"rank": 1, "root": "deterministic_fact_missing", "reason": "three audited units consume governed primary Evidence but do not form a complete fact"},
+    {"rank": 1, "root": "ranked_concentration_table_extraction", "reason": "one audited supplier unit consumes a ranked table but lacks deterministic aggregation"},
     {"rank": 2, "root": "retrieval_candidate_miss", "reason": "three audited units do not receive their governed Evidence page"},
     {"rank": 3, "root": "numeric_extraction", "reason": "one current unit has preserved text but no value"},
     {"rank": 4, "root": "llm_evidence_stability", "reason": "structured failures remain runtime reliability cost"},

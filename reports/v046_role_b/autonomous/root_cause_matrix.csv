@@ -2,8 +2,8 @@ rank,root,status,proven_units,latest_action,next_action
 1,concentration_exact_fact_extraction,partially_closed,4,spaced_decimals_and_local_period_fixed,defer remaining severity-policy mismatch
 2,period_candidate_generation,rejected,0,batch006_current_audit_zero_units,no production change
 3,parser_preservation,rejected,0,batch007_pdf_text_and_trace_audit,no production change
-4,deterministic_fact_missing,active,3,batch007_reclassification,audit consumed Evidence conversion
-5,retrieval_candidate_miss,queued,3,batch007_reclassification,audit bounded candidate recall
+4,deterministic_fact_missing,partially_closed,1,batch008_cash_closed_and_customer_reclassified,defer ranked supplier-table unit pending owner replan
+5,retrieval_candidate_miss,queued,4,batch008_customer_reclassification,audit bounded candidate recall after owner replan
 6,numeric_extraction,queued,1,classified_by_batch003,audit numeric parsing
 7,llm_evidence_stability,queued,3,diagnostic_non_reproduction,measure at fresh checkpoint
 8,final_evidence_binding,queued,1,batch004 evidence retained,inspect exact-anchor mismatch

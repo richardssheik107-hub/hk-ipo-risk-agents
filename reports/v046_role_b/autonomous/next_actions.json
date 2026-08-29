@@ -1,7 +1,9 @@
 {
   "version": "v046_autonomous_next_actions_v1",
   "actions": [
-    "audit deterministic fact conversion on already-consumed Development Evidence",
+    "stop execution until the owner approves a revised campaign plan",
+    "preserve Batch 008 as the current fixed-journal checkpoint",
+    "consider ranked supplier-table aggregation and retrieval misses as separate future roots",
     "keep retrieval candidate misses separate from extraction fixes",
     "do not modify Parser without a proven preservation failure",
     "keep concentration severity-policy mismatch deferred",

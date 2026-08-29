@@ -22,6 +22,14 @@
       "fixed_journal_m1": "12/30",
       "fixed_journal_m2": "18/48",
       "network_calls": 0
+    },
+    {
+      "id": "batch008_legacy_cash_statement",
+      "commit": "a602e409da8f10343ec6ba4ddcd5fbd77280f046",
+      "type": "accepted_production_fix",
+      "fixed_journal_m1": "13/30",
+      "fixed_journal_m2": "20/48",
+      "network_calls": 0
     }
   ]
 }
