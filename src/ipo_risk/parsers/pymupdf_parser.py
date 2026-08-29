@@ -415,12 +415,15 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
                 self.version,
                 raw_fingerprint,
                 table_fingerprint,
-                table_content_hash,
                 canonical_json_hash(DocumentChunk.model_json_schema()),
             ),
         )
         parser_input_hash = canonical_json_hash(
-            {"pdf_sha256": pdf_sha256, "raw_content_hash": raw_content_hash}
+            {
+                "pdf_sha256": pdf_sha256,
+                "raw_content_hash": raw_content_hash,
+                "table_content_hash": table_content_hash,
+            }
         )
         parser_started = time.perf_counter()
         payloads = cache.load_or_build(
