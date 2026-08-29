@@ -148,8 +148,20 @@ def _market_features(payload: dict[str, object]) -> StageView:
     if market:
         available = sum(1 for item in observations if item.get("availability") == "available")
         state = str(market.get("status") or "unavailable")
+        provenance = market.get("provenance") or {}
+        runtime_path = str(provenance.get("runtime_path") or "") if isinstance(provenance, dict) else ""
         if state == "available":
-            summary = "The governed point-in-time Market-X stage completed and exposes the available and unavailable observations for this case."
+            summary = (
+                "The governed point-in-time Market-X stage completed and exposes the available and unavailable observations for this case."
+            )
+            if runtime_path == "dynamic_pit":
+                # This case has no frozen artifact; saying so is the difference
+                # between a preloaded demo asset and a generalizable runtime.
+                summary = (
+                    "This case is outside the frozen Market-X universe, so the stage recomputed the same point-in-time "
+                    "contract from the governed prior-IPO history. Available and unavailable observations are both exposed; "
+                    "no market value is imputed."
+                )
         else:
             summary = (
                 "The Market-X stage completed to an explicit unavailable/partial state. Missing governed observations remain visible with their reasons; "
@@ -162,7 +174,8 @@ def _market_features(payload: dict[str, object]) -> StageView:
             metrics=(
                 Metric("Observations available", f"{available} of {len(observations)}"),
                 Metric("Market channel", state),
-            ),
+            )
+            + ((Metric("Market runtime path", runtime_path),) if runtime_path else ()),
         )
     if _runtime_completed(payload):
         return StageView(

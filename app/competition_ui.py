@@ -1132,6 +1132,80 @@ def available_market_observation_count(payload: dict[str, Any]) -> tuple[int, in
     return available, len(observations)
 
 
+
+_MARKET_RUNTIME_LABELS = {
+    "frozen": "冻结 PR-B 产物",
+    "dynamic_pit": "动态 PIT 重算",
+    "dynamic_new_case": "动态路径未配置",
+}
+_MARKET_IDENTITY_LABELS = {
+    "official_bridge_case_id": "官方目录 case_id",
+    "official_bridge_code_and_date": "官方目录 股票代码 + 上市日",
+    "caller_supplied_identity": "调用方提供（不在官方目录内）",
+}
+_MARKET_SPLIT_LABELS = {
+    "development": "开发集",
+    "validation": "验证集",
+    "blind": "盲测集",
+    "outside_frozen_split": "冻结划分之外",
+}
+_MARKET_EXTENDED_LABELS = {
+    "available": "已配置",
+    "not_configured": "未配置",
+    "source_error": "读取失败",
+}
+
+
+def market_runtime_summary(payload: dict[str, Any]) -> list[dict[str, object]]:
+    """Surface *how* the market numbers were produced, not only that they exist.
+
+    A validated frozen artifact and a point-in-time recomputation both render as
+    "Market-X 可用 15/15", which is precisely the distinction a reader needs when
+    the case is a prospectus this project has never seen. Leaving it inside a
+    collapsed provenance blob makes the honest answer technically present and
+    practically invisible.
+
+    Every row is read from the governed provenance the backend wrote. Absent
+    fields produce no row rather than a default, so this never states a lineage
+    the market channel did not claim.
+    """
+
+    provenance = (payload.get("market_context") or {}).get("provenance") or {}
+    if not isinstance(provenance, dict) or not provenance:
+        return []
+
+    runtime_path = str(provenance.get("runtime_path") or "")
+    rows: list[dict[str, object]] = []
+
+    def add(label: str, value: object) -> None:
+        if value not in (None, ""):
+            rows.append({"项目": label, "取值": value})
+
+    add("运行路径", _MARKET_RUNTIME_LABELS.get(runtime_path, runtime_path))
+    add(
+        "PIT 截止时点",
+        provenance.get("pit_cutoff_date") or provenance.get("listing_date"),
+    )
+    split = str(provenance.get("dataset_split") or "")
+    add("数据集划分", _MARKET_SPLIT_LABELS.get(split, split))
+
+    if runtime_path != "dynamic_pit":
+        return rows
+
+    identity = str(provenance.get("identity_source") or "")
+    add("身份解析", _MARKET_IDENTITY_LABELS.get(identity, identity))
+    add("前序 IPO 样本量", provenance.get("prior_ipo_universe_size"))
+    outcome = provenance.get("outcome_history_available")
+    if outcome is not None:
+        add(
+            "前序结果数据层",
+            "已配置" if outcome else "未配置（结果族显式缺失，不补零）",
+        )
+    extended = str(provenance.get("extended_status") or "")
+    add("Extended 市场环境", _MARKET_EXTENDED_LABELS.get(extended, extended))
+    return rows
+
+
 def risk_inventory_rows(payload: dict[str, Any]) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
     for domain in ("financial", "legal", "business"):

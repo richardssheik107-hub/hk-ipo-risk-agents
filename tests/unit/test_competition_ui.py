@@ -16,6 +16,7 @@ from competition_ui import (  # noqa: E402
     evidence_reference_count,
     executive_supervisor_view,
     localize_market_observation_rows,
+    market_runtime_summary,
     report_section_title,
     risk_display_name,
     risk_inventory_rows,
@@ -196,3 +197,59 @@ def test_future_modules_are_explicitly_planned_and_have_no_fake_metrics() -> Non
     assert [row["阶段"] for row in rows] == ["CH-1", "CH-2", "CH-3", "CH-4", "CH-5", "CH-6"]
     assert all(row["状态"] == "v0.4.3 后启动" for row in rows)
     assert all(set(row) == {"阶段", "模块", "状态", "目标"} for row in rows)
+
+
+def _market_payload(provenance: dict[str, object]) -> dict[str, object]:
+    return {"market_context": {"status": "available", "provenance": provenance}}
+
+
+def test_market_runtime_summary_names_the_dynamic_recomputation() -> None:
+    """"Available 15/15" reads identically for a frozen read and a rebuild."""
+
+    rows = market_runtime_summary(_market_payload({
+        "runtime_path": "dynamic_pit",
+        "pit_cutoff_date": "2025-02-12",
+        "dataset_split": "blind",
+        "identity_source": "official_bridge_case_id",
+        "prior_ipo_universe_size": 446,
+        "outcome_history_available": True,
+        "extended_status": "not_configured",
+    }))
+    by_label = {row["项目"]: row["取值"] for row in rows}
+    assert by_label["运行路径"] == "动态 PIT 重算"
+    assert by_label["PIT 截止时点"] == "2025-02-12"
+    assert by_label["数据集划分"] == "盲测集"
+    assert by_label["前序 IPO 样本量"] == 446
+    assert by_label["Extended 市场环境"] == "未配置"
+
+
+def test_market_runtime_summary_keeps_the_frozen_path_free_of_dynamic_fields() -> None:
+    rows = market_runtime_summary(_market_payload({
+        "runtime_path": "frozen",
+        "listing_date": "2024-08-20",
+        "dataset_split": "validation",
+    }))
+    by_label = {row["项目"]: row["取值"] for row in rows}
+    assert by_label["运行路径"] == "冻结 PR-B 产物"
+    assert by_label["PIT 截止时点"] == "2024-08-20"
+    for dynamic_only in ("身份解析", "前序 IPO 样本量", "前序结果数据层"):
+        assert dynamic_only not in by_label
+
+
+def test_market_runtime_summary_states_an_unconfigured_outcome_tier() -> None:
+    """Missing because the source is absent is not missing because zero."""
+
+    rows = market_runtime_summary(_market_payload({
+        "runtime_path": "dynamic_pit",
+        "outcome_history_available": False,
+    }))
+    by_label = {row["项目"]: row["取值"] for row in rows}
+    assert "不补零" in str(by_label["前序结果数据层"])
+
+
+def test_market_runtime_summary_invents_nothing_without_provenance() -> None:
+    assert market_runtime_summary({}) == []
+    assert market_runtime_summary({"market_context": {"status": "available"}}) == []
+    # A provenance that claims only a runtime path yields only that row.
+    rows = market_runtime_summary(_market_payload({"runtime_path": "dynamic_pit"}))
+    assert [row["项目"] for row in rows] == ["运行路径"]
