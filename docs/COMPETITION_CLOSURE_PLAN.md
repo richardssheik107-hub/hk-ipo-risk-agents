@@ -203,6 +203,8 @@ governed feature vector
 
 若 promote v2，必须新建 versioned model/hash/feature manifest/alert policy/receipt/handoff；不覆盖旧 PR-F，也不再根据 2024 Validation 调参。SHAP 必须来自当前 inference。
 
+V2 promotion package 已实现：versioned freeze、strict receipt、checker 与 final-three label-free handoff 均已生成，current-main strict revalidation 通过，resume / fresh-directory byte-identical 已验证，34-alert 工作量与 ROC-AUC 仍低于 0.5 的局限已披露。A 审核并合并 promotion PR 即 `PROMOTE_V2` 决议生效，旧 frozen PR-F 完整保留、可回滚。
+
 ## 6. Track E — Final Integration / Release / Submission（P1 → 最后 P0）
 
 从现在开始持续做 integration watch，只有 A/C/D 核心行为稳定后进入 final freeze。

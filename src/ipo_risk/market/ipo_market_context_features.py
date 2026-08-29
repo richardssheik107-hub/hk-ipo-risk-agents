@@ -6,10 +6,11 @@ outcomes whose target trading session has already occurred. It does not use or
 proxy HSI, industry-index history, or total-market turnover; those belong to the
 separate Extended Market-X contract.
 
-A bounded prior-IPO source universe must also expose its left boundary. When a
-30/60/180-day lookback extends earlier than that source boundary, the affected
-feature family is returned as missing rather than a misleading zero/partial
-history value.
+A bounded prior-IPO source universe must also expose both of its boundaries.
+When a 30/60/180-day lookback extends earlier than the source's left boundary,
+or when the source stops before the day preceding the target listing date, the
+affected feature family is returned as missing rather than a misleading
+zero/partial history value.
 """
 
 from __future__ import annotations
@@ -87,23 +88,76 @@ IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH = content_hash(
 )
 
 
-def build_ipo_market_context(
+# Stable units for the frozen raw feature order.  Every projection of these
+# features -- frozen artifact or dynamic build -- must report the same unit.
+IPO_MARKET_CONTEXT_FEATURE_UNITS: dict[str, str] = {
+    "ipo_count_30d": "count",
+    "ipo_count_60d": "count",
+    "log_prior_ipo_funds_raised_30d": "log_currency",
+    "log_prior_ipo_funds_raised_60d": "log_currency",
+    "prior_ipo_funds_raised_30d_sample_count": "count",
+    "prior_ipo_funds_raised_60d_sample_count": "count",
+    "recent_ipo_break_rate": "ratio",
+    "recent_ipo_return_5d": "ratio",
+    "recent_ipo_1d_sample_count": "count",
+    "recent_ipo_5d_sample_count": "count",
+    "same_industry_ipo_count_180d": "count",
+    "same_industry_recent_break_rate": "ratio",
+    "same_industry_recent_return_5d": "ratio",
+    "same_industry_recent_1d_sample_count": "count",
+    "same_industry_recent_5d_sample_count": "count",
+}
+if set(IPO_MARKET_CONTEXT_FEATURE_UNITS) != set(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER):
+    raise RuntimeError("market-context feature units drifted from the frozen manifest")
+
+
+IPO_MARKET_CONTEXT_MISSING_LEFT_BOUNDARY = (
+    "prior_ipo_universe_left_boundary_incomplete"
+)
+IPO_MARKET_CONTEXT_MISSING_RIGHT_BOUNDARY = (
+    "prior_ipo_universe_right_boundary_incomplete"
+)
+IPO_MARKET_CONTEXT_MISSING_INDUSTRY = "missing_industry_classification"
+IPO_MARKET_CONTEXT_MISSING_OUTCOME_SOURCE = (
+    "prior_ipo_outcome_source_not_configured"
+)
+IPO_MARKET_CONTEXT_MISSING_FUNDS_SAMPLE = "no_prior_ipo_offer_amount_sample"
+IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE = "no_recent_ipo_outcome_sample"
+IPO_MARKET_CONTEXT_MISSING_SAME_INDUSTRY_OUTCOME_SAMPLE = (
+    "no_same_industry_recent_outcome_sample"
+)
+
+def build_ipo_market_context_with_reasons(
     *,
     listing_date: date,
     industry: str | None,
     prior_ipos: list[dict[str, Any]],
     history_start_date: date | None = None,
-) -> dict[str, float | int | None]:
-    """Build deterministic context using only complete, pre-listing history.
+    history_end_date: date | None = None,
+    outcome_history_available: bool = True,
+) -> tuple[dict[str, float | int | None], dict[str, str]]:
+    """Build PIT context values plus an explicit reason for every absent value.
 
-    ``history_start_date`` is the earliest date for which the supplied prior-IPO
-    universe is considered complete. It is provenance, not a feature. If a
-    requested lookback begins before it, that feature family is explicitly
-    missing.
+    ``history_start_date`` and ``history_end_date`` declare the closed interval
+    over which the supplied prior-IPO universe is complete. They are provenance,
+    not features. A lookback window that reaches outside that interval makes the
+    affected feature family explicitly missing instead of silently short-counted
+    against a truncated universe.
+
+    ``outcome_history_available`` states whether prior-IPO 1D/5D outcomes could
+    be supplied at all. "The outcome source is not configured" and "the window
+    contained no completed prior outcome" are different facts, and a caller that
+    has to explain missingness needs to be able to tell them apart.
     """
 
     if history_start_date is not None and history_start_date > listing_date:
         raise ValueError("history_start_date cannot be after target listing_date")
+    if (
+        history_start_date is not None
+        and history_end_date is not None
+        and history_end_date < history_start_date
+    ):
+        raise ValueError("history_end_date cannot precede history_start_date")
 
     normalized_industry = industry.strip() if industry and industry.strip() else None
     prior = sorted(
@@ -118,37 +172,28 @@ def build_ipo_market_context(
         item["listing_date"] < history_start_date for item in prior
     ):
         raise ValueError("prior IPO row predates declared history_start_date")
+    if history_end_date is not None and any(
+        item["listing_date"] > history_end_date for item in prior
+    ):
+        raise ValueError("prior IPO row postdates declared history_end_date")
 
-    def lookback_complete(days: int) -> bool:
-        return (
-            history_start_date is None
-            or history_start_date <= listing_date - timedelta(days=days)
-        )
+    # The universe must cover every day of the lookback window, which ends on
+    # the session before the target listing date.
+    right_complete = (
+        history_end_date is None
+        or history_end_date >= listing_date - timedelta(days=1)
+    )
+
+    def boundary_reason(days: int) -> str | None:
+        if history_start_date is not None and history_start_date > listing_date - timedelta(days=days):
+            return IPO_MARKET_CONTEXT_MISSING_LEFT_BOUNDARY
+        if not right_complete:
+            return IPO_MARKET_CONTEXT_MISSING_RIGHT_BOUNDARY
+        return None
 
     def window(days: int) -> list[dict[str, Any]]:
         start = listing_date - timedelta(days=days)
         return [item for item in prior if item["listing_date"] >= start]
-
-    def aggregate(
-        rows: list[dict[str, Any]], prefix: str
-    ) -> dict[str, float | int | None]:
-        amounts = [
-            float(item["funds_raised"])
-            for item in rows
-            if item.get("funds_raised") is not None
-        ]
-        return {
-            f"log_prior_ipo_funds_raised_{prefix}": (
-                math.log1p(sum(amounts)) if amounts else None
-            ),
-            f"prior_ipo_funds_raised_{prefix}_sample_count": len(amounts),
-        }
-
-    def missing_aggregate(prefix: str) -> dict[str, float | int | None]:
-        return {
-            f"log_prior_ipo_funds_raised_{prefix}": None,
-            f"prior_ipo_funds_raised_{prefix}_sample_count": None,
-        }
 
     def outcomes(
         rows: list[dict[str, Any]],
@@ -176,70 +221,135 @@ def build_ipo_market_context(
             len(five_day),
         )
 
-    complete_30d = lookback_complete(30)
-    complete_60d = lookback_complete(60)
-    complete_180d = lookback_complete(180)
-    rows_30d = window(30) if complete_30d else []
-    rows_60d = window(60) if complete_60d else []
+    computed: dict[str, float | int | None] = {}
+    reasons: dict[str, str] = {}
 
-    if complete_60d:
-        recent = rows_60d[-20:]
-        break_rate, return_5d, sample_1d, sample_5d = outcomes(recent)
-        recent_values: dict[str, float | int | None] = {
-            "recent_ipo_break_rate": break_rate,
-            "recent_ipo_return_5d": return_5d,
-            "recent_ipo_1d_sample_count": sample_1d,
-            "recent_ipo_5d_sample_count": sample_5d,
-        }
-    else:
-        recent_values = {
-            "recent_ipo_break_rate": None,
-            "recent_ipo_return_5d": None,
-            "recent_ipo_1d_sample_count": None,
-            "recent_ipo_5d_sample_count": None,
-        }
+    def record(name: str, value: float | int | None, reason: str) -> None:
+        computed[name] = value
+        if value is None:
+            reasons[name] = reason
 
-    if normalized_industry is None or not complete_180d:
-        same_industry_values: dict[str, float | int | None] = {
-            "same_industry_ipo_count_180d": None,
-            "same_industry_recent_break_rate": None,
-            "same_industry_recent_return_5d": None,
-            "same_industry_recent_1d_sample_count": None,
-            "same_industry_recent_5d_sample_count": None,
-        }
+    reason_30d = boundary_reason(30)
+    reason_60d = boundary_reason(60)
+    reason_180d = boundary_reason(180)
+
+    for days, reason in ((30, reason_30d), (60, reason_60d)):
+        prefix = f"{days}d"
+        rows = window(days) if reason is None else []
+        record(f"ipo_count_{prefix}", None if reason else len(rows), reason or "")
+        amounts = [
+            float(item["funds_raised"])
+            for item in rows
+            if item.get("funds_raised") is not None
+        ]
+        record(
+            f"log_prior_ipo_funds_raised_{prefix}",
+            None
+            if reason
+            else (math.log1p(sum(amounts)) if amounts else None),
+            reason or IPO_MARKET_CONTEXT_MISSING_FUNDS_SAMPLE,
+        )
+        record(
+            f"prior_ipo_funds_raised_{prefix}_sample_count",
+            None if reason else len(amounts),
+            reason or "",
+        )
+
+    outcome_reason = (
+        reason_60d
+        if reason_60d
+        else None
+        if outcome_history_available
+        else IPO_MARKET_CONTEXT_MISSING_OUTCOME_SOURCE
+    )
+    if outcome_reason is None:
+        break_rate, return_5d, sample_1d, sample_5d = outcomes(window(60)[-20:])
     else:
+        break_rate = return_5d = None
+        sample_1d = sample_5d = None
+    record("recent_ipo_break_rate", break_rate, outcome_reason or IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE)
+    record("recent_ipo_return_5d", return_5d, outcome_reason or IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE)
+    record("recent_ipo_1d_sample_count", sample_1d, outcome_reason or "")
+    record("recent_ipo_5d_sample_count", sample_5d, outcome_reason or "")
+
+    industry_reason = (
+        reason_180d
+        if reason_180d
+        else IPO_MARKET_CONTEXT_MISSING_INDUSTRY
+        if normalized_industry is None
+        else None
+    )
+    if industry_reason is None:
         same_industry = [
             item
             for item in window(180)
             if (item.get("industry") or "").strip() == normalized_industry
         ]
+    else:
+        same_industry = []
+    record(
+        "same_industry_ipo_count_180d",
+        None if industry_reason else len(same_industry),
+        industry_reason or "",
+    )
+    same_outcome_reason = (
+        industry_reason
+        if industry_reason
+        else None
+        if outcome_history_available
+        else IPO_MARKET_CONTEXT_MISSING_OUTCOME_SOURCE
+    )
+    if same_outcome_reason is None:
         (
             same_break_rate,
             same_return_5d,
             same_sample_1d,
             same_sample_5d,
         ) = outcomes(same_industry)
-        same_industry_values = {
-            "same_industry_ipo_count_180d": len(same_industry),
-            "same_industry_recent_break_rate": same_break_rate,
-            "same_industry_recent_return_5d": same_return_5d,
-            "same_industry_recent_1d_sample_count": same_sample_1d,
-            "same_industry_recent_5d_sample_count": same_sample_5d,
-        }
+    else:
+        same_break_rate = same_return_5d = None
+        same_sample_1d = same_sample_5d = None
+    fallback = IPO_MARKET_CONTEXT_MISSING_SAME_INDUSTRY_OUTCOME_SAMPLE
+    record("same_industry_recent_break_rate", same_break_rate, same_outcome_reason or fallback)
+    record("same_industry_recent_return_5d", same_return_5d, same_outcome_reason or fallback)
+    record("same_industry_recent_1d_sample_count", same_sample_1d, same_outcome_reason or "")
+    record("same_industry_recent_5d_sample_count", same_sample_5d, same_outcome_reason or "")
 
-    computed: dict[str, float | int | None] = {
-        "ipo_count_30d": len(rows_30d) if complete_30d else None,
-        "ipo_count_60d": len(rows_60d) if complete_60d else None,
-        **(aggregate(rows_30d, "30d") if complete_30d else missing_aggregate("30d")),
-        **(aggregate(rows_60d, "60d") if complete_60d else missing_aggregate("60d")),
-        **recent_values,
-        **same_industry_values,
-    }
     if set(computed) != set(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER):
         raise RuntimeError("IPO market-context feature order drifted")
+    if any(not reason for reason in reasons.values()):
+        raise RuntimeError("a missing market-context feature has no stated reason")
     values = {
         name: computed[name] for name in IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER
     }
+    return values, reasons
+
+
+def build_ipo_market_context(
+    *,
+    listing_date: date,
+    industry: str | None,
+    prior_ipos: list[dict[str, Any]],
+    history_start_date: date | None = None,
+    history_end_date: date | None = None,
+    outcome_history_available: bool = True,
+) -> dict[str, float | int | None]:
+    """Build deterministic context using only complete, pre-listing history.
+
+    ``history_start_date`` is the earliest date for which the supplied prior-IPO
+    universe is considered complete. It is provenance, not a feature. If a
+    requested lookback begins before it, that feature family is explicitly
+    missing.
+    """
+
+    values, _ = build_ipo_market_context_with_reasons(
+        listing_date=listing_date,
+        industry=industry,
+        prior_ipos=prior_ipos,
+        history_start_date=history_start_date,
+        history_end_date=history_end_date,
+        outcome_history_available=outcome_history_available,
+    )
     return values
 
 

@@ -34,6 +34,7 @@ PRODUCT_SIGNALS_NAME = "product_case_signals.json"
 PRODUCT_CHECKSUMS_NAME = "SHA256SUMS.txt"
 PRODUCT_README_NAME = "README_PRODUCT_RUNTIME_HANDOFF.md"
 PRODUCT_MANIFEST_VERSION = "v04_pr_f_product_runtime_handoff_v1"
+V2_PRODUCT_MANIFEST_VERSION = "v045_role_d_v2_product_runtime_handoff_v1"
 PRODUCTION_COHORT = "full_production"
 PRODUCTION_FEATURE_GROUP = "PM"
 
@@ -57,6 +58,16 @@ PRODUCT_README = (
     "drivers. It is not a probability, does not retrain or rescore the model, and contains "
     "no outcome labels or 2025 Blind outcomes.\n"
 )
+V2_PRODUCT_README = (
+    "# Role-D V2 Product Runtime Handoff\n\n"
+    "This directory is a deterministic, label-free projection of the frozen Role-D V2 "
+    "promotion candidate. It contains only case identity, the frozen uncalibrated model "
+    "score, the Development-selected batch alert, and frozen SHAP drivers. The score is "
+    "not a probability. The package contains no outcome labels or 2025 Blind outcomes.\n"
+)
+SUPPORTED_PRODUCT_MANIFEST_VERSIONS = frozenset(
+    {PRODUCT_MANIFEST_VERSION, V2_PRODUCT_MANIFEST_VERSION}
+)
 _WINDOWS_ABSOLUTE_PATH = re.compile(r"\b[A-Za-z]:[\\/]")
 _UNIX_LOCAL_ABSOLUTE_PATH = re.compile(
     r"(?<![A-Za-z0-9_])/(?:Users|home|mnt|private|var/folders)/[^\s\"']+"
@@ -64,6 +75,7 @@ _UNIX_LOCAL_ABSOLUTE_PATH = re.compile(
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 
 _ALLOWED_SIGNAL_KEYS = {"case_id", "score", "drivers"}
+_V2_ALLOWED_SIGNAL_KEYS = _ALLOWED_SIGNAL_KEYS | {"alert", "alert_policy"}
 _ALLOWED_DRIVER_KEYS = {"feature", "component", "feature_value", "shap_value"}
 _FORBIDDEN_LABEL_KEYS = {
     "poor_performer_5d",
@@ -94,6 +106,16 @@ _ROLE_D_PREDICTION_FIELDS = (
 
 class ProductRuntimeHandoffError(ValueError):
     """A product-runtime projection cannot be trusted or produced safely."""
+
+
+class ProductCaseNotPresentError(ProductRuntimeHandoffError):
+    """The handoff is valid; this case simply is not one of its rows.
+
+    A case outside the sanitized cohort is an out-of-scope request, not a
+    corrupt artifact.  Reporting both as "handoff failed validation" tells a
+    reader that the frozen model package is broken when it is intact -- which
+    is exactly what every dynamic new-IPO case would otherwise be told.
+    """
 
 
 def _sha256_file(path: Path) -> str:
@@ -230,11 +252,20 @@ def _assert_label_free(signals: list[dict[str, Any]]) -> None:
     walk(signals)
 
 
-def _validate_signal_rows(signals: list[dict[str, Any]]) -> None:
+def _validate_signal_rows(
+    signals: list[dict[str, Any]],
+    *,
+    manifest_version: str = PRODUCT_MANIFEST_VERSION,
+) -> None:
     _assert_label_free(signals)
+    allowed_keys = (
+        _V2_ALLOWED_SIGNAL_KEYS
+        if manifest_version == V2_PRODUCT_MANIFEST_VERSION
+        else _ALLOWED_SIGNAL_KEYS
+    )
     seen: set[str] = set()
     for signal in signals:
-        if not isinstance(signal, dict) or set(signal) != _ALLOWED_SIGNAL_KEYS:
+        if not isinstance(signal, dict) or set(signal) != allowed_keys:
             raise ProductRuntimeHandoffError("product case-signal schema drift")
         case_id = signal.get("case_id")
         if not isinstance(case_id, str) or not case_id.strip() or case_id in seen:
@@ -243,6 +274,11 @@ def _validate_signal_rows(signals: list[dict[str, Any]]) -> None:
         score = signal.get("score")
         if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(float(score)):
             raise ProductRuntimeHandoffError("product score must be a finite number")
+        if manifest_version == V2_PRODUCT_MANIFEST_VERSION:
+            if not isinstance(signal.get("alert"), bool):
+                raise ProductRuntimeHandoffError("V2 product alert must be boolean")
+            if not isinstance(signal.get("alert_policy"), str) or not signal["alert_policy"]:
+                raise ProductRuntimeHandoffError("V2 product alert policy is invalid")
         drivers = signal.get("drivers")
         if not isinstance(drivers, list):
             raise ProductRuntimeHandoffError("product driver payload is not a list")
@@ -297,7 +333,8 @@ def validate_product_handoff(
     manifest = _read_json(manifest_path)
     if not isinstance(manifest, dict):
         raise ProductRuntimeHandoffError("product runtime manifest has incompatible shape")
-    if manifest.get("manifest_version") != PRODUCT_MANIFEST_VERSION:
+    manifest_version = manifest.get("manifest_version")
+    if manifest_version not in SUPPORTED_PRODUCT_MANIFEST_VERSIONS:
         raise ProductRuntimeHandoffError("unsupported product runtime manifest version")
     if manifest.get("source_model_result_hash") != expected_source_model_result_hash:
         raise ProductRuntimeHandoffError("product runtime source hash does not match frozen PR-F")
@@ -313,7 +350,7 @@ def validate_product_handoff(
     signals = _read_json(signals_path)
     if not isinstance(signals, list):
         raise ProductRuntimeHandoffError("product case-signal payload is not a list")
-    _validate_signal_rows(signals)
+    _validate_signal_rows(signals, manifest_version=str(manifest_version))
     if _sha256_file(signals_path) != manifest.get("case_signal_sha256"):
         raise ProductRuntimeHandoffError("product case-signal checksum mismatch")
     try:
@@ -333,7 +370,12 @@ def validate_product_handoff(
         readme = readme_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as exc:
         raise ProductRuntimeHandoffError("product handoff README is unreadable") from exc
-    if readme != PRODUCT_README:
+    expected_readme = (
+        V2_PRODUCT_README
+        if manifest_version == V2_PRODUCT_MANIFEST_VERSION
+        else PRODUCT_README
+    )
+    if readme != expected_readme:
         raise ProductRuntimeHandoffError("product handoff README drifted from the contract")
 
     checksums = _read_checksums(run_dir / PRODUCT_CHECKSUMS_NAME)
@@ -389,11 +431,15 @@ def _write_product_package(
     *,
     expected_source_model_result_hash: str,
     source_pr_f: Mapping[str, Any] | None = None,
+    manifest_version: str = PRODUCT_MANIFEST_VERSION,
+    source_frozen_manifest_name: str | None = None,
 ) -> dict[str, Any]:
     """Write the canonical four-file package from already-validated signals."""
 
     output_dir = Path(output_dir)
-    _validate_signal_rows(signals)
+    if manifest_version not in SUPPORTED_PRODUCT_MANIFEST_VERSIONS:
+        raise ProductRuntimeHandoffError("unsupported product runtime manifest version")
+    _validate_signal_rows(signals, manifest_version=manifest_version)
     output_dir.mkdir(parents=True, exist_ok=True)
     signals_path = output_dir / PRODUCT_SIGNALS_NAME
     signals_path.write_text(
@@ -401,7 +447,7 @@ def _write_product_package(
         encoding="utf-8",
     )
     manifest = {
-        "manifest_version": PRODUCT_MANIFEST_VERSION,
+        "manifest_version": manifest_version,
         "source_model_result_hash": expected_source_model_result_hash,
         "source_pr_f": dict(source_pr_f or {}),
         "case_signal_file": PRODUCT_SIGNALS_NAME,
@@ -411,11 +457,20 @@ def _write_product_package(
         "blind_2025_y_accessed": False,
         "score_semantics": "uncalibrated_model_score",
     }
+    if source_frozen_manifest_name is not None:
+        if Path(source_frozen_manifest_name).name != source_frozen_manifest_name:
+            raise ProductRuntimeHandoffError("frozen manifest name must be a basename")
+        manifest["source_frozen_manifest_name"] = source_frozen_manifest_name
     (output_dir / PRODUCT_MANIFEST_NAME).write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    (output_dir / PRODUCT_README_NAME).write_text(PRODUCT_README, encoding="utf-8")
+    readme = (
+        V2_PRODUCT_README
+        if manifest_version == V2_PRODUCT_MANIFEST_VERSION
+        else PRODUCT_README
+    )
+    (output_dir / PRODUCT_README_NAME).write_text(readme, encoding="utf-8")
     checksum_lines = [
         f"{_sha256_file(output_dir / name)}  {name}"
         for name in CHECKSUMMED_PRODUCT_FILES
@@ -429,6 +484,26 @@ def _write_product_package(
         expected_case_ids=[signal["case_id"] for signal in signals],
     )
     return validated
+
+
+def write_v2_product_handoff(
+    output_dir: Path,
+    signals: list[dict[str, Any]],
+    *,
+    expected_source_model_result_hash: str,
+    source_frozen_manifest_name: str,
+    source_identity: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Write a versioned V2 handoff without weakening the legacy PR-F contract."""
+
+    return _write_product_package(
+        output_dir,
+        signals,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+        source_pr_f=source_identity,
+        manifest_version=V2_PRODUCT_MANIFEST_VERSION,
+        source_frozen_manifest_name=source_frozen_manifest_name,
+    )
 
 
 def project_case_signals_from_role_d_predictions(
@@ -582,7 +657,9 @@ def read_product_case_signal(
 
     row = next((item for item in signals if item.get("case_id") == case_id), None)
     if row is None:
-        raise ProductRuntimeHandoffError("case is not present in the sanitized product handoff")
+        raise ProductCaseNotPresentError(
+            "case is not present in the sanitized product handoff"
+        )
 
     drivers = tuple(
         ModelDriver(
@@ -597,3 +674,29 @@ def read_product_case_signal(
         for driver in row["drivers"]
     )
     return float(row["score"]), drivers
+
+
+def read_product_case_signal_details(
+    run_dir: Path,
+    *,
+    expected_source_model_result_hash: str,
+    case_id: str,
+) -> tuple[float, tuple[ModelDriver, ...], bool | None, str | None] | None:
+    """Read score/drivers plus the optional V2 governed alert fields."""
+
+    basic = read_product_case_signal(
+        run_dir,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+        case_id=case_id,
+    )
+    if basic is None:
+        return None
+    _, signals = validate_product_handoff(
+        run_dir,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+    )
+    row = next(item for item in signals if item.get("case_id") == case_id)
+    score, drivers = basic
+    alert = row.get("alert")
+    policy = row.get("alert_policy")
+    return score, drivers, alert if isinstance(alert, bool) else None, str(policy) if policy else None

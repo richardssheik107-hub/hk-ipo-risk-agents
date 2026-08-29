@@ -18,6 +18,7 @@
 | `team/01_M1_M2_OWNER.md` | M1/M2 autonomous wide-sprint 执行线 |
 | `team/02_FRONTEND_OWNER.md` | final frontend / product execution |
 | `team/03_DYNAMIC_MARKET_X_OWNER.md` | Dynamic Market-X execution |
+| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 泛化合同、PIT 边界、missing_reason 词表、Model handoff 绑定 |
 | `team/04_DYNAMIC_MODEL_OWNER.md` | Dynamic Model / Prediction / SHAP + D decision |
 | `team/05_RELEASE_SUBMISSION_OWNER.md` | integration / freeze / Validation / submission |
 | `V046_ROLE_B_EXPERIMENT_LEDGER.md` | Role-B Batch001–009 **历史总账**；不是 live plan |

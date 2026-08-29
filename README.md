@@ -123,7 +123,7 @@ governed feature vector
 → Final Supervisor / UI
 ```
 
-同时必须完成 `PROMOTE_V2` 或 `RETAIN_FROZEN_PR_F` 正式治理决议。任何 promotion 都建立新的 versioned freeze / receipt，不覆盖历史 PR-F 身份，也不得根据 2024 Validation 继续调参。
+同时必须完成 `PROMOTE_V2` 或 `RETAIN_FROZEN_PR_F` 正式治理决议。任何 promotion 都建立新的 versioned freeze / receipt，不覆盖历史 PR-F 身份，也不得根据 2024 Validation 继续调参。V2 promotion package（versioned freeze、strict receipt、checker、final-three label-free handoff）已实现，A 审核并合并 promotion PR 即 `PROMOTE_V2` 生效。
 
 ## 前端 / 产品
 

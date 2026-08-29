@@ -1,0 +1,16 @@
+{
+  "blind_2025_y_accessed": false,
+  "case_count": 3,
+  "case_signal_file": "product_case_signals.json",
+  "case_signal_sha256": "752763687ee72ea48b40c414f4debc2fd99d7bda8ebda14c9412bf965598721c",
+  "contains_target_labels": false,
+  "manifest_version": "v045_role_d_v2_product_runtime_handoff_v1",
+  "score_semantics": "uncalibrated_model_score",
+  "source_frozen_manifest_name": "v045_role_d_v2_promotion_manifest.json",
+  "source_model_result_hash": "ecfcb5f886ca69150e4da7a380ffd0e8d639969630ec288604c20a1ac87bcae6",
+  "source_pr_f": {
+    "alert_policy_version": "development_forward_oof_f2_top_fraction_0.475",
+    "model_policy_version": "v045_role_d_temporal_feature_pruning_v1",
+    "release_version": "v045_role_d_v2_promotion_release_v1"
+  }
+}

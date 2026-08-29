@@ -114,6 +114,19 @@ A 做一次 promote/retain 决议：
 - promote v2：创建新的 versioned freeze/receipt/handoff，不再按 2024 调参；
 - retain PR-F：保留弱辅助 signal，并完成 strict revalidation / dynamic inference contract。
 
+V2 的 builder/checker/frozen binding 已版本化实现。持有授权 PR-C targets 时重建：
+
+```bash
+python scripts/build_v045_role_d_v2_release.py \
+  --target-dir <AUTHORIZED_PR_C_TARGET_DIR>/targets \
+  --base-main-commit <BASE_MAIN_SHA>
+python scripts/check_v045_role_d_v2_release.py
+```
+
+输出使用 `reports/v045_role_d_v2`、独立 V2 freeze/receipt 和独立 handoff；不得手工改写或覆盖旧 frozen PR-F artifact。再验证 `--resume` 与新空目录重建 byte-identical。
+
+V2 runtime 使用 `reports/v045_role_d_v2_product_handoff_final3`。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
+
 验证现有 frozen receipt：
 
 ```bash
@@ -157,6 +170,99 @@ new PDF
 ```
 
 外部市场历史不足时明确 partial/unavailable，不 fake-fill。
+
+Market 通道已实现并默认启用（`configs/v045_competition_*.yaml` 的
+`market_dynamic_context: pit_bridge`）。**offer-fact 一层只依赖已提交的 bridge，
+clone 下来即可用**；outcome 与 Extended 两层来自受授权数据，仓库只提交 builder 与
+schema，必须在授权环境本地物化。
+
+#### 6.1 本地物化 prior-IPO outcome pack（封包前必做）
+
+不做这一步不会报错，但 **dynamic 案例只有 7/15 个 Market-X Core 特征**，
+8 个 outcome 家族显示 `prior_ipo_outcome_source_not_configured`。
+这是诚实降级，不是缺陷；但演示与截图应当在 15/15 下产出。
+
+```bash
+# 需要授权 EOD 抽取。--data-root 指向包含 hkshareeodprices.csv 的目录，
+# 不要把该目录复制进仓库。
+python scripts/build_prior_ipo_outcome_pack.py \
+  --data-root <AUTHORIZED_COMPETITION_DATA_ROOT>
+```
+
+输出写到 `data/competition/derived/prior_ipo_outcome_pack.json`。
+`data/competition/` 被 `.gitignore` 整目录覆盖，因此派生数据不会被误提交——
+**也不要绕过它提交这个文件**。
+
+预期输出（record_count 必须是 438，且一条 2025 都没有）：
+
+```text
+record_count             438
+blind_outcomes_included  false
+ipo_eod_sha256           与 reports/frozen/v04_pr_b_market_x_core_manifest.json
+                         的 governed_eod.raw_eod_sha256 相同
+```
+
+后续所有运行加上该环境变量即可启用：
+
+```bash
+export IPO_RISK_MARKET_DYNAMIC_OUTCOME_PACK=data/competition/derived/prior_ipo_outcome_pack.json
+```
+
+loader 对该 pack 做六道 fail-closed 校验（schema、content_hash、bridge 谱系、
+三元 identity join、cohort year ∈ 2020–2024、target session 不早于自身上市日），
+任一失败整包拒绝，不做部分采纳。
+
+#### 6.2 可选：本地物化 Market-X Extended 缓存
+
+配置后 dynamic observation 从 15 个 Core 扩到 21 个（Core 15 + Extended 6），
+Market Regime Skill 才能给出真实 regime 而不是 `INSUFFICIENT_DATA`。
+两个路径必须同时配置，只有一个不算半个源：
+
+```bash
+export IPO_RISK_MARKET_DYNAMIC_EXTENDED_HSI_CSV=<normalized CSMAR HSI csv>
+export IPO_RISK_MARKET_DYNAMIC_EXTENDED_TURNOVER_CSV=<normalized HKEX turnover csv>
+```
+
+CSMAR 授权声明为「仅供西安交通大学使用；原始与 normalized 数据不得提交公开仓库」，
+两份缓存与派生 pack 一样留在本地。`industry_return_5d/20d` 保持
+`INDUSTRY_MAPPING_PIT_BLOCKED`，配置 Extended 也不会解除。
+
+#### 6.3 验收
+
+```bash
+python scripts/run_market_runtime_audit.py --strict
+```
+
+判定：`status: pass`、五个 failure 桶全为 0、`integrity_violation_count: 0`。
+`by_model_handoff` 应为 `bound 550 / not_projectable 12`；那 12 例是 2026 上市，
+lookback 越过语料覆盖终点，属于预期的诚实 unavailable。
+
+Model 侧交接产物：
+
+```bash
+python scripts/build_market_feature_handoff.py --case-id <CASE_ID>
+```
+
+每例写出 `{handoff, model_binding}`；绑定失败的案例不写盘。
+`model_binding.checks` 六项必须全部 `match`。
+
+Dynamic New-IPO 能力证据用 `configs/v046_dynamic_new_ipo_cases.json`
+（一份从未被本项目解析过的 2025 源年招股书）：
+
+```bash
+IPO_RISK_PROSPECTUS_ROOT=<AUTHORIZED_ROOT> \
+python scripts/run_v04_role_e_demo.py \
+  --cases configs/v046_dynamic_new_ipo_cases.json \
+  --config configs/v045_competition_offline.yaml \
+  --output-dir reports/v046_dynamic_new_ipo
+```
+
+判定：`market` 通道为 `available`、`runtime_path: dynamic_pit`、
+`outcome_labels_accessed: false`、`blind_2025_y_accessed: false`。
+2025 是 Blind cohort——这是能力证据，**不是效果证据**，其上市后表现不得回头用于
+评估或调参。
+
+细节见 `docs/V046_ROLE_C_DYNAMIC_MARKET_X.md`。
 
 ## 7. Final-three replay / regression check
 
@@ -279,8 +385,8 @@ Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本�
 [ ] ALL79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
-[ ] D A-owned promote/retain decision
-[ ] D strict revalidation / determinism / final identity
+[ ] D A-owned promotion PR merge
+[x] D V2 strict revalidation / determinism / final identity（promotion package）
 [x] C/E final-three baseline
 [x] E accepted 3/3
 [x] M3 =100%

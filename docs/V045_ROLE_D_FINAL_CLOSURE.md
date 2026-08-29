@@ -217,7 +217,7 @@ python scripts/check_v045_product_runtime.py
 
 ## 4. v2 high-recall candidate
 
-The Role-D v2 high-recall work remains a research candidate. It has not replaced the frozen PR-F model and is not used by the D1 receipt or the D-to-E product handoff.
+This section records the historical pre-promotion closure state. It is superseded by the versioned V2 promotion manifest/receipt and `docs/ROLE_D_MODEL_DECISION.md`; the old PR-F artifacts described here remain preserved for audit and rollback.
 
 ```text
 v2_candidate_promoted = false

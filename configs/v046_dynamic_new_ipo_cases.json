@@ -1,0 +1,10 @@
+{
+  "manifest_version": "v046_role_c_dynamic_new_ipo_cases_v1",
+  "note": "Dynamic New-IPO capability evidence. These are 2025-source-year prospectuses that have never been parsed by this project (parser_status: not_run, annotation_status: unreviewed) and whose listing year is outside the frozen PR-B 2020-2024 Market-X universe, so the market channel must take the dynamic point-in-time path. Identity, prospectus filename, SHA-256, byte size and page count are all resolved from the frozen catalogs exactly as the demo runner does for the final three; nothing here is case-specific runtime configuration. No outcome label of any year is opened, and the 2025 blind outcomes are never read: this is capability evidence, not performance evidence.",
+  "cases": [
+    {
+      "case_id": "ipo_2025_01364",
+      "company_name": "古茗控股有限公司"
+    }
+  ]
+}

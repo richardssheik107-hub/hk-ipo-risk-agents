@@ -123,7 +123,7 @@ governed feature vector
 → ModelSignal
 ```
 
-必须完成 frozen PR-F vs v2 candidate 的正式 promote/retain 决议。任何 promotion 都创建新的 versioned freeze / receipt，不允许覆盖历史身份或根据 2024 Validation 继续调参。
+必须完成 frozen PR-F vs v2 candidate 的正式 promote/retain 决议。任何 promotion 都创建新的 versioned freeze / receipt，不允许覆盖历史身份或根据 2024 Validation 继续调参。V2 promotion package（独立 freeze/receipt/handoff）已实现，A-owned merge 后生效，不覆盖 frozen PR-F 身份。
 
 ## 7. Final Frontend
 

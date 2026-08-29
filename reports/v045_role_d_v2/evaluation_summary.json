@@ -1,0 +1,54 @@
+{
+  "alert_policy": {
+    "objective": "F2",
+    "selected_fraction": 0.475,
+    "selection_split": "2021_2023_expanding_year_forward_oof",
+    "validation_used_for_selection": false,
+    "version": "development_forward_oof_f2_top_fraction_0.475"
+  },
+  "blind_2025_y_accessed": false,
+  "evaluation_count": 70,
+  "evaluation_split": "2024_validation",
+  "five_day_metrics": {
+    "alert_count": 34,
+    "alert_fraction_realized": 0.4857142857142857,
+    "base_prevalence": 0.32857142857142857,
+    "brier_score": 0.25024004357291624,
+    "f1": 0.42105263157894735,
+    "positive_count": 23,
+    "pr_auc": 0.3811961298633645,
+    "precision": 0.35294117647058826,
+    "recall": 0.5217391304347826,
+    "roc_auc": 0.48751156336725254,
+    "sample_count": 70
+  },
+  "horizons": [
+    "1D",
+    "5D",
+    "20D",
+    "60D"
+  ],
+  "input_binding": {
+    "development_count": 354,
+    "market_feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+    "market_rows_hash": "f443193fee4617d21edfe4bbdce56b7c5327c5e263f804547e9e8dbb1b92d173",
+    "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+    "target_policy_hash": "5f793de0df22679430bb0a7565ed2d9eabfe63f0153725babc7ebd121d369c67",
+    "target_rows_hash": "77008d3a7f2be19dd56afa6f4ca79aee5a9e9938ed50a70da8bf07ff48e39538",
+    "target_threshold_hash": "5aac9625209e65ccd7337d713e714ae1e9bd7e2d8f24db510e46131608a6ec05",
+    "validation_count": 70
+  },
+  "role_d_release_version": "v045_role_d_v2_promotion_release_v1",
+  "score_semantics": "uncalibrated_model_score_not_probability",
+  "selected_features": [
+    "ipo_count_30d",
+    "ipo_count_60d",
+    "recent_ipo_break_rate",
+    "recent_ipo_return_5d",
+    "same_industry_ipo_count_180d",
+    "same_industry_recent_break_rate",
+    "same_industry_recent_return_5d"
+  ],
+  "status": "complete_frozen_on_a_owned_merge",
+  "threshold_or_model_retuned_on_validation": false
+}

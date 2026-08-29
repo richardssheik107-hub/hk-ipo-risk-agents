@@ -17,6 +17,10 @@ import pytest
 
 from app.presenters import result_payload
 from ipo_risk.core.config import load_settings
+from ipo_risk.core.container import DependencyContainer, default_registry
+from ipo_risk.market.ipo_market_context_features import (
+    IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
+)
 from ipo_risk.modeling.pr_f_product_handoff import (
     CHECKSUMMED_PRODUCT_FILES,
     PRODUCT_CHECKSUMS_NAME,
@@ -25,7 +29,8 @@ from ipo_risk.modeling.pr_f_product_handoff import (
     PRODUCT_README_NAME,
     PRODUCT_SIGNALS_NAME,
 )
-from ipo_risk.schemas import IPOAnalysisRequest, TaskStatus
+from ipo_risk.schemas import IPOAnalysisRequest, IPOProfile, TaskStatus
+from ipo_risk.schemas.final_supervision import ChannelStatus
 from ipo_risk.services.analysis_service import IPOAnalysisService
 from ..v04_market_context_fixture import (
     write_governed_extended_fixture,
@@ -274,3 +279,43 @@ def test_sanitized_model_handoff_reaches_the_final_supervisor(tmp_path) -> None:
         "document": "available", "market": "available",
         "model": "available", "rule": "available",
     }
+
+
+def test_competition_config_gives_a_non_frozen_case_a_dynamic_market_x() -> None:
+    """A legal prospectus outside the frozen 438 still gets governed Market-X."""
+
+    settings = load_settings("configs/v045_competition_offline.yaml")
+    assert settings.market_dynamic_context == "pit_bridge"
+    provider = DependencyContainer(settings, default_registry())._create_channel(
+        "market_context", settings.market_context
+    )
+    view = provider.context(IPOProfile(
+        company_name="2025 blind cohort issuer",
+        stock_code="9999.HK",
+        listing_date=date(2025, 6, 2),
+        industry="软件服务",
+    ))
+    assert view.status is ChannelStatus.AVAILABLE
+    assert view.provenance["runtime_path"] == "dynamic_pit"
+    assert view.provenance["dataset_split"] == "blind"
+    assert view.provenance["blind_outcomes_included"] is False
+    assert view.feature_manifest_hash == IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH
+    available = [item for item in view.observations if item.availability == "available"]
+    assert available
+    for item in view.observations:
+        if item.availability != "available":
+            assert item.value is None and item.missing_reason
+
+
+def test_competition_config_keeps_the_frozen_path_for_a_frozen_case() -> None:
+    settings = load_settings("configs/v045_competition_offline.yaml")
+    provider = DependencyContainer(settings, default_registry())._create_channel(
+        "market_context", settings.market_context
+    )
+    view = provider.context(IPOProfile(
+        company_name="同源康医药-B", stock_code="2410.HK", listing_date=date(2024, 8, 20)
+    ))
+    assert view.status is ChannelStatus.AVAILABLE
+    assert view.provenance["runtime_path"] == "frozen"
+    assert view.provenance["case_id"] == "ipo_2024_02410"
+    assert len(view.observations) == 15
