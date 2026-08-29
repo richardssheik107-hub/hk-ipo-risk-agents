@@ -3,7 +3,8 @@
 > 状态日期：`2026-08-29`
 
 本页只说明如何从 fresh clone 打开已记录的 final-three 演示，以及它与新 PDF 实时分析的区别。
-项目整体仍是 `NOT COMPETITION_READY`；B M1/M2、M4、one-shot Validation 等 Gate 以
+项目整体仍是 `NOT COMPETITION_READY`；B M1/M2、Dynamic Model、capability proof、
+one-shot Validation 等 Gate 以
 `V0.4_RELEASE_ACCEPTANCE.md` 为准。
 
 ## Offline Replay

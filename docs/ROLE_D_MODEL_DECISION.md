@@ -2,7 +2,7 @@
 
 > 状态日期：`2026-08-29`
 >
-> 当前决议：**PROMOTE V2 — EFFECTIVE ON A-OWNED MERGE OF THE PROMOTION PR**
+> 当前决议：**PROMOTE V2 — EFFECTIVE（A-owned PR #184 已合入 main）**
 
 本文档把“当前正式 frozen identity”“效果更好的 research candidate”和“Dynamic New-IPO inference”分开。
 
@@ -10,7 +10,7 @@
 
 | 项目 | Frozen PR-F | v2 candidate |
 |---|---:|---:|
-| 状态 | 保留的旧正式冻结 / 已有 70-case receipt | 新版本化 freeze/receipt；由 A 合并本 PR 后生效 |
+| 状态 | 保留的旧正式冻结 / 已有 70-case receipt | 已正式晋升；新版本化 freeze/receipt 由 A-owned PR #184 合并生效 |
 | 选择数据 | 历史 frozen protocol | 2020→2021、2020–21→2022、2020–22→2023 expanding Development folds |
 | 2024 用途 | 正式记录结果 | 候选冻结后一次性评价 |
 | ROC-AUC | 0.4246 | 0.4875 |
@@ -35,7 +35,7 @@ canonical replay / fresh clone = PASS
 
 这说明 frozen PR-F 的**三案例 product handoff 已可稳定消费**，但不等于模型业务价值已经充分，也不等于新 IPO 可以动态推理。
 
-当前 `FrozenModelPredictionProvider` 的正式产品路径仍以 governed per-case handoff / frozen result 为主；下一产品目标是加载受治理的 frozen model identity，对非 final-three feature vector 做真实 dynamic inference + native SHAP。
+当前 `FrozenModelPredictionProvider` 的产品路径仍以 governed per-case handoff / frozen result 为主；PR #184 使 V2 身份正式生效，但没有把 per-case handoff 自动变成泛化推理。下一产品目标仍是加载受治理的 V2 frozen model identity，对非 final-three feature vector 做真实 dynamic inference + native SHAP。
 
 ## 3. 正确解释
 
@@ -48,7 +48,7 @@ v2 候选明显改善高召回 operating point，它晋升后的产品定位仍�
 
 因此最强可支持表述仍是：
 
-> Development-selected V2 substantially improves the governed high-recall operating point over frozen PR-F. It remains an uncalibrated triage signal, and promotion becomes effective only through A-owned merge of the versioned freeze/receipt PR.
+> Development-selected V2 substantially improves the governed high-recall operating point over frozen PR-F. It remains an uncalibrated triage signal. Its versioned promotion became effective through A-owned PR #184; generalized runtime inference remains a separate open product Gate.
 
 不能写成：
 
@@ -57,9 +57,9 @@ v2 候选明显改善高召回 operating point，它晋升后的产品定位仍�
 - “score 是破发概率”；
 - “final-three handoff 证明任意新 IPO 都能模型推理”。
 
-## 4. A-owned promotion Gate
+## 4. A-owned promotion Gate（PASS）
 
-A 只进行一次明确、可审计决议，不继续按 2024 调试更多方案。
+A 已通过 PR #184 的 merge record 完成一次明确、可审计决议；不得继续按 2024 调试更多方案。
 
 ### A 合并前审核项
 
@@ -118,7 +118,8 @@ uncalibrated_model_score
 
 ## 6. 晋升决议载体
 
-本 PR 实现 Option A，并把审批动作收敛为 A-owned GitHub merge：A 合并即确认完成身份、复现、determinism、leakage、工作量和局限审核。未合并前，本分支只是一份完整晋升候选；合并进入 `main` 后，版本化 promotion record 生效。
+PR #184 实现 Option A，并把审批动作收敛为 A-owned GitHub merge。该 PR 已合并进入
+`main`，因此版本化 promotion record 已生效；严格 checker 当前仍为 PASS。
 
 旧 PR-F manifest、receipt、四项结果和 handoff 均保留，不覆盖、可回滚。
 
@@ -137,7 +138,9 @@ Dynamic New-IPO inference 与 promote/retain 决议可以并行设计 adapter，
 下一动作：
 
 ```text
-A 审核本 promotion PR
-→ 合并：V2 晋升生效，前端消费 V2 handoff
-→ 不合并：main 继续保留旧 PR-F
+V2 正式身份
+→ 非 final-three governed feature vector
+→ frozen-model runtime inference
+→ native SHAP
+→ Dynamic Model audit
 ```
