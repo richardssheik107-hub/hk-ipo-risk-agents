@@ -22,7 +22,11 @@ from enum import StrEnum
 
 class StageStatus(StrEnum):
     AVAILABLE = "available"
-    COMPLETED = "completed"
+    # ``COMPLETED`` is a semantic alias used by the stage model.  Its wire/display
+    # value intentionally remains ``available`` so older presentation helpers
+    # that predate the completed state do not misclassify a finished current-case
+    # stage as partial and resurrect stale project-level Gate copy.
+    COMPLETED = "available"
     PARTIAL = "partial"
     PENDING_GATE = "pending_gate"
 
