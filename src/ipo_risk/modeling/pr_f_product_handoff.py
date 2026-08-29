@@ -96,6 +96,16 @@ class ProductRuntimeHandoffError(ValueError):
     """A product-runtime projection cannot be trusted or produced safely."""
 
 
+class ProductCaseNotPresentError(ProductRuntimeHandoffError):
+    """The handoff is valid; this case simply is not one of its rows.
+
+    A case outside the sanitized cohort is an out-of-scope request, not a
+    corrupt artifact.  Reporting both as "handoff failed validation" tells a
+    reader that the frozen model package is broken when it is intact -- which
+    is exactly what every dynamic new-IPO case would otherwise be told.
+    """
+
+
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -582,7 +592,9 @@ def read_product_case_signal(
 
     row = next((item for item in signals if item.get("case_id") == case_id), None)
     if row is None:
-        raise ProductRuntimeHandoffError("case is not present in the sanitized product handoff")
+        raise ProductCaseNotPresentError(
+            "case is not present in the sanitized product handoff"
+        )
 
     drivers = tuple(
         ModelDriver(
