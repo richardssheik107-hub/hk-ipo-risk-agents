@@ -98,8 +98,9 @@ def main() -> int:
     validate_contracts()
     validate_ai_configs()
     print(
-        "INFO  external secrets, real-case PDFs, PR-F handoff, competition metrics, "
-        "and B/C/D/E lane outputs are intentionally outside this network-free A gate"
+        "INFO  external secrets, real-case PDFs, full PR-F research runtime, competition "
+        "metrics, and B/C/D/E lane outputs are outside this network-free A gate; the "
+        "receipt-bound final-three product handoff has its own strict preflight"
     )
     return 0
 

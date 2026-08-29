@@ -37,5 +37,6 @@ market_context: governed_pr_b_core
 market_feature_dir: reports/v04_pr_b/core_features
 market_official_bridge: data/catalog/ipo_official_master_bridge.csv
 final_supervisor: llm
-# Set IPO_RISK_PR_F_RUN_DIR to a local sanitized handoff. It stays empty in Git.
-pr_f_run_dir: ""
+# The committed four-file handoff is label-free, checksum-bound and byte-identical
+# to the final-three package recorded by the immutable Role-D receipt.
+pr_f_run_dir: reports/v045_pr_f_product_handoff_final3

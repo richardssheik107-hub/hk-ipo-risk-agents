@@ -1,0 +1,52 @@
+{
+  "blind_2025_y_accessed": false,
+  "evaluation_count": 70,
+  "evaluation_split": "2024_validation",
+  "five_day_metrics": {
+    "base_prevalence": 0.32857142857142857,
+    "classification_threshold": 0.5,
+    "f1": 0.07692307692307693,
+    "positive_count": 23,
+    "pr_auc": 0.3363610278209001,
+    "precision": 0.3333333333333333,
+    "recall": 0.043478260869565216,
+    "roc_auc": 0.4246068455134135,
+    "sample_count": 70,
+    "top_10pct_hit_rate": 0.42857142857142855,
+    "top_20pct_hit_rate": 0.2857142857142857,
+    "top_fraction_definition": "positive_rate_within_highest_scoring_fraction"
+  },
+  "horizons": [
+    "1D",
+    "5D",
+    "20D",
+    "60D"
+  ],
+  "market_source": {
+    "filter_schema_version": "v04_ipo_eod_filter_v2",
+    "filtered_store_filename": "v04_ipo_eod.csv",
+    "filtered_store_manifest_filename": "v04_ipo_eod.manifest.json",
+    "filtered_store_manifest_sha256": "f23c4433329b7954ab76fc922335634eb866f000c35ccee258292104885ed20d",
+    "filtered_store_row_count": 433776,
+    "filtered_store_sha256": "73599d60818eeecfadc556453386d1dabc819138049c047cceb5ccc3a737cd1a",
+    "official_bridge_sha256": "c0696f480d54397c169b43085ad77939edde538be3ee5ec3a2ae8ce8b2489a2d",
+    "provider": "governed_filtered_eod_v2",
+    "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152"
+  },
+  "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
+  "role_d_m5_version": "v045_role_d_m5_handoff_v2",
+  "score_semantics": "uncalibrated_model_score_not_probability",
+  "significant_drop_5d_definition": "return_5d <= -0.10",
+  "source_hashes": {
+    "pr_e_baseline_results_sha256": "4444ea914295ecd9544e8f2d2db126e541b6dc1da60e5b05e648c49a3f9f659e",
+    "pr_e_frozen_manifest_sha256": "6570dc891395402ed497ad85068ae219d925733fcc5ab23dbbb8bfb8fab5170d",
+    "pr_e_run_manifest_sha256": "f60cc143d7710ae45978cfb07cb74968089ccffe687a673f2faa248c5d8508c4",
+    "pr_e_value_diagnostic_sha256": "c0d1882773863d1fcd6fa6155a9a09f02001e39ad60a5c92f2a87d33c286b863",
+    "pr_f_frozen_manifest_sha256": "f62eeb513d74998ace1ed2a1deb8a450d7114c73d4ab412af060faaf63fdb97a",
+    "pr_f_model_comparison_sha256": "c033c4f8ed849255eb4369ecfe413a384ab9f1d8a20f4b6899f45683785efd27",
+    "pr_f_model_results_sha256": "d6b4cae7d4cb8b78430b6b9beb25a866d4709e19c41fc9b6c60b6a07a6e4f41f",
+    "pr_f_run_manifest_sha256": "dcaa27ff64d3268e85f7f46fa16fac8621107a420297a6059d4824866e97c035"
+  },
+  "status": "complete",
+  "threshold_or_model_retuned_on_validation": false
+}

@@ -146,6 +146,28 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _csv_line_ending_hashes(path: Path) -> frozenset[str]:
+    """Return byte hashes that differ only by CSV newline representation.
+
+    The official bridge was frozen from a Windows checkout, while Git stores
+    the same tracked CSV with LF line endings.  A fresh Linux checkout must not
+    make every frozen Market-X artifact unavailable merely because CRLF became
+    LF.  Both candidates are still hashes of the complete file content; no
+    field, row, ordering or other byte difference is tolerated.
+    """
+
+    raw = path.read_bytes()
+    lf = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    crlf = lf.replace(b"\n", b"\r\n")
+    return frozenset(
+        {
+            hashlib.sha256(raw).hexdigest(),
+            hashlib.sha256(lf).hexdigest(),
+            hashlib.sha256(crlf).hexdigest(),
+        }
+    )
+
+
 class GovernedPRBMarketContextProvider:
     """Load governed point-in-time Core and optional Extended projections.
 
@@ -281,7 +303,9 @@ class GovernedPRBMarketContextProvider:
         provenance = payload.get("source_provenance")
         if not isinstance(provenance, dict):
             raise ValueError("source_provenance is missing")
-        if provenance.get("official_bridge_sha256") != _sha256_file(self.official_bridge_path):
+        if provenance.get("official_bridge_sha256") not in _csv_line_ending_hashes(
+            self.official_bridge_path
+        ):
             raise ValueError("official bridge provenance hash does not match")
         stored_hash = payload.get("content_hash")
         body = dict(payload)

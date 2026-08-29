@@ -188,11 +188,32 @@ governed final-three manifest support = COMPLETE
 final-three package strict validation = PASS
 case IDs = ipo_2024_02410 / ipo_2024_02460 / ipo_2024_01318
 label or realized-return fields = absent
-package materialized in Git = false
-reason = package remains a generated frozen-runtime deliverable
+package materialized in Git = true
+runtime config enabled = true
+Market-X Core final-three materialized in Git = true
+fresh-checkout product preflight = 3/3 Market available + 3/3 Model available
 ```
 
-Role E must keep Model Channel unavailable until a valid package is supplied. It must not consume a reconstructed model or a hand-edited signal.
+The committed package is byte-identical to the four-file package already recorded
+by the immutable current-main receipt.  It was recovered only after validating
+the receipt and the exact `test_predictions.csv` byte hash; every output hash
+matches the previously accepted handoff.  This is not a reconstructed model or
+a hand-edited signal.
+
+The ordinary build remains the preferred path when full frozen PR-F runtime
+files are present.  Disaster recovery from the receipt-bound D export is:
+
+```bash
+python scripts/build_v04_pr_f_product_handoff_from_receipt.py \
+  --predictions reports/v045_role_d/test_predictions.csv \
+  --output-dir reports/v045_pr_f_product_handoff_final3
+```
+
+Fresh-checkout product verification:
+
+```bash
+python scripts/check_v045_product_runtime.py
+```
 
 ## 4. v2 high-recall candidate
 
@@ -222,6 +243,9 @@ network-free receipt validator and tests
 CI receipt validation
 governed final-three demo-case manifest support
 validated label-free final-three package evidence
+committed receipt-bound final-three Market-X Core projections
+committed byte-identical label-free final-three model handoff
+3/3 Market and 3/3 Model product-runtime preflight
 deterministic resume and fresh-directory rebuild evidence
 D closure documentation
 ```
@@ -231,11 +255,12 @@ The following cannot be honestly completed from committed files alone:
 ```text
 A-owned promote/retain decision for v2
 v2 freeze and re-materialization if A selects promotion
-committing the licensed EOD archive or external frozen research runtime
+committing the licensed EOD archive or full external frozen research runtime
 ```
 
-The live frozen-baseline revalidation and generated product package now exist as
-validated, hash-bound external-runtime evidence. They remain outside Git by
-design. They do not settle A's v2 promote/retain decision and do not authorize
+The current-main D result files and the small label-free final-three product
+projections now exist as validated, hash-bound Git artifacts. Licensed raw EOD
+and full research runtime files remain outside Git. This does not settle A's
+v2 promote/retain decision and does not authorize
 retraining PR-F, changing frozen manifests, retuning on 2024 Validation, or
 letting E consume v2 without a separate promotion record.

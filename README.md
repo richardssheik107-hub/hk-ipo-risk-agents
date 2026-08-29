@@ -39,12 +39,12 @@
 | B fresh gated | `10/30` M1、`15/48` M2；37/40 structured valid | 继续 Development 泛化 |
 | M3 Traceability | 三案例 `3/3 = 1.0` | 保持 100% 并进入 final bundle |
 | Final Supervisor | latest current-main real-provider `3/3` | final evidence 稳定；fallback 不计 remote success |
-| Market | strict unavailable-observation metadata implementation 已合入 | final-three strict runtime `3/3` |
+| Market | final-three receipt-bound Core runtime `3/3 available`；全量 438 案例可由授权 ZIP 一键重建 | 保持 PIT / provenance 合同 |
 | Evidence bbox | truthful PyMuPDF `page_text_union` bbox 已合入 | 精确 quote/snippet screenshot/export manifest |
 | M4 | `0/6` 真人评审 | 每案 2 名独立评审并通过 rubric |
-| M5 formal | 70-case 四文件物化与 receipt 已记录 | current-main strict revalidation |
+| M5 formal | current-main 70-case 四文件与 receipt 哈希一致；D1 `12/12 PASS` | 保持 deterministic / Blind 边界 |
 | M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，未晋升 | A governance decision + 新 freeze/handoff |
-| 产品 | UI、Report、Trace、Human Review、bbox、runtime stage wiring 已存在 | current-case 7-stage 全跑通 + capability demos + final bundle |
+| 产品 | final-three Market / frozen Model `3/3 available`，UI 不再因资产缺失显示未启用 | real PDF/LLM case matrix + capability demos + final bundle |
 
 Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 仍不足以宣称强预测效果。v2 candidate 改善了高召回 operating point，但正式产品在新 promotion/freeze 前不能把它冒充 frozen model。
 
@@ -136,6 +136,14 @@ python scripts/validate_project.py
 python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
+python scripts/check_v045_product_runtime.py
+```
+
+使用授权行情 ZIP 重建完整 438 案例 Market-X（CSV 会在系统临时目录解压，
+不会写入 Git checkout）：
+
+```bash
+python scripts/prepare_v045_market_runtime.py --eod-archive <hkshareeodprices.zip>
 ```
 
 Role-B：

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -13,9 +14,12 @@ from ipo_risk.modeling.pr_f_product_handoff import (
     PRODUCT_MANIFEST_NAME,
     PRODUCT_README_NAME,
     PRODUCT_SIGNALS_NAME,
+    PRODUCT_FILES,
     ProductRuntimeHandoffError,
+    project_case_signals_from_role_d_predictions,
     read_product_case_signal,
     validate_product_handoff,
+    write_receipt_bound_product_handoff,
     write_product_handoff,
 )
 from ipo_risk.schemas.canonical_modeling import canonical_hash
@@ -170,6 +174,98 @@ def test_source_reporting_blind_access_fails(tmp_path) -> None:
     with pytest.raises(ProductRuntimeHandoffError, match="blind"):
         write_product_handoff(
             source, tmp_path / "out", expected_source_model_result_hash=result_hash,
+            case_ids=["ipo_2024_00001"],
+        )
+
+
+def _role_d_predictions(path: Path) -> str:
+    fields = [
+        "case_id", "stock_code", "cohort_year", "dataset_split", "model",
+        "feature_group", "poor_performer_score", "score_semantics",
+        "classification_threshold", "predicted_significant_drop_5d",
+        "predicted_return_5d", "actual_significant_drop_5d",
+        "actual_return_5d", "top_shap_drivers_json",
+    ]
+    drivers = {
+        "ipo_2024_00001": [{
+            "feature": "market_core__prior_ipo_count_20d",
+            "component": "market_core",
+            "feature_value": 3.0,
+            "shap_value": -0.125,
+        }],
+        "ipo_2024_00002": [],
+    }
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        for index, case_id in enumerate(drivers, start=1):
+            writer.writerow({
+                "case_id": case_id,
+                "stock_code": f"000{index}.HK",
+                "cohort_year": 2024,
+                "dataset_split": "validation",
+                "model": "lightgbm",
+                "feature_group": "PM",
+                "poor_performer_score": 0.25 if index == 1 else 0.75,
+                "score_semantics": "uncalibrated_model_score_not_probability",
+                "classification_threshold": 0.5,
+                "predicted_significant_drop_5d": index == 2,
+                "predicted_return_5d": 0.1 if index == 1 else -0.2,
+                "actual_significant_drop_5d": index == 2,
+                "actual_return_5d": 0.1 if index == 1 else -0.2,
+                "top_shap_drivers_json": json.dumps(
+                    drivers[case_id], sort_keys=True, separators=(",", ":")
+                ),
+            })
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_receipt_bound_recovery_is_byte_identical_to_full_source(tmp_path) -> None:
+    source, result_hash = _source(tmp_path)
+    expected_dir = tmp_path / "expected"
+    source_pr_f = {"execution_revision": "abc"}
+    write_product_handoff(
+        source,
+        expected_dir,
+        expected_source_model_result_hash=result_hash,
+        case_ids=["ipo_2024_00001", "ipo_2024_00002"],
+        source_pr_f=source_pr_f,
+    )
+    expected_hashes = {
+        name: hashlib.sha256((expected_dir / name).read_bytes()).hexdigest()
+        for name in PRODUCT_FILES
+    }
+    predictions = tmp_path / "test_predictions.csv"
+    prediction_hash = _role_d_predictions(predictions)
+
+    recovered = tmp_path / "recovered"
+    write_receipt_bound_product_handoff(
+        predictions,
+        recovered,
+        expected_predictions_sha256=prediction_hash,
+        expected_product_sha256=expected_hashes,
+        expected_source_model_result_hash=result_hash,
+        case_ids=["ipo_2024_00001", "ipo_2024_00002"],
+        source_pr_f=source_pr_f,
+    )
+
+    assert {
+        name: hashlib.sha256((recovered / name).read_bytes()).hexdigest()
+        for name in PRODUCT_FILES
+    } == expected_hashes
+    signals = json.loads((recovered / PRODUCT_SIGNALS_NAME).read_text(encoding="utf-8"))
+    assert all("actual_return_5d" not in row for row in signals)
+
+
+def test_receipt_bound_recovery_rejects_prediction_byte_drift(tmp_path) -> None:
+    predictions = tmp_path / "test_predictions.csv"
+    expected_hash = _role_d_predictions(predictions)
+    predictions.write_text(predictions.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+
+    with pytest.raises(ProductRuntimeHandoffError, match="immutable Role-D receipt"):
+        project_case_signals_from_role_d_predictions(
+            predictions,
+            expected_predictions_sha256=expected_hash,
             case_ids=["ipo_2024_00001"],
         )
 

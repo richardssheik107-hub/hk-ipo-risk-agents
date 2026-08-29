@@ -274,6 +274,48 @@ def test_governed_pr_b_split_uses_official_listing_year_not_source_year(tmp_path
     assert view.provenance["dataset_split"] == "validation"
 
 
+def test_governed_pr_b_accepts_the_same_bridge_with_crlf_provenance(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
+    source = bridge_path.read_bytes()
+    normalized = source.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    crlf_hash = hashlib.sha256(normalized.replace(b"\n", b"\r\n")).hexdigest()
+
+    artifact_path = feature_dir / "ipo_2024_02410.json"
+    payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+    payload["source_provenance"]["official_bridge_sha256"] = crlf_hash
+    payload.pop("content_hash")
+    payload["content_hash"] = content_hash(payload)
+    artifact_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    view = GovernedPRBMarketContextProvider(
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
+    ).context(IPOProfile(
+        company_name="同源康医药-B",
+        stock_code="2410.HK",
+        listing_date=date(2024, 8, 20),
+    ))
+    assert view.status is ChannelStatus.AVAILABLE
+
+
+def test_governed_pr_b_still_rejects_bridge_content_changes(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path)
+    bridge_path.write_bytes(
+        bridge_path.read_bytes().replace(b",2024,validation", b",2023,validation", 1)
+    )
+
+    view = GovernedPRBMarketContextProvider(
+        feature_dir=feature_dir,
+        official_bridge_path=bridge_path,
+    ).context(IPOProfile(
+        company_name="同源康医药-B",
+        stock_code="2410.HK",
+        listing_date=date(2024, 8, 20),
+    ))
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert "provenance hash" in view.reason
+
+
 def test_governed_pr_b_projection_rejects_tampered_artifact(tmp_path) -> None:
     source_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "source")
     source = source_dir / "ipo_2024_02410.json"

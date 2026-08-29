@@ -1,0 +1,16 @@
+{
+  "blind_2025_y_accessed": false,
+  "case_count": 3,
+  "case_signal_file": "product_case_signals.json",
+  "case_signal_sha256": "96bdb58c9a9c8a1fa603550ee0fab1bf7febef24f9fd298c4f0e75196f3437b0",
+  "contains_target_labels": false,
+  "manifest_version": "v04_pr_f_product_runtime_handoff_v1",
+  "score_semantics": "uncalibrated_model_score",
+  "source_model_result_hash": "7d5a6747b39739ea57e90a00c7b364fd7e1c55cf44e916b1285c075c3a9e7bc3",
+  "source_pr_f": {
+    "execution_revision": "854294769cd8162bb989d019addf10d653e663e8",
+    "freeze_manifest_hash": "3e140da1269bd3a9762e62cc2c2c8507f614627391833afb5fc69539c3bce489",
+    "model_policy_version": "v04_pr_f_lightgbm_policy_v1",
+    "pr_f_version": "v04_pr_f_lightgbm_explainability_v1"
+  }
+}

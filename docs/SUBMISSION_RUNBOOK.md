@@ -1,6 +1,6 @@
 # Competition Submission Runbook
 
-> 状态日期：`2026-08-28`
+> 状态日期：`2026-08-29`
 
 本 Runbook 只描述从当前状态到最终封包的可重复步骤。状态见 `V0.4_RELEASE_ACCEPTANCE.md`，顺序见 `COMPETITION_CLOSURE_PLAN.md`。
 
@@ -31,6 +31,7 @@ python scripts/validate_project.py
 python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
+python scripts/check_v045_product_runtime.py
 ```
 
 ## 3. Role-B forensic baseline
@@ -115,11 +116,37 @@ python scripts/build_v04_pr_f_product_handoff.py \
   --output-dir reports/v045_pr_f_product_handoff_final3
 ```
 
+当前 main 已包含与 immutable receipt 四个哈希逐字节一致的 label-free
+final-three handoff；若全量 PR-F runtime 遗失但持有 receipt-bound D export，
+只允许使用下列 fail-closed 恢复命令：
+
+```bash
+python scripts/build_v04_pr_f_product_handoff_from_receipt.py \
+  --predictions reports/v045_role_d/test_predictions.csv \
+  --output-dir reports/v045_pr_f_product_handoff_final3
+```
+
+使用授权行情 ZIP 重建全量 438 案例 Market-X：
+
+```bash
+python scripts/prepare_v045_market_runtime.py \
+  --eod-archive <hkshareeodprices.zip>
+```
+
+两个命令都验证 frozen/receipt 哈希；不接受替代行情、手改 signal 或 2025
+Blind outcome。
+
 若晋升 v2，使用其 versioned handoff builder/identity。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
 
 D 的最终报告必须同时给出性能、基准、alert 工作量和限制。
 
 ## 6. Final-three offline / AI / Market / M3
+
+先运行产品通道 preflight，必须得到 Market `3/3`、Model `3/3`：
+
+```bash
+python scripts/check_v045_product_runtime.py
+```
 
 Offline：
 

@@ -89,6 +89,18 @@ def test_the_competition_run_round_trips_through_the_repository(result) -> None:
     assert result.status is TaskStatus.COMPLETED, result.errors
 
 
+def test_final_three_runtime_enters_supervision_with_market_and_model_available(result) -> None:
+    states = {
+        row["channel"]: row["status"]
+        for row in result.metadata["final_supervision"]["channel_states"]
+    }
+    assert states["market"] == "available"
+    assert states["model"] == "available"
+    model = result.metadata["final_supervision"]["model_prediction"]
+    assert model["score"] == pytest.approx(0.09722022630014981)
+    assert len(model["drivers"]) == 10
+
+
 def test_conflict_detection_and_the_recheck_both_report_their_policy_version(result) -> None:
     diagnostics = _diagnostics(result)
     assert diagnostics["conflict_detection"]["policy_version"] == "v04_e_conflict_policy_v1"

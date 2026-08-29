@@ -18,6 +18,7 @@ file has its own byte SHA-256 in a manifest and is fail-closed on read.
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import math
@@ -72,6 +73,23 @@ _FORBIDDEN_LABEL_KEYS = {
     "label",
     "y",
 }
+
+_ROLE_D_PREDICTION_FIELDS = (
+    "case_id",
+    "stock_code",
+    "cohort_year",
+    "dataset_split",
+    "model",
+    "feature_group",
+    "poor_performer_score",
+    "score_semantics",
+    "classification_threshold",
+    "predicted_significant_drop_5d",
+    "predicted_return_5d",
+    "actual_significant_drop_5d",
+    "actual_return_5d",
+    "top_shap_drivers_json",
+)
 
 
 class ProductRuntimeHandoffError(ValueError):
@@ -357,6 +375,25 @@ def write_product_handoff(
     )
     _validate_signal_rows(signals)
 
+    return _write_product_package(
+        output_dir,
+        signals,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+        source_pr_f=source_pr_f,
+    )
+
+
+def _write_product_package(
+    output_dir: Path,
+    signals: list[dict[str, Any]],
+    *,
+    expected_source_model_result_hash: str,
+    source_pr_f: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Write the canonical four-file package from already-validated signals."""
+
+    output_dir = Path(output_dir)
+    _validate_signal_rows(signals)
     output_dir.mkdir(parents=True, exist_ok=True)
     signals_path = output_dir / PRODUCT_SIGNALS_NAME
     signals_path.write_text(
@@ -392,6 +429,132 @@ def write_product_handoff(
         expected_case_ids=[signal["case_id"] for signal in signals],
     )
     return validated
+
+
+def project_case_signals_from_role_d_predictions(
+    predictions_path: Path,
+    *,
+    expected_predictions_sha256: str,
+    case_ids: Iterable[str],
+) -> list[dict[str, Any]]:
+    """Recover the frozen product projection from a receipt-bound D export.
+
+    ``test_predictions.csv`` is a deterministic projection of the verified
+    PR-F runtime produced by Role D.  This recovery path is intentionally
+    narrower than the normal PR-F builder: it accepts only the byte-identical
+    export named by the immutable current-main receipt and removes every label
+    and realised-return column before writing a product package.
+    """
+
+    predictions_path = Path(predictions_path)
+    if _SHA256.fullmatch(expected_predictions_sha256) is None:
+        raise ProductRuntimeHandoffError("receipt prediction checksum is invalid")
+    if not predictions_path.is_file():
+        raise ProductRuntimeHandoffError("receipt-bound test_predictions.csv is missing")
+    if _sha256_file(predictions_path) != expected_predictions_sha256:
+        raise ProductRuntimeHandoffError(
+            "test_predictions.csv does not match the immutable Role-D receipt"
+        )
+
+    try:
+        with predictions_path.open("r", encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle)
+            if tuple(reader.fieldnames or ()) != _ROLE_D_PREDICTION_FIELDS:
+                raise ProductRuntimeHandoffError(
+                    "Role-D prediction export schema drifted from the frozen contract"
+                )
+            rows = list(reader)
+    except (OSError, UnicodeDecodeError, csv.Error) as exc:
+        raise ProductRuntimeHandoffError("Role-D prediction export is unreadable") from exc
+
+    rows_by_case: dict[str, dict[str, str]] = {}
+    for row in rows:
+        case_id = (row.get("case_id") or "").strip()
+        if not case_id or case_id in rows_by_case:
+            raise ProductRuntimeHandoffError(
+                "Role-D prediction export case ids must be unique and non-empty"
+            )
+        rows_by_case[case_id] = row
+
+    requested = tuple(
+        dict.fromkeys(str(case_id).strip() for case_id in case_ids if str(case_id).strip())
+    )
+    if not requested:
+        raise ProductRuntimeHandoffError("at least one receipt-qualified case id is required")
+    missing = [case_id for case_id in requested if case_id not in rows_by_case]
+    if missing:
+        raise ProductRuntimeHandoffError(
+            "receipt-qualified cases are absent from test_predictions.csv: "
+            + ", ".join(missing)
+        )
+
+    signals: list[dict[str, Any]] = []
+    for case_id in requested:
+        row = rows_by_case[case_id]
+        if (
+            row.get("cohort_year") != "2024"
+            or row.get("dataset_split") != "validation"
+            or row.get("model") != "lightgbm"
+            or row.get("feature_group") != PRODUCTION_FEATURE_GROUP
+            or row.get("score_semantics")
+            != "uncalibrated_model_score_not_probability"
+        ):
+            raise ProductRuntimeHandoffError(
+                f"Role-D prediction identity drift for {case_id}"
+            )
+        try:
+            score = float(row["poor_performer_score"])
+            drivers = json.loads(row["top_shap_drivers_json"])
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            raise ProductRuntimeHandoffError(
+                f"Role-D score or SHAP payload is invalid for {case_id}"
+            ) from exc
+        if not math.isfinite(score) or not isinstance(drivers, list):
+            raise ProductRuntimeHandoffError(
+                f"Role-D score or SHAP payload is invalid for {case_id}"
+            )
+        signals.append({"case_id": case_id, "score": score, "drivers": drivers})
+
+    _validate_signal_rows(signals)
+    return signals
+
+
+def write_receipt_bound_product_handoff(
+    predictions_path: Path,
+    output_dir: Path,
+    *,
+    expected_predictions_sha256: str,
+    expected_product_sha256: Mapping[str, str],
+    expected_source_model_result_hash: str,
+    case_ids: Iterable[str],
+    source_pr_f: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Reproduce, byte for byte, the product package recorded by the receipt."""
+
+    expected = {str(name): str(value) for name, value in expected_product_sha256.items()}
+    if set(expected) != PRODUCT_FILES or any(
+        _SHA256.fullmatch(value) is None for value in expected.values()
+    ):
+        raise ProductRuntimeHandoffError(
+            "receipt product checksums do not cover the exact four-file contract"
+        )
+    signals = project_case_signals_from_role_d_predictions(
+        predictions_path,
+        expected_predictions_sha256=expected_predictions_sha256,
+        case_ids=case_ids,
+    )
+    manifest = _write_product_package(
+        output_dir,
+        signals,
+        expected_source_model_result_hash=expected_source_model_result_hash,
+        source_pr_f=source_pr_f,
+    )
+    actual = {name: _sha256_file(Path(output_dir) / name) for name in PRODUCT_FILES}
+    if actual != expected:
+        raise ProductRuntimeHandoffError(
+            "recovered product package does not match the immutable Role-D receipt"
+        )
+    return manifest
 
 
 def read_product_case_signal(
