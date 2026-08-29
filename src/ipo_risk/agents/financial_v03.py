@@ -343,6 +343,7 @@ class V03FinancialAgent:
             decision.risk,
             retrieval.evidence,
             chunks_by_id,
+            extraction,
         )
         return risk, diagnostic
 
@@ -352,6 +353,7 @@ class V03FinancialAgent:
         risk: RiskItem | None,
         retrieved: Sequence[Evidence],
         chunks_by_id: Mapping[str, DocumentChunk],
+        extraction: FinancialPeriodSeriesResult | ConcentrationFact | None = None,
     ) -> RiskItem | None:
         """Attach parser-governed table views without changing the decision.
 
@@ -372,8 +374,36 @@ class V03FinancialAgent:
 
         retained = list(risk.evidence)
         retained_ids = {item.evidence_id for item in retained}
+        parsed_support_ids: set[str] = set()
+        if isinstance(extraction, ConcentrationFact):
+            diagnostics = extraction.metadata.get("candidate_diagnostics", [])
+            if isinstance(diagnostics, Sequence) and not isinstance(
+                diagnostics, (str, bytes)
+            ):
+                for item in diagnostics:
+                    if not isinstance(item, Mapping):
+                        continue
+                    issues = {str(value) for value in item.get("issues") or []}
+                    if issues.intersection(
+                        {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
+                    ):
+                        continue
+                    if (
+                        item.get("largest_counterparty_pct") is None
+                        and item.get("top_five_pct") is None
+                    ):
+                        continue
+                    parsed_support_ids.update(
+                        str(value)
+                        for value in item.get("evidence_ids") or []
+                        if str(value)
+                    )
         for evidence in retrieved:
             if evidence.evidence_id in retained_ids or not evidence.chunk_id:
+                continue
+            if evidence.evidence_id in parsed_support_ids:
+                retained.append(evidence)
+                retained_ids.add(evidence.evidence_id)
                 continue
             chunk = chunks_by_id.get(evidence.chunk_id)
             if chunk is None:
@@ -407,6 +437,11 @@ class V03FinancialAgent:
                     **risk.metadata,
                     "ranked_table_evidence_augmented": (
                         len(retained) - len(risk.evidence)
+                    ),
+                    "parsed_concentration_evidence_augmented": len(
+                        parsed_support_ids.difference(
+                            item.evidence_id for item in risk.evidence
+                        )
                     ),
                 },
             }

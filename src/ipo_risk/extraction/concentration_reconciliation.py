@@ -339,6 +339,7 @@ class _ConcentrationReconciliationMixin:
                         else None
                     ),
                     "top_five_pct": str(item.top_five_pct) if item.top_five_pct is not None else None,
+                    "evidence_ids": list(item.evidence_ids),
                     "status": item.status.value,
                     "issues": list(item.issues),
                     "source_context": item.metadata.get("source_context"),

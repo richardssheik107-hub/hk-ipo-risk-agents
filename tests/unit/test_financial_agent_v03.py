@@ -10,7 +10,7 @@ from ipo_risk.agents.financial_builders import V03FinancialRiskBuilder
 from ipo_risk.agents.financial_models import ConcentrationObservation
 from ipo_risk.agents.financial_policy import load_v03_financial_policy
 from ipo_risk.agents.financial_v03 import FINANCIAL_EVIDENCE_QUERIES, V03FinancialAgent
-from ipo_risk.extraction import V03FinancialFactExtractor
+from ipo_risk.extraction import ConcentrationFact, ExtractionStatus, V03FinancialFactExtractor
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.schemas import (
     ComponentDiagnostic,
@@ -248,6 +248,95 @@ def test_ranked_table_evidence_cannot_cross_concentration_type() -> None:
 
     observed = V03FinancialAgent._augment_ranked_concentration_evidence(
         "customer_concentration", risk, [evidence], {chunk.chunk_id: chunk}
+    )
+
+    assert observed is risk
+
+
+def test_parsed_concentration_support_is_retained_without_changing_decision() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    supporting = Evidence(
+        evidence_id="e-parsed-support",
+        document_id="doc",
+        chunk_id="supporting",
+        page=31,
+        text="五大客戶佔收益79%，最大客戶佔收益44%。",
+    )
+    extraction = ConcentrationFact(
+        concentration_type="customer",
+        status=ExtractionStatus.EXTRACTED,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "largest_counterparty_pct": "44",
+                    "top_five_pct": "79",
+                    "evidence_ids": [supporting.evidence_id],
+                    "issues": ["latest_period_months_ambiguous"],
+                }
+            ]
+        },
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration",
+        risk,
+        [supporting],
+        {supporting.chunk_id: DocumentChunk(
+            document_id="doc", chunk_id="supporting", page=31, text=supporting.text
+        )},
+        extraction,
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == supporting.evidence_id
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+
+
+def test_structurally_invalid_concentration_support_is_not_retained() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    invalid = Evidence(
+        evidence_id="e-invalid-support",
+        document_id="doc",
+        chunk_id="invalid",
+        page=31,
+        text="五大供應商佔採購753.1%。",
+    )
+    extraction = ConcentrationFact(
+        concentration_type="supplier",
+        status=ExtractionStatus.NEEDS_REVIEW,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "largest_counterparty_pct": None,
+                    "top_five_pct": "753.1",
+                    "evidence_ids": [invalid.evidence_id],
+                    "issues": ["percentage_out_of_range"],
+                }
+            ]
+        },
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [invalid],
+        {invalid.chunk_id: DocumentChunk(
+            document_id="doc", chunk_id="invalid", page=31, text=invalid.text
+        )},
+        extraction,
     )
 
     assert observed is risk
