@@ -43,6 +43,14 @@ class RiskSpecificRetriever:
         return []
 
 
+class EvidenceByRiskRetriever:
+    def __init__(self, values: dict[str, list[Evidence]]) -> None:
+        self.values = values
+
+    def retrieve_for_risk(self, chunks, risk_code, *, limit=20):
+        return list(self.values.get(risk_code, ()))[:limit]
+
+
 def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
     retriever = RiskSpecificRetriever()
     agent = v03_agent(retriever=retriever)
@@ -55,6 +63,84 @@ def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
         ("customer_concentration", 20),
         ("supplier_concentration", 20),
     ]
+
+
+@pytest.mark.parametrize(
+    ("risk_code", "text", "signal_code"),
+    [
+        (
+            "customer_concentration",
+            "The company is pre-revenue and has not generated any product sales revenue.",
+            "customer_denominator_unavailable_pre_revenue",
+        ),
+        (
+            "supplier_concentration",
+            "During the track record period the Group had no major suppliers.",
+            "major_supplier_term_undefined",
+        ),
+    ],
+)
+def test_explicit_qualitative_concentration_ambiguity_creates_pending_review(
+    risk_code: str,
+    text: str,
+    signal_code: str,
+) -> None:
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="qualitative",
+        page=7,
+        text=text,
+    )
+    evidence = Evidence(
+        evidence_id="e-qualitative",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+    retriever = EvidenceByRiskRetriever({risk_code: [evidence]})
+    agent = v03_agent(retriever=retriever)
+
+    observed = agent.analyze(IPOProfile(company_name="Demo"), [chunk])
+    risk = risk_by_code(observed, risk_code)
+
+    assert risk is not None
+    assert risk.verification_status == VerificationStatus.PENDING
+    assert risk.level == RiskLevel.MEDIUM
+    assert risk.calculation is None
+    assert risk.metadata["issue"] == signal_code
+    assert risk.metadata["percentage_inferred"] is False
+    assert [item.evidence_id for item in risk.evidence] == [evidence.evidence_id]
+
+
+def test_generic_concentration_language_does_not_create_qualitative_risk() -> None:
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="generic",
+        page=8,
+        text="We work with many customers and suppliers in the ordinary course.",
+    )
+    evidence = Evidence(
+        evidence_id="e-generic",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+    retriever = EvidenceByRiskRetriever(
+        {
+            "customer_concentration": [evidence],
+            "supplier_concentration": [evidence],
+        }
+    )
+
+    observed = v03_agent(retriever=retriever).analyze(
+        IPOProfile(company_name="Demo"),
+        [chunk],
+    )
+
+    assert risk_by_code(observed, "customer_concentration") is None
+    assert risk_by_code(observed, "supplier_concentration") is None
 
 
 def v03_agent(**kwargs) -> V03FinancialAgent:

@@ -115,6 +115,35 @@ _CONCENTRATION_SUPPORT_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = 
 
 _MAX_RANKED_DISCLOSURE_SUPPORT = 5
 
+_QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS: Mapping[
+    str, tuple[tuple[str, re.Pattern[str]], ...]
+] = {
+    "customer": (
+        (
+            "customer_denominator_unavailable_pre_revenue",
+            re.compile(
+                r"(?:pre[- ]?revenue|"
+                r"(?:尚未|未曾|並無|并无|沒有|没有).{0,36}"
+                r"(?:產生|产生|錄得|录得).{0,24}"
+                r"(?:產品銷售|产品销售|商業化|商业化|收益|收入)|"
+                r"has\s+not\s+generated.{0,40}revenue)",
+                re.I | re.S,
+            ),
+        ),
+    ),
+    "supplier": (
+        (
+            "major_supplier_term_undefined",
+            re.compile(
+                r"(?:並無|并无|沒有|没有|無|无).{0,12}"
+                r"(?:重大|主要)(?:供應商|供应商)|"
+                r"no\s+(?:major|principal)\s+suppliers?",
+                re.I | re.S,
+            ),
+        ),
+    ),
+}
+
 
 @dataclass(frozen=True, slots=True)
 class _RetrievalResult:
@@ -326,6 +355,35 @@ class V03FinancialAgent:
             extraction, retrieval.evidence
         )
         if (status != ExtractionStatus.EXTRACTED or issues) and not unresolved_concentration_signal:
+            qualitative_signal = self._qualitative_concentration_review_signal(
+                risk_code,
+                retrieval.evidence,
+            )
+            if qualitative_signal is not None:
+                signal_code, signal_evidence_ids = qualitative_signal
+                decision = self.risk_builder.build_qualitative_concentration_review(
+                    concentration_type=(
+                        "customer"
+                        if risk_code == "customer_concentration"
+                        else "supplier"
+                    ),
+                    signal_code=signal_code,
+                    evidence_ids=signal_evidence_ids,
+                    evidence_by_id={
+                        item.evidence_id: item for item in retrieval.evidence
+                    },
+                    chunks_by_id=chunks_by_id,
+                )
+                if decision.risk is not None:
+                    diagnostic = decision.diagnostic.model_copy(
+                        update={
+                            "metadata": {
+                                **decision.diagnostic.metadata,
+                                **query_metadata,
+                            }
+                        }
+                    )
+                    return decision.risk, diagnostic
             return None, self._diagnostic(
                 risk_code,
                 self._issue_code(issues, status=status),
@@ -365,6 +423,33 @@ class V03FinancialAgent:
             extraction,
         )
         return risk, diagnostic
+
+    @staticmethod
+    def _qualitative_concentration_review_signal(
+        risk_code: str,
+        evidence: Sequence[Evidence],
+    ) -> tuple[str, list[str]] | None:
+        """Identify explicit non-numeric disclosures that require review.
+
+        This path never infers a percentage or threshold result.  It only
+        preserves narrowly defined, source-backed ambiguity as a pending risk:
+        customer concentration has no usable revenue denominator, or an issuer
+        uses an undefined qualitative supplier-importance term.
+        """
+
+        concentration_type = {
+            "customer_concentration": "customer",
+            "supplier_concentration": "supplier",
+        }.get(risk_code)
+        if concentration_type is None:
+            return None
+        for signal_code, pattern in _QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS[
+            concentration_type
+        ]:
+            matched = [item.evidence_id for item in evidence if pattern.search(item.text)]
+            if matched:
+                return signal_code, list(dict.fromkeys(matched[:3]))
+        return None
 
     @staticmethod
     def _augment_ranked_concentration_evidence(
