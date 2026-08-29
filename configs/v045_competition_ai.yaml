@@ -42,6 +42,11 @@ market_official_bridge: data/catalog/ipo_official_master_bridge.csv
 # local pack: set IPO_RISK_MARKET_DYNAMIC_OUTCOME_PACK once it is materialized.
 market_dynamic_context: pit_bridge
 market_dynamic_outcome_pack: ""
+# Market-X Extended (HSI / HKEX turnover) for non-frozen cases. The CSMAR and
+# HKEX caches are licensed and stay out of Git; set both env vars locally.
+# Industry returns remain INDUSTRY_MAPPING_PIT_BLOCKED either way.
+market_dynamic_extended_hsi_csv: ""
+market_dynamic_extended_turnover_csv: ""
 final_supervisor: llm
 # The committed four-file handoff is label-free, checksum-bound and byte-identical
 # to the final-three package recorded by the immutable Role-D receipt.

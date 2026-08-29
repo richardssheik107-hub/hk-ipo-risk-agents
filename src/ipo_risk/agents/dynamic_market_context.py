@@ -21,10 +21,19 @@ Three properties make the result usable rather than decorative:
 
 from __future__ import annotations
 
+import re
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+from ipo_risk.agents.market_context import (
+    FAILURE_IDENTITY_MISMATCH,
+    FAILURE_OTHER,
+)
+from ipo_risk.market.dynamic_extended import (
+    DynamicExtendedMarketError,
+    DynamicExtendedMarketSource,
+)
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
     IPO_MARKET_CONTEXT_FEATURE_POLICY_VERSION,
@@ -71,6 +80,17 @@ _SAME_INDUSTRY_OUTCOME_FEATURES = (
     "same_industry_recent_1d_sample_count",
     "same_industry_recent_5d_sample_count",
 )
+_IDENTITY_FAILURE = re.compile(
+    "|".join(
+        (
+            "resolves to",
+            "lists on",
+            "not present in the governed universe",
+            "disagrees with the governed identity",
+            "duplicate official bridge case",
+        )
+    )
+)
 _EMPTY_SAMPLE_REASONS = frozenset(
     {
         IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE,
@@ -89,11 +109,16 @@ class DynamicPITMarketContextProvider:
         *,
         official_bridge_path: str | Path,
         outcome_pack_path: str | Path | None = None,
+        extended_source: DynamicExtendedMarketSource | None = None,
     ) -> None:
         self.official_bridge_path = Path(official_bridge_path)
         self.outcome_pack_path = (
             Path(outcome_pack_path) if outcome_pack_path else None
         )
+        # Optional: governed HSI / turnover context for the same cutoff. Absent,
+        # the six Extended names do not appear at all, which is not the same
+        # claim as reporting them unavailable from a source never consulted.
+        self.extended_source = extended_source
         self._history: PriorIPOHistory | None = None
 
     def history(self) -> PriorIPOHistory:
@@ -127,6 +152,11 @@ class DynamicPITMarketContextProvider:
                     "runtime_path": "dynamic_pit",
                     "reason_code": "governed_history_invalid",
                     "frozen_artifact_read_attempted": False,
+                    "failure_code": (
+                        FAILURE_IDENTITY_MISMATCH
+                        if _IDENTITY_FAILURE.search(str(exc))
+                        else FAILURE_OTHER
+                    ),
                 },
             )
         return view
@@ -248,7 +278,9 @@ class DynamicPITMarketContextProvider:
             industry=industry,
         )
         observations = self._observations(values, reasons)
-        available = sum(item.availability == "available" for item in observations)
+        core_available = sum(
+            item.availability == "available" for item in observations
+        )
         provenance = self._provenance(
             profile=profile,
             history=history,
@@ -257,8 +289,16 @@ class DynamicPITMarketContextProvider:
             values=values,
             reasons=reasons,
             prior_row_count=len(prior_rows),
-            available_count=available,
+            available_count=core_available,
         )
+        extended, extended_provenance = self._extended(
+            listing_date=listing_date,
+            case_id=record.case_id if record is not None else None,
+            stock_code=profile.stock_code or None,
+        )
+        observations += extended
+        provenance.update(extended_provenance)
+        available = sum(item.availability == "available" for item in observations)
         if available == 0:
             return MarketContextView(
                 status=ChannelStatus.UNAVAILABLE,
@@ -274,13 +314,51 @@ class DynamicPITMarketContextProvider:
             status=ChannelStatus.AVAILABLE,
             reason=(
                 "recomputed point-in-time Market-X Core from the governed "
-                f"prior-IPO universe ({available}/"
-                f"{len(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER)} features available)"
+                f"prior-IPO universe ({core_available}/"
+                f"{len(IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER)} Core features "
+                "available)"
+                + (
+                    f", plus governed Extended context "
+                    f"({available - core_available} available)"
+                    if extended
+                    else ""
+                )
             ),
             observations=observations,
             feature_manifest_hash=IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
             provenance=provenance,
         )
+
+    def _extended(
+        self,
+        *,
+        listing_date: date,
+        case_id: str | None,
+        stock_code: str | None,
+    ) -> tuple[tuple[MarketObservation, ...], dict[str, Any]]:
+        """Attach governed Extended context, or say why it could not be read.
+
+        An Extended cache that fails to load must not take the Core projection
+        down with it: Core is complete on its own, and the failure is reported
+        as a capability statement rather than swallowed.
+        """
+
+        if self.extended_source is None:
+            return (), {"extended_status": "not_configured"}
+        try:
+            result = self.extended_source.context(
+                listing_date=listing_date,
+                case_id=case_id,
+                stock_code=stock_code,
+            )
+        except DynamicExtendedMarketError as exc:
+            return (), {
+                "extended_status": "source_error",
+                "extended_error": str(exc),
+            }
+        provenance = dict(result.provenance)
+        provenance["extended_status"] = "available"
+        return result.observations, provenance
 
     @staticmethod
     def _refine_blind_cohort_reasons(

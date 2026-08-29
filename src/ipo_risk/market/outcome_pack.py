@@ -25,7 +25,7 @@ from ipo_risk.market.prior_ipo_history import (
     OUTCOME_COHORT_YEARS,
     PRIOR_IPO_OUTCOME_PACK_SCHEMA_VERSION,
     PriorIPOHistoryError,
-    csv_content_hashes,
+    line_ending_agnostic_hashes,
 )
 from ipo_risk.schemas.market import (
     IPOMarketMetadata,
@@ -92,7 +92,7 @@ def build_prior_ipo_outcome_pack(
         "blind_outcomes_included": False,
         "records": records,
     }
-    if body["official_bridge_sha256"] not in csv_content_hashes(path):
+    if body["official_bridge_sha256"] not in line_ending_agnostic_hashes(path):
         raise PriorIPOHistoryError("official bridge hash could not be reproduced")
     body["content_hash"] = content_hash(
         {key: value for key, value in body.items() if key != "content_hash"}

@@ -63,12 +63,14 @@ class PriorIPOHistoryError(ValueError):
     """The governed prior-IPO universe could not be loaded or validated."""
 
 
-def csv_content_hashes(path: Path) -> frozenset[str]:
-    """Return byte hashes that differ only by CSV newline representation.
+def line_ending_agnostic_hashes(path: Path) -> frozenset[str]:
+    """Return byte hashes that differ only by newline representation.
 
-    The official bridge was frozen from a Windows checkout while Git stores it
-    with LF endings.  Both candidates hash the complete file content; no field,
-    row or ordering difference is tolerated.
+    Several frozen artifacts were hashed from a Windows checkout while Git
+    stores them with LF endings, so a provenance hash recorded then does not
+    reproduce on a fresh Linux/macOS clone.  Every candidate still hashes the
+    complete file content: no field, row, ordering or other byte difference is
+    tolerated, only CR/LF.
     """
 
     raw = path.read_bytes()
@@ -232,7 +234,7 @@ def load_official_prior_ipo_history(
         record.listing_date > history_end_date for record in records.values()
     )
 
-    bridge_hashes = csv_content_hashes(path)
+    bridge_hashes = line_ending_agnostic_hashes(path)
     provenance: dict[str, Any] = {
         "schema_version": PRIOR_IPO_HISTORY_SCHEMA_VERSION,
         "offer_facts_source": "competition_official_master_bridge",

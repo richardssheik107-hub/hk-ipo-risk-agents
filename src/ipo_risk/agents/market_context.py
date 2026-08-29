@@ -29,6 +29,7 @@ from ipo_risk.market.ipo_market_context_features import (
     content_hash,
     vectorize_ipo_market_context,
 )
+from ipo_risk.market.prior_ipo_history import line_ending_agnostic_hashes
 from ipo_risk.schemas import IPOProfile, MarketSnapshot
 from ipo_risk.schemas.final_supervision import ChannelStatus, MarketContextView, MarketObservation
 from ipo_risk.schemas.market import expected_market_split
@@ -72,6 +73,55 @@ _INDUSTRY_MISSING_REASONS = {
     "MISSING_INDUSTRY_CLASSIFICATION",
 }
 _FROZEN_PR_B_LISTING_YEARS = frozenset({2020, 2021, 2022, 2023, 2024})
+
+# Machine-readable failure buckets for the coverage audit. A report that has to
+# grep an exception message to tell an identity mismatch from a missing file is
+# a report that will misclassify the first time a message is reworded.
+FAILURE_MISSING_ARTIFACT = "missing_or_unreadable_artifact"
+FAILURE_IDENTITY_MISMATCH = "identity_mismatch"
+FAILURE_PROVENANCE = "provenance_failure"
+FAILURE_SCHEMA_OR_HASH = "schema_or_hash_failure"
+FAILURE_OTHER = "validation_failure"
+
+_IDENTITY_MARKERS = (
+    "does not match the frozen PR-B contract",
+    "dataset_split does not match",
+    "resolves to multiple official IPO cases",
+    "Extended readiness",
+    "does not resolve to exactly one",
+)
+_PROVENANCE_MARKERS = (
+    "provenance hash",
+    "source_provenance is missing",
+)
+_SCHEMA_MARKERS = (
+    "content_hash",
+    "raw feature membership",
+    "feature vector is not a lossless projection",
+    "is not finite",
+    "availability flags",
+    "must remain null",
+    "value is incomplete",
+    "governed PIT-blocked",
+)
+
+
+def classify_frozen_failure(exc: Exception) -> str:
+    """Bucket a frozen-projection failure without parsing it at the call site."""
+
+    if isinstance(exc, (OSError, json.JSONDecodeError)):
+        return FAILURE_MISSING_ARTIFACT
+    detail = str(exc)
+    for marker in _IDENTITY_MARKERS:
+        if marker in detail:
+            return FAILURE_IDENTITY_MISMATCH
+    for marker in _PROVENANCE_MARKERS:
+        if marker in detail:
+            return FAILURE_PROVENANCE
+    for marker in _SCHEMA_MARKERS:
+        if marker in detail:
+            return FAILURE_SCHEMA_OR_HASH
+    return FAILURE_OTHER
 
 
 class UnsupportedNewCaseMarketContextProvider:
@@ -131,28 +181,6 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _csv_line_ending_hashes(path: Path) -> frozenset[str]:
-    """Return byte hashes that differ only by CSV newline representation.
-
-    The official bridge was frozen from a Windows checkout, while Git stores
-    the same tracked CSV with LF line endings.  A fresh Linux checkout must not
-    make every frozen Market-X artifact unavailable merely because CRLF became
-    LF.  Both candidates are still hashes of the complete file content; no
-    field, row, ordering or other byte difference is tolerated.
-    """
-
-    raw = path.read_bytes()
-    lf = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-    crlf = lf.replace(b"\n", b"\r\n")
-    return frozenset(
-        {
-            hashlib.sha256(raw).hexdigest(),
-            hashlib.sha256(lf).hexdigest(),
-            hashlib.sha256(crlf).hexdigest(),
-        }
-    )
-
-
 class GovernedPRBMarketContextProvider:
     """Load governed point-in-time Core and optional Extended projections.
 
@@ -207,6 +235,7 @@ class GovernedPRBMarketContextProvider:
                     "feature_pipeline": self.name,
                     "runtime_path": "frozen",
                     "frozen_artifact_read_attempted": frozen_artifact_read_attempted,
+                    "failure_code": classify_frozen_failure(exc),
                 },
             )
         return MarketContextView(
@@ -288,7 +317,7 @@ class GovernedPRBMarketContextProvider:
         provenance = payload.get("source_provenance")
         if not isinstance(provenance, dict):
             raise ValueError("source_provenance is missing")
-        if provenance.get("official_bridge_sha256") not in _csv_line_ending_hashes(
+        if provenance.get("official_bridge_sha256") not in line_ending_agnostic_hashes(
             self.official_bridge_path
         ):
             raise ValueError("official bridge provenance hash does not match")

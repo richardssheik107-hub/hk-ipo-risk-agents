@@ -20,6 +20,7 @@ from ipo_risk.agents.financial_v03 import V03FinancialAgent
 from ipo_risk.agents.financial_verifier import V03FinancialVerifier
 from ipo_risk.agents.legal import LegalAgent
 from ipo_risk.agents.dynamic_market_context import DynamicPITMarketContextProvider
+from ipo_risk.market.dynamic_extended import DynamicExtendedMarketSource
 from ipo_risk.agents.market_context import (
     GatePendingMarketContextProvider,
     GovernedPRBMarketContextProvider,
@@ -336,6 +337,18 @@ class DependencyContainer:
         return DynamicPITMarketContextProvider(
             official_bridge_path=self.settings.market_official_bridge,
             outcome_pack_path=self.settings.market_dynamic_outcome_pack or None,
+            extended_source=self._dynamic_extended_source(),
+        )
+
+    def _dynamic_extended_source(self):
+        """Both licensed caches are required; one alone is not a half source."""
+        hsi = self.settings.market_dynamic_extended_hsi_csv
+        turnover = self.settings.market_dynamic_extended_turnover_csv
+        if not hsi or not turnover:
+            return None
+        return DynamicExtendedMarketSource(
+            hsi_normalized_csv=hsi,
+            turnover_normalized_csv=turnover,
         )
 
     def _frozen_cohort_evidence(self):
