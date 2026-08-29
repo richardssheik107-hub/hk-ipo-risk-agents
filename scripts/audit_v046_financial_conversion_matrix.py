@@ -97,6 +97,23 @@ def _predicted_positive(analysis: Mapping[str, Any], risk_code: str) -> bool:
     )
 
 
+def _load_analysis_universe(mode_root: Path) -> dict[str, Mapping[str, Any]]:
+    """Load every completed case, including cases with no positive Gold unit."""
+
+    analyses: dict[str, Mapping[str, Any]] = {}
+    run_root = mode_root / "run"
+    if not run_root.is_dir():
+        return analyses
+    for case_root in sorted(path for path in run_root.iterdir() if path.is_dir()):
+        result_path = case_root / "analysis_result.json"
+        if not result_path.is_file():
+            continue
+        payload = _load_json(result_path)
+        if isinstance(payload, Mapping):
+            analyses[case_root.name] = payload
+    return analyses
+
+
 def _family_summary(
     rows: list[dict[str, Any]],
     *,
@@ -164,6 +181,8 @@ def _family_summary(
                 "valid_negative_count": len(explicit_negative_pairs - false_positive_pairs),
                 "new_valid_risk_count": len(true_positive_pairs),
                 "new_invalid_risk_count": len(false_positive_pairs),
+                "true_positive_case_ids": sorted(case_id for case_id, _ in true_positive_pairs),
+                "false_positive_case_ids": sorted(case_id for case_id, _ in false_positive_pairs),
                 "unjudged_treated_as_negative": False,
             },
         }
@@ -228,15 +247,13 @@ def build_matrix(
         if isinstance(item, Mapping):
             retrieval_by_key[(str(item["case_id"]), str(item["risk_code"]))].append(item)
 
-    cache: dict[str, Mapping[str, Any]] = {}
+    cache = _load_analysis_universe(mode_root)
     rows: list[dict[str, Any]] = []
     for gold in risk_rows:
         risk_code = gold["source_risk_code"]
         if risk_code not in FINANCIAL_RISKS | RUNTIME_UNAVAILABLE_RISKS:
             continue
         case_id = gold["case_id"]
-        if case_id not in cache:
-            cache[case_id] = _load_json(mode_root / "run" / case_id / "analysis_result.json")
         analysis = cache[case_id]
         key = (case_id, risk_code)
         evidence_units = evidence_by_key[key]

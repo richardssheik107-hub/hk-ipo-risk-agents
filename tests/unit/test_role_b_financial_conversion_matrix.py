@@ -6,6 +6,7 @@ from scripts.audit_v046_financial_conversion_matrix import (
     _classify,
     _diagnostic_code,
     _family_summary,
+    _load_analysis_universe,
 )
 
 
@@ -119,4 +120,26 @@ def test_family_summary_uses_only_explicit_gold_negatives() -> None:
     assert controls["false_positive_count"] == 1
     assert controls["new_valid_risk_count"] == 1
     assert controls["new_invalid_risk_count"] == 1
+    assert controls["true_positive_case_ids"] == ["positive"]
+    assert controls["false_positive_case_ids"] == ["negative"]
     assert controls["unjudged_treated_as_negative"] is False
+
+
+def test_analysis_universe_includes_cases_without_positive_units(tmp_path) -> None:
+    mode_root = tmp_path / "offline"
+    positive = mode_root / "run" / "positive"
+    negative = mode_root / "run" / "negative"
+    positive.mkdir(parents=True)
+    negative.mkdir(parents=True)
+    (positive / "analysis_result.json").write_text(
+        '{"verified_risks":[{"risk_code":"cash_runway"}]}',
+        encoding="utf-8",
+    )
+    (negative / "analysis_result.json").write_text(
+        '{"pending_risks":[{"risk_code":"cash_runway"}]}',
+        encoding="utf-8",
+    )
+
+    analyses = _load_analysis_universe(mode_root)
+
+    assert set(analyses) == {"positive", "negative"}
