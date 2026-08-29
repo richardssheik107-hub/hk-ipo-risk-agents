@@ -1,5 +1,52 @@
 # Changelog
 
+## Unreleased — demo bundle: a recorded run that replays offline, and says it is a recording
+
+G6 asks for a demonstration script and a static backup for the three cases. The UI
+could only run live from an uploaded PDF (`st.file_uploader` was the single entry
+point), so demonstrating anything required the licensed prospectus, provider
+credentials and a network — three things that can each fail in front of an
+audience while proving nothing the recorded run had not already proved.
+
+### Added
+
+- **`ipo_risk.runtime.demo_replay`** — packages a matrix run's artifacts into a
+  self-contained bundle with a SHA-256 for every file, loads a recorded case back
+  for display, and re-verifies a bundle before it goes on a screen.
+- **`scripts/build_v045_demo_bundle.py`** — builds the bundle and generates
+  `DEMO_SCRIPT.md` from the bundled artifacts; `--verify` re-hashes an existing
+  bundle and exits non-zero when a file was tampered with or lost.
+- **Sidebar "Demo replay"** in the Streamlit app: pick a recorded case, load it, and
+  every workspace renders it through the same schema a live run uses. The bundle
+  directory defaults to `reports/v045_demo_bundle` and honours
+  `IPO_RISK_DEMO_BUNDLE`.
+
+### Governance
+
+- **A replay announces itself.** A banner above the workspace carries the recorded
+  run's case id, analysis id, config, code base SHA (including whether that tree was
+  dirty) and the prospectus SHA-256, and states that nothing is filled in for the
+  replay. The runtime label reads `已记录运行回放` rather than a live scenario.
+- **Replay state cannot outlive its result**: starting a live analysis or clearing
+  the result drops the banner and the replay screenshots together, so no screen ever
+  mixes one run's provenance with another run's content.
+- **The offline Evidence page is the exported screenshot**, captioned with the
+  granularity the manifest recorded and the image's own SHA-256. An Evidence item
+  the export refused has no image here either — another item's page would be a false
+  claim about where this one came from.
+- A case with no recorded analysis result is refused rather than shown as a run that
+  found nothing; missing sidecars are listed as missing; the generated walkthrough
+  states the unavailable channels, the Gate E1 status and that an unreviewed case is
+  not an approved one.
+
+### Measured
+
+Bundled the existing three-case matrix: 3/3 replayable, 62 files, 5.4 MB, verify
+PASS. Loaded 2410 in the running app: all seven stages render from the recording,
+Market/Model stay honestly unavailable, and the Evidence page shows the exported
+screenshot with its hash.
+
+
 ## Unreleased — batch risk report: several companies in one view, with its ordering rule attached
 
 G6 asks for a single-company **and** a batch report. The per-case `case_report.md`

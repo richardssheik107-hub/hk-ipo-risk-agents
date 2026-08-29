@@ -15,6 +15,12 @@ the parser's page-level union -- which is never presented as a snippet box.
 Rendering needs the original PDF bytes.  When the run did not come from an upload
 in this session the viewer says so and still shows the Evidence text, because a
 missing page image must not hide the claim it supports.
+
+A replayed run has no PDF at all -- that is the point of the offline bundle -- so
+it shows the screenshot the export already produced for that Evidence, with the
+granularity the manifest recorded.  An Evidence item the export refused has no
+image here either: another item's page would be a false claim about where this
+one came from.
 """
 
 from __future__ import annotations
@@ -23,6 +29,7 @@ from typing import Any
 
 import streamlit as st
 
+from ipo_risk.runtime.demo_replay import ReplayScreenshots
 from ipo_risk.runtime.evidence_screenshots import (
     GRANULARITY_KEYWORD,
     GRANULARITY_SNIPPET,
@@ -83,8 +90,46 @@ def _localisation_caption(region: Any) -> str:
     return "该条 Evidence 没有可用坐标，页面按原样展示，未绘制高亮框。"
 
 
-def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> None:
-    """Draw the two-pane Evidence Viewer for the current analysis."""
+def _replay_caption(record: dict[str, Any]) -> str:
+    """Say what the exported image shows, in the manifest's own terms."""
+
+    if not record.get("highlight_drawn"):
+        return "该条 Evidence 没有可用坐标，导出的截图为原页，未绘制高亮框。"
+    if record.get("granularity") == GRANULARITY_SNIPPET:
+        return "红框由 PyMuPDF 在本页搜索该条 Evidence 片段原文得到，是精确到行的真实 PDF 坐标。"
+    if record.get("granularity") == GRANULARITY_KEYWORD:
+        return "红框是检索实际匹配到的关键词在本页的真实坐标，覆盖范围小于完整片段。"
+    return (
+        "红框是解析器记录的页级文本范围"
+        f"（{record.get('granularity')}），不是精确片段框。"
+    )
+
+
+def _render_replay_page(
+    item: dict[str, Any], page: object, replay: ReplayScreenshots
+) -> None:
+    """Show the exported screenshot for this Evidence, or say there is none."""
+
+    evidence_id = str(item.get("evidence_id") or "")
+    record = replay.record(evidence_id)
+    image_path = replay.image_path(evidence_id)
+    if record is None or image_path is None:
+        st.warning(
+            "本次回放的截图产物里没有这条 Evidence 的图片，因此不展示原页；"
+            "不会用其它 Evidence 的页面顶替。"
+        )
+        return
+    st.image(str(image_path), caption=f"招股书第 {record.get('page', page)} 页（导出截图）", width="stretch")
+    st.caption(_replay_caption(record))
+    st.caption(f"截图 SHA-256 · `{record.get('sha256') or '—'}`")
+
+
+def render_evidence_viewer(
+    payload: dict[str, Any],
+    pdf_bytes: bytes | None,
+    replay: ReplayScreenshots | None = None,
+) -> None:
+    """Draw the two-pane Evidence Viewer for the current analysis or replay."""
 
     catalog = evidence_catalog(payload)
     section_header(
@@ -134,7 +179,9 @@ def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> 
     with right:
         section_header("证据原文", "PDF 原页、定位框与被引用文本。")
         page = item.get("page")
-        if pdf_bytes is None:
+        if replay is not None:
+            _render_replay_page(item, page, replay)
+        elif pdf_bytes is None:
             st.warning(
                 "当前会话没有保留本次分析所用的 PDF 原文件，无法渲染原页。"
                 "重新在本页上传并运行同一份招股书即可看到高亮页面。"
