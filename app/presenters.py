@@ -250,6 +250,8 @@ def result_payload(result: IPOAnalysisResult) -> dict[str, object]:
         "configuration": result.metadata.get("configuration", {}),
         "supervision": result.metadata.get("supervision", {}),
         "market_context": result.metadata.get("market_context", {}),
+        "market_intelligence": result.metadata.get("market_intelligence", {}),
+        "model_prediction": result.metadata.get("model_prediction", {}),
         "final_supervision": result.metadata.get("final_supervision", {}),
         "governance": result.metadata.get("governance", {}),
         "component_diagnostics": result.metadata.get("component_diagnostics", {}),

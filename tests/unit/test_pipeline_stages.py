@@ -39,6 +39,13 @@ def _populated_payload() -> dict[str, object]:
 def _runtime_complete_payload() -> dict[str, object]:
     return {
         **_populated_payload(),
+        "status": "completed",
+        "verified_risks": [
+            {"risk_id": "r-1", "evidence": [{"evidence_id": "e-1"}]},
+            {"risk_id": "r-2", "evidence": [{"evidence_id": "e-2"}]},
+        ],
+        "pending_risks": [],
+        "rejected_risks": [],
         "market_context": {
             "status": "available",
             "observations": [
@@ -47,6 +54,7 @@ def _runtime_complete_payload() -> dict[str, object]:
             ],
         },
         "model_prediction": {
+            "status": "available",
             "score": 0.61,
             "score_semantics": "uncalibrated_model_score",
             "drivers": [
@@ -101,7 +109,6 @@ def test_partial_stages_only_show_values_the_payload_actually_has() -> None:
     assert empty["final_supervisor"].status is StageStatus.PARTIAL
     assert empty["final_supervisor"].metrics == ()
     assert populated["final_supervisor"].metrics != ()
-    # The document feature vector needs the PR-A run output, absent from this checkout.
     assert populated["document_features"].metrics == ()
 
 
@@ -136,6 +143,14 @@ def test_prediction_stage_never_calls_the_rule_or_model_score_a_probability() ->
         stage = {item.stage_id: item for item in resolve_stages(payload)}["prediction"]
         assert "probability" in stage.summary
         assert not any("probab" in metric.label.lower() for metric in stage.metrics)
+
+
+def test_runtime_document_risk_features_become_available_after_success() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["document_features"]
+    assert stage.status is StageStatus.AVAILABLE
+    metrics = {metric.label: metric.value for metric in stage.metrics}
+    assert metrics["Risk items"] == "2"
+    assert metrics["Evidence anchors"] == "2"
 
 
 def test_governed_market_context_makes_market_stage_available() -> None:
@@ -192,7 +207,16 @@ def test_final_supervisor_without_the_channel_names_no_retired_gate() -> None:
     assert stage.blocking_reason
 
 
-def test_final_report_points_only_to_pr_h() -> None:
+def test_final_report_without_sections_is_a_runtime_limitation_not_formal_gate() -> None:
     stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["final_report"]
     assert stage.status is StageStatus.PARTIAL
-    assert stage.blocking_gate == "PR-H"
+    assert stage.blocking_gate is None
+    assert "report" in stage.blocking_reason
+
+
+def test_materialized_final_report_is_available_independent_of_project_readiness() -> None:
+    payload = {**_runtime_complete_payload(), "report_sections": [{"title": "Summary"}]}
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["final_report"]
+    assert stage.status is StageStatus.AVAILABLE
+    assert stage.blocking_gate is None
+    assert {metric.label: metric.value for metric in stage.metrics}["Report sections"] == "1"
