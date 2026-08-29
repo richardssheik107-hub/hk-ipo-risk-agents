@@ -1,0 +1,83 @@
+{
+  "policy_version": "v04_e_recheck_policy_v2",
+  "attempted": 5,
+  "outcomes": [
+    {
+      "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": "recheck:conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 4 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "material_litigation_compliance"
+      ],
+      "new_evidence_ids": [
+        "d58f8844-5d09-505f-9179-5d21faa8280e",
+        "b72883f6-e385-53a8-90ef-c6790a43c6c9",
+        "0de2ed3e-9152-59e1-aabe-6e2b55679def",
+        "728c9efd-1f67-52c7-b24e-4033eb566b7b"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+      "recheck_id": "recheck:conflict:798a33cd-a52f-5827-a375-59f68e51dc52:agent_verifier_disagreement:legal:redemption_rights",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "redemption_rights"
+      ],
+      "new_evidence_ids": [
+        "74f54922-d9ef-5ca0-a78f-0a975bd32584",
+        "1ec16d22-eb9b-5431-badb-0c4a5a206b38",
+        "86949d3f-a22f-5b85-9cb2-30ecfab2ba79"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+      "recheck_id": "recheck:conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:continuous_loss",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "continuous_loss"
+      ],
+      "new_evidence_ids": [
+        "c1a4cf5b-20af-5117-85ab-f87a73b59223",
+        "dfcc4ebd-18d0-5bc6-83ed-c95f1c4b2c8b",
+        "c8d5bb8f-aa80-5318-8090-f6f4b93f8837",
+        "da728655-cf09-57f5-97fd-0f7364137ebf",
+        "cddc5755-a47b-5751-a30d-6817f98ec1c7"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth",
+      "recheck_id": "recheck:conflict:798a33cd-a52f-5827-a375-59f68e51dc52:unresolved_agent_claim:financial:revenue_growth",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "revenue_growth"
+      ],
+      "new_evidence_ids": [
+        "3206bbac-9a9a-510f-a34e-4c3812a7b389",
+        "e4f8e302-2f03-598f-89a0-d2582d8fa0f7",
+        "6df336de-b75e-54f9-baba-91dadd2649e0",
+        "7a6ed97f-1ec2-515e-8e11-c1e960ce1295",
+        "cdeb6003-0214-5b65-9a8c-d68c33bb2dad"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "recheck_id": "recheck:conflict:798a33cd-a52f-5827-a375-59f68e51dc52:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "status": "unresolved",
+      "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+      "targets": [
+        "document_supervisor",
+        "frozen_model_channel"
+      ],
+      "new_evidence_ids": [],
+      "revised_risk_ids": []
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": "v045_current_runtime_snapshot_v1",
+  "recorded_runtime_sha": "3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d",
+  "release_equivalence_head_sha": "802bf5095e0db6a604dcb762e1070563f8cb1b34",
+  "runtime_equivalent": true,
+  "runtime_rerun_required": false,
+  "case_count": 3,
+  "cases": {
+    "ipo_2024_01318": {
+      "stock_code": "1318.HK",
+      "market_available": true,
+      "model_available": true,
+      "gate_e1_satisfied": true,
+      "real_provider_accepted": true,
+      "first_attempt_accepted": true,
+      "scope_corrections": 0,
+      "fallback_used": false,
+      "severity_floor_respected": true,
+      "scope_violation_count": 0,
+      "m3": 1.0,
+      "rechecks_attempted": 5,
+      "conflicts_detected": 5,
+      "budget_skipped": 0,
+      "seven_stage_available": 7,
+      "final_supervisor_judgement_present": true
+    },
+    "ipo_2024_02410": {
+      "stock_code": "2410.HK",
+      "market_available": true,
+      "model_available": true,
+      "gate_e1_satisfied": true,
+      "real_provider_accepted": true,
+      "first_attempt_accepted": true,
+      "scope_corrections": 0,
+      "fallback_used": false,
+      "severity_floor_respected": true,
+      "scope_violation_count": 0,
+      "m3": 1.0,
+      "rechecks_attempted": 7,
+      "conflicts_detected": 7,
+      "budget_skipped": 0,
+      "seven_stage_available": 7,
+      "final_supervisor_judgement_present": true
+    },
+    "ipo_2024_02460": {
+      "stock_code": "2460.HK",
+      "market_available": true,
+      "model_available": true,
+      "gate_e1_satisfied": true,
+      "real_provider_accepted": true,
+      "first_attempt_accepted": true,
+      "scope_corrections": 0,
+      "fallback_used": false,
+      "severity_floor_respected": true,
+      "scope_violation_count": 0,
+      "m3": 1.0,
+      "rechecks_attempted": 5,
+      "conflicts_detected": 5,
+      "budget_skipped": 0,
+      "seven_stage_available": 7,
+      "final_supervisor_judgement_present": true
+    }
+  },
+  "aggregate": {
+    "market_available": 3,
+    "model_available": 3,
+    "gate_e1_satisfied": 3,
+    "real_provider_accepted": 3,
+    "first_attempt_accepted": 3,
+    "scope_corrections": 0,
+    "fallback_used": 0,
+    "severity_floor_respected": 3,
+    "scope_violation_count": 0,
+    "m3_at_one": 3,
+    "rechecks_attempted": 17,
+    "budget_skipped": 0,
+    "seven_stage_available": 21,
+    "seven_stage_required": 21
+  },
+  "evidence": {
+    "rendered": 17,
+    "required": 17,
+    "precise": 17,
+    "precise_rate": 1.0
+  },
+  "demo": {
+    "path": "reports/v045_demo_bundle",
+    "cases": 3,
+    "file_count": 66,
+    "bytes": 7528749,
+    "manifest_sha256": "a7d6b03486cab877b56ccd5edb5f57945ab8d7e6561bd72ea50198c72f907028"
+  }
+}

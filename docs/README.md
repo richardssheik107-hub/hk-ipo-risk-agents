@@ -17,6 +17,7 @@
 | `ROLE_D_MODEL_DECISION.md` | frozen PR-F 与 v2 candidate 的治理晋升决策 |
 | `V045_ROLE_D_FINAL_CLOSURE.md` | D 线正式物化、receipt、strict revalidation 边界 |
 | `SUBMISSION_RUNBOOK.md` | 从本地复验到 final bundle 的操作手册 |
+| `TEAM_QUICKSTART.md` | fresh clone 后离线回放 final-three 的最短路径 |
 | `PROJECT_SPEC.md` | 产品范围、赛题覆盖与不可破坏原则 |
 | `ARCHITECTURE.md` | 当前 runtime 与 v0.4.6 B 线诊断架构 |
 | `DATA_SCHEMA.md` | runtime、诊断、评测和交付 artifact contract |

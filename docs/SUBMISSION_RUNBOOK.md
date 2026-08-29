@@ -236,6 +236,33 @@ code_base_sha、招股书 SHA-256。回放的 Evidence 原页用的是导出的�
 
 回放不重跑分析，也不会产生那次运行没有产生的结论；演示时必须说明这是已记录运行。
 
+当前 canonical final-three replay 已由真实成功运行生成：
+
+```text
+recorded runtime SHA = 3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d
+runtime-equivalent release baseline = 802bf5095e0db6a604dcb762e1070563f8cb1b34
+Gate E1 = 3/3
+M3 = 1.0 x 3
+Market / Model = 3/3
+recheck budget-skipped = 0
+seven-stage = 7/7 x 3
+Evidence screenshot = 17/17 precise
+bundle = 66 files, hash verification PASS
+```
+
+运行团队 clone gate：
+
+```bash
+python scripts/check_v045_team_clone_ready.py
+```
+
+该 checker 只读 canonical bundle 与 `reports/final_status`，并重算 bundle hash、
+三案例 replay stage、E1、M3、Market/Model、recheck budget、Evidence accounting、
+runtime equivalence、敏感信息和体积限制。通过时输出 `TEAM_CLONE_READY = PASS`。
+
+equivalence artifact 保留真实 run SHA，不把它改写成 rebase 后 SHA。若 Git 审计发现
+runtime 文件变化，则必须重跑 final-three，而不是修改 artifact provenance。
+
 ## 10. One-shot Validation
 
 只有 B Full Development 通过且完整 freeze 后：
