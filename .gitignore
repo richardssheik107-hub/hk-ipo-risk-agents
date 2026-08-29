@@ -36,6 +36,8 @@ reports/*
 reports/llm_reranker_pilot/*.log
 !reports/oracle_gold_audit/
 !reports/oracle_gold_audit/**
+!reports/v046_dynamic_model_runtime/
+!reports/v046_dynamic_model_runtime/**
 !reports/v04_pr_b/
 reports/v04_pr_b/*
 !reports/v04_pr_b/core_features/
@@ -44,6 +46,13 @@ models/*
 !models/.gitkeep
 !models/retriever_v3/
 !models/retriever_v3/ltr_v3.txt
+# The Role-D V2 runtime package: a 300 KB LightGBM text booster plus its
+# manifests, rebuilt only under the frozen classifier hash. This is the product's
+# model identity, not a model bulk dump.
+!models/role_d_v2/
+!models/role_d_v2/model.txt
+!models/role_d_v2/*.json
+!models/role_d_v2/SHA256SUMS.txt
 *.pkl
 *.joblib
 *.onnx

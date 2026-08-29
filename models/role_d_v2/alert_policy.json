@@ -1,0 +1,59 @@
+{
+  "batch_policy": {
+    "applies_to": "a governed batch scored in one run",
+    "fraction": 0.475,
+    "operator": "top_fraction_of_a_governed_batch_with_case_id_tie_break",
+    "version": "development_forward_oof_f2_top_fraction_0.475"
+  },
+  "content_hash": "84d4d6990bf92a1ed0b5ee497516675a7c0f8d01b26d61783dede29e780b8de4",
+  "manifest_version": "v046_role_d_v2_alert_policy_v1",
+  "score_semantics": "uncalibrated_model_score_not_probability",
+  "single_case_policy": {
+    "applies_to": "one case scored without a governed batch",
+    "blind_used_for_derivation": false,
+    "consistency_report": {
+      "batch_policy_alert_count": 34,
+      "cohort": "2024_validation_scores_already_published_by_the_promotion",
+      "labels_used": false,
+      "per_case_agreement": 1.0,
+      "single_case_policy_alert_count": 34,
+      "used_for_derivation": false
+    },
+    "cutoff": 0.23216152501575124,
+    "derivation": "development_2021_2023_forward_oof_nearest_rank_top_fraction_0.475",
+    "development_oof_count": 237,
+    "forward_oof_folds": [
+      {
+        "evaluation_count": 94,
+        "evaluation_year": 2021,
+        "train_count": 117,
+        "train_years": [
+          2020
+        ]
+      },
+      {
+        "evaluation_count": 75,
+        "evaluation_year": 2022,
+        "train_count": 211,
+        "train_years": [
+          2020,
+          2021
+        ]
+      },
+      {
+        "evaluation_count": 68,
+        "evaluation_year": 2023,
+        "train_count": 286,
+        "train_years": [
+          2020,
+          2021,
+          2022
+        ]
+      }
+    ],
+    "nearest_rank": 113,
+    "operator": "score >= cutoff",
+    "validation_used_for_derivation": false,
+    "version": "v046_role_d_v2_single_case_alert_cutoff_v1"
+  }
+}

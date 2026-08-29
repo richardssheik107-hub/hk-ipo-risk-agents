@@ -37,6 +37,10 @@ from ipo_risk.agents.rules import RuleSupervisor, RuleVerifier
 from ipo_risk.agents.supervisor_v03 import V03Supervisor
 from ipo_risk.agents.verifier_router import SpecializedVerifierRouter
 from ipo_risk.core.config import ComponentConfigurationError, Settings
+from ipo_risk.modeling.dynamic_model_runtime import (
+    CompositeModelPredictionProvider,
+    DynamicFrozenModelPredictionProvider,
+)
 from ipo_risk.domain.legal_verifiers import (
     LegalRightsVerifier,
     LitigationComplianceVerifier,
@@ -368,13 +372,30 @@ class DependencyContainer:
             return None
 
     def _model_prediction_provider(self):
-        """Build the local-only frozen model channel only when explicitly configured."""
-        if not self.settings.pr_f_run_dir:
-            return None
-        return FrozenModelPredictionProvider(
-            run_dir=self.settings.pr_f_run_dir,
-            frozen_dir=Path(self.settings.report_dir) / "frozen",
+        """Compose the model channel: frozen per-case handoff, then real inference.
+
+        The handoff keeps priority wherever it covers a case, so the published
+        canonical numbers are still the published numbers.  The generalized
+        runtime answers everything the handoff was never going to cover.
+        """
+        frozen_dir = Path(self.settings.report_dir) / "frozen"
+        dynamic = (
+            None
+            if self.settings.model_dynamic_runtime == NO_COMPONENT
+            else DynamicFrozenModelPredictionProvider(
+                model_dir=Path(self.settings.model_artifact_dir),
+                frozen_dir=frozen_dir,
+            )
         )
+        if not self.settings.pr_f_run_dir:
+            return dynamic
+        primary = FrozenModelPredictionProvider(
+            run_dir=self.settings.pr_f_run_dir,
+            frozen_dir=frozen_dir,
+        )
+        if dynamic is None:
+            return primary
+        return CompositeModelPredictionProvider(primary, dynamic)
 
     def _create_agent(self, kind: str, name: str, retriever, llm_provider):
         if name == "cash_runway":

@@ -36,6 +36,8 @@ market_official_bridge: data/catalog/ipo_official_master_bridge.csv
 # Prior-IPO outcomes come from licensed EOD, so that tier stays an optional
 # local pack: set IPO_RISK_MARKET_DYNAMIC_OUTCOME_PACK once it is materialized.
 market_dynamic_context: pit_bridge
+# Generalized frozen-model inference for every case outside the per-case handoff.
+model_dynamic_runtime: frozen_v2
 market_dynamic_outcome_pack: ""
 # Market-X Extended (HSI / HKEX turnover) for non-frozen cases. The CSMAR and
 # HKEX caches are licensed and stay out of Git; set both env vars locally.

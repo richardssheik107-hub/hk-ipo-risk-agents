@@ -2,8 +2,11 @@
 
 > 状态日期：2026-08-29  
 > 建议分支：`codex/dynamic-model-runtime`  
-> 主优先级：**P0**  
-> 核心职责：把模型从 final-three per-case handoff 升级为真正可泛化的 frozen-model inference runtime，并完成 D 线正式模型决议
+> 主优先级：**已关闭（G4 PASS）**；核心职责：把模型从 final-three per-case handoff 升级为真正可泛化的 frozen-model inference runtime，并完成 D 线正式模型决议
+
+主线已交付：promote/retain 决议、冻结模型包 `models/role_d_v2`、泛化 inference runtime 与
+native SHAP 均已关闭，验收口径见 `V0.4_RELEASE_ACCEPTANCE.md` 第 6 节。本文余下内容保留为
+该岗位的规格与验收标准；第 13 节的特色能力 coverage 仍然开放（G6）。
 
 ## 1. 主目标
 

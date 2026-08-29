@@ -477,9 +477,21 @@ class MVPWorkflow:
         return self._safe(state, "final_supervisor", "finalize", operation, {"final_supervision": None})
 
     def load_model_prediction(self, state):
-        """Load a frozen per-case model projection; never score or train here."""
+        """Run the governed model channel; it loads or infers, and never trains.
+
+        Providers that declare ``consumes_market_context`` are handed the market
+        view this run already produced, so a generalized inference uses the same
+        governed feature vector the market channel reported -- not a second,
+        privately recomputed one.
+        """
         def operation():
-            view = self.model_prediction_provider.prediction(state["profile"])
+            provider = self.model_prediction_provider
+            if getattr(provider, "consumes_market_context", False):
+                view = provider.prediction(
+                    state["profile"], market_context=state.get("market_context_view")
+                )
+            else:
+                view = provider.prediction(state["profile"])
             return {
                 "model_prediction_view": view,
                 "component_diagnostics": {"model_prediction": view.model_dump(mode="json")},
