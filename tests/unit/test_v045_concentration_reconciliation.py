@@ -15,7 +15,7 @@ from ipo_risk.extraction import (
 def _fact(
     *,
     period_end: date,
-    period_months: int,
+    period_months: int | None,
     largest: str | None,
     top_five: str | None,
     page: int,
@@ -113,6 +113,34 @@ def test_value_period_mismatch_stays_fail_closed_when_gap_is_larger_than_one() -
     assert result.status == ExtractionStatus.NEEDS_REVIEW
     assert "value_period_count_mismatch" in result.issues
     assert result.metadata["value_period_count_reconciled"] is False
+
+
+def test_known_period_months_govern_duplicate_same_date_null_candidate() -> None:
+    fact = _fact(
+        period_end=date(2020, 6, 30),
+        period_months=None,
+        largest="32.7",
+        top_five="67.2",
+        page=20,
+        metadata={
+            "raw_percentages": {
+                "largest": ["36 .0%", "22 .8%", "36 .8%", "32 .7%"],
+                "top_five": ["88 .0%", "77 .7%", "85 .9%", "67 .2%"],
+            },
+            "period_candidates": [
+                {"period_end": "2020-06-30", "period_months": 6},
+                {"period_end": "2020-06-30", "period_months": None},
+            ],
+        },
+    )
+
+    result = V03FinancialFactExtractor._reconcile_concentration_candidate(fact)
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end == date(2020, 6, 30)
+    assert result.period_months == 6
+    assert result.metadata["null_period_month_candidates_ignored"] == 1
 
 
 def test_later_candidate_without_values_cannot_veto_last_usable_observation() -> None:

@@ -57,7 +57,8 @@ _ROW_AMOUNT_TOKEN_RE = re.compile(
     rf"(?:\(\s*{_ROW_NUMBER_BODY}\s*\)|（\s*{_ROW_NUMBER_BODY}\s*）|[+\-−]?\s*{_ROW_NUMBER_BODY}|[-–—])"
 )
 _PERCENT_RE = re.compile(
-    r"(?P<value>[+\-−]?\s*\d+(?:\.\d+)?)\s*(?:[%％]|per\s+cent|percent)", re.I
+    r"(?P<value>[+\-−]?\s*\d+(?:\s*\.\s*\d+)?)\s*(?:[%％]|per\s+cent|percent)",
+    re.I,
 )
 
 _V03_LABELS = {
