@@ -1654,6 +1654,13 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             start for start in selected_label_starts.values() if start is not None
         ]
         shared_value_count = len(values["largest"])
+        missing_count_companion_unique_pair = (
+            not selected_counts
+            and (
+                len(occurrence_series["largest"]) == 1
+                or len(occurrence_series["top_five"]) == 1
+            )
+        )
         companion_series_period_aligned = (
             shared_value_count >= 2
             and shared_value_count == len(values["top_five"])
@@ -1665,7 +1672,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             # present mismatched count still fails closed.
             and (
                 selected_counts == {shared_value_count}
-                or not selected_counts
+                or missing_count_companion_unique_pair
             )
             and len(local_period_values) == 1
             and len(selected_starts) == 2

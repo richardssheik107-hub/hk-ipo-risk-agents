@@ -401,6 +401,22 @@ def test_equal_companion_series_use_shared_local_period_when_bare_years_are_unav
     )
 
 
+def test_missing_period_count_does_not_choose_between_two_companion_pairs() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至2019年3月31日止年度，"
+            "最大供應商佔採購18.2%、23.8%及24.0%，"
+            "五大供應商佔採購59.7%、57.8%及60.1%；"
+            "最大供應商佔採購15.0%及16.0%，"
+            "五大供應商佔採購45.0%及46.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "value_period_count_mismatch" in result.issues
+
+
 def test_companion_series_does_not_override_mismatched_value_counts() -> None:
     result = concentration(
         "customer",
