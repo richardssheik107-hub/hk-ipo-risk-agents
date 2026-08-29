@@ -1,0 +1,20 @@
+{
+  "artifact_version": "v046_role_b_batch003_fix_decision_v1",
+  "final_status": "BATCH003_REJECTED",
+  "investigated_unit_count": 22,
+  "proven_selector_bug_count": 0,
+  "classification_counts": {
+    "conflict_fail_closed": 1,
+    "correct": 6,
+    "deterministic_fact_missing": 8,
+    "numeric_extraction_miss": 1,
+    "parser_text_missing": 4,
+    "period_candidate_missing": 2
+  },
+  "production_change_applied": false,
+  "production_patch_reverted": false,
+  "fresh_run_authorized": false,
+  "fresh_run_executed": false,
+  "decision_basis": "No safe issuer-agnostic selector change was proven; all candidate failures were upstream missing facts/periods/text or a real same-period conflict.",
+  "next_recommended_stage": "BATCH_004_CONCENTRATION_DETERMINISTIC_EXTRACTION_AND_FACT_CONVERSION"
+}

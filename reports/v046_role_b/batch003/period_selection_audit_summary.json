@@ -1,0 +1,20 @@
+{
+  "audit_version": "v046_role_b_period_selection_audit_v1",
+  "blind_2025_accessed": false,
+  "classification_counts": {
+    "conflict_fail_closed": 1,
+    "correct": 6,
+    "deterministic_fact_missing": 8,
+    "numeric_extraction_miss": 1,
+    "parser_text_missing": 4,
+    "period_candidate_missing": 2
+  },
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "gold_used_at_runtime": false,
+  "network_calls": 0,
+  "proven_selector_bug_count": 0,
+  "raw_gold_text_persisted": false,
+  "raw_prospectus_text_persisted": false,
+  "unit_count": 22,
+  "validation_opened": false
+}
