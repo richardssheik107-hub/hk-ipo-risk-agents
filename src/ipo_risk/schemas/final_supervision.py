@@ -57,14 +57,45 @@ class ChannelState(BaseModel):
 CalibrationStatus = Literal["uncalibrated", "calibrated"]
 ObservationAvailability = Literal["available", "unavailable"]
 
+# Stable metric metadata is part of the observation contract, not a market
+# value.  Keeping it available even when the value is PIT-blocked lets the UI,
+# trace and strict-contract audit explain what the missing observation means
+# without filling the missing fact with zero or a proxy.
+_MARKET_OBSERVATION_SPECS: dict[str, tuple[str, str]] = {
+    "hsi_return_5d": ("ratio", "HSI close(t)/close(t-5) - 1 over observed sessions"),
+    "hsi_return_20d": ("ratio", "HSI close(t)/close(t-20) - 1 over observed sessions"),
+    "industry_return_5d": ("ratio", "industry benchmark close(t)/close(t-5) - 1 over observed sessions"),
+    "industry_return_20d": ("ratio", "industry benchmark close(t)/close(t-20) - 1 over observed sessions"),
+    "recent_ipo_break_rate": ("ratio", "share of recent prior IPOs closing below offer on day one"),
+    "recent_ipo_return_5d": ("ratio", "mean 5-session return of recent prior IPOs"),
+    "recent_ipo_1d_sample_count": ("count", "count of governed recent IPO day-one observations"),
+    "recent_ipo_5d_sample_count": ("count", "count of governed recent IPO five-session observations"),
+    "market_turnover": ("currency", "aggregate market turnover at the observation date"),
+    "market_turnover_20d_mean": ("currency", "mean aggregate market turnover over the prior 20 observed sessions"),
+    "market_volatility": ("ratio", "realised volatility of the benchmark over the observation window"),
+    "market_volatility_20d": ("ratio", "realised volatility of the benchmark over the prior 20 observed sessions"),
+    "sentiment_score": ("index", "composite pre-listing sentiment index"),
+    "ipo_count_30d": ("count", "count of governed prior IPOs in the 30-day pre-listing window"),
+    "ipo_count_60d": ("count", "count of governed prior IPOs in the 60-day pre-listing window"),
+    "log_prior_ipo_funds_raised_30d": ("log_currency", "log transformed governed prior-IPO funds raised in the 30-day window"),
+    "log_prior_ipo_funds_raised_60d": ("log_currency", "log transformed governed prior-IPO funds raised in the 60-day window"),
+    "prior_ipo_funds_raised_30d_sample_count": ("count", "count of governed prior IPO fund-raising observations in the 30-day window"),
+    "prior_ipo_funds_raised_60d_sample_count": ("count", "count of governed prior IPO fund-raising observations in the 60-day window"),
+    "same_industry_ipo_count_180d": ("count", "count of governed same-industry prior IPOs in the 180-day window"),
+    "same_industry_recent_break_rate": ("ratio", "share of governed recent same-industry IPOs closing below offer on day one"),
+    "same_industry_recent_return_5d": ("ratio", "mean five-session return of governed recent same-industry IPOs"),
+    "same_industry_recent_1d_sample_count": ("count", "count of governed recent same-industry day-one observations"),
+    "same_industry_recent_5d_sample_count": ("count", "count of governed recent same-industry five-session observations"),
+}
+
 
 class MarketObservation(BaseModel):
     """One market fact, carrying its own derivation and its own absence reason.
 
     ``value`` and ``missing_reason`` are mutually exclusive by validator: a stated
-    number must say how it was derived, and an absent one must say why.  Prose
-    cannot express that, which is why observations are structured rather than
-    formatted strings.
+    number must say how it was derived, and an absent one must say why.  Stable
+    unit/derivation metadata for known metrics is retained even when the value is
+    unavailable; this describes the intended governed fact and never imputes it.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -76,6 +107,23 @@ class MarketObservation(BaseModel):
     missing_reason: str | None = None
     derivation: str = ""
     source: str = Field(min_length=1)
+
+    @model_validator(mode="before")
+    @classmethod
+    def populate_known_metric_metadata(cls, value: Any) -> Any:
+        if not isinstance(value, dict):
+            return value
+        name = str(value.get("name") or "")
+        spec = _MARKET_OBSERVATION_SPECS.get(name)
+        if spec is None:
+            return value
+        normalized = dict(value)
+        unit, derivation = spec
+        if not normalized.get("unit"):
+            normalized["unit"] = unit
+        if not normalized.get("derivation"):
+            normalized["derivation"] = derivation
+        return normalized
 
     @model_validator(mode="after")
     def validate_availability(self) -> "MarketObservation":
