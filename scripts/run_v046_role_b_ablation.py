@@ -34,6 +34,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import time
 from typing import Any, Callable, Mapping, Sequence
 import unicodedata
 
@@ -69,6 +70,7 @@ from ipo_risk.providers.llm import (
     OpenAIResponsesLLMProvider,
     UnavailableLLMProvider,
 )
+from ipo_risk.parsers.pymupdf_parser import PyMuPDFRoleBRecallParser
 from ipo_risk.runtime.llm_journal import (
     JournaledLLMProvider,
     LLMJournalRecord,
@@ -120,6 +122,7 @@ DEFAULT_SMOKE_SUMMARY = Path(
     "reports/v046_role_b/structured_smoke/structured_smoke_summary.json"
 )
 DEFAULT_CATALOG = Path("data/catalog/ipo_prospectus_manifest.csv")
+DEFAULT_CACHE_ROOT = Path("data/cache/role_b")
 REMOTE_PROVIDERS = {
     "openai_responses": OpenAIResponsesLLMProvider,
     "openai_compatible": OpenAICompatibleLLMProvider,
@@ -561,8 +564,14 @@ def _registry_for_mode(
     mode: str,
     role_b_provider: Any,
     provider_name: str,
+    *,
+    cache_root: Path | None = None,
+    expected_pdf_sha256: str | None = None,
 ) -> ComponentRegistry:
-    registry = _experiment_registry()
+    registry = _experiment_registry(
+        cache_root=cache_root,
+        expected_pdf_sha256=expected_pdf_sha256,
+    )
     registry.register("llm_provider", provider_name, lambda **_: role_b_provider)
     if mode == RoleBAblationMode.SHADOW.value:
         registry.register(
@@ -590,8 +599,21 @@ def _registry_for_mode(
     return registry
 
 
-def _experiment_registry() -> ComponentRegistry:
+def _experiment_registry(
+    *,
+    cache_root: Path | None = None,
+    expected_pdf_sha256: str | None = None,
+) -> ComponentRegistry:
     registry = default_registry()
+    if cache_root is not None:
+        registry.register(
+            "parser",
+            PyMuPDFRoleBRecallParser.name,
+            lambda **_: PyMuPDFRoleBRecallParser(
+                cache_root=cache_root,
+                expected_pdf_sha256=expected_pdf_sha256,
+            ),
+        )
     registry.register(
         "retriever",
         RoleBFinancialHighRecallRetriever.name,
@@ -975,6 +997,7 @@ def _case_executor(
     runtime_config_hash: str,
     output_root: Path,
     journal: LocalLLMJournal,
+    cache_root: Path | None = None,
 ) -> tuple[ModeExecutor, dict[str, Any]]:
     replay_delegates: dict[str, _ReplayOnlyDelegate] = {}
     shadow_projections: dict[str, Any] = {}
@@ -992,7 +1015,10 @@ def _case_executor(
             return _analyse(
                 settings=_offline_settings(settings, data_dir, report_dir),
                 request=request,
-                registry=_experiment_registry(),
+                registry=_experiment_registry(
+                    cache_root=cache_root,
+                    expected_pdf_sha256=case.prospectus_sha256,
+                ),
                 retrieval_trace_sink=trace_sink,
             )
 
@@ -1011,7 +1037,13 @@ def _case_executor(
         observed = _analyse(
             settings=mode_settings,
             request=request,
-            registry=_registry_for_mode(mode, provider, settings.llm_provider),
+            registry=_registry_for_mode(
+                mode,
+                provider,
+                settings.llm_provider,
+                cache_root=cache_root,
+                expected_pdf_sha256=case.prospectus_sha256,
+            ),
             retrieval_trace_sink=trace_sink,
         )
         if mode == RoleBAblationMode.SHADOW.value:
@@ -1273,6 +1305,8 @@ def _write_governed_run_artifacts(
     journal_manifest: Mapping[str, Any],
     evaluation: Mapping[str, Any],
     modes: Sequence[str],
+    wall_clock_ms: float = 0.0,
+    evaluation_wall_clock_ms: float = 0.0,
 ) -> None:
     mode_results = evaluation.get("modes") or {}
     summaries = {
@@ -1327,6 +1361,44 @@ def _write_governed_run_artifacts(
         and float(summaries["gated"]["m2"]) >= 0.85
     )
     _safe_json_write(output_root / "llm_call_quality.json", call_quality)
+    cache_by_mode: dict[str, dict[str, Any]] = {}
+    for mode in modes:
+        aggregate: dict[str, Any] = {
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 0,
+            "table_cache_hits": 0,
+            "table_cache_misses": 0,
+            "raw_page_cache_hits": 0,
+            "raw_page_cache_misses": 0,
+            "retrieval_cache_hits": 0,
+            "retrieval_cache_misses": 0,
+            "fact_cache_hits": 0,
+            "fact_cache_misses": 0,
+            "stage_wall_clock_ms": {},
+        }
+        case_ids = _case_ids(dict(subset)) if subset.get("cases") else []
+        for case_id in case_ids:
+            result_path = output_root / mode / "run" / case_id / "analysis_result.json"
+            if not result_path.exists():
+                continue
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            metrics = (
+                (result.get("metadata") or {}).get("document") or {}
+            ).get("cache_metrics") or {}
+            for key in tuple(aggregate):
+                if key == "stage_wall_clock_ms":
+                    continue
+                aggregate[key] += int(metrics.get(key) or 0)
+            for key, value in (metrics.get("stage_wall_clock_ms") or {}).items():
+                aggregate["stage_wall_clock_ms"][key] = (
+                    aggregate["stage_wall_clock_ms"].get(key, 0.0) + float(value)
+                )
+        aggregate["stage_wall_clock_ms"] = {
+            key: round(value, 3)
+            for key, value in sorted(aggregate["stage_wall_clock_ms"].items())
+        }
+        cache_by_mode[mode] = aggregate
+
     ablation_summary = {
         "report_version": "v046_role_b_ablation_summary_v1",
         "case_count": subset.get("case_count"),
@@ -1347,6 +1419,16 @@ def _write_governed_run_artifacts(
         "monotonicity_satisfied": monotonicity.get("satisfied"),
         "fixed10_target_reached": fixed10_target_reached,
         "selected_mode": selected_mode,
+        "cache": cache_by_mode,
+        "performance": {
+            "total_wall_clock_ms": round(wall_clock_ms, 3),
+            "evaluation_wall_clock_ms": round(evaluation_wall_clock_ms, 3),
+            "llm_reported_latency_ms": sum(
+                int(item.get("latency_ms") or 0) for item in call_quality.get("calls", [])
+            ),
+            "retrieval_wall_clock_ms": "NOT_YET_INSTRUMENTED",
+            "deterministic_extraction_wall_clock_ms": "NOT_YET_INSTRUMENTED",
+        },
         "validation_opened": False,
         "blind_2025_outcome_accessed": False,
     }
@@ -1396,6 +1478,7 @@ def _parse_modes(value: str) -> tuple[str, ...]:
 
 
 def main() -> int:
+    run_started = time.perf_counter()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -1405,6 +1488,7 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
     parser.add_argument("--smoke-summary", type=Path, default=DEFAULT_SMOKE_SUMMARY)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--cache-root", type=Path, default=DEFAULT_CACHE_ROOT)
     parser.add_argument("--run-id", default="run_001")
     parser.add_argument("--modes", type=_parse_modes, default=MODE_ORDER)
     parser.add_argument("--subset-size", type=int, default=10)
@@ -1434,6 +1518,7 @@ def main() -> int:
     catalog_path = resolved(args.catalog)
     smoke_summary_path = resolved(args.smoke_summary)
     output_root = resolved(args.output_root) / args.run_id
+    cache_root = resolved(args.cache_root)
     replay_journal_root = (
         resolved(args.replay_journal) if args.replay_journal is not None else None
     )
@@ -1544,6 +1629,7 @@ def main() -> int:
         runtime_config_hash=journal_identity_runtime_hash,
         output_root=output_root,
         journal=journal,
+        cache_root=cache_root,
     )
 
     statuses: list[dict[str, Any]] = []
@@ -1592,6 +1678,7 @@ def main() -> int:
         },
     )
 
+    evaluation_started = time.perf_counter()
     evaluation = _evaluate_modes(
         root=root,
         output_root=output_root,
@@ -1606,6 +1693,7 @@ def main() -> int:
         profile=profile,
         retrieval_calls=diagnostics["retrieval_calls"],
     )
+    evaluation_wall_clock_ms = (time.perf_counter() - evaluation_started) * 1000
     _write_governed_run_artifacts(
         output_root=output_root,
         subset=subset,
@@ -1616,6 +1704,8 @@ def main() -> int:
         journal_manifest=journal_manifest,
         evaluation=evaluation,
         modes=modes,
+        wall_clock_ms=(time.perf_counter() - run_started) * 1000,
+        evaluation_wall_clock_ms=evaluation_wall_clock_ms,
     )
     print(f"output_root={output_root}")
     print(f"journal_records={journal_manifest['record_count']}")

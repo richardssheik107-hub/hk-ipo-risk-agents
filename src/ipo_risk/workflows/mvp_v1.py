@@ -218,6 +218,9 @@ class MVPWorkflow:
                 "parser_error_count": len(parser_errors),
                 "parser_errors": serialized_errors,
             }
+            cache_metrics = getattr(self.parser, "last_cache_metrics", None)
+            if isinstance(cache_metrics, dict) and cache_metrics:
+                metadata["cache_metrics"] = cache_metrics
             return {
                 "chunks": chunks,
                 "document_metadata": metadata,
