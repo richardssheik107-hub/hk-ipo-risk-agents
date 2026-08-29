@@ -106,9 +106,9 @@
           "size_bytes": 1205
         },
         {
-          "path": "reports/v046_market_runtime/historical_market_runtime_audit.json",
-          "sha256": "70184b65aa27cf8f0099afc24668153551ffb6e422d3f30ddca825ff6df5d64a",
-          "size_bytes": 437482
+          "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
+          "sha256": "8b11af017e38e80cded8e066997b415b1ceec6355da013c06eb4f94ad404513b",
+          "size_bytes": 381109
         }
       ],
       "limitations": "Research/qualitative valuation context; it is not an investment recommendation or an M1/M2 metric.",
@@ -234,11 +234,6 @@
       },
       "evidence": [
         {
-          "path": "reports/v046_market_runtime/historical_market_runtime_audit.json",
-          "sha256": "70184b65aa27cf8f0099afc24668153551ffb6e422d3f30ddca825ff6df5d64a",
-          "size_bytes": 437482
-        },
-        {
           "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
           "sha256": "8b11af017e38e80cded8e066997b415b1ceec6355da013c06eb4f94ad404513b",
           "size_bytes": 381109
@@ -269,5 +264,5 @@
     "validation_opened": false,
     "blind_2025_y_accessed": false
   },
-  "content_hash": "1620a0fa7771813363f3a6b14fe8ae270cb7dedae451b3914b8174d207c5e99d"
+  "content_hash": "542f00334eb4c4d9a06bd8bde44b77c4b109f830f9558e0d19e8f03200e7424b"
 }

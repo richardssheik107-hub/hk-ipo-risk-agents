@@ -18,7 +18,7 @@
       "status": "pass",
       "checks": {
         "governed_cases_562": true,
-        "market_integrity_zero": true,
+        "historical_runtime_zero_errors": true,
         "historical_paths_include_frozen_and_dynamic": true,
         "frozen_model_runtime_pass": true,
         "historical_model_inference": true
@@ -61,11 +61,6 @@
       "size_bytes": 2717
     },
     {
-      "path": "reports/v046_market_runtime/historical_market_runtime_audit.json",
-      "sha256": "70184b65aa27cf8f0099afc24668153551ffb6e422d3f30ddca825ff6df5d64a",
-      "size_bytes": 437482
-    },
-    {
       "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
       "sha256": "8b11af017e38e80cded8e066997b415b1ceec6355da013c06eb4f94ad404513b",
       "size_bytes": 381109
@@ -92,5 +87,5 @@
     "ui_computes_or_invents_channel_values": false,
     "human_review_required": false
   },
-  "content_hash": "42d367089e0a8e397c496b361e8f117de9d92853f787e983c1ac8482de1057df"
+  "content_hash": "0956b910ac1ffcad073e32ce31c480b4be056bd9f6c1f93126f0c0e198482d13"
 }

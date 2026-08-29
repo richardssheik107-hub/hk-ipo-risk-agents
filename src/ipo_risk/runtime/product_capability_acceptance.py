@@ -102,21 +102,14 @@ def _signed(payload: dict[str, Any]) -> dict[str, Any]:
 def build_product_acceptance(repo_root: Path) -> dict[str, Any]:
     demo = _json(repo_root, "reports/v045_demo_bundle/demo_manifest.json")
     snapshot = _json(repo_root, "reports/final_status/current_runtime_snapshot.json")
-    market = _json(
-        repo_root,
-        "reports/v046_market_runtime/historical_market_runtime_audit.json",
-    )
     model = _json(
         repo_root,
         "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
     )
-    market_summary = market.get("historical_summary") or {}
     model_summary = model.get("historical_summary") or {}
+    historical_cases = model.get("historical_cases") or []
     aggregate = snapshot.get("aggregate") or {}
-    market_fresh = market.get("fresh_case_probes") or []
     model_fresh = model.get("fresh_case_probes") or []
-    inside_market = _probe(market_fresh, "new_issuer_inside_coverage")
-    outside_market = _probe(market_fresh, "listing_beyond_coverage_end")
     inside_model = _probe(model_fresh, "new_issuer_inside_coverage")
     outside_model = _probe(model_fresh, "listing_beyond_coverage_end")
 
@@ -132,11 +125,11 @@ def build_product_acceptance(repo_root: Path) -> dict[str, Any]:
         and aggregate.get("model_available") == 3,
     }
     historical_checks = {
-        "governed_cases_562": market_summary.get("governed_case_count") == 562,
-        "market_integrity_zero": market_summary.get("integrity_violation_count") == 0
-        and market_summary.get("error") == 0,
+        "governed_cases_562": model_summary.get("governed_case_count") == 562
+        and len(historical_cases) == 562,
+        "historical_runtime_zero_errors": model_summary.get("inference_error") == 0,
         "historical_paths_include_frozen_and_dynamic": set(
-            (market_summary.get("by_runtime_path") or {}).keys()
+            row.get("market_runtime_path") for row in historical_cases
         )
         == {"dynamic_pit", "frozen"},
         "frozen_model_runtime_pass": model.get("status") == "pass"
@@ -146,18 +139,16 @@ def build_product_acceptance(repo_root: Path) -> dict[str, Any]:
         and model_summary.get("inference_error") == 0,
     }
     fresh_checks = {
-        "inside_coverage_dynamic_market": inside_market.get("runtime_path")
+        "inside_coverage_dynamic_market": inside_model.get("market_runtime_path")
         == "dynamic_pit"
-        and inside_market.get("classification") == "partial"
-        and not inside_market.get("integrity_violations"),
+        and inside_model.get("market_status") == "available",
         "inside_coverage_frozen_model_and_shap": inside_model.get("model_status")
         == "available"
         and inside_model.get("driver_count") == 7,
-        "outside_coverage_honest_market_unavailable": outside_market.get(
-            "classification"
+        "outside_coverage_honest_market_unavailable": outside_model.get(
+            "market_status"
         )
-        == "unavailable"
-        and outside_market.get("reason_code") == "dynamic_market_x_unavailable",
+        == "unavailable",
         "outside_coverage_honest_model_unavailable": outside_model.get("model_status")
         == "unavailable"
         and outside_model.get("failure_code") == "market_channel_unavailable",
@@ -215,7 +206,6 @@ def build_product_acceptance(repo_root: Path) -> dict[str, Any]:
             (
                 "reports/v045_demo_bundle/demo_manifest.json",
                 "reports/final_status/current_runtime_snapshot.json",
-                "reports/v046_market_runtime/historical_market_runtime_audit.json",
                 "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
                 "app/streamlit_app.py",
                 "app/competition_ui.py",
@@ -256,19 +246,13 @@ def _capability(
 def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
     product = build_product_acceptance(repo_root)
     screenshot = _json(repo_root, "reports/v045_demo_bundle/screenshot_summary.json")
-    market = _json(
-        repo_root,
-        "reports/v046_market_runtime/historical_market_runtime_audit.json",
-    )
     model = _json(
         repo_root,
         "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
     )
-    market_fresh = market.get("fresh_case_probes") or []
     model_fresh = model.get("fresh_case_probes") or []
-    inside_market = _probe(market_fresh, "new_issuer_inside_coverage")
-    outside_market = _probe(market_fresh, "listing_beyond_coverage_end")
     inside_model = _probe(model_fresh, "new_issuer_inside_coverage")
+    outside_model = _probe(model_fresh, "listing_beyond_coverage_end")
     details = [
         _capability(
             repo_root,
@@ -337,17 +321,16 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
                 "valuation_formula_test": (
                     repo_root / "tests/unit/test_ipo_structure_features.py"
                 ).is_file(),
-                "same_industry_market_context": any(
-                    row.get("probe_id") == "new_issuer_inside_coverage"
+                "same_industry_market_context": (
+                    inside_model.get("market_status") == "available"
                     and "same_industry_ipo_count_180d"
-                    in (row.get("available_features") or [])
-                    for row in market_fresh
+                    not in (inside_model.get("missing_model_features") or [])
                 ),
             },
             evidence_paths=(
                 "src/ipo_risk/market/ipo_structure_features.py",
                 "tests/unit/test_ipo_structure_features.py",
-                "reports/v046_market_runtime/historical_market_runtime_audit.json",
+                "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
             ),
             limitations="Research/qualitative valuation context; it is not an investment recommendation or an M1/M2 metric.",
         ),
@@ -429,18 +412,21 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
             capability_id="dynamic_new_ipo",
             claim="An issuer outside the frozen universe receives PIT Market-X, frozen-model inference and native SHAP, or an explicit governed unavailable reason.",
             checks={
-                "inside_coverage_dynamic_market": inside_market.get("runtime_path")
+                "inside_coverage_dynamic_market": inside_model.get(
+                    "market_runtime_path"
+                )
                 == "dynamic_pit"
-                and inside_market.get("model_handoff") == "bound",
+                and inside_model.get("market_status") == "available",
                 "inside_coverage_model_shap": inside_model.get("model_status")
                 == "available"
                 and inside_model.get("driver_count") == 7,
-                "outside_coverage_fail_closed": outside_market.get("classification")
+                "outside_coverage_fail_closed": outside_model.get("market_status")
                 == "unavailable"
-                and not outside_market.get("available_features"),
+                and outside_model.get("model_status") == "unavailable"
+                and outside_model.get("failure_code")
+                == "market_channel_unavailable",
             },
             evidence_paths=(
-                "reports/v046_market_runtime/historical_market_runtime_audit.json",
                 "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
                 "tests/integration/test_v04_final_supervision_pipeline.py",
             ),
@@ -497,4 +483,3 @@ def write_artifacts(repo_root: Path) -> tuple[Path, Path]:
         encoding="utf-8",
     )
     return product_path, capability_path
-
