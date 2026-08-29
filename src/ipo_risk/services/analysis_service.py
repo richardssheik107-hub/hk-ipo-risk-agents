@@ -15,8 +15,8 @@ class IPOAnalysisService:
     def _component_modes(self):
         settings = self.settings
         modes = {
-            "parser": "real" if settings.parser in {"pymupdf", "pymupdf_table"} else "mock",
-            "retriever": "real" if settings.retriever == "keyword" else "mock",
+            "parser": "real" if settings.parser in {"pymupdf", "pymupdf_table", "pymupdf_role_b_recall"} else "mock",
+            "retriever": "real" if settings.retriever in {"keyword", "hybrid_bm25"} else "mock",
             "financial_agent": "real" if settings.financial_agent in {"cash_runway", "v03"} else "mock",
             "legal_agent": "real" if settings.legal_agent == "v03" else ("unavailable" if settings.legal_agent == "disabled" else "mock"),
             "business_agent": "real" if settings.business_agent == "v03" else ("unavailable" if settings.business_agent == "disabled" else "mock"),
