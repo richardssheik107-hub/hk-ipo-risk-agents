@@ -36,6 +36,11 @@ class Settings:
     # Optional local licensed-derived prior-IPO outcome pack. Absent, the
     # dynamic outcome families stay explicitly missing instead of zero-filled.
     market_dynamic_outcome_pack: str = ""
+    # Generalized frozen-model inference for cases outside the per-case handoff.
+    # "none" keeps the handoff-only behaviour; "frozen_v2" loads the committed
+    # Role-D V2 model package and scores anything that satisfies its contract.
+    model_dynamic_runtime: str = "none"
+    model_artifact_dir: str = "models/role_d_v2"
     # Optional local licensed CSMAR HSI / HKEX turnover caches. Both are needed
     # for dynamic Market-X Extended; absent, no Extended name is emitted at all.
     market_dynamic_extended_hsi_csv: str = ""

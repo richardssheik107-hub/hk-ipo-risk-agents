@@ -43,6 +43,11 @@ MODEL_NAME = "lightgbm"
 PRODUCTION_COHORT = "full_production"
 PRODUCTION_FEATURE_GROUP = "PM"
 
+# The one reason that means "the package is intact, this case is simply outside
+# its three rows".  The generalized runtime keys off exactly this string, so it
+# is a constant rather than a literal repeated in two lanes.
+PRODUCT_HANDOFF_SCOPE_REASON = "case_is_not_in_the_sanitized_product_handoff"
+
 EXPECTED_STATUS = "complete_frozen"
 EXPECTED_CALIBRATION = "assessment_only_uncalibrated"
 EXPECTED_SCORE_SEMANTICS = "uncalibrated_model_score_not_probability"
@@ -265,7 +270,7 @@ def load_case_prediction(
     except ProductCaseNotPresentError:
         # The package is intact; this case is out of its scope. Every dynamic
         # new-IPO case lands here, and must not be told the artifact is broken.
-        return _unavailable("case_is_not_in_the_sanitized_product_handoff", base)
+        return _unavailable(PRODUCT_HANDOFF_SCOPE_REASON, base)
     except ProductRuntimeHandoffError:
         return _unavailable("sanitized_pr_f_product_handoff_failed_validation", base)
     if product_signal is not None:

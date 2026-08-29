@@ -93,6 +93,10 @@ def command_specs(*, include_full_tests: bool = True) -> list[CommandSpec]:
             CommandSpec("product_runtime", (python, "scripts/check_v045_product_runtime.py")),
             CommandSpec("team_clone_ready", (python, "scripts/check_v045_team_clone_ready.py")),
             CommandSpec("dynamic_market_strict", (python, "scripts/run_market_runtime_audit.py", "--strict")),
+            CommandSpec(
+                "dynamic_model_strict",
+                (python, "scripts/run_dynamic_model_runtime_audit.py", "--strict"),
+            ),
             CommandSpec("git_diff_check", ("git", "diff", "--check"), True),
             CommandSpec(
                 "tracked_worktree_clean",
@@ -212,8 +216,13 @@ def _dynamic_model_gate(repo_root: Path, command_map: dict[str, CommandResult]) 
     )
     audit_path = repo_root / "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json"
     audit = _read_json(audit_path)
+    # The artifact alone could be stale, so the audit is re-run here and both the
+    # fresh exit status and the committed evidence have to agree.
+    audit_command = command_map.get("dynamic_model_strict")
     dynamic_ok = bool(
-        audit
+        audit_command is not None
+        and audit_command.passed
+        and audit
         and audit.get("status") == "pass"
         and audit.get("runtime_inference") is True
         and audit.get("native_shap") is True
@@ -226,6 +235,7 @@ def _dynamic_model_gate(repo_root: Path, command_map: dict[str, CommandResult]) 
         blockers.append("Role-D V2 promotion identity/strict checker is not PASS")
     if not dynamic_ok:
         blockers.append("real frozen-model dynamic inference + native SHAP audit is missing or not PASS")
+    published_parity = (audit or {}).get("published_parity") or {}
     return _gate(
         "G4",
         "Dynamic Model / SHAP",
@@ -235,6 +245,15 @@ def _dynamic_model_gate(repo_root: Path, command_map: dict[str, CommandResult]) 
             "promotion_manifest": "reports/frozen/v045_role_d_v2_promotion_manifest.json",
             "dynamic_runtime_audit": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
             "dynamic_runtime_passed": dynamic_ok,
+            "historical_inference_available": (
+                ((audit or {}).get("historical_summary") or {}).get("inference_available")
+            ),
+            "available_outside_the_per_case_handoff": (
+                ((audit or {}).get("historical_summary") or {}).get(
+                    "available_outside_the_per_case_handoff"
+                )
+            ),
+            "published_parity_mismatch_count": published_parity.get("mismatch_count"),
         },
         blockers,
     )

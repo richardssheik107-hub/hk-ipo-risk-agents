@@ -34,7 +34,7 @@ fresh clone / Streamlit smoke / team-ready checks = PASS
 | **A — M1 / M2 文档智能优化** | ALL79 Development：M1 `>=80%`、M2 `>=85%` | **P0** |
 | **B — 前端 / 产品展示** | 把真实系统做成答辩级最终 UI | **P0/P1** |
 | **C — Market-X 动态泛化** | 任意合法新 IPO 进入统一 Market runtime：真实计算或诚实降级 | **P0** |
-| **D — Model / Prediction / SHAP 动态化** | 摆脱 final-three per-case handoff，真实加载冻结模型推理 + native SHAP | **P0** |
+| **D — Model / Prediction / SHAP 动态化** | 摆脱 final-three per-case handoff，真实加载冻结模型推理 + native SHAP | **PASS** |
 | **E — 最终集成 / 验收 / 文档 / 提交包** | Freeze → one-shot Validation → audits → fresh clone → secure ZIP | **P1 → 最后 P0** |
 
 详细 owner 文档见 `docs/team/`。
@@ -198,14 +198,21 @@ governed feature vector
 → Final Supervisor / UI
 ```
 
-治理决议已关闭、runtime 泛化仍开放：
+两项都已关闭：
 
 1. A-owned `PROMOTE_V2` 正式决议：**PASS（PR #184 merged）**；
-2. Dynamic inference runtime：满足 feature contract 就能推理，不再按 case_id 查询预生成结果。
+2. Dynamic inference runtime：**PASS** —— 满足 feature contract 就能推理，不再按 case_id 查询预生成结果。
 
 若 promote v2，必须新建 versioned model/hash/feature manifest/alert policy/receipt/handoff；不覆盖旧 PR-F，也不再根据 2024 Validation 调参。SHAP 必须来自当前 inference。
 
-V2 promotion package 已实现并通过 PR #184 正式生效：versioned freeze、strict receipt、checker 与 final-three label-free handoff 均已生成，current-main strict revalidation 通过，resume / fresh-directory byte-identical 已验证，34-alert 工作量与 ROC-AUC 仍低于 0.5 的局限已披露。旧 frozen PR-F 完整保留、可回滚。当前只剩真实 dynamic inference + native SHAP。
+V2 promotion package 已实现并通过 PR #184 正式生效：versioned freeze、strict receipt、checker 与 final-three label-free handoff 均已生成，current-main strict revalidation 通过，resume / fresh-directory byte-identical 已验证，34-alert 工作量与 ROC-AUC 仍低于 0.5 的局限已披露。旧 frozen PR-F 完整保留、可回滚。
+
+泛化 runtime 已在 `models/role_d_v2` 落地：模型文件由哈希校验的复现产生（sha256 必须等于
+promotion manifest 的 `classifier_model_sha256`，否则拒绝落盘），runtime 只 load 不 fit。
+strict audit 562 governed / 540 inference / 537 在 handoff 之外 / 70 published case 全部
+逐位复现（max score delta 0.0，max SHAP delta 2.2e-16）。单案例告警使用 Development-only
+派生的绝对切点 `v046_role_d_v2_single_case_alert_cutoff_v1`。细节见
+`V0.4_RELEASE_ACCEPTANCE.md` 第 6 节。
 
 ## 6. Track E — Final Integration / Release / Submission（P1 → 最后 P0）
 

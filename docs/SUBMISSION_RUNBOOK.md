@@ -134,6 +134,19 @@ python scripts/validate_v045_role_d_receipt.py
 python scripts/check_v045_product_runtime.py
 ```
 
+产品要加载的冻结模型包在 `models/role_d_v2`。它由哈希校验的复现产生：重建 354/70 训练矩阵、
+重拟合已冻结的七特征配方，只有 model text 的 sha256 等于 promotion manifest 的
+`classifier_model_sha256` 才落盘。需要重建或核对时：
+
+```bash
+python scripts/build_v045_role_d_v2_model_artifact.py
+python scripts/run_dynamic_model_runtime_audit.py --strict
+```
+
+第二条是 G4 的验收产物来源（`reports/v046_dynamic_model_runtime/`），`run_final_acceptance.py`
+会重跑它，所以提交前保持产物与代码一致。runtime 只 load 不 fit；不得手工编辑 `models/role_d_v2`
+里的任何文件。
+
 使用授权行情 ZIP 重建 438 frozen Market-X：
 
 ```bash
