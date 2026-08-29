@@ -1,18 +1,18 @@
 # Role-D Model Decision — Frozen PR-F vs v2 Candidate
 
-> 状态日期：`2026-08-28`
+> 状态日期：`2026-08-29`
 >
 > 当前决议：**PENDING A-OWNED PROMOTION REVIEW**
 
-本文档把“正式可复现模型”和“效果更好的研究候选”分开，避免两种常见误判：一是把四文件物化完成等同于业务效果已经足够；二是把尚未治理晋升的候选直接写成正式系统结果。
+本文档把“当前正式 frozen identity”“效果更好的 research candidate”和“Dynamic New-IPO inference”分开。
 
 ## 1. 两条模型线
 
 | 项目 | Frozen PR-F | v2 candidate |
 |---|---:|---:|
 | 状态 | 正式冻结 / 已有 70-case receipt | Research candidate / 未晋升 |
-| 选择数据 | 历史 frozen protocol | 2020→2021、2020–21→2022、2020–22→2023 expanding Development folds |
-| 2024 用途 | 正式记录结果 | 冻结候选后一次性评价 |
+| 选择数据 | 历史 frozen protocol | Development expanding folds |
+| 2024 用途 | 正式记录结果 | 候选冻结后一次性评价 |
 | ROC-AUC | 0.4246 | 0.4875 |
 | PR-AUC | 0.3364 | 0.3812 |
 | Precision | 0.3333 | 0.3529 |
@@ -21,26 +21,32 @@
 | Alert count | 3 | 34 |
 | 2025 Blind y | 未访问 | 未访问 |
 
-v2 使用七个 Market Core regime features，并保留原 LightGBM 参数。候选选择与 alert fraction 只使用 expanding Development folds；仓库报告声明 2024 label 未用于 feature/model/alert selection。
+## 2. 当前产品事实
 
-## 2. 正确解释
+PR #185 已证明 final-three 产品路径：
 
-v2 候选显著改善：
+```text
+Market = 3/3
+Frozen Model = 3/3
+Final Supervisor = 3/3
+M3 = 1.0 x 3
+canonical replay / fresh clone = PASS
+```
 
-- 高风险样本召回；
-- F1；
-- PR-AUC；
-- Brier；
-- 实际可用的 alert 覆盖。
+这说明 frozen PR-F 的**三案例 product handoff 已可稳定消费**，但不等于模型业务价值已经充分，也不等于新 IPO 可以动态推理。
 
-但它仍是 triage candidate：
+当前 `FrozenModelPredictionProvider` 的正式产品路径仍以 governed per-case handoff / frozen result 为主；下一产品目标是加载受治理的 frozen model identity，对非 final-three feature vector 做真实 dynamic inference + native SHAP。
 
-- ROC-AUC 仍略低于 0.5；
+## 3. 正确解释
+
+v2 候选明显改善高召回 operating point，但：
+
+- ROC-AUC 仍低于 0.5；
 - score 未校准；
-- 目前没有正式 promotion record；
-- 当前 D receipt 与 D→E handoff 仍绑定 frozen PR-F。
+- 没有正式 promotion record；
+- 当前 receipt / handoff 仍绑定 frozen PR-F。
 
-因此当前最强可支持表述是：
+因此最强可支持表述仍是：
 
 > Development-selected v2 candidate substantially improves the high-recall operating point over frozen PR-F, but remains an uncalibrated research candidate pending governance promotion.
 
@@ -48,64 +54,89 @@ v2 候选显著改善：
 
 - “预测模型已经正式达到优秀水平”；
 - “v2 已替换正式模型”；
-- “ROC-AUC 已显著超过随机”；
-- “score 是破发概率”。
+- “score 是破发概率”；
+- “final-three handoff 证明任意新 IPO 都能模型推理”。
 
-## 3. A-owned promotion Gate
+## 4. A-owned promotion Gate
 
-A 应进行一次明确、可审计的晋升决策，而不是继续在 2024 上试更多方案。
+A 只进行一次明确、可审计决议，不继续按 2024 调试更多方案。
 
 ### 审核项
 
-1. v2 实现和报告身份与仓库代码一致；
-2. expanding Development selection 可从原始 artifact 重放；
-3. 2024 只执行一次冻结评价；
+1. v2 实现/报告身份与仓库代码一致；
+2. Development expanding-fold selection 可重放；
+3. 2024 仅一次冻结评价；
 4. 2025 Blind outcome 未访问；
 5. deterministic repeat hash 通过；
-6. 与 frozen PR-F 的比较公式、case universe 和 label 定义一致；
-7. score 继续标为 `uncalibrated_model_score`；
-8. 对 34 个 alerts 的业务工作量与命中率给出解释。
+6. 与 frozen PR-F 的 case universe / label / metric 一致；
+7. score 保持 `uncalibrated_model_score`；
+8. 34 alerts 的工作量和命中率可解释。
 
-### 晋升选项
-
-#### Option A — Promote v2
+### Option A — Promote v2
 
 - 创建 hash-bound promotion decision；
 - 冻结 v2 code/config/feature list/alert policy；
-- current-main 重建四个 Role-D artifact；
+- current-main 重建 Role-D artifacts；
 - strict checker 独立复算；
-- 生成新的 final-three label-free handoff；
-- 更新 A readiness、案例报告和答辩指标；
-- 不再根据 2024 结果调整任何参数。
+- 建立新 versioned product/dynamic inference identity；
+- 更新 final-three handoff；
+- 不再根据 2024 调参数。
 
-#### Option B — Retain frozen PR-F
+### Option B — Retain frozen PR-F
 
 - 保留现有 receipt；
-- 将模型定位为弱辅助信号；
-- 强调 Document + Market + Agent 归因价值，不把 M5 作为强预测卖点；
-- 同样完成 current-main strict revalidation 和 final-three handoff。
+- 将模型定位为弱辅助 signal；
+- 不把 M5 当强预测卖点；
+- 同样建立 frozen-model dynamic inference contract，使 historical/new cases 不依赖 final-three 预生成结果。
 
-## 4. 推荐决策
+## 5. Dynamic inference requirement
 
-基于当前仓库证据，优先审核 Option A：v2 在不覆盖 frozen PR-F、未用 2024 进行选择的前提下，明显修复了原系统几乎不报警的问题。
+无论 promote 还是 retain，最终产品都应该从：
 
-这是一项基于现有报告的治理建议，不是晋升结论。只有 A 完成身份、复现和 leakage 审核后才能正式采用。
+```text
+governed feature vector
++ frozen model artifact / model hash
+```
 
-## 5. 停止规则
+产生：
 
-从现在起不得：
+```text
+uncalibrated_model_score
++ native SHAP / top drivers
+```
 
-- 继续根据 2024 调 feature、threshold 或 alert fraction；
+而不是仅查询一个预生成 case prediction。
+
+硬边界：
+
+- feature manifest hash 必须匹配；
+- model identity/hash 必须匹配；
+- missingness 语义不能改变；
+- 不得用 2024/Blind label 参与新 case inference；
+- SHAP 必须来自实际 inference；
+- score 不得称 probability。
+
+## 6. 推荐决策
+
+仍优先审核 Option A，因为 v2 修复了 frozen PR-F 几乎不报警的问题。但这是治理建议，不是 promotion 结论。
+
+Dynamic New-IPO inference 与 promote/retain 决议可以并行设计 adapter，但正式模型身份必须等 A 决议后冻结。
+
+## 7. 停止规则
+
+不得：
+
+- 根据 2024 调 feature / threshold / alert fraction；
 - 反转 score；
-- 用 2025 Blind 输入或 outcome 选择模型；
-- 直接编辑 D artifact 使其显示 v2；
-- 在没有新 freeze/receipt 的情况下让 E 消费 v2 signal。
+- 用 2025 Blind input/outcome 选择模型；
+- 直接编辑 frozen D artifact 伪装 v2；
+- 复制 final-three per-case signal 冒充 dynamic inference。
 
-下一动作只有：
+下一动作：
 
 ```text
 A governance review
-→ promote and re-materialize
-或
-→ retain frozen PR-F and limit claims
+→ promote or retain
+→ freeze formal model identity
+→ dynamic inference + strict revalidation
 ```
