@@ -452,7 +452,7 @@ def apply_competition_theme() -> None:
         .ipo-title {font-size:clamp(1.55rem,2.4vw,2.2rem);font-weight:790;line-height:1.13;letter-spacing:-.025em;margin:.3rem 0 .34rem;color:var(--ipo-navy);}
         .ipo-subtitle {font-size:.86rem;color:var(--ipo-muted);max-width:980px;line-height:1.6;}
         .ipo-badge-row {display:flex;gap:.38rem;flex-wrap:wrap;margin-top:.72rem;}
-        .ipo-badge,.status-chip,.risk-chip {display:inline-flex;align-items:center;gap:.32rem;border-radius:999px;border:1px solid #d2d9e1;padding:.24rem .58rem;font-size:.71rem;font-weight:700;line-height:1.2;background:#f6f8fa;color:#536173;white-space:normal;}
+        .ipo-badge,.status-chip,.risk-chip {display:inline-flex;align-items:center;gap:.32rem;width:fit-content;max-width:100%;min-width:max-content;box-sizing:border-box;flex-shrink:0;border-radius:999px;border:1px solid #d2d9e1;padding:.24rem .58rem;font-size:.71rem;font-weight:700;line-height:1.2;background:#f6f8fa;color:#536173;white-space:nowrap;}
         .status-chip:before {content:"";width:6px;height:6px;border-radius:50%;background:#98a2b3;flex:0 0 6px;}
         .status-good {border-color:#a9dac4;background:#edf8f2;color:#11633f;}
         .status-good:before {background:var(--ipo-green);}
@@ -850,6 +850,70 @@ def apply_competition_theme() -> None:
         .st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button {width:min(100%,180px);min-height:46px;}
         .st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"] {isolation:isolate;}
         .st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"] > span svg {color:var(--ipo-primary);}
+        /* Result workspace accents remain subtle and inherit the governed nine-colour palette. */
+        .st-key-case_workspace_shell {--workspace-accent:var(--ipo-primary);--workspace-tint:rgba(20,184,166,.055);}
+        .st-key-case_workspace_shell:has([role="tab"]:nth-child(2)[aria-selected="true"]) {--workspace-accent:var(--ipo-secondary);--workspace-tint:rgba(96,213,200,.065);}
+        .st-key-case_workspace_shell:has([role="tab"]:nth-child(3)[aria-selected="true"]) {--workspace-accent:var(--ipo-lavender);--workspace-tint:rgba(184,167,255,.07);}
+        .st-key-case_workspace_shell:has([role="tab"]:nth-child(4)[aria-selected="true"]) {--workspace-accent:var(--ipo-mist-purple);--workspace-tint:rgba(217,204,255,.09);}
+        .st-key-case_workspace_shell:has([role="tab"]:nth-child(5)[aria-selected="true"]) {--workspace-accent:var(--ipo-primary);--workspace-tint:rgba(20,184,166,.045);}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"] {min-height:52px;padding:6px!important;border:1px solid color-mix(in srgb,var(--workspace-accent) 14%,transparent)!important;background:color-mix(in srgb,var(--ipo-mist-purple) 27%,rgba(255,255,255,.9))!important;border-radius:16px!important;}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab"],.stTabs:has([role="tab"]:nth-child(5)) [role="tab"] {min-height:40px;padding:.68rem .75rem!important;font-size:.81rem!important;font-weight:650!important;border-radius:11px!important;}
+        .stTabs:has([role="tab"]:nth-child(5)) [aria-selected="true"] {background:color-mix(in srgb,var(--workspace-accent) 14%,white)!important;color:color-mix(in srgb,var(--workspace-accent) 72%,#163B38)!important;box-shadow:0 4px 12px color-mix(in srgb,var(--workspace-accent) 15%,transparent)!important;}
+        .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-highlight"] {height:3px!important;background:var(--workspace-accent)!important;}
+        .stTabs:has([role="tab"]:nth-child(5)) .react-aria-SelectionIndicator {height:3px!important;background:var(--workspace-accent)!important;border-radius:999px!important;}
+        .st-key-risk_command_shell {--section-accent:var(--ipo-primary);--section-tint:rgba(20,184,166,.052);}
+        .st-key-evidence_section_shell {--section-accent:var(--ipo-secondary);--section-tint:rgba(96,213,200,.062);}
+        .st-key-market_model_section_shell {--section-accent:var(--ipo-lavender);--section-tint:rgba(184,167,255,.068);}
+        .st-key-agent_trace_section_shell {--section-accent:var(--ipo-lavender);--section-tint:rgba(217,204,255,.09);}
+        .st-key-review_report_section_shell {--section-accent:var(--ipo-primary);--section-tint:rgba(217,204,255,.06);}
+        .st-key-case_workspace_shell,.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell {box-sizing:border-box;width:100%;max-width:100%;min-width:0;}
+        .st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell {position:relative;border-left:3px solid var(--section-accent)!important;background:linear-gradient(145deg,var(--section-tint),rgba(255,255,255,.74) 32%,rgba(255,255,255,.68))!important;box-shadow:0 14px 34px color-mix(in srgb,var(--section-accent) 8%,transparent)!important;}
+        .st-key-case_workspace_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis),.st-key-risk_command_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis),.st-key-evidence_section_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis),.st-key-market_model_section_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis),.st-key-agent_trace_section_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis),.st-key-review_report_section_shell :is(.stTabs,[data-testid="stTabPanel"],[role="tabpanel"],.metric-grid,.bento-kpis) {box-sizing:border-box;width:100%;max-width:100%;min-width:0;}
+        .st-key-case_workspace_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"],.st-key-risk_command_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"],.st-key-evidence_section_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"],.st-key-market_model_section_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"],.st-key-agent_trace_section_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"],.st-key-review_report_section_shell [data-testid="stTabPanel"]>[data-testid="stVerticalBlock"] {box-sizing:border-box;width:100%;max-width:100%;min-width:0;}
+        .st-key-risk_command_shell .section-head,.st-key-evidence_section_shell .section-head,.st-key-market_model_section_shell .section-head,.st-key-agent_trace_section_shell .section-head,.st-key-review_report_section_shell .section-head {border-left-color:var(--section-accent)!important;}
+        .st-key-risk_command_shell .section-eyebrow,.st-key-evidence_section_shell .section-eyebrow,.st-key-market_model_section_shell .section-eyebrow,.st-key-agent_trace_section_shell .section-eyebrow,.st-key-review_report_section_shell .section-eyebrow {color:color-mix(in srgb,var(--section-accent) 72%,#163B38);}
+        .st-key-risk_command_shell .metric-card,.st-key-evidence_section_shell .metric-card,.st-key-market_model_section_shell .metric-card,.st-key-agent_trace_section_shell .metric-card,.st-key-review_report_section_shell .metric-card {border-top:2px solid color-mix(in srgb,var(--section-accent) 68%,white)!important;}
+        /* Evidence sub-tabs are a compact child navigation, not another workspace switcher. */
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs {margin:.35rem 0 .4rem;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab-list"],.st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tablist"] {box-sizing:border-box;width:calc(100% - clamp(2.3rem,10vw,8.5rem));max-width:100%;min-width:0;min-height:42px!important;margin-inline:auto;gap:4px!important;padding:4px!important;border:1px solid rgba(96,213,200,.18)!important;border-radius:11px!important;background:rgba(96,213,200,.075)!important;box-shadow:none!important;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab"],.st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tab"] {min-height:32px!important;padding:.46rem .8rem!important;border-radius:8px!important;background:transparent!important;color:var(--ipo-muted)!important;font-size:.73rem!important;font-weight:610!important;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [aria-selected="true"] {background:rgba(255,255,255,.88)!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab-highlight"] {height:2px!important;background:var(--ipo-secondary)!important;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tab"][data-testid="stTab"][data-selected="true"][aria-selected="true"] {background:rgba(255,255,255,.88)!important;background-image:none!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
+        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs .react-aria-SelectionIndicator {height:2px!important;background:var(--ipo-secondary)!important;border-radius:999px!important;}
+        /* Preserve interactive Streamlit dataframes while replacing the Excel-like grid treatment. */
+        [data-testid="stDataFrame"] {overflow:visible;border:0!important;border-radius:15px!important;background:transparent!important;box-shadow:none!important;}
+        [data-testid="stDataFrameResizable"] {overflow:hidden!important;border:1px solid rgba(20,184,166,.13)!important;border-radius:14px!important;background:rgba(255,255,255,.92)!important;box-shadow:0 4px 14px rgba(20,184,166,.04)!important;}
+        [data-testid="stDataFrame"] .stDataFrameGlideDataEditor {--gdg-accent-color:var(--section-accent,var(--workspace-accent,var(--ipo-primary)))!important;--gdg-accent-light:var(--section-tint,var(--workspace-tint,rgba(20,184,166,.06)))!important;--gdg-bg-cell:rgba(255,255,255,.96)!important;--gdg-bg-cell-medium:rgba(255,255,255,.96)!important;--gdg-bg-header:color-mix(in srgb,var(--section-accent,var(--workspace-accent,var(--ipo-primary))) 7%,white)!important;--gdg-bg-header-hovered:color-mix(in srgb,var(--section-accent,var(--workspace-accent,var(--ipo-primary))) 11%,white)!important;--gdg-bg-header-has-focus:color-mix(in srgb,var(--section-accent,var(--workspace-accent,var(--ipo-primary))) 11%,white)!important;--gdg-border-color:transparent!important;--gdg-horizontal-border-color:rgba(20,184,166,.1)!important;--gdg-text-header:#42586A!important;--gdg-header-font-style:650 13px!important;--gdg-base-font-style:400 13px!important;--gdg-cell-horizontal-padding:12px!important;--gdg-cell-vertical-padding:8px!important;--gdg-bg-bubble:rgba(217,204,255,.32)!important;--gdg-text-bubble:#42586A!important;}
+        [data-testid="stDataFrame"] [data-testid="stElementToolbar"] button {border-radius:8px!important;color:var(--ipo-muted)!important;}
+        /* Small read-only summaries use semantic chips without changing source values or order. */
+        .modern-table-shell {width:100%;overflow:auto;margin:.45rem 0 .95rem;border:1px solid rgba(20,184,166,.13);border-radius:14px;background:rgba(255,255,255,.92);box-shadow:0 4px 14px rgba(20,184,166,.04);}
+        .modern-table-scroll {max-height:430px;}
+        .modern-data-table {width:100%;border-collapse:separate;border-spacing:0;color:var(--ipo-ink);font-size:.79rem;line-height:1.45;}
+        .modern-data-table th {position:sticky;top:0;z-index:1;padding:.68rem .78rem;background:color-mix(in srgb,var(--section-accent,var(--workspace-accent,var(--ipo-primary))) 7%,white);color:#42586A;font-size:.73rem;font-weight:650;text-align:left;white-space:nowrap;}
+        .modern-data-table td {padding:.7rem .78rem;border:0;border-top:1px solid rgba(20,184,166,.09);background:transparent;vertical-align:middle;}
+        .modern-data-table tbody tr:first-child td {border-top:0;}
+        .modern-data-table tbody tr {transition:background-color 150ms var(--ease-product);}
+        .modern-data-table tbody tr:hover {background:var(--section-tint,var(--workspace-tint,rgba(20,184,166,.055)));}
+        .modern-table-compact .modern-data-table {table-layout:auto;font-size:.7rem;}
+        .modern-table-compact .modern-data-table th,.modern-table-compact .modern-data-table td {min-width:0;padding:.58rem .42rem;white-space:normal;overflow-wrap:anywhere;}
+        .modern-table-compact .data-badge {padding:.24rem .55rem;font-size:.67rem;}
+        .data-badge {display:inline-flex;align-items:center;gap:.32rem;width:fit-content;max-width:100%;min-width:max-content;box-sizing:border-box;flex-shrink:0;padding:3px 8px;border:1px solid transparent;border-radius:999px;font-size:.73rem;font-weight:650;line-height:1.35;white-space:nowrap;}
+        .data-badge:before {content:"";width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:currentColor;opacity:.82;}
+        .badge-success {color:color-mix(in srgb,var(--ipo-success) 68%,#163B38);background:color-mix(in srgb,var(--ipo-success) 9%,white);border-color:color-mix(in srgb,var(--ipo-success) 24%,transparent);}
+        .badge-warning {color:color-mix(in srgb,var(--ipo-warning) 70%,#163B38);background:color-mix(in srgb,var(--ipo-warning) 10%,white);border-color:color-mix(in srgb,var(--ipo-warning) 25%,transparent);}
+        .badge-danger {color:color-mix(in srgb,var(--ipo-danger) 72%,#163B38);background:color-mix(in srgb,var(--ipo-danger) 8%,white);border-color:color-mix(in srgb,var(--ipo-danger) 23%,transparent);}
+        .badge-neutral {color:var(--ipo-muted);background:rgba(127,148,163,.08);border-color:rgba(127,148,163,.18);}
+        .badge-category {color:color-mix(in srgb,var(--ipo-lavender) 64%,#304B5E);background:rgba(217,204,255,.3);border-color:rgba(184,167,255,.2);}
+        .badge-domain-financial {color:color-mix(in srgb,var(--ipo-primary) 70%,#163B38);background:rgba(20,184,166,.09);border-color:rgba(20,184,166,.2);}
+        .badge-domain-legal {color:color-mix(in srgb,var(--ipo-lavender) 68%,#304B5E);background:rgba(217,204,255,.31);border-color:rgba(184,167,255,.22);}
+        .badge-domain-business {color:color-mix(in srgb,var(--ipo-secondary) 70%,#163B38);background:rgba(96,213,200,.1);border-color:rgba(96,213,200,.22);}
+        /* IPO facts behave as a profile matrix, not a cell-by-cell spreadsheet. */
+        .profile-grid {gap:0!important;padding:4px;background:rgba(255,255,255,.72)!important;border:1px solid rgba(20,184,166,.12)!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(20,184,166,.035);}
+        .profile-item {position:relative;background:transparent!important;border:0!important;border-radius:10px!important;box-shadow:none!important;padding:.82rem .9rem!important;}
+        .profile-item:after {content:"";position:absolute;left:.9rem;right:.9rem;bottom:0;border-bottom:1px solid rgba(20,184,166,.075);}
+        .profile-label {color:#7F94A3!important;font-size:.64rem!important;font-weight:620!important;letter-spacing:.02em;}
+        .profile-value {color:var(--ipo-ink)!important;font-weight:680!important;}
         @media(max-width:1200px){.landing-hero-v3{grid-template-columns:minmax(0,1.05fr) minmax(360px,.85fr);padding:2rem}.capability-band{gap:2.5rem}.ipo-hero-row{grid-template-columns:1fr}.ipo-hero{min-height:185px}.bento-shell{grid-template-columns:minmax(0,1.35fr) minmax(285px,1fr)}.pipeline-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}.pipeline-grid:before{display:none}.pipeline-card{background:#fff;border:1px solid var(--ipo-line);border-radius:10px;padding:.6rem}.trace-card{grid-template-columns:38px minmax(120px,.7fr) minmax(160px,1.3fr) auto;}}
         @media(max-width:900px){.product-nav-links{gap:20px}.product-nav-links a{font-size:.78rem}.landing-hero-v3{grid-template-columns:1fr;min-height:auto}.risk-flow-visual{max-width:620px;margin:0 auto}.risk-flow-visual svg{width:100%;margin-left:0}.landing-section-head,.capability-band{grid-template-columns:1fr;gap:1.3rem}.capability-band.reverse .capability-copy,.capability-band.reverse .capability-visual{order:initial}.product-footer-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}.footer-system{grid-column:1/-1;max-width:620px}.command-health{grid-template-columns:repeat(2,minmax(0,1fr))}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"]{display:flex!important;overflow-x:auto}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab"],.stTabs:has([role="tab"]:nth-child(5)) [role="tab"]{min-width:max-content}.bento-shell,.audit-split{grid-template-columns:1fr}.bento-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.trace-flow{grid-template-columns:repeat(3,1fr)}.trace-flow-step:nth-child(3):after{display:none}.channel-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.roadmap-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.editorial-stepper{grid-template-columns:repeat(2,1fr);gap:1.25rem}.editorial-stepper:before{display:none}.block-container{padding-left:1rem;padding-right:1rem}.trace-card{grid-template-columns:34px 1fr auto}.trace-action{grid-column:2/4}.stTabs [data-baseweb="tab"]{font-size:.74rem;padding:.5rem .6rem}}
         @media(max-width:620px){div[data-testid="stElementContainer"]:has(.product-nav){top:var(--streamlit-header-height)}.product-nav{padding:0 .7rem}.product-nav-logo{height:30px;max-width:150px}.product-nav-links{max-width:66%;gap:17px}.product-nav-links a{font-size:.73rem}.landing-hero-v3{padding:1.5rem 1.15rem;border-radius:14px}.hero-v3-title{font-size:2.25rem}.risk-flow-visual{margin-top:.5rem}.capability-image-frame{border-radius:18px}.product-footer{padding-top:44px}.product-footer-grid{grid-template-columns:1fr;gap:2rem}.footer-system{grid-column:auto;max-width:none}.footer-lower{align-items:flex-start;flex-direction:column;gap:1rem;margin-top:34px}.metric-grid,.channel-grid,.pipeline-grid,.profile-grid,.empty-flow,.roadmap-grid,.bento-kpis{grid-template-columns:1fr;}.ipo-hero{padding:1rem;min-height:auto}.command-health{grid-template-columns:1fr 1fr}.case-shell{align-items:flex-start}.trace-flow{grid-template-columns:1fr}.trace-flow-step:after{display:none!important}.trace-card{grid-template-columns:30px 1fr}.trace-action{grid-column:2}.trace-card .status-chip{grid-column:2;justify-self:start}}
@@ -1441,15 +1505,97 @@ def render_state_panel(title: str, status: object, copy: str) -> None:
     )
 
 
+def _table_badge_tone(value: object, kind: str) -> str:
+    """Map an existing display value to presentation-only badge colours."""
+
+    normalized = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
+    if kind == "domain":
+        if normalized in {"财务风险", "financial"}:
+            return "badge-domain-financial"
+        if normalized in {"法律与合规", "legal"}:
+            return "badge-domain-legal"
+        return "badge-domain-business"
+    if kind == "risk":
+        if normalized in {"low", "低"}:
+            return "badge-success"
+        if normalized in {"medium", "中"}:
+            return "badge-warning"
+        if normalized in {"high", "critical", "高", "严重"}:
+            return "badge-danger"
+        return "badge-neutral"
+    if kind == "status":
+        if normalized in {
+            "available", "completed", "verified", "matched", "resolved", "accepted",
+            "可用", "已完成", "已验证", "已匹配", "已解决", "已执行", "接受（accept）",
+        }:
+            return "badge-success"
+        if normalized in {
+            "partial", "partially_resolved", "needs_review", "pending", "rechecking",
+            "部分可用", "部分解决", "待复核", "待处理", "复核中", "需继续跟进（needs_follow_up）",
+        }:
+            return "badge-warning"
+        if normalized in {"failed", "rejected", "unresolved", "error", "失败", "已驳回", "未解决", "驳回（reject）"}:
+            return "badge-danger"
+        return "badge-neutral"
+    return "badge-category"
+
+
+def _table_badge(value: object, kind: str) -> str:
+    text = "" if value is None else str(value)
+    return f"<span class='data-badge {_table_badge_tone(value, kind)}'>{escape(text)}</span>"
+
+
+def render_modern_table(
+    rows: Iterable[dict[str, object]],
+    *,
+    badge_columns: dict[str, str] | None = None,
+    compact: bool = False,
+) -> None:
+    """Render a compact read-only table without changing row values or order."""
+
+    data = [dict(row) for row in rows]
+    if not data:
+        return
+    columns: list[str] = []
+    for row in data:
+        for key in row:
+            if key not in columns:
+                columns.append(key)
+    badges = badge_columns or {}
+    header = "".join(f"<th scope='col'>{escape(str(column))}</th>" for column in columns)
+    body_rows = []
+    for row in data:
+        cells = []
+        for column in columns:
+            value = row.get(column, "")
+            content = _table_badge(value, badges[column]) if column in badges else escape("" if value is None else str(value))
+            cells.append(f"<td>{content}</td>")
+        body_rows.append("<tr>" + "".join(cells) + "</tr>")
+    scroll_class = " modern-table-scroll" if len(data) > 8 else ""
+    compact_class = " modern-table-compact" if compact else ""
+    st.markdown(
+        f"<div class='modern-table-shell{scroll_class}{compact_class}'><table class='modern-data-table'>"
+        f"<thead><tr>{header}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>",
+        unsafe_allow_html=True,
+    )
+
+
 def render_profile_grid(items: Iterable[tuple[object, object]]) -> None:
     """Render compact label/value facts without altering their values."""
 
     cards = []
     for label, value in items:
+        label_text = str(label)
+        if label_text == "匹配状态":
+            rendered_value = _table_badge(value, "status")
+        elif label_text == "证券类别" and str(value).lower() not in {"", "unavailable"}:
+            rendered_value = _table_badge(value, "category")
+        else:
+            rendered_value = escape(str(value))
         cards.append(
             "<div class='profile-item'>"
-            f"<div class='profile-label'>{escape(str(label))}</div>"
-            f"<div class='profile-value'>{escape(str(value))}</div>"
+            f"<div class='profile-label'>{escape(label_text)}</div>"
+            f"<div class='profile-value'>{rendered_value}</div>"
             "</div>"
         )
     st.markdown("<div class='profile-grid'>" + "".join(cards) + "</div>", unsafe_allow_html=True)

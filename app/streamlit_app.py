@@ -34,6 +34,7 @@ from competition_ui import (
     render_product_navigation,
     render_navigation_behavior,
     render_landing_runtime,
+    render_modern_table,
     render_state_panel,
     render_trace_timeline,
     report_section_title,
@@ -388,7 +389,11 @@ def _render_overview(payload: dict[str, object], stages) -> None:
     left, right = st.columns((1.05, 1.45))
     with left:
         section_header("Risk Coverage", "Financial / Legal / Business 覆盖。", "Coverage")
-        st.dataframe(domain_summary_rows(payload), hide_index=True, width="stretch")
+        render_modern_table(
+            domain_summary_rows(payload),
+            badge_columns={"领域": "domain", "状态": "status"},
+            compact=True,
+        )
     with right:
         section_header("Risk Inventory", "正式风险项与 Evidence 数量。", "Inventory")
         inventory = risk_inventory_rows(payload)
@@ -623,7 +628,7 @@ def _render_system(payload: dict[str, object], stages) -> None:
             }
         )
     st.markdown("#### Pipeline 状态")
-    st.dataframe(stage_rows, hide_index=True, width="stretch")
+    render_modern_table(stage_rows, badge_columns={"状态": "status"})
 
     with st.expander("阶段限制与待补输出", expanded=False):
         any_notice = False
@@ -651,7 +656,10 @@ def _render_system(payload: dict[str, object], stages) -> None:
                 "状态": status_label(item.get("status")),
             }
         )
-    st.dataframe(component_rows, hide_index=True, width="stretch")
+    render_modern_table(
+        component_rows,
+        badge_columns={"模式": "category", "状态": "status"},
+    )
 
     with st.expander("配置与治理信息", expanded=False):
         st.json(
@@ -783,7 +791,10 @@ def _render_agent_trace(payload: dict[str, object], stages) -> None:
     conflicts_table = conflict_rows(payload)
     section_header("跨 Agent 冲突与定向复核", "冲突、参与方、复核状态与保留结论。", "Conflict & re-check")
     if conflicts_table:
-        st.dataframe(conflicts_table, hide_index=True, width="stretch")
+        render_modern_table(
+            conflicts_table,
+            badge_columns={"状态": "status", "定向复核": "status"},
+        )
         outcomes = recheck_outcomes(payload)
         with st.expander(f"定向复核执行明细 · {len(outcomes)}", expanded=False):
             st.json(outcomes)
