@@ -168,7 +168,43 @@ def test_later_candidate_without_values_cannot_veto_last_usable_observation() ->
     assert result.period_end == date(2024, 12, 31)
     assert result.largest_counterparty_pct == Decimal("35.0")
     assert result.top_five_pct == Decimal("72.0")
-    assert result.metadata["merge_selection_basis"] == "latest_usable_concentration_period"
+    assert result.metadata["merge_selection_basis"] == "latest_governed_concentration_period"
+    assert result.metadata["discarded_nonselected_candidate_count"] == 1
+
+
+def test_later_ambiguous_fragment_cannot_veto_last_governed_observation() -> None:
+    extractor = V03FinancialFactExtractor()
+    governed = _fact(
+        period_end=date(2024, 12, 31),
+        period_months=12,
+        largest="35.0",
+        top_five="72.0",
+        page=20,
+    )
+    later_ambiguous = _fact(
+        period_end=date(2025, 6, 30),
+        period_months=None,
+        largest="36.0",
+        top_five="73.0",
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["latest_period_months_ambiguous"],
+    )
+
+    result = extractor._merge_concentration_facts(
+        "customer", [governed, later_ambiguous]
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end == date(2024, 12, 31)
+    assert result.period_months == 12
+    assert result.largest_counterparty_pct == Decimal("35.0")
+    assert result.top_five_pct == Decimal("72.0")
+    assert result.evidence_ids == ["e-20"]
+    assert (
+        result.metadata["merge_selection_basis"]
+        == "latest_governed_concentration_period"
+    )
     assert result.metadata["discarded_nonselected_candidate_count"] == 1
 
 

@@ -190,7 +190,24 @@ class _ConcentrationReconciliationMixin:
                 or item.top_five_pct is not None
             )
         ]
-        dated = usable or [item for item in facts if item.period_end is not None]
+        # A later fragment with an unresolved duration or an incomplete value
+        # pair must not displace an older, fully governed observation.  The
+        # latter is the latest fact that can actually support a deterministic
+        # concentration decision.  This remains fail-closed: when no clean,
+        # complete candidate exists, the previous latest-usable selection and
+        # conflict handling are retained unchanged.
+        governed_usable = [
+            item
+            for item in usable
+            if item.status == ExtractionStatus.EXTRACTED
+            and not item.issues
+            and item.period_months is not None
+            and item.largest_counterparty_pct is not None
+            and item.top_five_pct is not None
+        ]
+        dated = governed_usable or usable or [
+            item for item in facts if item.period_end is not None
+        ]
         selected_date = max((item.period_end for item in dated), default=None)
         selected = (
             [item for item in facts if item.period_end == selected_date]
@@ -328,7 +345,9 @@ class _ConcentrationReconciliationMixin:
                 "candidate_pages": [item.page for item in facts],
                 "selected_candidate_pages": [item.page for item in selected],
                 "merge_selection_basis": (
-                    "latest_usable_concentration_period"
+                    "latest_governed_concentration_period"
+                    if governed_usable
+                    else "latest_usable_concentration_period"
                     if usable
                     else "latest_dated_candidate"
                 ),
