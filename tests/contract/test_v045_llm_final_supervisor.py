@@ -8,6 +8,8 @@ that fails must leave the frozen PR-G composition untouched.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from ipo_risk.agents.final_supervision_llm import (
@@ -17,6 +19,7 @@ from ipo_risk.agents.final_supervision_llm import (
     LLMFinalSupervisor,
     SupervisionStatus,
     SynthesisOutcome,
+    _FORBIDDEN_TERMS,
     _numbers,
     severity_floor,
 )
@@ -32,7 +35,11 @@ from ipo_risk.schemas import (
     VerificationStatus,
 )
 from ipo_risk.schemas.competition_runtime import CompetitionConflict, ConflictStatus
-from ipo_risk.schemas.final_supervision import FinalSupervisionInput
+from ipo_risk.schemas.final_supervision import (
+    ChannelStatus,
+    FinalSupervisionInput,
+    ModelPredictionView,
+)
 
 
 EVIDENCE_ID = "evidence-1"
@@ -354,40 +361,77 @@ def test_a_vocabulary_slip_is_recoverable_within_the_bounded_correction() -> Non
     assert bundle.scope_check["scope_corrections"] == 1
     assert bundle.scope_check["first_attempt_passed"] is False
     assert "likelihood" in bundle.scope_check["rejected_attempts"][0]["violation"]
+    assert bundle.scope_check["rejected_attempts"][0]["violation_code"] == (
+        "FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED"
+    )
+    assert "likelihood" in bundle.scope_check["rejected_attempts"][0][
+        "audit_violation_detail"
+    ]
 
 
-def test_the_correction_feedback_addresses_the_rule_that_was_broken() -> None:
-    """Telling a model that used a banned word to fix its ids would help nobody."""
+def test_the_correction_feedback_uses_a_stable_code_without_echoing_the_term() -> None:
+    """Audit keeps the detail; the model-facing correction stays unpolluted."""
     provider = _SequenceProvider(
         [_judgement(final_explanation="the likelihood of a break is elevated"), _judgement()]
     )
     LLMFinalSupervisor(provider).supervise(_inputs())
 
     correction = next(item for item in provider.calls[1] if item.section == "scope_correction")
-    assert "prediction vocabulary" in correction.text
-    assert "likelihood" in correction.text
-    assert "Keep the same findings" in correction.text
+    payload = json.loads(correction.text)
+    assert payload["violation_code"] == "FORWARD_LOOKING_LANGUAGE_NOT_ALLOWED"
+    assert "violation_type" not in payload
+    assert "Keep all cited IDs and overall_risk unchanged" in payload["instruction"]
+    lowered = correction.text.casefold()
+    for term in _FORBIDDEN_TERMS:
+        assert term.casefold() not in lowered
 
 
-def test_the_registered_prompt_bans_the_vocabulary_outright() -> None:
-    """The v1 wording only forbade restating a model score that way.
-
-    A model reading it wrote "the likelihood of dilution" and lost the whole
-    judgement, so v2 states the ban as a ban over every string it produces.
-    """
+def test_the_registered_v3_prompt_and_schema_do_not_publish_guard_tokens() -> None:
+    """The guard owns its lexical list; model-facing contracts state principles."""
     instruction = resolve_domain_instruction(
         FINAL_SUPERVISION_TASK, FINAL_SUPERVISION_PROMPT_VERSION
     )
-    assert FINAL_SUPERVISION_PROMPT_VERSION == "v04_final_supervision_v2"
-    # Normalised: the instruction is hard-wrapped, so raw substrings would be
-    # asserting about line breaks rather than about the ban.
-    flattened = " ".join(instruction.split())
-    for term in ("probability", "likelihood", "forecast", "概率"):
-        assert term in flattened
-    assert "must not appear anywhere" in flattened
-    assert "rejected in full" in flattened
-    # v1 stays resolvable so historical traces still identify their prompt.
+    assert FINAL_SUPERVISION_PROMPT_VERSION == "v04_final_supervision_v3"
+    model_contract = (
+        instruction
+        + json.dumps(
+            FinalSupervisionJudgement.model_json_schema(),
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    ).casefold()
+    for term in _FORBIDDEN_TERMS:
+        assert term.casefold() not in model_contract
+    assert "descriptive, evidence-grounded supervisory language" in instruction
+    assert "forward-looking market claims" in instruction
+    assert "insufficient governed evidence" in instruction
+    # Historical traces keep resolving their original prompt identities.
     assert resolve_domain_instruction(FINAL_SUPERVISION_TASK, "v04_final_supervision_v1")
+    assert resolve_domain_instruction(FINAL_SUPERVISION_TASK, "v04_final_supervision_v2")
+
+
+def test_the_model_facing_payload_neutralises_upstream_disclaimers_only() -> None:
+    """Upstream artifacts remain exact while the LLM projection avoids echo bait."""
+    provider = _SequenceProvider([_judgement()])
+    inputs = FinalSupervisionInput(
+        document_supervision=_inputs().document_supervision,
+        model_prediction=ModelPredictionView(
+            status=ChannelStatus.AVAILABLE,
+            reason="the model score is not a probability",
+            score=0.2,
+        ),
+    )
+
+    bundle = LLMFinalSupervisor(provider).supervise(inputs)
+
+    model_facing = " ".join(item.text for item in provider.calls[0]).casefold()
+    for term in _FORBIDDEN_TERMS:
+        assert term.casefold() not in model_facing
+    model_section = next(item for item in provider.calls[0] if item.section == "model_prediction")
+    projected_model = json.loads(model_section.text)
+    assert "score" not in projected_model
+    # The deterministic composition and audit contract are not rewritten.
+    assert "probability" in bundle.result.uncertainty_statement
 
 
 def test_no_provider_degrades_to_the_frozen_composition_and_says_so() -> None:
