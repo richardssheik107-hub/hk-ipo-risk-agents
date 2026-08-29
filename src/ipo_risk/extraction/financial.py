@@ -50,6 +50,10 @@ _PERIOD_SPAN_PHRASE = re.compile(
 _NARRATIVE_BARE_YEAR_RE = re.compile(
     r"(20\d{2})\s*(?:年(?!\s*\d{1,2}\s*月)|財政年度|财政年度)"
 )
+_NARRATIVE_BARE_CHINESE_YEAR_RE = re.compile(
+    r"([〇零一二三四五六七八九]{4})\s*"
+    r"(?:年(?!\s*[一二三四五六七八九十]{1,3}\s*月)|財政年度|财政年度)"
+)
 _ENGLISH_DATE_DAY_FIRST_RE = re.compile(
     r"(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})",
     re.I,
@@ -1738,6 +1742,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         enumerated_values = {
             count for count in selected_enumerated_counts.values() if count is not None
         }
+        localized_prefix_truncated = False
         if len(enumerated_values) == 1:
             enumerated_count = next(iter(enumerated_values))
             if (
@@ -1763,6 +1768,11 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                     values[name] = values[name][:enumerated_count]
                     raw_percentages[name] = raw_percentages[name][:enumerated_count]
                     occurrence_selection[name] = "companion_enumerated_prefix"
+                    label_start = selected_label_starts[name]
+                    if label_start is not None:
+                        _, localized_prefix_truncated = self._enumerated_period_details(
+                            target.text, label_start
+                        )
 
         # A concentration sentence can enumerate several bare years and one
         # final full date while the adjacent page contains a newer, unrelated
@@ -1841,6 +1851,8 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         )
         issues.extend(largest_issue)
         issues.extend(top_five_issue)
+        if localized_prefix_truncated:
+            issues.append("localized_series_trailing_percentage_ambiguous")
         if largest is None or top_five is None:
             issues.append("incomplete_concentration_values")
         if any(value < 0 or value > 100 for value in [largest, top_five] if value is not None):
@@ -1930,12 +1942,26 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         mismatch against a single period. Returns ``None`` when no sentence above
         the label names a series, which leaves the caller's behaviour unchanged.
         """
+        return cls._enumerated_period_details(text, label_start)[0]
+
+    @classmethod
+    def _enumerated_period_details(
+        cls, text: str, label_start: int
+    ) -> tuple[int | None, bool]:
+        """Return period count and whether Chinese-word years govern it."""
+
         sentences = [item for item in re.split(r"[。;；]", text[:label_start]) if item.strip()]
         for sentence in reversed(sentences):
             years = {
                 int(match.group(1))
                 for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)
             }
+            localized_years = {
+                year
+                for match in _NARRATIVE_BARE_CHINESE_YEAR_RE.finditer(sentence)
+                if (year := cls._year_value(match.group(1))) is not None
+            }
+            years.update(localized_years)
             dates = {match.group(0) for match in _CHINESE_DATE_RE.finditer(sentence)}
             dates |= {
                 match.group(0) for match in _CHINESE_WORD_DATE_RE.finditer(sentence)
@@ -1945,11 +1971,13 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             # written to skip, so the two counts never double-count a period.
             total = len(years) + len(dates)
             if total >= 2:
-                return None if _PERIOD_SPAN_PHRASE.search(sentence) else total
+                if _PERIOD_SPAN_PHRASE.search(sentence):
+                    return None, False
+                return total, bool(localized_years)
             if total == 1:
                 # A lone year is a mention ("於2011年上市"), not a series.
-                return None
-        return None
+                return None, False
+        return None, False
 
     @classmethod
     def _label_local_period(cls, text: str, label_start: int) -> _Period | None:
