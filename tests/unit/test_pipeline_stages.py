@@ -254,3 +254,18 @@ def test_frozen_market_stage_summary_is_unchanged_and_claims_no_recomputation() 
     stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["market_features"]
     assert "recomputed" not in stage.summary
     assert "Market runtime path" not in {metric.label for metric in stage.metrics}
+
+
+def test_unavailable_market_stage_names_the_governed_reason() -> None:
+    payload = _runtime_complete_payload()
+    payload["market_context"] = {
+        "status": "unavailable",
+        "provenance": {"runtime_path": "dynamic_pit"},
+        "observations": [
+            {"availability": "unavailable",
+             "missing_reason": "prior_ipo_universe_right_boundary_incomplete"}
+        ],
+    }
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["market_features"]
+    assert "Stated reasons: prior_ipo_universe_right_boundary_incomplete" in stage.summary
+    assert "does not impute" in stage.summary

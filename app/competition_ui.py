@@ -200,11 +200,76 @@ def stage_title_zh(stage: object) -> str:
     return _STAGE_TITLES.get(stage_id, str(getattr(stage, "title", "阶段")))
 
 
+_STAGE_STATUS_LABELS = {
+    # A stage status answers "did this stage run", which is not the question a
+    # channel status answers. Reusing 可用 for both let a completed stage claim
+    # that data exists when the channel had produced none.
+    "available": "已完成",
+    "partial": "部分完成",
+    "pending_gate": "待 Gate",
+}
+
+
+def stage_status_label(stage: object) -> str:
+    status_obj = getattr(stage, "status", "unavailable")
+    status = str(getattr(status_obj, "value", status_obj))
+    return _STAGE_STATUS_LABELS.get(status, status_label(status))
+
+
+def _stage_metrics(stage: object) -> dict[str, str]:
+    return {
+        str(getattr(metric, "label", "")): str(getattr(metric, "value", ""))
+        for metric in (getattr(stage, "metrics", ()) or ())
+    }
+
+
+def _market_observation_counts(metrics: dict[str, str]) -> tuple[int, int] | None:
+    raw = metrics.get("Observations available", "")
+    parts = raw.split(" of ")
+    if len(parts) != 2:
+        return None
+    try:
+        return int(parts[0]), int(parts[1])
+    except ValueError:
+        return None
+
+
 def stage_summary_zh(stage: object) -> str:
     stage_id = str(getattr(stage, "stage_id", ""))
     status_obj = getattr(stage, "status", "unavailable")
     status = str(getattr(status_obj, "value", status_obj))
+    if stage_id == "market_features":
+        degraded = _market_stage_degraded_summary(stage)
+        if degraded:
+            return degraded
     return _STAGE_SUMMARIES.get((stage_id, status), str(getattr(stage, "summary", "")))
+
+
+def _market_stage_degraded_summary(stage: object) -> str:
+    """Refuse the "available" copy when the channel produced no market data.
+
+    The stage status is deliberately ``available`` for a completed run even when
+    an optional channel is empty, so copy keyed on stage status alone states the
+    opposite of what happened. Both facts are read from what the stage reported.
+    """
+
+    metrics = _stage_metrics(stage)
+    channel = metrics.get("Market channel", "")
+    counts = _market_observation_counts(metrics)
+    if not channel and counts is None:
+        return ""
+    available, total = counts if counts else (0, 0)
+    if channel == "available" and (counts is None or available == total):
+        return ""
+    if total and available:
+        return (
+            f"本阶段已执行，Market 通道为「{status_label(channel)}」，"
+            f"仅取得 {available}/{total} 项可用观测；缺失项的原因逐条保留在市场情报面板，界面不做填补。"
+        )
+    return (
+        f"本阶段已执行，但 Market 通道为「{status_label(channel)}」，"
+        f"未取得任何可用观测（0/{total or '—'}）；缺失原因逐条保留在市场情报面板，界面不做填补。"
+    )
 
 
 def stage_notice_zh(stage: object) -> str | None:
@@ -233,6 +298,71 @@ def report_section_title(order: object, fallback: object) -> str:
     return _REPORT_TITLES.get(key, str(fallback))
 
 
+# The market channel states why a feature is absent in a machine-readable
+# vocabulary. Rendering those codes raw leaves a reader with "unavailable" and
+# no way to tell a governed data boundary from a broken pipeline, which is the
+# opposite of what an honest degradation is for.
+_MARKET_MISSING_REASON_LABELS = {
+    "prior_ipo_universe_left_boundary_incomplete":
+        "回看窗口早于语料最早的受管上市日，样本不完整",
+    "prior_ipo_universe_right_boundary_incomplete":
+        "上市日晚于语料覆盖终点，回看窗口内的 IPO 未必齐全",
+    "missing_industry_classification": "缺少行业分类，同业家族无法计算",
+    "prior_ipo_outcome_source_not_configured":
+        "未配置前序 IPO 结果数据层（授权数据，需本地物化）",
+    "prior_ipo_outcomes_withheld_blind_cohort":
+        "窗口内前序 IPO 全属盲测年份，按政策不回读其结果",
+    "no_prior_ipo_offer_amount_sample": "窗口内没有披露募资额的前序 IPO",
+    "no_recent_ipo_outcome_sample": "窗口内没有已完成的前序 IPO 结果",
+    "no_same_industry_recent_outcome_sample": "同业窗口内没有已完成的前序 IPO 结果",
+    "insufficient_governed_prelisting_history": "受管的上市前历史不足",
+    "INDUSTRY_MAPPING_PIT_BLOCKED": "行业分类映射不满足 PIT，按治理决定阻断",
+    "MISSING_INDUSTRY_CLASSIFICATION": "缺少行业分类",
+    "listing_year_outside_governed_market_split": "上市年份在冻结的数据集划分之外",
+    "source_unavailable": "该来源未配置",
+    "missing_benchmark": "缺少基准指数序列",
+    "missing_industry_series": "缺少行业指数序列",
+    "missing_turnover_source": "缺少全市场成交额来源",
+}
+
+
+def market_missing_reason_label(code: object) -> str:
+    text = str(code or "")
+    if not text:
+        return ""
+    label = _MARKET_MISSING_REASON_LABELS.get(text)
+    # An unmapped code is shown verbatim rather than smoothed into prose: an
+    # unrecognised reason is itself information.
+    return f"{label}（{text}）" if label else text
+
+
+def market_degradation_summary(payload: dict[str, Any]) -> str:
+    """Explain, in one sentence, why the market channel is not fully available.
+
+    Reads only what the channel reported. It never asserts a cause the backend
+    did not state, and says nothing at all when every observation is available.
+    """
+
+    market = payload.get("market_context") or {}
+    observations = market.get("observations") or []
+    missing = [
+        str(item.get("missing_reason") or "")
+        for item in observations
+        if item.get("availability") != "available"
+    ]
+    if not missing:
+        return ""
+    counts: dict[str, int] = {}
+    for code in missing:
+        counts[code] = counts.get(code, 0) + 1
+    total = len(observations)
+    parts = [
+        f"{market_missing_reason_label(code)} · {counts[code]}/{total} 项"
+        for code in sorted(counts, key=lambda item: (-counts[item], item))
+    ]
+    return "；".join(parts)
+
+
 def localize_market_observation_rows(rows: Iterable[dict[str, object]]) -> list[dict[str, object]]:
     """Localize common presentation keys while keeping technical feature names intact."""
 
@@ -256,6 +386,8 @@ def localize_market_observation_rows(rows: Iterable[dict[str, object]]) -> list[
             display_key = key_map.get(str(key), str(key))
             if str(key) == "availability":
                 value = status_label(value)
+            elif str(key) == "missing_reason":
+                value = market_missing_reason_label(value)
             localized[display_key] = value
         output.append(localized)
     return output

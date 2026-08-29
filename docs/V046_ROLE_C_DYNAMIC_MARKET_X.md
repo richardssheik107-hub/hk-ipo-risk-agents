@@ -288,6 +288,30 @@ PIT 截止时点      2025-02-12
 Extended 市场环境 已配置 | 未配置 | 读取失败
 ```
 
+### 8.2 降级必须说人话
+
+一个越过语料覆盖终点的案例（例如 MiniMax，招股书披露 2025-12-31、**上市 2026-01-09**）
+15 个特征全部返回 `prior_ipo_universe_right_boundary_incomplete`，通道 `unavailable`。
+界面若只显示「不可用」加一张英文 snake_case 表，读者的第一反应是**系统坏了**——
+而实际是一条受管的数据边界。诚实降级只有在看得懂时才算诚实。
+
+`market_degradation_summary(payload)` 把缺失理由按覆盖项数排序，翻成中文并保留原
+code：
+
+```text
+上市日晚于语料覆盖终点，回看窗口内的 IPO 未必齐全
+（prior_ipo_universe_right_boundary_incomplete） · 15/15 项
+```
+
+未收录的 code 原样显示，不抹平——无法识别的理由本身就是信息。观测表的
+「缺失原因」列同样本地化。七阶段视图的 Market Features 在非可用时把 stated
+reasons 附在 summary 里。
+
+> 覆盖终点是否过于保守？已验算：语料全部招股书的最后披露日为 2025-12-31，
+> 全库 562 例的最小送审-上市间隔为 6 天，因此有数据支撑的最宽松覆盖终点是
+> 2026-01-06。MiniMax 的 30 天窗口需覆盖到 2026-01-08，**仍然不足**。
+> 该案例在本语料下确实拿不到可信 Market-X，当前边界不是保守过头。
+
 后四行只在 `runtime_path = dynamic_pit` 时出现。**provenance 里没有的字段不产生
 行**，因此这张表不会声称 Market 通道没有主张过的来源。七阶段视图的 Market
 Features 同样区分两条路径：dynamic 案例的 summary 明说「不在冻结 universe 内、

@@ -14,6 +14,7 @@ import streamlit as st
 from competition_ui import (
     apply_competition_theme,
     available_market_observation_count,
+    market_degradation_summary,
     market_runtime_summary,
     channel_state_map,
     domain_label,
@@ -40,6 +41,7 @@ from competition_ui import (
     risk_inventory_rows,
     risk_level_label,
     stage_notice_zh,
+    stage_status_label,
     stage_summary_zh,
     stage_title_zh,
     stage_unblocked_items_zh,
@@ -362,7 +364,7 @@ def _render_sidebar_status(payload: dict[str, object], stages) -> None:
         status_obj = getattr(stage, "status", "unavailable")
         raw_status = getattr(status_obj, "value", status_obj)
         gate = f" · {stage.blocking_gate}" if stage.blocking_gate else ""
-        st.sidebar.caption(f"{stage.ordinal}. {stage_title_zh(stage)} · {status_label(raw_status)}{gate}")
+        st.sidebar.caption(f"{stage.ordinal}. {stage_title_zh(stage)} · {stage_status_label(stage)}{gate}")
 
 
 def _render_overview(payload: dict[str, object], stages) -> None:
@@ -452,6 +454,12 @@ def _render_market_and_model(payload: dict[str, object], stages_by_id: dict[str,
                 f"可用观测 {available}/{total if total else 0}"
                 + (f"  ·  {runtime_path}" if runtime_path else "")
             )
+            degradation = market_degradation_summary(payload)
+            if degradation:
+                # "Unavailable" alone reads as a broken pipeline. A governed data
+                # boundary is a different fact and has to say so in words, or the
+                # honest degradation is only honest to whoever wrote it.
+                st.info(f"未取得的观测及原因：{degradation}")
             if runtime_rows:
                 # A frozen artifact read and a point-in-time recomputation both
                 # render as "available"; which one produced these numbers is the
@@ -609,7 +617,7 @@ def _render_system(payload: dict[str, object], stages) -> None:
             {
                 "阶段": stage.ordinal,
                 "名称": stage_title_zh(stage),
-                "状态": status_label(raw_status),
+                "状态": stage_status_label(stage),
                 "阻塞 Gate": stage.blocking_gate or "",
                 "说明": stage_summary_zh(stage),
             }

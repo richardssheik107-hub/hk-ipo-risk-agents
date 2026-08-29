@@ -163,10 +163,19 @@ def _market_features(payload: dict[str, object]) -> StageView:
                     "no market value is imputed."
                 )
         else:
+            reasons = sorted({
+                str(item.get("missing_reason") or "")
+                for item in observations
+                if item.get("availability") != "available"
+            } - {""})
             summary = (
                 "The Market-X stage completed to an explicit unavailable/partial state. Missing governed observations remain visible with their reasons; "
                 "the UI does not impute market values."
             )
+            if reasons:
+                # Naming the governed reason separates a data boundary from a
+                # broken channel, which "unavailable" on its own cannot do.
+                summary += " Stated reasons: " + ", ".join(reasons) + "."
         return StageView(
             stage_id="market_features", ordinal=3, title="Market Features",
             status=StageStatus.COMPLETED if _runtime_completed(payload) else StageStatus.AVAILABLE,
