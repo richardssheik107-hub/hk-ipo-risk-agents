@@ -8,9 +8,11 @@
 >
 > Role-B diagnostic track：`v0.4.6`
 >
+> Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`
+>
 > 状态日期：`2026-08-29`
 >
-> 当前结论：**NOT COMPETITION_READY**
+> 当前结论：**NOT COMPETITION_READY**；尚未标记 `COMPETITION_READY`。
 
 ## 当前执行模式
 
