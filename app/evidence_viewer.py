@@ -1,10 +1,16 @@
 """Evidence Viewer: the prospectus page beside the claim that cites it.
 
-The left half renders the actual PDF page with the Evidence bounding box drawn
-on it; the right half shows the risk, the LLM structured facts, the deterministic
+The left half renders the actual PDF page with the cited region outlined; the
+right half shows the risk, the LLM structured facts, the deterministic
 Calculation and the Verifier's ruling for that same Evidence.  Nothing here
-edits Evidence: page numbers, bounding boxes and identities come from the parser
-and are displayed as they are, or reported as unavailable.
+edits Evidence: page numbers, geometry and identities come from the parser and
+from PyMuPDF's own search of that page, and are displayed as they are or
+reported as unavailable.
+
+The box is drawn by the same localiser the screenshot export uses, so the page a
+reviewer sees here is the page the submission ships.  Its caption always names
+the granularity that was achieved: a located snippet line, a matched keyword, or
+the parser's page-level union -- which is never presented as a snippet box.
 
 Rendering needs the original PDF bytes.  When the run did not come from an upload
 in this session the viewer says so and still shows the Evidence text, because a
@@ -13,9 +19,17 @@ missing page image must not hide the claim it supports.
 
 from __future__ import annotations
 
-from typing import Any, Sequence
+from typing import Any
 
 import streamlit as st
+
+from ipo_risk.runtime.evidence_screenshots import (
+    GRANULARITY_KEYWORD,
+    GRANULARITY_SNIPPET,
+    EvidenceCapture,
+    EvidenceCaptureError,
+    capture_evidence_page,
+)
 
 from competition_runtime_view import evidence_catalog, evidence_label
 from competition_ui import (
@@ -26,52 +40,47 @@ from competition_ui import (
     status_badge,
 )
 
-PAGE_RENDER_DPI = 130
-_HIGHLIGHT = (0.85, 0.16, 0.16)
-
-
-class PageRenderError(RuntimeError):
-    """The requested prospectus page could not be rendered."""
-
-
-def render_page_png(
-    pdf_bytes: bytes,
-    page_number: int,
-    bbox: Sequence[float] | None = None,
-    *,
-    dpi: int = PAGE_RENDER_DPI,
-) -> bytes:
-    """Render one 1-indexed PDF page to PNG, outlining ``bbox`` when supplied."""
-
-    import pymupdf
-
-    if not pdf_bytes:
-        raise PageRenderError("no prospectus bytes are available for this run")
-    if page_number < 1:
-        raise PageRenderError(f"page number {page_number} is not a 1-indexed page")
-    try:
-        with pymupdf.open(stream=pdf_bytes, filetype="pdf") as document:
-            if page_number > document.page_count:
-                raise PageRenderError(
-                    f"page {page_number} is beyond the document's {document.page_count} page(s)"
-                )
-            page = document.load_page(page_number - 1)
-            if bbox is not None and len(tuple(bbox)) == 4:
-                rectangle = pymupdf.Rect(*bbox)
-                if not rectangle.is_empty:
-                    annotation = page.add_rect_annot(rectangle)
-                    annotation.set_colors(stroke=_HIGHLIGHT)
-                    annotation.set_border(width=1.6)
-                    annotation.update(opacity=0.9)
-            return page.get_pixmap(dpi=dpi).tobytes("png")
-    except PageRenderError:
-        raise
-    except Exception as exc:  # a rendering failure must not blank the workspace
-        raise PageRenderError(f"{type(exc).__name__}: {exc}") from exc
-
 
 def _display(value: object) -> str:
     return "不可用" if value in (None, "", {}, []) else str(value)
+
+
+def _capture(item: dict[str, Any]) -> EvidenceCapture:
+    """The catalog row as the localiser's input; nothing is added to it."""
+
+    metadata = item.get("evidence_metadata") or {}
+    return EvidenceCapture(
+        evidence_id=str(item.get("evidence_id") or ""),
+        page=item.get("page"),
+        snippet=item.get("text") or "",
+        matched_keywords=tuple(
+            str(keyword)
+            for keyword in (metadata.get("matched_keywords") or [])
+            if str(keyword).strip()
+        ),
+        recorded_bbox=item.get("bbox"),
+        recorded_bbox_granularity=metadata.get("bbox_granularity"),
+    )
+
+
+def _localisation_caption(region: Any) -> str:
+    """Say which granularity the drawn box actually has, every time."""
+
+    if region.granularity == GRANULARITY_SNIPPET:
+        return (
+            "红框由 PyMuPDF 在本页搜索该条 Evidence 片段原文得到，是精确到行的真实 PDF 坐标。"
+        )
+    if region.granularity == GRANULARITY_KEYWORD:
+        return (
+            "该条 Evidence 片段未能整行命中，红框是检索实际匹配到的关键词在本页的真实坐标，"
+            "覆盖范围小于完整片段。"
+        )
+    if region.rects:
+        return (
+            "该条 Evidence 未能在本页精确定位，红框是解析器记录的页级文本范围"
+            f"（{region.granularity}），不是精确片段框。"
+        )
+    return "该条 Evidence 没有可用坐标，页面按原样展示，未绘制高亮框。"
 
 
 def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> None:
@@ -134,13 +143,14 @@ def render_evidence_viewer(payload: dict[str, Any], pdf_bytes: bytes | None) -> 
             st.warning("该条 Evidence 没有页码，解析阶段未能定位到具体页，因此不渲染页面。")
         else:
             try:
-                image = render_page_png(pdf_bytes, int(page), item.get("bbox"))
-            except PageRenderError as exc:
+                image, region, _, _ = capture_evidence_page(pdf_bytes, _capture(item))
+            except EvidenceCaptureError as exc:
                 st.error(f"该页无法渲染：{exc}")
+            except Exception as exc:  # a render failure must not blank the workspace
+                st.error(f"该页无法渲染：{type(exc).__name__}: {exc}")
             else:
                 st.image(image, caption=f"招股书第 {page} 页", width="stretch")
-                if item.get("bbox") is None:
-                    st.caption("该条 Evidence 没有 bbox，页面按原样展示，未绘制高亮框。")
+                st.caption(_localisation_caption(region))
         with st.expander("Evidence 原文", expanded=True):
             st.write(item.get("text") or "该条 Evidence 没有可展示的原文。")
 

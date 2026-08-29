@@ -179,6 +179,10 @@ def evidence_catalog(payload: dict[str, Any]) -> list[dict[str, Any]]:
                         "text": evidence.get("text") or "",
                         "source_type": evidence.get("source_type") or "",
                         "relevance_score": evidence.get("relevance_score"),
+                        # Retrieval metadata travels with the item: the viewer
+                        # localises the cited text with the same inputs the
+                        # screenshot export uses, so both draw the same box.
+                        "evidence_metadata": evidence.get("metadata") or {},
                         "risk_id": risk["risk_id"],
                         "risk_code": risk.get("risk_code", ""),
                         "risk_level": risk.get("level", ""),
