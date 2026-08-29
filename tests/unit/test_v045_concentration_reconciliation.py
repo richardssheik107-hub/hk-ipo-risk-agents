@@ -329,6 +329,60 @@ def test_equivalent_undated_pair_is_retained_only_as_supporting_evidence() -> No
     assert result.metadata["equivalent_supporting_candidate_pages"] == [21]
 
 
+def test_noncontradictory_partial_fact_is_retained_only_as_supporting_evidence() -> None:
+    extractor = V03FinancialFactExtractor()
+    governing = _fact(
+        period_end=date(2020, 12, 31),
+        period_months=12,
+        largest="39.0",
+        top_five="44.1",
+        page=20,
+    )
+    matching_partial = _fact(
+        period_end=None,
+        period_months=None,
+        largest=None,
+        top_five="44.1",
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["missing_period", "incomplete_concentration_values"],
+    )
+    contradictory_partial = _fact(
+        period_end=None,
+        period_months=None,
+        largest=None,
+        top_five="45.0",
+        page=22,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["missing_period", "incomplete_concentration_values"],
+    )
+    invalid_partial = _fact(
+        period_end=None,
+        period_months=None,
+        largest=None,
+        top_five="753.1",
+        page=23,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=[
+            "missing_period",
+            "incomplete_concentration_values",
+            "percentage_out_of_range",
+        ],
+    )
+
+    result = extractor._merge_concentration_facts(
+        "customer",
+        [governing, matching_partial, contradictory_partial, invalid_partial],
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("39.0")
+    assert result.top_five_pct == Decimal("44.1")
+    assert result.evidence_ids == ["e-20", "e-21"]
+    assert result.metadata["partial_supporting_candidate_count"] == 1
+    assert result.metadata["partial_supporting_candidate_pages"] == [21]
+
+
 def test_same_date_period_length_disagreement_remains_fail_closed() -> None:
     extractor = V03FinancialFactExtractor()
     annual = _fact(

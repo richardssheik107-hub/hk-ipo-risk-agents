@@ -35,6 +35,15 @@ _RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v2"
 _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES = frozenset(
     {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
 )
+_PARTIAL_SUPPORT_ONLY_ISSUES = frozenset(
+    {
+        "concentration_percentage_missing",
+        "incomplete_concentration_values",
+        "latest_period_months_ambiguous",
+        "missing_period",
+        "value_period_count_mismatch",
+    }
+)
 
 
 class _ConcentrationReconciliationMixin:
@@ -316,7 +325,31 @@ class _ConcentrationReconciliationMixin:
             if largest is not None and top_five is not None
             else []
         )
-        evidence_facts = [*selected, *equivalent_supporting]
+        partial_supporting = (
+            [
+                item
+                for item in facts
+                if item not in selected
+                and item not in equivalent_supporting
+                and bool(item.issues)
+                and set(item.issues) <= _PARTIAL_SUPPORT_ONLY_ISSUES
+                and (
+                    (item.largest_counterparty_pct is None)
+                    != (item.top_five_pct is None)
+                )
+                and (
+                    item.largest_counterparty_pct is None
+                    or item.largest_counterparty_pct == largest
+                )
+                and (
+                    item.top_five_pct is None
+                    or item.top_five_pct == top_five
+                )
+            ]
+            if largest is not None and top_five is not None
+            else []
+        )
+        evidence_facts = [*selected, *equivalent_supporting, *partial_supporting]
         evidence_ids = self._dedupe_strings(
             [evidence_id for item in evidence_facts for evidence_id in item.evidence_ids]
         )
@@ -408,6 +441,10 @@ class _ConcentrationReconciliationMixin:
                 "equivalent_supporting_candidate_count": len(equivalent_supporting),
                 "equivalent_supporting_candidate_pages": [
                     item.page for item in equivalent_supporting
+                ],
+                "partial_supporting_candidate_count": len(partial_supporting),
+                "partial_supporting_candidate_pages": [
+                    item.page for item in partial_supporting
                 ],
                 "reconciliation_version": _RECONCILIATION_VERSION,
                 "candidate_diagnostics": candidate_diagnostics,
