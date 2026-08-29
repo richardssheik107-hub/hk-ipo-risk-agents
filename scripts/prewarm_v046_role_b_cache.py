@@ -19,6 +19,7 @@ for item in (_ROOT, _SOURCE):
         sys.path.insert(0, str(item))
 
 from ipo_risk.parsers.pymupdf_parser import PyMuPDFRoleBRecallParser
+from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.schemas import DocumentParseRequest
 from scripts.run_v04_role_e_demo import (
     PROSPECTUS_ROOT_ENV,
@@ -74,6 +75,10 @@ def _pass(
         chunks = parser.parse(
             DocumentParseRequest(document_id=case_id, prospectus_path=str(prospectus))
         )
+        retriever = KeywordDocumentRetriever(cache_root=cache_root)
+        retrieval = retriever.retrieve(
+            chunks, "cash_and_cash_equivalents", limit=20
+        )
         semantic_hash = _hash(
             [
                 {
@@ -94,6 +99,10 @@ def _pass(
                 "chunk_count": len(chunks),
                 "semantic_hash": semantic_hash,
                 "cache_metrics": parser.last_cache_metrics,
+                "retrieval_semantic_hash": _hash(
+                    [item.model_dump(mode="json") for item in retrieval]
+                ),
+                "retrieval_cache_metrics": retriever.last_cache_metrics,
             }
         )
         print(f"[{ordinal:02d}/{len(case_ids):02d}] {case_id}")
@@ -149,12 +158,15 @@ def main() -> int:
     mismatches = [
         left["case_id"]
         for left, right in zip(cold, warm, strict=True)
-        if left["semantic_hash"] != right["semantic_hash"]
+        if (
+            left["semantic_hash"] != right["semantic_hash"]
+            or left["retrieval_semantic_hash"] != right["retrieval_semantic_hash"]
+        )
     ]
     if mismatches:
         raise RuntimeError(f"cold/warm semantic mismatch count:{len(mismatches)}")
     summary = {
-        "summary_version": "v046_role_b_dev79_cache_prewarm_v1",
+        "summary_version": "v046_role_b_dev79_cache_prewarm_v2",
         "case_count": len(case_ids),
         "case_set_hash": _hash(case_ids),
         "manifest_hash": manifest.get("manifest_hash"),
@@ -166,6 +178,18 @@ def main() -> int:
         ),
         "warm_parser_cache_hits": sum(
             int(item["cache_metrics"]["parser_cache_hits"]) for item in warm
+        ),
+        "cold_retrieval_cache_misses": sum(
+            int(item["retrieval_cache_metrics"]["retrieval_cache_misses"])
+            for item in cold
+        ),
+        "cold_retrieval_cache_hits": sum(
+            int(item["retrieval_cache_metrics"]["retrieval_cache_hits"])
+            for item in cold
+        ),
+        "warm_retrieval_cache_hits": sum(
+            int(item["retrieval_cache_metrics"]["retrieval_cache_hits"])
+            for item in warm
         ),
         "semantic_mismatch_count": len(mismatches),
         "cache_fingerprints": sorted(
@@ -185,6 +209,7 @@ def main() -> int:
                     "pdf_sha256": item["pdf_sha256"],
                     "chunk_count": item["chunk_count"],
                     "semantic_hash": item["semantic_hash"],
+                    "retrieval_semantic_hash": item["retrieval_semantic_hash"],
                 }
                 for item in warm
             ]
