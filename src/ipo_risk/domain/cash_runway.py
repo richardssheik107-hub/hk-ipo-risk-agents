@@ -220,7 +220,7 @@ class CashRunwayRiskBuilder:
             issues.append("cash_value_negative")
         if cash_flow.normalized_value is None:
             issues.append("operating_cash_flow_value_missing")
-        if cash_flow.period_months not in {3, 6, 9, 12}:
+        if cash_flow.period_months not in range(1, 13):
             issues.append("operating_cash_flow_period_months_invalid")
         if cash.period_months is not None:
             issues.append("cash_period_months_should_be_none")

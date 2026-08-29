@@ -160,7 +160,7 @@ def test_non_extracted_metric_never_builds(field: str, status: ExtractionStatus)
         ("unit", "million", "unit_mismatch"),
         ("period_end", date(2024, 6, 30), "period_end_mismatch"),
         ("period_months", None, "operating_cash_flow_period_months_invalid"),
-        ("period_months", 2, "operating_cash_flow_period_months_invalid"),
+        ("period_months", 13, "operating_cash_flow_period_months_invalid"),
     ],
 )
 def test_incompatible_financial_facts_never_build(
@@ -174,6 +174,16 @@ def test_incompatible_financial_facts_never_build(
     assert result.status == CashRunwayBuildStatus.NEEDS_REVIEW
     assert issue in result.issues
     assert result.calculation is None
+
+
+def test_four_month_interim_cash_flow_builds_without_rescaling() -> None:
+    extraction, evidence = inputs(cash="3864", cash_flow="-31645", period_months=4)
+
+    result = CashRunwayRiskBuilder().build(extraction, evidence)
+
+    assert result.status == CashRunwayBuildStatus.BUILT
+    assert result.calculation is not None
+    assert result.calculation.result == str(Decimal("3864") * Decimal("4") / Decimal("31645"))
 
 
 def test_extraction_issues_prevent_calculation() -> None:

@@ -22,7 +22,7 @@ from ipo_risk.schemas import (
 )
 
 
-def valid_case() -> tuple[RiskItem, dict[str, Evidence]]:
+def valid_case(period_months: int = 3) -> tuple[RiskItem, dict[str, Evidence]]:
     cash_evidence = Evidence(
         evidence_id="cash-e",
         document_id="doc",
@@ -57,7 +57,7 @@ def valid_case() -> tuple[RiskItem, dict[str, Evidence]]:
             currency="CNY",
             unit="thousand",
             period_end=date(2024, 3, 31),
-            period_months=3,
+            period_months=period_months,
             evidence_id="ocf-e",
             document_id="doc",
             chunk_id="ocf-chunk",
@@ -104,6 +104,15 @@ def test_valid_cash_runway_is_independently_verified() -> None:
     assert "not a probability" in result.verified_risk.verification_notes
     assert result.issues == []
     assert all(result.checks.values())
+
+
+def test_four_month_interim_cash_runway_is_independently_verified() -> None:
+    risk, evidence = valid_case(period_months=4)
+
+    result = CashRunwayRiskVerifier().verify(risk, evidence)
+
+    assert result.status == CashRunwayVerificationStatus.VERIFIED
+    assert result.verified_risk is not None
 
 
 def test_one_evidence_item_can_support_both_cash_metrics() -> None:

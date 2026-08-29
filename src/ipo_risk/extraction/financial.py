@@ -421,7 +421,7 @@ class FinancialEvidenceExtractor:
                     or cash_value.currency != flow_value.currency
                     or cash_value.unit is None
                     or cash_value.unit != flow_value.unit
-                    or flow_value.period_months not in {3, 6, 9, 12}
+                    or flow_value.period_months not in range(1, 13)
                 ):
                     continue
                 pairs.append((cash, flow))
@@ -682,7 +682,7 @@ class FinancialEvidenceExtractor:
         if selected_value is None:
             issues.append("latest_complete_value_not_determinable")
         if metric_name == "operating_cash_flow" and (
-            selected_period is None or selected_period.months not in {3, 6, 9, 12}
+            selected_period is None or selected_period.months not in range(1, 13)
         ):
             issues.append("operating_cash_flow_period_months_missing")
 
@@ -2339,7 +2339,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         if selected_value is None:
             issues.append("latest_complete_value_not_determinable")
         if metric_name == "operating_cash_flow" and (
-            selected_period is None or selected_period.months not in {3, 6, 9, 12}
+            selected_period is None or selected_period.months not in range(1, 13)
         ):
             issues.append("operating_cash_flow_period_months_missing")
 

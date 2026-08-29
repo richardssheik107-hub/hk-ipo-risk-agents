@@ -176,7 +176,7 @@ class CashRunwayRiskVerifier:
                     record(f"{name}_finite", parsed.get(name) is not None, f"{name}_invalid")
                 record(
                     "period_months",
-                    parsed.get("period_months") in {3, 6, 9, 12},
+                    parsed.get("period_months") in range(1, 13),
                     "period_months_invalid",
                 )
                 record(
@@ -204,7 +204,7 @@ class CashRunwayRiskVerifier:
             calculation is not None
             and parsed.get("cash") is not None
             and parsed.get("operating_cash_flow") is not None
-            and parsed.get("period_months") in {3, 6, 9, 12}
+            and parsed.get("period_months") in range(1, 13)
             and parsed["cash"] >= 0
             and parsed["operating_cash_flow"] < 0
         )
