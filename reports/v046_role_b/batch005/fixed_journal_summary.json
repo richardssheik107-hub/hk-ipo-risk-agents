@@ -1,0 +1,31 @@
+{
+  "artifact_version": "v046_role_b_batch005_fixed_journal_summary_v1",
+  "base_commit": "0fe75521f27c6650575cf3ffe213df2c38273565",
+  "production_commit": "bfb18ef3680e99e7890885e3ad94cea2d1b3c04b",
+  "case_count": 10,
+  "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "journal_hash": "8d5cb474aaf6db3dcc504b9b7f926ac5948834709d9798dd2bf11252e0dce5e2",
+  "baseline": {
+    "m1": {"correct": 12, "support": 30, "rate": 0.4},
+    "m2": {"correct": 17, "support": 48, "rate": 0.3541666666666667}
+  },
+  "result": {
+    "m1": {"correct": 12, "support": 30, "rate": 0.4},
+    "m2": {"correct": 18, "support": 48, "rate": 0.375}
+  },
+  "per_risk_m1": {
+    "cash_runway": "1/5",
+    "customer_concentration": "4/8",
+    "supplier_concentration": "3/9",
+    "redemption_rights": "4/8"
+  },
+  "customer_existence_precision": 1.0,
+  "supplier_existence_precision": 1.0,
+  "network_calls": 0,
+  "formal_monotonicity": "NOT_PROVEN",
+  "formal_monotonicity_reason": "fixed_journal_replay_disallows_shadow_mode",
+  "validation_opened": false,
+  "blind_2025_accessed": false,
+  "existing_gold_modified": false
+}

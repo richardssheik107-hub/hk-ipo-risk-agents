@@ -14,6 +14,14 @@
       "fixed_journal_m1": "12/30",
       "fixed_journal_m2": "17/48",
       "network_calls": 0
+    },
+    {
+      "id": "batch005_concentration_exact_fact",
+      "commit": "bfb18ef3680e99e7890885e3ad94cea2d1b3c04b",
+      "type": "accepted_production_fix",
+      "fixed_journal_m1": "12/30",
+      "fixed_journal_m2": "18/48",
+      "network_calls": 0
     }
   ]
 }

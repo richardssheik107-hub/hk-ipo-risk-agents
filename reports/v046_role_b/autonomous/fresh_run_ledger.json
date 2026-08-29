@@ -19,6 +19,18 @@
       "scope_rejections": 0,
       "monotonicity": true,
       "classification": "ACCEPTED_FRESH_CHECKPOINT"
+    },
+    {
+      "id": "batch005_fresh_checkpoint",
+      "commit": "bfb18ef3680e99e7890885e3ad94cea2d1b3c04b",
+      "journal_hash": "da2361fd34f88d1402be85ed75c87ef6fb32ba2dd755265642599330b35dbeb4",
+      "m1": "11/30",
+      "m2": "17/48",
+      "structured_valid": "38/40",
+      "transport_failures": 0,
+      "scope_rejections": 0,
+      "monotonicity": true,
+      "classification": "ACCEPTED_FRESH_CHECKPOINT"
     }
   ],
   "next_fresh_checkpoint": "after_next_meaningful_accepted_bundle"

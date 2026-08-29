@@ -57,7 +57,8 @@ _ROW_AMOUNT_TOKEN_RE = re.compile(
     rf"(?:\(\s*{_ROW_NUMBER_BODY}\s*\)|（\s*{_ROW_NUMBER_BODY}\s*）|[+\-−]?\s*{_ROW_NUMBER_BODY}|[-–—])"
 )
 _PERCENT_RE = re.compile(
-    r"(?P<value>[+\-−]?\s*\d+(?:\.\d+)?)\s*(?:[%％]|per\s+cent|percent)", re.I
+    r"(?P<value>[+\-−]?\s*\d+(?:\s*\.\s*\d+)?)\s*(?:[%％]|per\s+cent|percent)",
+    re.I,
 )
 
 _V03_LABELS = {
@@ -1435,7 +1436,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         # a detail table.  Concatenating both segments lets a row percentage
         # overwrite the aggregate top-five value when the latest value is read.
         occurrence_series: dict[
-            str, list[tuple[int, list[Decimal], list[str], int | None]]
+            str, list[tuple[int, list[Decimal], list[str], int | None, _Period | None]]
         ] = {"largest": [], "top_five": []}
         scope_skipped = False
         for label_start, start_after_label, name in matches:
@@ -1463,6 +1464,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                         occurrence_values,
                         occurrence_raw,
                         self._enumerated_period_count(target.text, label_start),
+                        self._label_local_period(target.text, label_start),
                     )
                 )
 
@@ -1486,10 +1488,14 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             "largest": None,
             "top_five": None,
         }
+        selected_local_periods: dict[str, _Period | None] = {
+            "largest": None,
+            "top_five": None,
+        }
         for name, occurrences in occurrence_series.items():
             selected_index: int | None = None
             selected_basis: str | None = None
-            for index, (_, occurrence_values, _, enumerated_count) in enumerate(occurrences):
+            for index, (_, occurrence_values, _, enumerated_count, _) in enumerate(occurrences):
                 if enumerated_count is not None and len(occurrence_values) == enumerated_count:
                     selected_index = index
                     selected_basis = "enumerated_period_count"
@@ -1510,11 +1516,14 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 selected_basis = "first_nonempty_fail_closed"
 
             if selected_index is not None:
-                _, selected_values, selected_raw, selected_count = occurrences[selected_index]
+                _, selected_values, selected_raw, selected_count, selected_local_period = (
+                    occurrences[selected_index]
+                )
                 values[name] = selected_values
                 raw_percentages[name] = selected_raw
                 selected_enumerated_counts[name] = selected_count
                 occurrence_selection[name] = selected_basis
+                selected_local_periods[name] = selected_local_period
 
             occurrence_diagnostics[name] = [
                 {
@@ -1528,8 +1537,33 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                     occurrence_values,
                     _,
                     enumerated_count,
+                    _,
                 ) in enumerate(occurrences)
             ]
+
+        # A concentration sentence can enumerate several bare years and one
+        # final full date while the adjacent page contains a newer, unrelated
+        # date.  When both percentage series independently align to that same
+        # label-local full period, the local period is the governed denominator
+        # context.  Neighbouring dates must not re-date the percentages.
+        local_period_values = {
+            period
+            for period in selected_local_periods.values()
+            if period is not None
+        }
+        label_local_period_aligned = (
+            len(local_period_values) == 1
+            and all(period is not None for period in selected_local_periods.values())
+            and selected_enumerated_counts["largest"] is not None
+            and selected_enumerated_counts["largest"]
+            == selected_enumerated_counts["top_five"]
+            == len(values["largest"])
+            == len(values["top_five"])
+        )
+        if label_local_period_aligned:
+            periods = [next(iter(local_period_values))]
+            period_source = target
+            period_issues = []
 
         issues = list(period_issues)
         if self._review_only_context(evidence, target):
@@ -1594,6 +1628,11 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 ],
                 "percentage_semantics": "0_to_100_percent",
                 "period_source_chunk_id": period_source.chunk_id if period_source else None,
+                "concentration_period_selection": (
+                    "aligned_label_local_period"
+                    if label_local_period_aligned
+                    else "best_available_period_context"
+                ),
                 # Records that a receivable/payable share was read and discarded,
                 # so a dropped segment is auditable rather than silently absent.
                 "balance_scope_segment_skipped": scope_skipped,
@@ -1641,6 +1680,17 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 # A lone year is a mention ("於2011年上市"), not a series.
                 return None
         return None
+
+    @classmethod
+    def _label_local_period(cls, text: str, label_start: int) -> _Period | None:
+        """Return the nearest full period in the sentence that owns a label."""
+
+        sentence_start = max(
+            text.rfind(delimiter, 0, label_start) for delimiter in ("。", ";", "；")
+        )
+        prefix = text[sentence_start + 1 : label_start]
+        periods = cls._narrative_periods(prefix)
+        return periods[-1] if periods else None
 
     @staticmethod
     def _latest_concentration_value(

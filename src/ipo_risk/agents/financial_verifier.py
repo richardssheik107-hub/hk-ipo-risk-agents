@@ -557,6 +557,10 @@ class V03FinancialVerifier:
     @classmethod
     def _text_supports_decimal(cls, text: str, expected: Decimal) -> bool:
         normalized = text.replace(",", "").replace("，", "")
+        # PDF text extraction can insert layout whitespace around a decimal
+        # separator (for example ``32 .7%``).  Normalize only separators that
+        # are bounded by digits so prose and unrelated tokens remain intact.
+        normalized = re.sub(r"(?<=\d)\s*\.\s*(?=\d)", ".", normalized)
         number = re.escape(format(abs(expected), "f"))
         boundary = rf"(?<![\d.]){number}(?![\d.])"
         if expected < 0:

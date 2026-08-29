@@ -90,7 +90,7 @@ class _ConcentrationReconciliationMixin:
 
         latest_end = max(item[0] for item in periods)
         latest = [item for item in periods if item[0] == latest_end]
-        latest_months = {item[1] for item in latest}
+        latest_months = {item[1] for item in latest if item[1] is not None}
         issues = list(fact.issues)
 
         if len(latest_months) != 1:
@@ -106,6 +106,9 @@ class _ConcentrationReconciliationMixin:
             )
 
         resolved_months = next(iter(latest_months))
+        metadata["null_period_month_candidates_ignored"] = sum(
+            1 for _, months in latest if months is None
+        )
         if fact.period_end != latest_end or fact.period_months != resolved_months:
             metadata["period_reconciliation"] = "chronological_latest_existing_candidate"
             metadata["period_before_reconciliation"] = {
@@ -281,6 +284,12 @@ class _ConcentrationReconciliationMixin:
                     ),
                     "percentage_occurrences": item.metadata.get(
                         "percentage_occurrences", {}
+                    ),
+                    "concentration_period_selection": item.metadata.get(
+                        "concentration_period_selection"
+                    ),
+                    "period_reconciliation": item.metadata.get(
+                        "period_reconciliation"
                     ),
                     "selected_for_merge": item in selected,
                 }
