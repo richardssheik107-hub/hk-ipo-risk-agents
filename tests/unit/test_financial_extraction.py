@@ -92,6 +92,36 @@ def test_table_aware_cash_flow_does_not_treat_section_heading_as_net_row() -> No
     assert result.status != ExtractionStatus.EXTRACTED
 
 
+@pytest.mark.parametrize(
+    "label",
+    [
+        "經營活動所得╱（所用）現金流量淨額",
+        "經營活動所用現金流量淨額",
+        "经营活动所得/（所用）现金流量净额",
+        "经营活动所用现金流量净额",
+    ],
+)
+def test_operating_cash_flow_accepts_cash_flow_net_amount_wording(
+    label: str,
+) -> None:
+    source = chunk(
+        "截至2022年6月30日止六個月\n"
+        "人民幣千元\n"
+        f"{label}\n"
+        "(74,558)"
+    )
+
+    result = FinancialEvidenceExtractor().extract(
+        [],
+        [evidence(source)],
+        {source.chunk_id: source},
+    ).operating_cash_flow
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.normalized_value == Decimal("-74558")
+    assert result.period_months == 6
+
+
 def table(label: str, values: list[str], *, unit: str = "人民幣千元") -> str:
     return "\n".join(
         [
