@@ -19,10 +19,10 @@ market_agent: market_intelligence
 verifier: specialized_v03
 supervisor: v03
 predictor: rule_based
-# Latest three-case real-provider acceptance on current main used the
-# OpenAI-compatible transport. Environment variables still have precedence, so
-# an explicitly configured verified provider/model can override this safely.
-llm_provider: openai_compatible
+# Keep the frozen competition default on the acceptance-tested Responses path.
+# Environment variables have precedence, so a separately validated demo runtime
+# may opt into openai_compatible without mutating the frozen config identity.
+llm_provider: openai_responses
 llm_timeout_seconds: 300
 llm_max_retries: 0
 market_data_provider: unavailable
