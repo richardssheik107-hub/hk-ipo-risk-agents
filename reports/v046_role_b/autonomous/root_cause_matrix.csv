@@ -1,9 +1,8 @@
-rank,root,status,proven_units,latest_action,next_action
-1,concentration_exact_fact_extraction,partially_closed,4,spaced_decimals_and_local_period_fixed,defer remaining severity-policy mismatch
-2,period_candidate_generation,rejected,0,batch006_current_audit_zero_units,no production change
-3,parser_preservation,rejected,0,batch007_pdf_text_and_trace_audit,no production change
-4,deterministic_fact_missing,partially_closed,1,batch008_cash_closed_and_customer_reclassified,defer ranked supplier-table unit pending owner replan
-5,retrieval_candidate_miss,queued,4,batch008_customer_reclassification,audit bounded candidate recall after owner replan
-6,numeric_extraction,queued,1,classified_by_batch003,audit numeric parsing
-7,llm_evidence_stability,queued,3,diagnostic_non_reproduction,measure at fresh checkpoint
-8,final_evidence_binding,queued,1,batch004 evidence retained,inspect exact-anchor mismatch
+rank,root,status,proven_units,batch009_action,next_action
+1,legal_lifecycle_recognition,closed,2,generic restoration terms plus uncertain historical fail-closed,retain accepted checkpoint
+2,ranked_concentration_table_extraction,rejected_current_grammar,1,real-page probe passed but fixed10 precision regressed,redesign with candidate-context gating before retry
+3,retrieval_candidate_miss,open,16_m2_units_in_forensic_011,no production change in Batch009,audit query and fusion ranking on larger Development
+4,retrieval_ranking_or_topk_miss,open,1_m1_and_1_m2_in_forensic_011,01961 redemption inspected at rank18,prefer semantic transaction co-occurrence over broad limit increase
+5,numeric_extraction,open,4_m1_units_in_forensic_011,legacy cash grammar retained from Batch008,audit remaining Financial grammars
+6,final_evidence_binding,open,7_m2_units_in_forensic_011,legal status recovered but exact Evidence misses remain,trace Evidence ID page and anchor retention
+7,llm_evidence_stability,open,3_original_failures_nonreproduced,fixed journal only in Batch009,use bounded fresh checkpoint after next meaningful deterministic bundle

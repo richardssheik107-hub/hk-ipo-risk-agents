@@ -33,5 +33,5 @@
       "classification": "ACCEPTED_FRESH_CHECKPOINT"
     }
   ],
-  "next_fresh_checkpoint": "PAUSED_BY_OWNER_AFTER_BATCH008"
+  "next_fresh_checkpoint": "PAUSED_BY_OWNER_AFTER_BATCH009; no fresh provider call was made in Batch009"
 }

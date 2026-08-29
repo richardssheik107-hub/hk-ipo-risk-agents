@@ -1,11 +1,11 @@
 {
-  "version": "v046_autonomous_fix_priority_v1",
-  "active": "PAUSED_FOR_OWNER_REPLAN",
+  "version": "v046_autonomous_fix_priority_v2",
+  "active": "PAUSED_FOR_OWNER_REPLAN_AFTER_BATCH009",
   "ranked": [
-    {"rank": 1, "root": "ranked_concentration_table_extraction", "reason": "one audited supplier unit consumes a ranked table but lacks deterministic aggregation"},
-    {"rank": 2, "root": "retrieval_candidate_miss", "reason": "three audited units do not receive their governed Evidence page"},
-    {"rank": 3, "root": "numeric_extraction", "reason": "one current unit has preserved text but no value"},
-    {"rank": 4, "root": "llm_evidence_stability", "reason": "structured failures remain runtime reliability cost"},
-    {"rank": 5, "root": "final_evidence_binding", "reason": "one pending risk retains Evidence but misses the exact governed anchor"}
+    {"rank": 1, "root": "retrieval_candidate_and_ranking_miss", "reason": "largest proven first-failure layer; 01961 governed redemption page remains rank 18"},
+    {"rank": 2, "root": "final_evidence_binding", "reason": "legal status recovery exposed remaining page/exact-anchor misses"},
+    {"rank": 3, "root": "numeric_extraction", "reason": "forensic_011 still attributes four M1 units to deterministic extraction"},
+    {"rank": 4, "root": "ranked_concentration_table_extraction_v2", "reason": "direct grammar was rejected after a supplier precision regression; any retry needs stricter candidate-context gating"},
+    {"rank": 5, "root": "llm_evidence_stability", "reason": "defer fresh provider spend until another meaningful deterministic bundle"}
   ]
 }

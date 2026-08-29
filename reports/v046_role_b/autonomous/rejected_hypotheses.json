@@ -20,6 +20,11 @@
       "id": "batch007_parser_preservation",
       "result": "rejected_as_misclassified_root",
       "reason": "all 11 governed PDF pages have extractable text; failures split into deterministic-fact and retrieval-candidate misses"
+    },
+    {
+      "id": "batch009_ranked_table_direct_extraction",
+      "result": "rejected_after_fixed_journal_regression",
+      "reason": "real-page parsing succeeded, but fixed10 M1/M2 did not improve and supplier existence F1 regressed from 0.875 to 0.80; production and tests were fully reverted"
     }
   ]
 }
