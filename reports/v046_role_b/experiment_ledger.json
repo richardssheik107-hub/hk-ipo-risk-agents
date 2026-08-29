@@ -1,0 +1,27 @@
+{
+  "artifact_version": "v046_role_b_experiment_ledger_v1",
+  "latest_completed_batch": 9,
+  "campaign_status": "PAUSED_FOR_OWNER_REPLAN",
+  "batches": [
+    {"batch": 1, "decision": "MERGED_TRACE_CONTRACT_CORRECTED", "m1": "8/30", "m2": "11/48"},
+    {"batch": 2, "decision": "ACCEPTED_BOUNDED_CONVERSION", "offline_before": "5/30,7/48", "offline_after": "5/30,9/48"},
+    {"batch": 3, "decision": "REJECTED_NO_SELECTOR_BUG", "fixed_m1": "10/30", "fixed_m2": "14/48"},
+    {"batch": 4, "decision": "ACCEPTED_DETERMINISTIC_GAIN", "fixed_m1": "12/30", "fixed_m2": "17/48", "fresh_gated_m1": "10/30", "fresh_gated_m2": "15/48"},
+    {"batch": 5, "decision": "ACCEPTED_DETERMINISTIC_GAIN", "fixed_m1": "12/30", "fixed_m2": "18/48", "fresh_gated_m1": "11/30", "fresh_gated_m2": "17/48"},
+    {"batch": 6, "decision": "REJECTED_STALE_ROOT", "production_changed": false},
+    {"batch": 7, "decision": "REJECTED_MISCLASSIFIED_ROOT", "production_changed": false},
+    {"batch": 8, "decision": "ACCEPTED_DETERMINISTIC_GAIN", "fixed_m1": "13/30", "fixed_m2": "20/48", "fresh_executed": false},
+    {"batch": 9, "decision": "PARTIAL_ACCEPT_LEGAL_AND_REVERT_TABLE", "fixed_m1": "14/30", "fixed_m2": "21/48", "fresh_executed": false, "accepted_commit": "8743724a3509715ea3b83e4dd58f56dcf97ffe24", "rejected_supplier_existence_f1": "0.875_to_0.80"}
+  ],
+  "identities": {
+    "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+    "canonical_journal_hash": "8d5cb474aaf6db3dcc504b9b7f926ac5948834709d9798dd2bf11252e0dce5e2"
+  },
+  "governance": {
+    "development_only": true,
+    "validation_opened": false,
+    "blind_2025_outcome_accessed": false,
+    "existing_gold_modified": false,
+    "runtime_received_gold": false
+  }
+}

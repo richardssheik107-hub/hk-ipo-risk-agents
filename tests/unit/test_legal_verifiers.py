@@ -159,6 +159,50 @@ def test_rights_verifier_rejects_historical_waived_right() -> None:
     assert "historical_terminated_right_presented_as_current" in result.issues
 
 
+def test_rights_verifier_keeps_uncertain_historical_lifecycle_for_review() -> None:
+    evidence = [
+        _evidence(
+            "Prior to Listing, the pre-IPO investors held redemption rights which "
+            "terminated upon Listing; if the listing application lapses the rights "
+            "may again be exercised."
+        )
+    ]
+    risk = _risk(
+        "redemption_rights",
+        evidence,
+        survives_listing=False,
+        restoration_clause=None,
+        builder_issues=["restoration_status_not_established"],
+    ).model_copy(update={"verification_status": VerificationStatus.NEEDS_REVIEW})
+
+    result = LegalRightsVerifier().verify(risk, _available(evidence))
+
+    assert result.status == VerificationStatus.NEEDS_REVIEW
+    assert result.checks["lifecycle_consistent"] is True
+
+
+def test_rights_verifier_recognizes_chinese_reactivation_language() -> None:
+    evidence = [
+        _evidence(
+            "首次公開發售前投資者持有贖回權，於上市申請前終止；"
+            "如上市申請被撤回，該等權利可予行使並重啟。"
+        )
+    ]
+    result = LegalRightsVerifier().verify(
+        _risk(
+            "redemption_rights",
+            evidence,
+            holder="首次公開發售前投資者",
+            survives_listing=False,
+            restoration_clause=True,
+        ),
+        _available(evidence),
+    )
+
+    assert "conflicting_rights_lifecycle_evidence" not in result.issues
+    assert "historical_terminated_right_presented_as_current" not in result.issues
+
+
 def test_rights_verifier_checks_holder_against_evidence() -> None:
     evidence = [
         _evidence(

@@ -36,23 +36,32 @@ Document Intelligence 定量指标
 + final freeze / Validation / package
 ```
 
-### Human Review policy
-
-Human Review UI / export 继续保留，但：
-
-```text
-M4 6 human reviews = REMOVED FROM RELEASE PLAN
-```
-
-不新增真人标注，不要求 3 案 × 2 reviewer，不阻塞 `COMPETITION_READY`。历史 rubric 只作为 optional 解释质量诊断。
+Human Review UI / export 继续保留，但 `M4 6 human reviews = REMOVED FROM RELEASE PLAN`，不阻塞 `COMPETITION_READY`。
 
 ## 1. 当前 Source-of-truth 数字
 
-### Role-B
+### Role-B — Batch009 accepted checkpoint
+
+最新可比 fixed-journal gated：
 
 ```text
-fixed-journal M1 = 12/30 = 40.00%
-fixed-journal M2 = 18/48 = 37.50%
+Batch005  M1 = 12/30   M2 = 18/48
+Batch008  M1 = 13/30   M2 = 20/48
+Batch009  M1 = 14/30   M2 = 21/48
+```
+
+当前 Batch009：
+
+```text
+fixed-journal gated M1 = 14/30 = 46.67%
+fixed-journal gated M2 = 21/48 = 43.75%
+offline M1 = 9/30
+offline M2 = 15/48
+```
+
+最后一个真实 fresh-provider checkpoint 仍是 Batch005：
+
+```text
 fresh gated M1 = 11/30 = 36.67%
 fresh gated M2 = 17/48 = 35.42%
 structured valid = 38/40
@@ -61,16 +70,28 @@ transport failure = 0
 scope rejection = 0
 ```
 
+Batch008 / 009 使用 immutable local journal、`network_calls = 0`，所以 fixed-journal gain 不能冒充 fresh-provider gain。
+
+已接受：
+
+- Batch008 legacy Chinese cash-statement / explicit Notes-column deterministic exact-fact compatibility；
+- Batch009 generalized Legal redemption/restoration lifecycle recognition。
+
+已拒绝：direct ranked concentration-table extraction；它没有提高 canonical M1/M2，并把 supplier existence F1 从 `0.875` 降到 `0.80`，已完整回滚。
+
+已排除 broad `period_candidate_generation` / Parser preservation 作为当前主根因；历史 v0.4.5 GLM-5.3 harness 已归档为 measured failure，不作为当前主路线。
+
 当前 root-cause 顺序：
 
 ```text
-deterministic_fact_missing
-→ retrieval_candidate_miss
-→ numeric extraction / genuine conflicts
-→ LLM / Evidence variance
+retrieval candidate generation / ranking
+→ exact page / anchor Evidence binding
+→ remaining deterministic / numeric extraction
+→ genuine conflicts
+→ fixed-vs-fresh LLM / Evidence variance
 ```
 
-Batch006/007 已排除 `period_candidate_generation` 和广泛 Parser preservation 作为当前主根因。
+`forensic_011` 中 retrieval candidate generation 仍是最大 proven first-failure layer：6 M1 / 16 M2 units。一个 redemption Evidence page 仍位于 rank 18，超出 Legal Agent bounded 10-item consumption，需要优化 transaction/lifecycle co-occurrence ranking，而不是无界提高 K。
 
 ### Role-D
 
@@ -117,13 +138,13 @@ Blind not used for optimization
 
 ### 2.1 当前策略
 
-不要重新大范围改 Parser 或 period selector。优先：
+不要重新大范围改 Parser 或 period selector，也不要直接恢复 rejected ranked-table candidate。优先：
 
-1. deterministic fact formation；
-2. 明确隔离的 retrieval candidate miss；
-3. numeric extraction；
+1. retrieval candidate generation / ranking；
+2. exact page / anchor Evidence binding；
+3. remaining deterministic / numeric extraction；
 4. true conflict fail-closed；
-5. LLM / Evidence stability。
+5. fixed-vs-fresh LLM / Evidence stability。
 
 每个修复包必须：
 
@@ -134,6 +155,7 @@ ablation
 regression tests
 no company/case/page/Gold-text hardcoding
 M1/M2 non-regression
+fresh-provider status explicitly reported
 ```
 
 fixed10 只是诊断。达到稳定提升后尽快扩大 Development checkpoint，最终必须 ALL79。
@@ -144,8 +166,6 @@ fixed10 只是诊断。达到稳定提升后尽快扩大 Development checkpoint�
 
 ### Phase 1 — 438 historical frozen universe
 
-当前 438 个 Market-X Core artifacts 已提交。下一步补：
-
 ```text
 existing frozen Market-X artifact
 → frozen feature schema validation
@@ -155,24 +175,16 @@ existing frozen Market-X artifact
 → Final Supervisor / report
 ```
 
-验收：从非 final-three 的 frozen historical cases 中抽取一组 holdout，不能增加 case-specific code，也不能依赖预生成 per-case handoff。
+验收：从非 final-three frozen historical cases 抽取 holdout，不增加 case-specific code，不依赖预生成 per-case handoff。
 
 ### Phase 2 — arbitrary new IPO
-
-已有通用 PIT builder：
-
-```text
-listing_date + industry + prior IPO history
-→ Dynamic Market-X
-```
-
-需要接入受治理的历史输入，再进入同一 frozen model inference path：
 
 ```text
 new PDF
 → Document Agents
 → issuer/listing identity
-→ Dynamic PIT Market-X
+→ governed PIT history
+→ Dynamic Market-X
 → frozen model inference
 → SHAP
 → Final Supervisor
@@ -183,7 +195,7 @@ new PDF
 
 ## 4. 工作轨 C — Role-D Model Decision（P0）
 
-只允许一次治理决议：
+只允许一次治理决议。
 
 ### Promote v2
 
@@ -215,15 +227,7 @@ new PDF
 - API/UI；
 - Dynamic New-IPO proof。
 
-Human Review 可以展示，但 optional，不需要人工评分。
-
-无 Existing Gold 的能力统一标记：
-
-```text
-QUALITATIVE DEMONSTRATION
-```
-
-不混入 M1/M2。
+Human Review 可以展示，但 optional，不需要人工评分。无 Existing Gold 的能力统一标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。
 
 ## 6. 已完成、原则上只做回归保护的部分
 
@@ -239,7 +243,9 @@ QUALITATIVE DEMONSTRATION
 - fresh-clone launchers；
 - team clone checker；
 - Role-D runtime CI；
-- provenance-preserving runtime equivalence audit。
+- provenance-preserving runtime equivalence audit；
+- Batch008 accepted cash deterministic compatibility；
+- Batch009 accepted Legal lifecycle recognition。
 
 这些组件后续只在必要时做回归修复，不再作为开放式优化主线。
 
@@ -290,17 +296,19 @@ secure ZIP + SHA-256 manifest
 
 不要求 M4 真人 review 文件。
 
-## 9. 并行策略
+## 9. 五人并行策略
 
-建议三线立即并行：
+当前正式 owner 见 `docs/team/README.md`：
 
 ```text
-B M1/M2 autonomous optimization
-Dynamic New-IPO runtime
-D model governance decision
+Person 1 — M1/M2 Document Intelligence
+Person 2 — Frontend / Product UX
+Person 3 — Dynamic Market-X
+Person 4 — Dynamic Model / SHAP + D decision
+Person 5 — Release / Submission
 ```
 
-Capability case 和 final package 准备可穿插推进。
+Person 5 持续做 integration watch，但 only after freeze 执行 one-shot Validation。
 
 ## 10. 仍不可放松的边界
 
