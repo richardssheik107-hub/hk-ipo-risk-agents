@@ -37,14 +37,14 @@
 | B M1 | fixed-journal `12/30 = 40.00%` | ALL 79 Development `>=80%` |
 | B M2 | fixed-journal `17/48 = 35.42%` | ALL 79 Development `>=85%` |
 | B fresh gated | `10/30` M1、`15/48` M2；37/40 structured valid | 继续 Development 泛化 |
-| M3 Traceability | 三案例 `3/3 = 1.0` | 保持 100% 并进入 final bundle |
-| Final Supervisor | latest current-main real-provider `3/3` | final evidence 稳定；fallback 不计 remote success |
+| M3 Traceability | final-three 三案例 `3/3 = 1.0`，已进入 canonical replay | 保持 100% |
+| Final Supervisor | Gate E1 `3/3`；real-provider 首次接受 `3/3`；correction/fallback `0` | final evidence 稳定；fallback 不计 remote success |
 | Market | final-three receipt-bound Core runtime `3/3 available`；全量 438 案例可由授权 ZIP 一键重建 | 保持 PIT / provenance 合同 |
-| Evidence bbox | truthful PyMuPDF `page_text_union` bbox 已合入 | 精确 quote/snippet screenshot/export manifest |
+| Evidence screenshot | final-three `17/17`，精确 quote/snippet 定位 `100%` | 保持 PDF hash / page / bbox / screenshot hash 绑定 |
 | M4 | `0/6` 真人评审 | 每案 2 名独立评审并通过 rubric |
 | M5 formal | current-main 70-case 四文件与 receipt 哈希一致；D1 `12/12 PASS` | 保持 deterministic / Blind 边界 |
 | M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，未晋升 | A governance decision + 新 freeze/handoff |
-| 产品 | final-three Market / frozen Model `3/3 available`，UI 不再因资产缺失显示未启用 | real PDF/LLM case matrix + capability demos + final bundle |
+| 产品 | final-three Market / frozen Model `3/3 available`；每案七阶段 `7/7`；canonical bundle `66` 文件并通过哈希验证 | capability demos + final submission bundle |
 
 Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 仍不足以宣称强预测效果。v2 candidate 改善了高召回 operating point，但正式产品在新 promotion/freeze 前不能把它冒充 frozen model。
 
@@ -137,7 +137,26 @@ python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
 python scripts/check_v045_product_runtime.py
+python scripts/check_v045_team_clone_ready.py
 ```
+
+## 离线三案例回放
+
+仓库自带 hash-bound canonical replay：`reports/v045_demo_bundle`。它保留真实运行
+SHA `3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d`；该运行与发布基线
+`802bf5095e0db6a604dcb762e1070563f8cb1b34` 的 Git 审计差异只有 Role-D CI workflow，
+因此没有改写 provenance，也不需要重复消耗一次真实 provider 运行。
+
+```bash
+python scripts/check_v045_team_clone_ready.py
+# Windows
+START_DEMO.bat
+# macOS / Linux
+./start_demo.sh
+```
+
+回放不需要招股书 PDF、API key 或 provider 网络；它不是新 PDF 的实时分析。完整说明见
+[`docs/TEAM_QUICKSTART.md`](docs/TEAM_QUICKSTART.md)。
 
 使用授权行情 ZIP 重建完整 438 案例 Market-X（CSV 会在系统临时目录解压，
 不会写入 Git checkout）：
