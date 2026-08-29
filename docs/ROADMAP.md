@@ -11,12 +11,13 @@
 ## 当前数字
 
 ```text
-B fixed-journal M1 = 12/30 = 40.00%
-B fixed-journal M2 = 18/48 = 37.50%
-B fresh gated M1 = 11/30 = 36.67%
-B fresh gated M2 = 17/48 = 35.42%
-B structured valid = 38/40
-B current root = deterministic_fact_missing
+B Batch009 fixed-journal gated M1 = 14/30 = 46.67%
+B Batch009 fixed-journal gated M2 = 21/48 = 43.75%
+B latest real fresh gated remains Batch005: M1 = 11/30, M2 = 17/48
+B structured valid at latest fresh = 38/40
+B Batch008 = accepted legacy cash deterministic fix
+B Batch009 = accepted Legal lifecycle fix
+B ranked-table candidate = rejected / reverted
 
 D frozen PR-F: Recall 4.35%, F1 7.69%, ROC-AUC 0.4246
 D v2 candidate: Recall 52.17%, F1 42.11%, PR-AUC 0.3812, ROC-AUC 0.4875
@@ -32,25 +33,30 @@ seven-stage = 21/21
 canonical replay = 66 files; fresh clone PASS
 ```
 
-Human Review / M4 已从 Release Gate 移除。Human Review UI 可以继续作为 optional 产品能力，但不要求真人评分。
+Batch008/009 都是 immutable local journal、zero-network 测量，不能把 `14/30, 21/48` 写成新的 fresh-provider checkpoint。Human Review / M4 已从 Release Gate 移除。
 
 ## 工作流 1 — B 指标与 Full Development（P0）
 
-已排除：
+已排除 / 已关闭：
 
 ```text
 period_candidate_generation as active root
 broad Parser preservation as active root
+legacy cash deterministic sub-root closed by Batch008
+ranked concentration-table candidate rejected by Batch009
 ```
 
 当前顺序：
 
 ```text
-deterministic_fact_missing
-→ retrieval_candidate_miss
-→ numeric extraction / genuine conflict
-→ LLM / Evidence variance
+retrieval candidate generation / ranking
+→ exact page / anchor Evidence binding
+→ remaining deterministic / numeric extraction
+→ genuine conflict fail-closed
+→ fixed-vs-fresh LLM / Evidence variance
 ```
+
+已知 `forensic_011` retrieval candidate generation 是最大 proven first-failure layer（6 M1 / 16 M2 units）。另有一个 redemption Evidence page 位于 rank 18，优先改善 transaction/lifecycle co-occurrence ranking，而不是粗暴扩大 Agent consumption 上限。
 
 每个修复包必须有 proven root cause、测试、前后消融和无 hardcoding 证明。
 
@@ -114,9 +120,7 @@ A 只做一次 promote/retain：
 - Dynamic New-IPO proof；
 - Evidence screenshot / report / API/UI。
 
-无 Existing Gold 时标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。
-
-Human Review 可展示，不是必需评测。
+无 Existing Gold 时标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。Human Review 可展示，不是必需评测。
 
 ## 收尾阶段 1 — Freeze 与一次性 Validation
 
