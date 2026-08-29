@@ -1,0 +1,27 @@
+{
+  "artifact_version": "v046_role_b_batch003_controls_v1",
+  "controls": {
+    "ipo_2023_06682": {
+      "cash_runway": "correct",
+      "result": "preserved"
+    },
+    "ipo_2021_02190": {
+      "cash_runway": "numeric_extraction_miss",
+      "customer_concentration": "correct",
+      "supplier_concentration": "deterministic_fact_missing",
+      "result": "not falsely converted"
+    },
+    "ipo_2022_06610": {
+      "customer_concentration": "parser_text_missing",
+      "supplier_concentration": "parser_text_missing",
+      "result": "parser absence preserved"
+    },
+    "redemption_rights": {
+      "m1": "4/8",
+      "m2": "5/11",
+      "result": "floor preserved"
+    }
+  },
+  "production_patch_present": false,
+  "network_calls": 0
+}
