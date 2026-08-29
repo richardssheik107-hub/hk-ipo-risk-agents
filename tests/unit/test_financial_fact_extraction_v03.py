@@ -315,6 +315,28 @@ def test_spaced_decimal_percentages_are_not_truncated_to_fractional_digits() -> 
     assert result.top_five_pct == Decimal("67.2")
 
 
+def test_aligned_label_local_period_outranks_newer_adjacent_context_date() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "於2017年、2018年、2019年及截至2020年6月30日止六個月，"
+            "最大供應商佔採購總額的36.0%、22.8%、36.8%及32.7%，"
+            "五大供應商佔採購總額的88.0%、77.7%、85.9%及67.2%。"
+        ),
+        header="產品專利於2023年5月24日屆滿。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end.isoformat() == "2020-06-30"
+    assert result.period_months == 6
+    assert result.largest_counterparty_pct == Decimal("32.7")
+    assert result.top_five_pct == Decimal("67.2")
+    assert (
+        result.metadata["candidate_diagnostics"][0]["period_reconciliation"]
+        == "already_chronological_latest"
+    )
+
+
 def test_bare_years_are_not_guessed_as_calendar_year_ends() -> None:
     result = concentration(
         "customer",

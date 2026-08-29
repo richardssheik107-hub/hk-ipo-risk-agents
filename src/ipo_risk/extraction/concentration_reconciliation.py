@@ -285,6 +285,12 @@ class _ConcentrationReconciliationMixin:
                     "percentage_occurrences": item.metadata.get(
                         "percentage_occurrences", {}
                     ),
+                    "concentration_period_selection": item.metadata.get(
+                        "concentration_period_selection"
+                    ),
+                    "period_reconciliation": item.metadata.get(
+                        "period_reconciliation"
+                    ),
                     "selected_for_merge": item in selected,
                 }
             )
