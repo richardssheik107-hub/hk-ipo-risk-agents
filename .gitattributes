@@ -9,3 +9,7 @@ reports/v045_pr_f_product_handoff_final3/** -text
 
 # Release status is ordinary reviewable JSON and stays portable.
 reports/final_status/*.json text eol=lf
+
+# The promoted V2 LightGBM artifact is verified by its exact raw-byte SHA-256.
+# Treat it as binary so Windows checkout conversion cannot rewrite its bytes.
+models/role_d_v2/model.txt -text

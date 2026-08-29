@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import subprocess
 import sys
@@ -99,6 +100,15 @@ def test_bundle_loads_the_promoted_frozen_identity(bundle) -> None:
     assert bundle.model_manifest["model_version"] == frozen["pr_f_version"]
     assert bundle.booster.num_feature() == len(bundle.model_feature_names)
     assert tuple(frozen["selection"]["selected_features"]) == bundle.model_feature_names
+
+
+def test_committed_model_bytes_and_checkout_attributes_preserve_the_frozen_identity() -> None:
+    frozen = json.loads((FROZEN_DIR / V2_PROMOTION_MANIFEST_NAME).read_text(encoding="utf-8"))
+    model_path = MODEL_DIR / MODEL_FILE
+
+    assert hashlib.sha256(model_path.read_bytes()).hexdigest() == frozen["classifier_model_sha256"]
+    attributes = (REPO_ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
+    assert "models/role_d_v2/model.txt -text" in attributes
 
 
 def test_a_tampered_model_file_fails_closed(tmp_path) -> None:
