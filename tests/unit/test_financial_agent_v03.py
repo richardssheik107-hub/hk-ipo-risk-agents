@@ -538,6 +538,58 @@ def test_concentration_without_parsed_percentage_remains_diagnostic_only() -> No
     }
 
 
+def test_strict_top_five_bound_below_largest_threshold_is_not_applicable() -> None:
+    agent = v03_agent()
+    chunks = [
+        DocumentChunk(
+            document_id="doc",
+            chunk_id="customer-bound",
+            page=30,
+            section="業務",
+            text=(
+                "截至2023年12月31日止年度，五大客戶佔總收入的比例均低於6%。"
+            ),
+        )
+    ]
+
+    risks = agent.analyze(IPOProfile(company_name="Demo"), chunks)
+
+    assert risk_by_code(risks, "customer_concentration") is None
+    diagnostic = diagnostic_by_code(agent, "customer_concentration")
+    assert diagnostic.code == DiagnosticCode.NOT_APPLICABLE
+    assert diagnostic.metadata["candidate_state"] == (
+        "strict_top_five_upper_bound_excludes_thresholds"
+    )
+    assert diagnostic.metadata["top_five_upper_bound_pct"] == "6"
+    assert diagnostic.metadata["exact_percentage_claimed"] is False
+
+
+def test_strict_top_five_bound_above_largest_threshold_remains_pending() -> None:
+    agent = v03_agent()
+    chunks = [
+        DocumentChunk(
+            document_id="doc",
+            chunk_id="supplier-bound",
+            page=30,
+            section="業務",
+            text=(
+                "截至2023年12月31日止年度，五大供應商佔總採購額的比例低於35%。"
+            ),
+        )
+    ]
+
+    risk = risk_by_code(
+        agent.analyze(IPOProfile(company_name="Demo"), chunks),
+        "supplier_concentration",
+    )
+
+    assert risk is not None
+    assert risk.verification_status == VerificationStatus.PENDING
+    assert risk.metadata["candidate_state"] == (
+        "bounded_percentage_signal_requires_review"
+    )
+
+
 def test_negative_customer_concentration_disclosure_ignores_shareholding_percentage() -> None:
     agent = v03_agent()
 

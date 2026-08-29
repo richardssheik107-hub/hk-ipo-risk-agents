@@ -354,6 +354,10 @@ class _ConcentrationReconciliationMixin:
                     "period_reconciliation": item.metadata.get(
                         "period_reconciliation"
                     ),
+                    "strict_upper_bound_proofs": item.metadata.get(
+                        "strict_upper_bound_proofs", {}
+                    ),
+                    "evidence_ids": list(item.evidence_ids),
                     "selected_for_merge": item in selected,
                 }
             )

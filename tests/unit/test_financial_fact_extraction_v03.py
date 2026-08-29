@@ -57,6 +57,73 @@ def test_extracts_traditional_simplified_english_and_number_formats(
     assert all(item.context_pages == [10] for item in result.observations)
 
 
+@pytest.mark.parametrize(
+    ("kind", "party", "text", "expected"),
+    [
+        (
+            "customer",
+            "客戶",
+            "截至2023年12月31日止年度，五大客戶佔總收入的比例均低於6%。",
+            "6",
+        ),
+        (
+            "supplier",
+            "供應商",
+            "For the year ended 31 December 2023, the top five suppliers accounted for less than 29.5 percent of purchases.",
+            "29.5",
+        ),
+    ],
+)
+def test_concentration_records_label_local_strict_upper_bound(
+    kind: str, party: str, text: str, expected: str
+) -> None:
+    chunk = DocumentChunk(
+        document_id="doc", chunk_id=f"{kind}-bound", page=9, section="業務", text=text
+    )
+    evidence = Evidence(
+        evidence_id=f"e-{kind}-bound",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=9,
+        text=text,
+    )
+
+    fact = V03FinancialFactExtractor()._concentration_from_evidence(
+        kind, evidence, {chunk.chunk_id: chunk}
+    )
+
+    assert fact.metadata["strict_upper_bound_proofs"]["top_five"] == {
+        "operator": "<",
+        "upper_bound_pct": expected,
+        "match_count": 1,
+        "binding": "top_five",
+        "source": "label_local_explicit_strict_upper_bound",
+    }
+
+
+def test_concentration_does_not_treat_unrelated_ownership_bound_as_proof() -> None:
+    text = (
+        "截至2023年12月31日止年度，五大客戶資料載於下表。"
+        "董事於母公司的實益擁有權少於1%。"
+    )
+    chunk = DocumentChunk(
+        document_id="doc", chunk_id="unrelated-bound", page=9, section="業務", text=text
+    )
+    evidence = Evidence(
+        evidence_id="e-unrelated-bound",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=9,
+        text=text,
+    )
+
+    fact = V03FinancialFactExtractor()._concentration_from_evidence(
+        "customer", evidence, {chunk.chunk_id: chunk}
+    )
+
+    assert fact.metadata.get("strict_upper_bound_proofs") == {}
+
+
 @pytest.mark.parametrize("label", ["收入", "收益", "營業收入", "revenue", "turnover"])
 def test_extracts_chinese_and_english_revenue_rows(label: str) -> None:
     result = extract_series("revenue", f"{label} 1,000.25 800.10")
