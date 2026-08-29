@@ -501,48 +501,6 @@ def test_ranked_disclosure_support_is_type_and_rank_bounded() -> None:
     assert observed is risk
 
 
-def test_deeper_ranked_concentration_percentage_is_retained_as_evidence_only() -> None:
-    base = v03_agent().analyze(
-        IPOProfile(company_name="Demo"),
-        [concentration_chunk("customer", "45", "80", page=30)],
-    )
-    risk = risk_by_code(base, "customer_concentration")
-    assert risk is not None
-    unrelated = [
-        Evidence(
-            evidence_id=f"e-unrelated-deep-{index}",
-            document_id="doc",
-            chunk_id=f"unrelated-deep-{index}",
-            page=31 + index,
-            text="一般業務資料。",
-        )
-        for index in range(5)
-    ]
-    explicit_rank_six = Evidence(
-        evidence_id="e-rank-six-explicit-customer",
-        document_id="doc",
-        chunk_id="rank-six-explicit-customer",
-        page=40,
-        text="五大客戶佔總收入80%，最大客戶佔45%。",
-    )
-
-    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
-        "customer_concentration",
-        risk,
-        [*unrelated, explicit_rank_six],
-        {},
-    )
-
-    assert observed is not None
-    assert [item.evidence_id for item in observed.evidence][-1] == (
-        explicit_rank_six.evidence_id
-    )
-    assert observed.level == risk.level
-    assert observed.score == risk.score
-    assert observed.verification_status == risk.verification_status
-    assert observed.calculation == risk.calculation
-
-
 def diagnostic_by_code(agent: V03FinancialAgent, risk_code: str) -> ComponentDiagnostic:
     return next(item for item in agent.last_diagnostics if item.risk_code == risk_code)
 

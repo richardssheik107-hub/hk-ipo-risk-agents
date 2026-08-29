@@ -114,7 +114,6 @@ _CONCENTRATION_SUPPORT_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = 
 }
 
 _MAX_RANKED_DISCLOSURE_SUPPORT = 5
-_EXPLICIT_PERCENTAGE = re.compile(r"(?:\d+(?:\.\d+)?\s*%|百分之\s*\d+(?:\.\d+)?)")
 
 _QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS: Mapping[
     str, tuple[tuple[str, re.Pattern[str]], ...]
@@ -546,9 +545,7 @@ class V03FinancialAgent:
         # itself contain a second parseable percentage.  This is deliberately
         # evidence-only: it cannot create a risk or alter its decision fields.
         ranked_disclosure_support = 0
-        for rank, evidence in enumerate(retrieved, start=1):
-            if ranked_disclosure_support >= _MAX_RANKED_DISCLOSURE_SUPPORT:
-                break
+        for evidence in retrieved[:_MAX_RANKED_DISCLOSURE_SUPPORT]:
             if (
                 evidence.evidence_id in retained_ids
                 or evidence.evidence_id in structurally_invalid_ids
@@ -557,14 +554,6 @@ class V03FinancialAgent:
             if not any(
                 pattern.search(evidence.text)
                 for pattern in _CONCENTRATION_SUPPORT_DISCLOSURES[expected_type]
-            ):
-                continue
-            # Generic label-only context is useful only in the highest-ranked
-            # window.  Deeper Top-20 support must carry an explicit percentage
-            # as well as the matching counterparty label; this prevents broad
-            # customer/supplier boilerplate from inflating Evidence provenance.
-            if rank > _MAX_RANKED_DISCLOSURE_SUPPORT and not _EXPLICIT_PERCENTAGE.search(
-                evidence.text
             ):
                 continue
             retained.append(evidence)
