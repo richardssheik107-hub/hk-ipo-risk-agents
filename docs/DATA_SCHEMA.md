@@ -1,5 +1,7 @@
 # Data Schema — Runtime, Evaluation and Submission Contracts
 
+> 状态日期：`2026-08-29`
+
 源码中的 Pydantic / Protocol 是 runtime 最终权威。本文件描述当前跨 lane artifact 形状，不允许用文档字段绕过代码校验。
 
 ## 1. Core runtime
@@ -59,9 +61,11 @@ Formal risk 必须通过 owner、Evidence 与 Verifier contract。
 - `CompetitionConflict`；
 - `RecheckRequest`；
 - `TraceEvent`；
-- `HumanReview`。
+- `HumanReview`（optional）。
 
 Relevant trace event 必须有 actor/action/tool，并绑定 Evidence、Calculation 或 explicit `no_evidence_reason`。远程 LLM 额外记录 provider、model、Prompt、request identity、response hash 和 latency。
+
+`HumanReview` sidecar 继续存在以支持人机协同 UI/export，但不存在 review 不影响当前 Release Gate。
 
 ## 3. Role-B v0.4.6 diagnostic artifacts
 
@@ -97,48 +101,33 @@ runtime_config_hash
 
 Journal 不持久化 API Key、Base URL、完整 Prompt、完整 raw response 或本机路径。
 
-### Retrieval waterfall
+### Retrieval / root-cause diagnostics
 
 ```text
 case_id
 risk_code
 gold_unit_id
 candidate_count
-first_gold_page_rank
 first_gold_rank
 top1 / 3 / 5 / 10 / 20
 agent_consumed
 candidate_generation_miss
 ranking_miss
-```
-
-Gold 只在分析完成后的 evaluator-side join 使用。
-
-### Risk pipeline waterfall
-
-目标字段：
-
-```text
-deterministic_candidate_present
-llm_request_attempted / success
-llm_structured_valid / scope_valid
-llm_candidate_present / abstained
-extraction_status
-builder_status
-normalization_success
-reconciliation_success
-candidate_after_reconciliation
-verifier_outcome
-final bucket / Evidence IDs
 first_failure_stage
 proof_level
 ```
 
-缺 trace 必须写 `NOT_AVAILABLE`，不得猜测。
+当前 active roots：
 
-### Root-cause matrix
+```text
+deterministic_fact_missing
+retrieval_candidate_miss
+numeric_extraction_miss
+genuine_conflict_fail_closed
+LLM / Evidence variance
+```
 
-每个 Risk/Evidence Unit 记录 earliest proven failure、secondary observations、proof artifact、`PROVEN|INFERRED|UNAVAILABLE`。
+Gold 只在分析完成后的 evaluator-side join 使用。
 
 ## 4. Existing-Gold evaluation
 
@@ -167,9 +156,20 @@ Existing Gold immutable；`UNJUDGED` 不等于 negative。
 
 ## 5. Market / Model / Outcome
 
-Market observation：value 或 missing reason、unit、source、derivation、PIT cutoff、provenance。
+### Market observation
 
-Model signal：
+```text
+value OR missing_reason
+unit
+source
+derivation
+PIT cutoff
+provenance
+```
+
+历史 frozen path 使用 governed Market-X artifacts；Dynamic New-IPO path 必须使用上市日前可知的受治理历史。
+
+### Model signal
 
 ```text
 score
@@ -179,7 +179,19 @@ availability / missing reason
 optional signed drivers
 ```
 
-Role-D canonical directory 恰好四文件：
+Dynamic inference 额外必须绑定：
+
+```text
+feature_manifest_hash
+model_hash / frozen identity
+input feature vector provenance
+inference method
+SHAP / pred_contrib method
+```
+
+不得用预生成 per-case signal 冒充新 case inference。
+
+### Role-D canonical artifacts
 
 ```text
 test_predictions.csv
@@ -190,7 +202,26 @@ ai_vs_offline_report.json
 
 Outcome horizons：1D / 5D / 20D / 60D。`significant_drop_5d = return_5d <= -0.10` 是项目冻结定义，不是命题方给定阈值。
 
-## 6. Evidence screenshot contract
+## 6. Final Supervisor / Trace contract
+
+Final Supervisor result 必须保留：
+
+```text
+prompt_version
+provider / model
+request_id
+raw_response_hash
+latency_ms
+scope check
+severity floor
+accepted / fallback outcome
+```
+
+当前 v3 contract：禁止越界 Risk/Evidence/Conflict、未治理数字和预测词；severity 不得低于 deterministic floor。
+
+M3 relevant TraceEvent 必须 accounted；当前 final-three 已验证 `1.0 × 3`。
+
+## 7. Evidence screenshot contract
 
 每条截图 manifest 至少记录：
 
@@ -211,28 +242,58 @@ unavailable_reason
 exporter_version
 ```
 
-`bbox_source` 只允许：upstream parser bbox、exact unique quote search、unavailable。多重匹配不得画假框。
+`bbox_source` 只允许：真实 upstream bbox、exact unique quote search、unavailable。多重匹配不得画假框。
 
-## 7. Final submission artifacts
+当前 canonical final-three：`17/17` precise。
 
-至少包括：
+## 8. Demo replay contract
+
+Canonical bundle：`reports/v045_demo_bundle`。
+
+至少保留：
+
+```text
+demo_manifest.json
+DEMO_SCRIPT.md
+per-case analysis_result
+Final Supervisor artifact
+conflicts / rechecks
+traceability
+Evidence screenshot manifests / images
+case reports
+batch report
+recorded code/config/PDF provenance
+```
+
+Replay immutable，不重新推理，不给旧运行补缺失结果。
+
+## 9. Final submission artifacts
+
+Required：
 
 ```text
 metric dashboard
 prediction table
-Agent reasoning logs
+Agent reasoning / Trace logs
 Evidence / screenshot manifests
-3 case reports
-M4 review artifact
+canonical case reports
+Dynamic New-IPO proof
 Blind / provenance / determinism / security audits
 artifact index
 release note
 submission ZIP / SHA-256 manifest
 ```
 
-所有路径使用相对路径；bundle 不含 Secret、PDF、raw EOD、raw journal、本机路径或未授权模型。
+Optional：
 
-## 8. Identity rules
+```text
+human_review_export.json
+explanation_quality diagnostics
+```
+
+**M4 review artifact 不再是 required package item。** 如果 Human Review export 存在但无人评审，必须保留 `unreviewed` 语义，不能解释为批准。
+
+## 10. Identity rules
 
 跨模块至少保持：
 
@@ -245,4 +306,4 @@ code / config / Prompt / Schema identity
 source / artifact hashes
 ```
 
-正式 join 不使用公司名称 fuzzy match。
+正式 join 不使用公司名称 fuzzy match；UI smart-match 只用于输入便利，不替代 governed identity binding。
