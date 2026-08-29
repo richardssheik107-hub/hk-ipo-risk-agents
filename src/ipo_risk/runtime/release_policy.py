@@ -23,10 +23,23 @@ _OPTIONAL_ARTIFACT_SUFFIXES = (
     "/explanation_quality.json",
     "/human_review_export.json",
 )
+_ACTIVE_SUBMISSION_DOCS = (
+    "docs/SUBMISSION_RUNBOOK.md",
+    "docs/V0.4_RELEASE_ACCEPTANCE.md",
+    "docs/COMPETITION_CLOSURE_PLAN.md",
+    "docs/ROADMAP.md",
+    "docs/V045_CURRENT_EXECUTION_PLAN.md",
+    "docs/TEAM_QUICKSTART.md",
+    "docs/PROJECT_SPEC.md",
+    "docs/ARCHITECTURE.md",
+    "docs/DATA_SCHEMA.md",
+    "docs/ROLE_B_M1_M2_PLAN.md",
+    "docs/ROLE_D_MODEL_DECISION.md",
+)
 
 
 def activate_active_release_policy() -> None:
-    """Make legacy Role-E file discovery match the active release policy.
+    """Make legacy discovery match the active release policy.
 
     This mutation is process-local and is deliberately performed only by the
     active readiness/packaging CLIs.  Library callers of the frozen historical
@@ -40,6 +53,9 @@ def activate_active_release_policy() -> None:
         for name in legacy.ROLE_E_CASE_REQUIRED
         if name not in _OPTIONAL_ROLE_E_CASE_FILES
     )
+    # Retire references to deleted historical planning files from the final ZIP
+    # allowlist and ship the current active documentation set instead.
+    legacy.SUBMISSION_DOCS = _ACTIVE_SUBMISSION_DOCS
 
 
 def _optional_m4_blocker(blocker: Any) -> bool:
