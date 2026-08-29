@@ -4,9 +4,9 @@ No Streamlit import lives here so the whole stage model stays testable headlessl
 the Streamlit layer only renders what ``resolve_stages`` returns.
 
 A stage status answers one question only: did this current-case runtime surface
-materialize enough governed state to render its product step?  It does not claim
+materialize enough governed state to render its product step? It does not claim
 that every optional channel is available and it does not claim that project-level
-competition gates are closed.  Optional Market/Model/LLM assets therefore remain
+competition gates are closed. Optional Market/Model/LLM assets therefore remain
 explicit in the stage summary/metrics instead of turning an otherwise completed
 case surface amber.
 
@@ -140,7 +140,7 @@ def _document_features(payload: dict[str, object]) -> StageView:
 
 def _market_features(payload: dict[str, object]) -> StageView:
     market = payload.get("market_context") or {}
-    observations = market.get("observations") or [] if isinstance(market, dict) else []
+    observations = (market.get("observations") or []) if isinstance(market, dict) else []
     if market:
         available = sum(1 for item in observations if item.get("availability") == "available")
         state = str(market.get("status") or "unavailable")
@@ -209,7 +209,9 @@ def _prediction(payload: dict[str, object]) -> StageView:
     return StageView(
         stage_id="prediction", ordinal=4, title="Prediction",
         status=StageStatus.PARTIAL,
-        summary="The prediction product surface is ready, but no completed current-case runtime is loaded.",
+        summary=(
+            "The prediction product surface is ready, but no completed current-case runtime is loaded. Any future deterministic rule or uncalibrated model score remains a prioritization signal, not a probability."
+        ),
         blocking_reason="run the current case; an authentic model handoff remains optional for rendering the deterministic rule result",
         what_appears_when_unblocked=(
             "deterministic rule score and level",
@@ -222,7 +224,7 @@ def _prediction(payload: dict[str, object]) -> StageView:
 def _explainability(payload: dict[str, object]) -> StageView:
     model = payload.get("model_prediction") or {}
     model_available = bool(model and model.get("status", "available") == "available")
-    drivers = model.get("drivers") or [] if isinstance(model, dict) else []
+    drivers = (model.get("drivers") or []) if isinstance(model, dict) else []
     if _runtime_completed(payload):
         summary = (
             "The explainability surface completed with the current-case Document Evidence/Calculation provenance. "
@@ -282,26 +284,29 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
         )
 
     supervision = payload.get("supervision") or {}
-    if supervision and _runtime_completed(payload):
-        return StageView(
-            stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
-            status=StageStatus.COMPLETED,
-            summary=(
-                "The supervision stage completed with the document-scope deterministic supervisor. Cross-channel/LLM synthesis is not materialized in this runtime and remains explicitly unavailable rather than blocking the product surface."
-            ),
-            metrics=(
-                Metric("Duplicate groups", str(len(supervision.get("duplicate_groups", [])))),
-                Metric("Conflicts", str(len(supervision.get("conflicts", [])))),
-                Metric("Composite findings", str(len(supervision.get("composite_findings", [])))),
-                Metric("Cross-channel LLM", "unavailable"),
-            ),
+    supervision_metrics: tuple[Metric, ...] = ()
+    if supervision:
+        supervision_metrics = (
+            Metric("Duplicate groups", str(len(supervision.get("duplicate_groups", [])))),
+            Metric("Conflicts", str(len(supervision.get("conflicts", [])))),
+            Metric("Composite findings", str(len(supervision.get("composite_findings", [])))),
         )
+        if _runtime_completed(payload):
+            return StageView(
+                stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
+                status=StageStatus.COMPLETED,
+                summary=(
+                    "The supervision stage completed with the document-scope deterministic supervisor. Cross-channel/LLM synthesis is not materialized in this runtime and remains explicitly unavailable rather than blocking the product surface."
+                ),
+                metrics=(*supervision_metrics, Metric("Cross-channel LLM", "unavailable")),
+            )
 
     return StageView(
         stage_id="final_supervisor", ordinal=6, title="Final Supervisor",
         status=StageStatus.PARTIAL,
-        summary="The Supervisor product surface is ready, but no current-case supervision artifact is loaded.",
+        summary="The Supervisor product surface is ready, but no completed current-case supervision artifact is loaded.",
         blocking_reason="run a scenario with document or cross-channel supervision enabled",
+        metrics=supervision_metrics,
     )
 
 
