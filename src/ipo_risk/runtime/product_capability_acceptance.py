@@ -14,6 +14,7 @@ from typing import Any, Iterable
 
 PRODUCT_SCHEMA_VERSION = "competition_product_acceptance_v1"
 CAPABILITY_SCHEMA_VERSION = "competition_capability_manifest_v1"
+CAPABILITY_PROOF_SCHEMA_VERSION = "competition_capability_proof_v1"
 QUALITATIVE = "QUALITATIVE_DEMONSTRATION"
 REQUIRED_CAPABILITIES = (
     "core_pipeline_progress",
@@ -33,6 +34,20 @@ TARGETED_TEST_FILES = (
     "tests/unit/test_v045_competition_runtime_view.py",
     "tests/unit/test_v045_team_clone_ready.py",
 )
+AUDITABLE_PROOF_CAPABILITIES = (
+    "text_embellishment",
+    "related_party_transaction",
+    "comparable_ipo_valuation",
+)
+CAPABILITY_PROOF_DIR = "reports/final_status/capability_proofs"
+_MISSING_PROOF_REASONS = (
+    "missing_real_case_proof",
+    "missing_capability_output",
+    "missing_evidence_binding",
+    "missing_provenance",
+    "missing_product_projection",
+)
+_PRODUCT_PROOF_KINDS = {"report", "api", "ui", "demo_receipt"}
 
 
 class ProductCapabilityAcceptanceError(ValueError):
@@ -97,6 +112,182 @@ def _probe(rows: list[dict[str, Any]], probe_id: str) -> dict[str, Any]:
 
 def _signed(payload: dict[str, Any]) -> dict[str, Any]:
     return {**payload, "content_hash": _canonical_hash(payload)}
+
+
+def _is_sha256(value: Any) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value.lower())
+    )
+
+
+def _is_nonempty(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _valid_artifact_ref(repo_root: Path, value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    relative = value.get("path")
+    expected = value.get("sha256")
+    if not _is_nonempty(relative) or not _is_sha256(expected):
+        return False
+    relative_path = Path(relative)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        return False
+    path = repo_root / relative_path
+    return path.is_file() and _sha(path) == expected.lower()
+
+
+def _artifact_json_matches(repo_root: Path, reference: Any, payload: Any) -> bool:
+    if not _valid_artifact_ref(repo_root, reference):
+        return False
+    try:
+        actual = json.loads((repo_root / reference["path"]).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return False
+    return actual == payload
+
+
+def _meaningful_capability_output(capability_id: str, payload: Any) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    if capability_id == "text_embellishment":
+        return "tone_risk" in payload and isinstance(
+            payload.get("supporting_evidence_ids"), list
+        ) and bool(payload["supporting_evidence_ids"])
+    if capability_id == "related_party_transaction":
+        return all(
+            _is_nonempty(payload.get(field))
+            for field in ("counterparty", "relationship", "transaction_nature")
+        ) and isinstance(payload.get("evidence_ids"), list) and bool(
+            payload["evidence_ids"]
+        )
+    if capability_id == "comparable_ipo_valuation":
+        peers = payload.get("peer_identities")
+        calculation = payload.get("valuation_calculation")
+        return (
+            isinstance(peers, list)
+            and bool(peers)
+            and all(_is_nonempty(item) for item in peers)
+            and isinstance(calculation, dict)
+            and all(
+                field in calculation
+                for field in ("multiple", "target_value", "peer_values", "result")
+            )
+            and isinstance(calculation.get("peer_values"), list)
+            and bool(calculation["peer_values"])
+            and isinstance(calculation.get("evidence_ids"), list)
+            and bool(calculation["evidence_ids"])
+        )
+    return bool(payload)
+
+
+def evaluate_capability_proof(repo_root: Path, capability_id: str) -> dict[str, Any]:
+    """Validate one committed real-case proof without trusting declarations alone."""
+
+    relative_path = f"{CAPABILITY_PROOF_DIR}/{capability_id}.json"
+    path = repo_root / relative_path
+    if not path.is_file():
+        return {
+            "proof_path": relative_path,
+            "proof_present": False,
+            "proof_complete": False,
+            "missing_reasons": list(_MISSING_PROOF_REASONS),
+        }
+    try:
+        proof = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return {
+            "proof_path": relative_path,
+            "proof_present": True,
+            "proof_complete": False,
+            "missing_reasons": ["invalid_capability_proof"],
+            "proof_artifact": _ref(repo_root, relative_path),
+        }
+    if not isinstance(proof, dict):
+        reasons = ["invalid_capability_proof"]
+    else:
+        reasons: list[str] = []
+        case = proof.get("case") or {}
+        if not (
+            _is_nonempty(case.get("case_id"))
+            and _valid_artifact_ref(repo_root, case.get("input_artifact"))
+        ):
+            reasons.append("missing_real_case_proof")
+
+        output = proof.get("output") or {}
+        if not (
+            _artifact_json_matches(
+                repo_root, output.get("artifact"), output.get("payload")
+            )
+            and _meaningful_capability_output(capability_id, output.get("payload"))
+        ):
+            reasons.append("missing_capability_output")
+
+        evidence = proof.get("evidence")
+        if not (
+            isinstance(evidence, list)
+            and bool(evidence)
+            and all(
+                isinstance(item, dict)
+                and _is_nonempty(item.get("evidence_id"))
+                and isinstance(item.get("locator"), dict)
+                and bool(item["locator"])
+                and _valid_artifact_ref(repo_root, item.get("source_artifact"))
+                for item in evidence
+            )
+        ):
+            reasons.append("missing_evidence_binding")
+        else:
+            bound_ids = {item["evidence_id"] for item in evidence}
+            payload = output.get("payload") or {}
+            if capability_id == "text_embellishment":
+                cited_ids = payload.get("supporting_evidence_ids") or []
+            elif capability_id == "related_party_transaction":
+                cited_ids = payload.get("evidence_ids") or []
+            else:
+                cited_ids = (payload.get("valuation_calculation") or {}).get(
+                    "evidence_ids"
+                ) or []
+            if not cited_ids or not set(cited_ids) <= bound_ids:
+                reasons.append("missing_evidence_binding")
+
+        provenance = proof.get("provenance") or {}
+        if not (
+            _is_nonempty(provenance.get("producer"))
+            and _is_nonempty(provenance.get("schema_version"))
+            and _is_nonempty(provenance.get("trace_id"))
+            and _is_sha256(provenance.get("input_sha256"))
+            and provenance.get("input_sha256")
+            == (case.get("input_artifact") or {}).get("sha256")
+            and _valid_artifact_ref(repo_root, provenance.get("trace_artifact"))
+        ):
+            reasons.append("missing_provenance")
+
+        product = proof.get("product_proof") or {}
+        if not (
+            product.get("kind") in _PRODUCT_PROOF_KINDS
+            and _valid_artifact_ref(repo_root, product.get("artifact"))
+        ):
+            reasons.append("missing_product_projection")
+
+        if not (
+            proof.get("schema_version") == CAPABILITY_PROOF_SCHEMA_VERSION
+            and proof.get("capability") == capability_id
+            and proof.get("status") == "pass"
+            and proof.get("classification") == QUALITATIVE
+            and proof.get("included_in_m1_m2") is False
+        ):
+            reasons.append("invalid_qualitative_governance")
+    return {
+        "proof_path": relative_path,
+        "proof_present": True,
+        "proof_complete": not reasons,
+        "missing_reasons": sorted(set(reasons)),
+        "proof_artifact": _ref(repo_root, relative_path),
+    }
 
 
 def build_product_acceptance(repo_root: Path) -> dict[str, Any]:
@@ -230,14 +421,28 @@ def _capability(
     checks: dict[str, bool],
     evidence_paths: Iterable[str],
     limitations: str,
+    proof: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    implementation_present = _all(checks)
+    proof_required = proof is not None
+    proof_complete = bool(proof and proof.get("proof_complete"))
+    ready = implementation_present and (proof_complete if proof_required else True)
     return {
         "capability": capability_id,
-        "status": "pass" if _all(checks) else "fail",
+        "status": "pass" if ready else "fail",
+        "readiness": "ready" if ready else "incomplete",
         "classification": QUALITATIVE,
         "claim": claim,
         "checks": checks,
+        "implementation_evidence_present": implementation_present,
+        "proof_required": proof_required,
+        "proof_complete": proof_complete if proof_required else None,
+        "missing_reasons": list((proof or {}).get("missing_reasons") or []),
+        "proof": proof,
         "evidence": _refs(repo_root, evidence_paths),
+        "evidence_role": (
+            "implementation_support_only" if proof_required else "capability_proof"
+        ),
         "limitations": limitations,
         "included_in_m1_m2": False,
     }
@@ -291,6 +496,7 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
                 "tests/unit/test_bounded_document_semantics.py",
             ),
             limitations="Qualitative contract demonstration only; no new Gold or M1/M2 unit is claimed.",
+            proof=evaluate_capability_proof(repo_root, "text_embellishment"),
         ),
         _capability(
             repo_root,
@@ -309,6 +515,7 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
                 "tests/unit/test_bounded_document_semantics.py",
             ),
             limitations="Private structured proposal, not a registered production RiskItem or a scored M1/M2 family.",
+            proof=evaluate_capability_proof(repo_root, "related_party_transaction"),
         ),
         _capability(
             repo_root,
@@ -333,6 +540,7 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
                 "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
             ),
             limitations="Research/qualitative valuation context; it is not an investment recommendation or an M1/M2 metric.",
+            proof=evaluate_capability_proof(repo_root, "comparable_ipo_valuation"),
         ),
         _capability(
             repo_root,
@@ -441,6 +649,9 @@ def build_capability_manifest(repo_root: Path) -> dict[str, Any]:
         "status": "pass" if passed else "fail",
         "capabilities": [item["capability"] for item in details],
         "capability_details": details,
+        "incomplete_capabilities": [
+            item["capability"] for item in details if item["status"] != "pass"
+        ],
         "targeted_test_files": list(TARGETED_TEST_FILES),
         "governance": {
             "all_demonstrations_are_qualitative": True,

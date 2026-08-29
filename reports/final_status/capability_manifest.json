@@ -1,6 +1,6 @@
 {
   "schema_version": "competition_capability_manifest_v1",
-  "status": "pass",
+  "status": "fail",
   "capabilities": [
     "core_pipeline_progress",
     "text_embellishment",
@@ -15,12 +15,18 @@
     {
       "capability": "core_pipeline_progress",
       "status": "pass",
+      "readiness": "ready",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "The canonical replay demonstrates all seven governed stages for three cases.",
       "checks": {
         "product_gate_modes_pass": true,
         "seven_stage_21_of_21": true
       },
+      "implementation_evidence_present": true,
+      "proof_required": false,
+      "proof_complete": null,
+      "missing_reasons": [],
+      "proof": null,
       "evidence": [
         {
           "path": "reports/final_status/current_runtime_snapshot.json",
@@ -33,41 +39,41 @@
           "size_bytes": 17393
         }
       ],
+      "evidence_role": "capability_proof",
       "limitations": "Recorded replay is labelled as replay and is not live inference.",
       "included_in_m1_m2": false
     },
     {
       "capability": "text_embellishment",
-      "status": "pass",
+      "status": "fail",
+      "readiness": "incomplete",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "Disclosure-tone proposals are structured and rejected when citations leave bounded Evidence.",
       "checks": {
         "bounded_tone_contract": true,
         "scope_guard_test": true
       },
-      "evidence": [
-        {
-          "path": "src/ipo_risk/extraction/bounded_semantics.py",
-          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
-          "size_bytes": 5709
-        },
-        {
-          "path": "tests/unit/test_bounded_document_semantics.py",
-          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
-          "size_bytes": 4227
-        }
+      "implementation_evidence_present": true,
+      "proof_required": true,
+      "proof_complete": false,
+      "missing_reasons": [
+        "missing_real_case_proof",
+        "missing_capability_output",
+        "missing_evidence_binding",
+        "missing_provenance",
+        "missing_product_projection"
       ],
-      "limitations": "Qualitative contract demonstration only; no new Gold or M1/M2 unit is claimed.",
-      "included_in_m1_m2": false
-    },
-    {
-      "capability": "related_party_transaction",
-      "status": "pass",
-      "classification": "QUALITATIVE_DEMONSTRATION",
-      "claim": "Related-party transaction proposals require counterparty, relationship, nature and bounded Evidence.",
-      "checks": {
-        "structured_related_party_contract": true,
-        "private_proposal_test": true
+      "proof": {
+        "proof_path": "reports/final_status/capability_proofs/text_embellishment.json",
+        "proof_present": false,
+        "proof_complete": false,
+        "missing_reasons": [
+          "missing_real_case_proof",
+          "missing_capability_output",
+          "missing_evidence_binding",
+          "missing_provenance",
+          "missing_product_projection"
+        ]
       },
       "evidence": [
         {
@@ -81,18 +87,90 @@
           "size_bytes": 4227
         }
       ],
+      "evidence_role": "implementation_support_only",
+      "limitations": "Qualitative contract demonstration only; no new Gold or M1/M2 unit is claimed.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "related_party_transaction",
+      "status": "fail",
+      "readiness": "incomplete",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "Related-party transaction proposals require counterparty, relationship, nature and bounded Evidence.",
+      "checks": {
+        "structured_related_party_contract": true,
+        "private_proposal_test": true
+      },
+      "implementation_evidence_present": true,
+      "proof_required": true,
+      "proof_complete": false,
+      "missing_reasons": [
+        "missing_real_case_proof",
+        "missing_capability_output",
+        "missing_evidence_binding",
+        "missing_provenance",
+        "missing_product_projection"
+      ],
+      "proof": {
+        "proof_path": "reports/final_status/capability_proofs/related_party_transaction.json",
+        "proof_present": false,
+        "proof_complete": false,
+        "missing_reasons": [
+          "missing_real_case_proof",
+          "missing_capability_output",
+          "missing_evidence_binding",
+          "missing_provenance",
+          "missing_product_projection"
+        ]
+      },
+      "evidence": [
+        {
+          "path": "src/ipo_risk/extraction/bounded_semantics.py",
+          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
+          "size_bytes": 5709
+        },
+        {
+          "path": "tests/unit/test_bounded_document_semantics.py",
+          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
+          "size_bytes": 4227
+        }
+      ],
+      "evidence_role": "implementation_support_only",
       "limitations": "Private structured proposal, not a registered production RiskItem or a scored M1/M2 family.",
       "included_in_m1_m2": false
     },
     {
       "capability": "comparable_ipo_valuation",
-      "status": "pass",
+      "status": "fail",
+      "readiness": "incomplete",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "The deterministic IPO-structure lane computes price-to-adjusted-NTA and preserves missingness.",
       "checks": {
         "valuation_feature_contract": true,
         "valuation_formula_test": true,
         "same_industry_market_context": true
+      },
+      "implementation_evidence_present": true,
+      "proof_required": true,
+      "proof_complete": false,
+      "missing_reasons": [
+        "missing_real_case_proof",
+        "missing_capability_output",
+        "missing_evidence_binding",
+        "missing_provenance",
+        "missing_product_projection"
+      ],
+      "proof": {
+        "proof_path": "reports/final_status/capability_proofs/comparable_ipo_valuation.json",
+        "proof_present": false,
+        "proof_complete": false,
+        "missing_reasons": [
+          "missing_real_case_proof",
+          "missing_capability_output",
+          "missing_evidence_binding",
+          "missing_provenance",
+          "missing_product_projection"
+        ]
       },
       "evidence": [
         {
@@ -111,18 +189,25 @@
           "size_bytes": 381109
         }
       ],
+      "evidence_role": "implementation_support_only",
       "limitations": "Research/qualitative valuation context; it is not an investment recommendation or an M1/M2 metric.",
       "included_in_m1_m2": false
     },
     {
       "capability": "evidence_screenshot",
       "status": "pass",
+      "readiness": "ready",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "Every cited canonical Evidence item has a hash-bound precise screenshot.",
       "checks": {
         "screenshots_17_of_17": true,
         "precise_localisation_100_percent": true
       },
+      "implementation_evidence_present": true,
+      "proof_required": false,
+      "proof_complete": null,
+      "missing_reasons": [],
+      "proof": null,
       "evidence": [
         {
           "path": "reports/v045_demo_bundle/screenshot_summary.json",
@@ -145,18 +230,25 @@
           "size_bytes": 10480
         }
       ],
+      "evidence_role": "capability_proof",
       "limitations": "Applies to the three canonical recorded cases.",
       "included_in_m1_m2": false
     },
     {
       "capability": "single_batch_report",
       "status": "pass",
+      "readiness": "ready",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "Three single-case reports and one batch report are committed in the canonical bundle.",
       "checks": {
         "three_single_reports": true,
         "batch_json_and_markdown": true
       },
+      "implementation_evidence_present": true,
+      "proof_required": false,
+      "proof_complete": null,
+      "missing_reasons": [],
+      "proof": null,
       "evidence": [
         {
           "path": "reports/v045_demo_bundle/ipo_2024_01318/case_report.md",
@@ -184,12 +276,14 @@
           "size_bytes": 4665
         }
       ],
+      "evidence_role": "capability_proof",
       "limitations": "Canonical reports are recorded artifacts and retain their recorded provenance.",
       "included_in_m1_m2": false
     },
     {
       "capability": "api_ui",
       "status": "pass",
+      "readiness": "ready",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "The Streamlit workbench and governed review API expose tested contracts.",
       "checks": {
@@ -197,6 +291,11 @@
         "fastapi_contract": true,
         "openapi_contract_test": true
       },
+      "implementation_evidence_present": true,
+      "proof_required": false,
+      "proof_complete": null,
+      "missing_reasons": [],
+      "proof": null,
       "evidence": [
         {
           "path": "app/streamlit_app.py",
@@ -219,12 +318,14 @@
           "size_bytes": 8668
         }
       ],
+      "evidence_role": "capability_proof",
       "limitations": "Human review is optional and does not determine release readiness.",
       "included_in_m1_m2": false
     },
     {
       "capability": "dynamic_new_ipo",
       "status": "pass",
+      "readiness": "ready",
       "classification": "QUALITATIVE_DEMONSTRATION",
       "claim": "An issuer outside the frozen universe receives PIT Market-X, frozen-model inference and native SHAP, or an explicit governed unavailable reason.",
       "checks": {
@@ -232,6 +333,11 @@
         "inside_coverage_model_shap": true,
         "outside_coverage_fail_closed": true
       },
+      "implementation_evidence_present": true,
+      "proof_required": false,
+      "proof_complete": null,
+      "missing_reasons": [],
+      "proof": null,
       "evidence": [
         {
           "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
@@ -244,9 +350,15 @@
           "size_bytes": 13913
         }
       ],
+      "evidence_role": "capability_proof",
       "limitations": "Qualitative governed probes only; no formal Validation or Blind result is claimed.",
       "included_in_m1_m2": false
     }
+  ],
+  "incomplete_capabilities": [
+    "text_embellishment",
+    "related_party_transaction",
+    "comparable_ipo_valuation"
   ],
   "targeted_test_files": [
     "tests/unit/test_bounded_document_semantics.py",
@@ -264,5 +376,5 @@
     "validation_opened": false,
     "blind_2025_y_accessed": false
   },
-  "content_hash": "542f00334eb4c4d9a06bd8bde44b77c4b109f830f9558e0d19e8f03200e7424b"
+  "content_hash": "f8f06628531170fa2f3cd3ae0f9a0c9c6a419de36cec713164df266e17b73f37"
 }

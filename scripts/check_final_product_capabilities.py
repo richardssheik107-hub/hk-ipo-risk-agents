@@ -43,24 +43,30 @@ def main() -> int:
             print(json.dumps({"status": "fail", "tests": test_result}, indent=2))
             return 2
 
+    product = build_product_acceptance(root)
+    capability = build_capability_manifest(root)
     if args.write:
         product_path, capability_path = write_artifacts(root)
     else:
         product_path = root / "reports/final_status/product_acceptance.json"
         capability_path = root / "reports/final_status/capability_manifest.json"
-        verify_persisted(build_product_acceptance(root), product_path)
-        verify_persisted(build_capability_manifest(root), capability_path)
+        verify_persisted(product, product_path)
+        verify_persisted(capability, capability_path)
+    ready = product.get("status") == "pass" and capability.get("status") == "pass"
     result = {
-        "status": "pass",
+        "status": "pass" if ready else "fail",
         "mode": "write" if args.write else "check",
         "product_acceptance": product_path.relative_to(root).as_posix(),
+        "product_acceptance_status": product.get("status"),
         "capability_manifest": capability_path.relative_to(root).as_posix(),
+        "capability_manifest_status": capability.get("status"),
+        "incomplete_capabilities": capability.get("incomplete_capabilities", []),
         "tests": test_result,
         "validation_opened": False,
         "blind_2025_y_accessed": False,
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0
+    return 0 if ready else 2
 
 
 if __name__ == "__main__":

@@ -256,10 +256,11 @@ Human Review UI/export 可以保留，但不是 Release Gate，不需要补 6 �
 
 无 Existing Gold 的能力标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。
 
-上述 8/8 能力已记录于 `reports/final_status/capability_manifest.json`，状态为 **PASS**。
-每项均绑定源码、测试或 runtime artifact 的 SHA-256 与限制说明；全部
-`included_in_m1_m2=false`。Fresh New-IPO 的结论是受治理的覆盖内可用/部分可用和覆盖外
-明确不可用，不是 Validation 或 Blind 效果声明。
+上述 8 项能力继续记录于 `reports/final_status/capability_manifest.json`，但 G6 acceptance
+已改为 fail-closed：源码与测试只证明 implementation/support 存在，不能替代真实案例的
+input、output、Evidence、provenance 和 report/API/UI/demo proof。当前文本粉饰、关联交易、
+可比 IPO 估值缺少完整可审计 proof，G6 状态为 **ACTIVE / NOT READY**。全部展示仍为
+`QUALITATIVE_DEMONSTRATION` 且 `included_in_m1_m2=false`，不构成 Validation 或 Blind 效果声明。
 
 ## 8. 并行依赖
 
