@@ -101,3 +101,25 @@ This archive does not claim that M1/M2 release targets are met. It records the
 observed quality and root-cause evidence without changing Gold, prompts,
 Retriever policy, Agent rules, Verifier behavior, frozen artifacts, Validation,
 or 2025 Blind data.
+
+## Historical v0.4.5 GLM-5.3 benchmark
+
+```text
+status = MEASURED_FAIL
+source_branch = feat/v045-role-b-glm53-benchmark
+source_commit = 905ffb3
+source_pr = #186
+semantic_calls = 30
+structured_contract_valid = 2/30
+M1 = FAIL
+M2 = FAIL
+offline_baseline_outperformance = NOT_PROVEN
+```
+
+This is historical negative experimental data and is not part of the current
+v0.4.6 fixed-10 results. It must not be interpreted as evidence that GLM-5.3 is
+permanently unusable; it records only that the provider/model/config/runtime
+combination tested at that time did not satisfy the structured-output contract.
+
+The legacy harness is intentionally excluded from runtime. The current
+implementation remains the v0.4.6 Role-B diagnostic/gated workflow.
