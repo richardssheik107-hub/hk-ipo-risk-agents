@@ -1,4 +1,4 @@
-# Architecture — Current Runtime and Diagnostic Lanes
+# Architecture — Current Runtime and Open Generalization Paths
 
 > 状态日期：`2026-08-29`
 
@@ -20,220 +20,173 @@ Financial ─┬─ Legal ─┬─ Business
                  ↓
 Governed MarketContext + Skills
                  ↓
-Governed model signal
+Governed ModelSignal
                  ↓
 Conflict Detection
                  ↓
 bounded Targeted Re-check
                  ↓
-Verifier Challenge
-                 ↓
 LLM Final Supervisor
 + deterministic fallback
                  ↓
 Trace + Evidence / Screenshot + Report / UI / API
-                 ↓
-optional Human Review
 ```
 
-Final release evaluation 位于 runtime 之后：
+Release evaluation 位于 runtime 之后：M1 / M2 / M3 / M5、Dynamic generalization、freeze / Validation / audits / package。
+
+## 2. Document / Role-B boundary
+
+Parser 拥有 physical page identity；page/text/bbox 由解析/Evidence layer 提供，UI 不猜坐标。
+
+Financial 保持 deterministic-first；Legal / Business 只消费 bounded Evidence，受 Pydantic schema 与 Evidence scope guard 约束。
+
+PR #189 后正式 fixed-journal gated checkpoint：
 
 ```text
-Frozen Existing Gold + B artifacts
-C market trace + D outcome artifacts + E final artifacts
-→ M1 / M2 / M3 / M5
-→ product-generalization / capability gates
-→ Validation / readiness / audits / package
+Batch009 M1 = 14/30 = 46.67%
+Batch009 M2 = 21/48 = 43.75%
+Batch009 offline = 9/30, 15/48
+last real fresh checkpoint = Batch005 11/30, 17/48
 ```
 
-Human Review 不修改机器事实，并且不再是 mandatory Release Gate。
+fixed journal 是诊断 microscope，不是 ALL79 Release score，也不能冒充 fresh-provider result。
 
-## 2. Document boundary
+当前 Role-B root order：
 
-### Parser / Evidence geometry
+```text
+retrieval candidate generation / ranking
+→ exact page / anchor Evidence binding
+→ remaining deterministic / numeric extraction
+→ genuine conflict fail-closed
+→ fixed-vs-fresh LLM / Evidence variance
+```
 
-Parser 拥有 physical page identity。page、text 与 bbox 必须来自解析/Evidence layer；UI 不得猜测。
+执行允许 multi-root wide sprint：多个 proven compatible subfix 独立 commit，targeted controls 后组成 bundle，出现回归只撤问题 subfix，保留 best checkpoint，再扩大 Development。
 
-当前 final-three 已完成：
+已拒绝的 direct ranked concentration-table candidate 因无 canonical M1/M2 gain 且 supplier existence F1 回归，不得原样恢复。broad Parser preservation / period candidate generation 只有出现新 proof 才重新打开。
+
+## 3. Market runtime
+
+### Historical governed path
+
+```text
+438 governed Market-X Core artifacts
+→ GovernedPRBMarketContextProvider
+→ schema / identity / hash / PIT provenance validation
+→ MarketContext
+```
+
+### Target unified resolver
+
+```text
+case identity
+→ validated cache/artifact exists?
+   ├─ yes → load
+   └─ no  → governed historical/online source
+             → PIT-safe builder
+             → validation
+             → optional governed cache
+→ MarketContext
+```
+
+新 IPO 不要求强行生成数字：合法历史不足时 `PARTIAL / UNAVAILABLE` 是正确产品行为。
+
+LLM / Skill 不能 mint market numbers。missing 不得 zero-fill；目标 IPO 上市后数据和 Blind outcome 不得进入 pre-listing runtime。
+
+## 4. Model runtime
+
+### Current stable baseline
+
+```text
+receipt-bound final-three handoff
+→ Frozen Model 3/3
+→ uncalibrated_model_score + drivers
+```
+
+该路径用于稳定 Demo / regression，不是最终泛化机制。
+
+### Target dynamic path
+
+```text
+governed feature vector
++ final frozen model artifact/hash
++ feature / alert manifests
+→ LightGBM inference (no retraining)
+→ uncalibrated_model_score
+→ native pred_contrib / SHAP
+→ ModelSignal
+```
+
+必须完成明确的 `PROMOTE_V2 / RETAIN_FROZEN_PR_F` 决议。任何 promoted model 创建新 versioned identity，不覆盖历史 frozen PR-F。
+
+SHAP 必须来自当前 inference；不得复制 final-three drivers。
+
+## 5. Supervision / conflict / trace
+
+Final Supervisor 只能引用 supplied in-scope Risk、Evidence、Conflict、Recheck、MarketContext、ModelSignal；severity 不低于 deterministic verified-risk floor。
+
+当前 regression baseline：
+
+```text
+E1 = 3/3
+first-attempt accepted = 3/3
+fallback = 0
+M3 = 1.0 x 3
+recheck = 17/17
+```
+
+`unresolved + recheck executed` 是合法状态，不等于 workflow failure。
+
+## 6. Evidence and product surfaces
+
+当前 final-three：
 
 ```text
 Evidence ID
 → source PDF hash
 → physical page
-→ upstream bbox / unique exact quote match
+→ unique localisation / truthful fallback
 → screenshot
 → screenshot manifest / hash
 ```
 
-实测 `17/17` precise。多重匹配或无匹配继续 fail closed。
+实测 `17/17` precise。
 
-### Retriever
-
-正式检索允许 keyword、domain-aware 和 Development-only 可消融的 lexical/hybrid 改造。禁止 Gold、公司、股票、case 或页码进入 runtime scoring。
-
-### Financial
-
-Financial 保持 deterministic-first。数值、期间、单位、比例和 Calculation 由 Python 负责；LLM 不覆盖已确定的权威数值。
-
-当前 B 根因重点是 deterministic fact formation，而不是 broad Parser/period-selector rewrite。
-
-### Legal / Business
-
-LLM 只消费 bounded Evidence，输出受 Pydantic Schema 与 Evidence scope guard 约束。provider failure、scope rejection 或表达冲突不得无条件删除正确 deterministic candidate。
-
-## 3. Role-B v0.4.6 diagnostic lane
+最终 UI 明确支持：
 
 ```text
-same fixed Development subset
-       ├─ offline: zero network baseline
-       ├─ shadow: real LLM + journal, canonical result = offline
-       └─ gated: replay journal through agents, no extra network
+Offline Demo Replay
+Historical Governed IPO
+Fresh New-IPO Analysis
 ```
 
-当前 checkpoint：
+Frontend 只消费正式 schema/state/provenance，不自己计算 Market/Model，也不把 unavailable 染成 available。
+
+发行人输入已支持 official catalog-backed 快速匹配；正式 downstream join 仍使用 governed identity，而不是 fuzzy company-name join。
+
+## 7. Current stable baseline
+
+进入 regression-protection：
+
+- final-three Market/Model `3/3`；
+- Final Supervisor E1 `3/3`；
+- M3 `1.0 x 3`；
+- recheck `17/17`；
+- precise screenshot `17/17`；
+- seven-stage `21/21`；
+- canonical replay `66` files；
+- fresh clone / Streamlit smoke / team-ready checks PASS。
+
+## 8. Open architecture work
 
 ```text
-fixed-journal M1 = 12/30
-fixed-journal M2 = 18/48
-fresh gated M1 = 11/30
-fresh gated M2 = 17/48
-structured valid = 38/40
+ALL79 M1/M2
+Dynamic Market-X resolver / fresh-case PIT source
+formal D model decision
+frozen-model dynamic inference + native SHAP
+final answer-ready frontend
+capability proofs
+freeze / one-shot Validation / audits / secure package
 ```
 
-当前 root sequence：
-
-```text
-deterministic_fact_missing
-→ retrieval_candidate_miss
-→ numeric extraction / genuine conflicts
-→ LLM / Evidence variance
-```
-
-## 4. Market boundary
-
-历史 frozen path：
-
-```text
-438 governed Market-X Core artifacts
-→ GovernedPRBMarketContextProvider
-```
-
-Dynamic New-IPO target：
-
-```text
-listing_date + industry + governed prior-IPO history
-→ PIT Market-X feature builder
-→ MarketContext
-```
-
-LLM 不能 mint market numbers。真实缺失合法；zero fill、未来信息和未经证明 proxy 不合法。
-
-## 5. Model / Outcome boundary
-
-当前 final-three：
-
-```text
-receipt-bound frozen PR-F handoff
-→ uncalibrated_model_score
-→ signed/native drivers
-```
-
-下一步 dynamic inference：
-
-```text
-governed feature vector
-+ frozen model artifact/hash
-→ LightGBM inference
-→ pred_contrib / native SHAP
-→ ModelPredictionView
-```
-
-不得复制 final-three per-case signal 冒充新 case inference。
-
-Frozen PR-F 有正式 receipt；v2 candidate 使用 Development selection 并在 2024 一次评价，但尚未晋升。任何 promote 必须创建新的 versioned freeze / receipt / artifact / handoff。
-
-Outcome evaluator 独立计算 1D / 5D / 20D / 60D，不把真实 outcome 反馈到分析 runtime。
-
-## 6. Supervision
-
-Final Supervisor v3 只能引用 in-scope Risk、Evidence、Conflict、Recheck 和 governed market/model signals；severity 不低于 deterministic verified-risk floor。
-
-当前实测：
-
-```text
-Gate E1 = 3/3
-first-attempt accepted = 3/3
-corrections = 0
-fallback = 0
-scope violation = 0
-```
-
-远程失败仍保留 deterministic fallback，但 fallback 不计 remote acceptance。
-
-## 7. Trace / M3
-
-Relevant event 必须有 actor/action/tool，并绑定 Evidence、Calculation 或 explicit `no_evidence_reason`。远程 LLM 额外记录 provider、model、Prompt、request identity、response hash 和 latency。
-
-当前 final-three：`M3 = 1.0 × 3`。
-
-## 8. Conflict / Re-check
-
-re-check v2 对 document-actionable conflict 使用 bounded budget；cross-channel non-document conflict 不消耗 document budget。
-
-当前 final-three：
-
-```text
-17/17 actionable attempted
-budget-skipped = 0
-```
-
-`unresolved` + `recheck executed` 是合法事实状态，不等于 workflow failure。
-
-## 9. Human Review
-
-`HumanReview` sidecar / UI / export 保留，作为 optional 人机协同能力。
-
-当前 Release policy：
-
-```text
-human-review count is not a release requirement
-M4 6-review gate = removed
-```
-
-空 review 只能解释为 `unreviewed`，不能解释为“已批准”。
-
-## 10. Replay / product delivery
-
-Canonical replay：
-
-```text
-reports/v045_demo_bundle
-3 cases
-66 files
-hash verify PASS
-fresh clone PASS
-Streamlit smoke PASS
-```
-
-Replay immutable：不会用新代码给旧运行补结果；provenance 保留 recorded run SHA。
-
-## 11. Current measured gaps
-
-已关闭：
-
-- C/E final-three 3/3；
-- M3 1.0 ×3；
-- Evidence screenshot 17/17；
-- seven-stage 21/21；
-- team-ready replay；
-- Final Supervisor vocabulary/scope blocker。
-
-仍开放：
-
-- ALL79 B M1/M2；
-- D promote/retain；
-- historical-universe frozen-model dynamic inference；
-- arbitrary new-IPO PIT Market path；
-- pipeline / text embellishment / related-party / comparable valuation demonstrations；
-- one-shot Validation；
-- final audits / secure package。
+Human Review sidecar/UI/export 可保留为 optional 人机协同能力，不是当前 Release Gate。

@@ -1,7 +1,7 @@
 {
   "controller_version": "v046_autonomous_campaign_v3",
   "campaign_started_at": "2026-08-29",
-  "current_main_sha": "f6f78e275075ae6a5955c6ace331a287b919ca0e",
+  "current_main_sha": "0d62930b195561fe219278f713c80389ff95ab07",
   "current_branch": "feat/v046-role-b-wide-sprint-009",
   "best_commit": "1d73c5157048d7ea8d322ec4fe938f71cefa3301",
   "best_fixed_journal_m1": {"correct": 15, "support": 30, "rate": 0.5},
