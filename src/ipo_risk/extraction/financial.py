@@ -50,10 +50,6 @@ _PERIOD_SPAN_PHRASE = re.compile(
 _NARRATIVE_BARE_YEAR_RE = re.compile(
     r"(20\d{2})\s*(?:年(?!\s*\d{1,2}\s*月)|財政年度|财政年度)"
 )
-_NARRATIVE_BARE_CHINESE_YEAR_RE = re.compile(
-    r"([〇零一二三四五六七八九]{4})\s*"
-    r"(?:年(?!\s*[一二三四五六七八九十]{1,3}\s*月)|財政年度|财政年度)"
-)
 _ENGLISH_DATE_DAY_FIRST_RE = re.compile(
     r"(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})",
     re.I,
@@ -1940,11 +1936,6 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 int(match.group(1))
                 for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)
             }
-            years.update(
-                year
-                for match in _NARRATIVE_BARE_CHINESE_YEAR_RE.finditer(sentence)
-                if (year := cls._year_value(match.group(1))) is not None
-            )
             dates = {match.group(0) for match in _CHINESE_DATE_RE.finditer(sentence)}
             dates |= {
                 match.group(0) for match in _CHINESE_WORD_DATE_RE.finditer(sentence)

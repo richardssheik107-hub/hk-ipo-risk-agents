@@ -307,25 +307,6 @@ def test_multiple_period_concentration_selects_latest_aligned_percentages() -> N
     assert result.top_five_pct == Decimal("5.1")
 
 
-def test_chinese_word_year_series_aligns_latest_concentration_percentages() -> None:
-    result = concentration(
-        "customer",
-        (
-            "於二零一七財政年度、二零一八財政年度、二零一九財政年度及"
-            "二零二零年八個月，最大客戶佔總收益10.1%、11.8%、13.5%及37.5%，"
-            "五大客戶佔總收益34.3%、36.5%、36.6%及68.0%。"
-        ),
-        header="截至二零二零年八月三十一日止八個月",
-    )
-
-    assert result.status == ExtractionStatus.EXTRACTED
-    assert result.issues == []
-    assert result.period_end.isoformat() == "2020-08-31"
-    assert result.period_months == 8
-    assert result.largest_counterparty_pct == Decimal("37.5")
-    assert result.top_five_pct == Decimal("68.0")
-
-
 def test_period_months_survive_pdf_space_between_counter_and_month() -> None:
     result = concentration(
         "supplier",
