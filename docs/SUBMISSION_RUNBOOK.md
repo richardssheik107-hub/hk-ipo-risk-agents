@@ -1,6 +1,8 @@
 # Competition Submission Runbook
 
 > 状态日期：`2026-08-29`
+>
+> Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`
 
 本 Runbook 描述从当前 main 到最终封包的可重复步骤。实时状态见 `V0.4_RELEASE_ACCEPTANCE.md`，执行顺序见 `COMPETITION_CLOSURE_PLAN.md`。
 
