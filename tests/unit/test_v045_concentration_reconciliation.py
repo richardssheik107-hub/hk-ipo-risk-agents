@@ -329,45 +329,6 @@ def test_equivalent_undated_pair_is_retained_only_as_supporting_evidence() -> No
     assert result.metadata["equivalent_supporting_candidate_pages"] == [21]
 
 
-def test_clean_historical_pairs_are_retained_as_provenance_not_decision_inputs() -> None:
-    extractor = V03FinancialFactExtractor()
-    historical = _fact(
-        period_end=date(2023, 12, 31),
-        period_months=12,
-        largest="28.0",
-        top_five="63.0",
-        page=19,
-    )
-    latest = _fact(
-        period_end=date(2024, 12, 31),
-        period_months=12,
-        largest="35.0",
-        top_five="72.0",
-        page=20,
-    )
-    ambiguous = _fact(
-        period_end=date(2025, 6, 30),
-        period_months=None,
-        largest="36.0",
-        top_five="73.0",
-        page=21,
-        status=ExtractionStatus.NEEDS_REVIEW,
-        issues=["latest_period_months_ambiguous"],
-    )
-
-    result = extractor._merge_concentration_facts(
-        "customer", [historical, latest, ambiguous]
-    )
-
-    assert result.status == ExtractionStatus.EXTRACTED
-    assert result.period_end == date(2024, 12, 31)
-    assert result.largest_counterparty_pct == Decimal("35.0")
-    assert result.top_five_pct == Decimal("72.0")
-    assert result.evidence_ids == ["e-20", "e-19"]
-    assert result.metadata["governed_supporting_candidate_count"] == 1
-    assert result.metadata["governed_supporting_candidate_pages"] == [19]
-
-
 def test_same_date_period_length_disagreement_remains_fail_closed() -> None:
     extractor = V03FinancialFactExtractor()
     annual = _fact(

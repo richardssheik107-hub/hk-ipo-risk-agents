@@ -316,27 +316,7 @@ class _ConcentrationReconciliationMixin:
             if largest is not None and top_five is not None
             else []
         )
-        # Preserve clean historical disclosures as provenance for the final
-        # concentration risk.  The latest governed fact still exclusively
-        # determines the selected period, values, status, level, and
-        # calculation; older facts only retain their source Evidence.  This is
-        # deliberately stricter than ``usable``: partial, ambiguous, or
-        # structurally invalid fragments must not enlarge the formal Evidence
-        # bundle merely because they contain a percentage.
-        governed_supporting = [
-            item
-            for item in facts
-            if item not in selected
-            and item.status == ExtractionStatus.EXTRACTED
-            and not item.issues
-            and item.period_end is not None
-            and item.period_months is not None
-            and item.largest_counterparty_pct is not None
-            and item.top_five_pct is not None
-        ]
-        evidence_facts = self._dedupe_facts(
-            [*selected, *equivalent_supporting, *governed_supporting]
-        )
+        evidence_facts = [*selected, *equivalent_supporting]
         evidence_ids = self._dedupe_strings(
             [evidence_id for item in evidence_facts for evidence_id in item.evidence_ids]
         )
@@ -429,26 +409,10 @@ class _ConcentrationReconciliationMixin:
                 "equivalent_supporting_candidate_pages": [
                     item.page for item in equivalent_supporting
                 ],
-                "governed_supporting_candidate_count": len(governed_supporting),
-                "governed_supporting_candidate_pages": [
-                    item.page for item in governed_supporting
-                ],
                 "reconciliation_version": _RECONCILIATION_VERSION,
                 "candidate_diagnostics": candidate_diagnostics,
             },
         )
-
-    @staticmethod
-    def _dedupe_facts(facts: Sequence[ConcentrationFact]) -> list[ConcentrationFact]:
-        output: list[ConcentrationFact] = []
-        seen: set[int] = set()
-        for fact in facts:
-            identity = id(fact)
-            if identity in seen:
-                continue
-            seen.add(identity)
-            output.append(fact)
-        return output
 
 
 class V03FinancialFactExtractor(
