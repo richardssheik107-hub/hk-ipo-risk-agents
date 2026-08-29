@@ -1091,7 +1091,10 @@ class FinancialEvidenceExtractor:
 
     @staticmethod
     def _period_months(line: str) -> int | None:
-        chinese = re.search(r"(?:止|為|为|共)\s*([一二三四五六七八九十0-9]+)\s*[個个]?月", line)
+        chinese = re.search(
+            r"(?:止|為|为|共)\s*([一二三四五六七八九十兩两0-9]+)\s*[個个]?月",
+            line,
+        )
         if chinese:
             values = {
                 "一": 1,
@@ -1106,6 +1109,8 @@ class FinancialEvidenceExtractor:
                 "十": 10,
                 "十一": 11,
                 "十二": 12,
+                "兩": 2,
+                "两": 2,
             }
             return values.get(chinese.group(1), int(chinese.group(1)) if chinese.group(1).isdigit() else None)
         english = re.search(r"(3|6|9|12|three|six|nine|twelve)\s+months?", line, re.I)

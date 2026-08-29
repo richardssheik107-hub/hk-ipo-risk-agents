@@ -348,6 +348,25 @@ def test_aligned_label_local_period_outranks_newer_adjacent_context_date() -> No
     )
 
 
+def test_chinese_two_month_period_preserves_concentration_series() -> None:
+    result = concentration(
+        "customer",
+        (
+            "於2017年、2018年、2019年及截至2020年2月29日止兩個月，"
+            "五大客戶佔收益93.7%、93.5%、87.6%及97.3%，"
+            "最大客戶佔收益57.9%、40.4%、30.5%及85.9%。"
+        ),
+        header="一項產品專利於2023年5月24日屆滿。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-02-29"
+    assert result.period_months == 2
+    assert result.largest_counterparty_pct == Decimal("85.9")
+    assert result.top_five_pct == Decimal("97.3")
+
+
 def test_bare_years_are_not_guessed_as_calendar_year_ends() -> None:
     result = concentration(
         "customer",
