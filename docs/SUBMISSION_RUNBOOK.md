@@ -2,21 +2,45 @@
 
 > 状态日期：`2026-08-29`
 
-本 Runbook 只描述从当前状态到最终封包的可重复步骤。状态见 `V0.4_RELEASE_ACCEPTANCE.md`，顺序见 `COMPETITION_CLOSURE_PLAN.md`。
+本 Runbook 描述从当前 main 到最终封包的可重复步骤。实时状态见 `V0.4_RELEASE_ACCEPTANCE.md`，执行顺序见 `COMPETITION_CLOSURE_PLAN.md`。
 
 ## 1. 基本原则
 
-- fixed-10 不是正式比赛 PASS；
-- `COMPETITION_READY` 只能由真实 Gate 得出；
+- fixed10 不是正式比赛 PASS；
+- `COMPETITION_READY` 只能由真实 active Gate 得出；
 - Gold immutable；
 - Validation one-shot after freeze；
-- 2025 Blind 不用于后续优化；
+- 2025 Blind 不用于优化；
 - fallback 不计 real-provider accepted；
 - Market missing 不补零；
 - uncalibrated score 不称 probability；
-- PDF、raw EOD、model bulk、Secret、raw journal、绝对路径不进入 Git 或 bundle。
+- PDF、raw EOD、Secret、raw journal、绝对路径不进入 Git/bundle；
+- **Human Review / M4 不再是 Release Gate，不要求 6 份真人 review。**
 
-## 2. 安装与基础校验
+## 2. 当前稳定团队基线
+
+PR #185 后已验证：
+
+```text
+Gate E1 = 3/3
+real-provider first-attempt = 3/3
+M3 = 1.0 x 3
+Market / frozen Model = 3/3
+recheck = 17/17
+budget-skipped = 0
+seven-stage = 7/7 x 3
+Evidence screenshot = 17/17 precise
+canonical bundle = 66 files / 7,528,749 bytes
+bundle verify = PASS
+TEAM_CLONE_READY = PASS
+fresh clone = PASS
+Streamlit smoke = PASS
+CI = PASS
+```
+
+Canonical replay：`reports/v045_demo_bundle`。
+
+## 3. 安装与基础校验
 
 ```bash
 python -m venv .venv
@@ -32,49 +56,49 @@ python scripts/validate_competition_data.py
 python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
 python scripts/check_v045_product_runtime.py
+python scripts/check_v045_team_clone_ready.py
 ```
 
-## 3. Role-B forensic baseline
+## 4. Role-B Development closure
+
+当前 checkpoint：
+
+```text
+fixed-journal M1 = 12/30 = 40.00%
+fixed-journal M2 = 18/48 = 37.50%
+fresh gated M1 = 11/30
+fresh gated M2 = 17/48
+structured valid = 38/40
+```
+
+当前优先根因：
+
+```text
+deterministic_fact_missing
+→ retrieval_candidate_miss
+→ numeric extraction / genuine conflict
+→ LLM / Evidence variance
+```
+
+执行规则：
+
+- 每个修复包只处理 proven root；
+- fixed10 用于快速诊断；
+- 稳定后扩大 Development；
+- 最终跑 ALL79；
+- M1 `>=0.80`、M2 `>=0.85` 后 freeze；
+- 在 A 授权前不运行 Validation。
+
+常用入口：
 
 ```bash
 python scripts/audit_v045_existing_gold.py --output-dir reports/v045_role_b
 python scripts/run_v046_role_b_ablation.py --subset-only
 python scripts/check_v046_role_b_structured_smoke.py
-python scripts/run_v046_role_b_ablation.py \
-  --run-id <RUN_ID> \
-  --modes all \
-  --execute
+python scripts/run_v046_role_b_ablation.py --run-id <RUN_ID> --modes all --execute
 ```
 
-要求：matching provider/model/Prompt/Schema smoke 通过；offline/shadow/gated 同身份；shadow 不改变 canonical result；gated 无额外网络调用。
-
-对 persisted case result 可运行 read-only Evidence audit：
-
-```bash
-python scripts/audit_v04_pr_h_document_evidence.py \
-  --analysis-json <analysis_result.json> \
-  --case-id <case_id> \
-  --stock-code <stock_code> \
-  --pdf <authorized_prospectus.pdf> \
-  --expected-pdf-sha256 <sha256> \
-  --output <evidence_audit.json>
-```
-
-该 CLI 按单案例运行；final-three 由 E/A 汇总。它不替代 Candidate/LLM/Builder lifecycle trace。
-
-在进入优化前补齐 Risk/Evidence root-cause matrix。完整规则见 `ROLE_B_M1_M2_PLAN.md`。
-
-## 4. Role-B Development closure
-
-- 根据 proven root cause 做通用修复；
-- 每个修复包有测试与消融；
-- fixed-10 达标后运行 ALL 79 Development；
-- 达到 M1/M2 门槛后冻结完整身份；
-- 不运行 Validation，直到 A 批准 one-shot。
-
-冻结清单：code SHA、Gold/subset manifest、Prompt、Retriever、Schema、normalization、reconciliation、Verifier、Evaluator、provider/model/transport/config。
-
-## 5. Role-D model decision and release revalidation
+## 5. Role-D model decision
 
 先读：
 
@@ -83,228 +107,188 @@ docs/ROLE_D_MODEL_DECISION.md
 docs/V045_ROLE_D_FINAL_CLOSURE.md
 ```
 
-A 只能做一次 promote/retain 决议：
+A 做一次 promote/retain 决议：
 
-- promote v2：创建新 freeze/decision record，之后不得按 2024 调参；
-- retain PR-F：保留弱辅助信号定位与现有 receipt。
+- promote v2：创建新的 versioned freeze/receipt/handoff，不再按 2024 调参；
+- retain PR-F：保留弱辅助 signal，并完成 strict revalidation / dynamic inference contract。
 
-随后验证 recorded receipt：
+验证现有 frozen receipt：
 
 ```bash
 python scripts/validate_v045_role_d_receipt.py
+python scripts/check_v045_product_runtime.py
 ```
 
-持有与正式决议匹配的 frozen runtime 与授权 EOD 时：
-
-```bash
-python scripts/build_v045_role_d_m5.py --output-dir reports/v045_role_d
-python scripts/check_v045_role_d_m5.py \
-  --role-d-dir reports/v045_role_d \
-  --output reports/v045_role_d_acceptance/acceptance.json
-```
-
-若晋升 v2，必须先完成对应 builder/checker/frozen binding 的 versioned 支持；不得把 v2 内容手工写进 frozen PR-F artifact。
-
-再验证 `--resume` 与新空目录重建 byte-identical。
-
-Final-three handoff：
-
-```bash
-python scripts/build_v04_pr_f_product_handoff.py \
-  --source-pr-f-dir reports/v04_pr_f \
-  --case-list configs/v045_demo_cases.json \
-  --output-dir reports/v045_pr_f_product_handoff_final3
-```
-
-当前 main 已包含与 immutable receipt 四个哈希逐字节一致的 label-free
-final-three handoff；若全量 PR-F runtime 遗失但持有 receipt-bound D export，
-只允许使用下列 fail-closed 恢复命令：
-
-```bash
-python scripts/build_v04_pr_f_product_handoff_from_receipt.py \
-  --predictions reports/v045_role_d/test_predictions.csv \
-  --output-dir reports/v045_pr_f_product_handoff_final3
-```
-
-使用授权行情 ZIP 重建全量 438 案例 Market-X：
+使用授权行情 ZIP 重建 438 frozen Market-X：
 
 ```bash
 python scripts/prepare_v045_market_runtime.py \
   --eod-archive <hkshareeodprices.zip>
 ```
 
-两个命令都验证 frozen/receipt 哈希；不接受替代行情、手改 signal 或 2025
-Blind outcome。
+## 6. Dynamic New-IPO runtime
 
-若晋升 v2，使用其 versioned handoff builder/identity。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
+### Phase 1 — historical universe
 
-D 的最终报告必须同时给出性能、基准、alert 工作量和限制。
+要求：非 final-three 的 frozen historical case 也能：
 
-## 6. Final-three offline / AI / Market / M3
+```text
+Market-X artifact
+→ frozen model inference
+→ native SHAP
+→ Final Supervisor / report
+```
 
-先运行产品通道 preflight，必须得到 Market `3/3`、Model `3/3`：
+验收必须使用未参与实现的 historical holdout cases，禁止 company/case-specific code。
+
+### Phase 2 — arbitrary new IPO
+
+```text
+new PDF
+→ Document pipeline
+→ issuer/listing identity
+→ governed pre-listing history
+→ Dynamic PIT Market-X
+→ frozen model inference
+→ SHAP
+→ Supervisor / report
+```
+
+外部市场历史不足时明确 partial/unavailable，不 fake-fill。
+
+## 7. Final-three replay / regression check
+
+后续任何大改都要保护 canonical baseline：
 
 ```bash
 python scripts/check_v045_product_runtime.py
-```
-
-Offline：
-
-```bash
-python scripts/run_v04_role_e_demo.py \
-  --config configs/v045_competition_offline.yaml \
-  --prospectus-root <AUTHORIZED_ROOT> \
-  --output-dir reports/v045_role_e_offline_final
-```
-
-AI：
-
-```bash
-python scripts/run_v04_role_e_demo.py \
-  --config configs/v045_competition_ai.yaml \
-  --prospectus-root <AUTHORIZED_ROOT> \
-  --output-dir reports/v045_role_e_ai_final
-```
-
-验收：2410/2460/1318 real-provider accepted 3/3、scope PASS、severity floor、complete call trace；M3 每案 1.0；Market strict contract 3/3。
-
-### 批量报告
-
-单家报告是每案的 `case_report.md`；批量报告在矩阵产物之上生成（只读，不重跑）：
-
-```bash
-python scripts/build_v045_batch_report.py --input-dir reports/v045_role_e_ai_final
-```
-
-输出 `batch_report.json` 与 `batch_report.md`：矩阵身份、按风险等级的排查顺序、逐案摘要、
-跨案例汇总，以及「这份报告不支持什么」。排序规则随排序一起印出，
-**不是分数、不是概率、不是上市后表现预测**；未执行的案例必须留在报告里，
-不允许批量悄悄缩水到「跑通的那几家」。
-
-## 7. M4 Human Review
-
-每案至少两名独立真人，共 6 份。LLM reviewer 只能 advisory。
-
-## 8. Competition capability cases
-
-为 core pipeline progress、text embellishment、related-party transaction、comparable IPO valuation 和 Evidence screenshot 准备真实案例与可审计产物。
-
-无正式 Gold 时标为 qualitative demonstration，不混入 M1/M2。
-
-## 9. Evidence screenshot export
-
-在 final-three 案例产物已经生成之后运行（只读已有 artifact，不重新分析）：
-
-```bash
-python scripts/build_v045_evidence_screenshots.py \
-  --input-dir reports/v045_role_e_ai_final \
-  --prospectus-root <AUTHORIZED_ROOT>
-```
-
-每案写出 `screenshots/*.png` 与 `screenshot_manifest.json`，顶层写出 `screenshot_summary.json`。
-
-每个关键 Evidence 绑定 source PDF hash、physical page、bbox source、match count、screenshot path/hash。
-
-只接受 upstream bbox 或唯一 exact quote match。多重/无匹配时明确 unavailable，不画假框：
-snippet 行在该页出现多于一次即判 ambiguous 并记录 `matched_page_line_count`，
-落回 parser 的 `page_text_union` 时按页级粒度标注，两者都不得冒充精确 snippet 框。
-PDF 与运行时记录的 SHA-256 不一致则整案拒绝渲染。
-
-## 9.1 演示静态备份与回放
-
-把一次已记录的矩阵运行打包成自带哈希的离线备份（**不联网、不需要凭证、不需要 PDF**）：
-
-```bash
+python scripts/check_v045_team_clone_ready.py
 python scripts/build_v045_demo_bundle.py \
-  --source-dir reports/v045_role_e_ai_final \
-  --output-dir reports/v045_demo_bundle
+  --output-dir reports/v045_demo_bundle \
+  --verify
 ```
 
-产出 `demo_manifest.json`（逐文件 SHA-256）与 `DEMO_SCRIPT.md`（按真实产物生成的演示脚本，
-包含必须照实说的通道缺失、Gate 状态与「未复核 ≠ 已认可」）。
+必须保持：
 
-上台前在演示机上先校验，不通过就不要演：
-
-```bash
-python scripts/build_v045_demo_bundle.py --output-dir reports/v045_demo_bundle --verify
+```text
+E1 3/3
+M3 1.0 x 3
+Market / Model 3/3
+recheck 17/17
+seven-stage 7/7 x 3
+Evidence 17/17 precise
+bundle verify PASS
 ```
 
-界面侧栏「Demo replay」载入案例即可回放；顶部固定显示回放标识与来源运行的 config、
-code_base_sha、招股书 SHA-256。回放的 Evidence 原页用的是导出的截图产物并标注粒度与图像哈希；
-导出拒绝过的 Evidence 在回放里同样没有图，不会用别的页面顶替。
-默认目录 `reports/v045_demo_bundle`，可用 `IPO_RISK_DEMO_BUNDLE` 覆盖。
-
-回放不重跑分析，也不会产生那次运行没有产生的结论；演示时必须说明这是已记录运行。
-
-当前 canonical final-three replay 已由真实成功运行生成：
+Recorded provenance：
 
 ```text
 recorded runtime SHA = 3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d
-runtime-equivalent release baseline = 802bf5095e0db6a604dcb762e1070563f8cb1b34
-Gate E1 = 3/3
-M3 = 1.0 x 3
-Market / Model = 3/3
-recheck budget-skipped = 0
-seven-stage = 7/7 x 3
-Evidence screenshot = 17/17 precise
-bundle = 66 files, hash verification PASS
+runtime-equivalent release SHA = 802bf5095e0db6a604dcb762e1070563f8cb1b34
+team-ready merge SHA = 732c5fd7b609b1a6589630b6e6a559c117206747
 ```
 
-运行团队 clone gate：
+不得修改 replay 内的 recorded SHA 伪装成后来 commit。
+
+## 8. Competition capability cases
+
+准备真实、可审计案例：
+
+- core pipeline progress；
+- text embellishment；
+- related-party transaction；
+- comparable IPO valuation；
+- Dynamic New-IPO proof；
+- Evidence screenshot；
+- single/batch report；
+- API/UI。
+
+无正式 Existing Gold 时标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。
+
+Human Review UI 可以展示，但不需要真人评分。
+
+## 9. Evidence screenshot export
+
+对新的真实运行：
 
 ```bash
-python scripts/check_v045_team_clone_ready.py
+python scripts/build_v045_evidence_screenshots.py \
+  --input-dir <RUN_DIR> \
+  --prospectus-root <AUTHORIZED_ROOT>
 ```
 
-该 checker 只读 canonical bundle 与 `reports/final_status`，并重算 bundle hash、
-三案例 replay stage、E1、M3、Market/Model、recheck budget、Evidence accounting、
-runtime equivalence、敏感信息和体积限制。通过时输出 `TEAM_CLONE_READY = PASS`。
-
-equivalence artifact 保留真实 run SHA，不把它改写成 rebase 后 SHA。若 Git 审计发现
-runtime 文件变化，则必须重跑 final-three，而不是修改 artifact provenance。
+必须绑定 source PDF hash、physical page、bbox source、match count、screenshot path/hash。多重/无匹配明确 unavailable，不画假框。
 
 ## 10. One-shot Validation
 
-只有 B Full Development 通过且完整 freeze 后：
+只有 B Full Development 达标、B/D 身份冻结后：
 
 ```text
-ALL 19 evaluable 2024 Existing-Gold cases
+ALL19 evaluable 2024 Existing-Gold cases
 one execution under frozen identity
 ```
 
-运行后不再调整 Prompt、Retriever、Verifier、threshold 或 evaluator。
+执行后不得根据 Validation 调 Prompt、Retriever、Verifier、threshold、model 或 evaluator。
 
 ## 11. Final readiness
 
-所有 lane artifact 到齐后运行现有 readiness builder，并检查：B M1/M2、D model decision/strict acceptance/final-three、C/E/M3/M4、capability cases/screenshots、CI 和 audits。
+最终 readiness 只检查当前 active Gate：
 
-`--latest-main-ci-passed` 只能在 CI 实际通过时使用。
+```text
+B ALL79 + M1/M2
+D formal model decision / strict identity
+C/E/M3 stable baseline
+Dynamic New-IPO / product coverage
+competition capability cases
+one-shot Validation
+latest-main CI
+Blind / provenance / determinism / security
+final package
+```
+
+**不检查 M4 6 human reviews。**
+
+Human Review artifact 若存在，可以作为 optional artifact；没有真人 review 不得导致 readiness FAIL。
 
 ## 12. Final package
 
-只有 `submission_readiness.json.competition_ready=true` 才运行 packager。
+只有 active readiness 全部通过后运行 packager。
 
-Bundle 必须包含 source/environment/scripts、prototype/API、prediction table、Agent logs、Evidence/screenshots、three case reports、M4 reviews、metrics/audits/index/release note。
+Bundle 必须包含：
 
-Bundle 必须拒绝 PDF、raw licensed data、Secret/private key/token、本机路径、raw journal、未授权模型和 reviewer 私有工作文件。
+```text
+source / environment / scripts
+prototype / API / UI
+prediction table
+Agent / Tool / Evidence trace
+Evidence screenshots
+canonical 3 case reports / replay
+Dynamic New-IPO proof
+metrics / audits / artifact index / release note
+```
+
+Human Review export 可选；不要求 review scores。
+
+Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本机路径、raw journal、未授权模型、Validation/Blind leakage。
 
 ## 13. Final checklist
 
 ```text
-[ ] B forensic baseline
-[ ] ALL 79 Development
+[ ] ALL79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
-[ ] D A-owned model decision
-[ ] D strict revalidation / determinism / final-three
-[ ] C strict 3/3
-[ ] E accepted 3/3
-[ ] M3 =100%
-[ ] M4 6 reviews
-[ ] capability cases
-[ ] Evidence screenshots
+[ ] D A-owned promote/retain decision
+[ ] D strict revalidation / determinism / final identity
+[x] C/E final-three baseline
+[x] E accepted 3/3
+[x] M3 =100%
+[x] Evidence screenshots 17/17 precise
+[x] canonical replay / team clone
+[ ] Dynamic New-IPO Phase 1
+[ ] Dynamic New-IPO Phase 2 or governed external-data limitation documented
+[ ] competition capability cases
 [ ] frozen one-shot Validation
-[ ] latest-main CI
+[ ] latest-main CI after final freeze
 [ ] Blind / provenance / determinism / security
 [ ] artifact index / ZIP / SHA manifest
 ```
