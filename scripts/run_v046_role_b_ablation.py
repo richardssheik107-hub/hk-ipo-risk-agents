@@ -168,6 +168,11 @@ class _TracingRetriever:
         self._delegate = delegate
         self._sink = sink
 
+    @property
+    def last_cache_metrics(self) -> dict[str, Any]:
+        observed = getattr(self._delegate, "last_cache_metrics", None)
+        return dict(observed) if isinstance(observed, dict) else {}
+
     def retrieve(self, chunks: list[Any], query: str, limit: int = 3) -> list[Evidence]:
         candidates = list(self._delegate.retrieve(chunks, query, limit=limit))
         diagnostic_candidates = (

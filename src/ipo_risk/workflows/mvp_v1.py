@@ -256,6 +256,23 @@ class MVPWorkflow:
             return diagnostics.model_dump(mode="json")
         return dict(diagnostics) if isinstance(diagnostics, dict) else {"value": str(diagnostics)}
 
+    def _document_with_retrieval_cache(self, state) -> dict[str, Any]:
+        document = dict(state.get("document_metadata") or {})
+        observed = getattr(self.retriever, "last_cache_metrics", None)
+        if not isinstance(observed, dict) or not observed:
+            return document
+        combined = dict(document.get("cache_metrics") or {})
+        for key in ("retrieval_cache_hits", "retrieval_cache_misses"):
+            combined[key] = int(observed.get(key) or 0)
+        timings = dict(combined.get("stage_wall_clock_ms") or {})
+        timings.update(observed.get("stage_wall_clock_ms") or {})
+        combined["stage_wall_clock_ms"] = timings
+        for key in ("retrieval_fingerprint", "retrieval_input_hash"):
+            if observed.get(key):
+                combined[key] = observed[key]
+        document["cache_metrics"] = combined
+        return document
+
     def agent_node(self, agent):
         def node(state):
             try:
@@ -265,6 +282,7 @@ class MVPWorkflow:
                 diagnostics = self._diagnostics(agent)
                 return {
                     "candidates": candidates,
+                    "document_metadata": self._document_with_retrieval_cache(state),
                     "component_diagnostics": {agent.name: diagnostics},
                     "agent_logs": [
                         self._log(

@@ -127,6 +127,10 @@ class RoleBFinancialHighRecallRetriever:
         self._result_cache: dict[tuple[str, str], list[Evidence]] = {}
         self._corpus_cache: dict[str, _SearchCorpus] = {}
 
+    @property
+    def last_cache_metrics(self) -> dict[str, object]:
+        return dict(self._keyword.last_cache_metrics)
+
     def retrieve(
         self,
         chunks: list[DocumentChunk],
