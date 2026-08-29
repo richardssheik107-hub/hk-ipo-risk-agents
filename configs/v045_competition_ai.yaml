@@ -36,6 +36,12 @@ log_level: INFO
 market_context: governed_pr_b_core
 market_feature_dir: reports/v04_pr_b/core_features
 market_official_bridge: data/catalog/ipo_official_master_bridge.csv
+# Any legal prospectus outside the frozen 438 recomputes Market-X Core from the
+# committed prior-IPO universe under the same strictly pre-listing cutoff.
+# Prior-IPO outcomes come from licensed EOD, so that tier stays an optional
+# local pack: set IPO_RISK_MARKET_DYNAMIC_OUTCOME_PACK once it is materialized.
+market_dynamic_context: pit_bridge
+market_dynamic_outcome_pack: ""
 final_supervisor: llm
 # The committed four-file handoff is label-free, checksum-bound and byte-identical
 # to the final-three package recorded by the immutable Role-D receipt.

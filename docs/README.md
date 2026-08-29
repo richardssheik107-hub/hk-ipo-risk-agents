@@ -23,6 +23,7 @@
 | `TEAM_QUICKSTART.md` | fresh clone 后离线回放三案例 |
 | `team/README.md` | 五人并行执行总索引及 owner 文档入口 |
 | `PROJECT_SPEC.md` | 产品范围、Dynamic New-IPO 目标和不可破坏原则 |
+| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 泛化合同、PIT 边界、missing_reason 词表、Model handoff |
 | `ARCHITECTURE.md` | runtime / modeling / diagnostics 架构 |
 | `DATA_SCHEMA.md` | runtime、评测和 artifact contract |
 | `COMPETITION_DATA_OVERVIEW.md` | 数据与 Development / Validation / Blind 边界 |

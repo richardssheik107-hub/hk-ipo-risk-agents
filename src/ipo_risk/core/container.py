@@ -19,6 +19,7 @@ from ipo_risk.agents.financial import CashRunwayFinancialAgent
 from ipo_risk.agents.financial_v03 import V03FinancialAgent
 from ipo_risk.agents.financial_verifier import V03FinancialVerifier
 from ipo_risk.agents.legal import LegalAgent
+from ipo_risk.agents.dynamic_market_context import DynamicPITMarketContextProvider
 from ipo_risk.agents.market_context import (
     GatePendingMarketContextProvider,
     GovernedPRBMarketContextProvider,
@@ -317,8 +318,25 @@ class DependencyContainer:
                 feature_dir=self.settings.market_feature_dir,
                 official_bridge_path=self.settings.market_official_bridge,
                 extended_readiness_path=self.settings.market_extended_readiness,
+                new_case_provider=self._dynamic_market_context(),
             )
+        if kind == "market_context" and name == "dynamic_pit":
+            return self._dynamic_market_context(required=True)
         return self.registry.create(kind, name)
+
+    def _dynamic_market_context(self, *, required: bool = False):
+        """Build the dynamic Market-X path only when a config asks for it.
+
+        The default keeps the honest "not configured" placeholder, so every
+        pre-existing runtime keeps its current new-case semantics until it
+        opts in.
+        """
+        if not required and self.settings.market_dynamic_context == NO_COMPONENT:
+            return None
+        return DynamicPITMarketContextProvider(
+            official_bridge_path=self.settings.market_official_bridge,
+            outcome_pack_path=self.settings.market_dynamic_outcome_pack or None,
+        )
 
     def _frozen_cohort_evidence(self):
         """Tier-1 frozen PR-F evidence; absent manifest degrades, never crashes."""

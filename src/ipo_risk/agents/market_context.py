@@ -23,6 +23,7 @@ from ipo_risk.agents.base import MarketContextProvider
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
     IPO_MARKET_CONTEXT_FEATURE_POLICY_VERSION,
+    IPO_MARKET_CONTEXT_FEATURE_UNITS,
     IPO_MARKET_CONTEXT_FEATURE_SCHEMA_VERSION,
     IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER,
     content_hash,
@@ -53,23 +54,7 @@ _OBSERVATION_SPECS: dict[str, tuple[str, str, str]] = {
     "sentiment_score": ("index", "composite pre-listing sentiment index", "source_unavailable"),
 }
 
-_CORE_UNITS: dict[str, str] = {
-    "ipo_count_30d": "count",
-    "ipo_count_60d": "count",
-    "log_prior_ipo_funds_raised_30d": "log_currency",
-    "log_prior_ipo_funds_raised_60d": "log_currency",
-    "prior_ipo_funds_raised_30d_sample_count": "count",
-    "prior_ipo_funds_raised_60d_sample_count": "count",
-    "recent_ipo_break_rate": "ratio",
-    "recent_ipo_return_5d": "ratio",
-    "recent_ipo_1d_sample_count": "count",
-    "recent_ipo_5d_sample_count": "count",
-    "same_industry_ipo_count_180d": "count",
-    "same_industry_recent_break_rate": "ratio",
-    "same_industry_recent_return_5d": "ratio",
-    "same_industry_recent_1d_sample_count": "count",
-    "same_industry_recent_5d_sample_count": "count",
-}
+_CORE_UNITS = IPO_MARKET_CONTEXT_FEATURE_UNITS
 
 _EXTENDED_ONLY_RAW_FEATURE_ORDER = tuple(
     name for name in MARKET_RAW_FEATURE_ORDER if name not in _CORE_UNITS
