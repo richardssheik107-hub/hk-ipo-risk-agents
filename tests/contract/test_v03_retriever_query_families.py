@@ -45,6 +45,18 @@ LANGUAGE_CASES = (
     ("supplier_concentration", "五大供应商", "向五大供应商采购占总采购额70%", "suppliers"),
     ("supplier_concentration", "五大供應商", "向五大供應商採購佔總採購額70%", "供應商"),
     ("supplier_concentration", "top five suppliers", "Purchases from our top five suppliers were 70%", "suppliers"),
+    (
+        "supplier_concentration",
+        "前五大供應商",
+        "向前五大供應商作出的採購額佔同期銷售成本73.6%",
+        "供應商",
+    ),
+    (
+        "customer_concentration",
+        "五大客戶應佔收入",
+        "五大客戶應佔收入佔同期總收入78.0%",
+        "客戶",
+    ),
     ("redemption_rights", "赎回权", "投资协议约定赎回权将于上市时终止", "history and reorganisation"),
     ("redemption_rights", "贖回權", "投資協議約定贖回權將於上市時終止", "歷史及重組"),
     ("redemption_rights", "redemption rights", "Redemption rights under the investment agreement terminate upon listing", "history"),

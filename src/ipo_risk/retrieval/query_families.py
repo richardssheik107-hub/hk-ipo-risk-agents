@@ -80,6 +80,10 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
             "客户集中度", "客戶集中度", "五大客户", "五大客戶", "最大客户",
             "最大客戶", "主要客户", "主要客戶", "customer concentration",
             "top five customers", "largest customer", "major customers",
+            "来自五大客户的收入", "來自五大客戶的收入",
+            "五大客户应占收入", "五大客戶應佔收入",
+            "向五大客户作出的销售", "向五大客戶作出的銷售",
+            "单一最大客户的收入", "單一最大客戶的收入",
         ),
         positive_context=(
             "来自五大客户", "來自五大客戶", "占总收入", "佔總收入", "销售额",
@@ -98,12 +102,17 @@ QUERY_FAMILIES: tuple[QueryFamily, ...] = (
         name="supplier_concentration",
         aliases=(
             "供应商集中度", "供應商集中度", "五大供应商", "五大供應商",
+            "前五大供应商", "前五大供應商",
             "最大供应商", "最大供應商", "主要供应商", "主要供應商",
             "supplier concentration", "top five suppliers", "largest supplier", "major suppliers",
+            "向前五大供应商采购", "向前五大供應商採購",
+            "前五大供应商采购额", "前五大供應商採購額",
+            "单一最大供应商采购", "單一最大供應商採購",
         ),
         positive_context=(
             "向五大供应商采购", "向五大供應商採購", "占总采购额", "佔總採購額",
             "采购额", "採購額", "供应商依赖", "供應商依賴",
+            "占销售成本", "佔銷售成本", "占收入成本", "佔收入成本",
             "purchases from", "percentage of total purchases", "procurement", "supplier dependency",
         ),
         negative_context=(
