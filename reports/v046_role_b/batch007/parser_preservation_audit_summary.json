@@ -1,0 +1,22 @@
+{
+  "artifact_version": "v046_role_b_batch007_parser_preservation_audit_v1",
+  "base_commit": "4b342ef54ff0851d3d7733fdcf8240ec64e5f592",
+  "audited_unit_count": 6,
+  "governed_pdf_page_count": 11,
+  "nonempty_text_page_count": 11,
+  "parser_preservation_failure_count": 0,
+  "reclassified": {
+    "deterministic_fact_missing": 3,
+    "retrieval_candidate_miss": 3
+  },
+  "decision": "REJECTED_MISCLASSIFIED_ROOT",
+  "production_change": false,
+  "network_calls": 0,
+  "gold_used_at_runtime": false,
+  "raw_gold_text_persisted": false,
+  "raw_prospectus_text_persisted": false,
+  "local_paths_persisted": false,
+  "validation_opened": false,
+  "blind_2025_accessed": false,
+  "next_root": "deterministic_fact_missing"
+}

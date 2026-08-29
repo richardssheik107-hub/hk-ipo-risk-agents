@@ -15,6 +15,11 @@
       "id": "batch006_period_candidate_generation",
       "result": "rejected_as_stale_root",
       "reason": "current post-Batch005 audit contains zero period_candidate_missing units and zero proven selector bugs"
+    },
+    {
+      "id": "batch007_parser_preservation",
+      "result": "rejected_as_misclassified_root",
+      "reason": "all 11 governed PDF pages have extractable text; failures split into deterministic-fact and retrieval-candidate misses"
     }
   ]
 }
