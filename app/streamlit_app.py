@@ -56,8 +56,9 @@ from competition_runtime_view import (
     traceability,
     traceability_metrics,
 )
-from evidence_viewer import render_evidence_viewer
+from evidence_viewer_compat import render_evidence_viewer
 from human_review_ui import render_human_review
+from issuer_identity_ui import render_issuer_identity_inputs
 from ipo_risk.runtime.demo_replay import (
     available_recorded_cases,
     load_recorded_case,
@@ -849,38 +850,30 @@ if not has_existing_result:
         "</section>",
         unsafe_allow_html=True,
     )
-    with st.form("analysis"):
-        identity_col, upload_col = st.columns((0.4, 0.6), gap="large")
-        with identity_col:
-            st.markdown("<div class='landing-intake-label'>IPO Identity</div>", unsafe_allow_html=True)
-            st.markdown("<div class='landing-intake-title'>发行人信息</div>", unsafe_allow_html=True)
-            st.markdown(
-                "<div class='landing-intake-copy'>用于绑定本次研究案例与上市时点。</div>",
-                unsafe_allow_html=True,
-            )
-            company = st.text_input("公司名称", "Demo Biotech")
-            code = st.text_input("股票代码", "9999.HK")
-            listing = st.date_input("上市日期", date.today())
-        with upload_col:
-            st.markdown("<div class='landing-intake-label'>Prospectus</div>", unsafe_allow_html=True)
-            st.markdown("<div class='landing-intake-title'>上传招股书</div>", unsafe_allow_html=True)
-            st.markdown(
-                "<div class='landing-intake-copy'>PDF 将在当前分析生命周期内用于解析、Evidence 定位与原页复核。</div>",
-                unsafe_allow_html=True,
-            )
+    identity_col, upload_col = st.columns((0.4, 0.6), gap="large")
+    with identity_col:
+        st.markdown("<div class='landing-intake-label'>IPO Identity</div>", unsafe_allow_html=True)
+        st.markdown("<div class='landing-intake-title'>发行人信息</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='landing-intake-copy'>输入公司名称、股票代码、case id 或上市日期即可从官方 catalog 自动匹配；匹配后仍可手工修改。</div>",
+            unsafe_allow_html=True,
+        )
+        company, code, listing = render_issuer_identity_inputs(key_prefix="analysis")
+    with upload_col:
+        st.markdown("<div class='landing-intake-label'>Prospectus</div>", unsafe_allow_html=True)
+        st.markdown("<div class='landing-intake-title'>上传招股书</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='landing-intake-copy'>PDF 将在当前分析生命周期内用于解析、Evidence 定位与原页复核。</div>",
+            unsafe_allow_html=True,
+        )
+        with st.form("analysis"):
             uploaded = st.file_uploader("招股书 PDF", type=["pdf"]) if needs_pdf else None
             submitted = st.form_submit_button("开始分析", type="primary")
 else:
     st.markdown("<div id='new-analysis' class='landing-section-anchor'></div>", unsafe_allow_html=True)
-    section_header("Analysis Setup", "绑定公司、股票代码和上市日期，上传真实招股书后启动受治理分析。")
+    section_header("Analysis Setup", "输入任一发行人身份线索即可匹配官方 catalog，也可手工填写新 IPO。")
+    company, code, listing = render_issuer_identity_inputs(key_prefix="analysis")
     with st.form("analysis"):
-        first, second, third = st.columns((1.4, 1, 1))
-        with first:
-            company = st.text_input("公司名称", "Demo Biotech")
-        with second:
-            code = st.text_input("股票代码", "9999.HK")
-        with third:
-            listing = st.date_input("上市日期", date.today())
         uploaded = st.file_uploader("招股书 PDF", type=["pdf"]) if needs_pdf else None
         submitted = st.form_submit_button("开始分析", type="primary", width="stretch")
 
