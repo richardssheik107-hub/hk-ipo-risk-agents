@@ -141,6 +141,19 @@ python scripts/run_v04_role_e_demo.py \
 
 验收：2410/2460/1318 real-provider accepted 3/3、scope PASS、severity floor、complete call trace；M3 每案 1.0；Market strict contract 3/3。
 
+### 批量报告
+
+单家报告是每案的 `case_report.md`；批量报告在矩阵产物之上生成（只读，不重跑）：
+
+```bash
+python scripts/build_v045_batch_report.py --input-dir reports/v045_role_e_ai_final
+```
+
+输出 `batch_report.json` 与 `batch_report.md`：矩阵身份、按风险等级的排查顺序、逐案摘要、
+跨案例汇总，以及「这份报告不支持什么」。排序规则随排序一起印出，
+**不是分数、不是概率、不是上市后表现预测**；未执行的案例必须留在报告里，
+不允许批量悄悄缩水到「跑通的那几家」。
+
 ## 7. M4 Human Review
 
 每案至少两名独立真人，共 6 份。LLM reviewer 只能 advisory。

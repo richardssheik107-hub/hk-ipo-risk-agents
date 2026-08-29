@@ -1,5 +1,39 @@
 # Changelog
 
+## Unreleased — batch risk report: several companies in one view, with its ordering rule attached
+
+G6 asks for a single-company **and** a batch report. The per-case `case_report.md`
+existed; nothing produced a portfolio view (`grep batch` over `runtime/` and `app/`
+returned nothing). A batch view is also where a summary is most tempted to say more
+than the runs did, because putting companies in an order invites reading the order
+as a verdict.
+
+### Added
+
+- **`ipo_risk.runtime.batch_report`** — builds one report over a matrix run: matrix
+  identity (code/config/case-list SHA-256, dirty tree), per-case recorded state
+  (severity counts, conflicts, Final Supervisor outcome, traceability, Evidence and
+  screenshot coverage, channel states, human-review count), cross-case aggregates,
+  and a limitations section derived from the data rather than asserted.
+- **`scripts/build_v045_batch_report.py`** — reads an existing matrix output
+  directory and writes `batch_report.json` + `batch_report.md`. It re-analyses
+  nothing and opens no outcome label.
+
+### Governance
+
+- **The ordering carries its rule.** Cases are ordered by the severities the
+  document channel recorded, and `TRIAGE_RULE` — printed inside the report — states
+  that this orders recorded risk counts and is not a score, not a probability and
+  not a prediction of post-listing performance.
+- **A declared case that did not execute stays in the report**, with the reason the
+  matrix recorded. A batch that silently shrinks to the cases that worked would make
+  every aggregate under it wrong.
+- A case whose document channel asserted nothing is shown as asserting nothing; an
+  unavailable channel contributes no fact and is named with its state; an unreviewed
+  case reads as unreviewed; a deterministic fallback is never counted as
+  real-provider arbitration.
+
+
 ## Unreleased — Evidence screenshots: unique-match localisation and a hash-bound manifest
 
 `Evidence screenshots` is a required submission deliverable and nothing implemented
