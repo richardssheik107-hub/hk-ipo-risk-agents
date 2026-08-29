@@ -7,6 +7,38 @@ on:
     branches: [main]
 
 jobs:
+  windows-v2-model-artifact-integrity:
+    name: Windows V2 model artifact integrity
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify V2 model checkout attributes
+        shell: pwsh
+        run: |
+          $autocrlf = git config --get core.autocrlf
+          if ($LASTEXITCODE -ne 0) {
+            $autocrlf = "<unset>"
+          }
+          Write-Host "core.autocrlf=$autocrlf"
+
+          $attribute = git check-attr text -- models/role_d_v2/model.txt
+          if ($LASTEXITCODE -ne 0) {
+            throw "Unable to resolve Git attributes for model.txt"
+          }
+          Write-Host $attribute
+          if ($attribute -notmatch ": text: unset$") {
+            throw "model.txt is not protected by -text: $attribute"
+          }
+      - name: Verify V2 model raw SHA-256
+        shell: pwsh
+        run: |
+          $expected = "320e810e85dcdb7e6caa40f9ef2b20157005e7a1d1af38ad7d586dd0feee72e2"
+          $actual = (Get-FileHash models/role_d_v2/model.txt -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $expected) {
+            throw "V2 model raw SHA mismatch: expected=$expected actual=$actual"
+          }
+
   test:
     runs-on: ubuntu-latest
     steps:
