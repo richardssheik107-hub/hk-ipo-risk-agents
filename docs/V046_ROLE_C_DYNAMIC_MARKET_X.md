@@ -33,17 +33,28 @@ identity / hash / PIT 失败      0
 missing-feature 被填 0          0
 ```
 
-按上市年度：
+按上市年度（`15/15` 列给出未配置 / 已配置 outcome pack 两种情形）：
 
-| 上市年 | 15/15 available | partial | unavailable |
+| 上市年 | Core 15/15 available | partial | unavailable |
 |---|---|---|---|
 | 2020 | 41 | 74 | 10 |
 | 2021 | 65 | 32 | 0 |
 | 2022 | 40 | 38 | 0 |
 | 2023 | 31 | 37 | 0 |
 | 2024 | 31 | 39 | 0 |
-| 2025 | 0 | 112 | 0 |
+| 2025 | 0 → **3** | 112 → 109 | 0 |
 | 2026 | 0 | 0 | 12 |
+
+2025 只有 3 家能拿到 15/15，不是缺陷而是 blind 政策的正确结果：只有 60 天
+lookback 仍能回溯到 2024 outcome cohort 的年初案例才有 prior outcome；其余
+112 家窗口内全是 blind cohort，返回 `prior_ipo_outcomes_withheld_blind_cohort`。
+2025 全年缺失理由分布：
+
+```text
+302  prior_ipo_outcomes_withheld_blind_cohort
+102  no_same_industry_recent_outcome_sample
+ 10  missing_industry_classification
+```
 
 2020 的 10 个 unavailable 与全部 partial 都不是缺陷：它们是 lookback 落在
 universe 左边界之外、缺行业分类、或缺 prior-IPO outcome 源的**显式**结果，
@@ -54,18 +65,28 @@ universe 左边界之外、缺行业分类、或缺 prior-IPO outcome 源的**�
 
 ## 3. Dynamic 与 frozen 的一致性证明
 
-对全部 438 个 frozen artifact 重放 dynamic builder，**offer-fact 家族
-（7 个特征）438/438 逐值一致**：
+对全部 438 个 frozen artifact 重放 dynamic builder：
 
 ```text
-ipo_count_30d / ipo_count_60d
-log_prior_ipo_funds_raised_30d / 60d
-prior_ipo_funds_raised_30d_sample_count / 60d_sample_count
-same_industry_ipo_count_180d
+未配置 outcome pack   offer-fact 7 个特征     438/438 逐值一致
+已配置 outcome pack   全部 15 个 Core 特征    438/438 逐值一致，0 例不一致
 ```
 
-即 dynamic path 不是另一套口径，而是 frozen 口径在没有 artifact 时的
-重算；两者唯一的差别在于 outcome 层是否配置（见 §5）。
+**dynamic path 不是另一套口径，而是 frozen 口径在没有 artifact 时的重算。**
+
+谱系也是可校验的，不是口头声明：outcome pack 的 `ipo_eod_sha256` 与 438 个
+frozen artifact 的 `source_provenance.ipo_eod_sha256` 相同
+（`190e45ff…c007152`），即两者派生自同一份 EOD 抽取。
+
+这条等价性已固化为回归测试
+`tests/integration/test_dynamic_market_x_frozen_equivalence.py`：
+offer-fact 部分在干净 checkout 里就能跑；15/15 部分与谱系校验在 pack 缺席时
+skip，物化后自动生效。
+
+唯一的语义差异：约 10 个 2020 年初案例的所有特征都落在 universe 左边界之外，
+frozen 报 `AVAILABLE`（一个校验通过、15 个值全为 null 的 artifact），dynamic 报
+`UNAVAILABLE`（什么都算不出来）。**observation 层面的事实完全一致**，
+两者都不是 error。
 
 ## 4. PIT / 泄漏边界
 
@@ -123,6 +144,17 @@ python scripts/build_prior_ipo_outcome_pack.py
 export IPO_RISK_MARKET_DYNAMIC_OUTCOME_PACK=data/competition/derived/prior_ipo_outcome_pack.json
 ```
 
+本机已物化一次（授权 EOD 位于仓库外，未复制进仓库，用 `--data-root` 指过去）：
+
+```text
+record_count             438        （= 2020–2024 outcome cohort，无一条 2025）
+content_hash             9db11d85d06aed940e8e48e2fa0698fedbf79fb875b6eb8a9c552b0b41deff92
+ipo_eod_sha256           190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152
+blind_outcomes_included  false
+```
+
+`ipo_eod_sha256` 与 frozen artifact 记录的一致，见 §3。
+
 loader 对 pack 的校验（任一失败即整包拒绝，不做部分采纳）：
 
 ```text
@@ -151,6 +183,8 @@ channel 级 `reason_code`：`dynamic_market_x_available`、
 
 ## 7. 给 Model Owner 的 handoff
 
+### 7.1 payload
+
 `ipo_risk.market.handoff.build_market_feature_handoff(view)` 对 frozen 与
 dynamic 两条路径产出同一个 payload：
 
@@ -170,6 +204,62 @@ content_hash
 Model 侧不重算 Market-X，只消费这个 payload；`missing_mask` 保证「值为 0」
 与「值未知」在模型输入里不会被混淆。
 
+### 7.2 与冻结模型身份的绑定
+
+Model owner 不应该被要求「相信」一个 dynamic 案例。
+`verify_market_handoff_binding(handoff, frozen_dir=...)` 把 handoff 对
+`reports/frozen/v04_pr_b_market_x_core_manifest.json` 逐项核对，**任何不符即
+抛错，不降级为 warning**：
+
+| check | 含义 |
+|---|---|
+| `core_feature_schema_version` | 与冻结 Market-X 同一 schema |
+| `core_feature_policy_version` | 同一口径策略 |
+| `core_feature_manifest_hash` | 同一 feature manifest（`c2f4a169…`） |
+| `feature_position_count` | 向量宽度 = 冻结的 30 位 |
+| `ipo_eod_sha256` | 同一份 EOD 抽取（handoff 声明时才校验） |
+| `prior_ipo_history_start_date` | 同一个 prior universe 左边界 |
+
+外加链路检查：`v04_pr_d_input_binding_manifest.json` 声明的上游 PR-B 哈希必须
+仍指向这份 manifest，否则说明模型的 input binding 建在另一份 Market-X 之上。
+
+实测（本机，配置 outcome pack 后）：
+
+```text
+frozen  ipo_2024_02410  2024-08-20  → 6/6 checks match，pr_d_input_binding match
+dynamic ipo_2024_02530  2025-01-10  → 6/6 checks match，pr_d_input_binding match
+        （blind split，15/15 特征可用，missing_mask 全 0）
+```
+
+一个 blind cohort 的 2025 案例，**完全由 dynamic 重算**，能证明自己与冻结模型
+用的是同一个 feature 身份、同一份 EOD、同一个 universe 左边界。
+
+### 7.3 物化产物
+
+```bash
+python scripts/build_market_feature_handoff.py --case-id ipo_2024_02530
+python scripts/build_market_feature_handoff.py --stock-code 9999.HK --listing-date 2025-06-02
+```
+
+每个案例写出 `{handoff, model_binding}`；**绑定失败的案例不写盘，只在
+`skipped` 里报告原因**。全 universe 统计（见 §2 audit）：
+
+```text
+model handoff bound            550 / 562
+not projectable                 12       （2026 上市：Core 越过覆盖终点，channel unavailable）
+```
+
+### 7.4 一个真实发现：CRLF 让冻结链路看起来是断的
+
+PR-D 记录的上游 PR-B 哈希（`640190d3…`）是在 Windows checkout 下算的，
+Git 存的是 LF 版本（`76a631fd…`）。用朴素的 `sha256(file)` 去校验这条链，
+会得出「模型的 input binding 建在另一份 Market-X 上」的错误结论。
+
+仓库里本来就有同类处理（official bridge 的 CRLF 容忍），本 PR 把它统一成
+`ipo_risk.market.prior_ipo_history.line_ending_agnostic_hashes`，
+`market_context` / `outcome_pack` / `handoff` 三处共用一份实现。
+容忍的只有换行表示，任何字段、行序或其它字节差异仍然 fail closed。
+
 ## 8. 给 Frontend Owner 的合同
 
 前端仍然只消费 `MarketContextView`：`status` / `reason` / `observations` /
@@ -182,29 +272,78 @@ builder 中间文件。
 ## 9. 配置
 
 ```yaml
-market_context: governed_pr_b_core        # frozen 优先
-market_dynamic_context: pit_bridge        # 非 frozen 案例走 dynamic PIT
-market_dynamic_outcome_pack: ""           # 可选、本地、licensed-derived
+market_context: governed_pr_b_core            # frozen 优先
+market_dynamic_context: pit_bridge            # 非 frozen 案例走 dynamic PIT
+market_dynamic_outcome_pack: ""               # 可选、本地、licensed-derived
+market_dynamic_extended_hsi_csv: ""           # 可选、本地、licensed（CSMAR HSI）
+market_dynamic_extended_turnover_csv: ""      # 可选、本地、licensed（HKEX 成交额）
 ```
+
+Extended 两个路径必须同时配置才生效：只有其中一个不算「半个源」。
 
 已在 `configs/v045_competition_offline.yaml` 与
 `configs/v045_competition_ai.yaml` 启用。`market_dynamic_context` 默认
 `none`，因此所有既有 config 的 new-case 语义保持不变，直到显式启用。
 
-## 10. 已知外部数据边界
+## 10. Market-X Extended 与它真正的边界
 
-以下仍然缺源，属于 Market-X **Extended** 契约，不在 Core 内，也不用代理值填补：
+Extended 的四类源**早已由 C 线接入并通过治理验收**，不是缺源。按
+`docs/research/V04_C_INDUSTRY_TURNOVER_INTEGRATION.md` 与
+`data/catalog/v04_c_extended_readiness_summary.json` 记录的实测：
+
+| Extended 特征 | 源 | 438 家可用数 | 状态 |
+|---|---|---|---|
+| `hsi_return_5d` / `hsi_return_20d` | CSMAR 恒生指数日行情 | 438 / 438 | ACCEPT |
+| `market_volatility_20d` | 同上（基准已实现波动率） | 438 / 438 | ACCEPT |
+| `market_turnover_20d_mean` | HKEX 官方全市场成交额 | 438 / 438 | ACCEPT |
+| `industry_return_5d` / `industry_return_20d` | 恒生综合行业指数 12 条 series | **0 / 438** | 源 ACCEPT、**分类映射 PIT-blocked** |
+
+`pit_detail: HSI/HSCI/HKEX are strict-before; unsafe industry mapping is blocked`。
+
+行业两项为 0 **不是缺源，是治理主动阻断**：交付的 HSICS 静态分类没有
+`effective_from` / `effective_to`，无法证明它是上市时点的分类，接进 production
+会破坏 PIT。C 线因此记录 `INDUSTRY_MAPPING_PIT_BLOCKED` 并明确否决了
+「买 HKD 1,000 历史产品」的方案——补历史修不好分类的时点问题。
+**本 PR 不解除这个阻断。**
+
+真正的边界是另外三件事：
+
+1. 逐案产物 `v04_c_extended_readiness_438.csv`（438 行，
+   sha256 `9fc6b5c1…`）按授权约定不入库，发布 config 里
+   `market_extended_readiness: ""`，所以默认运行时那 6 个名字不出现。
+2. 该 CSV **按 `case_id` 索引**，天然只能服务 frozen 的 438 家，
+   给不了新 IPO——这正是本 PR §10.1 要补的缺口。
+3. CSMAR HSI 的授权声明是「仅供西安交通大学使用；原始与 normalized 数据
+   不得提交公开仓库」，所以 Extended 与 outcome pack 一样，**仓库只提交
+   builder / provider / schema，数据留在本地**。
+
+### 10.1 Dynamic Extended：让新 IPO 也拿到市场状态
+
+`PreListingMarketFeatureEngine` 本身**不按 case_id 索引**，它只要一个
+`listing_date` 作为 exclusive cutoff。缺的只是一个能按任意上市日取数的组合层，
+本 PR 补上 `ipo_risk.market.dynamic_extended.DynamicExtendedMarketSource`：
 
 ```text
-HSI 指数历史            → hsi_return_5d / hsi_return_20d
-行业指数历史 + PIT 映射  → industry_return_5d / industry_return_20d
-全市场成交额            → market_turnover_20d_mean
-基准波动率              → market_volatility_20d
+CSMARHSIProvider            → hsi_return_5d / hsi_return_20d / market_volatility_20d
+OfficialHKEXTurnoverProvider→ market_turnover_20d_mean
+行业两项                     → 恒定 INDUSTRY_MAPPING_PIT_BLOCKED（不解除阻断）
 ```
 
-在 dynamic path 下这些名字根本不出现在 observation 里（Core 15 名之外），
-Market Regime Skill 因此返回 `INSUFFICIENT_DATA` 并列出 missingness——这是
-诚实的能力声明，不是 bug。
+配置后，dynamic path 的 observation 从 15 个 Core 扩展到 21 个
+（Core 15 + Extended 6），与 frozen + extended_readiness 的形状一致，
+Market Regime Skill 因此能给出真实 regime 而不是 `INSUFFICIENT_DATA`。
+
+```yaml
+market_dynamic_extended_hsi_csv: <本地 normalized HSI csv>
+market_dynamic_extended_turnover_csv: <本地 normalized HKEX turnover csv>
+```
+
+未配置时这 6 个名字仍然完全不出现——不是填 0，也不是伪造 unavailable。
+
+已知剩余边界：`PreListingMarketFeatureContext` 校验 `dataset_split` 必须匹配
+`expected_market_split(cohort_year)`，后者只认 2020–2025。因此 2026 及以后的
+上市日会得到 6 个 `listing_year_outside_governed_market_split` 的显式缺失。
+放宽它属于改动冻结的 split 治理契约，不在本 PR 范围内。
 
 ## 11. 测试
 
@@ -214,7 +353,16 @@ tests/unit/test_prior_ipo_history.py             覆盖终点、unmatched 跳过
 tests/unit/test_dynamic_market_context.py        新案例可用、无 listing date 不借用时钟、PIT 边界、
                                                  identity mismatch fail closed、缺行业、零填充禁令、
                                                  自我剔除、blind withheld、frozen→dynamic 组合
-tests/unit/test_market_feature_handoff.py        两条路径同一 feature identity、mask 语义、content hash
+tests/unit/test_market_feature_handoff.py        两条路径同一 feature identity、mask 语义、content hash、
+                                                 与冻结 manifest 的 6 项绑定、manifest 漂移 / universe 边界不符 /
+                                                 PR-D 建在另一份 manifest 上均 fail closed、真实仓库链路（含 CRLF）
+tests/unit/test_dynamic_extended_market.py       新上市日拿到 HSI/turnover、行业保持 PIT-blocked、
+                                                 benchmark 严格早于上市日、split 外显式缺失、
+                                                 缓存缺失是 error 不是空序列、Core+Extended 21 个 observation、
+                                                 Extended 读取失败不拖垮 Core、未配置时一个名字都不出现
+tests/integration/test_dynamic_market_x_frozen_equivalence.py
+                                                 438 个 frozen artifact 逐值重放；无 pack 时比 7 个 offer-fact 特征，
+                                                 有 pack 时比全部 15 个，并校验 EOD 谱系哈希
 tests/integration/test_v04_final_supervision_pipeline.py
                                                  竞赛 config 下 frozen 与 dynamic 两条路径的实际装配
 ```
