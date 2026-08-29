@@ -1,7 +1,7 @@
 rank,root,status,proven_units,latest_action,next_action
 1,concentration_exact_fact_extraction,partially_closed,4,spaced_decimals_and_local_period_fixed,defer remaining severity-policy mismatch
-2,period_candidate_generation,active,2,classified_by_batch003,audit candidate creation
-3,parser_preservation,queued,4,classified_by_batch003,profile parser loss modes
+2,period_candidate_generation,rejected,0,batch006_current_audit_zero_units,no production change
+3,parser_preservation,active,6,batch006_current_audit,profile bounded parser loss modes
 4,numeric_extraction,queued,1,classified_by_batch003,audit numeric parsing
 5,llm_evidence_stability,queued,3,diagnostic_non_reproduction,measure at fresh checkpoint
 6,final_evidence_binding,queued,1,batch004 evidence retained,inspect exact-anchor mismatch

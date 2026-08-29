@@ -10,6 +10,11 @@
       "id": "batch004_unqualified_percentage_fallback",
       "result": "refined_before_acceptance",
       "reason": "an unrelated shareholding percentage caused one concentration false positive"
+    },
+    {
+      "id": "batch006_period_candidate_generation",
+      "result": "rejected_as_stale_root",
+      "reason": "current post-Batch005 audit contains zero period_candidate_missing units and zero proven selector bugs"
     }
   ]
 }
