@@ -4,15 +4,16 @@
 
 ```text
 BATCH_009 = PARTIAL_ACCEPT
-BEST_KNOWN_GOOD = bd09c320f12a0ab9de51c0743ddb0bbc00b06346
+BEST_KNOWN_GOOD = 8743724a3509715ea3b83e4dd58f56dcf97ffe24
 accepted = generalized Legal lifecycle recognition
 rejected = direct ranked concentration-table extraction
 campaign = PAUSED_FOR_OWNER_REPLAN_AFTER_BATCH009
 ```
 
-The branch was rebased onto `main@9758e4c4154aada4c308fa0a5bf86e23d3d2d948`.
+The final branch was rebased onto
+`main@f6f78e275075ae6a5955c6ace331a287b919ca0e`.
 Batch008's accepted legacy cash-statement behavior was transplanted as
-`ee86fd7`. The Legal lifecycle fix is the independent commit `bd09c32`.
+`d009387`. The Legal lifecycle fix is the independent commit `8743724`.
 
 ## Comparable fixed-journal result
 
@@ -70,11 +71,12 @@ validate_competition_runtime = PASS
 git diff --check = PASS after accepted code
 ```
 
-Full pytest at the accepted code SHA produced `2291 passed, 3 failed, 3
-warnings`. The three failures are outside Role-B: on Windows, Git checks out a
-frozen PR-F JSON with CRLF bytes while its receipt binds the LF byte hash. No
-PR-F artifact or checksum was modified. This limitation remains explicit and
-is not relabeled as PASS.
+Full pytest after the final rebase produced `2294 passed, 2 skipped, 3 failed,
+3 warnings`. The three failures are outside Role-B: this worktree predates the
+new main `.gitattributes` rule and still holds a frozen PR-F JSON with CRLF
+bytes, while its receipt binds the LF byte hash. The same three product-handoff
+checks therefore fail locally. No PR-F artifact or checksum was modified. This
+worktree-specific limitation remains explicit and is not relabeled as PASS.
 
 ## Governance
 

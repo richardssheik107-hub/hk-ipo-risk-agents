@@ -33,7 +33,7 @@
     },
     {
       "id": "batch009_legal_lifecycle_recognition",
-      "commit": "bd09c320f12a0ab9de51c0743ddb0bbc00b06346",
+      "commit": "8743724a3509715ea3b83e4dd58f56dcf97ffe24",
       "type": "accepted_production_fix",
       "fixed_journal_m1": "14/30",
       "fixed_journal_m2": "21/48",

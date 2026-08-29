@@ -11,7 +11,7 @@
     {"batch": 6, "decision": "REJECTED_STALE_ROOT", "production_changed": false},
     {"batch": 7, "decision": "REJECTED_MISCLASSIFIED_ROOT", "production_changed": false},
     {"batch": 8, "decision": "ACCEPTED_DETERMINISTIC_GAIN", "fixed_m1": "13/30", "fixed_m2": "20/48", "fresh_executed": false},
-    {"batch": 9, "decision": "PARTIAL_ACCEPT_LEGAL_AND_REVERT_TABLE", "fixed_m1": "14/30", "fixed_m2": "21/48", "fresh_executed": false, "accepted_commit": "bd09c320f12a0ab9de51c0743ddb0bbc00b06346", "rejected_supplier_existence_f1": "0.875_to_0.80"}
+    {"batch": 9, "decision": "PARTIAL_ACCEPT_LEGAL_AND_REVERT_TABLE", "fixed_m1": "14/30", "fixed_m2": "21/48", "fresh_executed": false, "accepted_commit": "8743724a3509715ea3b83e4dd58f56dcf97ffe24", "rejected_supplier_existence_f1": "0.875_to_0.80"}
   ],
   "identities": {
     "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",

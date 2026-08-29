@@ -2,7 +2,7 @@
   "version": "v046_autonomous_next_actions_v2",
   "actions": [
     "stop execution at the owner-requested Batch009 checkpoint",
-    "preserve bd09c320f12a0ab9de51c0743ddb0bbc00b06346 as BEST_KNOWN_GOOD",
+    "preserve 8743724a3509715ea3b83e4dd58f56dcf97ffe24 as BEST_KNOWN_GOOD",
     "replan retrieval candidate/ranking and exact Evidence binding as the next compatible bundle",
     "do not revive the rejected ranked-table grammar without candidate-context controls",
     "run a cheap larger-Development retrieval funnel before the next fresh provider checkpoint",
