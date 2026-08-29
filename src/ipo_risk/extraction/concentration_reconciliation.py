@@ -32,6 +32,9 @@ from ipo_risk.schemas import DocumentChunk, Evidence
 
 
 _RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v1"
+_STRUCTURALLY_INVALID_PERCENTAGE_ISSUES = frozenset(
+    {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
+)
 
 
 class _ConcentrationReconciliationMixin:
@@ -185,6 +188,7 @@ class _ConcentrationReconciliationMixin:
             item
             for item in facts
             if item.period_end is not None
+            and not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(item.issues)
             and (
                 item.largest_counterparty_pct is not None
                 or item.top_five_pct is not None
@@ -223,12 +227,21 @@ class _ConcentrationReconciliationMixin:
             and item.largest_counterparty_pct is not None
             and item.top_five_pct is not None
         ]
+        selected_value_candidates = [
+            item
+            for item in selected
+            if not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(item.issues)
+            and (
+                item.largest_counterparty_pct is not None
+                or item.top_five_pct is not None
+            )
+        ]
         # A clean, complete candidate governs partial same-date disclosures.
         # Partial summaries remain auditable Evidence, but a single quoted
         # percentage must not veto a complete primary reading.  Multiple clean
         # complete candidates still vote together and therefore fail closed if
         # their values genuinely disagree.
-        value_candidates = governing or selected
+        value_candidates = governing or selected_value_candidates or selected
         period_month_values = {
             item.period_months
             for item in value_candidates
@@ -238,7 +251,7 @@ class _ConcentrationReconciliationMixin:
         if len(period_month_values) > 1:
             issues.append("period_months_conflict")
         if not governing:
-            issues.extend(issue for item in selected for issue in item.issues)
+            issues.extend(issue for item in value_candidates for issue in item.issues)
 
         largest_values = {
             item.largest_counterparty_pct
@@ -350,6 +363,14 @@ class _ConcentrationReconciliationMixin:
                     else "latest_usable_concentration_period"
                     if usable
                     else "latest_dated_candidate"
+                ),
+                "structurally_invalid_candidate_count": sum(
+                    bool(
+                        _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(
+                            item.issues
+                        )
+                    )
+                    for item in facts
                 ),
                 "reconciliation_version": _RECONCILIATION_VERSION,
                 "candidate_diagnostics": candidate_diagnostics,

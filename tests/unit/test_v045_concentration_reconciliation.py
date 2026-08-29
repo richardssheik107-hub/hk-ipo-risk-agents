@@ -208,6 +208,55 @@ def test_later_ambiguous_fragment_cannot_veto_last_governed_observation() -> Non
     assert result.metadata["discarded_nonselected_candidate_count"] == 1
 
 
+def test_later_out_of_range_fragment_cannot_displace_plausible_pair() -> None:
+    extractor = V03FinancialFactExtractor()
+    plausible = _fact(
+        period_end=date(2020, 8, 31),
+        period_months=8,
+        largest="37.5",
+        top_five="68.0",
+        page=20,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["value_period_count_mismatch"],
+    )
+    later_growth_rate = _fact(
+        period_end=date(2020, 12, 11),
+        period_months=None,
+        largest=None,
+        top_five="753.1",
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=[
+            "incomplete_concentration_values",
+            "latest_period_months_ambiguous",
+            "percentage_out_of_range",
+            "value_period_count_mismatch",
+        ],
+    )
+    same_date_empty = _fact(
+        period_end=date(2020, 8, 31),
+        period_months=12,
+        largest=None,
+        top_five=None,
+        page=22,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["concentration_percentage_missing", "incomplete_concentration_values"],
+    )
+
+    result = extractor._merge_concentration_facts(
+        "customer", [plausible, later_growth_rate, same_date_empty]
+    )
+
+    assert result.period_end == date(2020, 8, 31)
+    assert result.period_months == 8
+    assert result.largest_counterparty_pct == Decimal("37.5")
+    assert result.top_five_pct == Decimal("68.0")
+    assert result.issues == ["value_period_count_mismatch"]
+    assert result.metadata["structurally_invalid_candidate_count"] == 1
+    assert result.metadata["discarded_nonselected_candidate_count"] == 1
+    assert result.metadata["value_candidate_count"] == 1
+
+
 def test_same_date_period_length_disagreement_remains_fail_closed() -> None:
     extractor = V03FinancialFactExtractor()
     annual = _fact(
