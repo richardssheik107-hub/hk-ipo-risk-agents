@@ -7,6 +7,7 @@ import zipfile
 from ipo_risk.runtime.final_acceptance import (
     CommandResult,
     build_acceptance,
+    command_specs,
     package_preflight_evidence,
     write_outputs,
 )
@@ -25,6 +26,12 @@ def _git_repo(path: Path) -> None:
     (path / "README.md").write_text("fixture\n", encoding="utf-8")
     subprocess.run(("git", "add", "README.md"), cwd=path, check=True)
     subprocess.run(("git", "commit", "-qm", "fixture"), cwd=path, check=True)
+
+
+def test_final_acceptance_runtime_audits_are_read_only() -> None:
+    specs = {item.name: item for item in command_specs()}
+    assert "--no-write" in specs["dynamic_market_strict"].argv
+    assert "--no-write" in specs["dynamic_model_strict"].argv
 
 
 def test_missing_formal_artifacts_remain_blockers(tmp_path: Path) -> None:

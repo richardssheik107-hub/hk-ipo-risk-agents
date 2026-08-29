@@ -328,6 +328,11 @@ def main() -> int:
     parser.add_argument(
         "--output-dir", type=Path, default=REPO_ROOT / "reports" / "v046_dynamic_model_runtime"
     )
+    parser.add_argument(
+        "--no-write",
+        action="store_true",
+        help="run the audit without rewriting the committed evidence artifacts",
+    )
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args()
 
@@ -350,11 +355,12 @@ def main() -> int:
             "per_case_handoff_only": True,
             "blind_2025_y_accessed": False,
         }
-        args.output_dir.mkdir(parents=True, exist_ok=True)
-        (args.output_dir / "dynamic_model_runtime_audit.json").write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
+        if not args.no_write:
+            args.output_dir.mkdir(parents=True, exist_ok=True)
+            (args.output_dir / "dynamic_model_runtime_audit.json").write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
         print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
         return 2
 
@@ -489,18 +495,19 @@ def main() -> int:
         "historical_cases": historical_rows,
     }
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    (args.output_dir / "dynamic_model_runtime_audit.json").write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    fieldnames = sorted({key for row in historical_rows for key in row})
-    with (args.output_dir / "dynamic_model_runtime_audit.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(historical_rows)
+    if not args.no_write:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        (args.output_dir / "dynamic_model_runtime_audit.json").write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        fieldnames = sorted({key for row in historical_rows for key in row})
+        with (args.output_dir / "dynamic_model_runtime_audit.csv").open(
+            "w", encoding="utf-8", newline=""
+        ) as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(historical_rows)
 
     print(
         json.dumps(

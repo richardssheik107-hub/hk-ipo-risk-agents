@@ -55,11 +55,11 @@ ALL79 M1 >= 0.80
 ALL79 M2 >= 0.85
 
 Person 3:
-Dynamic Market-X historical + fresh path
+Dynamic Market-X historical + fresh path（PR #191 已关闭，持续回归保护）
 
 Person 4:
-formal model decision
-Dynamic Model / SHAP
+formal model decision（已关闭）
+Dynamic Model / SHAP（PR #197 已关闭，持续回归保护）
 capability coverage
 
 Person 2:

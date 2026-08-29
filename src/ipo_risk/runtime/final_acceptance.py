@@ -92,10 +92,18 @@ def command_specs(*, include_full_tests: bool = True) -> list[CommandSpec]:
             CommandSpec("role_d_v2_release", (python, "scripts/check_v045_role_d_v2_release.py")),
             CommandSpec("product_runtime", (python, "scripts/check_v045_product_runtime.py")),
             CommandSpec("team_clone_ready", (python, "scripts/check_v045_team_clone_ready.py")),
-            CommandSpec("dynamic_market_strict", (python, "scripts/run_market_runtime_audit.py", "--strict")),
+            CommandSpec(
+                "dynamic_market_strict",
+                (python, "scripts/run_market_runtime_audit.py", "--strict", "--no-write"),
+            ),
             CommandSpec(
                 "dynamic_model_strict",
-                (python, "scripts/run_dynamic_model_runtime_audit.py", "--strict"),
+                (
+                    python,
+                    "scripts/run_dynamic_model_runtime_audit.py",
+                    "--strict",
+                    "--no-write",
+                ),
             ),
             CommandSpec("git_diff_check", ("git", "diff", "--check"), True),
             CommandSpec(

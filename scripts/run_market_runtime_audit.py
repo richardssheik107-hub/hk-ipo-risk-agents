@@ -298,6 +298,11 @@ def main() -> int:
         type=Path,
         default=REPO_ROOT / "reports" / "v046_market_runtime",
     )
+    parser.add_argument(
+        "--no-write",
+        action="store_true",
+        help="run the audit without rewriting the committed evidence artifacts",
+    )
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args()
 
@@ -364,18 +369,19 @@ def main() -> int:
         "historical_cases": rows,
     }
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    (args.output_dir / "historical_market_runtime_audit.json").write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    fieldnames = list(rows[0]) if rows else []
-    with (args.output_dir / "historical_market_runtime_audit.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    if not args.no_write:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        (args.output_dir / "historical_market_runtime_audit.json").write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        fieldnames = list(rows[0]) if rows else []
+        with (args.output_dir / "historical_market_runtime_audit.csv").open(
+            "w", encoding="utf-8", newline=""
+        ) as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
 
     violations = summary["integrity_violation_count"] + sum(
         bool(item["integrity_violations"]) for item in fresh
