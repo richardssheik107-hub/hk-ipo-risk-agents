@@ -275,12 +275,6 @@ class V03FinancialRiskBuilder:
         risk_code = f"{fact.concentration_type}_concentration"
         context, issue = self._map_concentration(fact)
         if issue or context is None:
-            threshold_exclusion = self._build_concentration_threshold_exclusion(
-                fact,
-                risk_code=risk_code,
-            )
-            if threshold_exclusion is not None:
-                return threshold_exclusion
             pending = self._build_unresolved_concentration(
                 fact,
                 risk_code=risk_code,
@@ -400,118 +394,6 @@ class V03FinancialRiskBuilder:
             metadata=metadata,
         )
         return self._generated(risk, metadata)
-
-    def _build_concentration_threshold_exclusion(
-        self,
-        fact: ConcentrationFact,
-        *,
-        risk_code: str,
-    ) -> _RiskDecision | None:
-        """Resolve an incomplete candidate only from a governed strict bound.
-
-        A top-five share strictly below 30% also bounds the largest share below
-        30%, so it excludes both frozen concentration thresholds (30% largest,
-        60% top-five).  The bound remains a bound: no exact percentage or
-        Calculation is fabricated.  Conflicting values and non-selected source
-        fragments stay fail-closed.
-        """
-
-        blocking_issues = {
-            "conflicting_values_for_same_period",
-            "summary_primary_statement_conflict",
-            "largest_percentage_exceeds_top_five",
-            "percentage_out_of_range",
-        }
-        if blocking_issues.intersection(fact.issues):
-            return None
-
-        diagnostics = fact.metadata.get("candidate_diagnostics", [])
-        if not isinstance(diagnostics, Sequence) or isinstance(diagnostics, (str, bytes)):
-            return None
-
-        selected = [
-            item
-            for item in diagnostics
-            if isinstance(item, Mapping) and item.get("selected_for_merge") is True
-        ]
-        if not selected:
-            return None
-
-        # Any selected exact reading at or above a frozen threshold overrides a
-        # purported exclusion proof and leaves the candidate unresolved.
-        for item in selected:
-            try:
-                largest = (
-                    Decimal(str(item["largest_counterparty_pct"]))
-                    if item.get("largest_counterparty_pct") is not None
-                    else None
-                )
-                top_five = (
-                    Decimal(str(item["top_five_pct"]))
-                    if item.get("top_five_pct") is not None
-                    else None
-                )
-            except (ArithmeticError, ValueError):
-                return None
-            if (largest is not None and largest >= Decimal("30")) or (
-                top_five is not None and top_five >= Decimal("60")
-            ):
-                return None
-
-        qualifying: list[tuple[Decimal, list[str]]] = []
-        for item in selected:
-            raw_proofs = item.get("strict_upper_bound_proofs", {})
-            if not isinstance(raw_proofs, Mapping):
-                continue
-            proof = raw_proofs.get("top_five")
-            if not isinstance(proof, Mapping) or proof.get("operator") != "<":
-                continue
-            try:
-                upper_bound = Decimal(str(proof.get("upper_bound_pct")))
-            except (ArithmeticError, ValueError):
-                continue
-            if upper_bound > Decimal("30"):
-                continue
-            raw_evidence_ids = item.get("evidence_ids", [])
-            evidence_ids = (
-                [str(value) for value in raw_evidence_ids if value]
-                if isinstance(raw_evidence_ids, Sequence)
-                and not isinstance(raw_evidence_ids, (str, bytes))
-                else []
-            )
-            if evidence_ids:
-                qualifying.append((upper_bound, evidence_ids))
-
-        if not qualifying:
-            return None
-
-        governing_bound = max(value for value, _ in qualifying)
-        evidence_ids = list(
-            dict.fromkeys(
-                evidence_id
-                for _, identifiers in qualifying
-                for evidence_id in identifiers
-            )
-        )
-        metadata = {
-            "rule_version": self.policy.version,
-            "concentration_type": fact.concentration_type,
-            "candidate_state": "strict_top_five_upper_bound_excludes_thresholds",
-            "bound_operator": "<",
-            "top_five_upper_bound_pct": str(governing_bound),
-            "largest_threshold_pct": "30",
-            "top_five_threshold_pct": "60",
-            "calculation_unavailable": True,
-            "exact_percentage_claimed": False,
-            "period_end": fact.period_end.isoformat() if fact.period_end else None,
-            "period_months": fact.period_months,
-        }
-        return self._not_applicable(
-            risk_code,
-            "A source-bound strict top-five concentration upper bound excludes the configured thresholds.",
-            evidence_ids,
-            metadata,
-        )
 
     def _build_unresolved_concentration(
         self,

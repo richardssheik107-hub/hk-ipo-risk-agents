@@ -75,21 +75,6 @@ _PERCENT_RE = re.compile(
     re.I,
 )
 
-# A disclosed strict upper bound can prove that a concentration threshold is
-# not reached without pretending that the bound is an exact percentage.  Keep
-# this deliberately narrower than the general percentage parser: the wording
-# must occur immediately after the concentration label and must explicitly bind
-# the percentage to a revenue/purchase share.  Inclusive bounds ("no more
-# than") are not handled here because equality can trigger the frozen policy.
-_CONCENTRATION_STRICT_UPPER_BOUND_RE = re.compile(
-    r"(?:[佔占].{0,48}?(?:比例|比重)?(?:均|皆|分別|分别)?\s*"
-    r"(?:低於|低于|少於|少于)\s*"
-    r"|(?:account(?:ed|s)?\s+for|represent(?:ed|s)?|contribut(?:ed|es)?)"
-    r".{0,32}?(?:less\s+than|below)\s*)"
-    r"(?P<value>\d+(?:\.\d+)?)\s*(?:[%％]|per\s+cent|percent)",
-    re.I | re.S,
-)
-
 _V03_LABELS = {
     "net_result": (
         re.compile(r"年[內内][╱／/]期[內内](?:虧損|亏损|溢利)"),
@@ -1716,44 +1701,6 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 ) in enumerate(occurrences)
             ]
 
-        strict_upper_bound_proofs: dict[str, dict[str, object]] = {}
-        for name, selected_start in selected_label_starts.items():
-            if selected_start is None:
-                continue
-            selected_match = next(
-                (
-                    (start_after_label, label_name)
-                    for label_start, start_after_label, label_name in matches
-                    if label_start == selected_start and label_name == name
-                ),
-                None,
-            )
-            if selected_match is None:
-                continue
-            start_after_label, _ = selected_match
-            end = next(
-                (item for item in boundaries if item >= start_after_label),
-                len(target.text),
-            )
-            # The local window prevents a later ownership percentage or other
-            # unrelated disclosure in a long chunk from becoming a threshold
-            # proof for this label.
-            local_segment = target.text[start_after_label : min(end, start_after_label + 180)]
-            bound_matches = list(_CONCENTRATION_STRICT_UPPER_BOUND_RE.finditer(local_segment))
-            if not bound_matches:
-                continue
-            values_found = [Decimal(match.group("value")) for match in bound_matches]
-            strict_upper_bound_proofs[name] = {
-                "operator": "<",
-                # The largest disclosed upper bound governs a multi-period
-                # statement.  A single low historical period must not hide a
-                # higher later bound in the same local series.
-                "upper_bound_pct": str(max(values_found)),
-                "match_count": len(values_found),
-                "binding": name,
-                "source": "label_local_explicit_strict_upper_bound",
-            }
-
         # If one label selected a short period-count occurrence but its nearby
         # companion label exposes a unique, equally-sized aggregate series,
         # prefer that structurally paired occurrence.  This repairs repeated
@@ -1965,7 +1912,6 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 # Records that a receivable/payable share was read and discarded,
                 # so a dropped segment is auditable rather than silently absent.
                 "balance_scope_segment_skipped": scope_skipped,
-                "strict_upper_bound_proofs": strict_upper_bound_proofs,
             },
         )
 
