@@ -26,17 +26,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import lightgbm as lgb
-import numpy as np
-
 from ipo_risk.market.handoff import (
     MarketFeatureHandoffError,
     MarketHandoffBindingError,
     build_market_feature_handoff,
     verify_market_handoff_binding,
 )
-from ipo_risk.modeling.alert_policy import alert_budget_predictions
-from ipo_risk.modeling.role_d_v2_model_artifact import (
+from ipo_risk.modeling.frozen_model_evidence import PRODUCT_HANDOFF_SCOPE_REASON
+from ipo_risk.modeling.role_d_v2_model_package import (
     ALERT_POLICY_FILE,
     DEFAULT_FROZEN_DIR,
     DEFAULT_MODEL_DIR,
@@ -44,14 +41,19 @@ from ipo_risk.modeling.role_d_v2_model_artifact import (
     MODEL_FILE,
     MODEL_MANIFEST_FILE,
     V2_PROMOTION_MANIFEST_NAME,
+    sha256_file,
 )
-from ipo_risk.modeling.frozen_model_evidence import PRODUCT_HANDOFF_SCOPE_REASON
-from ipo_risk.modeling.role_d_v2_release import canonical_hash, sha256_file
+from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import (
     ChannelStatus,
     ModelDriver,
     ModelPredictionView,
 )
+
+# LightGBM, scikit-learn and NumPy are optional extras. They are imported where
+# inference actually happens, so merely wiring this channel into the container
+# never forces a deployment to carry the modelling stack; a deployment without
+# it gets an explicit UNAVAILABLE instead of an import crash.
 
 
 DYNAMIC_MODEL_RUNTIME_VERSION = "v046_dynamic_model_runtime_v1"
@@ -67,7 +69,7 @@ class DynamicModelRuntimeError(ValueError):
 class FrozenModelBundle:
     """A loaded, hash-verified frozen model and its governing manifests."""
 
-    booster: lgb.Booster
+    booster: Any
     model_manifest: Mapping[str, Any]
     feature_manifest: Mapping[str, Any]
     alert_policy: Mapping[str, Any]
@@ -175,6 +177,13 @@ def load_frozen_model_bundle(
         )
     if model_manifest.get("blind_2025_y_accessed") is not False:
         raise DynamicModelRuntimeError("model manifest does not prove Blind isolation")
+
+    try:
+        import lightgbm as lgb
+    except ImportError as exc:  # pragma: no cover - exercised by extras-free installs
+        raise DynamicModelRuntimeError(
+            "LightGBM is not installed, so the frozen model cannot be loaded"
+        ) from exc
 
     booster = lgb.Booster(model_str=model_text)
     expected = int(feature_manifest["model_expected_dimension"])
@@ -329,6 +338,8 @@ def infer_batch(
                 )
             )
 
+    import numpy as np
+
     scored = [
         (index, model_input)
         for index, model_input in enumerate(inputs)
@@ -360,6 +371,8 @@ def infer_batch(
         single_case = bundle.alert_policy["single_case_policy"]
         batch_policy = bundle.alert_policy["batch_policy"]
         if use_batch_alert_policy:
+            from ipo_risk.modeling.alert_policy import alert_budget_predictions
+
             alerts = alert_budget_predictions(
                 [model_input.case_id for _, model_input in scored],
                 scores,

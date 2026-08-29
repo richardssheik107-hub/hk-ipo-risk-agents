@@ -55,43 +55,36 @@ from ipo_risk.modeling.role_d_v2_release import (
     V2_ALERT_POLICY,
     V2_RELEASE_VERSION,
     canonical_hash,
-    sha256_file,
 )
 
-
-MODEL_ARTIFACT_VERSION = "v046_role_d_v2_frozen_model_artifact_v1"
-FEATURE_MANIFEST_VERSION = "v046_role_d_v2_feature_manifest_v1"
-ALERT_POLICY_ARTIFACT_VERSION = "v046_role_d_v2_alert_policy_v1"
-SINGLE_CASE_ALERT_POLICY_VERSION = "v046_role_d_v2_single_case_alert_cutoff_v1"
-
-MODEL_NAME = "lightgbm_role_d_v2"
-MODEL_FILE = "model.txt"
-MODEL_MANIFEST_FILE = "model_manifest.json"
-FEATURE_MANIFEST_FILE = "feature_manifest.json"
-ALERT_POLICY_FILE = "alert_policy.json"
-CHECKSUM_FILE = "SHA256SUMS.txt"
-ARTIFACT_FILES = (
+# The package identity lives in a dependency-free module so the product import
+# graph never needs LightGBM just to name the model. Re-exported here because
+# this module is the builder that writes it.
+from ipo_risk.modeling.role_d_v2_model_package import (  # noqa: F401
+    ALERT_POLICY_ARTIFACT_VERSION,
+    ALERT_POLICY_FILE,
+    ARTIFACT_FILES,
+    CALIBRATION_STATUS,
+    CHECKSUM_FILE,
+    DEFAULT_FROZEN_DIR,
+    DEFAULT_MARKET_CORE_DIR,
+    DEFAULT_MODEL_DIR,
+    DEFAULT_OUTCOME_PACK,
+    FEATURE_MANIFEST_FILE,
+    FEATURE_MANIFEST_VERSION,
+    LABEL_RULE,
+    METRIC_TOLERANCE,
+    MISSINGNESS_POLICY,
+    MODEL_ARTIFACT_VERSION,
     MODEL_FILE,
     MODEL_MANIFEST_FILE,
-    FEATURE_MANIFEST_FILE,
-    ALERT_POLICY_FILE,
+    MODEL_NAME,
+    PR_C_MANIFEST_NAME,
+    SCORE_SEMANTICS,
+    SINGLE_CASE_ALERT_POLICY_VERSION,
+    V2_PROMOTION_MANIFEST_NAME,
+    sha256_file,
 )
-
-DEFAULT_MODEL_DIR = Path("models/role_d_v2")
-DEFAULT_MARKET_CORE_DIR = Path("reports/v04_pr_b/core_features")
-DEFAULT_OUTCOME_PACK = Path("data/competition/derived/prior_ipo_outcome_pack.json")
-DEFAULT_FROZEN_DIR = Path("reports/frozen")
-
-V2_PROMOTION_MANIFEST_NAME = "v045_role_d_v2_promotion_manifest.json"
-PR_C_MANIFEST_NAME = "v04_pr_c_5d_outcome_manifest.json"
-
-SCORE_SEMANTICS = "uncalibrated_model_score_not_probability"
-CALIBRATION_STATUS = "assessment_only_uncalibrated"
-LABEL_RULE = "raw_return_5d <= poor_performer_threshold"
-MISSINGNESS_POLICY = (
-    "missing_feature_is_passed_to_lightgbm_as_nan_exactly_as_in_the_frozen_training_matrix"
-)
-METRIC_TOLERANCE = 1e-12
 
 
 class RoleDV2ModelArtifactError(ValueError):

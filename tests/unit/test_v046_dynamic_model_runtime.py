@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import csv
 import json
+import subprocess
+import sys
 from datetime import date
 from pathlib import Path
 
@@ -337,3 +339,45 @@ def test_the_prediction_view_never_calls_the_score_a_probability(
         driver.direction == ("increases" if driver.shap_value >= 0 else "decreases")
         for driver in view.drivers
     )
+
+
+# --- optional-extra boundary ------------------------------------------------
+
+
+def test_the_product_import_graph_does_not_require_the_modelling_extras() -> None:
+    """LightGBM and scikit-learn are optional extras, and must stay optional.
+
+    Wiring this channel into the container must not drag the modelling stack
+    into every deployment -- and into every CI job that installs only ``[dev]``.
+    A deployment without the extras gets an explicit UNAVAILABLE, not an
+    ImportError at start-up.
+    """
+
+    script = """
+import sys
+
+class _Block:
+    def find_module(self, name, path=None):
+        return self if name.split(".")[0] in {"lightgbm", "sklearn"} else None
+
+    def load_module(self, name):
+        raise ImportError(name)
+
+sys.meta_path.insert(0, _Block())
+
+import ipo_risk.core.container  # noqa: F401
+from ipo_risk.modeling.dynamic_model_runtime import DynamicFrozenModelPredictionProvider
+
+view = DynamicFrozenModelPredictionProvider().prediction(None, market_context=None)
+assert view.status.value == "unavailable_error", view.status
+assert "LightGBM is not installed" in view.reason, view.reason
+print("ok")
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "ok" in result.stdout
