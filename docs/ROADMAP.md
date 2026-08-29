@@ -2,6 +2,8 @@
 
 > 状态日期：`2026-08-29`
 >
+> Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`
+>
 > 详细版：`COMPETITION_CLOSURE_PLAN.md`
 
 当前剩余 **4 个实质工作流 + 2 个收尾阶段**。
