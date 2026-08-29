@@ -275,6 +275,46 @@ def test_extracts_customer_and_supplier_concentration(
     assert result.evidence_ids == ["e-concentration"]
 
 
+@pytest.mark.parametrize(
+    ("largest_label", "top_five_label"),
+    [
+        ("最大最終供應商", "五大最終供應商"),
+        ("最大最终供应商", "五大最终供应商"),
+        ("largest ultimate supplier", "top five ultimate suppliers"),
+    ],
+)
+def test_extracts_explicit_ultimate_supplier_concentration_labels(
+    largest_label: str,
+    top_five_label: str,
+) -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至2023年6月30日止六個月，"
+            f"{top_five_label}佔服務成本78.7%，"
+            f"{largest_label}佔服務成本60.8%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("60.8")
+    assert result.top_five_pct == Decimal("78.7")
+
+
+def test_no_major_supplier_statement_does_not_bind_unrelated_ownership_percentage() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "本集團並無主要供應商。董事或擁有本公司已發行股本5%或以上的股東，"
+            "概無於任何供應商中擁有權益。"
+        ),
+    )
+
+    assert result.status != ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct is None
+    assert result.top_five_pct is None
+
+
 def test_chinese_word_date_is_counted_and_parsed_as_a_narrative_period() -> None:
     result = concentration(
         "supplier",

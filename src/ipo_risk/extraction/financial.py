@@ -160,12 +160,35 @@ _CONCENTRATION_LABELS = {
     },
     "supplier": {
         "largest": _concentration_pattern(
-            ["單一最大供應商", "单一最大供应商", "最大供應商", "最大供应商"],
-            ["single largest supplier", "largest supplier"],
+            [
+                "單一最大供應商",
+                "单一最大供应商",
+                "最大最終供應商",
+                "最大最终供应商",
+                "最大供應商",
+                "最大供应商",
+            ],
+            [
+                "single largest supplier",
+                "largest ultimate supplier",
+                "largest supplier",
+            ],
         ),
         "top_five": _concentration_pattern(
-            ["前五大供應商", "前五大供应商", "五大供應商", "五大供应商"],
-            ["five largest suppliers", "top five suppliers"],
+            [
+                "前五大供應商",
+                "前五大供应商",
+                "五大最終供應商",
+                "五大最终供应商",
+                "五大供應商",
+                "五大供应商",
+            ],
+            [
+                "five largest ultimate suppliers",
+                "five largest suppliers",
+                "top five ultimate suppliers",
+                "top five suppliers",
+            ],
         ),
     },
 }
