@@ -419,7 +419,7 @@ Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本�
 [x] Evidence screenshots 17/17 precise
 [x] canonical replay / team clone
 [x] Dynamic Market-X strict historical/fresh classification audit
-[ ] Dynamic Model / SHAP runtime
+[x] Dynamic Model / SHAP runtime（PR #197 strict audit）
 [ ] Dynamic New-IPO full-chain capability proof
 [ ] competition capability cases
 [ ] frozen one-shot Validation

@@ -357,11 +357,10 @@ def test_the_product_import_graph_does_not_require_the_modelling_extras() -> Non
 import sys
 
 class _Block:
-    def find_module(self, name, path=None):
-        return self if name.split(".")[0] in {"lightgbm", "sklearn"} else None
-
-    def load_module(self, name):
-        raise ImportError(name)
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname.split(".")[0] in {"lightgbm", "sklearn"}:
+            raise ImportError(fullname)
+        return None
 
 sys.meta_path.insert(0, _Block())
 
