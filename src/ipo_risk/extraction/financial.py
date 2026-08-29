@@ -1657,7 +1657,16 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         companion_series_period_aligned = (
             shared_value_count >= 2
             and shared_value_count == len(values["top_five"])
-            and selected_counts == {shared_value_count}
+            # Some licensed PDFs preserve the two parallel percentage series
+            # and their shared label-local final period, but corrupt the bare
+            # comparative years used by ``_enumerated_period_count``.  Equal
+            # multi-value companion series remain structurally aligned when
+            # neither label exposes a contradictory enumerated count.  A
+            # present mismatched count still fails closed.
+            and (
+                selected_counts == {shared_value_count}
+                or not selected_counts
+            )
             and len(local_period_values) == 1
             and len(selected_starts) == 2
             and max(selected_starts) - min(selected_starts) <= 1200

@@ -375,6 +375,32 @@ def test_repeated_layout_can_align_a_companion_concentration_series() -> None:
     )
 
 
+def test_equal_companion_series_use_shared_local_period_when_bare_years_are_unavailable() -> None:
+    result = concentration(
+        "customer",
+        (
+            "截至2020年8月31日止八個月，"
+            "最大客戶佔收益10.1%、11.8%、13.5%及37.5%，"
+            "五大客戶佔收益34.3%、36.5%、36.6%及68.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-08-31"
+    assert result.period_months == 8
+    assert result.largest_counterparty_pct == Decimal("37.5")
+    assert result.top_five_pct == Decimal("68.0")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"] == {
+        "largest": "companion_series_period_count",
+        "top_five": "companion_series_period_count",
+    }
+    assert candidate["concentration_period_selection"] == (
+        "companion_series_label_local_period"
+    )
+
+
 def test_companion_series_does_not_override_mismatched_value_counts() -> None:
     result = concentration(
         "customer",
