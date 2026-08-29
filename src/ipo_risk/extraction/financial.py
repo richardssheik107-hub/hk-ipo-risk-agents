@@ -2197,6 +2197,13 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             *_LABELS["operating_cash_flow"],
             re.compile(r"經營活動(?:所得|所用|產生|使用|經營).*?現金淨額"),
             re.compile(r"经营活动(?:所得|所用|产生|使用|经营).*?现金净额"),
+            re.compile(r"經營活動.{0,24}?現金(?:流量)?淨額"),
+            re.compile(r"经营活动.{0,24}?现金(?:流量)?净额"),
+            re.compile(
+                r"net cash(?: flows?)?\s+(?:generated from|from)\s*"
+                r"(?:[/／]\s*[（(]?(?:used in)[）)]?)?\s*operating activities",
+                re.I,
+            ),
         ),
     }
 
