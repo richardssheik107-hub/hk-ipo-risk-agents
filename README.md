@@ -39,9 +39,9 @@ Human Review UI / export 继续保留为可选的人机协同能力，但**不�
 
 | 维度 | 当前已合入事实 | 最终关闭标准 |
 |---|---|---|
-| B M1 | fixed-journal `12/30 = 40.00%` | ALL 79 Development `>=80%` |
-| B M2 | fixed-journal `18/48 = 37.50%` | ALL 79 Development `>=85%` |
-| B fresh gated | `11/30` M1、`17/48` M2；`38/40` structured valid；2 fallback；0 transport/scope failure | 继续 Development 泛化，先修 deterministic fact formation，再处理 retrieval candidate miss |
+| B M1 | Batch009 fixed-journal gated `14/30 = 46.67%` | ALL 79 Development `>=80%` |
+| B M2 | Batch009 fixed-journal gated `21/48 = 43.75%` | ALL 79 Development `>=85%` |
+| B fresh gated | 最后真实 fresh 仍为 Batch005：`11/30` M1、`17/48` M2；`38/40` structured valid；2 fallback；0 transport/scope failure | Batch008/009 尚未 fresh 重跑；继续 Development 泛化 |
 | M3 Traceability | final-three 三案例均 `1.0` | 保持 100% |
 | Final Supervisor | Gate E1 `3/3`；real-provider 首轮接受 `3/3`；correction `0`；fallback `0`；severity floor `3/3` | 保持 scope / vocabulary / severity contract |
 | Market | final-three `3/3 available`；已提交 438 个 governed frozen Market-X Core artifacts | 历史 universe 保持 PIT/provenance；继续补 Dynamic New-IPO path |
@@ -53,20 +53,25 @@ Human Review UI / export 继续保留为可选的人机协同能力，但**不�
 | M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`、ROC-AUC `0.4875`，未晋升 | A governance decision + 新 freeze/handoff（若 promote） |
 | Human Review | UI / export 能力保留 | **Optional；不需要真人标注，不是 Release Gate** |
 
+Role-B Batch008 已接受 legacy Chinese cash-statement / explicit Notes-column deterministic exact-fact 修复；Batch009 已接受 generalized Legal redemption/restoration lifecycle recognition。direct ranked concentration-table candidate 因无 M1/M2 增益且 supplier existence F1 回归而完整回滚。Batch008/009 都是 immutable-journal zero-network 测量，因此不能把 `14/30, 21/48` 冒充新的 fresh-provider 结果。
+
 Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 仍不足以宣称强预测效果。v2 candidate 改善了高召回 operating point，但正式产品在新 promotion/freeze 前不能把它冒充 frozen model。
 
 ## 当前优先级
 
 ### P0 — Role-B M1/M2
 
-当前已经排除“广泛 Parser preservation”和“period candidate generation”作为主根因。下一主根因顺序：
+当前已经排除 broad Parser preservation 和 period candidate generation 作为主根因，并关闭了一个 legacy cash deterministic sub-root。Batch009 后的优先级：
 
 ```text
-deterministic_fact_missing
-→ isolated retrieval_candidate_miss
-→ numeric extraction / true conflict
-→ LLM / Evidence variance
+retrieval candidate generation / ranking
+→ exact page / anchor Evidence binding
+→ remaining deterministic / numeric extraction
+→ genuine conflict fail-closed
+→ fixed-vs-fresh LLM / Evidence variance
 ```
+
+已拒绝的 ranked-table candidate 和历史失败 GLM-5.3 harness 不应直接恢复。
 
 fixed-10 只是快速诊断。最终必须跑 ALL 79 Development：
 
@@ -211,6 +216,7 @@ python scripts/prepare_v045_market_runtime.py --eod-archive <hkshareeodprices.zi
 - 当前统一计划：[`docs/COMPETITION_CLOSURE_PLAN.md`](docs/COMPETITION_CLOSURE_PLAN.md)
 - 最终 Release Gate：[`docs/V0.4_RELEASE_ACCEPTANCE.md`](docs/V0.4_RELEASE_ACCEPTANCE.md)
 - B 线计划：[`docs/ROLE_B_M1_M2_PLAN.md`](docs/ROLE_B_M1_M2_PLAN.md)
+- 五人执行分工：[`docs/team/README.md`](docs/team/README.md)
 - D 模型决议：[`docs/ROLE_D_MODEL_DECISION.md`](docs/ROLE_D_MODEL_DECISION.md)
 - 冻结指标协议：[`docs/COMPETITION_METRIC_PROTOCOL.md`](docs/COMPETITION_METRIC_PROTOCOL.md)
 - 最终提交：[`docs/SUBMISSION_RUNBOOK.md`](docs/SUBMISSION_RUNBOOK.md)
