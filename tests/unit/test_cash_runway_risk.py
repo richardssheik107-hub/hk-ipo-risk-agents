@@ -285,7 +285,6 @@ def test_negative_cash_needs_review() -> None:
     [
         ("-100", RiskLevel.HIGH, 80),
         ("-50", RiskLevel.MEDIUM, 60),
-        ("-25", RiskLevel.LOW, 20),
     ],
 )
 def test_policy_boundaries_are_explicit(
@@ -296,6 +295,18 @@ def test_policy_boundaries_are_explicit(
     assert result.risk_item is not None
     assert result.risk_item.level == level
     assert result.risk_item.score == score
+
+
+def test_twelve_month_or_longer_runway_is_not_a_risk_item() -> None:
+    extraction, evidence = inputs(cash="100", cash_flow="-25", period_months=3)
+
+    result = CashRunwayRiskBuilder().build(extraction, evidence)
+
+    assert result.status == CashRunwayBuildStatus.NOT_APPLICABLE
+    assert result.risk_item is None
+    assert result.calculation is None
+    assert result.metadata["runway_months_exact"] == "12"
+    assert result.metadata["threshold_months"] == "12"
 
 
 def test_builder_consumes_skill_output_instead_of_reimplementing_formula(monkeypatch) -> None:

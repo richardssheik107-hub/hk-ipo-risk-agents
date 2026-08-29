@@ -119,6 +119,22 @@ class CashRunwayRiskBuilder:
                 issues=["cash_runway_skill_output_invalid"],
             )
 
+        # The frozen risk boundary treats 12 months as sufficient runway.
+        # Preserve the deterministic calculation in diagnostics, but do not
+        # manufacture a LOW RiskItem for a condition outside the risk scope.
+        if exact_runway >= Decimal("12"):
+            return CashRunwayBuildResult(
+                status=CashRunwayBuildStatus.NOT_APPLICABLE,
+                issues=["cash_runway_not_below_risk_threshold"],
+                metadata={
+                    "runway_months_exact": str(exact_runway),
+                    "runway_months_rounded": str(rounded_runway),
+                    "monthly_burn": str(monthly_burn),
+                    "threshold_months": "12",
+                    "evidence_ids": evidence_ids,
+                },
+            )
+
         calculation = Calculation(
             skill_name="cash_runway",
             skill_version="1.1",
