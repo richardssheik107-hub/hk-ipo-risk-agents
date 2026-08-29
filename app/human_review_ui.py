@@ -12,7 +12,7 @@ from typing import Any
 
 import streamlit as st
 
-from competition_ui import render_state_panel, section_header
+from competition_ui import render_modern_table, render_state_panel, section_header
 from competition_runtime_view import machine_vs_human_rows, review_targets
 from ipo_risk.services.human_review_service import HumanReviewService, HumanReviewStoreError
 from ipo_risk.schemas.competition_runtime import HumanReviewDecision
@@ -104,7 +104,15 @@ def render_human_review(
                 st.rerun()
 
     section_header("机器结论 vs 人工结论", "两套结论始终并列展示，不自动合并或改写。", "Decision ledger")
-    st.dataframe(machine_vs_human_rows(payload, latest), hide_index=True, width="stretch")
+    render_modern_table(
+        machine_vs_human_rows(payload, latest),
+        badge_columns={
+            "类别": "category",
+            "机器结论": "status",
+            "人工结论": "status",
+            "复核后状态": "status",
+        },
+    )
 
     with st.expander(f"人工复核历史 · {len(history)} 条", expanded=False):
         if history:
