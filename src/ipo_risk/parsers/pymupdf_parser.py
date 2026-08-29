@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
+import math
 import re
 
 import fitz
@@ -17,6 +18,39 @@ class DocumentParseError(RuntimeError):
     def __init__(self, error: AnalysisError) -> None:
         self.error = error
         super().__init__(error.message)
+
+
+def _page_text_bbox(words: Sequence[Sequence[object]]) -> list[float] | None:
+    """Return the real PDF-coordinate union of non-empty text words on a page.
+
+    This is intentionally a page-text bounding box, not a fabricated sentence
+    anchor. Downstream Evidence can highlight a genuine source region today;
+    exact snippet-level boxes remain a separate refinement because one page
+    chunk may support multiple Evidence snippets.
+    """
+
+    rectangles: list[tuple[float, float, float, float]] = []
+    for word in words:
+        if len(word) <= 4 or not str(word[4]).strip():
+            continue
+        try:
+            rectangle = tuple(float(word[index]) for index in range(4))
+        except (TypeError, ValueError):
+            continue
+        if len(rectangle) != 4 or not all(math.isfinite(value) for value in rectangle):
+            continue
+        x0, y0, x1, y1 = rectangle
+        if x1 <= x0 or y1 <= y0:
+            continue
+        rectangles.append((x0, y0, x1, y1))
+    if not rectangles:
+        return None
+    return [
+        min(item[0] for item in rectangles),
+        min(item[1] for item in rectangles),
+        max(item[2] for item in rectangles),
+        max(item[3] for item in rectangles),
+    ]
 
 
 class PyMuPDFDocumentParser:
@@ -85,6 +119,8 @@ class PyMuPDFDocumentParser:
         text = page.get_text("text").strip()
         if not text:
             return None
+        words = page.get_text("words")
+        bbox = _page_text_bbox(words)
         physical_page = page_index + 1
         return DocumentChunk(
             document_id=document_id,
@@ -92,11 +128,13 @@ class PyMuPDFDocumentParser:
             page=physical_page,
             section="unknown",
             text=text,
+            bbox=bbox,
             block_type="page_text",
             metadata={
                 "parser": self.name,
                 "page_index": page_index,
                 "physical_page": physical_page,
+                "bbox_granularity": "page_text_union" if bbox is not None else "unavailable",
             },
         )
 
@@ -277,6 +315,7 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
             return None
 
         physical_page = page_index + 1
+        bbox = _page_text_bbox(words)
         variants = _unique_search_text_variants(
             primary,
             (
@@ -304,6 +343,7 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
             ),
             "search_text_variants": variants,
             "search_text_variant_count": len(variants),
+            "bbox_granularity": "page_text_union" if bbox is not None else "unavailable",
         }
         if tables:
             metadata.update(
@@ -318,6 +358,7 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
             page=physical_page,
             section="unknown",
             text=primary,
+            bbox=bbox,
             block_type="page_text",
             metadata=metadata,
         )
