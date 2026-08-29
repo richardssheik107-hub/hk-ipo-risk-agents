@@ -94,6 +94,11 @@ retrieval candidate generation / ranking
 
 ## Dynamic Market-X
 
+PR #191 已把 governed Dynamic Market-X runtime 合入 main；最新严格离线审计覆盖
+`562` 个受治理案例，`integrity_violation_count = 0`，Model handoff 为
+`bound 550 / not_projectable 12`。因此 Market-X 动态化 Gate 已关闭，合法数据不足的
+案例继续按 contract 诚实返回 `PARTIAL / UNAVAILABLE`。
+
 目标 runtime：
 
 ```text
@@ -123,7 +128,10 @@ governed feature vector
 → Final Supervisor / UI
 ```
 
-同时必须完成 `PROMOTE_V2` 或 `RETAIN_FROZEN_PR_F` 正式治理决议。任何 promotion 都建立新的 versioned freeze / receipt，不覆盖历史 PR-F 身份，也不得根据 2024 Validation 继续调参。V2 promotion package（versioned freeze、strict receipt、checker、final-three label-free handoff）已实现，A 审核并合并 promotion PR 即 `PROMOTE_V2` 生效。
+`PROMOTE_V2` 已通过 A-owned PR #184 合并正式生效；新的 versioned freeze、strict
+receipt、checker 和 final-three label-free handoff 均已保留，历史 PR-F 身份未被覆盖。
+当前仍开放的是非 final-three 案例的真实 frozen-model runtime inference + native SHAP，
+不能用 per-case handoff 冒充该能力。
 
 ## 前端 / 产品
 
@@ -167,6 +175,7 @@ python scripts/validate_competition_runtime.py
 python scripts/validate_v045_role_d_receipt.py
 python scripts/check_v045_product_runtime.py
 python scripts/check_v045_team_clone_ready.py
+python scripts/run_final_acceptance.py --ci-status pass --ci-evidence-url <LATEST_MAIN_CI_URL>
 ```
 
 离线答辩基线：

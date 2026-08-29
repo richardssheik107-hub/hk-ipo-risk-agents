@@ -1700,7 +1700,16 @@ def _scan_path_for_sensitive_material(path: Path) -> list[str]:
         issues.append("Bearer token-like secret detected")
     if _AWS_ACCESS_KEY_RE.search(text):
         issues.append("cloud access-key-like secret detected")
-    if _WINDOWS_ABS_RE.search(text) or _UNIX_LOCAL_ABS_RE.search(text):
+    # Do not let source-code regex declarations trigger the path scanner that
+    # consumes them.  We still scan every non-regex line, including comments,
+    # strings and ordinary source literals where an accidental workstation path
+    # could leak into the package.
+    absolute_path_scan_text = "\n".join(
+        line for line in text.splitlines() if "re.compile(" not in line
+    )
+    if _WINDOWS_ABS_RE.search(absolute_path_scan_text) or _UNIX_LOCAL_ABS_RE.search(
+        absolute_path_scan_text
+    ):
         issues.append("local absolute path detected")
     return issues
 

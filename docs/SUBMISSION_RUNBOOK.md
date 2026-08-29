@@ -114,7 +114,7 @@ A 做一次 promote/retain 决议：
 - promote v2：创建新的 versioned freeze/receipt/handoff，不再按 2024 调参；
 - retain PR-F：保留弱辅助 signal，并完成 strict revalidation / dynamic inference contract。
 
-V2 的 builder/checker/frozen binding 已版本化实现。持有授权 PR-C targets 时重建：
+V2 的 builder/checker/frozen binding 已版本化实现，并已通过 A-owned PR #184 合并正式生效。持有授权 PR-C targets 时重建：
 
 ```bash
 python scripts/build_v045_role_d_v2_release.py \
@@ -358,6 +358,19 @@ final package
 
 Human Review artifact 若存在，可以作为 optional artifact；没有真人 review 不得导致 readiness FAIL。
 
+统一预验收入口：
+
+```bash
+python scripts/run_final_acceptance.py \
+  --ci-status pass \
+  --ci-evidence-url <LATEST_MAIN_CI_URL> \
+  --package-preflight
+```
+
+默认运行 full pytest 与所有离线 validator，写出 `final_acceptance.json`、
+`FINAL_ACCEPTANCE_REPORT.md`、`SHA256SUMS.txt`。Gate 未全部关闭时生成的 ZIP 带有
+`README_NOT_FINAL.txt`，只用于团队交接和 blocker 复核，不是最终提交包。
+
 ## 12. Final package
 
 只有 active readiness 全部通过后运行 packager。
@@ -385,15 +398,16 @@ Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本�
 [ ] ALL79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
-[ ] D A-owned promotion PR merge
+[x] D A-owned promotion PR #184 merge
 [x] D V2 strict revalidation / determinism / final identity（promotion package）
 [x] C/E final-three baseline
 [x] E accepted 3/3
 [x] M3 =100%
 [x] Evidence screenshots 17/17 precise
 [x] canonical replay / team clone
-[ ] Dynamic New-IPO Phase 1
-[ ] Dynamic New-IPO Phase 2 or governed external-data limitation documented
+[x] Dynamic Market-X strict historical/fresh classification audit
+[ ] Dynamic Model / SHAP runtime
+[ ] Dynamic New-IPO full-chain capability proof
 [ ] competition capability cases
 [ ] frozen one-shot Validation
 [ ] latest-main CI after final freeze
