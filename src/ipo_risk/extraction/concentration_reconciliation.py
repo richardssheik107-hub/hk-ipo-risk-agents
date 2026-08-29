@@ -31,7 +31,7 @@ from ipo_risk.extraction.models import ConcentrationFact, ExtractionStatus
 from ipo_risk.schemas import DocumentChunk, Evidence
 
 
-_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v2"
+_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v1"
 _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES = frozenset(
     {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
 )
@@ -131,19 +131,19 @@ class _ConcentrationReconciliationMixin:
             "top_five": top_five_count,
         }
 
-        dual_series_suffix_aligned = (
+        can_reconcile_count = (
             "value_period_count_mismatch" in issues
             and fact.largest_counterparty_pct is not None
             and fact.top_five_pct is not None
             and largest_count == top_five_count
             and largest_count >= 2
-            and len(periods) >= 1
-            and abs(len(periods) - largest_count) <= 2
+            and largest_count <= len(periods)
+            and len(periods) - largest_count <= 1
         )
-        if dual_series_suffix_aligned:
+        if can_reconcile_count:
             issues = [item for item in issues if item != "value_period_count_mismatch"]
             metadata["value_period_count_reconciled"] = True
-            metadata["value_period_alignment"] = "dual_series_latest_period_suffix"
+            metadata["value_period_alignment"] = "dual_series_to_latest_period_suffix"
         else:
             metadata["value_period_count_reconciled"] = False
 
@@ -236,31 +236,6 @@ class _ConcentrationReconciliationMixin:
                 or item.top_five_pct is not None
             )
         ]
-        # Suffix alignment establishes a period/value association, but it does
-        # not grant the repaired pair authority to discard a contradictory
-        # same-date percentage from another provenance-valid candidate.
-        if governing and any(
-            item.metadata.get("value_period_alignment")
-            == "dual_series_latest_period_suffix"
-            for item in governing
-        ):
-            governing_largest = {
-                item.largest_counterparty_pct for item in governing
-            }
-            governing_top_five = {item.top_five_pct for item in governing}
-            suffix_conflict = any(
-                (
-                    item.largest_counterparty_pct is not None
-                    and item.largest_counterparty_pct not in governing_largest
-                )
-                or (
-                    item.top_five_pct is not None
-                    and item.top_five_pct not in governing_top_five
-                )
-                for item in selected_value_candidates
-            )
-            if suffix_conflict:
-                governing = []
         # A clean, complete candidate governs partial same-date disclosures.
         # Partial summaries remain auditable Evidence, but a single quoted
         # percentage must not veto a complete primary reading.  Multiple clean
