@@ -601,6 +601,43 @@ def test_preflight_binds_exact_prompt_hashes_and_has_no_secret_or_url() -> None:
     assert len(runtime_hash) == 64
 
 
+def test_preflight_rejects_effective_retry_override_that_drifted_from_profile() -> None:
+    profile = {
+        **_profile(),
+        "max_transport_attempts_per_structured_attempt": 2,
+        "max_structured_attempts": 2,
+        "max_network_calls_per_task": 4,
+    }
+
+    with pytest.raises(RoleBAblationRunnerError, match="effective transport retries"):
+        _preflight(
+            config_path=Path("configs/experiments/v046_role_b_ai_responses.yaml"),
+            settings=_settings(llm_max_retries=0),
+            profile=profile,
+            require_remote=True,
+        )
+
+
+def test_preflight_reports_effective_retry_contract() -> None:
+    profile = {
+        **_profile(),
+        "max_transport_attempts_per_structured_attempt": 2,
+        "max_structured_attempts": 2,
+        "max_network_calls_per_task": 4,
+    }
+
+    report = _preflight(
+        config_path=Path("configs/experiments/v046_role_b_ai_responses.yaml"),
+        settings=_settings(llm_max_retries=1),
+        profile=profile,
+        require_remote=True,
+    )
+
+    assert report["effective_transport_retries"] == 1
+    assert report["expected_transport_retries"] == 1
+    assert report["max_network_calls_per_task"] == 4
+
+
 def test_mode_identity_contains_every_waterfall_alignment_key() -> None:
     settings = _settings()
     profile = _profile()

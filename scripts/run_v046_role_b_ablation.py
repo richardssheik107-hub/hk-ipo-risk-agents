@@ -526,6 +526,16 @@ def _preflight(
         raise RoleBAblationRunnerError("Role-B ablation requires Final Supervisor disabled")
     if not settings.llm_model:
         raise RoleBAblationRunnerError("Role-B ablation model identity is missing")
+    configured_transport_attempts = profile.get(
+        "max_transport_attempts_per_structured_attempt"
+    )
+    expected_transport_retries = None
+    if configured_transport_attempts is not None:
+        expected_transport_retries = max(0, int(configured_transport_attempts) - 1)
+        if int(settings.llm_max_retries) != expected_transport_retries:
+            raise RoleBAblationRunnerError(
+                "Role-B effective transport retries differ from the frozen profile"
+            )
     prompt_hashes = _prompt_hashes(profile, settings.llm_provider)
     api_key_present = bool(settings.llm_api_key)
     base_url_present = bool(settings.llm_base_url)
@@ -537,6 +547,8 @@ def _preflight(
         "effective_model": settings.llm_model,
         "transport": transport,
         "timeout_seconds": int(settings.llm_timeout_seconds),
+        "effective_transport_retries": int(settings.llm_max_retries),
+        "expected_transport_retries": expected_transport_retries,
         "max_network_calls_per_task": int(
             profile.get("max_network_calls_per_task")
             or (1 + int(settings.llm_max_retries))
