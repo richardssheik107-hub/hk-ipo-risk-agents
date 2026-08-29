@@ -275,6 +275,15 @@ class V03FinancialRiskBuilder:
         risk_code = f"{fact.concentration_type}_concentration"
         context, issue = self._map_concentration(fact)
         if issue or context is None:
+            pending = self._build_unresolved_concentration(
+                fact,
+                risk_code=risk_code,
+                issue=issue or "concentration_mapping_failed",
+                evidence_by_id=evidence_by_id,
+                chunks_by_id=chunks_by_id,
+            )
+            if pending is not None:
+                return pending
             return self._review(
                 risk_code,
                 issue or "concentration_mapping_failed",
@@ -381,6 +390,79 @@ class V03FinancialRiskBuilder:
                 str(context.period_months),
                 str(largest),
                 str(top_five),
+            ],
+            metadata=metadata,
+        )
+        return self._generated(risk, metadata)
+
+    def _build_unresolved_concentration(
+        self,
+        fact: ConcentrationFact,
+        *,
+        risk_code: str,
+        issue: str,
+        evidence_by_id: Mapping[str, Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> _RiskDecision | None:
+        """Preserve a bounded percentage signal as an honest pending risk.
+
+        A concentration candidate may contain one or more deterministic
+        percentages while period/value reconciliation remains fail-closed.  A
+        diagnostic alone is invisible to the specialized Verifier and Human
+        Review.  Emitting a pending RiskItem keeps the real Evidence attached
+        without asserting a threshold, calculation, or verified severity.
+
+        Candidates with no parsed percentage remain diagnostics only; this
+        prevents a generic retrieval hit from becoming a risk.
+        """
+
+        diagnostics = fact.metadata.get("candidate_diagnostics", [])
+        bounded_signal = fact.largest_counterparty_pct is not None or fact.top_five_pct is not None
+        if isinstance(diagnostics, Sequence) and not isinstance(diagnostics, (str, bytes)):
+            bounded_signal = bounded_signal or any(
+                isinstance(item, Mapping)
+                and (
+                    item.get("largest_counterparty_pct") is not None
+                    or item.get("top_five_pct") is not None
+                )
+                for item in diagnostics
+            )
+        if not bounded_signal or not fact.evidence_ids:
+            return None
+
+        evidence, evidence_issue = self._resolve_evidence(
+            fact.evidence_ids, evidence_by_id, chunks_by_id
+        )
+        if evidence_issue or not evidence:
+            return None
+
+        label = "Customer" if fact.concentration_type == "customer" else "Supplier"
+        metadata = {
+            "rule_version": self.policy.version,
+            "concentration_type": fact.concentration_type,
+            "issue": issue,
+            "extraction_issues": list(fact.issues),
+            "candidate_state": "bounded_percentage_signal_requires_review",
+            "provisional_level": True,
+            "calculation_unavailable": True,
+            "period_end": fact.period_end.isoformat() if fact.period_end else None,
+            "period_months": fact.period_months,
+        }
+        risk = self._risk(
+            risk_code=risk_code,
+            risk_type=f"{label} concentration",
+            level=RiskLevel.MEDIUM,
+            conclusion=(
+                f"Bounded {label.lower()} concentration evidence requires deterministic "
+                "period/value reconciliation before verification."
+            ),
+            evidence=evidence,
+            calculation=None,
+            identity_values=[
+                "unresolved",
+                str(fact.period_end or ""),
+                str(fact.period_months or ""),
+                issue,
             ],
             metadata=metadata,
         )
@@ -570,7 +652,7 @@ class V03FinancialRiskBuilder:
         level: RiskLevel,
         conclusion: str,
         evidence: list[Evidence],
-        calculation: Calculation,
+        calculation: Calculation | None,
         identity_values: Sequence[str],
         metadata: Mapping[str, object],
     ) -> RiskItem:

@@ -418,10 +418,68 @@ def test_invalid_concentration_relationship_needs_review() -> None:
         [concentration_chunk("customer", "70", "60", page=30)],
     )
 
-    assert risk_by_code(risks, "customer_concentration") is None
+    risk = risk_by_code(risks, "customer_concentration")
+    assert risk is not None
+    assert risk.verification_status == VerificationStatus.PENDING
+    assert risk.calculation is None
+    assert risk.evidence
+    assert risk.metadata["candidate_state"] == (
+        "bounded_percentage_signal_requires_review"
+    )
+    assert risk.metadata["provisional_level"] is True
     diagnostic = diagnostic_by_code(agent, "customer_concentration")
-    assert diagnostic.code == DiagnosticCode.NEEDS_REVIEW
-    assert "largest_percentage_exceeds_top_five" in diagnostic.metadata["issues"]
+    assert diagnostic.code == DiagnosticCode.RISK_GENERATED
+    assert "largest_percentage_exceeds_top_five" in risk.metadata["extraction_issues"]
+
+
+def test_concentration_without_parsed_percentage_remains_diagnostic_only() -> None:
+    agent = v03_agent()
+
+    risks = agent.analyze(
+        IPOProfile(company_name="Demo"),
+        [
+            DocumentChunk(
+                document_id="doc",
+                chunk_id="customer-no-percentage",
+                page=30,
+                section="業務",
+                text="截至2023年12月31日止年度，五大客戶資料未提供百分比。",
+            )
+        ],
+    )
+
+    assert risk_by_code(risks, "customer_concentration") is None
+    assert diagnostic_by_code(agent, "customer_concentration").code in {
+        DiagnosticCode.NEEDS_REVIEW,
+        DiagnosticCode.EXTRACTION_FAILED,
+    }
+
+
+def test_negative_customer_concentration_disclosure_ignores_shareholding_percentage() -> None:
+    agent = v03_agent()
+
+    risks = agent.analyze(
+        IPOProfile(company_name="Demo"),
+        [
+            DocumentChunk(
+                document_id="doc",
+                chunk_id="customer-negative-bound",
+                page=31,
+                section="業務",
+                text=(
+                    "本集團於往績記錄期並不依賴任何單一客戶，因此確定本集團"
+                    "五大客戶並非切實可行。概無擁有本公司超過5.0%股本的股東"
+                    "於客戶中擁有權益。"
+                ),
+            )
+        ],
+    )
+
+    assert risk_by_code(risks, "customer_concentration") is None
+    assert diagnostic_by_code(agent, "customer_concentration").code in {
+        DiagnosticCode.NEEDS_REVIEW,
+        DiagnosticCode.EXTRACTION_FAILED,
+    }
 
 
 def test_frozen_concentration_model_excludes_period_months_but_chain_retains_it() -> None:
