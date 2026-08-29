@@ -1,14 +1,16 @@
 """One controlled, targeted re-check per conflict -- never an autonomous loop.
 
 The runner re-retrieves evidence for exactly the risk codes named by a conflict
-and asks the existing Verifier to rule again on the enlarged evidence set.  It
+and asks the existing Verifier to rule again on the enlarged evidence set. It
 adds no risk, rewrites no verdict by hand, and stops after a single attempt:
 ``RecheckRequest.max_attempts`` is pinned to 1 by the public contract, and this
 runner never issues a second request for the same conflict.
 
 A conflict that no document re-retrieval can settle -- a market, model or rule
-divergence -- is reported ``unresolved`` with the reason, rather than being
-quietly dropped or narrated into resolution.
+divergence -- is reported ``unresolved`` with the reason. Such cross-channel
+conflicts are still recorded as outcomes, but they do not consume the bounded
+document re-check budget reserved for conflicts that can actually benefit from
+re-retrieval.
 """
 
 from __future__ import annotations
@@ -35,7 +37,7 @@ from ipo_risk.schemas.competition_runtime import (
 )
 
 
-RECHECK_POLICY_VERSION = "v04_e_recheck_policy_v1"
+RECHECK_POLICY_VERSION = "v04_e_recheck_policy_v2"
 RECHECK_AGENT = "targeted_recheck"
 
 _DOCUMENT_RULES = frozenset({RULE_AGENT_VERIFIER, RULE_INTRA_DOCUMENT, RULE_UNRESOLVED_CLAIM})
@@ -61,12 +63,13 @@ class TargetedRecheckRunner:
     name = RECHECK_AGENT
     policy_version = RECHECK_POLICY_VERSION
 
-    def __init__(self, retriever=None, verifier=None, *, evidence_limit: int = 5, max_conflicts: int = 3) -> None:
+    def __init__(self, retriever=None, verifier=None, *, evidence_limit: int = 5, max_conflicts: int = 12) -> None:
         self.retriever = retriever
         self.verifier = verifier
         self.evidence_limit = evidence_limit
-        # A bounded budget keeps the re-check controlled; conflicts beyond it are
-        # reported as not attempted rather than silently ignored.
+        # Submission-sprint default: allow a normal current case to re-check all
+        # actionable document conflicts while remaining bounded. Cross-channel
+        # conflicts that document retrieval cannot settle do not consume this budget.
         self.max_conflicts = max_conflicts
 
     def run(
@@ -78,28 +81,57 @@ class TargetedRecheckRunner:
         chunks: Sequence[DocumentChunk] = (),
         risks: Sequence[RiskItem] = (),
     ) -> tuple[tuple[CompetitionConflict, ...], tuple[RecheckOutcome, ...]]:
-        """Return the conflicts with updated status, plus one outcome per attempt."""
+        """Return conflicts with updated status plus one outcome per processed conflict."""
 
         risks_by_id = {risk.risk_id: risk for risk in risks}
         updated: list[CompetitionConflict] = []
         outcomes: list[RecheckOutcome] = []
-        attempted = 0
+        attempted_actionable = 0
         for conflict in conflicts:
-            if attempted >= self.max_conflicts:
+            rule = conflict_rule(conflict)
+
+            # Market/model/rule disagreements cannot be settled by document
+            # re-retrieval. Record the honest not-actionable outcome without
+            # spending a document-recheck slot that a Financial/Legal/Business
+            # coverage conflict can use.
+            if rule not in _DOCUMENT_RULES:
+                outcome = self._recheck(
+                    conflict,
+                    case_id=case_id,
+                    run_id=run_id,
+                    chunks=chunks,
+                    risks_by_id=risks_by_id,
+                )
+                outcomes.append(outcome)
+                updated.append(
+                    conflict.model_copy(
+                        update={"status": outcome.status, "resolution_note": outcome.resolution_note}
+                    )
+                )
+                continue
+
+            if attempted_actionable >= self.max_conflicts:
                 updated.append(
                     conflict.model_copy(
                         update={
                             "status": ConflictStatus.UNRESOLVED,
                             "resolution_note": (
-                                f"not attempted: the controlled re-check budget of {self.max_conflicts} "
-                                "conflict(s) for this run was already used"
+                                "not attempted: the controlled document re-check budget of "
+                                f"{self.max_conflicts} actionable conflict(s) for this run was already used"
                             ),
                         }
                     )
                 )
                 continue
-            attempted += 1
-            outcome = self._recheck(conflict, case_id=case_id, run_id=run_id, chunks=chunks, risks_by_id=risks_by_id)
+
+            attempted_actionable += 1
+            outcome = self._recheck(
+                conflict,
+                case_id=case_id,
+                run_id=run_id,
+                chunks=chunks,
+                risks_by_id=risks_by_id,
+            )
             outcomes.append(outcome)
             updated.append(
                 conflict.model_copy(
@@ -289,9 +321,9 @@ class TargetedRecheckRunner:
     ) -> RecheckOutcome:
         """Separate a retrieval gap from an extraction gap, and say which it is.
 
-        There is no risk item to re-verify here: the agent produced none.  What a
-        controlled re-check *can* establish is whether additional in-scope Evidence
-        exists that the agent did not use.  If it does, the gap is at least partly
+        There is no risk item to re-verify here: the agent produced none. What a
+        controlled re-check can establish is whether additional in-scope Evidence
+        exists that the agent did not use. If it does, the gap is at least partly
         retrieval and the new Evidence is handed to the reviewer; if it does not,
         the gap is in extraction, and saying so is more useful than a silent
         unresolved.

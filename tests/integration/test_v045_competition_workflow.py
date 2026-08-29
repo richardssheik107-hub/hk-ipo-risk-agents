@@ -92,7 +92,7 @@ def test_the_competition_run_round_trips_through_the_repository(result) -> None:
 def test_conflict_detection_and_the_recheck_both_report_their_policy_version(result) -> None:
     diagnostics = _diagnostics(result)
     assert diagnostics["conflict_detection"]["policy_version"] == "v04_e_conflict_policy_v1"
-    assert diagnostics["targeted_recheck"]["policy_version"] == "v04_e_recheck_policy_v1"
+    assert diagnostics["targeted_recheck"]["policy_version"] == "v04_e_recheck_policy_v2"
 
 
 def test_the_trace_sidecar_reaches_the_result_and_measures_traceability(result) -> None:
@@ -193,7 +193,7 @@ class _GroundedSupervisionProvider:
     """Answers strictly from the bounded payload it is handed.
 
     Risk ids are minted per run, so a fixture with hard-coded ids would only ever
-    prove that out-of-scope citations are rejected.  Reading the supplied payload
+    prove that out-of-scope citations are rejected. Reading the supplied payload
     is what a well-behaved provider does, and it is what has to be accepted.
     """
 
