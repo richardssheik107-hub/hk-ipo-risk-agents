@@ -134,6 +134,56 @@ def test_balanced_fusion_keeps_a_bm25_only_page_in_the_top_results() -> None:
     assert recovered.metadata["bm25_rank"] == 1
 
 
+def test_concentration_structure_promotes_direct_supplier_disclosure() -> None:
+    def candidate(page: int, text: str) -> Evidence:
+        return Evidence(
+            evidence_id=f"domain:{page}",
+            document_id="doc",
+            chunk_id=f"doc:page:{page}",
+            page=page,
+            text=text,
+            source_type=EvidenceSourceType.PROSPECTUS,
+            relevance_score=0.5,
+        )
+
+    generic = [
+        candidate(page, "供應商管理及採購政策的一般披露")
+        for page in range(1, 21)
+    ]
+    direct = candidate(
+        99,
+        "五大供應商佔總採購額73.6%，最大供應商佔40.8%。",
+    )
+
+    observed = RoleBFinancialHighRecallRetriever()._fuse(
+        "supplier_concentration",
+        [*generic, direct],
+        [],
+        limit=5,
+    )
+
+    assert observed[0].page == 99
+    assert observed[0].metadata["concentration_structural_score"] == 3
+    assert observed[0].metadata["concentration_structural_boost"] > 0
+
+
+def test_concentration_structure_does_not_promote_wrong_entity_or_percent_only() -> None:
+    retriever = RoleBFinancialHighRecallRetriever()
+
+    assert retriever._concentration_structural_score(
+        "supplier_concentration",
+        "五大客戶佔總收益80%，最大客戶佔40%。",
+    ) < 3
+    assert retriever._concentration_structural_score(
+        "customer_concentration",
+        "本公司毛利率為80%，同比上升10%。",
+    ) < 3
+    assert retriever._concentration_structural_score(
+        "cash_runway",
+        "五大客戶佔總收益80%。",
+    ) == 0
+
+
 def test_balanced_fusion_keeps_ranked_table_body_on_original_page() -> None:
     candidate = Evidence(
         evidence_id="domain:8",

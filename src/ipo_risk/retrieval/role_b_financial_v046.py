@@ -58,6 +58,7 @@ _DOMAIN_DEPTH = 60
 _BM25_DEPTH = 100
 _FUSION_DEPTH = 60
 _RRF_K = 60
+_CONCENTRATION_STRUCTURAL_BONUS = 0.012
 _BM25_CONFIG = BM25Config(
     name="RoleB-BM25-C",
     tokenizer="cjk_bigram_trigram",
@@ -88,6 +89,7 @@ class _FusedPage:
     score: float
     domain_rank: int | None
     bm25_rank: int | None
+    structural_score: int = 0
 
     @property
     def lane_count(self) -> int:
@@ -116,7 +118,7 @@ class RoleBFinancialHighRecallRetriever:
     # Keep the public name stable for existing v0.4.6 configs. The version is
     # the behaviour identity used by Evidence provenance and journal hashes.
     name = "role_b_v046_financial_high_recall"
-    version = "role_b_v046_hybrid_high_recall_v3"
+    version = "role_b_v046_hybrid_high_recall_v4"
 
     def __init__(self, *, cache_root: str | Path | None = None) -> None:
         self._keyword = KeywordDocumentRetriever(cache_root=cache_root)
@@ -533,12 +535,31 @@ class RoleBFinancialHighRecallRetriever:
                 score += 1.0 / (_RRF_K + domain_rank)
             if bm25_rank is not None:
                 score += 1.0 / (_RRF_K + bm25_rank)
+            domain_evidence = domain_by_page.get(page, (None, None))[1]
+            bm25_evidence = bm25_by_page.get(page, (None, None))[1]
+            structural_text = self._merge_fragments(
+                [
+                    *((page_supplements or {}).get(page, ())),
+                    *(
+                        evidence.text
+                        for evidence in (bm25_evidence, domain_evidence)
+                        if evidence is not None
+                    ),
+                ]
+            )
+            structural_score = self._concentration_structural_score(
+                risk_code,
+                structural_text,
+            )
+            if structural_score >= 3:
+                score += _CONCENTRATION_STRUCTURAL_BONUS
             fused.append(
                 _FusedPage(
                     page=page,
                     score=score,
                     domain_rank=domain_rank,
                     bm25_rank=bm25_rank,
+                    structural_score=structural_score,
                 )
             )
         fused.sort(
@@ -610,6 +631,12 @@ class RoleBFinancialHighRecallRetriever:
                             "domain_rank": row.domain_rank,
                             "bm25_rank": row.bm25_rank,
                             "balanced_rrf_score": row.score,
+                            "concentration_structural_score": row.structural_score,
+                            "concentration_structural_boost": (
+                                _CONCENTRATION_STRUCTURAL_BONUS
+                                if row.structural_score >= 3
+                                else 0.0
+                            ),
                             "context_adapter": self.version,
                             "merged_context": len(lanes) > 1,
                             "page_supplement_count": len(supplements),
@@ -619,6 +646,48 @@ class RoleBFinancialHighRecallRetriever:
                 )
             )
         return output
+
+    @staticmethod
+    def _concentration_structural_score(risk_code: str, text: str) -> int:
+        """Score a generic concentration disclosure without case knowledge.
+
+        A page receives the bounded fusion bonus only when three independent
+        structural signals agree: the requested counterparty type, an explicit
+        percentage, and either a Top-N/largest marker or the matching financial
+        denominator.  Percent-only boilerplate and the opposite counterparty
+        family therefore cannot be promoted.
+        """
+
+        if risk_code not in {"customer_concentration", "supplier_concentration"}:
+            return 0
+        normalized = normalize_for_match(text)
+        if risk_code == "customer_concentration":
+            entity_terms = ("客戶", "客户", "customer")
+            denominator_terms = ("收益", "收入", "營業額", "营业额", "revenue", "sales")
+        else:
+            entity_terms = ("供應商", "供应商", "supplier")
+            denominator_terms = ("採購", "采购", "purchase", "purchases")
+
+        entity = any(normalize_for_match(term) in normalized for term in entity_terms)
+        percentage = bool(
+            re.search(r"(?:\d+(?:\.\d+)?\s*%|百分之\s*\d+(?:\.\d+)?)", text)
+        )
+        top_n = any(
+            normalize_for_match(term) in normalized
+            for term in (
+                "五大",
+                "最大",
+                "首五",
+                "topfive",
+                "top5",
+                "largest",
+                "singlelargest",
+            )
+        )
+        denominator = any(
+            normalize_for_match(term) in normalized for term in denominator_terms
+        )
+        return int(entity) + int(percentage) + int(top_n or denominator)
 
     @staticmethod
     def _first_by_page(
