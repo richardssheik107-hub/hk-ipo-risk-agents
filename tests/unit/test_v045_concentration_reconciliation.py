@@ -115,6 +115,37 @@ def test_value_period_mismatch_stays_fail_closed_when_gap_is_larger_than_one() -
     assert result.metadata["value_period_count_reconciled"] is False
 
 
+def test_dual_series_can_align_when_period_parser_keeps_latest_suffix() -> None:
+    fact = _fact(
+        period_end=date(2020, 8, 31),
+        period_months=8,
+        largest="37.5",
+        top_five="68.0",
+        page=20,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["value_period_count_mismatch"],
+        metadata={
+            "raw_percentages": {
+                "largest": ["10.1%", "11.8%", "13.5%", "37.5%"],
+                "top_five": ["34.3%", "36.5%", "36.6%", "68.0%"],
+            },
+            "period_candidates": [
+                {"period_end": "2019-12-31", "period_months": 8},
+                {"period_end": "2020-08-31", "period_months": 8},
+            ],
+        },
+    )
+
+    result = V03FinancialFactExtractor._reconcile_concentration_candidate(fact)
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end == date(2020, 8, 31)
+    assert result.period_months == 8
+    assert result.metadata["value_period_count_reconciled"] is True
+    assert result.metadata["value_period_alignment"] == "dual_series_latest_period_suffix"
+
+
 def test_known_period_months_govern_duplicate_same_date_null_candidate() -> None:
     fact = _fact(
         period_end=date(2020, 6, 30),
@@ -314,6 +345,36 @@ def test_clean_complete_candidate_governs_same_date_partial_conflict() -> None:
     assert result.metadata["value_candidate_count"] == 1
     assert result.metadata["merge_value_basis"] == "clean_complete_governing_candidates"
     assert len(result.metadata["candidate_diagnostics"]) == 2
+
+
+def test_suffix_reconciled_candidate_does_not_override_same_date_conflict() -> None:
+    extractor = V03FinancialFactExtractor()
+    suffix_reconciled = _fact(
+        period_end=date(2021, 7, 31),
+        period_months=4,
+        largest="40.8",
+        top_five="73.6",
+        page=20,
+        metadata={"value_period_alignment": "dual_series_latest_period_suffix"},
+    )
+    conflicting_partial = _fact(
+        period_end=date(2021, 7, 31),
+        period_months=4,
+        largest="38.0",
+        top_five=None,
+        page=21,
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["value_period_count_mismatch", "incomplete_concentration_values"],
+    )
+
+    result = extractor._merge_concentration_facts(
+        "supplier", [suffix_reconciled, conflicting_partial]
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_values_for_same_period" in result.issues
+    assert result.largest_counterparty_pct is None
+    assert result.metadata["governing_candidate_count"] == 0
 
 
 def test_genuine_same_period_value_conflict_remains_fail_closed() -> None:
