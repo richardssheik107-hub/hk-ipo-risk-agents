@@ -236,6 +236,7 @@ class _Candidate:
     relevance: float
     intent_priority: int
     context_strength: int
+    source_table_rows: int
 
 
 @dataclass
@@ -299,6 +300,7 @@ class FinancialEvidenceExtractor:
                         evidence.relevance_score,
                         intent_priority,
                         self._context_strength(evidence),
+                        self._source_table_rows(evidence, chunks_by_id),
                     )
                 )
 
@@ -398,6 +400,9 @@ class FinancialEvidenceExtractor:
                         relevance=evidence.relevance_score,
                         intent_priority=priority,
                         context_strength=self._context_strength(evidence),
+                        source_table_rows=self._source_table_rows(
+                            evidence, chunks_by_id
+                        ),
                     )
                 )
             return collected
@@ -432,6 +437,7 @@ class FinancialEvidenceExtractor:
             key=lambda pair: (
                 -pair[0].result.period_end.toordinal(),
                 pair[0].intent_priority + pair[1].intent_priority,
+                -pair[0].source_table_rows - pair[1].source_table_rows,
                 pair[0].rank + pair[1].rank,
                 -pair[0].context_strength - pair[1].context_strength,
                 -pair[0].relevance - pair[1].relevance,
@@ -504,6 +510,7 @@ class FinancialEvidenceExtractor:
             "extraction_method": value.extraction_method,
             "relevance_score": candidate.relevance,
             "context_strength": candidate.context_strength,
+            "source_table_rows": candidate.source_table_rows,
             "selected": selected,
         }
 
@@ -545,6 +552,35 @@ class FinancialEvidenceExtractor:
             "table_context",
         )
         return sum(bool(evidence.metadata.get(field)) for field in fields)
+
+    @staticmethod
+    def _source_table_rows(
+        evidence: Evidence,
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> int:
+        """Return the largest parser-proven table row count for the source.
+
+        Prospectus summaries commonly repeat a subset of a financial statement.
+        When two clean candidates disclose the same metric, period, currency,
+        unit and value, the more complete source table is the stronger Evidence
+        binding.  This signal is parser provenance only; it contains no issuer,
+        page, case, or Gold identity.
+        """
+
+        chunk = chunks_by_id.get(evidence.chunk_id or "")
+        if chunk is None:
+            return 0
+        tables = chunk.metadata.get("tables")
+        if not isinstance(tables, Sequence) or isinstance(tables, (str, bytes)):
+            return 0
+        counts = [
+            int(table.get("n_rows") or 0)
+            for table in tables
+            if isinstance(table, Mapping)
+            and isinstance(table.get("n_rows"), int)
+            and not isinstance(table.get("n_rows"), bool)
+        ]
+        return max(counts, default=0)
 
     def _extract_candidate(
         self,

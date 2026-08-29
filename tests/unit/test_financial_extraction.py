@@ -434,6 +434,61 @@ def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
     assert result.operating_cash_flow.period_end == date(2024, 6, 30)
 
 
+def test_equivalent_cash_flow_pair_prefers_more_complete_source_table() -> None:
+    def with_table_rows(source: DocumentChunk, rows: int) -> DocumentChunk:
+        return source.model_copy(
+            update={"metadata": {"tables": [{"n_rows": rows}]}}
+        )
+
+    summary_cash = with_table_rows(
+        chunk(
+            "截至2024年4月30日止四個月\n人民幣千元\n"
+            "現金流量表所述現金及現金等價物\n3,864",
+            page=20,
+        ),
+        7,
+    )
+    summary_flow = with_table_rows(
+        chunk(
+            "截至2024年4月30日止四個月\n人民幣千元\n"
+            "經營活動所用淨現金流量\n(31,645)",
+            page=20,
+            chunk_id="doc:page:20:flow",
+        ),
+        7,
+    )
+    statement_cash = with_table_rows(
+        chunk(
+            "截至2024年4月30日止四個月\n人民幣千元\n"
+            "現金流量表所述現金及現金等價物\n3,864",
+            page=200,
+        ),
+        10,
+    )
+    statement_flow = with_table_rows(
+        chunk(
+            "截至2024年4月30日止四個月\n人民幣千元\n"
+            "經營活動所用淨現金流量\n(31,645)",
+            page=200,
+            chunk_id="doc:page:200:flow",
+        ),
+        10,
+    )
+    sources = (summary_cash, summary_flow, statement_cash, statement_flow)
+
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(summary_cash), evidence(statement_cash, score=0.8)],
+        [evidence(summary_flow), evidence(statement_flow, score=0.8)],
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.cash_and_cash_equivalents.page == 200
+    assert result.operating_cash_flow.page == 200
+    assert result.cash_and_cash_equivalents.metadata["pair_selection"] == (
+        "latest_common_compatible_period"
+    )
+
+
 def test_bounded_extractor_can_use_clean_candidate_beyond_old_top_five() -> None:
     noise = [
         chunk(f"不相關披露 {index}", page=50 + index) for index in range(5)
