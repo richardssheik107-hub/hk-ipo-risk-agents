@@ -243,7 +243,9 @@ def test_a_cross_channel_conflict_is_reported_unresolved_not_dropped() -> None:
     )
     assert updated[0].status is ConflictStatus.UNRESOLVED
     assert "outside the document" in updated[0].resolution_note
-    assert outcomes[0].trace_events[0].event_type.value == "recheck"
+    event = outcomes[0].trace_events[0]
+    assert event.event_type.value == "recheck"
+    assert "not document-actionable" in event.details["no_evidence_reason"]
 
 
 def test_the_recheck_budget_bounds_how_many_conflicts_are_attempted() -> None:

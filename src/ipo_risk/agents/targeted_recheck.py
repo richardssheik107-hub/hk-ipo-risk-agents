@@ -432,7 +432,15 @@ class TargetedRecheckRunner:
                     status="not_actionable", agent_name=self.name, action="targeted_recheck",
                     tool_or_skill="none", conflict_id=conflict.conflict_id, recheck_id=request.recheck_id,
                     latency_ms=0,
-                    details={"reason": reason, "rule": rule, "policy_version": self.policy_version},
+                    details={
+                        "reason": reason,
+                        "rule": rule,
+                        "policy_version": self.policy_version,
+                        "no_evidence_reason": (
+                            "this conflict is not document-actionable, so this re-check does not "
+                            "retrieve or cite document Evidence"
+                        ),
+                    },
                 ),
             ),
         )
