@@ -1,0 +1,21 @@
+{
+  "artifact_version": "v046_role_b_batch005_fresh_checkpoint_summary_v1",
+  "production_commit": "bfb18ef3680e99e7890885e3ad94cea2d1b3c04b",
+  "case_count": 10,
+  "journal_hash": "da2361fd34f88d1402be85ed75c87ef6fb32ba2dd755265642599330b35dbeb4",
+  "offline": {"m1": "8/30", "m2": "13/48"},
+  "shadow": {"m1": "8/30", "m2": "13/48"},
+  "gated": {"m1": "11/30", "m2": "17/48"},
+  "call_count": 40,
+  "structured_valid": 38,
+  "fallback_count": 2,
+  "transport_failures": 0,
+  "scope_rejections": 0,
+  "monotonicity": "PASS",
+  "classification": "RUNTIME_LLM_VARIANCE",
+  "fresh_retry_count": 0,
+  "validation_opened": false,
+  "blind_2025_accessed": false,
+  "raw_prompt_persisted": false,
+  "raw_response_persisted": false
+}
