@@ -23,7 +23,7 @@ from ipo_risk.evaluation.role_b_concentration_forensics import (  # noqa: E402
     classify_concentration_formation,
     summarize_concentration_matrix,
 )
-from ipo_risk.extraction import V03FinancialFactExtractor  # noqa: E402
+from ipo_risk.extraction import TableAwareV03FinancialFactExtractor  # noqa: E402
 from ipo_risk.parsers.pymupdf_parser import PyMuPDFRoleBRecallParser  # noqa: E402
 from ipo_risk.retrieval.role_b_financial_v046 import (  # noqa: E402
     RoleBFinancialHighRecallRetriever,
@@ -141,7 +141,9 @@ def main() -> int:
         by_case.setdefault(case_id, []).append(risk_code)
 
     retriever = RoleBFinancialHighRecallRetriever(cache_root=args.cache_root)
-    extractor = V03FinancialFactExtractor()
+    # Match the frozen Role-B experiment profile. Using the regex extractor
+    # here would diagnose a different execution path than the ALL79 run.
+    extractor = TableAwareV03FinancialFactExtractor()
     rows: list[dict[str, Any]] = []
     for ordinal, (case_id, risk_codes) in enumerate(sorted(by_case.items()), start=1):
         catalog_row = catalog.get(case_id)
