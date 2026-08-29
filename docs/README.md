@@ -13,6 +13,7 @@
 | `V0.4_RELEASE_ACCEPTANCE.md` | **唯一实时 Release Gate / blocker 状态源** |
 | `COMPETITION_CLOSURE_PLAN.md` | 当前统一执行计划和优先级 |
 | `ROADMAP.md` | 剩余路线短版 |
+| `team/README.md` | **五人并行分工总入口；每位负责人有独立详细任务文档** |
 | `ROLE_B_M1_M2_PLAN.md` | B 线当前 checkpoint、root cause 和 ALL79 计划 |
 | `ROLE_D_MODEL_DECISION.md` | frozen PR-F vs v2 candidate 的 promote/retain 决策 |
 | `V045_ROLE_D_FINAL_CLOSURE.md` | D 线正式物化、receipt、strict revalidation 边界 |
@@ -23,6 +24,18 @@
 | `DATA_SCHEMA.md` | runtime、评测和 artifact contract |
 | `COMPETITION_DATA_OVERVIEW.md` | 数据与 Development / Validation / Blind 边界 |
 
+五份负责人文档：
+
+```text
+team/01_M1_M2_OWNER.md
+team/02_FRONTEND_OWNER.md
+team/03_DYNAMIC_MARKET_X_OWNER.md
+team/04_DYNAMIC_MODEL_OWNER.md
+team/05_RELEASE_SUBMISSION_OWNER.md
+```
+
+每份文档都定义了 owner 边界、禁止事项、依赖接口、分支建议、验收标准和最终交付物。
+
 ## 2. Source-of-truth hierarchy
 
 出现冲突时：
@@ -32,7 +45,7 @@
 3. 冻结 Metric-v2 对 M1/M2/M3/M5 的定义；
 4. `V0.4_RELEASE_ACCEPTANCE.md` 对**当前 Release Gate 是否适用**的判定；
 5. `COMPETITION_CLOSURE_PLAN.md`；
-6. lane 文档 / Runbook；
+6. lane 文档 / Runbook / `team/` owner 文档；
 7. research、历史 PR、Git history。
 
 ### M4 / Human Review 特别说明
