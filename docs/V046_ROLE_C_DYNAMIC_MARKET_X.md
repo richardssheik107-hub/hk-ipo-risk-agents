@@ -266,8 +266,33 @@ Git 存的是 LF 版本（`76a631fd…`）。用朴素的 `sha256(file)` 去校�
 `provenance`。新增可展示字段都在 `provenance` 里：`runtime_path`、
 `identity_source`、`pit_cutoff_date`、`prior_ipo_universe_size`、
 `prior_ipo_history_start_date` / `_end_date`、`outcome_history_available`、
-`available_observation_count`。前端不需要读 bridge、outcome pack 或任何
-builder 中间文件。
+`extended_status`、`available_observation_count`。前端不需要读 bridge、
+outcome pack 或任何 builder 中间文件。
+
+### 8.1 运行路径必须可见
+
+「Market-X 可用 15/15」这句话，冻结产物和动态重算读起来完全一样——而对一份
+本项目从没见过的招股书，**这恰恰是读者最需要知道的一件事**。把它留在默认折叠的
+provenance JSON 里，等于技术上存在、实际上不可见。
+
+`app.competition_ui.market_runtime_summary(payload)` 把 provenance 投影成一张
+小表，Streamlit 市场面板在标题行与观测表之间渲染它：
+
+```text
+运行路径          冻结 PR-B 产物 | 动态 PIT 重算
+PIT 截止时点      2025-02-12
+数据集划分        开发集 / 验证集 / 盲测集
+身份解析          官方目录 case_id | 股票代码+上市日 | 调用方提供（不在目录内）
+前序 IPO 样本量   446
+前序结果数据层    已配置 | 未配置（结果族显式缺失，不补零）
+Extended 市场环境 已配置 | 未配置 | 读取失败
+```
+
+后四行只在 `runtime_path = dynamic_pit` 时出现。**provenance 里没有的字段不产生
+行**，因此这张表不会声称 Market 通道没有主张过的来源。七阶段视图的 Market
+Features 同样区分两条路径：dynamic 案例的 summary 明说「不在冻结 universe 内、
+按同一 PIT 契约重算」，并多出一个 `Market runtime path` 指标；frozen 案例的措辞
+一字未改。
 
 ## 9. 配置
 
