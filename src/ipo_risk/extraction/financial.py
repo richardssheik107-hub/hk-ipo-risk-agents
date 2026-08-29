@@ -2232,6 +2232,180 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         (re.compile(rf"(?:千|仟)\s*{_CURRENCY_WORD}"), "thousand"),
     )
 
+    _NARRATIVE_POSITIVE_OCF_RE = re.compile(
+        r"截至(?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日止"
+        r"(?P<months>[一二三四五六七八九十兩两\d]+)[個个]月"
+        r"[^。]{0,48}?經營活動(?:所得|產生|经营活动所得|产生)(?:正)?"
+        r"現金流量(?:淨額)?"
+        r"(?P<currency>人民幣|人民币|港元|港幣|港币|美元)"
+        r"(?P<amount>\d+(?:\.\d+)?)"
+        r"(?P<unit>百萬元|百万元|萬元|万元|千元|元)"
+    )
+    _NARRATIVE_DATED_CASH_RE = re.compile(
+        r"截至(?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日"
+        r"(?:的|為|为)?"
+        r"(?P<currency>人民幣|人民币|港元|港幣|港币|美元)"
+        r"(?P<amount>\d+(?:\.\d+)?)"
+        r"(?P<unit>百萬元|百万元|萬元|万元|千元|元)"
+    )
+
+    def extract(
+        self,
+        cash_evidence_candidates: Sequence[Evidence],
+        operating_cash_flow_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> FinancialExtractionResult:
+        result = super().extract(
+            cash_evidence_candidates,
+            operating_cash_flow_candidates,
+            chunks_by_id,
+        )
+        narrative_pair = self._latest_positive_narrative_cash_pair(
+            [*cash_evidence_candidates[:20], *operating_cash_flow_candidates[:20]],
+            chunks_by_id,
+        )
+        if narrative_pair is None:
+            return result
+        current_period = result.operating_cash_flow.period_end
+        if current_period is not None and narrative_pair[1].period_end <= current_period:
+            return result
+        return FinancialExtractionResult(
+            cash_and_cash_equivalents=narrative_pair[0],
+            operating_cash_flow=narrative_pair[1],
+        )
+
+    @classmethod
+    def _latest_positive_narrative_cash_pair(
+        cls,
+        evidence_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[FinancialMetricValue, FinancialMetricValue] | None:
+        """Read a newer explicit positive-OCF/cash pair from one narrative page.
+
+        The pair is accepted only when both values name the same full date and
+        carry identical explicit currency/unit tokens.  This is deliberately
+        narrower than general prose extraction: it can suppress an obsolete
+        cash-burn period, but cannot manufacture a runway from partial prose.
+        """
+
+        currency_map = {
+            "人民幣": "CNY",
+            "人民币": "CNY",
+            "港元": "HKD",
+            "港幣": "HKD",
+            "港币": "HKD",
+            "美元": "USD",
+        }
+        unit_map = {
+            "百萬元": "million",
+            "百万元": "million",
+            "萬元": "ten_thousand",
+            "万元": "ten_thousand",
+            "千元": "thousand",
+            "元": "unit",
+        }
+        pairs: list[tuple[date, FinancialMetricValue, FinancialMetricValue]] = []
+        seen: set[str] = set()
+        for evidence in evidence_candidates:
+            if evidence.evidence_id in seen:
+                continue
+            seen.add(evidence.evidence_id)
+            chunk = chunks_by_id.get(evidence.chunk_id or "")
+            if chunk is None or any(
+                getattr(evidence, field) != getattr(chunk, field)
+                for field in ("chunk_id", "document_id", "page")
+            ):
+                continue
+            compact = re.sub(r"\s+", "", chunk.text)
+            ocf_matches = list(cls._NARRATIVE_POSITIVE_OCF_RE.finditer(compact))
+            if not ocf_matches:
+                continue
+            cash_sentences = [
+                sentence
+                for sentence in re.split(r"[。；;]", compact)
+                if re.search(r"現金及現金等價物|现金及现金等价物", sentence)
+            ]
+            cash_matches = [
+                match
+                for sentence in cash_sentences
+                for match in cls._NARRATIVE_DATED_CASH_RE.finditer(sentence)
+            ]
+            for ocf_match in ocf_matches:
+                try:
+                    period_end = date(
+                        int(ocf_match.group("year")),
+                        int(ocf_match.group("month")),
+                        int(ocf_match.group("day")),
+                    )
+                except ValueError:
+                    continue
+                months = cls._chinese_integer(ocf_match.group("months"))
+                if months not in range(1, 13):
+                    continue
+                matching_cash = [
+                    match
+                    for match in cash_matches
+                    if (
+                        int(match.group("year")),
+                        int(match.group("month")),
+                        int(match.group("day")),
+                        match.group("currency"),
+                        match.group("unit"),
+                    )
+                    == (
+                        period_end.year,
+                        period_end.month,
+                        period_end.day,
+                        ocf_match.group("currency"),
+                        ocf_match.group("unit"),
+                    )
+                ]
+                if len(matching_cash) != 1:
+                    continue
+                cash_match = matching_cash[0]
+                cash_value = cls._normalize_amount(cash_match.group("amount"))
+                ocf_value = cls._normalize_amount(ocf_match.group("amount"))
+                if cash_value is None or cash_value < 0 or ocf_value is None:
+                    continue
+                common = {
+                    "evidence_id": evidence.evidence_id,
+                    "document_id": chunk.document_id,
+                    "chunk_id": chunk.chunk_id,
+                    "page": chunk.page,
+                    "status": ExtractionStatus.EXTRACTED,
+                    "issues": [],
+                    "currency": currency_map[ocf_match.group("currency")],
+                    "unit": unit_map[ocf_match.group("unit")],
+                    "period_end": period_end,
+                    "context_chunk_ids": [chunk.chunk_id],
+                    "context_pages": [chunk.page],
+                    "extraction_method": "bounded_positive_cash_narrative_pair",
+                    "metadata": {
+                        "pair_selection": "latest_explicit_positive_narrative_period",
+                        "query_intent": evidence.metadata.get("query_intent"),
+                    },
+                }
+                cash = FinancialMetricValue(
+                    metric_name="cash_and_cash_equivalents",
+                    raw_label="現金及現金等價物",
+                    raw_value=cash_match.group("amount"),
+                    normalized_value=cash_value,
+                    **common,
+                )
+                ocf = FinancialMetricValue(
+                    metric_name="operating_cash_flow",
+                    raw_label="經營活動所得正現金流量",
+                    raw_value=ocf_match.group("amount"),
+                    normalized_value=abs(ocf_value),
+                    period_months=months,
+                    **common,
+                )
+                pairs.append((period_end, cash, ocf))
+        if not pairs:
+            return None
+        _, cash, ocf = max(pairs, key=lambda item: item[0])
+        return cash, ocf
+
     @classmethod
     def _currency_unit_candidates(cls, text: str) -> tuple[set[str], set[str]]:
         currencies, units = super()._currency_unit_candidates(text)

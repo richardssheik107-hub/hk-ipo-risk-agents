@@ -493,6 +493,37 @@ def test_shared_cash_runway_query_intent_is_valid_for_both_metrics() -> None:
     )
 
 
+def test_table_aware_newer_explicit_positive_narrative_pair_outranks_old_burn() -> None:
+    older = chunk(
+        "截至2020年6月30日止六個月\n人民幣百萬元\n"
+        "期末現金及現金等價物\n22.7\n"
+        "經營活動所用現金流量淨額\n(28.1)",
+        page=20,
+    )
+    newer = chunk(
+        "我們於截至2020年9月30日止三個月錄得"
+        "經營活動所得正現金流量人民幣19 .0百萬元。\n"
+        "我們的現金及現金等價物結餘由截至2020年6月30日"
+        "的人民幣22 .7百萬元增至截至2020年9月30日的人民幣44 .4百萬元。",
+        page=21,
+    )
+    candidates = [evidence(older), evidence(newer)]
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in (older, newer)},
+    )
+
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("44.4")
+    assert result.operating_cash_flow.normalized_value == Decimal("19.0")
+    assert result.operating_cash_flow.period_end == date(2020, 9, 30)
+    assert result.operating_cash_flow.period_months == 3
+    assert result.operating_cash_flow.extraction_method == (
+        "bounded_positive_cash_narrative_pair"
+    )
+
+
 def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
     cash_latest = chunk(
         "截至2024年9月30日止九個月\n人民幣千元\n"
