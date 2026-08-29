@@ -1,0 +1,7 @@
+# The canonical replay is hash-bound to the exact bytes produced by the
+# recorded-run bundle builder. Never let checkout line-ending conversion alter
+# those bytes; demo_manifest.json is the integrity authority for this tree.
+reports/v045_demo_bundle/** -text
+
+# Release status is ordinary reviewable JSON and stays portable.
+reports/final_status/*.json text eol=lf
