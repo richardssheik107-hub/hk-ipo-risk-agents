@@ -1,0 +1,36 @@
+{
+  "artifact_version": "v046_role_b_batch008_fixed_journal_summary_v1",
+  "base_commit": "25a5a37e049006a00aca5c904b742986971d5cdb",
+  "production_commit": "a602e409da8f10343ec6ba4ddcd5fbd77280f046",
+  "case_count": 10,
+  "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "journal_hash": "8d5cb474aaf6db3dcc504b9b7f926ac5948834709d9798dd2bf11252e0dce5e2",
+  "baseline": {
+    "offline_m1": {"correct": 8, "support": 30},
+    "offline_m2": {"correct": 13, "support": 48},
+    "gated_m1": {"correct": 12, "support": 30},
+    "gated_m2": {"correct": 18, "support": 48}
+  },
+  "result": {
+    "offline_m1": {"correct": 9, "support": 30},
+    "offline_m2": {"correct": 15, "support": 48},
+    "gated_m1": {"correct": 13, "support": 30},
+    "gated_m2": {"correct": 20, "support": 48}
+  },
+  "gated_per_risk": {
+    "cash_runway": {"m1": "2/5", "m2": "4/11"},
+    "customer_concentration": {"m1": "4/8", "m2": "5/13"},
+    "supplier_concentration": {"m1": "3/9", "m2": "6/13"},
+    "redemption_rights": {"m1": "4/8", "m2": "5/11"}
+  },
+  "control_case_count": 3,
+  "control_regressions": 0,
+  "network_calls": 0,
+  "fresh_checkpoint_executed": false,
+  "fresh_checkpoint_reason": "owner_requested_stop_for_replan",
+  "validation_opened": false,
+  "blind_2025_outcome_accessed": false,
+  "existing_gold_modified": false,
+  "runtime_received_gold": false
+}

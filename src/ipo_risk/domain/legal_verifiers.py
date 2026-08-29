@@ -50,8 +50,10 @@ _TERMINATION = re.compile(
 )
 _WAIVER = re.compile(r"豁免|放弃|放棄|\bwaiv(?:e|ed|er)\b", re.I)
 _RESTORATION = re.compile(
-    r"恢复|恢復|重新生效|\brestor(?:e|ed|ation)\b|\brev(?:ive|ived)\b|"
-    r"\breinstate[dm]?\b|\bresume[ds]?\b",
+    r"恢复|恢復|重新生效|重启|重啟|可予行使|再次行使|"
+    r"\brestor(?:e|ed|ation)\b|\brev(?:ive|ived)\b|\breinstate[dm]?\b|"
+    r"\bresume[ds]?\b|\b(?:become|becomes|became) exercisable\b|"
+    r"\bmay (?:again )?be exercised\b",
     re.I,
 )
 _RESTORATION_NEGATED = re.compile(
@@ -313,7 +315,15 @@ class LegalRightsVerifier(_LegalVerifierBase):
         if human_review:
             issues.append("manual_legal_judgment_required")
 
-        if invalid_identity or ordinary_only or historical_terminated:
+        # A historical right is not automatically a negative finding when the
+        # builder has explicitly kept lifecycle uncertainty open for review.
+        # Reject only an unsupported *current* presentation; otherwise retain
+        # the fail-closed needs-review outcome.
+        historical_misstatement = (
+            historical_terminated
+            and risk.verification_status != VerificationStatus.NEEDS_REVIEW
+        )
+        if invalid_identity or ordinary_only or historical_misstatement:
             status = VerificationStatus.REJECTED
         elif issues:
             status = VerificationStatus.NEEDS_REVIEW

@@ -26,7 +26,13 @@ _AMOUNT_RE = re.compile(
 )
 _EMPTY_AMOUNT_RE = re.compile(r"^\s*[-−–—]\s*$")
 _YEAR_RE = re.compile(r"^(20\d{2})\s*年?$", re.IGNORECASE)
+_CHINESE_YEAR_RE = re.compile(r"^([〇零一二三四五六七八九]{4})\s*年?$")
 _CHINESE_DATE_RE = re.compile(r"(20\d{2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日")
+_CHINESE_WORD_DATE_RE = re.compile(
+    r"([〇零一二三四五六七八九]{4})\s*年\s*"
+    r"([一二三四五六七八九十]{1,3})\s*月\s*"
+    r"([一二三四五六七八九十]{1,3})\s*日"
+)
 _ISO_DATE_RE = re.compile(r"(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})")
 # A year that is not the head of a full date, i.e. an enumerated fiscal year
 # ("於2022年、2023年、2024年以及截至2025年6月30日止六個月").
@@ -56,6 +62,8 @@ _ROW_NUMBER_BODY = r"(?:\d{1,3}(?:[,，]\d{3})+|\d+)(?:\.\d+)?"
 _ROW_AMOUNT_TOKEN_RE = re.compile(
     rf"(?:\(\s*{_ROW_NUMBER_BODY}\s*\)|（\s*{_ROW_NUMBER_BODY}\s*）|[+\-−]?\s*{_ROW_NUMBER_BODY}|[-–—])"
 )
+_NOTE_COLUMN_HEADER_RE = re.compile(r"^(?:附註|附注|註|注|notes?)$", re.I)
+_NOTE_REFERENCE_RE = re.compile(r"^[1-9]\d{0,2}$")
 _PERCENT_RE = re.compile(
     r"(?P<value>[+\-−]?\s*\d+(?:\s*\.\s*\d+)?)\s*(?:[%％]|per\s+cent|percent)",
     re.I,
@@ -199,6 +207,16 @@ _LABELS = {
     "operating_cash_flow": (
         re.compile(r"經營活動(?:所用|所得|產生|使用)?(?:之)?淨現金(?:流量)?"),
         re.compile(r"经营活动(?:所用|所得|产生|使用)?(?:之)?净现金(?:流量)?"),
+        re.compile(
+            r"經營(?:活動)?(?:所得|所用|產生|使用)"
+            r"(?:\s*[╱／/]\s*[（(]?(?:所得|所用|產生|使用)[）)]?)?"
+            r"\s*現金淨額"
+        ),
+        re.compile(
+            r"经营(?:活动)?(?:所得|所用|产生|使用)"
+            r"(?:\s*[╱／/]\s*[（(]?(?:所得|所用|产生|使用)[）)]?)?"
+            r"\s*现金净额"
+        ),
         re.compile(r"net cash (?:used in|generated from|from) operating activities", re.I),
         re.compile(r"net cash flows? (?:used in|generated from) operating activities", re.I),
     ),
@@ -621,6 +639,20 @@ class FinancialEvidenceExtractor:
         issues.extend(period_issues)
         if period_source:
             field_sources["period"] = period_source.chunk_id
+        ignored_note_reference = None
+        if (
+            periods
+            and len(raw_values) == len(periods) + 1
+            and any(_NOTE_COLUMN_HEADER_RE.fullmatch(line) for line in lines[:label_index])
+            and _NOTE_REFERENCE_RE.fullmatch(raw_values[0])
+        ):
+            # HK prospectus statements commonly flatten the ``Notes`` column
+            # onto its own line immediately before the period values.  It is a
+            # row reference, not an extra financial observation.  Remove it
+            # only when one explicit Notes header and an exact N+1 shape prove
+            # the column relationship; every other mismatch remains fail-closed.
+            ignored_note_reference = raw_values[0]
+            raw_values = raw_values[1:]
         numeric_values = [(raw, self._normalize_amount(raw)) for raw in raw_values]
         valid_values = [(raw, value) for raw, value in numeric_values if value is not None]
         if not raw_values:
@@ -697,6 +729,7 @@ class FinancialEvidenceExtractor:
                     {"period_end": item.end.isoformat(), "period_months": item.months}
                     for item in periods
                 ],
+                "ignored_note_reference": ignored_note_reference,
                 "query_intent": evidence.metadata.get("query_intent"),
             },
         )
@@ -900,7 +933,7 @@ class FinancialEvidenceExtractor:
         if explicit:
             return self._dedupe_periods(explicit), []
 
-        years = [int(match.group(1)) for line in lines if (match := _YEAR_RE.fullmatch(line))]
+        years = [year for line in lines if (year := self._year_value(line)) is not None]
         groups = [
             (self._month_day(line), self._period_months(line))
             for line in lines
@@ -942,6 +975,15 @@ class FinancialEvidenceExtractor:
                     )
                 except ValueError:
                     pass
+        for match in _CHINESE_WORD_DATE_RE.finditer(text):
+            try:
+                year = FinancialEvidenceExtractor._year_value(match.group(1))
+                month = FinancialEvidenceExtractor._chinese_integer(match.group(2))
+                day = FinancialEvidenceExtractor._chinese_integer(match.group(3))
+                if year is not None and month is not None and day is not None:
+                    matches.append((match.start(), date(year, month, day)))
+            except ValueError:
+                pass
         for match in _ENGLISH_DATE_DAY_FIRST_RE.finditer(text):
             try:
                 matches.append(
@@ -984,6 +1026,16 @@ class FinancialEvidenceExtractor:
         match = re.search(r"(\d{1,2})\s*月\s*(\d{1,2})\s*日", line)
         if match:
             return int(match.group(1)), int(match.group(2))
+        chinese = re.search(
+            r"([一二三四五六七八九十]{1,3})\s*月\s*"
+            r"([一二三四五六七八九十]{1,3})\s*日",
+            line,
+        )
+        if chinese:
+            month = FinancialEvidenceExtractor._chinese_integer(chinese.group(1))
+            day = FinancialEvidenceExtractor._chinese_integer(chinese.group(2))
+            if month is not None and day is not None:
+                return month, day
         english = re.search(
             r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})",
             line,
@@ -1002,6 +1054,40 @@ class FinancialEvidenceExtractor:
                 int(english_day_first.group(1)),
             )
         return None
+
+    @staticmethod
+    def _chinese_integer(token: str) -> int | None:
+        digits = {"〇": 0, "零": 0, "一": 1, "二": 2, "三": 3, "四": 4,
+                  "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+        if not token:
+            return None
+        if "十" not in token:
+            if any(character not in digits for character in token):
+                return None
+            value = 0
+            for character in token:
+                value = value * 10 + digits[character]
+            return value
+        if token.count("十") != 1:
+            return None
+        left, right = token.split("十")
+        if len(left) > 1 or len(right) > 1:
+            return None
+        tens = digits.get(left, 1) if left else 1
+        ones = digits.get(right, 0) if right else 0
+        return tens * 10 + ones
+
+    @staticmethod
+    def _year_value(text: str) -> int | None:
+        stripped = text.strip()
+        match = _YEAR_RE.fullmatch(stripped)
+        if match:
+            return int(match.group(1))
+        chinese = _CHINESE_YEAR_RE.fullmatch(stripped)
+        if not chinese:
+            return None
+        value = FinancialEvidenceExtractor._chinese_integer(chinese.group(1))
+        return value if value is not None and 2000 <= value <= 2099 else None
 
     @staticmethod
     def _period_months(line: str) -> int | None:
