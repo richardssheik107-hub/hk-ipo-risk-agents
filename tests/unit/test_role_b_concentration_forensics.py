@@ -53,6 +53,18 @@ def test_true_conflict_with_clean_candidates_remains_fail_closed() -> None:
     assert observed["generic_runtime_fix_candidate"] is False
 
 
+def test_multiple_complete_but_noisy_conflicting_candidates_remain_fail_closed() -> None:
+    observed = classify_concentration_formation(
+        _evidence(
+            complete_candidate_count=2,
+            merged_issues=("conflicting_values_for_same_period",),
+        )
+    )
+    assert observed["primary_pattern"] == "genuine_conflict"
+    assert observed["source_sufficiency"] == "genuine_ambiguity_fail_closed"
+    assert observed["generic_runtime_fix_candidate"] is False
+
+
 def test_complementary_partial_candidates_require_aggregation() -> None:
     observed = classify_concentration_formation(
         _evidence(

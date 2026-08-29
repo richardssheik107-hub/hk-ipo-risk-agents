@@ -73,7 +73,10 @@ def classify_concentration_formation(
         sufficiency = "source_information_sufficient_fact_formed"
         primary = "fact_formed_downstream_miss"
         recoverable = False
-    elif "genuine_conflict" in patterns and evidence.clean_complete_candidate_count:
+    elif "genuine_conflict" in patterns and (
+        evidence.clean_complete_candidate_count
+        or evidence.complete_candidate_count >= 2
+    ):
         sufficiency = "genuine_ambiguity_fail_closed"
         primary = "genuine_conflict"
         recoverable = False
