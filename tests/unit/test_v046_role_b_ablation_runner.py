@@ -17,6 +17,7 @@ from scripts.run_v046_role_b_ablation import (
     CaseInputs,
     RoleBAblationRunnerError,
     _TracingRetriever,
+    _all_development_subset,
     _build_journaled_router,
     _canonical_hash,
     _experiment_registry,
@@ -761,6 +762,46 @@ def test_explicit_fixed_journal_replay_allows_offline_and_gated_without_shadow()
         execute_mode=execute,
         allow_gated_without_shadow=True,
     )
-
     assert tuple(results) == ("offline", "gated")
     assert calls == ["offline", "gated"]
+
+
+def test_all_development_subset_keeps_negative_control_cases(tmp_path: Path) -> None:
+    manifest = {
+        "evaluable_development_case_count": 2,
+        "metric_protocol_version": "metric-v2",
+        "manifest_hash": _digest("manifest"),
+        "risk_units": [
+            {
+                "case_id": "ipo_2020_positive",
+                "stock_code": "0001.HK",
+                "split": "development",
+                "primary_scope": True,
+                "evaluable_positive": True,
+                "competition_risk_family": "cash_burn_pressure",
+            },
+            {
+                "case_id": "ipo_2020_negative",
+                "stock_code": "0002.HK",
+                "split": "development",
+                "primary_scope": True,
+                "evaluable_positive": False,
+                "competition_risk_family": "cash_burn_pressure",
+            },
+        ],
+        "evidence_units": [],
+    }
+
+    subset = _all_development_subset(tmp_path / "all79.json", manifest, size=2)
+
+    assert subset is not None
+    assert [item["case_id"] for item in subset["cases"]] == [
+        "ipo_2020_negative",
+        "ipo_2020_positive",
+    ]
+    assert subset["cases"][0]["positive_primary_families"] == []
+    assert subset["cases"][1]["positive_primary_families"] == [
+        "cash_burn_pressure"
+    ]
+    assert subset["validation_opened"] is False
+    assert subset["blind_2025_outcome_accessed"] is False

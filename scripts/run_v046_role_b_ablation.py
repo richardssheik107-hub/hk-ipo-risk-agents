@@ -310,6 +310,84 @@ def _safe_json_write(path: Path, payload: Any) -> None:
     )
 
 
+def _all_development_subset(
+    path: Path, manifest: Mapping[str, Any], *, size: int
+) -> dict[str, Any] | None:
+    expected_count = int(manifest.get("evaluable_development_case_count") or 0)
+    if size != expected_count or expected_count <= 0:
+        return None
+    cases: dict[str, dict[str, Any]] = {}
+    for row in manifest.get("risk_units") or []:
+        if not isinstance(row, Mapping):
+            continue
+        if row.get("split") != "development" or row.get("primary_scope") is not True:
+            continue
+        case_id = str(row.get("case_id") or "")
+        if not case_id:
+            continue
+        item = cases.setdefault(
+            case_id,
+            {
+                "case_id": case_id,
+                "stock_code": str(row.get("stock_code") or ""),
+                "positive_primary_families": set(),
+                "primary_evidence_unit_count": 0,
+            },
+        )
+        family = row.get("competition_risk_family")
+        if row.get("evaluable_positive") is True and isinstance(family, str) and family:
+            item["positive_primary_families"].add(family)
+    for row in manifest.get("evidence_units") or []:
+        if not isinstance(row, Mapping):
+            continue
+        if row.get("split") != "development" or row.get("primary_scope") is not True:
+            continue
+        case_id = str(row.get("case_id") or "")
+        if case_id in cases:
+            cases[case_id]["primary_evidence_unit_count"] += 1
+    if len(cases) != expected_count:
+        raise RoleBAblationRunnerError(
+            f"evaluable Development universe mismatch:{len(cases)}/{expected_count}"
+        )
+    rows = []
+    for case_id in sorted(cases):
+        item = dict(cases[case_id])
+        item["positive_primary_families"] = sorted(
+            item["positive_primary_families"]
+        )
+        rows.append(item)
+    payload: dict[str, Any] = {
+        "subset_version": "v046_role_b_all_development_subset_v1",
+        "selection_algorithm": "all_evaluable_development_cases_sorted_v1",
+        "metric_protocol_version": manifest.get("metric_protocol_version"),
+        "source_coverage_manifest_hash": manifest.get("manifest_hash"),
+        "split": "development",
+        "case_count": expected_count,
+        "cases": rows,
+        "debug_subset_only": False,
+        "validation_opened": False,
+        "blind_2025_outcome_accessed": False,
+    }
+    payload["subset_hash"] = _subset_identity_hash(payload)
+    if path.is_file():
+        observed = json.loads(path.read_text(encoding="utf-8"))
+        if observed != payload:
+            raise RoleBAblationRunnerError(
+                "frozen ALL-Development subset differs from current Existing-Gold manifest"
+            )
+        return observed
+    _safe_json_write(path, payload)
+    return payload
+
+
+def _load_role_b_subset(
+    path: Path, manifest: dict[str, Any], *, size: int
+) -> dict[str, Any]:
+    return _all_development_subset(path, manifest, size=size) or _load_or_create_subset(
+        path, manifest, size=size
+    )
+
+
 def _read_profile(path: Path) -> dict[str, Any]:
     try:
         payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -1529,7 +1607,7 @@ def main() -> int:
     )
 
     coverage = _ensure_coverage(root, coverage_path)
-    subset = _load_or_create_subset(subset_path, coverage, size=args.subset_size)
+    subset = _load_role_b_subset(subset_path, coverage, size=args.subset_size)
     validate_development_only_manifest(subset)
     case_ids = _case_ids(subset)
     if args.case_id:
