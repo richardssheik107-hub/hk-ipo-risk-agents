@@ -97,8 +97,10 @@ def test_final_three_runtime_enters_supervision_with_market_and_model_available(
     assert states["market"] == "available"
     assert states["model"] == "available"
     model = result.metadata["final_supervision"]["model_prediction"]
-    assert model["score"] == pytest.approx(0.09722022630014981)
-    assert len(model["drivers"]) == 10
+    assert model["score"] == pytest.approx(0.14101203637169535)
+    assert model["alert"] is False
+    assert model["alert_policy"] == "development_forward_oof_f2_top_fraction_0.475"
+    assert len(model["drivers"]) == 7
 
 
 def test_conflict_detection_and_the_recheck_both_report_their_policy_version(result) -> None:

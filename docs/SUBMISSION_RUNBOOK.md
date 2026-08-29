@@ -103,7 +103,16 @@ python scripts/check_v045_role_d_m5.py \
   --output reports/v045_role_d_acceptance/acceptance.json
 ```
 
-若晋升 v2，必须先完成对应 builder/checker/frozen binding 的 versioned 支持；不得把 v2 内容手工写进 frozen PR-F artifact。
+V2 的 builder/checker/frozen binding 已版本化实现。持有授权 PR-C targets 时重建：
+
+```bash
+python scripts/build_v045_role_d_v2_release.py \
+  --target-dir <AUTHORIZED_PR_C_TARGET_DIR>/targets \
+  --base-main-commit <BASE_MAIN_SHA>
+python scripts/check_v045_role_d_v2_release.py
+```
+
+输出使用 `reports/v045_role_d_v2`、独立 V2 freeze/receipt 和独立 handoff；不得手工改写或覆盖旧 frozen PR-F artifact。
 
 再验证 `--resume` 与新空目录重建 byte-identical。
 
@@ -136,7 +145,7 @@ python scripts/prepare_v045_market_runtime.py \
 两个命令都验证 frozen/receipt 哈希；不接受替代行情、手改 signal 或 2025
 Blind outcome。
 
-若晋升 v2，使用其 versioned handoff builder/identity。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
+V2 runtime 使用 `reports/v045_role_d_v2_product_handoff_final3`。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
 
 D 的最终报告必须同时给出性能、基准、alert 工作量和限制。
 
@@ -269,7 +278,8 @@ Bundle 必须拒绝 PDF、raw licensed data、Secret/private key/token、本机�
 [ ] M1 >=80%
 [ ] M2 >=85%
 [ ] D A-owned model decision
-[ ] D strict revalidation / determinism / final-three
+[x] D V2 strict revalidation / determinism / final-three implementation
+[ ] A-owned promotion PR merge
 [ ] C strict 3/3
 [ ] E accepted 3/3
 [ ] M3 =100%

@@ -158,12 +158,12 @@ PR #170 已关闭 metadata contract 代码缺口，下一步直接做 final-thre
 
 并行完成：
 
-1. A 对 frozen PR-F / v2 candidate 做 promote/retain 决议；
-2. current-main strict revalidation；
-3. resume / fresh-directory determinism；
-4. final-three label-free handoff；
-5. prediction table；
-6. 业务价值、alert 工作量与局限诚实解释。
+1. A 审核并合并 V2 promotion PR，使决议生效；
+2. V2 current-main strict revalidation 已实现；
+3. resume / fresh-directory byte-identical 已验证；
+4. final-three label-free V2 handoff 已生成；
+5. 70-case prediction table 与 1D/5D/20D/60D 结果已生成；
+6. 34-alert 工作量与 ROC-AUC 仍低于 0.5 的局限已明确披露。
 
 D 没有正式 per-case handoff 时，前端 Model channel 显示 unavailable；不阻止其余 6 个产品阶段跑通。
 

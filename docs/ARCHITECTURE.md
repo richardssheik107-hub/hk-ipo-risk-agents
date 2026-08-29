@@ -114,7 +114,7 @@ LLM 不能 mint market numbers。Core-only 合法；真实缺失合法；zero fi
 
 Authentic frozen handoff 存在时输出 `uncalibrated_model_score`、identity 和 signed drivers；缺失或 hash mismatch 时 unavailable。
 
-当前 frozen PR-F 有正式 receipt；v2 candidate 使用 Development selection 并在 2024 一次评价，但尚未晋升。任何 promote 必须创建新的 versioned freeze、artifact 与 product handoff，不能手工覆盖 frozen PR-F。
+旧 frozen PR-F receipt/handoff 继续保留。V2 使用 Development selection 并在 2024 一次评价，且已有独立 versioned freeze、四项 artifact、strict receipt 与 product handoff；A-owned merge 后晋升生效。两条身份不互相覆盖。
 
 Outcome evaluator 独立计算 1D / 5D / 20D / 60D，不把真实 outcome 反馈到分析 runtime。
 

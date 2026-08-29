@@ -461,6 +461,9 @@ def _render_market_and_model(payload: dict[str, object], stages_by_id: dict[str,
             section_header("模型 / 规则情报", "冻结模型信号与确定性规则信号对照。")
             if model:
                 st.metric("模型评分", model.get("score", "不可用"))
+                if model.get("alert") is not None:
+                    st.metric("V2 风险初筛告警", "是" if model["alert"] else "否")
+                    st.caption(f"告警策略：{model.get('alert_policy', '不可用')}")
                 st.caption(
                     f"评分语义：{model.get('score_semantics', '不可用')} · 校准状态：{model.get('calibration_status', '不可用')}"
                 )

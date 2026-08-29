@@ -53,11 +53,11 @@ Blind input/outcome not used for optimization
 
 ### D
 
-- A 审核 frozen PR-F 与 v2 candidate；
-- 若晋升 v2，创建 freeze/decision record，禁止再用 2024 调参；
-- current-main strict revalidation；
-- resume / fresh-directory determinism；
-- final-three label-free handoff；
+- A 审核并合并 V2 promotion PR；
+- V2 freeze/decision record 已生成，禁止再用 2024 调参；
+- current-main strict revalidation 已通过；
+- resume / fresh-directory byte-identical 已通过；
+- final-three label-free V2 handoff 已生成；
 - 给出准确的业务价值和局限。
 
 ### C / E

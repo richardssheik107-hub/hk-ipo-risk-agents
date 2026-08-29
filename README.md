@@ -43,10 +43,10 @@
 | Evidence bbox | truthful PyMuPDF `page_text_union` bbox 已合入 | 精确 quote/snippet screenshot/export manifest |
 | M4 | `0/6` 真人评审 | 每案 2 名独立评审并通过 rubric |
 | M5 formal | current-main 70-case 四文件与 receipt 哈希一致；D1 `12/12 PASS` | 保持 deterministic / Blind 边界 |
-| M5 v2 candidate | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，未晋升 | A governance decision + 新 freeze/handoff |
+| M5 V2 promotion | Recall `52.17%`、F1 `42.11%`、PR-AUC `38.12%`，版本化 freeze/receipt/handoff 已完成 | A 审核并合并 promotion PR |
 | 产品 | final-three Market / frozen Model `3/3 available`，UI 不再因资产缺失显示未启用 | real PDF/LLM case matrix + capability demos + final bundle |
 
-Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 仍不足以宣称强预测效果。v2 candidate 改善了高召回 operating point，但正式产品在新 promotion/freeze 前不能把它冒充 frozen model。
+旧 Frozen PR-F 的五日 Recall `4.35%`、ROC-AUC `0.4246` 不足以宣称强预测效果。V2 把 Recall 提升至 `52.17%`，定位为未校准的高召回初筛信号；其 promotion package 不覆盖旧 PR-F，并由 A-owned merge 使决议生效。
 
 ## 当前优先级
 

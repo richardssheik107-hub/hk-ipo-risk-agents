@@ -35,7 +35,7 @@ def _path(value: str) -> Path:
 )
 def test_competition_configs_enable_the_receipt_bound_model_handoff(config) -> None:
     settings = load_settings(str(ROOT / config))
-    assert settings.pr_f_run_dir == "reports/v045_pr_f_product_handoff_final3"
+    assert settings.pr_f_run_dir == "reports/v045_role_d_v2_product_handoff_final3"
 
 
 def test_final_three_market_and_model_channels_are_available() -> None:
@@ -66,21 +66,22 @@ def test_final_three_market_and_model_channels_are_available() -> None:
         assert len(market_view.observations) == 15
         assert model_view.status is ChannelStatus.AVAILABLE, model_view.reason
         assert model_view.score is not None
-        assert len(model_view.drivers) == 10
+        assert len(model_view.drivers) == 7
+        assert model_view.alert is not None
 
 
 def test_final_three_handoff_matches_the_current_main_receipt() -> None:
     receipt = json.loads(
-        (ROOT / "reports/frozen/v045_role_d_current_main_revalidation_receipt.json").read_text(
+        (ROOT / "reports/frozen/v045_role_d_v2_promotion_receipt.json").read_text(
             encoding="utf-8"
         )
     )
     frozen = json.loads(
-        (ROOT / "reports/frozen/v04_pr_f_lightgbm_manifest.json").read_text(
+        (ROOT / "reports/frozen/v045_role_d_v2_promotion_manifest.json").read_text(
             encoding="utf-8"
         )
     )
-    handoff = ROOT / "reports/v045_pr_f_product_handoff_final3"
+    handoff = ROOT / "reports/v045_role_d_v2_product_handoff_final3"
     manifest, signals = validate_product_handoff(
         handoff,
         expected_source_model_result_hash=frozen["model_result_hash"],
@@ -88,6 +89,7 @@ def test_final_three_handoff_matches_the_current_main_receipt() -> None:
     )
     assert manifest["contains_target_labels"] is False
     assert [row["case_id"] for row in signals] == receipt["product_handoff"]["case_ids"]
+    assert all(isinstance(row["alert"], bool) for row in signals)
     assert {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in handoff.iterdir()

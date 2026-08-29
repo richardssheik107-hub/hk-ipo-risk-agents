@@ -2,7 +2,7 @@
 
 > 状态日期：`2026-08-28`
 >
-> 当前决议：**PENDING A-OWNED PROMOTION REVIEW**
+> 当前决议：**PROMOTE V2 — EFFECTIVE ON A-OWNED MERGE OF THE PROMOTION PR**
 
 本文档把“正式可复现模型”和“效果更好的研究候选”分开，避免两种常见误判：一是把四文件物化完成等同于业务效果已经足够；二是把尚未治理晋升的候选直接写成正式系统结果。
 
@@ -10,7 +10,7 @@
 
 | 项目 | Frozen PR-F | v2 candidate |
 |---|---:|---:|
-| 状态 | 正式冻结 / 已有 70-case receipt | Research candidate / 未晋升 |
+| 状态 | 保留的旧正式冻结 / 已有 70-case receipt | 新版本化 freeze/receipt；由 A 合并本 PR 后生效 |
 | 选择数据 | 历史 frozen protocol | 2020→2021、2020–21→2022、2020–22→2023 expanding Development folds |
 | 2024 用途 | 正式记录结果 | 冻结候选后一次性评价 |
 | ROC-AUC | 0.4246 | 0.4875 |
@@ -33,16 +33,16 @@ v2 候选显著改善：
 - Brier；
 - 实际可用的 alert 覆盖。
 
-但它仍是 triage candidate：
+它晋升后的产品定位仍是 triage signal：
 
 - ROC-AUC 仍略低于 0.5；
 - score 未校准；
-- 目前没有正式 promotion record；
-- 当前 D receipt 与 D→E handoff 仍绑定 frozen PR-F。
+- promotion record、严格 receipt 和 D→E handoff 已版本化生成；
+- A 对本 promotion PR 的合并记录是决议生效证据。
 
 因此当前最强可支持表述是：
 
-> Development-selected v2 candidate substantially improves the high-recall operating point over frozen PR-F, but remains an uncalibrated research candidate pending governance promotion.
+> Development-selected V2 substantially improves the governed high-recall operating point over frozen PR-F. It remains an uncalibrated triage signal, and promotion becomes effective only through A-owned merge of the versioned freeze/receipt PR.
 
 不能写成：
 
@@ -55,7 +55,7 @@ v2 候选显著改善：
 
 A 应进行一次明确、可审计的晋升决策，而不是继续在 2024 上试更多方案。
 
-### 审核项
+### A 合并前审核项
 
 1. v2 实现和报告身份与仓库代码一致；
 2. expanding Development selection 可从原始 artifact 重放；
@@ -85,11 +85,11 @@ A 应进行一次明确、可审计的晋升决策，而不是继续在 2024 上
 - 强调 Document + Market + Agent 归因价值，不把 M5 作为强预测卖点；
 - 同样完成 current-main strict revalidation 和 final-three handoff。
 
-## 4. 推荐决策
+## 4. 晋升决议载体
 
-基于当前仓库证据，优先审核 Option A：v2 在不覆盖 frozen PR-F、未用 2024 进行选择的前提下，明显修复了原系统几乎不报警的问题。
+本 PR 实现 Option A，并把审批动作收敛为 A-owned GitHub merge：A 合并即确认完成身份、复现、determinism、leakage、工作量和局限审核。未合并前，本分支只是一份完整晋升候选；合并进入 `main` 后，版本化 promotion record 生效。
 
-这是一项基于现有报告的治理建议，不是晋升结论。只有 A 完成身份、复现和 leakage 审核后才能正式采用。
+旧 PR-F manifest、receipt、四项结果和 handoff 均保留，不覆盖、可回滚。
 
 ## 5. 停止规则
 
@@ -104,8 +104,7 @@ A 应进行一次明确、可审计的晋升决策，而不是继续在 2024 上
 下一动作只有：
 
 ```text
-A governance review
-→ promote and re-materialize
-或
-→ retain frozen PR-F and limit claims
+A 审核本 promotion PR
+→ 合并：V2 晋升生效，前端消费 V2 handoff
+→ 不合并：main 继续保留旧 PR-F
 ```

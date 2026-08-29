@@ -64,10 +64,10 @@ Governed MarketContext、IPOHeatSkill/MarketRegimeSkill、bounded Market LLM、o
 
 ### D model tracks
 
-- frozen PR-F：正式 receipt 和 product identity；
-- v2 candidate：Development-selected、2024 one-shot evaluated、未晋升。
+- frozen PR-F：保留的旧正式 receipt 和 product identity；
+- V2 promotion：Development-selected、2024 one-shot evaluated、独立 freeze/receipt/handoff，A-owned merge 后生效。
 
-若晋升 v2，必须创建新的 freeze/decision/artifact/handoff，不能覆盖 frozen PR-F 身份。
+V2 使用新的 freeze/decision/artifact/handoff，不覆盖 frozen PR-F 身份。
 
 ## 6. 当前限制
 

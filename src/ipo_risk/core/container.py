@@ -77,6 +77,7 @@ from ipo_risk.modeling.frozen_model_evidence import (
     FrozenModelPredictionProvider,
     FrozenModelEvidenceError,
     load_frozen_cohort_evidence,
+    runtime_frozen_manifest_name,
 )
 from ipo_risk.workflows.enhanced_v2 import EnhancedV2Workflow
 from ipo_risk.workflows.mvp_v1 import MVPWorkflow
@@ -323,8 +324,14 @@ class DependencyContainer:
     def _frozen_cohort_evidence(self):
         """Tier-1 frozen PR-F evidence; absent manifest degrades, never crashes."""
         try:
+            manifest_name = (
+                runtime_frozen_manifest_name(Path(self.settings.pr_f_run_dir))
+                if self.settings.pr_f_run_dir
+                else None
+            )
             return load_frozen_cohort_evidence(
-                Path(self.settings.report_dir) / "frozen"
+                Path(self.settings.report_dir) / "frozen",
+                **({"manifest_name": manifest_name} if manifest_name else {}),
             )
         except FrozenModelEvidenceError:
             return None

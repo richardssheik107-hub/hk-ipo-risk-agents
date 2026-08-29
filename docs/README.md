@@ -56,7 +56,7 @@ B fixed-10 M1 = 23.33%
 B fixed-10 M2 = 18.75%
 B v0.4.6 diagnostics + read-only Evidence auditor = implemented; full measured run pending
 D frozen M5 artifacts / receipt = recorded
-D v2 candidate Recall = 52.17%; F1 = 42.11%; not promoted
+D V2 Recall = 52.17%; F1 = 42.11%; versioned promotion package complete, effective on A-owned merge
 C strict contract = 1/3
 E accepted real-provider = 2/3
 M3 = 3/3 exactly 1.0
