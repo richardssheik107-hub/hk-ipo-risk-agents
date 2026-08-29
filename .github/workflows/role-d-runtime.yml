@@ -1,0 +1,33 @@
+name: Role D runtime
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  final-three-market-model:
+    name: Final-three Market 3/3 and Model 3/3
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev,retrieval-research]"
+      - name: Role-D product runtime preflight
+        run: python scripts/check_v045_product_runtime.py
+      - name: Role-D and frontend integration contracts
+        run: >-
+          pytest -q
+          tests/integration/test_v045_final_three_runtime_assets.py
+          tests/integration/test_v045_competition_workflow.py
+          tests/unit/test_market_context_provider.py
+          tests/unit/test_pr_f_product_handoff.py
+          tests/unit/test_competition_ui.py
+          tests/unit/test_evidence_viewer_compat.py
+          tests/unit/test_issuer_catalog.py
