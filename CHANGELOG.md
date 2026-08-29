@@ -1,5 +1,58 @@
 # Changelog
 
+## Unreleased — Evidence screenshots: unique-match localisation and a hash-bound manifest
+
+`Evidence screenshots` is a required submission deliverable and nothing implemented
+it: the repository contained no screenshot code at all, and the only geometry an
+Evidence item carried was the parser's page-level text union. This adds the export,
+and localises the cited text on the page rather than boxing the whole page.
+
+### Added
+
+- **`ipo_risk.runtime.evidence_screenshots`** — locates each cited Evidence item on
+  its physical page and renders one PNG per item. Localisation is matched against
+  the page's own text lines (`get_text("dict")`), so "how many times does this text
+  appear on this page" is an exact count rather than an inference from geometry: a
+  hit that wraps across two visual lines returns two rectangles and would otherwise
+  be indistinguishable from two separate occurrences.
+- **`scripts/build_v045_evidence_screenshots.py`** — reads case artifacts that
+  already exist, re-opens the prospectus the run verified, and writes
+  `screenshots/*.png`, a per-case `screenshot_manifest.json` and a matrix-level
+  `screenshot_summary.json`. It never re-analyses and never invents an item.
+- The manifest binds every image to the source PDF SHA-256, the physical page, the
+  geometry drawn, the anchors searched and the image's own SHA-256, as
+  `docs/SUBMISSION_RUNBOOK.md` §9 requires.
+
+### Governance
+
+- **Granularity is never overstated.** `snippet_line_match` / `keyword_match` are
+  coordinates PyMuPDF found for text that is in the retrieved snippet;
+  `page_text_union` is the parser's page-level region and is reported as such;
+  `unavailable` renders the page with no box drawn. A page union is never presented
+  as a snippet box.
+- **Only a unique match is drawn.** Text appearing on more than one line of the page
+  cannot say which line the Evidence came from, so the anchor is rejected and
+  recorded with its `matched_page_line_count` — the record of what was refused is
+  what shows no box was guessed.
+- **The source fails closed.** A PDF whose bytes do not match the SHA-256 the run
+  verified is refused for the whole case; a missing prospectus, a page beyond the
+  document and a failed render are each a recorded status rather than a missing row.
+  No local path is written to any artifact.
+
+### Changed
+
+- The Evidence Viewer draws its box through the same localiser, so what a reviewer
+  sees on screen is the geometry the submission ships, and its caption always names
+  the granularity that was achieved. `evidence_catalog` now carries the Evidence
+  metadata the localiser reads; the viewer's own `render_page_png` is removed rather
+  than left as a second, page-level renderer.
+
+### Measured, on current main
+
+Three-case matrix over the authorised archive: 13 cited Evidence items, 13 rendered,
+13 precisely localised, 0 page-level fallbacks, 0 unrendered.
+
+
 ## Unreleased — concentration extraction: duplicate label block, narrative period counts, receivable scope
 
 Follow-up to the previous concentration work, driven by 0699.HK 均勝電子, whose

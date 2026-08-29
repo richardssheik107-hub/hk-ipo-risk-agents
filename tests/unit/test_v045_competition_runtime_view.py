@@ -1,8 +1,9 @@
 """The product surface reads governed output; it never repairs or invents it.
 
 These are the pure projections behind the five workspaces, plus the Evidence
-Viewer's page renderer.  A missing page, a missing bbox and an unresolved
-conflict all have to survive the trip to the screen unchanged.
+Viewer's page capture.  A missing page, a missing bbox and an unresolved
+conflict all have to survive the trip to the screen unchanged, and a drawn box
+must be captioned with the granularity it actually has.
 """
 
 from __future__ import annotations
@@ -29,7 +30,19 @@ from competition_runtime_view import (  # noqa: E402
     trace_rows,
     traceability_metrics,
 )
-from evidence_viewer import PageRenderError, render_page_png  # noqa: E402
+from ipo_risk.runtime.evidence_screenshots import (  # noqa: E402
+    EvidenceCaptureError,
+    LocalisedRegion,
+    GRANULARITY_KEYWORD,
+    GRANULARITY_PAGE_UNION,
+    GRANULARITY_SNIPPET,
+    GRANULARITY_UNAVAILABLE,
+    METHOD_NONE,
+    METHOD_PARSER_BBOX,
+    capture_evidence_page,
+)
+
+from evidence_viewer import _capture, _localisation_caption  # noqa: E402
 
 REAL_PDF = Path(__file__).resolve().parents[2] / "data" / "local" / "real_case_001" / "prospectus.pdf"
 
@@ -174,28 +187,64 @@ def test_machine_and_human_verdicts_are_shown_side_by_side_not_merged() -> None:
 
 
 @pytest.mark.skipif(not REAL_PDF.exists(), reason="the local prospectus is not present")
-def test_a_prospectus_page_renders_to_png_with_and_without_a_bbox() -> None:
+def test_a_prospectus_page_renders_to_png_with_and_without_a_box() -> None:
     content = REAL_PDF.read_bytes()
-    plain = render_page_png(content, 3)
-    highlighted = render_page_png(content, 3, (72.0, 100.0, 400.0, 200.0))
-    assert plain.startswith(b"\x89PNG") and highlighted.startswith(b"\x89PNG")
-    # The highlight is drawn on the page, so the two renders cannot be identical.
-    assert plain != highlighted
+    plain, plain_region, _, _ = capture_evidence_page(
+        content, _capture({"evidence_id": "e", "page": 3, "text": "nowhere in this document"})
+    )
+    boxed, boxed_region, _, _ = capture_evidence_page(
+        content,
+        _capture(
+            {
+                "evidence_id": "e",
+                "page": 3,
+                "text": "nowhere in this document",
+                "bbox": [72.0, 100.0, 400.0, 200.0],
+            }
+        ),
+    )
+    assert plain.startswith(b"\x89PNG") and boxed.startswith(b"\x89PNG")
+    assert plain_region.granularity == GRANULARITY_UNAVAILABLE
+    assert boxed_region.method == METHOD_PARSER_BBOX
+    # The box is drawn on the page, so the two renders cannot be identical.
+    assert plain != boxed
 
 
-@pytest.mark.parametrize(
-    "content, page",
-    [(b"", 1), (b"%PDF-1.4 broken", 1)],
-)
-def test_an_unrenderable_page_raises_instead_of_returning_a_blank_image(content, page) -> None:
-    with pytest.raises(PageRenderError):
-        render_page_png(content, page)
+@pytest.mark.parametrize("content, page", [(b"", 1), (b"%PDF-1.4 broken", 1)])
+def test_an_unrenderable_page_fails_instead_of_returning_a_blank_image(content, page) -> None:
+    with pytest.raises(Exception):
+        capture_evidence_page(content, _capture({"evidence_id": "e", "page": page, "text": "x"}))
 
 
 @pytest.mark.skipif(not REAL_PDF.exists(), reason="the local prospectus is not present")
 def test_a_page_beyond_the_document_is_refused_by_name() -> None:
-    with pytest.raises(PageRenderError, match="beyond the document"):
-        render_page_png(REAL_PDF.read_bytes(), 10**6)
+    with pytest.raises(EvidenceCaptureError, match="beyond the document"):
+        capture_evidence_page(
+            REAL_PDF.read_bytes(), _capture({"evidence_id": "e", "page": 10**6, "text": "x"})
+        )
+
+
+def test_the_viewer_passes_retrieval_metadata_to_the_localiser_unchanged() -> None:
+    item = evidence_catalog(_payload())[0]
+    assert "evidence_metadata" in item
+    capture = _capture(
+        {**item, "evidence_metadata": {"matched_keywords": ["现金"], "bbox_granularity": "page_text_union"}}
+    )
+    assert capture.matched_keywords == ("现金",)
+    assert capture.recorded_bbox_granularity == "page_text_union"
+
+
+@pytest.mark.parametrize(
+    "region, expected",
+    [
+        (LocalisedRegion(GRANULARITY_SNIPPET, "m", ((1.0, 1.0, 2.0, 2.0),)), "精确到行"),
+        (LocalisedRegion(GRANULARITY_KEYWORD, "m", ((1.0, 1.0, 2.0, 2.0),)), "关键词"),
+        (LocalisedRegion(GRANULARITY_PAGE_UNION, METHOD_PARSER_BBOX, ((1.0, 1.0, 2.0, 2.0),)), "页级文本范围"),
+        (LocalisedRegion(GRANULARITY_UNAVAILABLE, METHOD_NONE), "未绘制高亮框"),
+    ],
+)
+def test_the_caption_never_claims_a_finer_box_than_was_found(region, expected: str) -> None:
+    assert expected in _localisation_caption(region)
 
 
 def _app_source() -> str:

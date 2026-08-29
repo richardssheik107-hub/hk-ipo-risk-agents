@@ -153,9 +153,22 @@ python scripts/run_v04_role_e_demo.py \
 
 ## 9. Evidence screenshot export
 
+在 final-three 案例产物已经生成之后运行（只读已有 artifact，不重新分析）：
+
+```bash
+python scripts/build_v045_evidence_screenshots.py \
+  --input-dir reports/v045_role_e_ai_final \
+  --prospectus-root <AUTHORIZED_ROOT>
+```
+
+每案写出 `screenshots/*.png` 与 `screenshot_manifest.json`，顶层写出 `screenshot_summary.json`。
+
 每个关键 Evidence 绑定 source PDF hash、physical page、bbox source、match count、screenshot path/hash。
 
-只接受 upstream bbox 或唯一 exact quote match。多重/无匹配时明确 unavailable，不画假框。
+只接受 upstream bbox 或唯一 exact quote match。多重/无匹配时明确 unavailable，不画假框：
+snippet 行在该页出现多于一次即判 ambiguous 并记录 `matched_page_line_count`，
+落回 parser 的 `page_text_union` 时按页级粒度标注，两者都不得冒充精确 snippet 框。
+PDF 与运行时记录的 SHA-256 不一致则整案拒绝渲染。
 
 ## 10. One-shot Validation
 
