@@ -1,0 +1,19 @@
+{
+  "version": "v046_autonomous_accepted_fixes_v1",
+  "fixes": [
+    {
+      "id": "overnight_convergence_001",
+      "type": "accepted_bundle",
+      "fixed_journal_m1": "10/30",
+      "fixed_journal_m2": "14/48"
+    },
+    {
+      "id": "batch004_pending_concentration_conversion",
+      "commit": "a0ae90a",
+      "type": "accepted_production_fix",
+      "fixed_journal_m1": "12/30",
+      "fixed_journal_m2": "17/48",
+      "network_calls": 0
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "version": "v046_autonomous_next_actions_v1",
+  "actions": [
+    "measure Batch004 on one fresh fixed-10 checkpoint",
+    "audit concentration exact-fact extraction on Development only",
+    "re-rank roots after the fresh checkpoint",
+    "do not open Validation until all 79 Development pass the B gate"
+  ]
+}

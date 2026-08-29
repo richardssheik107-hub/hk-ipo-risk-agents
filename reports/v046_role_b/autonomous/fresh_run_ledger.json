@@ -1,0 +1,13 @@
+{
+  "version": "v046_autonomous_fresh_run_ledger_v1",
+  "runs": [
+    {
+      "id": "overnight_convergence_001",
+      "m1": "9/30",
+      "m2": "13/48",
+      "structured_valid": "37/40",
+      "classification": "RUNTIME_LLM_VARIANCE"
+    }
+  ],
+  "next_fresh_checkpoint": "after_batch004_commit"
+}

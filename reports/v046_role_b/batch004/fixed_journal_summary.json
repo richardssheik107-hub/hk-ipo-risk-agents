@@ -1,0 +1,36 @@
+{
+  "artifact_version": "v046_role_b_batch004_fixed_journal_summary_v1",
+  "production_commit": "a0ae90a",
+  "case_count": 10,
+  "fixed10_hash": "5758b9f0b38fe0dabffade07d1da850938406b98ebe021dc65c93e806a1f3b6a",
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "journal_hash": "8d5cb474aaf6db3dcc504b9b7f926ac5948834709d9798dd2bf11252e0dce5e2",
+  "provider": "openai_responses",
+  "model": "ark-code-latest",
+  "transport": "responses",
+  "baseline": {
+    "m1": {"correct": 10, "support": 30, "rate": 0.3333333333333333},
+    "m2": {"correct": 14, "support": 48, "rate": 0.2916666666666667}
+  },
+  "result": {
+    "m1": {"correct": 12, "support": 30, "rate": 0.4},
+    "m2": {"correct": 17, "support": 48, "rate": 0.3541666666666667}
+  },
+  "per_risk": {
+    "cash_runway": {"m1": "1/5", "m2": "2/11"},
+    "customer_concentration": {"m1": "4/8", "m2": "4/13", "existence_precision": 1.0},
+    "supplier_concentration": {"m1": "3/9", "m2": "6/13", "existence_precision": 1.0},
+    "redemption_rights": {"m1": "4/8", "m2": "5/11"}
+  },
+  "network_calls": 0,
+  "structured_valid": 37,
+  "structured_total": 40,
+  "transport_failures": 0,
+  "scope_rejections": 0,
+  "metric_non_regression": true,
+  "formal_monotonicity": "NOT_PROVEN",
+  "formal_monotonicity_reason": "fixed_journal_replay_disallows_shadow_mode",
+  "validation_opened": false,
+  "blind_2025_accessed": false,
+  "existing_gold_modified": false
+}
