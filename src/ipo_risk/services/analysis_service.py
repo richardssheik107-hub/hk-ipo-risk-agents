@@ -36,7 +36,7 @@ class IPOAnalysisService:
             if (mode := getattr(settings, channel)) != "none":
                 modes[channel] = mode
         if settings.pr_f_run_dir:
-            modes["model_prediction"] = "frozen_pr_f_sanitized_or_verified"
+            modes["model_prediction"] = "versioned_role_d_sanitized_or_verified"
         if settings.workflow_version == "enhanced_v2":
             remote_llm_providers = {"openai_compatible", "openai_responses"}
             if settings.llm_provider == "unavailable":

@@ -95,13 +95,13 @@ PR-AUC = 0.3812
 ROC-AUC = 0.4875
 ```
 
-v2 使用 expanding Development folds 选择并在 2024 一次评价，尚未晋升。正式 D receipt 与产品 handoff 仍绑定 frozen PR-F。
+V2 使用 expanding Development folds 选择并在 2024 一次评价。其独立 D receipt 与 label-free handoff 已生成，A-owned promotion PR merge 后生效；旧 frozen PR-F receipt/handoff 保留。
 
 ## 7. Oracle / model data
 
 Oracle 仅用于 evaluation/diagnosis，不进入 production runtime。Authentic frozen handoff 不可用时 Model Channel = unavailable。
 
-A 必须对 v2 做一次 promote/retain 决策；若晋升，创建新 freeze、四文件和 final-three handoff。不得继续根据 2024 调参。
+A 通过审核并合并 promotion PR 使 V2 决议生效。新 freeze、四文件和 final-three handoff 已物化；不得继续根据 2024 调参。
 
 ## 8. Final-three data
 

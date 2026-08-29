@@ -1,0 +1,69 @@
+{
+  "blind_2025_y_accessed": false,
+  "comparison_scope": "same_2024_validation_70_case_universe",
+  "interpretation_policy": "descriptive_only_no_validation_retuning",
+  "limitations": [
+    "ROC-AUC remains below 0.5 on the one-shot 2024 Validation cohort.",
+    "The score is uncalibrated and must not be interpreted as a probability.",
+    "The 34-alert workload is a triage budget, not an automatic investment decision."
+  ],
+  "offline_baseline": {
+    "metrics": {
+      "accuracy": 0.6285714285714286,
+      "brier_score": 0.24203905823196534,
+      "classification_threshold": 0.5,
+      "f1": 0.0,
+      "positive_rate": 0.32857142857142857,
+      "pr_auc": 0.3553883385374205,
+      "precision": 0.0,
+      "recall": 0.0,
+      "roc_auc": 0.5513413506012952,
+      "sample_count": 70
+    },
+    "name": "frozen_logistic_regression"
+  },
+  "prior_frozen_pr_f": {
+    "metrics": {
+      "base_prevalence": 0.32857142857142857,
+      "classification_threshold": 0.5,
+      "f1": 0.07692307692307693,
+      "positive_count": 23,
+      "pr_auc": 0.3363610278209001,
+      "precision": 0.3333333333333333,
+      "recall": 0.043478260869565216,
+      "roc_auc": 0.4246068455134135,
+      "sample_count": 70,
+      "top_10pct_hit_rate": 0.42857142857142855,
+      "top_20pct_hit_rate": 0.2857142857142857,
+      "top_fraction_definition": "positive_rate_within_highest_scoring_fraction"
+    },
+    "name": "frozen_lightgbm_pr_f"
+  },
+  "role_d_release_version": "v045_role_d_v2_promotion_release_v1",
+  "threshold_or_model_retuned_on_validation": false,
+  "v2_minus_prior_pr_f": {
+    "f1": 0.3441295546558704,
+    "pr_auc": 0.04483510204246438,
+    "precision": 0.019607843137254943,
+    "recall": 0.4782608695652174,
+    "roc_auc": 0.06290471785383905
+  },
+  "v2_model": {
+    "metrics": {
+      "alert_count": 34,
+      "alert_fraction_realized": 0.4857142857142857,
+      "base_prevalence": 0.32857142857142857,
+      "brier_score": 0.25024004357291624,
+      "f1": 0.42105263157894735,
+      "positive_count": 23,
+      "pr_auc": 0.3811961298633645,
+      "precision": 0.35294117647058826,
+      "recall": 0.5217391304347826,
+      "roc_auc": 0.48751156336725254,
+      "sample_count": 70
+    },
+    "name": "lightgbm_role_d_v2_core_regime_7",
+    "positioning": "high_recall_triage_signal",
+    "score_semantics": "uncalibrated_model_score_not_probability"
+  }
+}

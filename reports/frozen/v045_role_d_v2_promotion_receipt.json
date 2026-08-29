@@ -1,0 +1,51 @@
+{
+  "artifact_sha256": {
+    "ai_vs_offline_report.json": "bb6a2ab8cf0fe89faeb43aae71c11c7235c3c00ebb2f7d64b70950ad3f6bc354",
+    "evaluation_summary.json": "e3d9d08adbc2e5367a59ea72e2b011fe709036e4604c413fd5ee6d9618db004c",
+    "multi_horizon_results.csv": "f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725",
+    "test_predictions.csv": "ecfcb5f886ca69150e4da7a380ffd0e8d639969630ec288604c20a1ac87bcae6"
+  },
+  "determinism": {
+    "fresh_directory_rebuild_byte_identical": true,
+    "same_directory_resume_byte_identical": true
+  },
+  "evaluation": {
+    "alert_count": 34,
+    "alert_fraction_realized": 0.4857142857142857,
+    "base_prevalence": 0.32857142857142857,
+    "brier_score": 0.25024004357291624,
+    "f1": 0.42105263157894735,
+    "positive_count": 23,
+    "pr_auc": 0.3811961298633645,
+    "precision": 0.35294117647058826,
+    "recall": 0.5217391304347826,
+    "roc_auc": 0.48751156336725254,
+    "sample_count": 70
+  },
+  "freeze_manifest_hash": "16bd9a538224b5bd450973c48e58e43bbc66b5e318b663dfa68ec5a94f7851f5",
+  "freeze_manifest_sha256": "a227387562181cb8a3ac853f420c9e3258016ffae380b96a3d9456c6d8710451",
+  "governance": {
+    "blind_2025_y_accessed": false,
+    "decision": "promote_v2",
+    "decision_owner": "A",
+    "effective_condition": "A-owned merge of the promotion PR into main",
+    "prior_frozen_pr_f_preserved": true,
+    "validation_retuning_performed": false
+  },
+  "product_handoff": {
+    "case_ids": [
+      "ipo_2024_02410",
+      "ipo_2024_02460",
+      "ipo_2024_01318"
+    ],
+    "file_sha256": {
+      "README_PRODUCT_RUNTIME_HANDOFF.md": "9ce4f77a91b96f58721bda987faf654de03e52f52dc7ad4f4a858395ff4c4cbf",
+      "SHA256SUMS.txt": "7b2f2b46abecf41f99128b237a58ba8d0a52bd4c6228fe1e49fde91dcb08b8cf",
+      "product_case_signals.json": "752763687ee72ea48b40c414f4debc2fd99d7bda8ebda14c9412bf965598721c",
+      "product_runtime_manifest.json": "55a653566732a16b5536aa4a247833f4bd864e2b7f8b0bc68b2699d9e6deefdd"
+    },
+    "label_free": true
+  },
+  "receipt_version": "v045_role_d_v2_promotion_receipt_v1",
+  "status": "strict_revalidation_pass_effective_on_a_owned_merge"
+}
