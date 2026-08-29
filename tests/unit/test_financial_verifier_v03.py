@@ -252,6 +252,27 @@ def test_all_five_valid_financial_risks_are_verified(risk_factory) -> None:
     assert result.rejected_risks == []
 
 
+def test_concentration_evidence_with_spaced_decimals_is_verified() -> None:
+    risk = concentration_risk("supplier", "32.7", "67.2")
+    risk = risk.model_copy(
+        update={
+            "evidence": [
+                risk.evidence[0].model_copy(
+                    update={
+                        "text": "最大供應商佔32 .7%，而五大供應商合計佔67 .2%。"
+                    }
+                )
+            ]
+        }
+    )
+
+    result = V03FinancialVerifier().verify([risk], {})
+
+    assert result.verified_risks[0].risk_id == risk.risk_id
+    assert result.pending_risks == []
+    assert result.rejected_risks == []
+
+
 def test_protocol_returns_three_lists_and_preserves_input_order_and_ids() -> None:
     risks = [continuous_loss_risk(), revenue_risk(), concentration_risk()]
     result = V03FinancialVerifier().verify(risks, {})
