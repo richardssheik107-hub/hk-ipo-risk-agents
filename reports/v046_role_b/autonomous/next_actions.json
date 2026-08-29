@@ -1,7 +1,8 @@
 {
   "version": "v046_autonomous_next_actions_v1",
   "actions": [
-    "audit period-candidate generation on Development only",
+    "audit bounded parser-preservation failures on Development only",
+    "do not perform a broad Parser rewrite",
     "keep concentration severity-policy mismatch deferred",
     "do not open Validation until all 79 Development pass the B gate"
   ]

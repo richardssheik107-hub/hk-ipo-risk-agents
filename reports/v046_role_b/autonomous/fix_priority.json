@@ -1,12 +1,11 @@
 {
   "version": "v046_autonomous_fix_priority_v1",
-  "active": "concentration_exact_fact_extraction",
+  "active": "parser_preservation",
   "ranked": [
-    {"rank": 1, "root": "concentration_exact_fact_extraction", "reason": "four remaining concentration units are present but pending or absent"},
-    {"rank": 2, "root": "period_candidate_generation", "reason": "two Batch003 units lack a deterministic period candidate"},
-    {"rank": 3, "root": "parser_preservation", "reason": "four Batch003 units lose required text before extraction"},
-    {"rank": 4, "root": "numeric_extraction", "reason": "one Batch003 unit has preserved text but no value"},
-    {"rank": 5, "root": "llm_evidence_stability", "reason": "three structured failures were non-reproducible and remain runtime reliability cost"},
-    {"rank": 6, "root": "final_evidence_binding", "reason": "one pending risk retains Evidence but misses the exact governed anchor"}
+    {"rank": 1, "root": "parser_preservation", "reason": "six current units lose required text before deterministic extraction"},
+    {"rank": 2, "root": "deterministic_fact_missing", "reason": "six current units have no complete deterministic fact"},
+    {"rank": 3, "root": "numeric_extraction", "reason": "one current unit has preserved text but no value"},
+    {"rank": 4, "root": "llm_evidence_stability", "reason": "structured failures remain runtime reliability cost"},
+    {"rank": 5, "root": "final_evidence_binding", "reason": "one pending risk retains Evidence but misses the exact governed anchor"}
   ]
 }

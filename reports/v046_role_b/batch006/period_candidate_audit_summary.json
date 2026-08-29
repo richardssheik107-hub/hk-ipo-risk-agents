@@ -1,0 +1,23 @@
+{
+  "artifact_version": "v046_role_b_batch006_period_candidate_audit_v1",
+  "base_commit": "ea46cb2a8e1923225e783640c418e0829de55225",
+  "unit_count": 22,
+  "classification_counts": {
+    "correct": 8,
+    "parser_text_missing": 6,
+    "deterministic_fact_missing": 6,
+    "numeric_extraction_miss": 1,
+    "conflict_fail_closed": 1,
+    "period_candidate_missing": 0
+  },
+  "proven_selector_bug_count": 0,
+  "decision": "REJECTED_NO_ACTIVE_TARGET_UNITS",
+  "production_change": false,
+  "network_calls": 0,
+  "gold_used_at_runtime": false,
+  "raw_gold_text_persisted": false,
+  "raw_prospectus_text_persisted": false,
+  "validation_opened": false,
+  "blind_2025_accessed": false,
+  "next_root": "parser_preservation"
+}
