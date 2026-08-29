@@ -29,6 +29,17 @@ class Settings:
     market_official_bridge: str = "data/catalog/ipo_official_master_bridge.csv"
     # Optional governed local C-lane projection; raw/large audit rows stay uncommitted.
     market_extended_readiness: str = ""
+    # Dynamic Market-X for IPOs outside the frozen PR-B universe. "none" keeps
+    # the honest unconfigured placeholder; "pit_bridge" recomputes Market-X Core
+    # from the committed official prior-IPO universe.
+    market_dynamic_context: str = "none"
+    # Optional local licensed-derived prior-IPO outcome pack. Absent, the
+    # dynamic outcome families stay explicitly missing instead of zero-filled.
+    market_dynamic_outcome_pack: str = ""
+    # Optional local licensed CSMAR HSI / HKEX turnover caches. Both are needed
+    # for dynamic Market-X Extended; absent, no Extended name is emitted at all.
+    market_dynamic_extended_hsi_csv: str = ""
+    market_dynamic_extended_turnover_csv: str = ""
     data_dir: str = "data"; report_dir: str = "reports"; log_level: str = "INFO"
 
 def _coerce(value: str, current):

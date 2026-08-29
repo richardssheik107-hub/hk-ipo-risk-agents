@@ -153,7 +153,7 @@ Report / Trace / Provenance
 
 所有 channel 必须真实显示 `AVAILABLE / PARTIAL / UNAVAILABLE` 与 reason。Track B 可以先完成信息架构和状态语义，不必等待 C/D，但不能伪造尚未完成的动态值。
 
-## 4. Track C — Dynamic Market-X（P0）
+## 4. Track C — Dynamic Market-X（PASS / regression protection）
 
 已有：438 个 governed frozen Market-X Core artifacts、final-three Market `3/3`、PIT-safe builder/schema/provenance contracts。
 
@@ -176,7 +176,9 @@ issuer / stock / listing identity
 
 禁止目标 IPO post-listing data、Blind outcome、missing→0、final-three 值复制、unsourced proxy。
 
-验收：final-three no regression、438 historical coverage audit、非 canonical runtime tests、fresh-case full/partial tests、PIT/identity/hash/missingness tests。
+验收已通过：PR #191 合入后 strict audit 覆盖 562 governed cases，0 integrity
+violation；438 frozen + 124 dynamic PIT，Model handoff `bound 550 / not_projectable 12`。
+后续只做 regression protection 和授权 Extended 数据的可选本地物化。
 
 ## 5. Track D — Dynamic Model / Prediction / SHAP（P0）
 
@@ -196,12 +198,14 @@ governed feature vector
 → Final Supervisor / UI
 ```
 
-同时关闭：
+治理决议已关闭、runtime 泛化仍开放：
 
-1. A-owned `PROMOTE_V2` / `RETAIN_FROZEN_PR_F` 正式决议；
+1. A-owned `PROMOTE_V2` 正式决议：**PASS（PR #184 merged）**；
 2. Dynamic inference runtime：满足 feature contract 就能推理，不再按 case_id 查询预生成结果。
 
 若 promote v2，必须新建 versioned model/hash/feature manifest/alert policy/receipt/handoff；不覆盖旧 PR-F，也不再根据 2024 Validation 调参。SHAP 必须来自当前 inference。
+
+V2 promotion package 已实现并通过 PR #184 正式生效：versioned freeze、strict receipt、checker 与 final-three label-free handoff 均已生成，current-main strict revalidation 通过，resume / fresh-directory byte-identical 已验证，34-alert 工作量与 ROC-AUC 仍低于 0.5 的局限已披露。旧 frozen PR-F 完整保留、可回滚。当前只剩真实 dynamic inference + native SHAP。
 
 ## 6. Track E — Final Integration / Release / Submission（P1 → 最后 P0）
 

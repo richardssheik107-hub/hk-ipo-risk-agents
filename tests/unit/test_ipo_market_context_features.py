@@ -5,8 +5,12 @@ import pytest
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST,
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
+    IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE,
+    IPO_MARKET_CONTEXT_MISSING_OUTCOME_SOURCE,
+    IPO_MARKET_CONTEXT_MISSING_RIGHT_BOUNDARY,
     IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER,
     build_ipo_market_context,
+    build_ipo_market_context_with_reasons,
     content_hash,
     vectorize_ipo_market_context,
 )
@@ -177,3 +181,81 @@ def test_context_vector_rejects_manifest_key_drift() -> None:
 
     with pytest.raises(ValueError, match="frozen manifest"):
         vectorize_ipo_market_context(values)
+
+
+def test_right_boundary_marks_a_stale_universe_missing_not_short_counted() -> None:
+    """A universe that stops before the target cannot report a low count."""
+
+    rows = [
+        {"listing_date": date(2022, 1, 5), "industry": "A", "funds_raised": 10},
+        {"listing_date": date(2022, 1, 20), "industry": "A", "funds_raised": 10},
+    ]
+    values, reasons = build_ipo_market_context_with_reasons(
+        listing_date=date(2022, 6, 1),
+        industry="A",
+        prior_ipos=rows,
+        history_start_date=date(2020, 1, 1),
+        history_end_date=date(2022, 1, 31),
+    )
+    assert values["ipo_count_30d"] is None
+    assert reasons["ipo_count_30d"] == IPO_MARKET_CONTEXT_MISSING_RIGHT_BOUNDARY
+    assert reasons["same_industry_ipo_count_180d"] == IPO_MARKET_CONTEXT_MISSING_RIGHT_BOUNDARY
+
+
+def test_a_universe_complete_to_the_prior_session_keeps_the_window() -> None:
+    values, reasons = build_ipo_market_context_with_reasons(
+        listing_date=date(2022, 6, 1),
+        industry="A",
+        prior_ipos=[{"listing_date": date(2022, 5, 20), "industry": "A", "funds_raised": 10}],
+        history_start_date=date(2020, 1, 1),
+        history_end_date=date(2022, 5, 31),
+    )
+    assert values["ipo_count_30d"] == 1
+    assert "ipo_count_30d" not in reasons
+
+
+def test_a_row_after_the_declared_coverage_end_fails_closed() -> None:
+    with pytest.raises(ValueError, match="postdates declared history_end_date"):
+        build_ipo_market_context_with_reasons(
+            listing_date=date(2022, 6, 1),
+            industry="A",
+            prior_ipos=[{"listing_date": date(2022, 5, 20), "industry": "A"}],
+            history_start_date=date(2020, 1, 1),
+            history_end_date=date(2022, 1, 31),
+        )
+
+
+def test_an_absent_outcome_source_is_not_an_empty_sample() -> None:
+    rows = [
+        {
+            "listing_date": date(2022, 2, 15),
+            "industry": "A",
+            "funds_raised": 10,
+            "target_1d": date(2022, 2, 16),
+            "return_1d": -0.1,
+        }
+    ]
+    values, reasons = build_ipo_market_context_with_reasons(
+        listing_date=date(2022, 3, 1),
+        industry="A",
+        prior_ipos=rows,
+        outcome_history_available=False,
+    )
+    assert values["ipo_count_30d"] == 1
+    for name in ("recent_ipo_break_rate", "recent_ipo_1d_sample_count"):
+        assert values[name] is None
+        assert reasons[name] == IPO_MARKET_CONTEXT_MISSING_OUTCOME_SOURCE
+    assert reasons["recent_ipo_break_rate"] != IPO_MARKET_CONTEXT_MISSING_OUTCOME_SAMPLE
+
+
+def test_every_missing_value_carries_a_reason() -> None:
+    values, reasons = build_ipo_market_context_with_reasons(
+        listing_date=date(2022, 3, 1),
+        industry=None,
+        prior_ipos=[],
+        history_start_date=date(2022, 2, 20),
+        history_end_date=date(2022, 2, 28),
+    )
+    for name in IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER:
+        if values[name] is None:
+            assert reasons[name], name

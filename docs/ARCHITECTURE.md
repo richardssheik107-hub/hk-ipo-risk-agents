@@ -117,7 +117,7 @@ governed feature vector
 → ModelSignal
 ```
 
-必须完成明确的 `PROMOTE_V2 / RETAIN_FROZEN_PR_F` 决议。任何 promoted model 创建新 versioned identity，不覆盖历史 frozen PR-F。
+必须完成明确的 `PROMOTE_V2 / RETAIN_FROZEN_PR_F` 决议。任何 promoted model 创建新 versioned identity，不覆盖历史 frozen PR-F。V2 已有独立 versioned freeze、四项 artifact、strict receipt 与 product handoff，A-owned merge 后晋升生效，两条身份不互相覆盖。
 
 SHAP 必须来自当前 inference；不得复制 final-three drivers。
 

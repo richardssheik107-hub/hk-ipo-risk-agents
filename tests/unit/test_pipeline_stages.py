@@ -230,3 +230,42 @@ def test_materialized_final_report_is_completed_independent_of_project_readiness
     assert stage.status is StageStatus.COMPLETED
     assert stage.blocking_gate is None
     assert {metric.label: metric.value for metric in stage.metrics}["Report sections"] == "1"
+
+
+def _dynamic_market_payload() -> dict[str, object]:
+    payload = _runtime_complete_payload()
+    payload["market_context"] = dict(payload.get("market_context") or {})
+    payload["market_context"]["provenance"] = {"runtime_path": "dynamic_pit"}
+    return payload
+
+
+def test_market_stage_names_the_dynamic_runtime_path() -> None:
+    """A case with no frozen artifact should not read like a preloaded asset."""
+
+    stage = {item.stage_id: item for item in resolve_stages(_dynamic_market_payload())}["market_features"]
+    assert stage.status is StageStatus.COMPLETED
+    metrics = {metric.label: metric.value for metric in stage.metrics}
+    assert metrics["Market runtime path"] == "dynamic_pit"
+    assert "outside the frozen Market-X universe" in stage.summary
+    assert "recomputed" in stage.summary
+
+
+def test_frozen_market_stage_summary_is_unchanged_and_claims_no_recomputation() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["market_features"]
+    assert "recomputed" not in stage.summary
+    assert "Market runtime path" not in {metric.label for metric in stage.metrics}
+
+
+def test_unavailable_market_stage_names_the_governed_reason() -> None:
+    payload = _runtime_complete_payload()
+    payload["market_context"] = {
+        "status": "unavailable",
+        "provenance": {"runtime_path": "dynamic_pit"},
+        "observations": [
+            {"availability": "unavailable",
+             "missing_reason": "prior_ipo_universe_right_boundary_incomplete"}
+        ],
+    }
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["market_features"]
+    assert "Stated reasons: prior_ipo_universe_right_boundary_incomplete" in stage.summary
+    assert "does not impute" in stage.summary

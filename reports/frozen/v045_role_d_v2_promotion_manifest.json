@@ -1,0 +1,107 @@
+{
+  "blind_2025_y_accessed": false,
+  "calibration_status": "assessment_only_uncalibrated",
+  "classifier_model_sha256": "320e810e85dcdb7e6caa40f9ef2b20157005e7a1d1af38ad7d586dd0feee72e2",
+  "cohorts": {
+    "full_production": {
+      "development": 354,
+      "validation": 70
+    }
+  },
+  "component_ablation": {
+    "oracle_om_minus_m": {
+      "roc_auc_gain": 0.0,
+      "roc_auc_gain_95_interval": [
+        0.0,
+        0.0
+      ]
+    },
+    "production_pm_minus_m": {
+      "roc_auc_gain": 0.0,
+      "roc_auc_gain_95_interval": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "execution_revision": "9758e4c4154aada4c308fa0a5bf86e23d3d2d948",
+  "formal_conclusion": {
+    "positioning": "high_recall_triage_signal",
+    "score_semantics": "uncalibrated_model_score_not_probability"
+  },
+  "formal_gate_condition": "A-owned merge of the promotion PR into main",
+  "formal_gate_passed": true,
+  "freeze_manifest_hash": "16bd9a538224b5bd450973c48e58e43bbc66b5e318b663dfa68ec5a94f7851f5",
+  "implementation_sha256": "45e188031893ddbd543f849624db98cb65b5687661bd1701c349a8a42b2d1767",
+  "input_binding": {
+    "development_count": 354,
+    "market_feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+    "market_rows_hash": "f443193fee4617d21edfe4bbdce56b7c5327c5e263f804547e9e8dbb1b92d173",
+    "raw_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+    "target_policy_hash": "5f793de0df22679430bb0a7565ed2d9eabfe63f0153725babc7ebd121d369c67",
+    "target_rows_hash": "77008d3a7f2be19dd56afa6f4ca79aee5a9e9938ed50a70da8bf07ff48e39538",
+    "target_threshold_hash": "5aac9625209e65ccd7337d713e714ae1e9bd7e2d8f24db510e46131608a6ec05",
+    "validation_count": 70
+  },
+  "manifest_version": "v045_role_d_v2_freeze_manifest_v1",
+  "model_name": "lightgbm_role_d_v2",
+  "model_policy_version": "v045_role_d_temporal_feature_pruning_v1",
+  "model_result_hash": "ecfcb5f886ca69150e4da7a380ffd0e8d639969630ec288604c20a1ac87bcae6",
+  "pr_f_version": "v045_role_d_v2_promotion_release_v1",
+  "product_handoff": {
+    "case_ids": [
+      "ipo_2024_02410",
+      "ipo_2024_02460",
+      "ipo_2024_01318"
+    ],
+    "file_sha256": {
+      "README_PRODUCT_RUNTIME_HANDOFF.md": "9ce4f77a91b96f58721bda987faf654de03e52f52dc7ad4f4a858395ff4c4cbf",
+      "SHA256SUMS.txt": "7b2f2b46abecf41f99128b237a58ba8d0a52bd4c6228fe1e49fde91dcb08b8cf",
+      "product_case_signals.json": "752763687ee72ea48b40c414f4debc2fd99d7bda8ebda14c9412bf965598721c",
+      "product_runtime_manifest.json": "55a653566732a16b5536aa4a247833f4bd864e2b7f8b0bc68b2699d9e6deefdd"
+    },
+    "label_free": true
+  },
+  "promotion_record": {
+    "approval_evidence": "GitHub merge record for this promotion PR",
+    "decision": "promote_v2",
+    "decision_owner": "A",
+    "prior_frozen_pr_f_preserved": true,
+    "status": "effective_on_a_owned_merge"
+  },
+  "runtime_outputs": {
+    "ai_vs_offline_report.json": "bb6a2ab8cf0fe89faeb43aae71c11c7235c3c00ebb2f7d64b70950ad3f6bc354",
+    "evaluation_summary.json": "e3d9d08adbc2e5367a59ea72e2b011fe709036e4604c413fd5ee6d9618db004c",
+    "multi_horizon_results.csv": "f2d3382f2618e3d328155e9a37e81cd01a156cfc0787c8bc42320237dbb56725",
+    "test_predictions.csv": "ecfcb5f886ca69150e4da7a380ffd0e8d639969630ec288604c20a1ac87bcae6"
+  },
+  "selection": {
+    "alert_fraction": 0.475,
+    "alert_policy": "development_forward_oof_f2_top_fraction_0.475",
+    "selected_features": [
+      "ipo_count_30d",
+      "ipo_count_60d",
+      "recent_ipo_break_rate",
+      "recent_ipo_return_5d",
+      "same_industry_ipo_count_180d",
+      "same_industry_recent_break_rate",
+      "same_industry_recent_return_5d"
+    ],
+    "split": "2021_2023_expanding_year_forward_oof",
+    "validation_used_for_selection": false
+  },
+  "status": "complete_frozen",
+  "validation_metrics": {
+    "alert_count": 34,
+    "alert_fraction_realized": 0.4857142857142857,
+    "base_prevalence": 0.32857142857142857,
+    "brier_score": 0.25024004357291624,
+    "f1": 0.42105263157894735,
+    "positive_count": 23,
+    "pr_auc": 0.3811961298633645,
+    "precision": 0.35294117647058826,
+    "recall": 0.5217391304347826,
+    "roc_auc": 0.48751156336725254,
+    "sample_count": 70
+  }
+}
