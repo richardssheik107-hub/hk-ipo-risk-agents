@@ -342,6 +342,79 @@ def test_structurally_invalid_concentration_support_is_not_retained() -> None:
     assert observed is risk
 
 
+def test_top_ranked_type_specific_disclosure_is_retained_as_evidence_only() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    supporting = Evidence(
+        evidence_id="e-principal-suppliers",
+        document_id="doc",
+        chunk_id="principal-suppliers",
+        page=31,
+        text="我們與190多家供應商合作，並將其中四家公司視為主要供應商。",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [supporting],
+        {},
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == supporting.evidence_id
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+    assert observed.metadata["ranked_disclosure_evidence_augmented"] == 1
+
+
+def test_ranked_disclosure_support_is_type_and_rank_bounded() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    wrong_type = Evidence(
+        evidence_id="e-wrong-type-disclosure",
+        document_id="doc",
+        chunk_id="wrong-type-disclosure",
+        page=31,
+        text="五大供應商的採購詳情。",
+    )
+    unrelated = [
+        Evidence(
+            evidence_id=f"e-unrelated-{index}",
+            document_id="doc",
+            chunk_id=f"unrelated-{index}",
+            page=32 + index,
+            text="一般業務資料。",
+        )
+        for index in range(4)
+    ]
+    rank_six = Evidence(
+        evidence_id="e-rank-six-customer",
+        document_id="doc",
+        chunk_id="rank-six-customer",
+        page=40,
+        text="五大客戶的收入詳情。",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration",
+        risk,
+        [wrong_type, *unrelated, rank_six],
+        {},
+    )
+
+    assert observed is risk
+
+
 def diagnostic_by_code(agent: V03FinancialAgent, risk_code: str) -> ComponentDiagnostic:
     return next(item for item in agent.last_diagnostics if item.risk_code == risk_code)
 

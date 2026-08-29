@@ -96,6 +96,25 @@ _NEGATIVE_CONCENTRATION_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] =
     ),
 }
 
+_CONCENTRATION_SUPPORT_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = {
+    "customer": (
+        re.compile(r"(?:五大|前五大|最大|主要).{0,6}(?:客戶|客户)", re.I | re.S),
+        re.compile(
+            r"(?:top\s*(?:five|5)|largest|major|principal).{0,16}customers?",
+            re.I | re.S,
+        ),
+    ),
+    "supplier": (
+        re.compile(r"(?:五大|前五大|最大|主要).{0,6}(?:供應商|供应商)", re.I | re.S),
+        re.compile(
+            r"(?:top\s*(?:five|5)|largest|major|principal).{0,16}suppliers?",
+            re.I | re.S,
+        ),
+    ),
+}
+
+_MAX_RANKED_DISCLOSURE_SUPPORT = 5
+
 
 @dataclass(frozen=True, slots=True)
 class _RetrievalResult:
@@ -375,6 +394,7 @@ class V03FinancialAgent:
         retained = list(risk.evidence)
         retained_ids = {item.evidence_id for item in retained}
         parsed_support_ids: set[str] = set()
+        structurally_invalid_ids: set[str] = set()
         if isinstance(extraction, ConcentrationFact):
             diagnostics = extraction.metadata.get("candidate_diagnostics", [])
             if isinstance(diagnostics, Sequence) and not isinstance(
@@ -387,6 +407,11 @@ class V03FinancialAgent:
                     if issues.intersection(
                         {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
                     ):
+                        structurally_invalid_ids.update(
+                            str(value)
+                            for value in item.get("evidence_ids") or []
+                            if str(value)
+                        )
                         continue
                     if (
                         item.get("largest_counterparty_pct") is None
@@ -428,6 +453,28 @@ class V03FinancialAgent:
             retained.append(evidence)
             retained_ids.add(evidence.evidence_id)
 
+        # Retain a small, rank-bounded provenance window for an already-created
+        # concentration risk.  Some prospectuses separate the governing
+        # percentage table from a nearby top-five/principal-counterparty
+        # disclosure.  That disclosure is useful support even when it does not
+        # itself contain a second parseable percentage.  This is deliberately
+        # evidence-only: it cannot create a risk or alter its decision fields.
+        ranked_disclosure_support = 0
+        for evidence in retrieved[:_MAX_RANKED_DISCLOSURE_SUPPORT]:
+            if (
+                evidence.evidence_id in retained_ids
+                or evidence.evidence_id in structurally_invalid_ids
+            ):
+                continue
+            if not any(
+                pattern.search(evidence.text)
+                for pattern in _CONCENTRATION_SUPPORT_DISCLOSURES[expected_type]
+            ):
+                continue
+            retained.append(evidence)
+            retained_ids.add(evidence.evidence_id)
+            ranked_disclosure_support += 1
+
         if len(retained) == len(risk.evidence):
             return risk
         return risk.model_copy(
@@ -443,6 +490,7 @@ class V03FinancialAgent:
                             item.evidence_id for item in risk.evidence
                         )
                     ),
+                    "ranked_disclosure_evidence_augmented": ranked_disclosure_support,
                 },
             }
         )
