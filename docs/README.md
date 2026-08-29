@@ -1,90 +1,128 @@
 # Documentation Index and Governance
 
-> 状态日期：`2026-08-28`
+> 状态日期：`2026-08-29`
 
-仓库文档已经收敛为“一套指标、一套 Gate、一套总计划”。历史 PR 完成报告和一次性运行提示词不再作为当前状态源；需要时从 Git 历史或对应 PR 查询。
+仓库当前文档收敛为“一套冻结指标协议 + 一套实时 Release Gate + 一套统一执行计划”。历史 PR 报告和一次性运行提示词不作为当前状态源。
 
 ## 1. 当前权威文档
 
 | 文档 | 作用 |
 |---|---|
-| `../README.md` | 项目入口、最新数字与 6 阶段摘要 |
-| `COMPETITION_METRIC_PROTOCOL.md` | M1–M5、Gold、split 与 evaluator 的唯一指标口径 |
-| `V0.4_RELEASE_ACCEPTANCE.md` | 唯一实时 Gate / blocker 状态源 |
-| `COMPETITION_CLOSURE_PLAN.md` | 唯一统一执行计划、依赖关系和退出条件 |
-| `ROADMAP.md` | 剩余路线的短版视图 |
-| `ROLE_B_M1_M2_PLAN.md` | B 线 forensic、ablation、修复和 Full Development 计划 |
-| `ROLE_D_MODEL_DECISION.md` | frozen PR-F 与 v2 candidate 的治理晋升决策 |
+| `../README.md` | 项目入口、最新数字和当前优先级 |
+| `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2、Gold、split、M1/M2/M3/M5 口径；历史 M4 rubric 保留为 optional diagnostic |
+| `V0.4_RELEASE_ACCEPTANCE.md` | **唯一实时 Release Gate / blocker 状态源** |
+| `COMPETITION_CLOSURE_PLAN.md` | 当前统一执行计划和优先级 |
+| `ROADMAP.md` | 剩余路线短版 |
+| `ROLE_B_M1_M2_PLAN.md` | B 线当前 checkpoint、root cause 和 ALL79 计划 |
+| `ROLE_D_MODEL_DECISION.md` | frozen PR-F vs v2 candidate 的 promote/retain 决策 |
 | `V045_ROLE_D_FINAL_CLOSURE.md` | D 线正式物化、receipt、strict revalidation 边界 |
-| `SUBMISSION_RUNBOOK.md` | 从本地复验到 final bundle 的操作手册 |
-| `TEAM_QUICKSTART.md` | fresh clone 后离线回放 final-three 的最短路径 |
-| `PROJECT_SPEC.md` | 产品范围、赛题覆盖与不可破坏原则 |
-| `ARCHITECTURE.md` | 当前 runtime 与 v0.4.6 B 线诊断架构 |
-| `DATA_SCHEMA.md` | runtime、诊断、评测和交付 artifact contract |
-| `COMPETITION_DATA_OVERVIEW.md` | 数据、Development / Validation / Blind 边界 |
-| `DOCUMENT_AUDIT_20260828.md` | 本轮保留、更新和删除记录 |
+| `SUBMISSION_RUNBOOK.md` | 从当前状态到 final package 的操作手册 |
+| `TEAM_QUICKSTART.md` | fresh clone 后离线回放三案例 |
+| `PROJECT_SPEC.md` | 产品范围、Dynamic New-IPO 目标和不可破坏原则 |
+| `ARCHITECTURE.md` | runtime / modeling / diagnostics 架构 |
+| `DATA_SCHEMA.md` | runtime、评测和 artifact contract |
+| `COMPETITION_DATA_OVERVIEW.md` | 数据与 Development / Validation / Blind 边界 |
 
-## 2. 仍保留的技术与冻结合同
+## 2. Source-of-truth hierarchy
 
-- `V04_PR_D_INPUT_BINDING.md`；
-- `V04_PR_G_FINAL_SUPERVISOR_CONTRACT.md`；
-- `V04_ORACLE_GOLD_COVERAGE_AUDIT.md`；
-- `V04_ORACLE_REFRESH_GOVERNANCE.md`；
-- `V04_ORACLE_V2_COMPLETION_REPORT.md`；
-- `V045_ROLE_D_V2_CANDIDATE_REPORT.md`：原始 research candidate 报告；
-- `annotation/`、`research/` 中仍有明确消费者的材料。
+出现冲突时：
 
-这些文件不是当前路线图，但仍承担 contract、provenance 或 research 证据角色。
-
-## 3. Source-of-truth hierarchy
-
-出现冲突时按以下顺序裁定：
-
-1. 代码 validator、Pydantic、Protocol 和 fail-closed guard；
+1. 代码 validator / Pydantic / fail-closed guard；
 2. `reports/frozen/*.json`、hash-bound manifest / receipt；
-3. `COMPETITION_METRIC_PROTOCOL.md`；
-4. `V0.4_RELEASE_ACCEPTANCE.md`；
+3. 冻结 Metric-v2 对 M1/M2/M3/M5 的定义；
+4. `V0.4_RELEASE_ACCEPTANCE.md` 对**当前 Release Gate 是否适用**的判定；
 5. `COMPETITION_CLOSURE_PLAN.md`；
-6. 当前 lane 文档和 Runbook；
+6. lane 文档 / Runbook；
 7. research、历史 PR、Git history。
 
-文档中的“PASS implementation”不等于最终比赛 Gate 已通过；必须存在对应 runtime evidence。
+### M4 / Human Review 特别说明
 
-## 4. 当前状态摘要
+`COMPETITION_METRIC_PROTOCOL.md` 不改写历史身份，其 M4 explanation rubric 仍可作为 optional quality diagnostic。
+
+当前 active Release policy 已明确：
 
 ```text
-B fixed-10 M1 = 23.33%
-B fixed-10 M2 = 18.75%
-B v0.4.6 diagnostics + read-only Evidence auditor = implemented; full measured run pending
-D frozen M5 artifacts / receipt = recorded
+M4 6 human reviews = NOT_REQUIRED_FOR_RELEASE
+```
+
+Human Review UI/export 可以保留，但不新增真人标注、不影响 `COMPETITION_READY`。
+
+## 3. 当前状态摘要
+
+```text
+B fixed-journal M1 = 12/30 = 40.00%
+B fixed-journal M2 = 18/48 = 37.50%
+B fresh gated M1 = 11/30
+B fresh gated M2 = 17/48
+B current root = deterministic_fact_missing
+
+D frozen PR-F = formal identity
 D v2 candidate Recall = 52.17%; F1 = 42.11%; not promoted
-C strict contract = 1/3
-E accepted real-provider = 2/3
-M3 = 3/3 exactly 1.0
-M4 = 0/6
+
+Market final-three = 3/3
+Frozen Model final-three = 3/3
+Final Supervisor E1 = 3/3 first-attempt
+M3 = 1.0 x 3
+recheck = 17/17
+Evidence screenshot = 17/17 precise
+seven-stage = 21/21
+canonical replay = 66 files
+team clone / fresh clone / Streamlit smoke / CI = PASS
+
 overall = NOT COMPETITION_READY
 ```
 
-## 5. 文档生命周期
+## 4. 当前未关闭工作
 
-长期保留的文档必须至少满足一项：
+```text
+P0 Role-B ALL79 M1/M2
+P0 Dynamic New-IPO Full Path
+P0 Role-D promote/retain + strict release identity
+P1 competition capability demos
+P1 freeze / one-shot Validation / audits / secure package
+```
 
-- 当前唯一状态源、计划或可重复 Runbook；
-- 被代码、CI 或 validator 直接消费的合同；
-- 不可重建的冻结测量或 provenance；
-- 仍有明确消费者的 research / annotation 证据。
+Final Supervisor、M3、final-three Market/Model、Evidence screenshot、team-ready replay 已进入 regression-protection 状态，不再作为开放式优化主线。
 
-以下内容不再长期保留在 `docs/` 根目录：
+## 5. Dynamic New-IPO 状态
 
-- 一次性 Codex 提示词；
-- 已解除的 blocker；
-- 旧角色排期；
-- PR completion report；
-- 与当前 Metric-v2 身份不一致的 benchmark 叙述；
-- 被新计划完整取代的重复文档。
+当前三案例是稳定 replay，不是期望的能力上限。
 
-## 6. 治理边界
+计划：
 
-可以移除的只是流程冗余，例如固定迭代轮数、Runner-only 和绝对禁止检索实验。
+```text
+Phase 1 — 438 historical frozen universe
+Market-X → frozen model dynamic inference → native SHAP
 
-不能移除：Existing Gold immutable、Validation one-shot、Blind 隔离、Evidence scope、PIT、Trace、deterministic calculation、Secret/PDF/raw data 安全边界。
+Phase 2 — arbitrary new IPO
+PIT history → Dynamic Market-X → frozen model inference → SHAP → report
+```
+
+不得通过 case-specific handoff / hardcoding 假装泛化。
+
+## 6. 文档生命周期
+
+长期保留文档必须至少满足一项：
+
+- 当前状态源、计划或可重复 Runbook；
+- 被代码、CI 或 validator 消费的合同；
+- 不可重建的冻结测量 / provenance；
+- 有明确消费者的 research / annotation 证据。
+
+历史 batch 报告可以保留用于 provenance，但不得覆盖当前实时状态源。
+
+## 7. 治理边界
+
+不能移除：
+
+- Existing Gold immutable；
+- Validation one-shot；
+- Blind 隔离；
+- Evidence scope；
+- PIT；
+- Trace；
+- deterministic calculation；
+- frozen score 语义；
+- Secret/PDF/raw licensed data 安全边界。
+
+可以移除的是项目内部不再需要的流程 Gate，例如本轮已经取消的 M4 真人评审要求。
