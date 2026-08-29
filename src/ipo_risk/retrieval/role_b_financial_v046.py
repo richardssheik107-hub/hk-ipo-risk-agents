@@ -170,9 +170,37 @@ class RoleBFinancialHighRecallRetriever:
                 self._domain_candidates(corpus, risk_code),
                 self._bm25_candidates(corpus, risk_code),
                 limit=_FUSION_DEPTH,
+                page_supplements=self._page_supplements(corpus),
             )
             self._result_cache[cache_key] = values
         return list(values[:limit])
+
+    @staticmethod
+    def _page_supplements(corpus: _SearchCorpus) -> dict[int, list[str]]:
+        """Return bounded parser-derived page bodies that preserve table order.
+
+        A ranked table body is another deterministic view of the same physical
+        page, not a newly minted Evidence item.  Consolidating it here keeps the
+        original chunk/page identity while allowing downstream extraction and
+        exact-anchor checks to consume the row order that the default PDF text
+        view interleaves with column headers.
+        """
+
+        output: dict[int, list[str]] = defaultdict(list)
+        seen: dict[int, set[str]] = defaultdict(set)
+        for chunk in corpus.chunks:
+            if chunk.page is None:
+                continue
+            variants = chunk.metadata.get("search_text_variants")
+            if not isinstance(variants, Mapping):
+                continue
+            text = str(variants.get("ranked_table_body") or "").strip()
+            identity = re.sub(r"\s+", "", normalize_for_match(text))
+            if not text or not identity or identity in seen[chunk.page]:
+                continue
+            seen[chunk.page].add(identity)
+            output[chunk.page].append(text)
+        return dict(output)
 
     @staticmethod
     def _chunk_fingerprint(chunks: Sequence[DocumentChunk]) -> str:
@@ -486,6 +514,7 @@ class RoleBFinancialHighRecallRetriever:
         bm25: Sequence[Evidence],
         *,
         limit: int,
+        page_supplements: Mapping[int, Sequence[str]] | None = None,
     ) -> list[Evidence]:
         domain_by_page = self._first_by_page(domain)
         bm25_by_page = self._first_by_page(bm25)
@@ -525,11 +554,16 @@ class RoleBFinancialHighRecallRetriever:
             base = domain_evidence or bm25_evidence
             if base is None:
                 continue
-            fragments = [
+            supplements = list((page_supplements or {}).get(row.page, ()))
+            # The recovered body is the smallest complete row-order view, so it
+            # receives budget first.  Larger BM25/domain views remain available
+            # afterwards up to the same hard context limit.
+            fragments = [*supplements]
+            fragments.extend(
                 evidence.text
                 for evidence in (bm25_evidence, domain_evidence)
                 if evidence is not None
-            ]
+            )
             text = self._merge_fragments(fragments)
             text_hash = sha256(text.encode("utf-8")).hexdigest()
             lanes = [
@@ -573,6 +607,7 @@ class RoleBFinancialHighRecallRetriever:
                             "balanced_rrf_score": row.score,
                             "context_adapter": self.version,
                             "merged_context": len(lanes) > 1,
+                            "page_supplement_count": len(supplements),
                             "merged_text_sha256": text_hash,
                         },
                     }
@@ -616,13 +651,17 @@ class RoleBFinancialHighRecallRetriever:
         if len(retained) == 1:
             return retained[0][:_CONTEXT_LIMIT]
 
-        primary = retained[0][:_BM25_WINDOW_SIZE]
-        separator = "\n"
-        supplement_budget = max(
-            0,
-            _CONTEXT_LIMIT - len(primary) - len(separator),
-        )
-        supplement = retained[1][:supplement_budget]
-        if not supplement:
-            return primary[:_CONTEXT_LIMIT]
-        return f"{primary}{separator}{supplement}"[:_CONTEXT_LIMIT]
+        # More than two deterministic views can exist for the same physical
+        # page (BM25 window, domain context, and a parser-recovered table body).
+        # The previous two-fragment implementation silently discarded every
+        # later view.  Retain each distinct view in rank order under the same
+        # hard context bound; identity de-duplication above still prevents
+        # repeated primary/sorted copies from consuming the budget.
+        merged = ""
+        for value in retained:
+            separator = "\n" if merged else ""
+            budget = _CONTEXT_LIMIT - len(merged) - len(separator)
+            if budget <= 0:
+                break
+            merged = f"{merged}{separator}{value[:budget]}"
+        return merged[:_CONTEXT_LIMIT]

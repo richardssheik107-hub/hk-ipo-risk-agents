@@ -9,6 +9,7 @@ import re
 
 import fitz
 
+from ipo_risk.parsers.ranked_numeric_table import recover_ranked_numeric_table
 from ipo_risk.schemas import AnalysisError, DocumentChunk, DocumentParseRequest
 
 
@@ -279,7 +280,7 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
     """
 
     name = "pymupdf_role_b_recall"
-    version = "pymupdf_role_b_recall_v1"
+    version = "pymupdf_role_b_recall_v2"
 
     def _parse_page(
         self, document: fitz.Document, document_id: str, page_index: int
@@ -309,6 +310,10 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
             # remains useful when table reconstruction cannot classify a page.
             tables = []
         table_text = _table_search_text(tables)
+        ranked_table = recover_ranked_numeric_table(default_text)
+        ranked_table_text = (
+            str(ranked_table.get("body_text") or "") if ranked_table else ""
+        )
 
         primary = default_text or sorted_text or block_text or word_text or table_text
         if not primary:
@@ -323,6 +328,7 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
                 ("block_text", block_text),
                 ("word_stream", word_text),
                 ("structured_table", table_text),
+                ("ranked_table_body", ranked_table_text),
             ),
         )
         metadata: dict[str, object] = {
@@ -352,6 +358,9 @@ class PyMuPDFRoleBRecallParser(PyMuPDFDocumentParser):
                     "has_structured_tables": True,
                 }
             )
+        if ranked_table:
+            metadata["ranked_numeric_table"] = ranked_table
+            metadata["has_ranked_numeric_table"] = True
         return DocumentChunk(
             document_id=document_id,
             chunk_id=f"{document_id}:page:{physical_page}",

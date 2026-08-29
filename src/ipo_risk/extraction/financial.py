@@ -1756,6 +1756,9 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         for sentence in reversed(sentences):
             years = {match.group(1) for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)}
             dates = {match.group(0) for match in _CHINESE_DATE_RE.finditer(sentence)}
+            dates |= {
+                match.group(0) for match in _CHINESE_WORD_DATE_RE.finditer(sentence)
+            }
             dates |= {match.group(0) for match in _ISO_DATE_RE.finditer(sentence)}
             # A full date carries its own year, which the bare-year pattern is
             # written to skip, so the two counts never double-count a period.
@@ -1907,6 +1910,20 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 clause_end = text.find("。", match.end())
                 clause = text[clause_start : clause_end if clause_end >= 0 else len(text)]
                 located.append((match.start(), _Period(end, cls._period_months(clause))))
+        for match in _CHINESE_WORD_DATE_RE.finditer(text):
+            year = cls._year_value(match.group(1))
+            month = cls._chinese_integer(match.group(2))
+            day = cls._chinese_integer(match.group(3))
+            if year is None or month is None or day is None:
+                continue
+            try:
+                end = date(year, month, day)
+            except ValueError:
+                continue
+            clause_start = max(0, text.rfind("。", 0, match.start()) + 1)
+            clause_end = text.find("。", match.end())
+            clause = text[clause_start : clause_end if clause_end >= 0 else len(text)]
+            located.append((match.start(), _Period(end, cls._period_months(clause))))
         located.sort(key=lambda item: item[0])
         return cls._dedupe_periods([period for _, period in located])
 

@@ -275,6 +275,17 @@ def test_extracts_customer_and_supplier_concentration(
     assert result.evidence_ids == ["e-concentration"]
 
 
+def test_chinese_word_date_is_counted_and_parsed_as_a_narrative_period() -> None:
+    result = concentration(
+        "supplier",
+        "截至二零一九年十二月三十一日止年度，最大供應商佔比45%，五大供應商佔比80%。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end.isoformat() == "2019-12-31"
+    assert result.period_months == 12
+
+
 def test_multiple_period_concentration_selects_latest_aligned_percentages() -> None:
     result = concentration(
         "customer",

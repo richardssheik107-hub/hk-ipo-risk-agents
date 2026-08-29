@@ -170,6 +170,89 @@ def risk_by_code(risks: list[RiskItem], risk_code: str) -> RiskItem | None:
     return next((item for item in risks if item.risk_code == risk_code), None)
 
 
+def test_ranked_table_evidence_augments_existing_risk_without_changing_decision() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    table_chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="supplier-table",
+        page=31,
+        text="ranked table source",
+        metadata={
+            "ranked_numeric_table": {
+                "detector": "ranked_numeric_1_to_5_v1",
+                "counterparty_type": "supplier",
+                "largest_counterparty_pct": "45",
+                "top_five_pct": "80",
+                "rank_rows": [{"rank": rank} for rank in range(1, 6)],
+            }
+        },
+    )
+    table_evidence = Evidence(
+        evidence_id="e-ranked-table",
+        document_id="doc",
+        chunk_id=table_chunk.chunk_id,
+        page=table_chunk.page,
+        text="ranked table source",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [*risk.evidence, table_evidence],
+        {table_chunk.chunk_id: table_chunk},
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == "e-ranked-table"
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+    assert observed.metadata["ranked_table_evidence_augmented"] == 1
+
+
+def test_ranked_table_evidence_cannot_cross_concentration_type() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="supplier-table",
+        page=31,
+        text="ranked table source",
+        metadata={
+            "ranked_numeric_table": {
+                "detector": "ranked_numeric_1_to_5_v1",
+                "counterparty_type": "supplier",
+                "largest_counterparty_pct": "45",
+                "top_five_pct": "80",
+                "rank_rows": [{"rank": rank} for rank in range(1, 6)],
+            }
+        },
+    )
+    evidence = Evidence(
+        evidence_id="e-wrong-type",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration", risk, [evidence], {chunk.chunk_id: chunk}
+    )
+
+    assert observed is risk
+
+
 def diagnostic_by_code(agent: V03FinancialAgent, risk_code: str) -> ComponentDiagnostic:
     return next(item for item in agent.last_diagnostics if item.risk_code == risk_code)
 

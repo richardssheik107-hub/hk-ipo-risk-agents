@@ -338,7 +338,79 @@ class V03FinancialAgent:
                 "metadata": {**decision.diagnostic.metadata, **query_metadata}
             }
         )
-        return decision.risk, diagnostic
+        risk = self._augment_ranked_concentration_evidence(
+            risk_code,
+            decision.risk,
+            retrieval.evidence,
+            chunks_by_id,
+        )
+        return risk, diagnostic
+
+    @staticmethod
+    def _augment_ranked_concentration_evidence(
+        risk_code: str,
+        risk: RiskItem | None,
+        retrieved: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> RiskItem | None:
+        """Attach parser-governed table views without changing the decision.
+
+        Complete ranked tables often span several physical pages.  Extraction
+        may correctly emit one bounded pending/positive concentration risk from
+        one page while the other pages remain retrieval-only context.  Retaining
+        those already-retrieved pages on an existing risk improves source
+        traceability; it never creates a risk and never changes level, status,
+        score, calculation, or the fact used by policy.
+        """
+
+        expected_type = {
+            "customer_concentration": "customer",
+            "supplier_concentration": "supplier",
+        }.get(risk_code)
+        if risk is None or expected_type is None:
+            return risk
+
+        retained = list(risk.evidence)
+        retained_ids = {item.evidence_id for item in retained}
+        for evidence in retrieved:
+            if evidence.evidence_id in retained_ids or not evidence.chunk_id:
+                continue
+            chunk = chunks_by_id.get(evidence.chunk_id)
+            if chunk is None:
+                continue
+            table = chunk.metadata.get("ranked_numeric_table")
+            if not isinstance(table, Mapping):
+                continue
+            rows = table.get("rank_rows")
+            ranks = (
+                [item.get("rank") for item in rows if isinstance(item, Mapping)]
+                if isinstance(rows, list)
+                else []
+            )
+            if (
+                table.get("detector") != "ranked_numeric_1_to_5_v1"
+                or table.get("counterparty_type") != expected_type
+                or ranks != [1, 2, 3, 4, 5]
+                or table.get("largest_counterparty_pct") is None
+                or table.get("top_five_pct") is None
+            ):
+                continue
+            retained.append(evidence)
+            retained_ids.add(evidence.evidence_id)
+
+        if len(retained) == len(risk.evidence):
+            return risk
+        return risk.model_copy(
+            update={
+                "evidence": retained,
+                "metadata": {
+                    **risk.metadata,
+                    "ranked_table_evidence_augmented": (
+                        len(retained) - len(risk.evidence)
+                    ),
+                },
+            }
+        )
 
     @staticmethod
     def _has_bounded_concentration_signal(
