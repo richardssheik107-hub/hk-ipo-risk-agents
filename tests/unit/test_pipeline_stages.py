@@ -1,4 +1,4 @@
-"""Guards for the PR-H seven-stage skeleton, especially the no-fake-data rule."""
+"""Guards for the competition-facing seven-stage runtime surface."""
 from __future__ import annotations
 
 import importlib.util
@@ -12,7 +12,6 @@ _MODULE_PATH = Path(__file__).resolve().parents[2] / "app" / "pipeline_stages.py
 _SPEC = importlib.util.spec_from_file_location("pipeline_stages", _MODULE_PATH)
 assert _SPEC is not None and _SPEC.loader is not None
 pipeline_stages = importlib.util.module_from_spec(_SPEC)
-# dataclasses resolve their own module through sys.modules during class creation.
 sys.modules[_SPEC.name] = pipeline_stages
 _SPEC.loader.exec_module(pipeline_stages)
 
@@ -74,7 +73,7 @@ def _runtime_complete_payload() -> dict[str, object]:
     }
 
 
-def test_chain_matches_the_pr_h_page_order() -> None:
+def test_chain_matches_product_page_order() -> None:
     stages = resolve_stages(_populated_payload())
     assert len(stages) == 7
     assert tuple(stage.ordinal for stage in stages) == tuple(range(1, 8))
@@ -82,13 +81,12 @@ def test_chain_matches_the_pr_h_page_order() -> None:
     assert len({stage.stage_id for stage in stages}) == 7
 
 
-def test_only_pr_h_remains_a_referenced_gate() -> None:
-    """PR-B and PR-F are frozen; runtime absence is not a gate statement."""
-    assert pipeline_stages.blocking_gates() == ("PR-H",)
+def test_frontend_chain_carries_no_project_level_release_gate() -> None:
+    """Final competition gates live in release acceptance, not the case renderer."""
+    assert pipeline_stages.blocking_gates() == ()
 
 
 def test_pending_gate_stages_render_nothing_numeric() -> None:
-    """If a future stage is fully blocked, it must never show a fabricated number."""
     for payload in ({}, _populated_payload()):
         for stage in resolve_stages(payload):
             if stage.status is not StageStatus.PENDING_GATE:
@@ -99,12 +97,12 @@ def test_pending_gate_stages_render_nothing_numeric() -> None:
             assert not any(NUMERIC.search(item) for item in stage.what_appears_when_unblocked)
 
 
-def test_partial_stages_only_show_values_the_payload_actually_has() -> None:
-    """PARTIAL stages may show the half that is genuinely available, and nothing more."""
+def test_partial_stages_only_show_values_payload_actually_has() -> None:
     empty = {stage.stage_id: stage for stage in resolve_stages({})}
     populated = {stage.stage_id: stage for stage in resolve_stages(_populated_payload())}
     assert empty["prediction"].status is StageStatus.PARTIAL
     assert empty["prediction"].metrics == ()
+    assert populated["prediction"].status is StageStatus.PARTIAL
     assert populated["prediction"].metrics != ()
     assert empty["final_supervisor"].status is StageStatus.PARTIAL
     assert empty["final_supervisor"].metrics == ()
@@ -112,9 +110,9 @@ def test_partial_stages_only_show_values_the_payload_actually_has() -> None:
     assert populated["document_features"].metrics == ()
 
 
-def test_every_nonavailable_stage_names_a_reason() -> None:
+def test_every_genuinely_incomplete_stage_names_reason() -> None:
     for stage in resolve_stages(_populated_payload()):
-        if stage.status is StageStatus.AVAILABLE:
+        if stage.is_available:
             continue
         assert stage.blocking_reason, stage.stage_id
         if stage.status is StageStatus.PENDING_GATE:
@@ -122,101 +120,113 @@ def test_every_nonavailable_stage_names_a_reason() -> None:
             assert stage.what_appears_when_unblocked, stage.stage_id
 
 
-def test_market_runtime_absence_is_not_misreported_as_pr_b_gate() -> None:
-    stage = {item.stage_id: item for item in resolve_stages(_populated_payload())}["market_features"]
-    assert stage.status is StageStatus.PARTIAL
+def test_runtime_document_risk_features_become_completed_after_success() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["document_features"]
+    assert stage.status is StageStatus.COMPLETED
+    assert pending_notice(stage) is None
+    metrics = {metric.label: metric.value for metric in stage.metrics}
+    assert metrics["Risk items"] == "2"
+    assert metrics["Evidence anchors"] == "2"
+
+
+def test_governed_market_context_makes_market_stage_completed() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["market_features"]
+    assert stage.status is StageStatus.COMPLETED
     assert stage.blocking_gate is None
-    assert "PR-B itself is not blocking" in stage.blocking_reason
+    assert {metric.label: metric.value for metric in stage.metrics}["Observations available"] == "1 of 2"
+    assert pending_notice(stage) is None
 
 
 @pytest.mark.parametrize("stage_id", ["prediction", "explainability"])
-def test_model_runtime_absence_is_not_misreported_as_pr_f_gate(stage_id: str) -> None:
-    stage = {item.stage_id: item for item in resolve_stages({})}[stage_id]
-    assert stage.status is StageStatus.PARTIAL
+def test_authentic_model_projection_makes_model_surfaces_completed(stage_id: str) -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}[stage_id]
+    assert stage.status is StageStatus.COMPLETED
     assert stage.blocking_gate is None
-    assert "PR-F" in stage.blocking_reason
-    assert "blocking gate" in stage.blocking_reason or "not a blocking gate" in stage.blocking_reason or "COMPLETE / FROZEN" in stage.blocking_reason
 
 
-def test_prediction_stage_never_calls_the_rule_or_model_score_a_probability() -> None:
+def test_prediction_stage_never_calls_rule_or_model_score_probability() -> None:
     for payload in (_populated_payload(), _runtime_complete_payload()):
         stage = {item.stage_id: item for item in resolve_stages(payload)}["prediction"]
         assert "probability" in stage.summary
         assert not any("probab" in metric.label.lower() for metric in stage.metrics)
 
 
-def test_runtime_document_risk_features_become_available_after_success() -> None:
-    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["document_features"]
-    assert stage.status is StageStatus.AVAILABLE
+def test_completed_runtime_stays_green_when_optional_market_and_model_are_missing() -> None:
+    payload = {
+        **_runtime_complete_payload(),
+        "market_context": {},
+        "model_prediction": {"status": "unavailable"},
+        "runtime_completion_status": "completed_with_deterministic_fallback",
+        "report_sections": [{"title": "Summary"}],
+    }
+    stages = {item.stage_id: item for item in resolve_stages(payload)}
+    assert all(stage.status is StageStatus.COMPLETED for stage in stages.values())
+    assert {metric.label: metric.value for metric in stages["market_features"].metrics}["Market channel"] == "unavailable"
+    assert {metric.label: metric.value for metric in stages["prediction"].metrics}["Model channel"] == "unavailable"
+    assert {metric.label: metric.value for metric in stages["explainability"].metrics}["Model drivers"] == "unavailable"
+    assert "fallback" in stages["final_supervisor"].summary.lower()
+    assert "not counted as real-provider acceptance" in stages["final_supervisor"].summary
+    assert all(pending_notice(stage) is None for stage in stages.values())
+
+
+def test_market_partial_state_can_complete_product_surface_without_imputation() -> None:
+    payload = {
+        **_runtime_complete_payload(),
+        "market_context": {
+            "status": "partial",
+            "observations": [
+                {"name": "industry_return_5d", "availability": "unavailable", "value": None, "missing_reason": "INDUSTRY_MAPPING_PIT_BLOCKED"},
+            ],
+        },
+    }
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["market_features"]
+    assert stage.status is StageStatus.COMPLETED
     metrics = {metric.label: metric.value for metric in stage.metrics}
-    assert metrics["Risk items"] == "2"
-    assert metrics["Evidence anchors"] == "2"
+    assert metrics["Observations available"] == "0 of 1"
+    assert metrics["Market channel"] == "partial"
+    assert "does not impute" in stage.summary
 
 
-def test_governed_market_context_makes_market_stage_available() -> None:
-    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["market_features"]
-    assert stage.status is StageStatus.AVAILABLE
+def test_final_supervisor_completed_with_real_channels() -> None:
+    stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["final_supervisor"]
+    assert stage.status is StageStatus.COMPLETED
     assert stage.blocking_gate is None
-    assert {metric.label: metric.value for metric in stage.metrics}["Observations available"] == "1 of 2"
-    assert pending_notice(stage) is None
+    assert {metric.label: metric.value for metric in stage.metrics}["Channels available"] == "4 of 4"
 
 
-def test_hash_bound_model_projection_makes_prediction_and_explainability_available() -> None:
-    stages = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}
-    assert stages["prediction"].status is StageStatus.AVAILABLE
-    assert stages["prediction"].blocking_gate is None
-    assert {metric.label: metric.value for metric in stages["prediction"].metrics}["Model score"] == "0.61"
-    assert stages["explainability"].status is StageStatus.AVAILABLE
-    assert {metric.label: metric.value for metric in stages["explainability"].metrics}["Model drivers"] == "1"
-
-
-def test_final_supervisor_becomes_available_once_pr_g_channels_run() -> None:
-    payload = {**_populated_payload(), "final_supervision": {
-        "channel_states": [
-            {"channel": "document", "status": "available"},
-            {"channel": "market", "status": "unavailable_error"},
-            {"channel": "model", "status": "disabled"},
-            {"channel": "rule", "status": "available"},
-        ],
-        "referenced_risk_ids": ["r-1", "r-2"],
-        "metadata": {"unresolved_conflict_count": 1},
-    }}
-    stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
-    assert stage.status is StageStatus.AVAILABLE
-    assert stage.blocking_gate is None
-    assert {metric.label: metric.value for metric in stage.metrics}["Channels available"] == "2 of 4"
-
-
-def test_final_supervisor_is_partial_when_real_llm_degraded() -> None:
+def test_final_supervisor_fallback_is_green_but_explicitly_not_real_provider_acceptance() -> None:
     payload = {
         **_runtime_complete_payload(),
         "runtime_completion_status": "completed_with_deterministic_fallback",
     }
-
     stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
-
-    assert stage.status is StageStatus.PARTIAL
-    assert "LLM Final Supervisor did not complete" in stage.summary
-    assert "provider diagnostics" in stage.blocking_reason
-
-
-def test_final_supervisor_without_the_channel_names_no_retired_gate() -> None:
-    stage = {item.stage_id: item for item in resolve_stages(_populated_payload())}["final_supervisor"]
-    assert stage.status is StageStatus.PARTIAL
-    assert stage.blocking_gate is None
-    assert stage.blocking_reason
+    assert stage.status is StageStatus.COMPLETED
+    assert "fallback" in stage.summary.lower()
+    assert "not counted as real-provider acceptance" in stage.summary
+    assert {metric.label: metric.value for metric in stage.metrics}["LLM synthesis"] == "deterministic fallback"
 
 
-def test_final_report_without_sections_is_a_runtime_limitation_not_formal_gate() -> None:
+def test_document_only_supervision_can_complete_supervisor_surface() -> None:
+    payload = {
+        **_runtime_complete_payload(),
+        "final_supervision": {},
+        "supervision": {"duplicate_groups": [{}], "conflicts": [{}], "composite_findings": [{}, {}]},
+    }
+    stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
+    assert stage.status is StageStatus.COMPLETED
+    assert {metric.label: metric.value for metric in stage.metrics}["Cross-channel LLM"] == "unavailable"
+
+
+def test_final_report_without_sections_is_runtime_limitation_not_release_gate() -> None:
     stage = {item.stage_id: item for item in resolve_stages(_runtime_complete_payload())}["final_report"]
     assert stage.status is StageStatus.PARTIAL
     assert stage.blocking_gate is None
     assert "report" in stage.blocking_reason
 
 
-def test_materialized_final_report_is_available_independent_of_project_readiness() -> None:
+def test_materialized_final_report_is_completed_independent_of_project_readiness() -> None:
     payload = {**_runtime_complete_payload(), "report_sections": [{"title": "Summary"}]}
     stage = {item.stage_id: item for item in resolve_stages(payload)}["final_report"]
-    assert stage.status is StageStatus.AVAILABLE
+    assert stage.status is StageStatus.COMPLETED
     assert stage.blocking_gate is None
     assert {metric.label: metric.value for metric in stage.metrics}["Report sections"] == "1"
