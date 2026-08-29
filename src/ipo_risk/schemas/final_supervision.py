@@ -38,6 +38,10 @@ class SupervisionChannel(StrEnum):
 
 class ChannelStatus(StrEnum):
     AVAILABLE = "available"
+    # The channel is configured and the request is valid, but the governed
+    # runtime has no supported data path for this case.  This is distinct from
+    # both a disabled channel and a validation/IO failure.
+    UNAVAILABLE = "unavailable"
     PENDING_GATE = "pending_gate"
     UNAVAILABLE_ERROR = "unavailable_error"
     DISABLED = "disabled"

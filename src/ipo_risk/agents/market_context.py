@@ -16,8 +16,10 @@ import csv
 import hashlib
 import json
 import math
+from datetime import date
 from pathlib import Path
 
+from ipo_risk.agents.base import MarketContextProvider
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
     IPO_MARKET_CONTEXT_FEATURE_POLICY_VERSION,
@@ -84,6 +86,56 @@ _INDUSTRY_MISSING_REASONS = {
     "INDUSTRY_MAPPING_PIT_BLOCKED",
     "MISSING_INDUSTRY_CLASSIFICATION",
 }
+_FROZEN_PR_B_LISTING_YEARS = frozenset({2020, 2021, 2022, 2023, 2024})
+
+
+class UnsupportedNewCaseMarketContextProvider:
+    """Honest dynamic-path placeholder for cases outside frozen PR-B.
+
+    A deployable dynamic provider must be backed by governed, point-in-time
+    reference inputs.  The current public deployment has no licensed-safe HSI
+    or Extended lookup configured, so this provider exposes that capability
+    gap without treating a valid new IPO as a broken frozen artifact.
+    """
+
+    name = "dynamic_new_case_market_x"
+
+    def context(
+        self,
+        profile: IPOProfile,
+        market: MarketSnapshot | None = None,
+    ) -> MarketContextView:
+        del market
+        identity_complete = bool(profile.stock_code and profile.listing_date is not None)
+        reason_code = (
+            "unsupported_new_case"
+            if identity_complete
+            else "new_case_identity_incomplete"
+        )
+        reason = (
+            "dynamic Market-X inputs are not configured for this non-frozen IPO"
+            if identity_complete
+            else "dynamic Market-X requires stock_code and listing_date for a non-frozen IPO"
+        )
+        return MarketContextView(
+            status=ChannelStatus.UNAVAILABLE,
+            reason=reason,
+            provenance={
+                "feature_pipeline": self.name,
+                "runtime_path": "dynamic_new_case",
+                "reason_code": reason_code,
+                "frozen_cohort_lookup": "not_applicable",
+                "frozen_artifact_read_attempted": False,
+                "stock_code": profile.stock_code,
+                "listing_date": (
+                    profile.listing_date.isoformat()
+                    if profile.listing_date is not None
+                    else None
+                ),
+                "cutoff_semantics": "market_data_strictly_before_listing_date",
+                "dynamic_provider": "unconfigured",
+            },
+        )
 
 
 def _sha256_file(path: Path) -> str:
@@ -112,17 +164,27 @@ class GovernedPRBMarketContextProvider:
         feature_dir: str | Path,
         official_bridge_path: str | Path,
         extended_readiness_path: str | Path | None = None,
+        new_case_provider: MarketContextProvider | None = None,
     ) -> None:
         self.feature_dir = Path(feature_dir)
         self.official_bridge_path = Path(official_bridge_path)
         self.extended_readiness_path = (
             Path(extended_readiness_path) if extended_readiness_path else None
         )
+        self.new_case_provider = (
+            new_case_provider or UnsupportedNewCaseMarketContextProvider()
+        )
 
     def context(self, profile: IPOProfile, market: MarketSnapshot | None = None) -> MarketContextView:
-        del market  # PR-B is the governed source; the legacy snapshot is not mixed in.
+        frozen_artifact_read_attempted = False
         try:
             row = self._official_row(profile)
+            if row is None:
+                return self.new_case_provider.context(profile, market)
+            # PR-B is the governed frozen source; the legacy snapshot is not
+            # mixed into a known official-cohort projection.
+            del market
+            frozen_artifact_read_attempted = True
             artifact = self._artifact(row)
             observations = self._observations(artifact)
             extended_row = None
@@ -134,7 +196,11 @@ class GovernedPRBMarketContextProvider:
             return MarketContextView(
                 status=ChannelStatus.UNAVAILABLE_ERROR,
                 reason=f"governed PR-B Market-X projection failed validation: {detail}",
-                provenance={"feature_pipeline": self.name},
+                provenance={
+                    "feature_pipeline": self.name,
+                    "runtime_path": "frozen",
+                    "frozen_artifact_read_attempted": frozen_artifact_read_attempted,
+                },
             )
         return MarketContextView(
             status=ChannelStatus.AVAILABLE,
@@ -147,6 +213,8 @@ class GovernedPRBMarketContextProvider:
             feature_manifest_hash=IPO_MARKET_CONTEXT_FEATURE_MANIFEST_HASH,
             provenance={
                 "feature_pipeline": self.name,
+                "runtime_path": "frozen",
+                "frozen_artifact_read_attempted": True,
                 "case_id": artifact["case_id"],
                 "stock_code": artifact["stock_code"],
                 "listing_date": artifact["listing_date"],
@@ -162,18 +230,34 @@ class GovernedPRBMarketContextProvider:
             },
         )
 
-    def _official_row(self, profile: IPOProfile) -> dict[str, str]:
+    def _official_row(self, profile: IPOProfile) -> dict[str, str] | None:
         if not profile.stock_code or profile.listing_date is None:
-            raise ValueError("stock_code and listing_date are required")
+            return None
         with self.official_bridge_path.open(encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            required = {"case_id", "stock_code_wind", "official_listed_date"}
+            missing = required - set(reader.fieldnames or ())
+            if missing:
+                raise ValueError(
+                    "official bridge missing fields: " + ", ".join(sorted(missing))
+                )
             rows = [
-                row for row in csv.DictReader(handle)
+                row for row in reader
                 if row.get("stock_code_wind") == profile.stock_code
                 and row.get("official_listed_date") == profile.listing_date.isoformat()
             ]
-        if len(rows) != 1:
-            raise ValueError("profile does not resolve to exactly one official IPO case")
-        return rows[0]
+        if len(rows) > 1:
+            raise ValueError("profile resolves to multiple official IPO cases")
+        if not rows:
+            return None
+        row = rows[0]
+        try:
+            listing_year = date.fromisoformat(row["official_listed_date"]).year
+        except (KeyError, ValueError) as exc:
+            raise ValueError("official bridge listing date is invalid") from exc
+        if listing_year not in _FROZEN_PR_B_LISTING_YEARS:
+            return None
+        return row
 
     def _artifact(self, row: dict[str, str]) -> dict[str, object]:
         path = self.feature_dir / f"{row['case_id']}.json"
@@ -189,7 +273,9 @@ class GovernedPRBMarketContextProvider:
         for key, value in expected.items():
             if payload.get(key) != value:
                 raise ValueError(f"{key} does not match the frozen PR-B contract")
-        expected_split = "development" if int(row["source_year"]) <= 2023 else "validation"
+        expected_split = expected_market_split(
+            int(row["official_listed_date"][:4])
+        ).value
         if payload.get("dataset_split") != expected_split:
             raise ValueError("dataset_split does not match the official cohort")
         provenance = payload.get("source_provenance")

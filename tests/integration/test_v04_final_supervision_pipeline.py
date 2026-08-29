@@ -15,6 +15,7 @@ from datetime import date
 
 import pytest
 
+from app.presenters import result_payload
 from ipo_risk.core.config import load_settings
 from ipo_risk.modeling.pr_f_product_handoff import (
     CHECKSUMMED_PRODUCT_FILES,
@@ -85,6 +86,70 @@ def test_the_market_channel_uses_the_governed_pr_b_projection(result) -> None:
     assert by_name["industry_return_5d"]["value"] is None
     assert by_name["industry_return_5d"]["availability"] == "unavailable"
     assert by_name["industry_return_5d"]["missing_reason"] == "INDUSTRY_MAPPING_PIT_BLOCKED"
+
+
+def test_known_frozen_0368_case_is_available_from_backend_artifact(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
+    settings = replace(
+        load_settings("configs/v04_ai.yaml"),
+        parser="mock",
+        retriever="mock",
+        financial_agent="mock",
+        legal_agent="mock",
+        business_agent="mock",
+        use_mock=True,
+        llm_provider="unavailable",
+        data_dir=str(tmp_path / "repo"),
+        market_feature_dir=str(feature_dir),
+        market_official_bridge=str(bridge_path),
+    )
+    outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
+        company_name="德合集团",
+        stock_code="0368.HK",
+        listing_date=date(2020, 7, 17),
+        use_mock=True,
+    ))
+    market = outcome.metadata["market_context"]
+    assert market["status"] == "available"
+    assert market["provenance"]["case_id"] == "ipo_2020_00368"
+    assert market["provenance"]["feature_pipeline"] == "governed_pr_b_core"
+    assert market["provenance"]["runtime_path"] == "frozen"
+
+
+def test_streamlit_payload_preserves_backend_new_case_unavailable_semantics(tmp_path) -> None:
+    feature_dir, bridge_path = write_governed_pr_b_fixture(tmp_path / "market")
+    settings = replace(
+        load_settings("configs/v04_ai.yaml"),
+        parser="mock",
+        retriever="mock",
+        financial_agent="mock",
+        legal_agent="mock",
+        business_agent="mock",
+        use_mock=True,
+        llm_provider="unavailable",
+        data_dir=str(tmp_path / "repo"),
+        market_feature_dir=str(feature_dir),
+        market_official_bridge=str(bridge_path),
+    )
+    outcome = IPOAnalysisService(settings=settings).analyze(IPOAnalysisRequest(
+        company_name="2026 New IPO",
+        stock_code="9999.HK",
+        listing_date=date(2026, 6, 1),
+        use_mock=True,
+    ))
+
+    backend = outcome.metadata["market_context"]
+    assert backend["status"] == "unavailable"
+    assert backend["provenance"]["runtime_path"] == "dynamic_new_case"
+    assert backend["provenance"]["reason_code"] == "unsupported_new_case"
+    assert backend["provenance"]["frozen_artifact_read_attempted"] is False
+    assert outcome.metadata["market_intelligence"]["status"] == "skipped_context_unavailable"
+
+    # Streamlit serializes the backend result; it does not hard-code the channel
+    # to available in its presentation payload.
+    payload = result_payload(outcome)
+    assert payload["market_context"] == backend
+    assert payload["market_context"]["status"] == "unavailable"
 
 
 def test_market_report_names_the_governed_source_instead_of_none(result) -> None:
