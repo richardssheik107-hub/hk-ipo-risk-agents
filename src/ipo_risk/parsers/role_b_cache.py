@@ -20,7 +20,9 @@ from uuid import uuid4
 
 
 CACHE_FORMAT_VERSION = "v046_role_b_content_cache_v1"
-_SAFE_STAGE = frozenset({"raw_pages", "table_reconstruction", "parser_chunks"})
+_SAFE_STAGE = frozenset(
+    {"raw_pages", "table_reconstruction", "parser_chunks", "retrieval_preprocessing"}
+)
 
 
 def canonical_json_hash(payload: Any) -> str:
@@ -61,10 +63,8 @@ class CacheRunMetrics:
             "table_cache_misses": self.misses["table_reconstruction"],
             "raw_page_cache_hits": self.hits["raw_pages"],
             "raw_page_cache_misses": self.misses["raw_pages"],
-            # Reserved stage counters keep every benchmark summary stable while
-            # retrieval/fact caches are introduced only after profiling proves value.
-            "retrieval_cache_hits": 0,
-            "retrieval_cache_misses": 0,
+            "retrieval_cache_hits": self.hits["retrieval_preprocessing"],
+            "retrieval_cache_misses": self.misses["retrieval_preprocessing"],
             "fact_cache_hits": 0,
             "fact_cache_misses": 0,
             "stage_wall_clock_ms": {
@@ -93,6 +93,7 @@ class RoleBContentCache:
             "raw_pages": "raw",
             "table_reconstruction": "tables",
             "parser_chunks": "chunks",
+            "retrieval_preprocessing": "retrieval",
         }[stage]
         return self.root / stage_name / identity[:2] / f"{identity}.json.gz"
 

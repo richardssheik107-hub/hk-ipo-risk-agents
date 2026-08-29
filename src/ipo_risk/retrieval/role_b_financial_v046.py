@@ -16,6 +16,7 @@ from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from hashlib import sha256
+from pathlib import Path
 import re
 from uuid import NAMESPACE_URL, uuid5
 
@@ -117,8 +118,8 @@ class RoleBFinancialHighRecallRetriever:
     name = "role_b_v046_financial_high_recall"
     version = "role_b_v046_hybrid_high_recall_v3"
 
-    def __init__(self) -> None:
-        self._keyword = KeywordDocumentRetriever()
+    def __init__(self, *, cache_root: str | Path | None = None) -> None:
+        self._keyword = KeywordDocumentRetriever(cache_root=cache_root)
         self._domain = DomainAwareRetrieverV21(
             base=self._keyword,
             candidate_depth=_DOMAIN_DEPTH,

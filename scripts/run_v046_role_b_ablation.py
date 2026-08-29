@@ -617,7 +617,7 @@ def _experiment_registry(
     registry.register(
         "retriever",
         RoleBFinancialHighRecallRetriever.name,
-        RoleBFinancialHighRecallRetriever,
+        lambda **_: RoleBFinancialHighRecallRetriever(cache_root=cache_root),
     )
     return registry
 
