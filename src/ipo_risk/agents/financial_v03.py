@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -71,6 +72,29 @@ _V03_RISK_ORDER = (
     "customer_concentration",
     "supplier_concentration",
 )
+
+_NEGATIVE_CONCENTRATION_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = {
+    "customer": (
+        re.compile(r"(?:不依賴|不依赖).{0,40}(?:單一|单一)(?:客戶|客户)", re.I | re.S),
+        re.compile(
+            r"(?:確定|确定).{0,30}(?:五大客戶|五大客户).{0,30}"
+            r"(?:並非|并非).{0,20}(?:切實可行|切实可行)",
+            re.I | re.S,
+        ),
+        re.compile(r"not\s+depend(?:ent)?\s+on\s+any\s+single\s+customer", re.I),
+        re.compile(r"not\s+practicable\s+to\s+identify.{0,40}(?:five|5)\s+largest\s+customers", re.I | re.S),
+    ),
+    "supplier": (
+        re.compile(r"(?:不依賴|不依赖).{0,40}(?:單一|单一)(?:供應商|供应商)", re.I | re.S),
+        re.compile(
+            r"(?:確定|确定).{0,30}(?:五大供應商|五大供应商).{0,30}"
+            r"(?:並非|并非).{0,20}(?:切實可行|切实可行)",
+            re.I | re.S,
+        ),
+        re.compile(r"not\s+depend(?:ent)?\s+on\s+any\s+single\s+supplier", re.I),
+        re.compile(r"not\s+practicable\s+to\s+identify.{0,40}(?:five|5)\s+largest\s+suppliers", re.I | re.S),
+    ),
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -279,7 +303,10 @@ class V03FinancialAgent:
                 metadata=query_metadata,
             )
 
-        if status != ExtractionStatus.EXTRACTED or issues:
+        unresolved_concentration_signal = self._has_bounded_concentration_signal(
+            extraction, retrieval.evidence
+        )
+        if (status != ExtractionStatus.EXTRACTED or issues) and not unresolved_concentration_signal:
             return None, self._diagnostic(
                 risk_code,
                 self._issue_code(issues, status=status),
@@ -312,6 +339,61 @@ class V03FinancialAgent:
             }
         )
         return decision.risk, diagnostic
+
+    @staticmethod
+    def _has_bounded_concentration_signal(
+        extraction: FinancialPeriodSeriesResult | ConcentrationFact,
+        evidence: Sequence[Evidence],
+    ) -> bool:
+        """Allow only parsed concentration percentages into pending conversion.
+
+        Retrieval presence alone is insufficient.  The extractor must have
+        produced at least one deterministic percentage, either on the merged
+        fact or in its bounded candidate diagnostics.
+        """
+
+        if not isinstance(extraction, ConcentrationFact):
+            return False
+        bounded_signal = (
+            extraction.largest_counterparty_pct is not None
+            or extraction.top_five_pct is not None
+        )
+        if not bounded_signal:
+            diagnostics = extraction.metadata.get("candidate_diagnostics", [])
+            if isinstance(diagnostics, Sequence) and not isinstance(
+                diagnostics, (str, bytes)
+            ):
+                bounded_signal = any(
+                    isinstance(item, Mapping)
+                    and (
+                        item.get("largest_counterparty_pct") is not None
+                        or item.get("top_five_pct") is not None
+                    )
+                    for item in diagnostics
+                )
+        if not bounded_signal:
+            return False
+
+        # A disclosure that explicitly says no single-counterparty dependency
+        # exists (or that a top-five set cannot be identified) is negative
+        # concentration evidence.  Percentages elsewhere in that paragraph,
+        # such as a director/shareholder ownership percentage, must not turn it
+        # into a pending concentration risk.
+        selected_ids = set(extraction.evidence_ids)
+        selected_evidence = [
+            item for item in evidence if item.evidence_id in selected_ids
+        ]
+        if selected_evidence and all(
+            any(
+                pattern.search(item.text)
+                for pattern in _NEGATIVE_CONCENTRATION_DISCLOSURES[
+                    extraction.concentration_type
+                ]
+            )
+            for item in selected_evidence
+        ):
+            return False
+        return True
 
     def _retrieve_family(
         self, risk_code: str, chunks: list[DocumentChunk]

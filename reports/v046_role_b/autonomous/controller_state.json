@@ -1,0 +1,29 @@
+{
+  "controller_version": "v046_autonomous_closure_v1",
+  "campaign_started_at": "2026-08-29",
+  "current_main_sha": "9e01d4f3c9c23df3fa4729cf6111a873d0bc58d1",
+  "current_branch": "fix/v046-role-b-concentration-fact-batch-004",
+  "best_commit": "a0ae90a",
+  "best_fixed_journal_m1": {"correct": 12, "support": 30, "rate": 0.4},
+  "best_fixed_journal_m2": {"correct": 17, "support": 48, "rate": 0.3541666666666667},
+  "best_fresh_m1": {"correct": 10, "support": 30, "rate": 0.3333333333333333},
+  "best_fresh_m2": {"correct": 15, "support": 48, "rate": 0.3125},
+  "current_full_development_m1": "NOT_AVAILABLE",
+  "current_full_development_m2": "NOT_AVAILABLE",
+  "accepted_fix_count": 2,
+  "rejected_hypothesis_count": 1,
+  "last_fresh_run_identity": "batch004_fresh_checkpoint:fb7e1504391ec11483ac24968db443448295ed0d752bff3efb2d91d329ef258e",
+  "last_full_pytest_sha": "a0ae90a",
+  "validation_opened": false,
+  "blind_used": false,
+  "active_root": "concentration_exact_fact_extraction",
+  "next_ranked_roots": [
+    "concentration_exact_fact_extraction",
+    "period_candidate_generation",
+    "parser_preservation",
+    "numeric_extraction",
+    "llm_evidence_stability",
+    "final_evidence_binding"
+  ],
+  "external_blockers": ["m4_human_review"]
+}

@@ -1,0 +1,11 @@
+{
+  "version": "v046_autonomous_external_blockers_v1",
+  "blockers": [
+    {
+      "id": "m4_human_review",
+      "type": "human_action",
+      "status": "open",
+      "codex_can_complete": false
+    }
+  ]
+}

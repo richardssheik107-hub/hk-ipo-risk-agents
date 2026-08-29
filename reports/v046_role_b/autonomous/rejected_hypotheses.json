@@ -1,0 +1,15 @@
+{
+  "version": "v046_autonomous_rejected_hypotheses_v1",
+  "hypotheses": [
+    {
+      "id": "batch003_period_selection_bug",
+      "result": "rejected_as_production_root",
+      "reason": "zero proven selector bugs; missing candidates/facts occur upstream"
+    },
+    {
+      "id": "batch004_unqualified_percentage_fallback",
+      "result": "refined_before_acceptance",
+      "reason": "an unrelated shareholding percentage caused one concentration false positive"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+rank,root,status,proven_units,latest_action,next_action
+1,concentration_exact_fact_extraction,active,4,pending_conversion_closed,audit complete-fact extraction
+2,period_candidate_generation,queued,2,classified_by_batch003,audit candidate creation
+3,parser_preservation,queued,4,classified_by_batch003,profile parser loss modes
+4,numeric_extraction,queued,1,classified_by_batch003,audit numeric parsing
+5,llm_evidence_stability,queued,3,diagnostic_non_reproduction,measure at fresh checkpoint
+6,final_evidence_binding,queued,1,batch004 evidence retained,inspect exact-anchor mismatch
