@@ -16,23 +16,30 @@ M2 Existing-Gold Evidence Coverage Recall >= 0.85
 real_llm_cases = 79/79
 ```
 
-内部目标可以更高：
+内部目标：M1 `>=0.85`、M2 `>=0.88`。fixed10 / fixed-journal 只用于诊断，不能替代 ALL79 正式结果。
+
+## 2. 当前起点 — Batch009
+
+最新**可比 fixed-journal gated** checkpoint：
 
 ```text
-M1 target >= 0.85
-M2 target >= 0.88
+Batch005  M1 12/30   M2 18/48
+Batch008  M1 13/30   M2 20/48
+Batch009  M1 14/30   M2 21/48
 ```
 
-fixed10 / fixed-journal 只用于诊断，不能替代 ALL79 正式结果。
-
-## 2. 当前起点
-
-当前正式诊断 checkpoint：
+当前 Batch009：
 
 ```text
-fixed-journal M1 = 12/30 = 40.00%
-fixed-journal M2 = 18/48 = 37.50%
+fixed-journal gated M1 = 14/30 = 46.67%
+fixed-journal gated M2 = 21/48 = 43.75%
+offline M1 = 9/30
+offline M2 = 15/48
+```
 
+Batch008/009 没有新的 remote provider 调用，所以最后一个真实 fresh checkpoint 仍是 Batch005：
+
+```text
 fresh gated M1 = 11/30 = 36.67%
 fresh gated M2 = 17/48 = 35.42%
 structured valid = 38/40
@@ -41,66 +48,77 @@ transport failures = 0
 scope rejections = 0
 ```
 
-当前已经被证据缩小的 root-cause 顺序：
+**不要把 `14/30, 21/48` 写成 fresh-provider 结果。**
 
-```text
-deterministic_fact_missing
-→ retrieval_candidate_miss
-→ numeric_extraction_miss
-→ genuine_conflict_fail_closed
-→ LLM / Evidence variance
-```
+## 3. 已接受 / 已拒绝的最新工作
 
-已排除为当前主要根因：
+### Batch008 — ACCEPTED
 
-```text
-broad Parser preservation
-period candidate generation / selector
-```
+接受 legacy Chinese cash-statement / explicit Notes-column deterministic exact-fact 修复：中文年份/日期、显式 Notes header、繁简体经营现金流 wording，并保持列数不匹配 fail-closed。
 
-除非出现新的 proven evidence，不要重新对 Parser 或 period selector 做大规模重写。
+效果：gated `M1 +1`、`M2 +2`，只影响 cash runway。
+
+### Batch009 — PARTIAL_ACCEPT
+
+接受 generalized Legal redemption/restoration lifecycle recognition，并保留 Builder-declared uncertainty，不把不确定状态硬转成 positive。
+
+效果：redemption-rights M1 `4/8 -> 5/8`，额外恢复 1 个 Evidence unit；总 gated 到 `14/30, 21/48`。
+
+拒绝 direct ranked concentration-table extraction：canonical fixed-journal M1/M2 无提升，supplier existence F1 `0.875 -> 0.80`，候选已完整回滚。**禁止直接恢复。**
 
 ### 历史 GLM-5.3 失败实验
 
-仓库已归档一条历史负结果：
+PR #187 已归档：
 
 ```text
-source PR = #186
 semantic_calls = 30
 structured_contract_valid = 2/30
 M1 = FAIL
 M2 = FAIL
+offline outperformance = NOT_PROVEN
 ```
 
-这只说明当时的 provider/model/config/runtime 组合没有满足结构化输出 contract，不代表模型永久不可用；但不要重复使用已经证明失败的旧 harness 当作当前主路线。
+只代表当时 provider/model/config/runtime 组合失败；不代表模型永久不可用，但旧 harness 不应作为当前主路线。
 
-## 3. 负责范围
+## 4. 当前 root-cause 优先级
 
-本岗位可以修改：
+Batch006/007 已排除 broad period selector 和 broad Parser preservation；Batch008 已关闭一个 legacy cash deterministic sub-root。
 
-- Document retrieval；
+Batch009 后：
+
+```text
+1. retrieval candidate generation / ranking
+2. exact page / anchor Evidence binding
+3. remaining deterministic / numeric extraction
+4. genuine conflict fail-closed
+5. fixed-vs-fresh LLM / Evidence variance
+```
+
+已知证据：
+
+- `forensic_011` retrieval candidate generation 是最大 proven first-failure layer：6 M1 / 16 M2 units；
+- 一个 redemption Evidence page 位于 rank 18，超出 Legal Agent bounded 10-item consumption；优先改 transaction/lifecycle co-occurrence ranking，不粗暴扩大上限；
+- Legal risk recovery 后仍有 exact page/anchor binding miss，M2 必须独立处理；
+- numeric extraction 和 fresh Evidence variance 仍开放。
+
+## 5. 负责范围
+
+可以修改：
+
+- Document retrieval / rerank；
 - Financial / Legal / Business 风险抽取；
 - deterministic fact formation；
 - table / numeric extraction；
-- Evidence candidate formation 与 consumption；
+- Evidence candidate formation / consumption / binding；
 - Risk builder / reconciliation；
 - specialized verifier；
 - 与 M1/M2 直接相关的 Prompt / Schema；
-- Role-B diagnostic、waterfall、root-cause tooling；
-- Existing-Gold evaluator 的 bug fix（不得改变 metric 定义）；
-- benchmark runner、batch runner、diagnostic artifacts。
+- Role-B diagnostics / waterfall / root-cause tooling；
+- Existing-Gold evaluator 的真实 bug fix（不得改变 metric 定义）。
 
-本岗位**不负责**：
+不负责：前端视觉、Dynamic Market-X、Frozen Model/SHAP、最终 submission ZIP。
 
-- Streamlit 前端视觉设计；
-- Dynamic Market-X；
-- Frozen Model / SHAP runtime；
-- 最终提交 ZIP；
-- 为了页面好看改变风险语义。
-
-## 4. 不可破坏的治理边界
-
-必须一直保持：
+## 6. 不可破坏边界
 
 ```text
 Existing Gold immutable
@@ -108,154 +126,84 @@ Gold never enters runtime
 UNJUDGED != negative
 Validation untouched during optimization
 2025 Blind untouched
-no company/page hardcoding
+no company/stock/case/page/Gold hardcoding
 no evaluator-specific runtime branching
 no manual label patching
 ```
 
-禁止通过：
+不得通过修改 Gold、分母、Validation 后调参、case-specific rule 来提分。
 
-- 给某家公司写 case-specific rule；
-- 给某个 Gold page 加特殊匹配；
-- 修改 Gold；
-- 修改分母；
-- 把 UNJUDGED 当 negative；
-- 看 Validation 后再调参；
+## 7. 下一轮执行
 
-来提高 M1/M2。
+### Step A — Retrieval candidate / ranking
 
-## 5. 工作方法
-
-每轮只接受 evidence-driven 小批次优化。
-
-### Step A — 冻结当前基线
-
-每个优化 batch 开始前记录：
+只针对 proven miss：
 
 ```text
-BASE_SHA
-runtime config hash
-Prompt versions
-Retriever version
-Verifier version
-fixed-journal M1/M2
-fresh-gated M1/M2
-structured-valid count
-fallback / transport / scope counts
-```
-
-### Step B — 建立 unit-level failure ledger
-
-至少按以下类型分类每个失败 Risk/Evidence Unit：
-
-```text
-deterministic_fact_missing
-retrieval_candidate_miss
-ranking_miss
-numeric_extraction_miss
-reconciliation_fail
-verifier_reject
-true_conflict_fail_closed
-llm_abstain
-llm_response_variance
-agent_consumption_miss
-other_proven
-```
-
-每个结论必须有 proof artifact。无法证明就写 `UNAVAILABLE / INFERRED`，不要猜。
-
-### Step C — 优先解决 deterministic fact formation
-
-重点检查：
-
-- 财务表格中的期间、单位、币种、同比关系；
-- customer / supplier concentration 的百分比与 period binding；
-- cash runway 的 deterministic input；
-- redemption-rights 条款的 deterministic trigger；
-- continuous loss / revenue growth 的 multi-period fact；
-- spaced decimals、PDF 数字断裂、表头和 label-local binding；
-- builder 为什么没有把正确 fact 形成 candidate Risk。
-
-原则：如果 Evidence 已进入 candidate set，但 Risk 没形成，优先修 deterministic formation，而不是继续扩大 retrieval。
-
-### Step D — 再解决 retrieval candidate miss
-
-只有在 unit-level audit 明确证明 gold-supporting content 没进入 candidate set 时，才调整 retrieval。
-
-优先：
-
-```text
-domain query formulation
-structured-table candidate generation
-risk-specific terms
+risk-specific query/alias
+transaction+lifecycle co-occurrence
 candidate diversity
-bounded top-K expansion
+rerank
+candidate top20
+Agent bounded consumption
 ```
 
-禁止无证据地无限扩大 K 或全局召回，因为会增加 Agent consumption 噪声和成本。
+### Step B — Exact Evidence binding
 
-### Step E — Numeric / reconciliation / verifier
-
-要求：
-
-- 数字 normalization 不改变实际值；
-- period 不跨列错误绑定；
-- 冲突时 fail-closed；
-- verifier 不能因为格式差异拒绝本来正确的 fact；
-- 不能为了 recall 放松 Evidence scope。
-
-### Step F — LLM variance 最后处理
-
-先排除 deterministic/retrieval 问题，再处理：
+对 Risk 已正确恢复但 M2 缺失的单元：
 
 ```text
-structured output stability
-abstention
-Evidence ID consumption
-response variance
+candidate
+-> Evidence ID
+-> exact page
+-> exact anchor/quote
+-> verifier retain
+-> M2 covered
 ```
 
-不得用大 Prompt 重写掩盖 deterministic bug。
+不允许制造 page/bbox 或放松 Evidence scope。
 
-## 6. 每个 batch 的验收条件
+### Step C — Remaining deterministic / numeric / conflict
 
-任何 batch 只有满足以下条件才能保留：
+只修新证据证明的通用 root；事实不唯一时继续 pending / needs_review。
+
+### Step D — Fresh-provider checkpoint
+
+在上面 roots 收敛后执行新的真实 fresh checkpoint，验证 fixed-journal gain 是否能跨 provider run 保持。
+
+不得 retry-to-improve benchmark。
+
+## 8. 每个 batch 的验收
 
 ```text
-fixed-journal M1/M2 不出现无解释回归
-fresh run 至少保持同方向
-structured validity 不下降
-transport/scope failures 不增加
-Existing Gold hash 不变
-Validation/Blind 未访问
-full relevant tests PASS
+hypothesis
+proven affected units
+before
+patch scope
+targeted/full tests
+after
+fixed-journal M1/M2 delta
+per-risk regression
+fresh-provider status
+network call count
+Gold modified = false
+Validation opened = false
+Blind accessed = false
+accepted / reverted
 ```
 
-如果某优化只在 fixed-journal 提升、fresh 明显回归，要标记为 `REJECTED / UNSTABLE`。
+无净增益、fresh 明显反向、structured validity 下降或出现重要回归 => REJECT / REVERT。
 
-## 7. 扩样顺序
-
-不要长期停留在 fixed10。
-
-推荐顺序：
+## 9. 扩样顺序
 
 ```text
 fixed10 diagnostic
-→ targeted larger Development slice
-→ stratified Development slice
-→ ALL79 Development
+-> targeted larger Development slice
+-> stratified Development slice
+-> ALL79 Development
 ```
 
-进入 ALL79 前，先保证：
-
-- 结构化输出稳定；
-- runtime cost 可控；
-- 没有 case-specific logic；
-- root-cause ledger 已覆盖主要失败类型。
-
-## 8. 正式 ALL79 输出
-
-最终至少生成：
+正式输出至少包括：
 
 ```text
 existing_gold_evaluable_manifest.json
@@ -263,53 +211,20 @@ document_benchmark_summary.json
 risk_benchmark.csv
 evidence_benchmark.csv
 retrieval diagnostics
-root-cause / failure ledger
-runtime identity / hashes
+root-cause ledger
+runtime/config/prompt hashes
 ```
 
-最终 summary 必须明确：
+## 10. 与其他人的接口
 
-```text
-split = Development
-evaluated_case_count = 79
-real_llm_cases = 79
-M1
-M2
-new_manual_annotations_added = false
-existing_gold_modified = false
-validation_accessed = false
-blind_accessed = false
-```
+- Frontend Owner：稳定 RiskItem / Evidence / Calculation / Verifier / conflict-recheck 字段；
+- Market-X Owner：可靠 issuer/listing identity 与必要 Document metadata；
+- Dynamic Model Owner：若模型需要 Document feature，提供 versioned schema-bound feature vector，不从 Gold 重建；
+- Release Owner：最终冻结 SHA、Prompt/Schema/Config identity、ALL79 metrics、artifact manifest。
 
-## 9. 对其他四人的接口
+## 11. DONE
 
-### 给 Frontend Owner
-
-输出稳定的：
-
-- RiskItem；
-- Evidence；
-- Calculation；
-- Verifier status；
-- conflict/recheck 所需字段。
-
-不要让前端依赖内部 debug 字段。
-
-### 给 Market-X Owner
-
-提供可靠 issuer / listing identity 和必要 Document-derived metadata，但不要改 Market 计算。
-
-### 给 Dynamic Model Owner
-
-若 frozen model 需要 Document feature：提供 versioned、schema-bound Document feature vector；不要让 Model owner从 Gold 重建 feature。
-
-### 给 Release Owner
-
-提供最终冻结 SHA、Prompt/Schema/Config identity、ALL79 metrics 与 artifact manifest。
-
-## 10. 完成定义
-
-本岗位只有在下面全部真实成立时才算 DONE：
+只有以下全部成立才算完成：
 
 ```text
 ALL79 Development completed
@@ -325,4 +240,4 @@ relevant tests PASS
 code/config/prompt identity frozen
 ```
 
-在此之前，不要把精力分散到 UI、打包或动态模型上。
+当前状态仍是 ACTIVE / P0；Batch009 是新的 accepted diagnostic checkpoint，不是正式 Gate PASS。
