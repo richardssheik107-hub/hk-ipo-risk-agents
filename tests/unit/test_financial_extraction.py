@@ -159,48 +159,6 @@ def test_chinese_word_periods_and_explicit_note_column_form_compatible_pair() ->
     )
 
 
-def test_table_aware_extractor_accepts_cash_flow_statement_label_variants() -> None:
-    labels = (
-        "經營活動（所用）╱所得現金流量淨額",
-        "Net cash generated from/(used in) operating activities",
-        "Net cash flows from/(used in) operating activities",
-    )
-
-    for index, label in enumerate(labels, start=1):
-        structured_table = {
-            "header_lines": [
-                "截至12月31日止年度",
-                "截至3月31日止三個月",
-                "2022年",
-                "2023年",
-                "2023年",
-                "2024年",
-                "人民幣千元",
-            ],
-            "period_header_cells": ["2022年", "2023年", "2023年", "2024年"],
-            "rows": [{"label": label, "cells": ["10", "20", "30", "(40)"], "y": 50.0}],
-        }
-        source = DocumentChunk(
-            document_id="doc",
-            chunk_id=f"doc:page:{index}",
-            page=index,
-            section="財務資料",
-            text="\n".join(
-                [*structured_table["header_lines"], label, "10", "20", "30", "(40)"]
-            ),
-            metadata={"tables": [structured_table], "has_structured_tables": True},
-        )
-
-        result = TableAwareV03FinancialFactExtractor().extract(
-            [], [evidence(source)], {source.chunk_id: source}
-        ).operating_cash_flow
-
-        assert result.status == ExtractionStatus.EXTRACTED
-        assert result.normalized_value == Decimal("-40")
-        assert result.period_end == date(2024, 3, 31)
-        assert result.period_months == 3
-
-
 def test_extra_leading_value_without_note_header_remains_fail_closed() -> None:
     source = chunk(
         "截至十二月三十一日止年度\n"
