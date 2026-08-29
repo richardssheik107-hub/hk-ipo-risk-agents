@@ -581,7 +581,7 @@ class OpenAIResponsesLLMProvider:
                     "arguments_length": len(arguments),
                     "first_char_class": self._first_char_class(arguments),
                     "arguments_hash": sha256(arguments.encode("utf-8")).hexdigest(),
-                    "errors": self._safe_validation_errors(exc),
+                    "errors": self._safe_validation_errors(exc, payload),
                 }
                 self.last_attempt_trace.append(
                     {
@@ -592,7 +592,7 @@ class OpenAIResponsesLLMProvider:
                         "retry_scheduled": structured_attempt < total_validation_attempts,
                     }
                 )
-                validation_feedback = self._validation_feedback(exc)
+                validation_feedback = self._validation_feedback(exc, payload)
             if structured_attempt >= total_validation_attempts:
                 raise LLMProviderError(
                     LLMFailureKind.RESPONSE_VALIDATION,
@@ -642,29 +642,78 @@ class OpenAIResponsesLLMProvider:
                 return arguments if isinstance(arguments, str) else None
         return None
 
-    @staticmethod
-    def _safe_validation_errors(exc: ValidationError) -> list[dict[str, str]]:
+    @classmethod
+    def _safe_validation_errors(
+        cls, exc: ValidationError, payload: Any | None = None
+    ) -> list[dict[str, str]]:
         safe_errors = []
         for error in exc.errors(include_input=False)[:8]:
-            path = ".".join(str(part) for part in error.get("loc", ())) or "<root>"
-            safe_errors.append(
-                {
-                    "path": path,
-                    "type": str(error.get("type", "validation_error")),
-                    "message": str(error.get("msg", "invalid value")),
-                }
-            )
+            location = tuple(error.get("loc", ()))
+            item = {
+                "path": ".".join(str(part) for part in location) or "<root>",
+                "type": str(error.get("type", "validation_error")),
+                "message": str(error.get("msg", "invalid value")),
+            }
+            if payload is not None:
+                item["input_class"] = cls._safe_input_class(payload, location)
+            safe_errors.append(item)
         return safe_errors
 
     @classmethod
-    def _validation_feedback(cls, exc: ValidationError) -> str:
-        safe_errors = cls._safe_validation_errors(exc)
+    def _validation_feedback(
+        cls, exc: ValidationError, payload: Any | None = None
+    ) -> str:
+        safe_errors = cls._safe_validation_errors(exc, payload)
         return (
             "The previous structured result failed local schema validation. Submit a "
             "corrected function call using only the same supplied Evidence; do not invent "
             "facts just to satisfy the schema. Validation errors: "
             + json.dumps(safe_errors, ensure_ascii=False, separators=(",", ":"))
         )
+
+    @staticmethod
+    def _safe_input_class(payload: Any, location: tuple[Any, ...]) -> str:
+        """Describe an invalid value without persisting provider content."""
+
+        value = payload
+        try:
+            for part in location:
+                value = value[part] if isinstance(part, int) else value[str(part)]
+        except (KeyError, IndexError, TypeError):
+            return "unavailable"
+        if value is None:
+            return "null"
+        if isinstance(value, bool):
+            return "boolean"
+        if isinstance(value, (int, float)):
+            return "number"
+        if isinstance(value, list):
+            return "array"
+        if isinstance(value, dict):
+            return "object"
+        if not isinstance(value, str):
+            return "other"
+        stripped = value.strip()
+        if not stripped:
+            return "string_empty"
+        normalized = stripped.casefold().replace("_", " ").replace("-", " ")
+        if normalized in {
+            "unknown",
+            "not disclosed",
+            "not available",
+            "not applicable",
+            "n/a",
+            "na",
+            "none",
+            "null",
+            "undisclosed",
+            "未知",
+            "未披露",
+            "不适用",
+            "不適用",
+        }:
+            return "string_placeholder"
+        return "string_other"
 
     @staticmethod
     def _first_char_class(value: str) -> str:
