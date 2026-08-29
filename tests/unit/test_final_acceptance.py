@@ -32,6 +32,9 @@ def test_final_acceptance_runtime_audits_are_read_only() -> None:
     specs = {item.name: item for item in command_specs()}
     assert "--no-write" in specs["dynamic_market_strict"].argv
     assert "--no-write" in specs["dynamic_model_strict"].argv
+    assert specs["product_capability_acceptance"].argv[-1] == (
+        "scripts/check_final_product_capabilities.py"
+    )
 
 
 def test_missing_formal_artifacts_remain_blockers(tmp_path: Path) -> None:

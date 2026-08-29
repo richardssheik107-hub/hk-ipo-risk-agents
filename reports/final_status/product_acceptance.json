@@ -1,0 +1,91 @@
+{
+  "schema_version": "competition_product_acceptance_v1",
+  "status": "pass",
+  "truthful_channel_states": true,
+  "modes": {
+    "offline_demo_replay": {
+      "status": "pass",
+      "checks": {
+        "three_replayable_cases": true,
+        "canonical_bundle_66_files": true,
+        "runtime_equivalent": true,
+        "three_schema_validated_cases": true,
+        "seven_stage_21_of_21": true,
+        "market_and_model_three_of_three": true
+      }
+    },
+    "historical_governed_ipo": {
+      "status": "pass",
+      "checks": {
+        "governed_cases_562": true,
+        "historical_runtime_zero_errors": true,
+        "historical_paths_include_frozen_and_dynamic": true,
+        "frozen_model_runtime_pass": true,
+        "historical_model_inference": true
+      }
+    },
+    "fresh_new_ipo_analysis": {
+      "status": "pass",
+      "checks": {
+        "inside_coverage_dynamic_market": true,
+        "inside_coverage_frozen_model_and_shap": true,
+        "outside_coverage_honest_market_unavailable": true,
+        "outside_coverage_honest_model_unavailable": true
+      },
+      "availability_semantics": "available, partial and unavailable are governed runtime states; missing data is never zero-filled"
+    }
+  },
+  "surface_checks": {
+    "streamlit_product_surface_present": true,
+    "offline_replay_loader_present": true,
+    "channel_truth_projection_present": true,
+    "single_and_batch_reports_present": true
+  },
+  "targeted_test_files": [
+    "tests/unit/test_bounded_document_semantics.py",
+    "tests/unit/test_ipo_structure_features.py",
+    "tests/contract/test_v046_human_review_api.py",
+    "tests/integration/test_v04_final_supervision_pipeline.py",
+    "tests/unit/test_v045_competition_runtime_view.py",
+    "tests/unit/test_v045_team_clone_ready.py"
+  ],
+  "evidence": [
+    {
+      "path": "reports/v045_demo_bundle/demo_manifest.json",
+      "sha256": "a7d6b03486cab877b56ccd5edb5f57945ab8d7e6561bd72ea50198c72f907028",
+      "size_bytes": 15125
+    },
+    {
+      "path": "reports/final_status/current_runtime_snapshot.json",
+      "sha256": "b01630bc7e4e825483fc8884f363bbe18b0d83503199a42ac1c33383780ab11f",
+      "size_bytes": 2717
+    },
+    {
+      "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
+      "sha256": "8b11af017e38e80cded8e066997b415b1ceec6355da013c06eb4f94ad404513b",
+      "size_bytes": 381109
+    },
+    {
+      "path": "app/streamlit_app.py",
+      "sha256": "d9c4f121c04410e9519e2334162a7555174199244fceecb3997f631c31cf441f",
+      "size_bytes": 43650
+    },
+    {
+      "path": "app/competition_ui.py",
+      "sha256": "e5a7c0d5a1bc88949a708dd1b4414ae111923a2e1c4eac78c15647094ba76136",
+      "size_bytes": 145614
+    },
+    {
+      "path": "src/ipo_risk/runtime/demo_replay.py",
+      "sha256": "e5f0d6658f7f2fdb2208bd8af7eb55c04252d9aac84a08ded7a5657429928726",
+      "size_bytes": 20636
+    }
+  ],
+  "governance": {
+    "validation_opened": false,
+    "blind_2025_y_accessed": false,
+    "ui_computes_or_invents_channel_values": false,
+    "human_review_required": false
+  },
+  "content_hash": "0956b910ac1ffcad073e32ce31c480b4be056bd9f6c1f93126f0c0e198482d13"
+}

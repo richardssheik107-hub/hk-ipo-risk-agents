@@ -328,6 +328,23 @@ team-ready merge SHA = 732c5fd7b609b1a6589630b6e6a559c117206747
 
 Human Review UI 可以展示，但不需要真人评分。
 
+统一检查入口：
+
+```bash
+python scripts/check_final_product_capabilities.py
+```
+
+该命令运行定向测试，并重建核对：
+
+```text
+reports/final_status/product_acceptance.json
+reports/final_status/capability_manifest.json
+```
+
+禁止手工编辑两份清单。所有 8 项 capability proof 都标记为
+`QUALITATIVE_DEMONSTRATION` 和 `included_in_m1_m2=false`；Fresh New-IPO 的
+覆盖外 `UNAVAILABLE` 也是正确的 fail-closed 证明，不得改写成成功率。
+
 ## 9. Evidence screenshot export
 
 对新的真实运行：
@@ -420,8 +437,8 @@ Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本�
 [x] canonical replay / team clone
 [x] Dynamic Market-X strict historical/fresh classification audit
 [x] Dynamic Model / SHAP runtime（PR #197 strict audit）
-[ ] Dynamic New-IPO full-chain capability proof
-[ ] competition capability cases
+[x] Dynamic New-IPO governed Market-X → Model/SHAP + fail-closed proof
+[x] competition capability cases（8/8 qualitative, excluded from M1/M2）
 [ ] frozen one-shot Validation
 [ ] latest-main CI after final freeze
 [ ] Blind / provenance / determinism / security

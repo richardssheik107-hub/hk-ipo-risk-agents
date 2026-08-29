@@ -517,6 +517,11 @@ submission ZIP path/hash
 known limitations
 ```
 
+当前 G5/G6 交付已关闭：`product_acceptance.json` 证明 Offline Demo Replay、Historical
+Governed IPO、Fresh New-IPO Analysis 三模式；`capability_manifest.json` 证明 8/8
+competition capabilities。两者由 `scripts/check_final_product_capabilities.py` 根据当前
+artifact/hash 重建校验，均不打开 Validation 或 Blind，且 capability 不计入 M1/M2。
+
 ## 18. 禁止事项
 
 禁止：

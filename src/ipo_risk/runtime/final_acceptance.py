@@ -105,6 +105,10 @@ def command_specs(*, include_full_tests: bool = True) -> list[CommandSpec]:
                     "--no-write",
                 ),
             ),
+            CommandSpec(
+                "product_capability_acceptance",
+                (python, "scripts/check_final_product_capabilities.py"),
+            ),
             CommandSpec("git_diff_check", ("git", "diff", "--check"), True),
             CommandSpec(
                 "tracked_worktree_clean",
