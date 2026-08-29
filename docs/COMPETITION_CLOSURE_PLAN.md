@@ -132,6 +132,11 @@ fixed10 只做 microscope；有 meaningful gain 后尽快扩到 20/40/ALL79 Deve
 
 当前已有稳定产品壳、Evidence Viewer、Market / Model 面板、Final Supervisor、Replay、发行人 catalog 快速匹配。
 
+Track B 的最终验收已由 `reports/final_status/product_acceptance.json` 关闭为 **PASS**。
+该清单用当前 artifact hash 和定向测试证明三种模式，并由
+`scripts/check_final_product_capabilities.py` 做 deterministic rebuild；UI 不计算或伪造
+Market / Model / Evidence channel 值。
+
 最终 UI 明确支持：
 
 ```text
@@ -250,6 +255,11 @@ Human Review UI/export 可以保留，但不是 Release Gate，不需要补 6 �
 - Dynamic New-IPO proof。
 
 无 Existing Gold 的能力标记 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2。
+
+上述 8/8 能力已记录于 `reports/final_status/capability_manifest.json`，状态为 **PASS**。
+每项均绑定源码、测试或 runtime artifact 的 SHA-256 与限制说明；全部
+`included_in_m1_m2=false`。Fresh New-IPO 的结论是受治理的覆盖内可用/部分可用和覆盖外
+明确不可用，不是 Validation 或 Blind 效果声明。
 
 ## 8. 并行依赖
 

@@ -1,0 +1,273 @@
+{
+  "schema_version": "competition_capability_manifest_v1",
+  "status": "pass",
+  "capabilities": [
+    "core_pipeline_progress",
+    "text_embellishment",
+    "related_party_transaction",
+    "comparable_ipo_valuation",
+    "evidence_screenshot",
+    "single_batch_report",
+    "api_ui",
+    "dynamic_new_ipo"
+  ],
+  "capability_details": [
+    {
+      "capability": "core_pipeline_progress",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "The canonical replay demonstrates all seven governed stages for three cases.",
+      "checks": {
+        "product_gate_modes_pass": true,
+        "seven_stage_21_of_21": true
+      },
+      "evidence": [
+        {
+          "path": "reports/final_status/current_runtime_snapshot.json",
+          "sha256": "b01630bc7e4e825483fc8884f363bbe18b0d83503199a42ac1c33383780ab11f",
+          "size_bytes": 2717
+        },
+        {
+          "path": "reports/v045_demo_bundle/summary.json",
+          "sha256": "7d1f564f1aaa1ba3d65e4cc0523ac306cc41f8ea681bbf3c690cae3b041c7c52",
+          "size_bytes": 17393
+        }
+      ],
+      "limitations": "Recorded replay is labelled as replay and is not live inference.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "text_embellishment",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "Disclosure-tone proposals are structured and rejected when citations leave bounded Evidence.",
+      "checks": {
+        "bounded_tone_contract": true,
+        "scope_guard_test": true
+      },
+      "evidence": [
+        {
+          "path": "src/ipo_risk/extraction/bounded_semantics.py",
+          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
+          "size_bytes": 5709
+        },
+        {
+          "path": "tests/unit/test_bounded_document_semantics.py",
+          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
+          "size_bytes": 4227
+        }
+      ],
+      "limitations": "Qualitative contract demonstration only; no new Gold or M1/M2 unit is claimed.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "related_party_transaction",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "Related-party transaction proposals require counterparty, relationship, nature and bounded Evidence.",
+      "checks": {
+        "structured_related_party_contract": true,
+        "private_proposal_test": true
+      },
+      "evidence": [
+        {
+          "path": "src/ipo_risk/extraction/bounded_semantics.py",
+          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
+          "size_bytes": 5709
+        },
+        {
+          "path": "tests/unit/test_bounded_document_semantics.py",
+          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
+          "size_bytes": 4227
+        }
+      ],
+      "limitations": "Private structured proposal, not a registered production RiskItem or a scored M1/M2 family.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "comparable_ipo_valuation",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "The deterministic IPO-structure lane computes price-to-adjusted-NTA and preserves missingness.",
+      "checks": {
+        "valuation_feature_contract": true,
+        "valuation_formula_test": true,
+        "same_industry_market_context": true
+      },
+      "evidence": [
+        {
+          "path": "src/ipo_risk/market/ipo_structure_features.py",
+          "sha256": "5bb99d8f5ae20dbe0ea690907c1117c24ce972217e7d3bda270031af22546416",
+          "size_bytes": 3973
+        },
+        {
+          "path": "tests/unit/test_ipo_structure_features.py",
+          "sha256": "248644a66e5bde723e690fa29bc4e37b20483b7f28a2b9d32e0c4e466772f7b8",
+          "size_bytes": 1205
+        },
+        {
+          "path": "reports/v046_market_runtime/historical_market_runtime_audit.json",
+          "sha256": "70184b65aa27cf8f0099afc24668153551ffb6e422d3f30ddca825ff6df5d64a",
+          "size_bytes": 437482
+        }
+      ],
+      "limitations": "Research/qualitative valuation context; it is not an investment recommendation or an M1/M2 metric.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "evidence_screenshot",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "Every cited canonical Evidence item has a hash-bound precise screenshot.",
+      "checks": {
+        "screenshots_17_of_17": true,
+        "precise_localisation_100_percent": true
+      },
+      "evidence": [
+        {
+          "path": "reports/v045_demo_bundle/screenshot_summary.json",
+          "sha256": "9efb775bcdb361c4c53f6db00d3249c15284935104c945f9df198f49f9e56475",
+          "size_bytes": 1098
+        },
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_01318/screenshot_manifest.json",
+          "sha256": "deb080ceaaf90a7dc616d775703aaeb883bd74079fb464a6a50e3da5ba2b3813",
+          "size_bytes": 20076
+        },
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_02410/screenshot_manifest.json",
+          "sha256": "9981eed63cd3749b3c9457a67fec89432ea51bb811eb17e79342d277ec39c203",
+          "size_bytes": 26118
+        },
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_02460/screenshot_manifest.json",
+          "sha256": "868adf4632af1806b80ce7b2655cf188ee48abb7bb2ee9b767f97bd381c7e649",
+          "size_bytes": 10480
+        }
+      ],
+      "limitations": "Applies to the three canonical recorded cases.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "single_batch_report",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "Three single-case reports and one batch report are committed in the canonical bundle.",
+      "checks": {
+        "three_single_reports": true,
+        "batch_json_and_markdown": true
+      },
+      "evidence": [
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_01318/case_report.md",
+          "sha256": "7a6a4fc27cf3eb01cd7064bd8ca4fb807953b9d2e17e92594caccc00fafa3a92",
+          "size_bytes": 4329
+        },
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_02410/case_report.md",
+          "sha256": "73a230c187cfdc6894117b2ed00ab656ae4321bda37c940719b3315582062329",
+          "size_bytes": 5781
+        },
+        {
+          "path": "reports/v045_demo_bundle/ipo_2024_02460/case_report.md",
+          "sha256": "5f780428d689cbcf31d733897e1b25944d39810c68f78a1d7cb4698ac7415e19",
+          "size_bytes": 4412
+        },
+        {
+          "path": "reports/v045_demo_bundle/batch_report.json",
+          "sha256": "67ccfac105315c233283c5b49256378e114f586e40ce540e572e41a80a43aada",
+          "size_bytes": 9196
+        },
+        {
+          "path": "reports/v045_demo_bundle/batch_report.md",
+          "sha256": "a6330ca56c3b78656f7a60e704db49fa6a5fe1123edc5f9d73bf62f2d256131f",
+          "size_bytes": 4665
+        }
+      ],
+      "limitations": "Canonical reports are recorded artifacts and retain their recorded provenance.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "api_ui",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "The Streamlit workbench and governed review API expose tested contracts.",
+      "checks": {
+        "streamlit_surface": true,
+        "fastapi_contract": true,
+        "openapi_contract_test": true
+      },
+      "evidence": [
+        {
+          "path": "app/streamlit_app.py",
+          "sha256": "d9c4f121c04410e9519e2334162a7555174199244fceecb3997f631c31cf441f",
+          "size_bytes": 43650
+        },
+        {
+          "path": "app/competition_ui.py",
+          "sha256": "e5a7c0d5a1bc88949a708dd1b4414ae111923a2e1c4eac78c15647094ba76136",
+          "size_bytes": 145614
+        },
+        {
+          "path": "src/ipo_risk/api/human_review.py",
+          "sha256": "da12ac3051035c4ac82f8b3b2757ef5ce4a7e816cb62247e91de45db25751cf8",
+          "size_bytes": 10015
+        },
+        {
+          "path": "tests/contract/test_v046_human_review_api.py",
+          "sha256": "5f525ca87287c46ebae550ad843922ec889d46e8d0b0b46aef65fa60660d7baa",
+          "size_bytes": 8668
+        }
+      ],
+      "limitations": "Human review is optional and does not determine release readiness.",
+      "included_in_m1_m2": false
+    },
+    {
+      "capability": "dynamic_new_ipo",
+      "status": "pass",
+      "classification": "QUALITATIVE_DEMONSTRATION",
+      "claim": "An issuer outside the frozen universe receives PIT Market-X, frozen-model inference and native SHAP, or an explicit governed unavailable reason.",
+      "checks": {
+        "inside_coverage_dynamic_market": true,
+        "inside_coverage_model_shap": true,
+        "outside_coverage_fail_closed": true
+      },
+      "evidence": [
+        {
+          "path": "reports/v046_market_runtime/historical_market_runtime_audit.json",
+          "sha256": "70184b65aa27cf8f0099afc24668153551ffb6e422d3f30ddca825ff6df5d64a",
+          "size_bytes": 437482
+        },
+        {
+          "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
+          "sha256": "8b11af017e38e80cded8e066997b415b1ceec6355da013c06eb4f94ad404513b",
+          "size_bytes": 381109
+        },
+        {
+          "path": "tests/integration/test_v04_final_supervision_pipeline.py",
+          "sha256": "4a729072b1a79737b14f7ae04e59fa88f6d835276a80e3c448070b17ff87c4e9",
+          "size_bytes": 13913
+        }
+      ],
+      "limitations": "Qualitative governed probes only; no formal Validation or Blind result is claimed.",
+      "included_in_m1_m2": false
+    }
+  ],
+  "targeted_test_files": [
+    "tests/unit/test_bounded_document_semantics.py",
+    "tests/unit/test_ipo_structure_features.py",
+    "tests/contract/test_v046_human_review_api.py",
+    "tests/integration/test_v04_final_supervision_pipeline.py",
+    "tests/unit/test_v045_competition_runtime_view.py",
+    "tests/unit/test_v045_team_clone_ready.py"
+  ],
+  "governance": {
+    "all_demonstrations_are_qualitative": true,
+    "included_in_m1_m2": false,
+    "new_manual_annotations_added": false,
+    "existing_gold_modified": false,
+    "validation_opened": false,
+    "blind_2025_y_accessed": false
+  },
+  "content_hash": "1620a0fa7771813363f3a6b14fe8ae270cb7dedae451b3914b8174d207c5e99d"
+}
