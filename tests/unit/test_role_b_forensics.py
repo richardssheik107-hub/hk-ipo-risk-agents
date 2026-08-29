@@ -114,6 +114,26 @@ def test_llm_not_invoked_is_distinct_from_transport_failure() -> None:
     assert (root, proof) == ("llm_transport_failure", "PROVEN")
 
 
+def test_llm_required_risk_is_not_a_runtime_defect_in_offline_mode() -> None:
+    base = {
+        "source_risk_code": "redemption_rights",
+        "predicted_present": False,
+    }
+    parser = [{"anchor_found_any_page": True}]
+    retrieval = [{"agent_consumed_gold_anchor": True}]
+
+    root, proof, _ = _risk_root_cause(
+        base,
+        parser,
+        retrieval,
+        None,
+        None,
+        llm_expected_available=False,
+    )
+
+    assert (root, proof) == ("llm_required_but_offline_mode", "PROVEN")
+
+
 def test_correct_unit_is_not_assigned_a_failure_root_cause() -> None:
     row = {"source_risk_code": "redemption_rights", "correct": True}
     root, proof, _ = _risk_root_cause(
