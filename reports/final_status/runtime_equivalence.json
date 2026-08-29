@@ -1,0 +1,22 @@
+{
+  "schema_version": "v045_runtime_equivalence_v1",
+  "recorded_run_sha": "3d81e5d0d71aeb5ffc76e3f123e8eecb5c75af8d",
+  "release_head_sha": "802bf5095e0db6a604dcb762e1070563f8cb1b34",
+  "runtime_equivalent": true,
+  "changed_files": [
+    ".github/workflows/role-d-runtime.yml"
+  ],
+  "changed_file_statuses": [
+    {
+      "status": "A",
+      "path": ".github/workflows/role-d-runtime.yml"
+    }
+  ],
+  "allowed_non_runtime_files": [
+    ".github/workflows/role-d-runtime.yml"
+  ],
+  "runtime_files_changed": [],
+  "runtime_behavior_changed": false,
+  "rerun_required": false,
+  "statement": "The recorded final-three run predates a rebase whose only material file addition is a CI workflow. Runtime source/configuration is unchanged."
+}

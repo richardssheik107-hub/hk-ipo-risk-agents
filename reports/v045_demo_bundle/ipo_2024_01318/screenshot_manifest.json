@@ -1,0 +1,582 @@
+{
+  "schema_version": "v045_role_e_evidence_screenshot_manifest_v1",
+  "case_id": "ipo_2024_01318",
+  "stock_code": "1318.HK",
+  "status": "rendered",
+  "statement": "Each image is one physical prospectus page as it is, with the located region outlined; the manifest binds it to the source PDF hash, the page, the geometry and the image hash.",
+  "render_dpi": 130,
+  "render_engine": "pymupdf",
+  "source_pdf": {
+    "sha256": "751fbe516187b926f4292e7c2251812a173b053f53c56d5657e4789c6e5f79a3",
+    "byte_size": 7933615,
+    "expected_sha256": "751fbe516187b926f4292e7c2251812a173b053f53c56d5657e4789c6e5f79a3",
+    "sha256_matches_expected": true,
+    "path_recorded": false
+  },
+  "cited_evidence_count": 6,
+  "screenshot_count": 6,
+  "precise_localisation_count": 6,
+  "page_level_fallback_count": 0,
+  "no_geometry_count": 0,
+  "unrendered_count": 0,
+  "ambiguous_anchor_count": 0,
+  "granularity_counts": {
+    "snippet_line_match": 6
+  },
+  "granularity_note": "snippet_line_match / keyword_match are PDF coordinates PyMuPDF found for text that is in the retrieved snippet. page_text_union is the parser's page-level region and is never reported as a snippet box. unavailable means the page was rendered with no box drawn.",
+  "items": [
+    {
+      "evidence_id": "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+      "risk_ids": [
+        "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+      ],
+      "risk_codes": [
+        "customer_concentration"
+      ],
+      "page": 263,
+      "recorded_bbox": [
+        85.03878784179688,
+        29.519702911376953,
+        510.3561096191406,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.0497817993164,
+            373.1103820800781,
+            510.2438049316406,
+            387.2893981933594
+          ],
+          [
+            85.03880310058594,
+            337.1183776855469,
+            510.2328186035156,
+            351.2973937988281
+          ],
+          [
+            141.73580932617188,
+            97.2643814086914,
+            510.3561096191406,
+            108.8113784790039
+          ]
+        ],
+        "bbox": [
+          85.03880310058594,
+          97.2643814086914,
+          510.3561096191406,
+          387.2893981933594
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "人民幣174.2百萬元、人民幣196.7百萬元、人民幣250.2百萬元及人民幣1…",
+            "char_length": 48,
+            "sha256": "96574846b1131dad0c7288aea03025687cfb8c1c6a8e69f0d89fbfaae7ec4cce",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "一家高端跨國美妝零售商）以及線下及線上經銷商。於2021年、2022年、2023…",
+            "char_length": 43,
+            "sha256": "02f53ef44f78997a3eb75bf7c903f0046ac1782977a0229aa7c06d1c19b078e5",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "包括瑩特麗科技（蘇州工業園區）有限公司及瑩特麗（上海）貿易有限公司應佔交易金額，…",
+            "char_length": 41,
+            "sha256": "2f6e5a6bb83d7cfffdc833ba8947b7bc4f39c367f9df6a79f5197ac58ab4f02b",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0263_f08e8780-872d-5ddb-be4b-2a7a10d50be4.png",
+        "sha256": "2877dafd54a18b5c48e9b54de7b297a0dafcfb48e6b7cc48610deb990bf827f5",
+        "byte_size": 148386,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "046cb1a1-309f-5139-a574-59947d4d60aa",
+      "risk_ids": [
+        "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+      ],
+      "risk_codes": [
+        "customer_concentration"
+      ],
+      "page": 268,
+      "recorded_bbox": [
+        85.03880310058594,
+        29.519702911376953,
+        510.3583068847656,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.07180786132812,
+            311.1063537597656,
+            510.2768249511719,
+            325.2853698730469
+          ],
+          [
+            85.07180786132812,
+            383.0903625488281,
+            510.23284912109375,
+            397.2693786621094
+          ],
+          [
+            85.06082153320312,
+            275.1143493652344,
+            510.2847900390625,
+            289.2933654785156
+          ]
+        ],
+        "bbox": [
+          85.06082153320312,
+          275.1143493652344,
+          510.2847900390625,
+          397.2693786621094
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "支的5.3%、8.7%及8.5%；及(ii)我們對該供應商－客戶的銷售額分別為人…",
+            "char_length": 47,
+            "sha256": "26ffd8d3b2be5b9eb246a750a45883ede5f060924c86e4ffb96932c2f48684bb",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "應商－客戶的毛利率分別為84.7%、84.0%及84.1%。該供應商－客戶自20…",
+            "char_length": 46,
+            "sha256": "7736fe97919209e30b34a39ed0f31f9de846ef0dd0bb26a1aac4557523daddc5",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "2021年、2022年及2023年各年，(i)我們向該供應商－客戶採購服務金額分…",
+            "char_length": 45,
+            "sha256": "88f0999ac8abeb14b44c93fb8f7d7457cf8b397957b068ea55dcf878e850725b",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0268_046cb1a1-309f-5139-a574-59947d4d60aa.png",
+        "sha256": "d2c6e82a717fd33d6440f3e6a606ff30a0c019ea53c2f7989309ff54abebb008",
+        "byte_size": 275803,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+      "risk_ids": [
+        "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+      ],
+      "risk_codes": [
+        "customer_concentration"
+      ],
+      "page": 20,
+      "recorded_bbox": [
+        85.03878784179688,
+        29.519702911376953,
+        510.3866271972656,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.0497817993164,
+            321.7893981933594,
+            510.2438049316406,
+            335.9684143066406
+          ],
+          [
+            85.06076049804688,
+            390.7814025878906,
+            510.27691650390625,
+            404.9604187011719
+          ],
+          [
+            85.06076049804688,
+            339.785400390625,
+            490.8187561035156,
+            353.96441650390625
+          ]
+        ],
+        "bbox": [
+          85.0497817993164,
+          321.7893981933594,
+          510.27691650390625,
+          404.9604187011719
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "人民幣174.2百萬元、人民幣196.7百萬元、人民幣250.2百萬元及人民幣1…",
+            "char_length": 48,
+            "sha256": "96574846b1131dad0c7288aea03025687cfb8c1c6a8e69f0d89fbfaae7ec4cce",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "運輸服務供應商。於2021年、2022年、2023年及截至2024年6月30日止…",
+            "char_length": 46,
+            "sha256": "c35a2087a3a973f61387292e54b294c29e49f0082bbf74a751ad8d45271d06e3",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "佔我們同期總收入的10.9%、10.7%、8.8%及9.7%。請參閱「業務－我們…",
+            "char_length": 45,
+            "sha256": "9139224b4e33b27cd542746c02bb9881c327e8746deab687cdd04e43eee9f027",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0020_1e0bb211-ce86-5c24-a1d8-9c0c873edb8b.png",
+        "sha256": "489b982d74ea03559e97dd0bb50e02935de91dde6a40910bffd52f05e1640efc",
+        "byte_size": 241381,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "522d7f33-bb28-5954-a241-eb084d13cd82",
+      "risk_ids": [
+        "15180087-4d5f-59d0-860b-67bbf39377cb"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 76,
+      "recorded_bbox": [
+        85.03939819335938,
+        29.519702911376953,
+        510.3689880371094,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03939819335938,
+            428.8611755371094,
+            510.25537109375,
+            443.0401916503906
+          ],
+          [
+            85.03939819335938,
+            284.8821716308594,
+            510.1587219238281,
+            298.99517822265625
+          ],
+          [
+            85.03939819335938,
+            68.90839385986328,
+            510.255615234375,
+            83.02139282226562
+          ]
+        ],
+        "bbox": [
+          85.03939819335938,
+          68.90839385986328,
+          510.255615234375,
+          443.0401916503906
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "請參閱「業務－僱員－社會保險及住房公積金」。截至2021年、2022年及2023…",
+            "char_length": 43,
+            "sha256": "1f246a601237e0fe61cc3dec60bcf2b2c5fea885d233d84797070fbfe7d1419c",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "公積金」。這種安排在中國並不少見，但並非嚴格遵守中國的相關法律法規。據我們中",
+            "char_length": 38,
+            "sha256": "8bb8213854b1a029cd5183b5b83dc81df9d6ce5215182d335af4d3360183f9a5",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "對我們提起的訴訟、索賠、糾紛、監管調查或法律程序可能由於供應商出售予我們的",
+            "char_length": 37,
+            "sha256": "89528efa3706897070864e14eb647a8dcc7d2f210f8f2e2cebf39ac40e144d7a",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0076_522d7f33-bb28-5954-a241-eb084d13cd82.png",
+        "sha256": "ea7be36c5d98597101244269b57da4e11938262094fc5f85e24f94fa52a56b27",
+        "byte_size": 305813,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "be673ef8-d819-50c4-90f7-0902bee50b2a",
+      "risk_ids": [
+        "15180087-4d5f-59d0-860b-67bbf39377cb"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 273,
+      "recorded_bbox": [
+        85.02841186523438,
+        29.519702911376953,
+        510.3432312011719,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.03939819335938,
+            104.90033721923828,
+            510.2192687988281,
+            119.07933807373047
+          ],
+          [
+            85.03939819335938,
+            410.8541259765625,
+            510.25537109375,
+            425.03314208984375
+          ],
+          [
+            85.03939819335938,
+            392.8581237792969,
+            510.23345947265625,
+            407.0371398925781
+          ]
+        ],
+        "bbox": [
+          85.03939819335938,
+          104.90033721923828,
+          510.25537109375,
+          425.03314208984375
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "影響。此外，根據人力資源和社會保障部於2018年9月21日發佈的《關於貫徹落實國…",
+            "char_length": 41,
+            "sha256": "c40640b1e1a9ce6c1e87e890e27be0f20e62ddddd7f42cd4a0a551bcef2f0307",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "期間，第三方人力資源機構並無與我們發生任何糾紛；(iii)其在此方面並無面臨任何…",
+            "char_length": 41,
+            "sha256": "5f57536ab8076a987a88330e840b1c6a2e4fb52ae3d79b1bd3abd8784380a0be",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "議，在其提供服務期間按時為相關僱員繳納社會保險及住房公積金；(ii)於其提供服務",
+            "char_length": 40,
+            "sha256": "8e79a480f84304009740b88529eda1f8fd1171007308229368e4de8b66bd77af",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0273_be673ef8-d819-50c4-90f7-0902bee50b2a.png",
+        "sha256": "03b46da221fd8ddc77be6d6590c3791a91e0141090d565007563b57a1e222f5f",
+        "byte_size": 269348,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    },
+    {
+      "evidence_id": "7a94777b-08aa-53e8-a759-fdad8487f6ec",
+      "risk_ids": [
+        "15180087-4d5f-59d0-860b-67bbf39377cb"
+      ],
+      "risk_codes": [
+        "material_litigation_compliance"
+      ],
+      "page": 274,
+      "recorded_bbox": [
+        85.03880310058594,
+        29.519702911376953,
+        510.37567138671875,
+        760.7545776367188
+      ],
+      "recorded_bbox_granularity": null,
+      "status": "rendered",
+      "reason": null,
+      "localisation": {
+        "granularity": "snippet_line_match",
+        "method": "pymupdf_search_snippet_line",
+        "precise_snippet_localisation": true,
+        "rect_count": 3,
+        "rects": [
+          [
+            85.0498046875,
+            122.89630889892578,
+            510.2547912597656,
+            137.07530212402344
+          ],
+          [
+            85.038818359375,
+            104.90033721923828,
+            510.2933349609375,
+            119.07933807373047
+          ],
+          [
+            85.0498046875,
+            158.88824462890625,
+            510.1888122558594,
+            173.06724548339844
+          ]
+        ],
+        "bbox": [
+          85.038818359375,
+          104.90033721923828,
+          510.2933349609375,
+          173.06724548339844
+        ],
+        "anchors": [
+          {
+            "kind": "snippet_line",
+            "preview": "方面面臨任何投訴、調查、行政處罰、行政命令或強制執行判決；(iii)根據我們與第…",
+            "char_length": 41,
+            "sha256": "267dfb38c81f22e7b203f72baf6dd66dba27a3822dcb25838d7aef5565dcbce4",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "資源機構及╱或我們之間亦無發生任何糾紛；(ii)第三方人力資源機構及我們均無在此",
+            "char_length": 40,
+            "sha256": "2bc642401becf2e97c88e5ba443efef0349f5cd37032d404684b6cb24981be38",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          },
+          {
+            "kind": "snippet_line",
+            "preview": "公積金而違反合約而向其問責的權利；(iv)我們承諾於有關部門要求時，盡快及時支付",
+            "char_length": 40,
+            "sha256": "f677eba73f2e27384f0f294f7e533fcdf2745faeb75d70f086dc327345eb1482",
+            "matched_page_line_count": 1,
+            "accepted": true,
+            "narrowed_within_line": true,
+            "rejection_reason": null
+          }
+        ]
+      },
+      "highlight_drawn": true,
+      "screenshot": {
+        "filename": "page0274_7a94777b-08aa-53e8-a759-fdad8487f6ec.png",
+        "sha256": "f1903110ae3bb56b073439fe2eee95bf8e6c803c921962bda920e1ecf68afeda",
+        "byte_size": 259183,
+        "pixel_width": 1075,
+        "pixel_height": 1434,
+        "render_dpi": 130
+      }
+    }
+  ],
+  "screenshot_dir": "screenshots"
+}

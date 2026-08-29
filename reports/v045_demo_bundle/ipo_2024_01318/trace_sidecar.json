@@ -1,0 +1,2623 @@
+{
+  "identity": {
+    "schema_version": "competition_runtime_v1",
+    "case_id": "ipo_2024_01318",
+    "stock_code": "1318.HK",
+    "listing_date": "2024-12-10",
+    "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+    "provider_name": "openai_responses",
+    "model_name": "lightgbm",
+    "prompt_version": "v04_final_supervision_v3",
+    "provenance": {
+      "workflow": "v04_competition",
+      "trace_schema_version": "v04_e_agent_trace_v1",
+      "conflict_policy_version": "v04_e_conflict_policy_v1",
+      "recheck_policy_version": "v04_e_recheck_policy_v2",
+      "market_feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+      "trace_scope": "parse_through_final_supervision"
+    }
+  },
+  "agent_results": [
+    {
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "agent_name": "llm_final_supervisor",
+      "status": "available",
+      "risk_ids": [],
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "provider_name": "openai_responses",
+      "model_name": null,
+      "prompt_version": "v04_final_supervision_v3",
+      "warnings": [],
+      "metadata": {
+        "task": "synthesise governed channels into a supervisory judgement",
+        "deterministic_severity_floor": "low",
+        "conflict_count": 5,
+        "creates_no_new_risk": true,
+        "probability_claimed": false
+      }
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "involved_agents": [
+        "financial",
+        "verifier"
+      ],
+      "risk_ids": [
+        "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+      ],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:agent_verifier_disagreement",
+        "risk_code:customer_concentration"
+      ],
+      "summary": "financial produced 1 customer_concentration risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 5 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "involved_agents": [
+        "legal",
+        "verifier"
+      ],
+      "risk_ids": [
+        "15180087-4d5f-59d0-860b-67bbf39377cb"
+      ],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:agent_verifier_disagreement",
+        "risk_code:material_litigation_compliance"
+      ],
+      "summary": "legal produced 1 material_litigation_compliance risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "involved_agents": [
+        "document_supervisor",
+        "financial"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:continuous_loss",
+        "diagnostic_code:conflicting_values"
+      ],
+      "summary": "financial held 3 bounded Evidence item(s) for continuous_loss and reported conflicting_values, while the document channel asserts nothing about continuous_loss: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "4e80db47-980c-5304-956d-5b7de2b2d65f",
+        "21511c3e-922e-54d1-83e2-6be88b2eb507",
+        "09d5ac0a-8a7b-52c8-91e2-1bb93294d9ab"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "involved_agents": [
+        "document_supervisor",
+        "financial"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:unresolved_agent_claim",
+        "risk_code:revenue_growth",
+        "diagnostic_code:needs_review"
+      ],
+      "summary": "financial held 1 bounded Evidence item(s) for revenue_growth and reported needs_review, while the document channel asserts nothing about revenue_growth: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "955909c5-479f-583c-bb76-f8ad077a39f6"
+      ],
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "involved_agents": [
+        "document_supervisor",
+        "frozen_model_channel"
+      ],
+      "risk_ids": [],
+      "claim_ids": [
+        "policy:v04_e_conflict_policy_v1",
+        "rule:document_model_divergence",
+        "model_feature:market_core__log_prior_ipo_funds_raised_30d",
+        "model_driver_direction:increases"
+      ],
+      "summary": "The frozen model's strongest driver market_core__log_prior_ipo_funds_raised_30d increases risk while the document channel reports no high or critical verified document risk; the uncalibrated score direction disagrees with the document.",
+      "evidence_ids": [],
+      "status": "unresolved",
+      "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    }
+  ],
+  "rechecks": [
+    {
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "requested_by": "final_supervisor",
+      "targets": [
+        "customer_concentration"
+      ],
+      "reason": "financial produced 1 customer_concentration risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b"
+      ],
+      "max_attempts": 1,
+      "status": "completed",
+      "created_at": "2026-08-29T05:25:35.504583Z"
+    },
+    {
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "requested_by": "final_supervisor",
+      "targets": [
+        "material_litigation_compliance"
+      ],
+      "reason": "legal produced 1 material_litigation_compliance risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+      "evidence_ids": [
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "max_attempts": 1,
+      "status": "completed",
+      "created_at": "2026-08-29T05:25:35.958602Z"
+    },
+    {
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "requested_by": "final_supervisor",
+      "targets": [
+        "continuous_loss"
+      ],
+      "reason": "financial held 3 bounded Evidence item(s) for continuous_loss and reported conflicting_values, while the document channel asserts nothing about continuous_loss: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "4e80db47-980c-5304-956d-5b7de2b2d65f",
+        "21511c3e-922e-54d1-83e2-6be88b2eb507",
+        "09d5ac0a-8a7b-52c8-91e2-1bb93294d9ab"
+      ],
+      "max_attempts": 1,
+      "status": "completed",
+      "created_at": "2026-08-29T05:25:36.774160Z"
+    },
+    {
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "requested_by": "final_supervisor",
+      "targets": [
+        "revenue_growth"
+      ],
+      "reason": "financial held 1 bounded Evidence item(s) for revenue_growth and reported needs_review, while the document channel asserts nothing about revenue_growth: Retrieved financial Evidence could not be mapped to clean facts.",
+      "evidence_ids": [
+        "955909c5-479f-583c-bb76-f8ad077a39f6"
+      ],
+      "max_attempts": 1,
+      "status": "completed",
+      "created_at": "2026-08-29T05:25:37.127877Z"
+    },
+    {
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "requested_by": "final_supervisor",
+      "targets": [
+        "document_supervisor",
+        "frozen_model_channel"
+      ],
+      "reason": "The frozen model's strongest driver market_core__log_prior_ipo_funds_raised_30d increases risk while the document channel reports no high or critical verified document risk; the uncalibrated score direction disagrees with the document.",
+      "evidence_ids": [],
+      "max_attempts": 1,
+      "status": "completed",
+      "created_at": "2026-08-29T05:25:37.874894Z"
+    }
+  ],
+  "trace_events": [
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:001:ipo_data_provider",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "agent",
+      "status": "completed",
+      "agent_name": "ipo_data_provider",
+      "action": "load_ipo_profile",
+      "tool_or_skill": "ipo_data_provider",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:01.671961Z",
+      "details": {
+        "step": 1,
+        "output_summary": "IPO profile loaded",
+        "log_id": "771f69b3-c0cb-405d-92fb-83159b34f356",
+        "no_evidence_reason": "ipo_data_provider is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:002:market_data_provider",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "market",
+      "status": "completed",
+      "agent_name": "market_data_provider",
+      "action": "load_market_snapshot",
+      "tool_or_skill": "market_data_provider",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:01.671961Z",
+      "details": {
+        "step": 2,
+        "output_summary": "market snapshot loaded",
+        "log_id": "a1fbcb26-94de-4098-9dca-6f5336aec9cb",
+        "no_evidence_reason": "market_data_provider is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:003:market_context",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "market",
+      "status": "completed",
+      "agent_name": "market_context",
+      "action": "context",
+      "tool_or_skill": "market_context",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:01.677369Z",
+      "details": {
+        "step": 3,
+        "output_summary": "market context available",
+        "log_id": "819827ea-34ba-4d5f-8999-e42d4fb12cc3",
+        "component_diagnostics": {
+          "status": "available",
+          "reason": "validated frozen PR-B Market-X Core projection",
+          "blocking_gate": null,
+          "observations": [
+            {
+              "name": "ipo_count_30d",
+              "value": 6.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "ipo_count_60d",
+              "value": 14.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "log_prior_ipo_funds_raised_30d",
+              "value": 22.898480966608595,
+              "unit": "log_currency",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "log_prior_ipo_funds_raised_60d",
+              "value": 23.88456377203046,
+              "unit": "log_currency",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "prior_ipo_funds_raised_30d_sample_count",
+              "value": 6.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "prior_ipo_funds_raised_60d_sample_count",
+              "value": 14.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "recent_ipo_break_rate",
+              "value": 0.42857142857142855,
+              "unit": "ratio",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "recent_ipo_return_5d",
+              "value": 0.02222786250427583,
+              "unit": "ratio",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "recent_ipo_1d_sample_count",
+              "value": 14.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "recent_ipo_5d_sample_count",
+              "value": 12.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "same_industry_ipo_count_180d",
+              "value": 0.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "same_industry_recent_break_rate",
+              "value": null,
+              "unit": "ratio",
+              "availability": "unavailable",
+              "missing_reason": "insufficient_governed_prelisting_history",
+              "derivation": "share of governed recent same-industry IPOs closing below offer on day one",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "same_industry_recent_return_5d",
+              "value": null,
+              "unit": "ratio",
+              "availability": "unavailable",
+              "missing_reason": "insufficient_governed_prelisting_history",
+              "derivation": "mean five-session return of governed recent same-industry IPOs",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "same_industry_recent_1d_sample_count",
+              "value": 0.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            },
+            {
+              "name": "same_industry_recent_5d_sample_count",
+              "value": 0.0,
+              "unit": "count",
+              "availability": "available",
+              "missing_reason": null,
+              "derivation": "frozen PR-B point-in-time Market-X Core feature",
+              "source": "pr_b_market_x_core"
+            }
+          ],
+          "feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+          "provenance": {
+            "feature_pipeline": "governed_pr_b_core",
+            "runtime_path": "frozen",
+            "frozen_artifact_read_attempted": true,
+            "case_id": "ipo_2024_01318",
+            "stock_code": "1318.HK",
+            "listing_date": "2024-12-10",
+            "dataset_split": "validation",
+            "artifact_content_hash": "54d5a94ad7f13fedc4a21f277ef51a0b7c1133aeda18f86d59c39fab99c791b8",
+            "cutoff_semantics": "strictly_before_target_listing_date",
+            "source_provenance": {
+              "ipo_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+              "official_bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
+              "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
+              "prior_ipo_history_start_date": "2020-02-14"
+            },
+            "extended_readiness_sha256": null
+          }
+        },
+        "no_evidence_reason": "market_context is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:market_intelligence:00",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "skill",
+      "status": "completed",
+      "agent_name": "market_intelligence",
+      "action": "deterministic_market_classification",
+      "tool_or_skill": "IPOHeatSkill",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "market_feature:recent_ipo_break_rate",
+        "market_feature:recent_ipo_return_5d",
+        "market_feature:recent_ipo_1d_sample_count",
+        "market_feature:recent_ipo_5d_sample_count"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:01.677369Z",
+      "details": {
+        "input_feature_ids": [
+          "recent_ipo_break_rate",
+          "recent_ipo_return_5d",
+          "recent_ipo_1d_sample_count",
+          "recent_ipo_5d_sample_count"
+        ],
+        "structured_output": {
+          "policy_version": "v04_ipo_heat_skill_v1",
+          "ipo_heat": "NEUTRAL",
+          "sample_strength": "STRONG",
+          "recent_break_pressure": "BALANCED",
+          "recent_return_condition": "POSITIVE",
+          "drivers": [
+            {
+              "driver_id": "recent_break_pressure",
+              "message": "Recent IPO break pressure is balanced.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "driver_id": "recent_return_condition",
+              "message": "Recent IPO five-session return condition is positive.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            }
+          ],
+          "missingness": {},
+          "source_feature_ids": [
+            "recent_ipo_break_rate",
+            "recent_ipo_return_5d",
+            "recent_ipo_1d_sample_count",
+            "recent_ipo_5d_sample_count"
+          ]
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:market_intelligence:01",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "skill",
+      "status": "completed",
+      "agent_name": "market_intelligence",
+      "action": "deterministic_market_classification",
+      "tool_or_skill": "MarketRegimeSkill",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "market_feature:hsi_return_5d",
+        "market_feature:hsi_return_20d",
+        "market_feature:market_volatility_20d",
+        "market_feature:market_turnover_20d_mean"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:01.677369Z",
+      "details": {
+        "input_feature_ids": [
+          "hsi_return_5d",
+          "hsi_return_20d",
+          "market_volatility_20d",
+          "market_turnover_20d_mean"
+        ],
+        "structured_output": {
+          "policy_version": "v04_market_regime_skill_v1",
+          "market_regime": "INSUFFICIENT_DATA",
+          "trend_condition": "UNAVAILABLE",
+          "volatility_condition": "UNAVAILABLE",
+          "liquidity_condition": "UNAVAILABLE",
+          "drivers": [],
+          "uncertainties": [
+            "Market turnover is unavailable."
+          ],
+          "missingness": {
+            "hsi_return_5d": "source_unavailable",
+            "hsi_return_20d": "source_unavailable",
+            "market_volatility_20d": "source_unavailable",
+            "market_turnover_20d_mean": "source_unavailable"
+          },
+          "source_feature_ids": [
+            "hsi_return_5d",
+            "hsi_return_20d",
+            "market_volatility_20d",
+            "market_turnover_20d_mean"
+          ]
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:003:market_intelligence",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "market",
+      "status": "completed",
+      "agent_name": "market_intelligence",
+      "action": "interpret_market_context",
+      "tool_or_skill": "market_intelligence",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:12.334404Z",
+      "details": {
+        "step": 3,
+        "output_summary": "governed MarketContext enriched; LLM interpretation available",
+        "log_id": "ee582941-39ba-4062-9ff1-b63de53edffe",
+        "component_diagnostics": {
+          "status": "completed",
+          "interpretation_status": "available",
+          "interpretation_reason": "structured grounded interpretation available",
+          "ipo_heat": {
+            "policy_version": "v04_ipo_heat_skill_v1",
+            "ipo_heat": "NEUTRAL",
+            "sample_strength": "STRONG",
+            "recent_break_pressure": "BALANCED",
+            "recent_return_condition": "POSITIVE",
+            "drivers": [
+              {
+                "driver_id": "recent_break_pressure",
+                "message": "Recent IPO break pressure is balanced.",
+                "source_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_1d_sample_count"
+                ]
+              },
+              {
+                "driver_id": "recent_return_condition",
+                "message": "Recent IPO five-session return condition is positive.",
+                "source_feature_ids": [
+                  "recent_ipo_return_5d",
+                  "recent_ipo_5d_sample_count"
+                ]
+              }
+            ],
+            "missingness": {},
+            "source_feature_ids": [
+              "recent_ipo_break_rate",
+              "recent_ipo_return_5d",
+              "recent_ipo_1d_sample_count",
+              "recent_ipo_5d_sample_count"
+            ]
+          },
+          "market_regime": {
+            "policy_version": "v04_market_regime_skill_v1",
+            "market_regime": "INSUFFICIENT_DATA",
+            "trend_condition": "UNAVAILABLE",
+            "volatility_condition": "UNAVAILABLE",
+            "liquidity_condition": "UNAVAILABLE",
+            "drivers": [],
+            "uncertainties": [
+              "Market turnover is unavailable."
+            ],
+            "missingness": {
+              "hsi_return_5d": "source_unavailable",
+              "hsi_return_20d": "source_unavailable",
+              "market_volatility_20d": "source_unavailable",
+              "market_turnover_20d_mean": "source_unavailable"
+            },
+            "source_feature_ids": [
+              "hsi_return_5d",
+              "hsi_return_20d",
+              "market_volatility_20d",
+              "market_turnover_20d_mean"
+            ]
+          },
+          "interpretation": {
+            "summary": "The market context shows neutral IPO heat with balanced break pressure and positive recent-listing returns, while market regime is insufficient data and liquidity is unavailable. Industry-specific IPO comparables are unavailable because there is no governed pre-listing history in the same industry.",
+            "market_regime_interpretation": "The market regime is classified as insufficient data. Core regime inputs such as market turnover are unavailable, and industry-specific pre-listing performance signals are PIT-blocked, so the broader regime picture cannot be confirmed beyond the IPO-specific evidence. Risk level is medium on the market side.",
+            "ipo_heat_interpretation": "IPO heat is neutral. Supply-side activity is moderate, with fewer new listings in the recent monthly window than the broader two-month window and a comparable fundraising pace. Demand-side signals are mixed: the recent break rate sits at a moderate level, indicating balanced price-discovery pressure, while the average recent listing return over the five-session horizon is positive, pointing to healthy aftermarket appetite.",
+            "liquidity_interpretation": "Liquidity condition is unavailable. Market turnover data are not provided, and no governed evidence supports a judgment on cash availability or trading depth; liquidity should be treated as unknown for this assessment.",
+            "key_drivers": [
+              {
+                "statement": "Recent IPO break pressure is balanced, with a moderate share of recent listings breaking price in early trading, leaving heat neutral rather than negative.",
+                "source_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_1d_sample_count"
+                ]
+              },
+              {
+                "statement": "The recent IPO return condition over the five-session horizon is positive, supporting neutral-to-constructive aftermarket appetite.",
+                "source_feature_ids": [
+                  "recent_ipo_return_5d",
+                  "recent_ipo_5d_sample_count"
+                ]
+              },
+              {
+                "statement": "New-listing supply is moderate: the count of recent offerings and the amount of funds they raised over the recent windows indicate steady but not overheated primary-market issuance.",
+                "source_feature_ids": [
+                  "ipo_count_30d",
+                  "ipo_count_60d",
+                  "log_prior_ipo_funds_raised_30d",
+                  "log_prior_ipo_funds_raised_60d",
+                  "prior_ipo_funds_raised_30d_sample_count",
+                  "prior_ipo_funds_raised_60d_sample_count"
+                ]
+              },
+              {
+                "statement": "No comparable same-industry listings are observed in the recent history, so industry-specific IPO evidence is unavailable.",
+                "source_feature_ids": [
+                  "same_industry_ipo_count_180d",
+                  "same_industry_recent_break_rate",
+                  "same_industry_recent_return_5d",
+                  "same_industry_recent_1d_sample_count",
+                  "same_industry_recent_5d_sample_count"
+                ]
+              }
+            ],
+            "uncertainties": [
+              "Market turnover is unavailable, leaving the liquidity condition unresolved.",
+              "Industry-specific IPO performance signals are PIT-blocked due to insufficient governed pre-listing history, so same-industry heat cannot be assessed.",
+              "The recent-listing sample underlying break-rate and return observations is small, making the neutral heat reading less robust."
+            ]
+          },
+          "agent_result": {
+            "case_id": "ipo_2024_01318",
+            "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+            "agent_name": "market_intelligence",
+            "status": "completed",
+            "risk_ids": [],
+            "evidence_ids": [],
+            "calculation_ids": [],
+            "provider_name": "openai_responses",
+            "model_name": "ark-code-latest",
+            "prompt_version": "v04_market_interpretation_v2",
+            "warnings": [],
+            "metadata": {
+              "task": "interpret governed pre-listing market context",
+              "market_context_status": "available",
+              "source_feature_ids": [
+                "ipo_count_30d",
+                "ipo_count_60d",
+                "log_prior_ipo_funds_raised_30d",
+                "log_prior_ipo_funds_raised_60d",
+                "prior_ipo_funds_raised_30d_sample_count",
+                "prior_ipo_funds_raised_60d_sample_count",
+                "recent_ipo_break_rate",
+                "recent_ipo_return_5d",
+                "recent_ipo_1d_sample_count",
+                "recent_ipo_5d_sample_count",
+                "same_industry_ipo_count_180d",
+                "same_industry_recent_break_rate",
+                "same_industry_recent_return_5d",
+                "same_industry_recent_1d_sample_count",
+                "same_industry_recent_5d_sample_count"
+              ],
+              "market_side_risk_only": true,
+              "latency_ms": 10656
+            }
+          },
+          "trace_events": [
+            {
+              "event_id": "3dce005b-b1ca-45c4-a3d7-8df2b919a4d7",
+              "case_id": "ipo_2024_01318",
+              "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+              "event_type": "skill",
+              "status": "completed",
+              "agent_name": "market_intelligence",
+              "action": "deterministic_market_classification",
+              "tool_or_skill": "IPOHeatSkill",
+              "provider_name": null,
+              "model_name": null,
+              "prompt_version": null,
+              "evidence_ids": [
+                "market_feature:recent_ipo_break_rate",
+                "market_feature:recent_ipo_return_5d",
+                "market_feature:recent_ipo_1d_sample_count",
+                "market_feature:recent_ipo_5d_sample_count"
+              ],
+              "calculation_ids": [],
+              "conflict_id": null,
+              "recheck_id": null,
+              "latency_ms": 0,
+              "request_id": null,
+              "raw_response_hash": null,
+              "occurred_at": "2026-08-29T05:25:01.677369Z",
+              "details": {
+                "input_feature_ids": [
+                  "recent_ipo_break_rate",
+                  "recent_ipo_return_5d",
+                  "recent_ipo_1d_sample_count",
+                  "recent_ipo_5d_sample_count"
+                ],
+                "structured_output": {
+                  "policy_version": "v04_ipo_heat_skill_v1",
+                  "ipo_heat": "NEUTRAL",
+                  "sample_strength": "STRONG",
+                  "recent_break_pressure": "BALANCED",
+                  "recent_return_condition": "POSITIVE",
+                  "drivers": [
+                    {
+                      "driver_id": "recent_break_pressure",
+                      "message": "Recent IPO break pressure is balanced.",
+                      "source_feature_ids": [
+                        "recent_ipo_break_rate",
+                        "recent_ipo_1d_sample_count"
+                      ]
+                    },
+                    {
+                      "driver_id": "recent_return_condition",
+                      "message": "Recent IPO five-session return condition is positive.",
+                      "source_feature_ids": [
+                        "recent_ipo_return_5d",
+                        "recent_ipo_5d_sample_count"
+                      ]
+                    }
+                  ],
+                  "missingness": {},
+                  "source_feature_ids": [
+                    "recent_ipo_break_rate",
+                    "recent_ipo_return_5d",
+                    "recent_ipo_1d_sample_count",
+                    "recent_ipo_5d_sample_count"
+                  ]
+                }
+              }
+            },
+            {
+              "event_id": "eba98301-b0c3-466a-8ce3-909dd1edea31",
+              "case_id": "ipo_2024_01318",
+              "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+              "event_type": "skill",
+              "status": "completed",
+              "agent_name": "market_intelligence",
+              "action": "deterministic_market_classification",
+              "tool_or_skill": "MarketRegimeSkill",
+              "provider_name": null,
+              "model_name": null,
+              "prompt_version": null,
+              "evidence_ids": [
+                "market_feature:hsi_return_5d",
+                "market_feature:hsi_return_20d",
+                "market_feature:market_volatility_20d",
+                "market_feature:market_turnover_20d_mean"
+              ],
+              "calculation_ids": [],
+              "conflict_id": null,
+              "recheck_id": null,
+              "latency_ms": 0,
+              "request_id": null,
+              "raw_response_hash": null,
+              "occurred_at": "2026-08-29T05:25:01.677369Z",
+              "details": {
+                "input_feature_ids": [
+                  "hsi_return_5d",
+                  "hsi_return_20d",
+                  "market_volatility_20d",
+                  "market_turnover_20d_mean"
+                ],
+                "structured_output": {
+                  "policy_version": "v04_market_regime_skill_v1",
+                  "market_regime": "INSUFFICIENT_DATA",
+                  "trend_condition": "UNAVAILABLE",
+                  "volatility_condition": "UNAVAILABLE",
+                  "liquidity_condition": "UNAVAILABLE",
+                  "drivers": [],
+                  "uncertainties": [
+                    "Market turnover is unavailable."
+                  ],
+                  "missingness": {
+                    "hsi_return_5d": "source_unavailable",
+                    "hsi_return_20d": "source_unavailable",
+                    "market_volatility_20d": "source_unavailable",
+                    "market_turnover_20d_mean": "source_unavailable"
+                  },
+                  "source_feature_ids": [
+                    "hsi_return_5d",
+                    "hsi_return_20d",
+                    "market_volatility_20d",
+                    "market_turnover_20d_mean"
+                  ]
+                }
+              }
+            },
+            {
+              "event_id": "19654305-7313-4f93-802a-4664c0d8c7b4",
+              "case_id": "ipo_2024_01318",
+              "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+              "event_type": "llm",
+              "status": "completed",
+              "agent_name": "market_intelligence",
+              "action": "market_context_interpretation",
+              "tool_or_skill": "LLMProvider.generate_structured",
+              "provider_name": "openai_responses",
+              "model_name": "ark-code-latest",
+              "prompt_version": "v04_market_interpretation_v2",
+              "evidence_ids": [
+                "market_feature:ipo_count_30d",
+                "market_feature:ipo_count_60d",
+                "market_feature:log_prior_ipo_funds_raised_30d",
+                "market_feature:log_prior_ipo_funds_raised_60d",
+                "market_feature:prior_ipo_funds_raised_30d_sample_count",
+                "market_feature:prior_ipo_funds_raised_60d_sample_count",
+                "market_feature:recent_ipo_break_rate",
+                "market_feature:recent_ipo_return_5d",
+                "market_feature:recent_ipo_1d_sample_count",
+                "market_feature:recent_ipo_5d_sample_count",
+                "market_feature:same_industry_ipo_count_180d",
+                "market_feature:same_industry_recent_break_rate",
+                "market_feature:same_industry_recent_return_5d",
+                "market_feature:same_industry_recent_1d_sample_count",
+                "market_feature:same_industry_recent_5d_sample_count",
+                "market_skill:deterministic_context"
+              ],
+              "calculation_ids": [],
+              "conflict_id": null,
+              "recheck_id": null,
+              "latency_ms": 10655,
+              "request_id": "021787981103132d7474cfa702fd7fc3234b385bd39455f9eed20",
+              "raw_response_hash": "ababf87dcfaa0f703828fb22697820625ced253bc711cd20641597474e97f409",
+              "occurred_at": "2026-08-29T05:25:12.334404Z",
+              "details": {
+                "structured_output": {
+                  "summary": "The market context shows neutral IPO heat with balanced break pressure and positive recent-listing returns, while market regime is insufficient data and liquidity is unavailable. Industry-specific IPO comparables are unavailable because there is no governed pre-listing history in the same industry.",
+                  "market_regime_interpretation": "The market regime is classified as insufficient data. Core regime inputs such as market turnover are unavailable, and industry-specific pre-listing performance signals are PIT-blocked, so the broader regime picture cannot be confirmed beyond the IPO-specific evidence. Risk level is medium on the market side.",
+                  "ipo_heat_interpretation": "IPO heat is neutral. Supply-side activity is moderate, with fewer new listings in the recent monthly window than the broader two-month window and a comparable fundraising pace. Demand-side signals are mixed: the recent break rate sits at a moderate level, indicating balanced price-discovery pressure, while the average recent listing return over the five-session horizon is positive, pointing to healthy aftermarket appetite.",
+                  "liquidity_interpretation": "Liquidity condition is unavailable. Market turnover data are not provided, and no governed evidence supports a judgment on cash availability or trading depth; liquidity should be treated as unknown for this assessment.",
+                  "key_drivers": [
+                    {
+                      "statement": "Recent IPO break pressure is balanced, with a moderate share of recent listings breaking price in early trading, leaving heat neutral rather than negative.",
+                      "source_feature_ids": [
+                        "recent_ipo_break_rate",
+                        "recent_ipo_1d_sample_count"
+                      ]
+                    },
+                    {
+                      "statement": "The recent IPO return condition over the five-session horizon is positive, supporting neutral-to-constructive aftermarket appetite.",
+                      "source_feature_ids": [
+                        "recent_ipo_return_5d",
+                        "recent_ipo_5d_sample_count"
+                      ]
+                    },
+                    {
+                      "statement": "New-listing supply is moderate: the count of recent offerings and the amount of funds they raised over the recent windows indicate steady but not overheated primary-market issuance.",
+                      "source_feature_ids": [
+                        "ipo_count_30d",
+                        "ipo_count_60d",
+                        "log_prior_ipo_funds_raised_30d",
+                        "log_prior_ipo_funds_raised_60d",
+                        "prior_ipo_funds_raised_30d_sample_count",
+                        "prior_ipo_funds_raised_60d_sample_count"
+                      ]
+                    },
+                    {
+                      "statement": "No comparable same-industry listings are observed in the recent history, so industry-specific IPO evidence is unavailable.",
+                      "source_feature_ids": [
+                        "same_industry_ipo_count_180d",
+                        "same_industry_recent_break_rate",
+                        "same_industry_recent_return_5d",
+                        "same_industry_recent_1d_sample_count",
+                        "same_industry_recent_5d_sample_count"
+                      ]
+                    }
+                  ],
+                  "uncertainties": [
+                    "Market turnover is unavailable, leaving the liquidity condition unresolved.",
+                    "Industry-specific IPO performance signals are PIT-blocked due to insufficient governed pre-listing history, so same-industry heat cannot be assessed.",
+                    "The recent-listing sample underlying break-rate and return observations is small, making the neutral heat reading less robust."
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "no_evidence_reason": "market_intelligence is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:market_intelligence:02",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "llm",
+      "status": "completed",
+      "agent_name": "market_intelligence",
+      "action": "market_context_interpretation",
+      "tool_or_skill": "LLMProvider.generate_structured",
+      "provider_name": "openai_responses",
+      "model_name": "ark-code-latest",
+      "prompt_version": "v04_market_interpretation_v2",
+      "evidence_ids": [
+        "market_feature:ipo_count_30d",
+        "market_feature:ipo_count_60d",
+        "market_feature:log_prior_ipo_funds_raised_30d",
+        "market_feature:log_prior_ipo_funds_raised_60d",
+        "market_feature:prior_ipo_funds_raised_30d_sample_count",
+        "market_feature:prior_ipo_funds_raised_60d_sample_count",
+        "market_feature:recent_ipo_break_rate",
+        "market_feature:recent_ipo_return_5d",
+        "market_feature:recent_ipo_1d_sample_count",
+        "market_feature:recent_ipo_5d_sample_count",
+        "market_feature:same_industry_ipo_count_180d",
+        "market_feature:same_industry_recent_break_rate",
+        "market_feature:same_industry_recent_return_5d",
+        "market_feature:same_industry_recent_1d_sample_count",
+        "market_feature:same_industry_recent_5d_sample_count",
+        "market_skill:deterministic_context"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 10655,
+      "request_id": "021787981103132d7474cfa702fd7fc3234b385bd39455f9eed20",
+      "raw_response_hash": "ababf87dcfaa0f703828fb22697820625ced253bc711cd20641597474e97f409",
+      "occurred_at": "2026-08-29T05:25:12.334404Z",
+      "details": {
+        "structured_output": {
+          "summary": "The market context shows neutral IPO heat with balanced break pressure and positive recent-listing returns, while market regime is insufficient data and liquidity is unavailable. Industry-specific IPO comparables are unavailable because there is no governed pre-listing history in the same industry.",
+          "market_regime_interpretation": "The market regime is classified as insufficient data. Core regime inputs such as market turnover are unavailable, and industry-specific pre-listing performance signals are PIT-blocked, so the broader regime picture cannot be confirmed beyond the IPO-specific evidence. Risk level is medium on the market side.",
+          "ipo_heat_interpretation": "IPO heat is neutral. Supply-side activity is moderate, with fewer new listings in the recent monthly window than the broader two-month window and a comparable fundraising pace. Demand-side signals are mixed: the recent break rate sits at a moderate level, indicating balanced price-discovery pressure, while the average recent listing return over the five-session horizon is positive, pointing to healthy aftermarket appetite.",
+          "liquidity_interpretation": "Liquidity condition is unavailable. Market turnover data are not provided, and no governed evidence supports a judgment on cash availability or trading depth; liquidity should be treated as unknown for this assessment.",
+          "key_drivers": [
+            {
+              "statement": "Recent IPO break pressure is balanced, with a moderate share of recent listings breaking price in early trading, leaving heat neutral rather than negative.",
+              "source_feature_ids": [
+                "recent_ipo_break_rate",
+                "recent_ipo_1d_sample_count"
+              ]
+            },
+            {
+              "statement": "The recent IPO return condition over the five-session horizon is positive, supporting neutral-to-constructive aftermarket appetite.",
+              "source_feature_ids": [
+                "recent_ipo_return_5d",
+                "recent_ipo_5d_sample_count"
+              ]
+            },
+            {
+              "statement": "New-listing supply is moderate: the count of recent offerings and the amount of funds they raised over the recent windows indicate steady but not overheated primary-market issuance.",
+              "source_feature_ids": [
+                "ipo_count_30d",
+                "ipo_count_60d",
+                "log_prior_ipo_funds_raised_30d",
+                "log_prior_ipo_funds_raised_60d",
+                "prior_ipo_funds_raised_30d_sample_count",
+                "prior_ipo_funds_raised_60d_sample_count"
+              ]
+            },
+            {
+              "statement": "No comparable same-industry listings are observed in the recent history, so industry-specific IPO evidence is unavailable.",
+              "source_feature_ids": [
+                "same_industry_ipo_count_180d",
+                "same_industry_recent_break_rate",
+                "same_industry_recent_return_5d",
+                "same_industry_recent_1d_sample_count",
+                "same_industry_recent_5d_sample_count"
+              ]
+            }
+          ],
+          "uncertainties": [
+            "Market turnover is unavailable, leaving the liquidity condition unresolved.",
+            "Industry-specific IPO performance signals are PIT-blocked due to insufficient governed pre-listing history, so same-industry heat cannot be assessed.",
+            "The recent-listing sample underlying break-rate and return observations is small, making the neutral heat reading less robust."
+          ]
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:005:document_parser",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "parser",
+      "status": "completed",
+      "agent_name": "document_parser",
+      "action": "parse",
+      "tool_or_skill": "document_parser",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:13.057024Z",
+      "details": {
+        "step": 5,
+        "output_summary": "document parsed into 616 chunks",
+        "log_id": "45c15dc1-720c-49d3-a310-8e67bc2a7f4a",
+        "no_evidence_reason": "document_parser is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:006:financial",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "agent",
+      "status": "completed",
+      "agent_name": "financial",
+      "action": "analyze",
+      "tool_or_skill": "financial",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+        "4e80db47-980c-5304-956d-5b7de2b2d65f",
+        "21511c3e-922e-54d1-83e2-6be88b2eb507",
+        "09d5ac0a-8a7b-52c8-91e2-1bb93294d9ab",
+        "955909c5-479f-583c-bb76-f8ad077a39f6",
+        "d37e505a-ff98-5b06-888a-ce4e6a596bbd",
+        "8b885a3a-f000-5c3f-bb9d-6e8105daaeec",
+        "cfce79cf-fdd0-5c80-9691-a89170314452"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:17.419857Z",
+      "details": {
+        "step": 6,
+        "output_summary": "agent completed with 1 risk(s)",
+        "log_id": "65a2924f-1554-4892-9163-6f1e03cf5c96",
+        "component_diagnostics": {
+          "value": "[ComponentDiagnostic(risk_code='cash_runway', code=<DiagnosticCode.NEEDS_REVIEW: 'needs_review'>, message='Cash-runway analysis did not generate a pending risk.', recoverable=True, evidence_ids=[], metadata={'rule_version': 'v03_contract_v1', 'legacy_status': 'extraction_needs_review', 'issues': ['bounded_evidence_contains_no_supported_target_row'], 'pages': [], 'financial_conversion': {'cash': {'status': 'extracted', 'issues': [], 'value': '552900', 'currency': 'CNY', 'unit': 'thousand', 'period_end': '2024-06-30', 'period_months': None, 'evidence_id': 'eab3ebf4-40eb-522d-b98c-4263725d6652', 'page': 456, 'pair_selection': None, 'evaluated_candidate_count': 2}, 'operating_cash_flow': {'status': 'not_found', 'issues': ['bounded_evidence_contains_no_supported_target_row'], 'value': None, 'currency': None, 'unit': None, 'period_end': None, 'period_months': None, 'evidence_id': None, 'page': None, 'pair_selection': None, 'evaluated_candidate_count': None}}}), ComponentDiagnostic(risk_code='continuous_loss', code=<DiagnosticCode.CONFLICTING_VALUES: 'conflicting_values'>, message='Retrieved financial Evidence could not be mapped to clean facts.', recoverable=True, evidence_ids=['4e80db47-980c-5304-956d-5b7de2b2d65f', '21511c3e-922e-54d1-83e2-6be88b2eb507', '09d5ac0a-8a7b-52c8-91e2-1bb93294d9ab'], metadata={'rule_version': 'v03_contract_v1', 'query_count': 9, 'retrieved_evidence_count': 5, 'retriever_error_types': [], 'extraction_status': 'needs_review', 'issues': ['metric_label_not_found', 'target_unit_ambiguous', 'missing_unit', 'conflicting_values_for_same_period']}), ComponentDiagnostic(risk_code='revenue_growth', code=<DiagnosticCode.NEEDS_REVIEW: 'needs_review'>, message='Retrieved financial Evidence could not be mapped to clean facts.', recoverable=True, evidence_ids=['955909c5-479f-583c-bb76-f8ad077a39f6'], metadata={'rule_version': 'v03_contract_v1', 'query_count': 6, 'retrieved_evidence_count': 5, 'retriever_error_types': [], 'extraction_status': 'needs_review', 'issues': ['metric_label_not_found', 'value_period_count_mismatch']}), ComponentDiagnostic(risk_code='customer_concentration', code=<DiagnosticCode.RISK_GENERATED: 'risk_generated'>, message='A pending financial risk was generated for Verifier review.', recoverable=True, evidence_ids=['f08e8780-872d-5ddb-be4b-2a7a10d50be4', '046cb1a1-309f-5139-a574-59947d4d60aa', '1e0bb211-ce86-5c24-a1d8-9c0c873edb8b'], metadata={'rule_version': 'v03_contract_v1', 'concentration_type': 'customer', 'issue': 'concentration_extraction_not_clean', 'extraction_issues': ['value_period_count_mismatch', 'incomplete_concentration_values', 'conflicting_values_for_same_period'], 'candidate_state': 'bounded_percentage_signal_requires_review', 'provisional_level': True, 'calculation_unavailable': True, 'period_end': '2024-06-30', 'period_months': 6, 'query_count': 6, 'retrieved_evidence_count': 5, 'retriever_error_types': []}), ComponentDiagnostic(risk_code='supplier_concentration', code=<DiagnosticCode.NOT_APPLICABLE: 'not_applicable'>, message='Latest supplier concentration is below configured thresholds.', recoverable=True, evidence_ids=['d37e505a-ff98-5b06-888a-ce4e6a596bbd', '8b885a3a-f000-5c3f-bb9d-6e8105daaeec', 'cfce79cf-fdd0-5c80-9691-a89170314452'], metadata={'rule_version': 'v03_contract_v1', 'concentration_type': 'supplier', 'period_end': '2024-06-30', 'period_months': 6, 'largest_counterparty_pct': '18.1', 'top_five_pct': '52.3', 'query_count': 6, 'retrieved_evidence_count': 5, 'retriever_error_types': []})]"
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:007:legal",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "agent",
+      "status": "completed",
+      "agent_name": "legal",
+      "action": "analyze",
+      "tool_or_skill": "legal",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec",
+        "52198359-93d0-58db-abfd-88110a33cde7",
+        "af33c9a3-9af5-56e1-8345-76cc3b946082",
+        "752ceda3-4d7c-5106-822c-74bf8b527374",
+        "7e964892-f3d6-5ae3-a752-a5a9526696cf",
+        "0cc4d849-cbb7-5df3-96d8-41a634d255f4",
+        "095bd066-5e83-5ba4-85dd-ade6cd312a3e",
+        "bc1682ed-1a14-52db-a1ae-8229b58e2778",
+        "bb075c1d-e310-50be-b0a2-1205e3a6eaec",
+        "555ab765-6ba3-5e2d-a15e-8b9a0ee30de7",
+        "503b90d1-0cd9-5114-bbdc-cb83a9fd690f",
+        "cf394242-8eab-5eec-8c86-9dc4c661c30c",
+        "d972414e-8c0e-5fff-8f94-2c3a7aa58fe1",
+        "f8bd1101-35a6-53e5-adad-dc8ce22eb7bb",
+        "8d663128-b750-5326-b857-4d6b4958f9ef",
+        "cd00aaa9-72ee-5927-a403-520e701b03c1",
+        "e2a4c229-1e5f-5288-b2a3-690e0b7fbf42",
+        "f38b751d-0e25-5b1a-869c-4441fef3afe2"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:26.659974Z",
+      "details": {
+        "step": 7,
+        "output_summary": "agent completed with 1 risk(s)",
+        "log_id": "38526b38-25ca-4a18-b623-e96df0128bd9",
+        "component_diagnostics": {
+          "value": "[ComponentDiagnostic(risk_code='redemption_rights', code=<DiagnosticCode.NOT_APPLICABLE: 'not_applicable'>, message='Special shareholder rights are not a current applicable risk.', recoverable=True, evidence_ids=['52198359-93d0-58db-abfd-88110a33cde7', 'af33c9a3-9af5-56e1-8345-76cc3b946082', '752ceda3-4d7c-5106-822c-74bf8b527374', '7e964892-f3d6-5ae3-a752-a5a9526696cf', '0cc4d849-cbb7-5df3-96d8-41a634d255f4', '095bd066-5e83-5ba4-85dd-ade6cd312a3e', 'bc1682ed-1a14-52db-a1ae-8229b58e2778', 'bb075c1d-e310-50be-b0a2-1205e3a6eaec', '555ab765-6ba3-5e2d-a15e-8b9a0ee30de7', '503b90d1-0cd9-5114-bbdc-cb83a9fd690f'], metadata={'stage': 'risk_builder', 'extraction_status': 'extracted', 'builder_status': 'not_applicable', 'failure_isolated': True, 'internal_issue_codes': ['historical_right_only'], 'evidence_count': 10, 'pages': [182, 183, 323, 42, 180, 177, 174, 45, 325, 175]}), ComponentDiagnostic(risk_code='material_litigation_compliance', code=<DiagnosticCode.NEEDS_REVIEW: 'needs_review'>, message='Litigation/compliance facts require legal review.', recoverable=True, evidence_ids=['522d7f33-bb28-5954-a241-eb084d13cd82', 'be673ef8-d819-50c4-90f7-0902bee50b2a', 'cf394242-8eab-5eec-8c86-9dc4c661c30c', 'd972414e-8c0e-5fff-8f94-2c3a7aa58fe1', 'f8bd1101-35a6-53e5-adad-dc8ce22eb7bb', '7a94777b-08aa-53e8-a759-fdad8487f6ec', '8d663128-b750-5326-b857-4d6b4958f9ef', 'cd00aaa9-72ee-5927-a403-520e701b03c1', 'e2a4c229-1e5f-5288-b2a3-690e0b7fbf42', 'f38b751d-0e25-5b1a-869c-4441fef3afe2'], metadata={'stage': 'risk_builder', 'extraction_status': 'needs_review', 'builder_status': 'needs_review', 'failure_isolated': True, 'internal_issue_codes': ['counterparty_or_regulator_not_identified', 'management_materiality_not_established', 'materiality_unclear'], 'evidence_count': 10, 'pages': [76, 273, 284, 83, 75, 274, 179, 269, 313, 566]})]"
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:008:business",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "agent",
+      "status": "completed",
+      "agent_name": "business",
+      "action": "analyze",
+      "tool_or_skill": "business",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "6faca3ff-e482-5662-bb1b-f1f70d886ad0",
+        "675ab21b-5bdd-5dd8-8896-8e4a9c83b777",
+        "9bffddc2-4907-59d1-8efd-24871c273e29",
+        "de12fbeb-3f77-5f48-b366-78f1123464a9",
+        "d6b11afd-1eb3-5ea5-83ce-d4fe3b256ac3",
+        "276f2a34-5f68-5c23-8c90-30254b1b2b00",
+        "1e19713e-321d-54a5-9c11-aa076f24b055",
+        "7bc1ae4c-3e5c-51df-913b-7454ef9de49c",
+        "686e2b40-23b8-5dd3-87d7-d9abc15f4844"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.493115Z",
+      "details": {
+        "step": 8,
+        "output_summary": "agent completed with 0 risk(s)",
+        "log_id": "c717297c-fffc-47d0-b243-df3dd186711e",
+        "component_diagnostics": {
+          "value": "[ComponentDiagnostic(risk_code='precommercial_product', code=<DiagnosticCode.NOT_APPLICABLE: 'not_applicable'>, message='Evidence shows commercialization or direct product sales revenue.', recoverable=True, evidence_ids=['6faca3ff-e482-5662-bb1b-f1f70d886ad0', '675ab21b-5bdd-5dd8-8896-8e4a9c83b777', '9bffddc2-4907-59d1-8efd-24871c273e29', 'de12fbeb-3f77-5f48-b366-78f1123464a9', 'd6b11afd-1eb3-5ea5-83ce-d4fe3b256ac3', '276f2a34-5f68-5c23-8c90-30254b1b2b00', '1e19713e-321d-54a5-9c11-aa076f24b055', '7bc1ae4c-3e5c-51df-913b-7454ef9de49c', '686e2b40-23b8-5dd3-87d7-d9abc15f4844'], metadata={'rule_version': 'v03_contract_v1', 'issues': ['generic_revenue_attribution_unclear', 'core_product_identity_unclear', 'commercialization_state_unclear'], 'revenue_source_types': [], 'llm_provider': 'openai_responses', 'prompt_version': 'business_precommercial_v1', 'llm_normalization': 'business_candidate_canonical_v1', 'llm_cross_check': 'consistent'})]"
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:009:verifier",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "verifier",
+      "status": "completed",
+      "agent_name": "verifier",
+      "action": "verify",
+      "tool_or_skill": "verifier",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.499002Z",
+      "details": {
+        "step": 9,
+        "output_summary": "specialized routing produced 0 verified, 2 pending, and 0 rejected risk(s)",
+        "log_id": "9731c229-feb9-4fb9-8a7f-42cbe1fcf8b3",
+        "component_diagnostics": {
+          "financial": {
+            "input": 1,
+            "verified": 0,
+            "pending": 1,
+            "rejected": 0,
+            "failed": false
+          },
+          "business": {
+            "input": 0,
+            "failed": false
+          },
+          "legal": {
+            "verified": 0,
+            "pending": 1,
+            "rejected": 0,
+            "failed": 0
+          },
+          "unsupported": {
+            "pending": 0
+          },
+          "input_count": 2,
+          "output_count": 2
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:010:supervisor",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "supervisor",
+      "status": "completed",
+      "agent_name": "supervisor",
+      "action": "supervise",
+      "tool_or_skill": "supervisor",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.499002Z",
+      "details": {
+        "step": 10,
+        "output_summary": "Supervised 2 risks into 2 unique risks; 0 unresolved conflict(s) and 0 supervisory finding(s).",
+        "log_id": "a6ec25fc-9e55-419a-beb7-7afafd071c50",
+        "component_diagnostics": {
+          "verified_risks": [],
+          "summary": "Supervised 2 risks into 2 unique risks; 0 unresolved conflict(s) and 0 supervisory finding(s).",
+          "duplicate_groups": [],
+          "conflicts": [],
+          "composite_findings": [],
+          "metadata": {
+            "input_count": 2,
+            "unique_count": 2,
+            "verified_count": 0,
+            "pending_count": 2,
+            "rejected_count": 0,
+            "rule_score_components": [],
+            "excluded_non_verified_risk_ids": [
+              "cd1e615d-5463-5512-8dd6-afd1eb9ffb73",
+              "15180087-4d5f-59d0-860b-67bbf39377cb"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:011:predictor",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "model",
+      "status": "completed",
+      "agent_name": "predictor",
+      "action": "predict",
+      "tool_or_skill": "predictor",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.500001Z",
+      "details": {
+        "step": 11,
+        "output_summary": "",
+        "log_id": "11595f55-57bd-4a96-860c-ccc920b0e1c9",
+        "no_evidence_reason": "predictor is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:012:model_prediction",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "model",
+      "status": "completed",
+      "agent_name": "model_prediction",
+      "action": "load_frozen_projection",
+      "tool_or_skill": "model_prediction",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.503326Z",
+      "details": {
+        "step": 12,
+        "output_summary": "model prediction available",
+        "log_id": "871d6885-395c-490b-9bfa-01f1ba45abb7",
+        "component_diagnostics": {
+          "status": "available",
+          "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+          "blocking_gate": null,
+          "model_name": "lightgbm",
+          "model_version": "v04_pr_f_lightgbm_explainability_v1",
+          "score": 0.15789534040116512,
+          "score_semantics": "uncalibrated_model_score",
+          "calibration_status": "uncalibrated",
+          "calibration_provenance_id": null,
+          "drivers": [
+            {
+              "feature": "market_core__log_prior_ipo_funds_raised_30d",
+              "component": "market_core",
+              "feature_value": 22.898480966608595,
+              "shap_value": 0.4856768319263922,
+              "direction": "increases"
+            },
+            {
+              "feature": "market_core__recent_ipo_return_5d",
+              "component": "market_core",
+              "feature_value": 0.022227862504275827,
+              "shap_value": -0.3780418381825626,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__ipo_count_30d",
+              "component": "market_core",
+              "feature_value": 6.0,
+              "shap_value": 0.3144528535392112,
+              "direction": "increases"
+            },
+            {
+              "feature": "market_core__ipo_count_60d",
+              "component": "market_core",
+              "feature_value": 14.0,
+              "shap_value": -0.178191175669989,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__recent_ipo_1d_sample_count",
+              "component": "market_core",
+              "feature_value": 14.0,
+              "shap_value": -0.15496641203427766,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__log_prior_ipo_funds_raised_60d",
+              "component": "market_core",
+              "feature_value": 23.88456377203046,
+              "shap_value": -0.11050002108066816,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__same_industry_recent_break_rate",
+              "component": "market_core",
+              "feature_value": null,
+              "shap_value": -0.09001831026228574,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__same_industry_recent_return_5d",
+              "component": "market_core",
+              "feature_value": null,
+              "shap_value": -0.06981326400171622,
+              "direction": "decreases"
+            },
+            {
+              "feature": "market_core__recent_ipo_break_rate",
+              "component": "market_core",
+              "feature_value": 0.42857142857142855,
+              "shap_value": 0.04682951924254962,
+              "direction": "increases"
+            },
+            {
+              "feature": "market_core__prior_ipo_funds_raised_30d_sample_count",
+              "component": "market_core",
+              "feature_value": 6.0,
+              "shap_value": 0.04144483267958438,
+              "direction": "increases"
+            }
+          ]
+        },
+        "no_evidence_reason": "model_prediction is an orchestration or channel step that references no document Evidence directly"
+      }
+    },
+    {
+      "event_id": "trace:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration:detected",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "conflict",
+      "status": "partially_resolved",
+      "agent_name": "conflict_detector",
+      "action": "detect_cross_agent_conflict",
+      "tool_or_skill": "deterministic_conflict_policy",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.504583Z",
+      "details": {
+        "involved_agents": [
+          "financial",
+          "verifier"
+        ],
+        "risk_ids": [
+          "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+        ],
+        "claim_ids": [
+          "policy:v04_e_conflict_policy_v1",
+          "rule:agent_verifier_disagreement",
+          "risk_code:customer_concentration"
+        ],
+        "summary": "financial produced 1 customer_concentration risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+        "resolution_note": "targeted re-retrieval added 5 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance:detected",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "conflict",
+      "status": "partially_resolved",
+      "agent_name": "conflict_detector",
+      "action": "detect_cross_agent_conflict",
+      "tool_or_skill": "deterministic_conflict_policy",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.504583Z",
+      "details": {
+        "involved_agents": [
+          "legal",
+          "verifier"
+        ],
+        "risk_ids": [
+          "15180087-4d5f-59d0-860b-67bbf39377cb"
+        ],
+        "claim_ids": [
+          "policy:v04_e_conflict_policy_v1",
+          "rule:agent_verifier_disagreement",
+          "risk_code:material_litigation_compliance"
+        ],
+        "summary": "legal produced 1 material_litigation_compliance risk item(s) that the Verifier left as needs_review; the assertion and its verification disagree.",
+        "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d:detected",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "conflict",
+      "status": "unresolved",
+      "agent_name": "conflict_detector",
+      "action": "detect_cross_agent_conflict",
+      "tool_or_skill": "deterministic_conflict_policy",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.504583Z",
+      "details": {
+        "involved_agents": [
+          "document_supervisor",
+          "frozen_model_channel"
+        ],
+        "risk_ids": [],
+        "claim_ids": [
+          "policy:v04_e_conflict_policy_v1",
+          "rule:document_model_divergence",
+          "model_feature:market_core__log_prior_ipo_funds_raised_30d",
+          "model_driver_direction:increases"
+        ],
+        "summary": "The frozen model's strongest driver market_core__log_prior_ipo_funds_raised_30d increases risk while the document channel reports no high or critical verified document risk; the uncalibrated score direction disagrees with the document.",
+        "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+        "no_evidence_reason": "this conflict spans channels that carry no document Evidence"
+      }
+    },
+    {
+      "event_id": "trace:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss:detected",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "conflict",
+      "status": "partially_resolved",
+      "agent_name": "conflict_detector",
+      "action": "detect_cross_agent_conflict",
+      "tool_or_skill": "deterministic_conflict_policy",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "4e80db47-980c-5304-956d-5b7de2b2d65f",
+        "21511c3e-922e-54d1-83e2-6be88b2eb507",
+        "09d5ac0a-8a7b-52c8-91e2-1bb93294d9ab"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.504583Z",
+      "details": {
+        "involved_agents": [
+          "document_supervisor",
+          "financial"
+        ],
+        "risk_ids": [],
+        "claim_ids": [
+          "policy:v04_e_conflict_policy_v1",
+          "rule:unresolved_agent_claim",
+          "risk_code:continuous_loss",
+          "diagnostic_code:conflicting_values"
+        ],
+        "summary": "financial held 3 bounded Evidence item(s) for continuous_loss and reported conflicting_values, while the document channel asserts nothing about continuous_loss: Retrieved financial Evidence could not be mapped to clean facts.",
+        "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth:detected",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "conflict",
+      "status": "partially_resolved",
+      "agent_name": "conflict_detector",
+      "action": "detect_cross_agent_conflict",
+      "tool_or_skill": "deterministic_conflict_policy",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "955909c5-479f-583c-bb76-f8ad077a39f6"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.504583Z",
+      "details": {
+        "involved_agents": [
+          "document_supervisor",
+          "financial"
+        ],
+        "risk_ids": [],
+        "claim_ids": [
+          "policy:v04_e_conflict_policy_v1",
+          "rule:unresolved_agent_claim",
+          "risk_code:revenue_growth",
+          "diagnostic_code:needs_review"
+        ],
+        "summary": "financial held 1 bounded Evidence item(s) for revenue_growth and reported needs_review, while the document channel asserts nothing about revenue_growth: Retrieved financial Evidence could not be mapped to clean facts.",
+        "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration:retrieve",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "retriever",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "targeted_re_retrieval",
+      "tool_or_skill": "hybrid_bm25",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "b27f7834-a507-59b5-94d9-22835d195cf5",
+        "314f2fd6-2635-5a96-ab44-ab93466db617",
+        "4212c577-b816-57c3-93d2-da9469f7f1bb",
+        "b0e783a1-c28c-54ba-9b9b-5810c9fe4e0e",
+        "c1830a75-0e8c-5007-960c-d8f4355849f4"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "latency_ms": 453,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.958602Z",
+      "details": {
+        "risk_codes": [
+          "customer_concentration"
+        ],
+        "retrieved_counts": {
+          "customer_concentration": 5
+        },
+        "new_evidence_count": 5,
+        "retriever_errors": [],
+        "policy_version": "v04_e_recheck_policy_v2"
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration:verify",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "verifier",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "verifier_challenge",
+      "tool_or_skill": "specialized_v03",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+        "314f2fd6-2635-5a96-ab44-ab93466db617",
+        "4212c577-b816-57c3-93d2-da9469f7f1bb",
+        "b0e783a1-c28c-54ba-9b9b-5810c9fe4e0e",
+        "b27f7834-a507-59b5-94d9-22835d195cf5",
+        "c1830a75-0e8c-5007-960c-d8f4355849f4",
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:35.958602Z",
+      "details": {
+        "challenged_risk_ids": [
+          "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+        ],
+        "settled_risk_ids": [],
+        "verified_risk_ids": [],
+        "rejected_risk_ids": [],
+        "error": "",
+        "policy_version": "v04_e_recheck_policy_v2"
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance:retrieve",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "retriever",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "targeted_re_retrieval",
+      "tool_or_skill": "hybrid_bm25",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "cf394242-8eab-5eec-8c86-9dc4c661c30c",
+        "d972414e-8c0e-5fff-8f94-2c3a7aa58fe1",
+        "f8bd1101-35a6-53e5-adad-dc8ce22eb7bb"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "latency_ms": 810,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:36.768387Z",
+      "details": {
+        "risk_codes": [
+          "material_litigation_compliance"
+        ],
+        "retrieved_counts": {
+          "material_litigation_compliance": 5
+        },
+        "new_evidence_count": 3,
+        "retriever_errors": [],
+        "policy_version": "v04_e_recheck_policy_v2"
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance:verify",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "verifier",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "verifier_challenge",
+      "tool_or_skill": "specialized_v03",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "cf394242-8eab-5eec-8c86-9dc4c661c30c",
+        "d972414e-8c0e-5fff-8f94-2c3a7aa58fe1",
+        "f8bd1101-35a6-53e5-adad-dc8ce22eb7bb"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "latency_ms": 6,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:36.774160Z",
+      "details": {
+        "challenged_risk_ids": [
+          "15180087-4d5f-59d0-860b-67bbf39377cb"
+        ],
+        "settled_risk_ids": [],
+        "verified_risk_ids": [],
+        "rejected_risk_ids": [],
+        "error": "",
+        "policy_version": "v04_e_recheck_policy_v2"
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss:coverage",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "retriever",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "targeted_coverage_re_retrieval",
+      "tool_or_skill": "hybrid_bm25",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "5c7325b2-cda0-5e72-a970-3471c48440c0",
+        "dbeb9831-ebd7-5791-a933-b5ed622e2a7a",
+        "b46956aa-4fb6-5cf8-94ff-308fc2d1ab35",
+        "d172ee7e-9f32-593f-99e0-b1a4201c0eb9",
+        "d5721287-0227-56a1-9716-b9ea30859a3f"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "latency_ms": 352,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:37.127877Z",
+      "details": {
+        "risk_codes": [
+          "continuous_loss"
+        ],
+        "retrieved_counts": {
+          "continuous_loss": 5
+        },
+        "agent_evidence_count": 3,
+        "new_evidence_count": 5,
+        "gap_classification": "retrieval_gap",
+        "retriever_errors": [],
+        "policy_version": "v04_e_recheck_policy_v2",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d:skipped",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "recheck",
+      "status": "not_actionable",
+      "agent_name": "targeted_recheck",
+      "action": "targeted_recheck",
+      "tool_or_skill": "none",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:37.874894Z",
+      "details": {
+        "reason": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+        "rule": "document_model_divergence",
+        "policy_version": "v04_e_recheck_policy_v2",
+        "no_evidence_reason": "this conflict is not document-actionable, so this re-check does not retrieve or cite document Evidence"
+      }
+    },
+    {
+      "event_id": "trace:recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth:coverage",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "retriever",
+      "status": "completed",
+      "agent_name": "targeted_recheck",
+      "action": "targeted_coverage_re_retrieval",
+      "tool_or_skill": "hybrid_bm25",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "1c5e8cd2-e29e-5a3c-863a-f9173da97e23",
+        "bc07cf01-39db-546f-b167-3d775697cf40",
+        "ebdc1cba-e79f-5949-8484-55c4c3e57c3b",
+        "15e45e9e-089d-5788-b72c-eb41b90c290f",
+        "68c3561c-fa3b-5846-9397-f2dacf41e721"
+      ],
+      "calculation_ids": [],
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "latency_ms": 747,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:37.874894Z",
+      "details": {
+        "risk_codes": [
+          "revenue_growth"
+        ],
+        "retrieved_counts": {
+          "revenue_growth": 5
+        },
+        "agent_evidence_count": 1,
+        "new_evidence_count": 5,
+        "gap_classification": "retrieval_gap",
+        "retriever_errors": [],
+        "policy_version": "v04_e_recheck_policy_v2",
+        "no_evidence_reason": ""
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:final_supervision_llm",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "llm",
+      "status": "completed",
+      "agent_name": "llm_final_supervisor",
+      "action": "final_supervision_synthesis",
+      "tool_or_skill": "LLMProvider.generate_structured",
+      "provider_name": "openai_responses",
+      "model_name": "ark-code-latest",
+      "prompt_version": "v04_final_supervision_v3",
+      "evidence_ids": [],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 15609,
+      "request_id": "02178798113918388db556329240132465f0386a4fcfe59182db0",
+      "raw_response_hash": "43d67eb062a6d78b06494408cda1a5c2a531740398daaadb368e7561536af446",
+      "occurred_at": "2026-08-29T05:25:53.492431Z",
+      "details": {
+        "schema_version": "v04_final_supervision_v1",
+        "outcome": "accepted",
+        "scope_check": {
+          "status": "passed",
+          "cited_risk_ids": [
+            "15180087-4d5f-59d0-860b-67bbf39377cb",
+            "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+          ],
+          "cited_evidence_ids": [],
+          "cited_conflict_ids": [
+            "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+            "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+            "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+            "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+            "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth"
+          ],
+          "supplied_risk_id_count": 2,
+          "supplied_evidence_id_count": 10,
+          "supplied_conflict_id_count": 5,
+          "out_of_scope_reference_count": 0,
+          "deterministic_severity_floor": "low",
+          "overall_risk": "medium",
+          "severity_floor_respected": true,
+          "invented_number_count": 0,
+          "prediction_vocabulary_used": false,
+          "attempts": 1,
+          "scope_corrections": 0,
+          "refused_response_count": 0,
+          "first_attempt_passed": true,
+          "rejected_attempts": []
+        },
+        "no_evidence_reason": "the supervisory synthesis reasons over composed channel outputs; the Evidence it relies on is referenced by the risks it cites",
+        "structured_output": {
+          "overall_risk": "medium",
+          "overall_risk_rationale": "The rule channel is low, but the document channel carries two medium-level risks left needs_review by the Verifier, which supports raising overall risk above the deterministic floor of low.",
+          "key_findings": [
+            {
+              "statement": "Two medium-level risks remain needs_review: financial's customer_concentration (calculation missing) and legal's material_litigation_compliance (actual matter and closure status not established), each carrying an agent–verifier disagreement that the Verifier settled none of.",
+              "risk_ids": [
+                "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+              ],
+              "evidence_ids": []
+            },
+            {
+              "statement": "Five conflicts are carried forward partially resolved or unresolved, including a cross-channel document–model divergence on market_core__log_prior_ipo_funds_raised_30d that document re-retrieval cannot settle, plus unmapped financial claims on continuous_loss and revenue_growth routed to human review.",
+              "risk_ids": [
+                "15180087-4d5f-59d0-860b-67bbf39377cb",
+                "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+              ],
+              "evidence_ids": []
+            }
+          ],
+          "conflict_assessments": [
+            {
+              "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+              "assessment": "Partially resolved: the financial agent's customer_concentration risk item remains needs_review and the Verifier settled none of the challenged items; the underlying calculation is missing, so the assertion and its verification remain unsettled."
+            },
+            {
+              "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+              "assessment": "Partially resolved: the legal agent's material_litigation_compliance risk item remains needs_review with the verifier citing pending_status_not_supported_by_evidence and manual_legal_judgment_required; the matter and closure status are not established."
+            },
+            {
+              "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+              "assessment": "Unresolved: the uncalibrated model's strongest driver increases risk while the document channel reports no high or critical verified risk; document re-retrieval cannot settle a cross-channel divergence, so this direction remains unsettled."
+            },
+            {
+              "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+              "assessment": "Partially resolved: financial held 3 evidence items for continuous_loss with conflicting values, while the document channel asserts nothing; the gap is at least partly retrieval and new evidence is routed to human review, so the risk picture is not established."
+            },
+            {
+              "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+              "assessment": "Partially resolved: financial held 1 evidence item for revenue_growth as needs_review that could not be mapped to clean facts; the document channel asserts nothing and the gap is at least partly retrieval."
+            }
+          ],
+          "uncertainties": [
+            "Model score is uncalibrated and not validated at the supplied sample size, so its risk direction cannot be read as descriptive governance wording.",
+            "same_industry_recent_break_rate and same_industry_recent_return_5d market features are unavailable (insufficient governed prelisting history).",
+            "Financial claims for continuous_loss and revenue_growth could not be mapped to clean facts and are routed to human review.",
+            "Litigation matter existence, closure and pending status remain unestablished pending manual legal judgment."
+          ],
+          "recheck_required": true,
+          "recheck_targets": [
+            {
+              "target": "financial customer_concentration risk item",
+              "reason": "A bounded verifier recheck could settle the agent–verifier disagreement since the calculation is missing.",
+              "risk_ids": [
+                "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+              ]
+            },
+            {
+              "target": "legal material_litigation_compliance risk item",
+              "reason": "A bounded verifier recheck with manual legal judgment could settle the unsettled litigation compliance claims.",
+              "risk_ids": [
+                "15180087-4d5f-59d0-860b-67bbf39377cb"
+              ]
+            }
+          ],
+          "final_explanation": "All four channels were available, with the rule channel at low risk and the model channel supplying an uncalibrated score whose strongest driver direction diverges from the document channel. Two medium agent risks remain needs_review, and financial claims for continuous_loss and revenue_growth remain unmapped. Overall risk is medium, driven by the two medium-level unsettled risks, and a bounded recheck of the two verifier-challenged risk items is warranted."
+        }
+      }
+    },
+    {
+      "event_id": "trace:cd280c4e-906d-5d81-8654-32ae9d591a72:log:013:final_supervisor",
+      "case_id": "ipo_2024_01318",
+      "run_id": "cd280c4e-906d-5d81-8654-32ae9d591a72",
+      "event_type": "supervisor",
+      "status": "completed",
+      "agent_name": "final_supervisor",
+      "action": "finalize",
+      "tool_or_skill": "final_supervisor",
+      "provider_name": null,
+      "model_name": null,
+      "prompt_version": null,
+      "evidence_ids": [
+        "f08e8780-872d-5ddb-be4b-2a7a10d50be4",
+        "046cb1a1-309f-5139-a574-59947d4d60aa",
+        "1e0bb211-ce86-5c24-a1d8-9c0c873edb8b",
+        "522d7f33-bb28-5954-a241-eb084d13cd82",
+        "be673ef8-d819-50c4-90f7-0902bee50b2a",
+        "7a94777b-08aa-53e8-a759-fdad8487f6ec"
+      ],
+      "calculation_ids": [],
+      "conflict_id": null,
+      "recheck_id": null,
+      "latency_ms": 0,
+      "request_id": null,
+      "raw_response_hash": null,
+      "occurred_at": "2026-08-29T05:25:53.492431Z",
+      "details": {
+        "step": 13,
+        "output_summary": "final supervision composed with conflict and targeted re-check",
+        "log_id": "5a6182e2-92a0-4820-ba43-dd98a5cd1609",
+        "component_diagnostics": {
+          "summary": "Supervised 2 risks into 2 unique risks; 0 unresolved conflict(s) and 0 supervisory finding(s).",
+          "channel_states": [
+            {
+              "channel": "document",
+              "status": "available",
+              "reason": "v0.3 document supervision result passed through unchanged",
+              "blocking_gate": null
+            },
+            {
+              "channel": "market",
+              "status": "available",
+              "reason": "validated frozen PR-B Market-X Core projection",
+              "blocking_gate": null
+            },
+            {
+              "channel": "model",
+              "status": "available",
+              "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+              "blocking_gate": null
+            },
+            {
+              "channel": "rule",
+              "status": "available",
+              "reason": "deterministic rule score",
+              "blocking_gate": null
+            }
+          ],
+          "referenced_risk_ids": [],
+          "referenced_evidence_ids": [],
+          "composite_findings": [],
+          "conflicts": [],
+          "market_context": {
+            "status": "available",
+            "reason": "validated frozen PR-B Market-X Core projection",
+            "blocking_gate": null,
+            "observations": [
+              {
+                "name": "ipo_count_30d",
+                "value": 6.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "ipo_count_60d",
+                "value": 14.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "log_prior_ipo_funds_raised_30d",
+                "value": 22.898480966608595,
+                "unit": "log_currency",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "log_prior_ipo_funds_raised_60d",
+                "value": 23.88456377203046,
+                "unit": "log_currency",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "prior_ipo_funds_raised_30d_sample_count",
+                "value": 6.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "prior_ipo_funds_raised_60d_sample_count",
+                "value": 14.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "recent_ipo_break_rate",
+                "value": 0.42857142857142855,
+                "unit": "ratio",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "recent_ipo_return_5d",
+                "value": 0.02222786250427583,
+                "unit": "ratio",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "recent_ipo_1d_sample_count",
+                "value": 14.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "recent_ipo_5d_sample_count",
+                "value": 12.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "same_industry_ipo_count_180d",
+                "value": 0.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "same_industry_recent_break_rate",
+                "value": null,
+                "unit": "ratio",
+                "availability": "unavailable",
+                "missing_reason": "insufficient_governed_prelisting_history",
+                "derivation": "share of governed recent same-industry IPOs closing below offer on day one",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "same_industry_recent_return_5d",
+                "value": null,
+                "unit": "ratio",
+                "availability": "unavailable",
+                "missing_reason": "insufficient_governed_prelisting_history",
+                "derivation": "mean five-session return of governed recent same-industry IPOs",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "same_industry_recent_1d_sample_count",
+                "value": 0.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              },
+              {
+                "name": "same_industry_recent_5d_sample_count",
+                "value": 0.0,
+                "unit": "count",
+                "availability": "available",
+                "missing_reason": null,
+                "derivation": "frozen PR-B point-in-time Market-X Core feature",
+                "source": "pr_b_market_x_core"
+              }
+            ],
+            "feature_manifest_hash": "c2f4a1699e2bf9149f24cb35ea32dbc4851c017001ec509a0eaccd93720d729d",
+            "provenance": {
+              "feature_pipeline": "governed_pr_b_core",
+              "runtime_path": "frozen",
+              "frozen_artifact_read_attempted": true,
+              "case_id": "ipo_2024_01318",
+              "stock_code": "1318.HK",
+              "listing_date": "2024-12-10",
+              "dataset_split": "validation",
+              "artifact_content_hash": "54d5a94ad7f13fedc4a21f277ef51a0b7c1133aeda18f86d59c39fab99c791b8",
+              "cutoff_semantics": "strictly_before_target_listing_date",
+              "source_provenance": {
+                "ipo_eod_sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+                "official_bridge_sha256": "751de6968ad8935ad45a8cd2841adbdc498d2bce6bb87153a1930959f4f85198",
+                "prior_ipo_history_scope": "official_2020_2024_listing_year_universe",
+                "prior_ipo_history_start_date": "2020-02-14"
+              },
+              "extended_readiness_sha256": null,
+              "market_intelligence_schema_version": "v04_market_intelligence_v1",
+              "market_intelligence": {
+                "market_regime": "INSUFFICIENT_DATA",
+                "risk_level": "medium",
+                "risk_scope": "market_side_only",
+                "ipo_heat": "NEUTRAL",
+                "liquidity_condition": "UNAVAILABLE",
+                "key_drivers": [
+                  {
+                    "driver_id": "recent_break_pressure",
+                    "message": "Recent IPO break pressure is balanced.",
+                    "source_feature_ids": [
+                      "recent_ipo_break_rate",
+                      "recent_ipo_1d_sample_count"
+                    ]
+                  },
+                  {
+                    "driver_id": "recent_return_condition",
+                    "message": "Recent IPO five-session return condition is positive.",
+                    "source_feature_ids": [
+                      "recent_ipo_return_5d",
+                      "recent_ipo_5d_sample_count"
+                    ]
+                  }
+                ],
+                "uncertainties": [
+                  "Market turnover is unavailable."
+                ],
+                "source_feature_ids": [
+                  "ipo_count_30d",
+                  "ipo_count_60d",
+                  "log_prior_ipo_funds_raised_30d",
+                  "log_prior_ipo_funds_raised_60d",
+                  "prior_ipo_funds_raised_30d_sample_count",
+                  "prior_ipo_funds_raised_60d_sample_count",
+                  "recent_ipo_break_rate",
+                  "recent_ipo_return_5d",
+                  "recent_ipo_1d_sample_count",
+                  "recent_ipo_5d_sample_count",
+                  "same_industry_ipo_count_180d",
+                  "same_industry_recent_break_rate",
+                  "same_industry_recent_return_5d",
+                  "same_industry_recent_1d_sample_count",
+                  "same_industry_recent_5d_sample_count"
+                ],
+                "missing_reasons": {
+                  "same_industry_recent_break_rate": "insufficient_governed_prelisting_history",
+                  "same_industry_recent_return_5d": "insufficient_governed_prelisting_history"
+                },
+                "ipo_heat_policy_version": "v04_ipo_heat_skill_v1",
+                "market_regime_policy_version": "v04_market_regime_skill_v1"
+              },
+              "llm_market_interpretation": {
+                "summary": "The market context shows neutral IPO heat with balanced break pressure and positive recent-listing returns, while market regime is insufficient data and liquidity is unavailable. Industry-specific IPO comparables are unavailable because there is no governed pre-listing history in the same industry.",
+                "market_regime_interpretation": "The market regime is classified as insufficient data. Core regime inputs such as market turnover are unavailable, and industry-specific pre-listing performance signals are PIT-blocked, so the broader regime picture cannot be confirmed beyond the IPO-specific evidence. Risk level is medium on the market side.",
+                "ipo_heat_interpretation": "IPO heat is neutral. Supply-side activity is moderate, with fewer new listings in the recent monthly window than the broader two-month window and a comparable fundraising pace. Demand-side signals are mixed: the recent break rate sits at a moderate level, indicating balanced price-discovery pressure, while the average recent listing return over the five-session horizon is positive, pointing to healthy aftermarket appetite.",
+                "liquidity_interpretation": "Liquidity condition is unavailable. Market turnover data are not provided, and no governed evidence supports a judgment on cash availability or trading depth; liquidity should be treated as unknown for this assessment.",
+                "key_drivers": [
+                  {
+                    "statement": "Recent IPO break pressure is balanced, with a moderate share of recent listings breaking price in early trading, leaving heat neutral rather than negative.",
+                    "source_feature_ids": [
+                      "recent_ipo_break_rate",
+                      "recent_ipo_1d_sample_count"
+                    ]
+                  },
+                  {
+                    "statement": "The recent IPO return condition over the five-session horizon is positive, supporting neutral-to-constructive aftermarket appetite.",
+                    "source_feature_ids": [
+                      "recent_ipo_return_5d",
+                      "recent_ipo_5d_sample_count"
+                    ]
+                  },
+                  {
+                    "statement": "New-listing supply is moderate: the count of recent offerings and the amount of funds they raised over the recent windows indicate steady but not overheated primary-market issuance.",
+                    "source_feature_ids": [
+                      "ipo_count_30d",
+                      "ipo_count_60d",
+                      "log_prior_ipo_funds_raised_30d",
+                      "log_prior_ipo_funds_raised_60d",
+                      "prior_ipo_funds_raised_30d_sample_count",
+                      "prior_ipo_funds_raised_60d_sample_count"
+                    ]
+                  },
+                  {
+                    "statement": "No comparable same-industry listings are observed in the recent history, so industry-specific IPO evidence is unavailable.",
+                    "source_feature_ids": [
+                      "same_industry_ipo_count_180d",
+                      "same_industry_recent_break_rate",
+                      "same_industry_recent_return_5d",
+                      "same_industry_recent_1d_sample_count",
+                      "same_industry_recent_5d_sample_count"
+                    ]
+                  }
+                ],
+                "uncertainties": [
+                  "Market turnover is unavailable, leaving the liquidity condition unresolved.",
+                  "Industry-specific IPO performance signals are PIT-blocked due to insufficient governed pre-listing history, so same-industry heat cannot be assessed.",
+                  "The recent-listing sample underlying break-rate and return observations is small, making the neutral heat reading less robust."
+                ]
+              },
+              "llm_market_interpretation_status": "available"
+            }
+          },
+          "model_prediction": {
+            "status": "available",
+            "reason": "per-case score read from the content-verified sanitized PR-F handoff",
+            "blocking_gate": null,
+            "model_name": "lightgbm",
+            "model_version": "v04_pr_f_lightgbm_explainability_v1",
+            "score": 0.15789534040116512,
+            "score_semantics": "uncalibrated_model_score",
+            "calibration_status": "uncalibrated",
+            "calibration_provenance_id": null,
+            "drivers": [
+              {
+                "feature": "market_core__log_prior_ipo_funds_raised_30d",
+                "component": "market_core",
+                "feature_value": 22.898480966608595,
+                "shap_value": 0.4856768319263922,
+                "direction": "increases"
+              },
+              {
+                "feature": "market_core__recent_ipo_return_5d",
+                "component": "market_core",
+                "feature_value": 0.022227862504275827,
+                "shap_value": -0.3780418381825626,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__ipo_count_30d",
+                "component": "market_core",
+                "feature_value": 6.0,
+                "shap_value": 0.3144528535392112,
+                "direction": "increases"
+              },
+              {
+                "feature": "market_core__ipo_count_60d",
+                "component": "market_core",
+                "feature_value": 14.0,
+                "shap_value": -0.178191175669989,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__recent_ipo_1d_sample_count",
+                "component": "market_core",
+                "feature_value": 14.0,
+                "shap_value": -0.15496641203427766,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__log_prior_ipo_funds_raised_60d",
+                "component": "market_core",
+                "feature_value": 23.88456377203046,
+                "shap_value": -0.11050002108066816,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__same_industry_recent_break_rate",
+                "component": "market_core",
+                "feature_value": null,
+                "shap_value": -0.09001831026228574,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__same_industry_recent_return_5d",
+                "component": "market_core",
+                "feature_value": null,
+                "shap_value": -0.06981326400171622,
+                "direction": "decreases"
+              },
+              {
+                "feature": "market_core__recent_ipo_break_rate",
+                "component": "market_core",
+                "feature_value": 0.42857142857142855,
+                "shap_value": 0.04682951924254962,
+                "direction": "increases"
+              },
+              {
+                "feature": "market_core__prior_ipo_funds_raised_30d_sample_count",
+                "component": "market_core",
+                "feature_value": 6.0,
+                "shap_value": 0.04144483267958438,
+                "direction": "increases"
+              }
+            ]
+          },
+          "uncertainty_statement": "model score is uncalibrated and must not be read as a probability; frozen model cohort evidence: the frozen LightGBM policy gave the production document features no split and no gain, so the document-plus-market and market-only arms are prediction-equivalent (not validated at this sample size); frozen model cohort evidence: the expert-gold ceiling arm differs from market-only by less than its own bootstrap interval spans, on a 19-case validation intersection (not validated at this sample size)",
+          "metadata": {
+            "classification": "SUPERVISORY_SYNTHESIS",
+            "creates_no_new_risk": true,
+            "probability_claimed": false,
+            "blocking_gates": [],
+            "unresolved_conflict_count": 5,
+            "frozen_model_evidence_available": true,
+            "final_supervision_llm": {
+              "schema_version": "v04_final_supervision_v1",
+              "prompt_version": "v04_final_supervision_v3",
+              "status": "available",
+              "outcome": "accepted",
+              "reason": "grounded supervisory synthesis available",
+              "fail_closed": false,
+              "scope_check": {
+                "status": "passed",
+                "cited_risk_ids": [
+                  "15180087-4d5f-59d0-860b-67bbf39377cb",
+                  "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+                ],
+                "cited_evidence_ids": [],
+                "cited_conflict_ids": [
+                  "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+                  "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+                  "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+                  "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+                  "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth"
+                ],
+                "supplied_risk_id_count": 2,
+                "supplied_evidence_id_count": 10,
+                "supplied_conflict_id_count": 5,
+                "out_of_scope_reference_count": 0,
+                "deterministic_severity_floor": "low",
+                "overall_risk": "medium",
+                "severity_floor_respected": true,
+                "invented_number_count": 0,
+                "prediction_vocabulary_used": false,
+                "attempts": 1,
+                "scope_corrections": 0,
+                "refused_response_count": 0,
+                "first_attempt_passed": true,
+                "rejected_attempts": []
+              },
+              "call": {
+                "provider_name": "openai_responses",
+                "model_name": "ark-code-latest",
+                "prompt_version": "v04_final_supervision_v3",
+                "request_id": "02178798113918388db556329240132465f0386a4fcfe59182db0",
+                "raw_response_hash": "43d67eb062a6d78b06494408cda1a5c2a531740398daaadb368e7561536af446",
+                "latency_ms": 15609
+              },
+              "deterministic_severity_floor": "low",
+              "judgement": {
+                "overall_risk": "medium",
+                "overall_risk_rationale": "The rule channel is low, but the document channel carries two medium-level risks left needs_review by the Verifier, which supports raising overall risk above the deterministic floor of low.",
+                "key_findings": [
+                  {
+                    "statement": "Two medium-level risks remain needs_review: financial's customer_concentration (calculation missing) and legal's material_litigation_compliance (actual matter and closure status not established), each carrying an agent–verifier disagreement that the Verifier settled none of.",
+                    "risk_ids": [
+                      "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+                    ],
+                    "evidence_ids": []
+                  },
+                  {
+                    "statement": "Five conflicts are carried forward partially resolved or unresolved, including a cross-channel document–model divergence on market_core__log_prior_ipo_funds_raised_30d that document re-retrieval cannot settle, plus unmapped financial claims on continuous_loss and revenue_growth routed to human review.",
+                    "risk_ids": [
+                      "15180087-4d5f-59d0-860b-67bbf39377cb",
+                      "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+                    ],
+                    "evidence_ids": []
+                  }
+                ],
+                "conflict_assessments": [
+                  {
+                    "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+                    "assessment": "Partially resolved: the financial agent's customer_concentration risk item remains needs_review and the Verifier settled none of the challenged items; the underlying calculation is missing, so the assertion and its verification remain unsettled."
+                  },
+                  {
+                    "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+                    "assessment": "Partially resolved: the legal agent's material_litigation_compliance risk item remains needs_review with the verifier citing pending_status_not_supported_by_evidence and manual_legal_judgment_required; the matter and closure status are not established."
+                  },
+                  {
+                    "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+                    "assessment": "Unresolved: the uncalibrated model's strongest driver increases risk while the document channel reports no high or critical verified risk; document re-retrieval cannot settle a cross-channel divergence, so this direction remains unsettled."
+                  },
+                  {
+                    "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+                    "assessment": "Partially resolved: financial held 3 evidence items for continuous_loss with conflicting values, while the document channel asserts nothing; the gap is at least partly retrieval and new evidence is routed to human review, so the risk picture is not established."
+                  },
+                  {
+                    "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+                    "assessment": "Partially resolved: financial held 1 evidence item for revenue_growth as needs_review that could not be mapped to clean facts; the document channel asserts nothing and the gap is at least partly retrieval."
+                  }
+                ],
+                "uncertainties": [
+                  "Model score is uncalibrated and not validated at the supplied sample size, so its risk direction cannot be read as descriptive governance wording.",
+                  "same_industry_recent_break_rate and same_industry_recent_return_5d market features are unavailable (insufficient governed prelisting history).",
+                  "Financial claims for continuous_loss and revenue_growth could not be mapped to clean facts and are routed to human review.",
+                  "Litigation matter existence, closure and pending status remain unestablished pending manual legal judgment."
+                ],
+                "recheck_required": true,
+                "recheck_targets": [
+                  {
+                    "target": "financial customer_concentration risk item",
+                    "reason": "A bounded verifier recheck could settle the agent–verifier disagreement since the calculation is missing.",
+                    "risk_ids": [
+                      "cd1e615d-5463-5512-8dd6-afd1eb9ffb73"
+                    ]
+                  },
+                  {
+                    "target": "legal material_litigation_compliance risk item",
+                    "reason": "A bounded verifier recheck with manual legal judgment could settle the unsettled litigation compliance claims.",
+                    "risk_ids": [
+                      "15180087-4d5f-59d0-860b-67bbf39377cb"
+                    ]
+                  }
+                ],
+                "final_explanation": "All four channels were available, with the rule channel at low risk and the model channel supplying an uncalibrated score whose strongest driver direction diverges from the document channel. Two medium agent risks remain needs_review, and financial claims for continuous_loss and revenue_growth remain unmapped. Overall risk is medium, driven by the two medium-level unsettled risks, and a bounded recheck of the two verifier-challenged risk items is warranted."
+              }
+            },
+            "conflict_status_counts": {
+              "detected": 0,
+              "rechecking": 0,
+              "resolved": 0,
+              "partially_resolved": 4,
+              "unresolved": 1
+            }
+          }
+        }
+      }
+    }
+  ],
+  "human_reviews": []
+}

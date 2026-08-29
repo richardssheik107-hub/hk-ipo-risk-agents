@@ -1,0 +1,84 @@
+{
+  "policy_version": "v04_e_recheck_policy_v2",
+  "attempted": 5,
+  "outcomes": [
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:financial:customer_concentration",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 5 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "customer_concentration"
+      ],
+      "new_evidence_ids": [
+        "b27f7834-a507-59b5-94d9-22835d195cf5",
+        "314f2fd6-2635-5a96-ab44-ab93466db617",
+        "4212c577-b816-57c3-93d2-da9469f7f1bb",
+        "b0e783a1-c28c-54ba-9b9b-5810c9fe4e0e",
+        "c1830a75-0e8c-5007-960c-d8f4355849f4"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval added 3 new evidence item(s); the Verifier settled 0 of 1 challenged risk item(s) and the rest remain unsettled",
+      "targets": [
+        "material_litigation_compliance"
+      ],
+      "new_evidence_ids": [
+        "cf394242-8eab-5eec-8c86-9dc4c661c30c",
+        "d972414e-8c0e-5fff-8f94-2c3a7aa58fe1",
+        "f8bd1101-35a6-53e5-adad-dc8ce22eb7bb"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:continuous_loss",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "continuous_loss"
+      ],
+      "new_evidence_ids": [
+        "5c7325b2-cda0-5e72-a970-3471c48440c0",
+        "dbeb9831-ebd7-5791-a933-b5ed622e2a7a",
+        "b46956aa-4fb6-5cf8-94ff-308fc2d1ab35",
+        "d172ee7e-9f32-593f-99e0-b1a4201c0eb9",
+        "d5721287-0227-56a1-9716-b9ea30859a3f"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:unresolved_agent_claim:financial:revenue_growth",
+      "status": "partially_resolved",
+      "resolution_note": "targeted re-retrieval surfaced 5 in-scope Evidence item(s) the agent did not use, so the gap is at least partly retrieval; the machine still asserts no risk for this code and the new Evidence is routed to human review",
+      "targets": [
+        "revenue_growth"
+      ],
+      "new_evidence_ids": [
+        "1c5e8cd2-e29e-5a3c-863a-f9173da97e23",
+        "bc07cf01-39db-546f-b167-3d775697cf40",
+        "ebdc1cba-e79f-5949-8484-55c4c3e57c3b",
+        "15e45e9e-089d-5788-b72c-eb41b90c290f",
+        "68c3561c-fa3b-5846-9397-f2dacf41e721"
+      ],
+      "revised_risk_ids": []
+    },
+    {
+      "conflict_id": "conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "recheck_id": "recheck:conflict:cd280c4e-906d-5d81-8654-32ae9d591a72:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "status": "unresolved",
+      "resolution_note": "conflict rule document_model_divergence spans channels outside the document, so no document re-retrieval can settle it; it is carried to the Final Supervisor unresolved",
+      "targets": [
+        "document_supervisor",
+        "frozen_model_channel"
+      ],
+      "new_evidence_ids": [],
+      "revised_risk_ids": []
+    }
+  ]
+}

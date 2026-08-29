@@ -1,0 +1,60 @@
+{
+  "schema_version": "v045_role_e_gate_e1_v1",
+  "gate": "E1",
+  "requirement": "same final case matrix + real provider credentials + successful bounded LLM Final Supervisor synthesis + trace metadata retained + no out-of-scope Evidence/Risk/Conflict references",
+  "case_id": "ipo_2024_02410",
+  "stock_code": "2410.HK",
+  "config": "configs/v045_competition_ai.yaml",
+  "synthesis_status": "available",
+  "synthesis_outcome": "accepted",
+  "successful_llm_arbitration": true,
+  "deterministic_fallback_used": false,
+  "provider_name": "openai_responses",
+  "provider_is_real_remote": true,
+  "provider_trace": {
+    "provider_name": "openai_responses",
+    "model_name": "ark-code-latest",
+    "prompt_version": "v04_final_supervision_v3",
+    "request_id": "02178798101318847c8075984f4c09bb3b0ca9abced541e5dbdb1",
+    "raw_response_hash": "6fb46af5da9d14e037c398a5a7b2a2e204f1cb72eb8eecc2634d9959220a2811",
+    "latency_ms": 21274
+  },
+  "provider_trace_complete": true,
+  "missing_provider_trace_fields": [],
+  "out_of_scope_reference_check": {
+    "status": "passed",
+    "fail_closed_fired": false,
+    "out_of_scope_reference_count": 0,
+    "violation": null,
+    "cited_risk_ids": [
+      "14ccf843-0a53-525c-95b7-b2f103f6f248",
+      "69066732-91e7-5238-850d-b162104dcab9",
+      "b890f18b-fa20-5af5-bd72-111b8fe2a56a"
+    ],
+    "cited_evidence_ids": [
+      "03c484d9-ee14-56cf-b8e8-228a5cfe4cf0",
+      "60dd7129-941a-5d23-a86a-a6cdf7467397",
+      "67ef7838-6af2-5ebd-8a5c-7a46c39bb804",
+      "f15aca6a-fe25-5c8c-a1f0-60af3b5ed4d9"
+    ],
+    "cited_conflict_ids": [
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:material_litigation_compliance",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:agent_verifier_disagreement:legal:redemption_rights",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:document_model_divergence:market_core__log_prior_ipo_funds_raised_30d",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:business:precommercial_product",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:continuous_loss",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:customer_concentration",
+      "conflict:8b7ac065-d42c-5d64-a180-2bfe10f41900:unresolved_agent_claim:financial:revenue_growth"
+    ],
+    "attempts": 1,
+    "scope_corrections": 0,
+    "first_attempt_passed": true,
+    "rejected_attempts": []
+  },
+  "scope_corrected": false,
+  "qualifications": [],
+  "deterministic_severity_floor": "critical",
+  "severity_floor_respected": true,
+  "satisfied": true,
+  "unmet_conditions": []
+}
