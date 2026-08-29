@@ -17,7 +17,7 @@ from ipo_risk.schemas import AnalysisError, DocumentChunk, DocumentParseRequest
 
 
 _ROLE_B_RAW_PAGE_CONTRACT = "v046_role_b_raw_pages_v1"
-_ROLE_B_TABLE_CONTRACT = "v046_role_b_tables_v1"
+_ROLE_B_TABLE_CONTRACT = "v046_role_b_tables_v2"
 _ROLE_B_CHUNK_CONTRACT = "v046_role_b_chunks_v1"
 
 
