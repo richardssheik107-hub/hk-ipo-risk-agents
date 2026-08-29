@@ -57,3 +57,5 @@ scripts/run_jingfa_full_demo.py
 # Local Oracle/modeling caches and ephemeral test workdirs.
 .pytest-oracle-*/
 data/cache/
+# Licensed/local prospectuses are never repository artifacts.
+data/local/
