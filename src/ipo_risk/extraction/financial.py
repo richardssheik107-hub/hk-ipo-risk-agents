@@ -217,6 +217,14 @@ _LABELS = {
             r"(?:\s*[╱／/]\s*[（(]?(?:所得|所用|产生|使用)[）)]?)?"
             r"\s*现金净额"
         ),
+        re.compile(
+            r"經營活動\s*[（(](?:所用|所得|產生|使用)[）)]\s*"
+            r"[╱／/]\s*(?:所得|所用|產生|使用)\s*現金(?:流量)?淨額"
+        ),
+        re.compile(
+            r"经营活动\s*[（(](?:所用|所得|产生|使用)[）)]\s*"
+            r"[╱／/]\s*(?:所得|所用|产生|使用)\s*现金(?:流量)?净额"
+        ),
         re.compile(r"net cash (?:used in|generated from|from) operating activities", re.I),
         re.compile(r"net cash flows? (?:used in|generated from) operating activities", re.I),
     ),
@@ -786,6 +794,13 @@ class FinancialEvidenceExtractor:
                 match = pattern.search(line)
                 if match:
                     return index, match.group(0)
+                if index + 1 < len(lines):
+                    joined = f"{line}\n{lines[index + 1]}"
+                    match = pattern.search(joined)
+                    if match:
+                        # Values start after the continuation line, so return
+                        # its index while preserving the exact joined label.
+                        return index + 1, match.group(0)
         return None, ""
 
     @staticmethod

@@ -33,6 +33,65 @@ def evidence(source: DocumentChunk, *, score: float = 1.0, evidence_id: str | No
     )
 
 
+def test_table_aware_cash_flow_accepts_parenthesized_bilingual_direction_label() -> None:
+    source = DocumentChunk(
+        document_id="doc",
+        chunk_id="doc:page:610",
+        page=610,
+        text=(
+            "截至十二月三十一日止年度\n"
+            "截至四月三十日止四個月\n"
+            "2017年\n2018年\n2019年\n2019年\n2020年\n"
+            "人民幣千元\n"
+            "經營活動（所用）╱\n"
+            "所得現金流量淨額\n"
+            "(291,844)\n686,062\n5,530,348\n(68,811)\n(3,168,273)"
+        ),
+    )
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        [], [evidence(source)], {source.chunk_id: source}
+    ).operating_cash_flow
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.normalized_value == Decimal("-3168273")
+    assert result.period_end == date(2020, 4, 30)
+    assert result.period_months == 4
+
+
+def test_table_aware_cash_flow_does_not_treat_section_heading_as_net_row() -> None:
+    source = DocumentChunk(
+        document_id="doc",
+        chunk_id="doc:page:385",
+        page=385,
+        text=(
+            "經營活動所得現金流量\n"
+            "除稅前利潤\n1,000\n2,000\n"
+            "新增銀行貸款\n30,000\n"
+        ),
+        metadata={
+            "tables": [
+                {
+                    "header_lines": ["2019年", "2020年", "人民幣千元"],
+                    "period_header_cells": ["2019年", "2020年"],
+                    "rows": [
+                        {"label": "經營活動所得現金流量", "cells": [], "y": 10.0},
+                        {"label": "除稅前利潤", "cells": ["1,000", "2,000"], "y": 20.0},
+                        {"label": "新增銀行貸款", "cells": ["30,000"], "y": 30.0},
+                    ],
+                }
+            ],
+            "has_structured_tables": True,
+        },
+    )
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        [], [evidence(source)], {source.chunk_id: source}
+    ).operating_cash_flow
+
+    assert result.status != ExtractionStatus.EXTRACTED
+
+
 def table(label: str, values: list[str], *, unit: str = "人民幣千元") -> str:
     return "\n".join(
         [
