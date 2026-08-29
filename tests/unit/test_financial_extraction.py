@@ -434,6 +434,45 @@ def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
     assert result.operating_cash_flow.period_end == date(2024, 6, 30)
 
 
+def test_compatible_pair_retains_strictly_equivalent_evidence_ids() -> None:
+    cash_summary = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n3,864",
+        page=20,
+    )
+    cash_statement = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n3,864",
+        page=200,
+    )
+    flow_summary = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(31,645)",
+        page=21,
+    )
+    flow_statement = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(31,645)",
+        page=201,
+    )
+    sources = (cash_summary, cash_statement, flow_summary, flow_statement)
+
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(cash_summary), evidence(cash_statement, score=0.8)],
+        [evidence(flow_summary), evidence(flow_statement, score=0.8)],
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.cash_and_cash_equivalents.metadata["equivalent_evidence_ids"] == [
+        "e:20",
+        "e:200",
+    ]
+    assert result.operating_cash_flow.metadata["equivalent_evidence_ids"] == [
+        "e:21",
+        "e:201",
+    ]
+
+
 def test_bounded_extractor_can_use_clean_candidate_beyond_old_top_five() -> None:
     noise = [
         chunk(f"不相關披露 {index}", page=50 + index) for index in range(5)

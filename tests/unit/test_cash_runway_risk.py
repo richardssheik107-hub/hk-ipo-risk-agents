@@ -141,6 +141,53 @@ def test_one_page_can_support_both_cash_and_operating_cash_flow() -> None:
     assert result.calculation.evidence_ids == ["combined-e"]
 
 
+def test_equivalent_financial_sources_are_retained_as_supporting_evidence() -> None:
+    extraction, evidence = inputs()
+    cash_support = evidence["cash-e"].model_copy(
+        update={
+            "evidence_id": "cash-support",
+            "chunk_id": "doc:page:171",
+            "page": 171,
+            "text": "same cash fact in a second prospectus section",
+        }
+    )
+    flow_support = evidence["ocf-e"].model_copy(
+        update={
+            "evidence_id": "ocf-support",
+            "chunk_id": "doc:page:172",
+            "page": 172,
+            "text": "same cash-flow fact in a second prospectus section",
+        }
+    )
+    cash = extraction.cash_and_cash_equivalents.model_copy(
+        update={"metadata": {"equivalent_evidence_ids": ["cash-e", "cash-support"]}}
+    )
+    cash_flow = extraction.operating_cash_flow.model_copy(
+        update={"metadata": {"equivalent_evidence_ids": ["ocf-e", "ocf-support"]}}
+    )
+
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(
+            update={
+                "cash_and_cash_equivalents": cash,
+                "operating_cash_flow": cash_flow,
+            }
+        ),
+        {**evidence, "cash-support": cash_support, "ocf-support": flow_support},
+    )
+
+    assert result.status == CashRunwayBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert [item.evidence_id for item in result.risk_item.evidence] == [
+        "cash-e",
+        "ocf-e",
+        "cash-support",
+        "ocf-support",
+    ]
+    assert result.calculation is not None
+    assert result.calculation.evidence_ids == ["cash-e", "ocf-e"]
+
+
 @pytest.mark.parametrize("field", ["cash_and_cash_equivalents", "operating_cash_flow"])
 @pytest.mark.parametrize("status", [ExtractionStatus.NEEDS_REVIEW, ExtractionStatus.NOT_FOUND])
 def test_non_extracted_metric_never_builds(field: str, status: ExtractionStatus) -> None:

@@ -455,18 +455,61 @@ class FinancialEvidenceExtractor:
                 if self._financial_fact_conflicts(selected.result, candidate.result):
                     return None
 
+        equivalent_cash_ids = self._equivalent_evidence_ids(
+            selected_cash.result, cash_candidates
+        )
+        equivalent_flow_ids = self._equivalent_evidence_ids(
+            selected_flow.result, flow_candidates
+        )
+
         pair_metadata = {
             "pair_selection": "latest_common_compatible_period",
             "compatible_pair_count": len(pairs),
             "pair_period_end": selected_cash.result.period_end.isoformat(),
         }
         cash_result = selected_cash.result.model_copy(
-            update={"metadata": {**selected_cash.result.metadata, **pair_metadata}}
+            update={
+                "metadata": {
+                    **selected_cash.result.metadata,
+                    **pair_metadata,
+                    "equivalent_evidence_ids": equivalent_cash_ids,
+                }
+            }
         )
         flow_result = selected_flow.result.model_copy(
-            update={"metadata": {**selected_flow.result.metadata, **pair_metadata}}
+            update={
+                "metadata": {
+                    **selected_flow.result.metadata,
+                    **pair_metadata,
+                    "equivalent_evidence_ids": equivalent_flow_ids,
+                }
+            }
         )
         return cash_result, flow_result
+
+    @staticmethod
+    def _equivalent_evidence_ids(
+        selected: FinancialMetricValue,
+        candidates: Sequence[_Candidate],
+    ) -> list[str]:
+        """Keep every independently retrieved source proving the same fact."""
+
+        fields = (
+            "normalized_value",
+            "currency",
+            "unit",
+            "period_end",
+            "period_months",
+        )
+        identifiers: list[str] = []
+        for candidate in candidates:
+            value = candidate.result
+            if not value.evidence_id or any(
+                getattr(value, field) != getattr(selected, field) for field in fields
+            ):
+                continue
+            identifiers.append(value.evidence_id)
+        return list(dict.fromkeys(identifiers))
 
     @staticmethod
     def _candidate_sort_key(candidate: _Candidate) -> tuple[object, ...]:

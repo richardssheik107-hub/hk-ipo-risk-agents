@@ -321,6 +321,28 @@ def test_three_evidence_items_need_review() -> None:
     assert "risk_evidence_count_invalid" in result.issues
 
 
+def test_marked_equivalent_supporting_evidence_is_independently_verified() -> None:
+    risk, evidence = valid_case()
+    support = risk.evidence[0].model_copy(
+        update={
+            "evidence_id": "cash-support",
+            "chunk_id": "cash-support-chunk",
+            "page": 110,
+            "metadata": {
+                "equivalent_financial_fact_support": True,
+                "supports_evidence_id": "cash-e",
+            },
+        }
+    )
+    evidence[support.evidence_id] = support
+    changed = risk.model_copy(update={"evidence": [*risk.evidence, support]})
+
+    result = CashRunwayRiskVerifier().verify(changed, evidence)
+
+    assert result.status == CashRunwayVerificationStatus.VERIFIED
+    assert result.issues == []
+
+
 def test_calculation_with_extra_evidence_id_needs_review() -> None:
     risk, evidence = valid_case()
     assert risk.calculation is not None

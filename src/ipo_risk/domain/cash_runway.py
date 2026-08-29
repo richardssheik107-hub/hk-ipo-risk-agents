@@ -253,6 +253,7 @@ class CashRunwayRiskBuilder:
         evidence_by_id: Mapping[str, Evidence],
     ) -> tuple[list[Evidence], list[str]]:
         resolved: list[Evidence] = []
+        supporting_evidence: list[Evidence] = []
         issues: list[str] = []
         for label, metric in (("cash", cash), ("operating_cash_flow", cash_flow)):
             if not metric.evidence_id:
@@ -274,7 +275,39 @@ class CashRunwayRiskBuilder:
                 continue
             if all(item.evidence_id != evidence.evidence_id for item in resolved):
                 resolved.append(evidence)
-        if len(resolved) == 2 and resolved[0].document_id != resolved[1].document_id:
+
+            equivalents = metric.metadata.get("equivalent_evidence_ids")
+            if not isinstance(equivalents, list):
+                continue
+            for evidence_id in equivalents:
+                if not isinstance(evidence_id, str) or not evidence_id:
+                    continue
+                support = evidence_by_id.get(evidence_id)
+                if (
+                    support is None
+                    or support.source_type != EvidenceSourceType.PROSPECTUS
+                    or support.document_id != metric.document_id
+                ):
+                    continue
+                if all(
+                    item.evidence_id != support.evidence_id
+                    for item in [*resolved, *supporting_evidence]
+                ):
+                    supporting_evidence.append(
+                        support.model_copy(
+                            update={
+                                "metadata": {
+                                    **support.metadata,
+                                    "equivalent_financial_fact_support": True,
+                                    "supports_evidence_id": metric.evidence_id,
+                                }
+                            }
+                        )
+                    )
+        resolved.extend(supporting_evidence)
+        if resolved and any(
+            item.document_id != resolved[0].document_id for item in resolved[1:]
+        ):
             issues.append("evidence_document_mismatch")
         return resolved, issues
 

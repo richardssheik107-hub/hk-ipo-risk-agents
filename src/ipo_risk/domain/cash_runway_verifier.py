@@ -87,12 +87,19 @@ class CashRunwayRiskVerifier:
 
         embedded = list(risk.evidence)
         embedded_ids = [item.evidence_id for item in embedded]
-        expected_evidence_count = (
-            len(set(calculation.evidence_ids)) if calculation is not None else len(embedded)
+        calculation_ids = calculation.evidence_ids if calculation is not None else []
+        expected_evidence_count = len(set(calculation_ids))
+        supporting = embedded[expected_evidence_count:]
+        supporting_contract_ok = all(
+            item.metadata.get("equivalent_financial_fact_support") is True
+            and item.metadata.get("supports_evidence_id") in calculation_ids
+            for item in supporting
         )
         record(
             "evidence_count",
-            1 <= len(embedded) <= 2 and len(embedded) == expected_evidence_count,
+            1 <= expected_evidence_count <= 2
+            and expected_evidence_count <= len(embedded) <= 6
+            and supporting_contract_ok,
             "risk_evidence_count_invalid",
         )
         record(
@@ -108,7 +115,7 @@ class CashRunwayRiskVerifier:
         if calculation is not None:
             record(
                 "calculation_evidence_order",
-                calculation.evidence_ids == embedded_ids,
+                calculation_ids == embedded_ids[:expected_evidence_count],
                 "calculation_evidence_ids_mismatch",
             )
 
