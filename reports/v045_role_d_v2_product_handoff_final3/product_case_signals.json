@@ -1,0 +1,152 @@
+[
+  {
+    "alert": false,
+    "alert_policy": "development_forward_oof_f2_top_fraction_0.475",
+    "case_id": "ipo_2024_02410",
+    "drivers": [
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_return_5d",
+        "feature_value": -0.09228013788280481,
+        "shap_value": -0.8297420583051542
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_return_5d",
+        "feature_value": -0.11053310886644219,
+        "shap_value": 0.3040816601898479
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_break_rate",
+        "feature_value": 0.6,
+        "shap_value": 0.17553186541199214
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_60d",
+        "feature_value": 15.0,
+        "shap_value": -0.14965190747324666
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_break_rate",
+        "feature_value": 0.0,
+        "shap_value": 0.1375986488241721
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_30d",
+        "feature_value": 2.0,
+        "shap_value": -0.10134403307138617
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_ipo_count_180d",
+        "feature_value": 3.0,
+        "shap_value": 0.04873799834287148
+      }
+    ],
+    "score": 0.14101203637169535
+  },
+  {
+    "alert": true,
+    "alert_policy": "development_forward_oof_f2_top_fraction_0.475",
+    "case_id": "ipo_2024_02460",
+    "drivers": [
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_return_5d",
+        "feature_value": -0.2503000744621902,
+        "shap_value": -0.8376256616350406
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_60d",
+        "feature_value": 6.0,
+        "shap_value": 0.5308044875423215
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_30d",
+        "feature_value": 4.0,
+        "shap_value": 0.35543605085914814
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_break_rate",
+        "feature_value": 0.6666666666666666,
+        "shap_value": 0.21507607949021595
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_ipo_count_180d",
+        "feature_value": 0.0,
+        "shap_value": 0.05438112159583384
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_break_rate",
+        "feature_value": null,
+        "shap_value": 0.04355189984243373
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_return_5d",
+        "feature_value": null,
+        "shap_value": -0.04012499367825468
+      }
+    ],
+    "score": 0.25528465362983727
+  },
+  {
+    "alert": false,
+    "alert_policy": "development_forward_oof_f2_top_fraction_0.475",
+    "case_id": "ipo_2024_01318",
+    "drivers": [
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_return_5d",
+        "feature_value": 0.02222786250427583,
+        "shap_value": -0.8548574548644778
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_60d",
+        "feature_value": 14.0,
+        "shap_value": -0.4868087416108752
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__ipo_count_30d",
+        "feature_value": 6.0,
+        "shap_value": 0.43956254824356594
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_return_5d",
+        "feature_value": null,
+        "shap_value": -0.04621284589748707
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__recent_ipo_break_rate",
+        "feature_value": 0.42857142857142855,
+        "shap_value": -0.04115577829851301
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_recent_break_rate",
+        "feature_value": null,
+        "shap_value": -0.008139272405702691
+      },
+      {
+        "component": "market_core",
+        "feature": "market_core__same_industry_ipo_count_180d",
+        "feature_value": 0.0,
+        "shap_value": -0.004931680727068183
+      }
+    ],
+    "score": 0.08358041817822966
+  }
+]

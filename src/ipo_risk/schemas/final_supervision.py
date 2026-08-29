@@ -194,6 +194,8 @@ class ModelPredictionView(BaseModel):
     score_semantics: str = "uncalibrated_model_score"
     calibration_status: CalibrationStatus = "uncalibrated"
     calibration_provenance_id: str | None = None
+    alert: bool | None = None
+    alert_policy: str | None = None
     drivers: tuple[ModelDriver, ...] = ()
 
 

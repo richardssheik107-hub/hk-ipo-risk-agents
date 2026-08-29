@@ -43,6 +43,6 @@ market_dynamic_outcome_pack: ""
 market_dynamic_extended_hsi_csv: ""
 market_dynamic_extended_turnover_csv: ""
 final_supervisor: llm
-# The committed four-file handoff is label-free, checksum-bound and byte-identical
-# to the final-three package recorded by the immutable Role-D receipt.
-pr_f_run_dir: reports/v045_pr_f_product_handoff_final3
+# The V2 handoff is label-free and bound to its versioned freeze/receipt. The
+# previous PR-F package remains committed for rollback and audit.
+pr_f_run_dir: reports/v045_role_d_v2_product_handoff_final3

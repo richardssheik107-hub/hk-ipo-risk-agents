@@ -114,6 +114,19 @@ A 做一次 promote/retain 决议：
 - promote v2：创建新的 versioned freeze/receipt/handoff，不再按 2024 调参；
 - retain PR-F：保留弱辅助 signal，并完成 strict revalidation / dynamic inference contract。
 
+V2 的 builder/checker/frozen binding 已版本化实现。持有授权 PR-C targets 时重建：
+
+```bash
+python scripts/build_v045_role_d_v2_release.py \
+  --target-dir <AUTHORIZED_PR_C_TARGET_DIR>/targets \
+  --base-main-commit <BASE_MAIN_SHA>
+python scripts/check_v045_role_d_v2_release.py
+```
+
+输出使用 `reports/v045_role_d_v2`、独立 V2 freeze/receipt 和独立 handoff；不得手工改写或覆盖旧 frozen PR-F artifact。再验证 `--resume` 与新空目录重建 byte-identical。
+
+V2 runtime 使用 `reports/v045_role_d_v2_product_handoff_final3`。缺不可变输入时状态为 `BLOCKED_EXTERNAL_IMMUTABLE_INPUTS`，不得重训或换行情绕过。
+
 验证现有 frozen receipt：
 
 ```bash
@@ -279,8 +292,8 @@ Bundle 必须拒绝：PDF、raw licensed data、Secret/private key/token、本�
 [ ] ALL79 Development
 [ ] M1 >=80%
 [ ] M2 >=85%
-[ ] D A-owned promote/retain decision
-[ ] D strict revalidation / determinism / final identity
+[ ] D A-owned promotion PR merge
+[x] D V2 strict revalidation / determinism / final identity（promotion package）
 [x] C/E final-three baseline
 [x] E accepted 3/3
 [x] M3 =100%

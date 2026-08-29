@@ -28,9 +28,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ipo_risk.modeling.statistical_power import assess_comparison
 from ipo_risk.modeling.pr_f_product_handoff import (
-    ProductRuntimeHandoffError,
-    read_product_case_signal,
+    PRODUCT_MANIFEST_NAME,
     ProductCaseNotPresentError,
+    ProductRuntimeHandoffError,
+    read_product_case_signal_details,
 )
 from ipo_risk.schemas.canonical_modeling import canonical_hash
 from ipo_risk.schemas.final_supervision import ChannelStatus, ModelDriver, ModelPredictionView
@@ -115,10 +116,15 @@ def _require(condition: bool, message: str) -> None:
         raise FrozenModelEvidenceError(message)
 
 
-def load_frozen_cohort_evidence(frozen_dir: Path) -> FrozenModelCohortEvidence:
+def load_frozen_cohort_evidence(
+    frozen_dir: Path,
+    *,
+    manifest_name: str = FROZEN_MANIFEST_NAME,
+) -> FrozenModelCohortEvidence:
     """Load and fail-closed validate the committed PR-F freeze manifest."""
-    path = Path(frozen_dir) / FROZEN_MANIFEST_NAME
-    _require(path.is_file(), f"frozen PR-F manifest not found at {FROZEN_MANIFEST_NAME}")
+    _require(Path(manifest_name).name == manifest_name, "frozen manifest name must be a basename")
+    path = Path(frozen_dir) / manifest_name
+    _require(path.is_file(), f"frozen model manifest not found at {manifest_name}")
     payload: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
 
     _require(payload.get("status") == EXPECTED_STATUS, "frozen PR-F manifest is not complete_frozen")
@@ -133,7 +139,7 @@ def load_frozen_cohort_evidence(frozen_dir: Path) -> FrozenModelCohortEvidence:
 
     ablation = payload.get("component_ablation") or {}
     return FrozenModelCohortEvidence(
-        model_name=MODEL_NAME,
+        model_name=str(payload.get("model_name") or MODEL_NAME),
         model_version=str(payload["pr_f_version"]),
         model_policy_version=str(payload["model_policy_version"]),
         freeze_manifest_hash=str(payload["freeze_manifest_hash"]),
@@ -157,9 +163,28 @@ def _gain(key: str, ablation: dict[str, Any]) -> AblationGain:
     )
 
 
-def frozen_manifest_result_hash(frozen_dir: Path) -> str:
-    path = Path(frozen_dir) / FROZEN_MANIFEST_NAME
+def frozen_manifest_result_hash(
+    frozen_dir: Path,
+    *,
+    manifest_name: str = FROZEN_MANIFEST_NAME,
+) -> str:
+    _require(Path(manifest_name).name == manifest_name, "frozen manifest name must be a basename")
+    path = Path(frozen_dir) / manifest_name
     return str(json.loads(path.read_text(encoding="utf-8"))["model_result_hash"])
+
+
+def runtime_frozen_manifest_name(run_dir: Path) -> str:
+    """Resolve a versioned manifest only from the checksum-verified handoff directory."""
+
+    payload = _read_json_if_valid(Path(run_dir) / PRODUCT_MANIFEST_NAME)
+    if not isinstance(payload, dict):
+        return FROZEN_MANIFEST_NAME
+    name = payload.get("source_frozen_manifest_name")
+    if name is None:
+        return FROZEN_MANIFEST_NAME
+    if not isinstance(name, str) or Path(name).name != name or not name.endswith(".json"):
+        raise FrozenModelEvidenceError("product handoff names an invalid frozen manifest")
+    return name
 
 
 class LocalRunBindingError(ValueError):
@@ -208,7 +233,16 @@ def load_case_prediction(
     This prevents a stale/tampered results file from being accepted merely
     because somebody copied a trusted hash into the local run manifest.
     """
-    evidence = load_frozen_cohort_evidence(frozen_dir)
+    try:
+        manifest_name = runtime_frozen_manifest_name(run_dir)
+    except FrozenModelEvidenceError:
+        return _unavailable("product_handoff_frozen_manifest_binding_is_invalid", {
+            "model_name": MODEL_NAME,
+            "model_version": None,
+            "score_semantics": "uncalibrated_model_score",
+            "calibration_status": "uncalibrated",
+        })
+    evidence = load_frozen_cohort_evidence(frozen_dir, manifest_name=manifest_name)
     base = {
         "model_name": evidence.model_name,
         "model_version": evidence.model_version,
@@ -219,9 +253,11 @@ def load_case_prediction(
         return _unavailable("ipo_identity_not_bound_to_the_governed_case_catalog", base)
 
     run_path = Path(run_dir)
-    expected_hash = frozen_manifest_result_hash(frozen_dir)
+    expected_hash = frozen_manifest_result_hash(
+        frozen_dir, manifest_name=manifest_name
+    )
     try:
-        product_signal = read_product_case_signal(
+        product_signal = read_product_case_signal_details(
             run_path,
             expected_source_model_result_hash=expected_hash,
             case_id=case_id,
@@ -233,11 +269,13 @@ def load_case_prediction(
     except ProductRuntimeHandoffError:
         return _unavailable("sanitized_pr_f_product_handoff_failed_validation", base)
     if product_signal is not None:
-        score, drivers = product_signal
+        score, drivers, alert, alert_policy = product_signal
         return ModelPredictionView(
             status=ChannelStatus.AVAILABLE,
-            reason="per-case score read from the content-verified sanitized PR-F handoff",
+            reason="per-case score read from the content-verified sanitized Role-D handoff",
             score=score,
+            alert=alert,
+            alert_policy=alert_policy,
             drivers=drivers,
             **base,
         )

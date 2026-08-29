@@ -20,7 +20,9 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: pip install -e ".[dev,retrieval-research]"
       - name: Role-D product runtime preflight
-        run: python scripts/check_v045_product_runtime.py
+        run: |
+          python scripts/check_v045_role_d_v2_release.py
+          python scripts/check_v045_product_runtime.py
       - name: Role-D and frontend integration contracts
         run: >-
           pytest -q

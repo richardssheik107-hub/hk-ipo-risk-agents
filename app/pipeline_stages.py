@@ -197,6 +197,8 @@ def _prediction(payload: dict[str, object]) -> StageView:
     model_available = bool(model and model.get("status", "available") == "available")
     if model_available:
         metrics.append(Metric("Model score", str(model.get("score", "Unavailable"))))
+        if model.get("alert") is not None:
+            metrics.append(Metric("V2 triage alert", "yes" if model["alert"] else "no"))
     elif _runtime_completed(payload):
         metrics.append(Metric("Model channel", str(model.get("status") or "unavailable")))
 
