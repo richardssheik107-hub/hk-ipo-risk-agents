@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from scripts.audit_v046_financial_conversion_matrix import _classify, _diagnostic_code
+from scripts.audit_v046_financial_conversion_matrix import (
+    _classify,
+    _diagnostic_code,
+    _family_summary,
+)
 
 
 @pytest.mark.parametrize(
@@ -73,3 +77,46 @@ def test_conversion_matrix_reads_component_diagnostic_code() -> None:
         "ComponentDiagnostic(risk_code='customer_concentration', "
         "code=<DiagnosticCode.NOT_APPLICABLE: 'not_applicable'>)"
     ) == "not_applicable"
+
+
+def test_family_summary_uses_only_explicit_gold_negatives() -> None:
+    positive = {
+        "case_id": "positive",
+        "risk_family": "customer_concentration",
+        "top20_hit": True,
+        "agent_consumed": True,
+        "structured_fact_created": True,
+        "risk_candidate_created": True,
+        "final_risk_created": True,
+        "status": "verified",
+        "gold_status": "verified",
+        "exact_page_match": True,
+        "exact_anchor_match": True,
+        "final_failure_root": "correct",
+    }
+    analyses = {
+        "positive": {"verified_risks": [{"risk_code": "customer_concentration"}]},
+        "negative": {"pending_risks": [{"risk_code": "customer_concentration"}]},
+        "unjudged": {"pending_risks": [{"risk_code": "customer_concentration"}]},
+    }
+    manifest = {
+        "risk_units": [
+            {
+                "case_id": "negative",
+                "split": "development",
+                "source_risk_code": "customer_concentration",
+                "primary_scope": True,
+                "explicit_gold_judgment": True,
+                "applicable": False,
+            }
+        ]
+    }
+
+    summary = _family_summary([positive], manifest=manifest, analyses=analyses)
+    controls = summary["customer_concentration"]["negative_control"]
+
+    assert controls["explicit_negative_count"] == 1
+    assert controls["false_positive_count"] == 1
+    assert controls["new_valid_risk_count"] == 1
+    assert controls["new_invalid_risk_count"] == 1
+    assert controls["unjudged_treated_as_negative"] is False

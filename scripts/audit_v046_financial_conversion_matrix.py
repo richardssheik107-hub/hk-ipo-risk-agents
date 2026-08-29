@@ -90,6 +90,86 @@ def _all_risks(payload: Mapping[str, Any]) -> list[tuple[str, Mapping[str, Any]]
     return result
 
 
+def _predicted_positive(analysis: Mapping[str, Any], risk_code: str) -> bool:
+    return any(
+        item.get("risk_code") == risk_code and bucket in {"verified", "pending"}
+        for bucket, item in _all_risks(analysis)
+    )
+
+
+def _family_summary(
+    rows: list[dict[str, Any]],
+    *,
+    manifest: Mapping[str, Any] | None,
+    analyses: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    summaries: dict[str, Any] = {}
+    for risk_code in sorted(FINANCIAL_RISKS):
+        selected = [row for row in rows if row["risk_family"] == risk_code]
+        first_failures = Counter(row["final_failure_root"] for row in selected)
+        positive_pairs = {(row["case_id"], risk_code) for row in selected}
+        predicted_positive_pairs = {
+            (case_id, risk_code)
+            for case_id, analysis in analyses.items()
+            if _predicted_positive(analysis, risk_code)
+        }
+        explicit_negative_pairs: set[tuple[str, str]] = set()
+        if manifest is not None:
+            explicit_negative_pairs = {
+                (str(item["case_id"]), risk_code)
+                for item in manifest.get("risk_units", [])
+                if isinstance(item, Mapping)
+                and item.get("split") == "development"
+                and item.get("source_risk_code") == risk_code
+                and item.get("primary_scope") is True
+                and item.get("explicit_gold_judgment") is True
+                and item.get("applicable") is False
+                and str(item.get("case_id")) in analyses
+            }
+        true_positive_pairs = predicted_positive_pairs & positive_pairs
+        false_positive_pairs = predicted_positive_pairs & explicit_negative_pairs
+        summaries[risk_code] = {
+            "positive_unit_count": len(selected),
+            "observed_stage_counts": {
+                "candidate_top20_hit": sum(row["top20_hit"] for row in selected),
+                "agent_consumed": sum(row["agent_consumed"] for row in selected),
+                "structured_fact_created": sum(
+                    row["structured_fact_created"] for row in selected
+                ),
+                "risk_candidate_created": sum(
+                    row["risk_candidate_created"] for row in selected
+                ),
+                "status_matched": sum(
+                    row["final_risk_created"]
+                    and row["status"] == row["gold_status"]
+                    for row in selected
+                ),
+                "evidence_retained_exact": sum(
+                    row["exact_page_match"] and row["exact_anchor_match"]
+                    for row in selected
+                ),
+                "m1_correct": sum(
+                    row["final_failure_root"] == "correct" for row in selected
+                ),
+            },
+            "first_failure_counts": dict(sorted(first_failures.items())),
+            "negative_control": {
+                "status": (
+                    "AVAILABLE_FROM_EXPLICIT_EXISTING_GOLD"
+                    if manifest is not None
+                    else "NOT_AVAILABLE_MANIFEST_NOT_PROVIDED"
+                ),
+                "explicit_negative_count": len(explicit_negative_pairs),
+                "false_positive_count": len(false_positive_pairs),
+                "valid_negative_count": len(explicit_negative_pairs - false_positive_pairs),
+                "new_valid_risk_count": len(true_positive_pairs),
+                "new_invalid_risk_count": len(false_positive_pairs),
+                "unjudged_treated_as_negative": False,
+            },
+        }
+    return summaries
+
+
 def _classify(
     *,
     risk_code: str,
@@ -123,7 +203,9 @@ def _classify(
     return "G", "verifier_or_reconciliation_drop"
 
 
-def build_matrix(run_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def build_matrix(
+    run_root: Path, *, manifest_path: Path | None = None
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     summary = _load_json(run_root / "ablation_summary.json")
     if summary.get("validation_opened") is not False:
         raise ValueError("validation_scope_not_closed")
@@ -236,6 +318,8 @@ def build_matrix(run_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
             }
         )
 
+    manifest = _load_json(manifest_path) if manifest_path is not None else None
+
     root_summary: dict[str, dict[str, int]] = defaultdict(
         lambda: {"risk_units": 0, "recoverable_m1_units": 0, "recoverable_m2_units": 0}
     )
@@ -257,6 +341,7 @@ def build_matrix(run_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         ),
         "category_counts": dict(Counter(row["final_failure_category"] for row in rows)),
         "root_summary": dict(root_summary),
+        "family_summary": _family_summary(rows, manifest=manifest, analyses=cache),
         "validation_opened": False,
         "blind_2025_outcome_accessed": False,
         "gold_modified": False,
@@ -268,8 +353,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path)
     args = parser.parse_args()
-    rows, summary = build_matrix(args.run_root.resolve())
+    rows, summary = build_matrix(
+        args.run_root.resolve(),
+        manifest_path=args.manifest.resolve() if args.manifest else None,
+    )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     _write_csv(args.output_dir / "financial_conversion_matrix.csv", rows)
     _write_json(args.output_dir / "financial_conversion_summary.json", summary)
