@@ -31,6 +31,14 @@ from typing import Any
 
 from ipo_risk.agents.dynamic_market_context import DynamicPITMarketContextProvider
 from ipo_risk.agents.market_context import GovernedPRBMarketContextProvider
+from ipo_risk.agents.market_context import FAILURE_OTHER
+from ipo_risk.market.dynamic_extended import DynamicExtendedMarketSource
+from ipo_risk.market.handoff import (
+    MarketFeatureHandoffError,
+    MarketHandoffBindingError,
+    build_market_feature_handoff,
+    verify_market_handoff_binding,
+)
 from ipo_risk.core.config import load_settings
 from ipo_risk.market.ipo_market_context_features import (
     IPO_MARKET_CONTEXT_RAW_FEATURE_ORDER,
@@ -97,12 +105,30 @@ def _row(case: dict[str, str], view: MarketContextView) -> dict[str, Any]:
         "feature_manifest_hash": view.feature_manifest_hash or "",
         "artifact_content_hash": provenance.get("artifact_content_hash", ""),
         "reason_code": provenance.get("reason_code", ""),
+        "failure_code": provenance.get("failure_code", ""),
+        "model_handoff": case.get("model_handoff", ""),
         "reason": view.reason,
         "integrity_violations": ";".join(_integrity_violations(view)),
     }
 
 
-def _historical(provider, bridge_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _model_handoff_state(view: MarketContextView, frozen_dir: Path) -> str:
+    """Can the model lane build a frozen model input from this view, or not?"""
+
+    try:
+        handoff = build_market_feature_handoff(view)
+    except MarketFeatureHandoffError:
+        return "not_projectable"
+    try:
+        verify_market_handoff_binding(handoff, frozen_dir=frozen_dir)
+    except MarketHandoffBindingError:
+        return "binding_failed"
+    return "bound"
+
+
+def _historical(
+    provider, bridge_path: Path, frozen_dir: Path
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     with bridge_path.open(encoding="utf-8-sig", newline="") as handle:
         bridge_rows = list(csv.DictReader(handle))
 
@@ -121,14 +147,16 @@ def _historical(provider, bridge_path: Path) -> tuple[list[dict[str, Any]], dict
             industry=(row.get("official_industry_name") or "").strip(),
             metadata={"case_id": row["case_id"]},
         )
+        view = provider.context(profile)
         rows.append(
             _row(
                 {
                     "case_id": row["case_id"],
                     "stock_code": code,
                     "listing_date": listing,
+                    "model_handoff": _model_handoff_state(view, frozen_dir),
                 },
-                provider.context(profile),
+                view,
             )
         )
 
@@ -156,11 +184,24 @@ def _historical(provider, bridge_path: Path) -> tuple[list[dict[str, Any]], dict
             for year in sorted({item["listing_year"] for item in rows})
         },
         "integrity_violation_count": sum(bool(item["integrity_violations"]) for item in rows),
+        # Role-C 4.3 asks for the failure kinds by name, not one "error" bucket.
+        "by_failure_code": dict(
+            sorted(
+                Counter(
+                    item["failure_code"] or FAILURE_OTHER
+                    for item in rows
+                    if item["classification"] == "error"
+                ).items()
+            )
+        ),
+        "by_model_handoff": dict(
+            sorted(Counter(item["model_handoff"] for item in rows).items())
+        ),
     }
     return rows, summary
 
 
-def _fresh(provider, bridge_path: Path) -> list[dict[str, Any]]:
+def _fresh(provider, bridge_path: Path, frozen_dir: Path) -> list[dict[str, Any]]:
     history = load_official_prior_ipo_history(bridge_path)
     covered = history.history_end_date - timedelta(days=30)
     beyond = history.history_end_date + timedelta(days=180)
@@ -230,6 +271,7 @@ def _fresh(provider, bridge_path: Path) -> list[dict[str, Any]]:
                 "classification": _classify(view),
                 "runtime_path": view.provenance.get("runtime_path", ""),
                 "reason_code": view.provenance.get("reason_code", ""),
+                "failure_code": view.provenance.get("failure_code", ""),
                 "reason": view.reason,
                 "available_features": [
                     item.name
@@ -241,6 +283,7 @@ def _fresh(provider, bridge_path: Path) -> list[dict[str, Any]]:
                     for item in view.observations
                     if item.availability != "available"
                 },
+                "model_handoff": _model_handoff_state(view, frozen_dir),
                 "integrity_violations": _integrity_violations(view),
             }
         )
@@ -275,11 +318,29 @@ def main() -> int:
                 if settings.market_dynamic_outcome_pack
                 else None
             ),
+            extended_source=(
+                DynamicExtendedMarketSource(
+                    hsi_normalized_csv=_rooted(
+                        settings.market_dynamic_extended_hsi_csv
+                    ),
+                    turnover_normalized_csv=_rooted(
+                        settings.market_dynamic_extended_turnover_csv
+                    ),
+                    hsi_manifest=_rooted("data/catalog/csmar_hsi_source_manifest.json"),
+                    external_manifest=_rooted(
+                        "data/catalog/v04_c_external_market_source_manifest.json"
+                    ),
+                )
+                if settings.market_dynamic_extended_hsi_csv
+                and settings.market_dynamic_extended_turnover_csv
+                else None
+            ),
         ),
     )
 
-    rows, summary = _historical(provider, bridge_path)
-    fresh = _fresh(provider, bridge_path)
+    frozen_dir = _rooted(settings.report_dir) / "frozen"
+    rows, summary = _historical(provider, bridge_path, frozen_dir)
+    fresh = _fresh(provider, bridge_path, frozen_dir)
     history = load_official_prior_ipo_history(
         bridge_path,
         outcome_pack_path=(
@@ -327,8 +388,13 @@ def main() -> int:
                 "output_dir": str(args.output_dir),
                 "historical_summary": summary,
                 "fresh_case_classifications": {
-                    item["probe_id"]: item["classification"] for item in fresh
+                    item["probe_id"]: (
+                        item["failure_code"] or item["classification"]
+                    )
+                    for item in fresh
                 },
+                "by_failure_code": summary["by_failure_code"],
+                "by_model_handoff": summary["by_model_handoff"],
                 "integrity_violation_count": violations,
             },
             ensure_ascii=False,
