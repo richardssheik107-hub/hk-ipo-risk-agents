@@ -29,6 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from ipo_risk.modeling.statistical_power import assess_comparison
 from ipo_risk.modeling.pr_f_product_handoff import (
     PRODUCT_MANIFEST_NAME,
+    ProductCaseNotPresentError,
     ProductRuntimeHandoffError,
     read_product_case_signal_details,
 )
@@ -261,6 +262,10 @@ def load_case_prediction(
             expected_source_model_result_hash=expected_hash,
             case_id=case_id,
         )
+    except ProductCaseNotPresentError:
+        # The package is intact; this case is out of its scope. Every dynamic
+        # new-IPO case lands here, and must not be told the artifact is broken.
+        return _unavailable("case_is_not_in_the_sanitized_product_handoff", base)
     except ProductRuntimeHandoffError:
         return _unavailable("sanitized_pr_f_product_handoff_failed_validation", base)
     if product_signal is not None:

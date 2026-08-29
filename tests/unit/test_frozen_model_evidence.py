@@ -299,3 +299,32 @@ def test_no_non_finite_value_escapes_the_cohort_evidence() -> None:
             assert math.isfinite(value), value
 
     walk(payload)
+
+
+def test_a_case_outside_the_product_handoff_is_not_reported_as_a_broken_artifact(
+    tmp_path,
+) -> None:
+    """Out of scope and corrupt are different facts, and read differently.
+
+    Every dynamic new-IPO case is absent from the sanitized handoff. Telling a
+    reader the frozen model package "failed validation" would make an intact
+    artifact look broken on the exact path the product is meant to support.
+    """
+
+    payload = _result_payload(_rows())
+    frozen = _frozen_dir_for_payload(tmp_path, payload)
+    source, _ = _run_dir(tmp_path, result_hash=canonical_hash(payload), rows=_rows())
+    handoff = tmp_path / "out_of_scope_handoff"
+    write_product_handoff(
+        source,
+        handoff,
+        expected_source_model_result_hash=canonical_hash(payload),
+        case_ids=["ipo_2024_00000"],
+    )
+
+    view = load_case_prediction(handoff, frozen, case_id="ipo_2025_01364")
+
+    assert view.status is ChannelStatus.UNAVAILABLE_ERROR
+    assert view.reason == "case_is_not_in_the_sanitized_product_handoff"
+    assert "failed_validation" not in view.reason
+    assert view.score is None
