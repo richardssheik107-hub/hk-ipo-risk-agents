@@ -1714,6 +1714,39 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             for index, diagnostic in enumerate(occurrence_diagnostics[name]):
                 diagnostic["selected"] = index == selected_index
 
+        # When both labels explicitly enumerate the same period count and one
+        # series contains exactly one trailing percentage beyond that count,
+        # the shared enumerated prefix is the only structurally comparable
+        # series.  Do not apply this repair without matching explicit counts.
+        enumerated_values = {
+            count for count in selected_enumerated_counts.values() if count is not None
+        }
+        if len(enumerated_values) == 1:
+            enumerated_count = next(iter(enumerated_values))
+            if (
+                enumerated_count >= 2
+                and all(
+                    selected_enumerated_counts[name] == enumerated_count
+                    for name in ("largest", "top_five")
+                )
+            ):
+                lengths = {name: len(values[name]) for name in ("largest", "top_five")}
+                longer = [
+                    name
+                    for name, length in lengths.items()
+                    if length == enumerated_count + 1
+                ]
+                aligned = [
+                    name
+                    for name, length in lengths.items()
+                    if length == enumerated_count
+                ]
+                if len(longer) == 1 and len(aligned) == 1:
+                    name = longer[0]
+                    values[name] = values[name][:enumerated_count]
+                    raw_percentages[name] = raw_percentages[name][:enumerated_count]
+                    occurrence_selection[name] = "companion_enumerated_prefix"
+
         # A concentration sentence can enumerate several bare years and one
         # final full date while the adjacent page contains a newer, unrelated
         # date.  When both percentage series independently align to that same

@@ -846,6 +846,30 @@ def test_companion_series_selects_unique_equal_length_aggregate_occurrence() -> 
     )
 
 
+def test_companion_series_uses_shared_explicit_enumerated_prefix() -> None:
+    result = concentration(
+        "customer",
+        (
+            "於2018年、2019年及2020年，"
+            "五大客戶佔收益19.1%、33.5%及44.1%，"
+            "最大客戶佔收益16.6%、29.2%、39.0%及85.0%。"
+        ),
+        header=(
+            "截至2018年12月31日止年度\n截至2019年12月31日止年度\n"
+            "截至2020年12月31日止年度"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("39.0")
+    assert result.top_five_pct == Decimal("44.1")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["largest"] == (
+        "companion_enumerated_prefix"
+    )
+
+
 def test_empty_first_label_yields_to_later_aligned_occurrence() -> None:
     result = concentration(
         "supplier",
