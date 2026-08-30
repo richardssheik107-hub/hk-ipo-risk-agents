@@ -293,9 +293,9 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
             "completed_with_deterministic_fallback",
         }
         summary = (
-            "The Final Supervisor stage completed with deterministic fallback because the real LLM synthesis did not complete successfully. The fallback state remains explicit and is not counted as real-provider acceptance."
+            "由于真实 LLM 综合判断未成功完成，Final Supervisor 已使用确定性降级结果完成；该降级状态会明确展示，不计为真实模型服务验收。"
             if degraded
-            else "The Final Supervisor stage completed for this case; channel states and unresolved conflicts remain explicit."
+            else "该案例的 Final Supervisor 阶段已完成；各通道状态和未解决冲突均会明确展示。"
         )
         metrics: list[Metric] = [
             Metric("Channels available", f"{available} of {len(states)}"),
@@ -354,7 +354,7 @@ def _final_report(payload: dict[str, object]) -> StageView:
         return StageView(
             stage_id="final_report", ordinal=7, title="Final Risk Report",
             status=StageStatus.PARTIAL,
-            summary="Final Supervisor output exists, but this runtime did not materialize report sections.",
+            summary="Final Supervisor 已生成输出，但本次运行未生成报告章节。",
             blocking_reason="report generation did not produce the current case artifact; inspect report-generator diagnostics",
             what_appears_when_unblocked=("the governed current-case report sections",),
         )

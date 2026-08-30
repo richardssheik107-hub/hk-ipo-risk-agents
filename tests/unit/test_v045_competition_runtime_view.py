@@ -131,8 +131,8 @@ def test_conflict_rows_carry_the_recheck_result_beside_the_conflict() -> None:
     row = conflict_rows(_payload())[0]
     assert row["状态"] == "部分解决"
     assert row["定向复核"] == "已执行"
-    assert row["新增 Evidence"] == 1
-    assert row["复核结论"] == "retrieval gap"
+    assert row["新增原文证据"] == 1
+    assert "新增 1 条范围内证据" in row["复核结论"]
 
 
 def test_a_conflict_without_a_recheck_is_shown_as_not_attempted() -> None:
@@ -152,13 +152,13 @@ def test_conflict_status_counts_do_not_collapse_partial_into_resolved() -> None:
 
 def test_trace_rows_expose_actor_tool_and_evidence_counts() -> None:
     row = trace_rows(_payload())[0]
-    assert (row["Agent"], row["工具 / Skill"], row["Evidence"]) == ("financial", "financial", 1)
+    assert (row["智能体"], row["工具 / 技能"], row["原文证据"]) == ("financial", "financial", 1)
 
 
 def test_traceability_metrics_report_the_measured_ratios() -> None:
     metrics = {row["指标"]: row["值"] for row in traceability_metrics(_payload())}
     assert metrics["综合可追溯率"] == 1.0
-    assert metrics["Evidence 引用可解析率"] == 1.0
+    assert metrics["原文证据引用可解析率"] == 1.0
 
 
 def test_a_run_without_the_e_lane_yields_no_synthetic_metrics() -> None:
@@ -261,9 +261,11 @@ def test_the_frozen_summary_is_never_labelled_as_the_final_supervisor_conclusion
     assert "Final Supervisor 综合结论" not in _app_source()
 
 
-def test_the_channel_grid_is_rendered_once_per_page() -> None:
-    """It sits above the workspaces; a second copy inside a tab is redundant."""
-    assert _app_source().count("render_channel_grid(payload)") == 1
+def test_the_reader_has_one_channel_health_projection() -> None:
+    """The executive snapshot owns channel health; a second grid is redundant."""
+    source = _app_source()
+    assert "render_channel_grid(payload)" not in source
+    assert source.count("render_executive_snapshot(payload)") == 1
 
 
 def test_the_report_surface_reuses_the_shared_supervisor_projection() -> None:

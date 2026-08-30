@@ -79,6 +79,27 @@ def conflict_short_name(conflict: dict[str, Any]) -> str:
     return str(conflict.get("conflict_id", ""))
 
 
+def _conflict_summary_zh(conflict: dict[str, Any]) -> str:
+    conflict_id = str(conflict.get("conflict_id") or "")
+    if "agent_verifier_disagreement" in conflict_id:
+        return "智能体提出了风险项，但验证器将其保留为待复核，风险判断与验证状态尚未完全一致。"
+    if "unresolved_agent_claim" in conflict_id:
+        return "智能体检索到相关原文证据，但尚未映射为可验证的结构化事实，文档通道暂未形成对应风险。"
+    if "document_model_divergence" in conflict_id:
+        return "冻结模型的主要驱动方向与招股书通道的风险判断不一致；模型分数未经校准，该分歧被保留。"
+    return "该跨通道冲突已被系统保留，需结合参与方输出进一步复核。"
+
+
+def _resolution_note_zh(conflict: dict[str, Any], outcome: dict[str, Any]) -> str:
+    conflict_id = str(conflict.get("conflict_id") or "")
+    new_count = len(outcome.get("new_evidence_ids") or [])
+    if "document_model_divergence" in conflict_id:
+        return "该冲突跨越招股书与模型通道，无法仅通过文档重新检索解决，继续保留至 Final Supervisor。"
+    if new_count:
+        return f"定向重新检索新增 {new_count} 条范围内证据；尚未解决的部分继续进入人工复核。"
+    return "本轮未取得可改变结论的新依据，冲突按原状态保留。"
+
+
 def conflict_rows(payload: dict[str, Any]) -> list[dict[str, object]]:
     """One display row per detected conflict, with its re-check result attached."""
 
@@ -92,9 +113,9 @@ def conflict_rows(payload: dict[str, Any]) -> list[dict[str, object]]:
                 "参与方": " ↔ ".join(conflict.get("involved_agents", [])),
                 "状态": RESOLUTION_LABELS.get(conflict.get("status", ""), conflict.get("status", "")),
                 "定向复核": "已执行" if outcome else "未执行（受控预算）",
-                "新增 Evidence": len(outcome.get("new_evidence_ids", [])),
-                "说明": conflict.get("summary", ""),
-                "复核结论": conflict.get("resolution_note") or "",
+                "新增原文证据": len(outcome.get("new_evidence_ids", [])),
+                "说明": _conflict_summary_zh(conflict),
+                "复核结论": _resolution_note_zh(conflict, outcome),
             }
         )
     return rows
@@ -118,17 +139,17 @@ def trace_rows(payload: dict[str, Any]) -> list[dict[str, object]]:
             {
                 "#": index,
                 "类型": EVENT_TYPE_LABELS.get(event.get("event_type", ""), event.get("event_type", "")),
-                "Agent": event.get("agent_name") or "",
+                "智能体": event.get("agent_name") or "",
                 "动作": event.get("action") or "",
-                "工具 / Skill": event.get("tool_or_skill") or "",
+                "工具 / 技能": event.get("tool_or_skill") or "",
                 "状态": event.get("status") or "",
-                "Provider": event.get("provider_name") or "",
-                "Model": event.get("model_name") or "",
-                "Prompt": event.get("prompt_version") or "",
-                "Evidence": len(event.get("evidence_ids") or []),
-                "Calculation": len(event.get("calculation_ids") or []),
+                "模型服务方": event.get("provider_name") or "",
+                "模型": event.get("model_name") or "",
+                "提示词版本": event.get("prompt_version") or "",
+                "原文证据": len(event.get("evidence_ids") or []),
+                "计算依据": len(event.get("calculation_ids") or []),
                 "延迟(ms)": event.get("latency_ms"),
-                "无 Evidence 原因": details.get("no_evidence_reason") or "",
+                "无原文证据原因": details.get("no_evidence_reason") or "",
             }
         )
     return rows
@@ -139,13 +160,13 @@ def traceability_metrics(payload: dict[str, Any]) -> list[dict[str, object]]:
     if not report:
         return []
     return [
-        {"指标": "Agent 可追溯率", "值": report.get("agent_traceability"),
+        {"指标": "智能体可追溯率", "值": report.get("agent_traceability"),
          "计数": f"{report.get('agent_identified_count')}/{report.get('event_count')}"},
-        {"指标": "Tool / Skill 可追溯率", "值": report.get("tool_traceability"),
+        {"指标": "工具 / 技能可追溯率", "值": report.get("tool_traceability"),
          "计数": f"{report.get('tool_identified_count')}/{report.get('event_count')}"},
-        {"指标": "Evidence 说明率", "值": report.get("evidence_traceability"),
+        {"指标": "原文证据说明率", "值": report.get("evidence_traceability"),
          "计数": f"{report.get('evidence_accounted_count')}/{report.get('event_count')}"},
-        {"指标": "Evidence 引用可解析率", "值": (
+        {"指标": "原文证据引用可解析率", "值": (
             1.0 if not report.get("referenced_evidence_count")
             else round(report.get("resolved_evidence_count", 0) / report["referenced_evidence_count"], 6)
         ),

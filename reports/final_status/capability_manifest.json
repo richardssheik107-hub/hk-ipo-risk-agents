@@ -48,13 +48,13 @@
       "evidence": [
         {
           "path": "src/ipo_risk/extraction/bounded_semantics.py",
-          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
-          "size_bytes": 5709
+          "sha256": "ddac4c25846c9376b63910f51f7fb68c12bf71d6b24d42f84bb4220e6b1f7dde",
+          "size_bytes": 5884
         },
         {
           "path": "tests/unit/test_bounded_document_semantics.py",
-          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
-          "size_bytes": 4227
+          "sha256": "86692e5a3641e9f458d9b437524b098bf654816591747b6bb4650d71808f3f64",
+          "size_bytes": 4359
         }
       ],
       "limitations": "Qualitative contract demonstration only; no new Gold or M1/M2 unit is claimed.",
@@ -72,13 +72,13 @@
       "evidence": [
         {
           "path": "src/ipo_risk/extraction/bounded_semantics.py",
-          "sha256": "69bee5ad3712e02337424a0a134406331de39e457b40313437ec351b4d084dfe",
-          "size_bytes": 5709
+          "sha256": "ddac4c25846c9376b63910f51f7fb68c12bf71d6b24d42f84bb4220e6b1f7dde",
+          "size_bytes": 5884
         },
         {
           "path": "tests/unit/test_bounded_document_semantics.py",
-          "sha256": "e2a6263cbe65b7fa79856d5d2f42df4d370b3384ebc7aba78b3968d5aad6611b",
-          "size_bytes": 4227
+          "sha256": "86692e5a3641e9f458d9b437524b098bf654816591747b6bb4650d71808f3f64",
+          "size_bytes": 4359
         }
       ],
       "limitations": "Private structured proposal, not a registered production RiskItem or a scored M1/M2 family.",
@@ -97,13 +97,13 @@
       "evidence": [
         {
           "path": "src/ipo_risk/market/ipo_structure_features.py",
-          "sha256": "5bb99d8f5ae20dbe0ea690907c1117c24ce972217e7d3bda270031af22546416",
-          "size_bytes": 3973
+          "sha256": "74bb777ad04e71cd97b4e19a4e524f99172c823871f7fa46a6cd91b9aeea6984",
+          "size_bytes": 4020
         },
         {
           "path": "tests/unit/test_ipo_structure_features.py",
-          "sha256": "248644a66e5bde723e690fa29bc4e37b20483b7f28a2b9d32e0c4e466772f7b8",
-          "size_bytes": 1205
+          "sha256": "cc826f10f683246a101c7e5a92daf433c0fec9bbb80046c83dd413c6fd229242",
+          "size_bytes": 1222
         },
         {
           "path": "reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json",
@@ -200,23 +200,23 @@
       "evidence": [
         {
           "path": "app/streamlit_app.py",
-          "sha256": "d9c4f121c04410e9519e2334162a7555174199244fceecb3997f631c31cf441f",
-          "size_bytes": 43650
+          "sha256": "b1dece8adde7c044ddfd7120ddaa9904d3ee58fa0c1f436fc01fce78b7883055",
+          "size_bytes": 59047
         },
         {
           "path": "app/competition_ui.py",
-          "sha256": "e5a7c0d5a1bc88949a708dd1b4414ae111923a2e1c4eac78c15647094ba76136",
-          "size_bytes": 145614
+          "sha256": "7c1ac7596182e3555784bc8f4b9e22b261e88d6ca7299adb46b72681ddc1b945",
+          "size_bytes": 170517
         },
         {
           "path": "src/ipo_risk/api/human_review.py",
-          "sha256": "da12ac3051035c4ac82f8b3b2757ef5ce4a7e816cb62247e91de45db25751cf8",
-          "size_bytes": 10015
+          "sha256": "ba437808b40075291a4d7ef6ad2fe93234261134e57e409e94b170378c2bfc65",
+          "size_bytes": 10319
         },
         {
           "path": "tests/contract/test_v046_human_review_api.py",
-          "sha256": "5f525ca87287c46ebae550ad843922ec889d46e8d0b0b46aef65fa60660d7baa",
-          "size_bytes": 8668
+          "sha256": "563cacf61f3a568dc0d4b984b7269a5161f465d8483b45e1344da3650c3bd955",
+          "size_bytes": 8900
         }
       ],
       "limitations": "Human review is optional and does not determine release readiness.",
@@ -253,6 +253,7 @@
     "tests/unit/test_ipo_structure_features.py",
     "tests/contract/test_v046_human_review_api.py",
     "tests/integration/test_v04_final_supervision_pipeline.py",
+    "tests/integration/test_streamlit_information_architecture.py",
     "tests/unit/test_v045_competition_runtime_view.py",
     "tests/unit/test_v045_team_clone_ready.py"
   ],
@@ -264,5 +265,5 @@
     "validation_opened": false,
     "blind_2025_y_accessed": false
   },
-  "content_hash": "542f00334eb4c4d9a06bd8bde44b77c4b109f830f9558e0d19e8f03200e7424b"
+  "content_hash": "a1e63411b0dc637953a13a64a55334f68f424d6ea42d036d384f2c8a74c011ac"
 }

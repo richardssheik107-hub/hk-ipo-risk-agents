@@ -164,8 +164,8 @@ def test_completed_runtime_stays_green_when_optional_market_and_model_are_missin
     assert {metric.label: metric.value for metric in stages["market_features"].metrics}["Market channel"] == "unavailable"
     assert {metric.label: metric.value for metric in stages["prediction"].metrics}["Model channel"] == "unavailable"
     assert {metric.label: metric.value for metric in stages["explainability"].metrics}["Model drivers"] == "unavailable"
-    assert "fallback" in stages["final_supervisor"].summary.lower()
-    assert "not counted as real-provider acceptance" in stages["final_supervisor"].summary
+    assert "确定性降级" in stages["final_supervisor"].summary
+    assert "不计为真实模型服务验收" in stages["final_supervisor"].summary
     assert all(pending_notice(stage) is None for stage in stages.values())
 
 
@@ -201,8 +201,8 @@ def test_final_supervisor_fallback_is_green_but_explicitly_not_real_provider_acc
     }
     stage = {item.stage_id: item for item in resolve_stages(payload)}["final_supervisor"]
     assert stage.status is StageStatus.COMPLETED
-    assert "fallback" in stage.summary.lower()
-    assert "not counted as real-provider acceptance" in stage.summary
+    assert "确定性降级" in stage.summary
+    assert "不计为真实模型服务验收" in stage.summary
     assert {metric.label: metric.value for metric in stage.metrics}["LLM synthesis"] == "deterministic fallback"
 
 

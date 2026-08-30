@@ -9,6 +9,7 @@ APP_DIR = Path(__file__).resolve().parents[2] / "app"
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+import competition_ui as competition_ui_module  # noqa: E402
 from competition_ui import (  # noqa: E402
     available_market_observation_count,
     channel_state_map,
@@ -19,6 +20,8 @@ from competition_ui import (  # noqa: E402
     market_degradation_summary,
     market_missing_reason_label,
     market_runtime_summary,
+    reader_market_model_summary,
+    reader_markdown_report,
     report_section_title,
     risk_display_name,
     risk_inventory_rows,
@@ -29,6 +32,58 @@ from competition_ui import (  # noqa: E402
     stage_title_zh,
     status_label,
 )
+
+
+def test_theme_localizes_visible_file_uploader_copy(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def _capture(body: str, *, unsafe_allow_html: bool = False) -> None:
+        captured["body"] = body
+        captured["unsafe_allow_html"] = unsafe_allow_html
+
+    monkeypatch.setattr(competition_ui_module.st, "markdown", _capture)
+    competition_ui_module.apply_competition_theme()
+
+    css = str(captured["body"])
+    assert 'content:"选择文件"' in css
+    assert 'content:"单个文件不超过 200 MB · PDF"' in css
+    assert 'content:"已就绪"' in css
+    assert 'content:"Ready"' not in css
+    assert captured["unsafe_allow_html"] is True
+
+
+def test_theme_scopes_balanced_navigation_and_intake_layout(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def _capture(body: str, *, unsafe_allow_html: bool = False) -> None:
+        captured["body"] = body
+        captured["unsafe_allow_html"] = unsafe_allow_html
+
+    monkeypatch.setattr(competition_ui_module.st, "markdown", _capture)
+    competition_ui_module.apply_competition_theme()
+
+    css = str(captured["body"])
+    assert (
+        '.st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],'
+        '[data-testid="stButtonGroup"]) '
+        '[role="radiogroup"] {display:grid!important;'
+        'grid-template-columns:repeat(4,minmax(0,1fr))'
+    ) in css
+    assert (
+        '.st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],'
+        '[data-testid="stButtonGroup"]) '
+        '[role="radio"] p {width:100%;margin:0;text-align:center'
+    ) in css
+    assert '[role="radio"][aria-checked="true"]' in css
+    assert "rgba(217,204,255,.22)" in css
+    assert ".st-key-home_start_analysis {display:flex;justify-content:center;width:100%!important" in css
+    assert '.st-key-home_start_analysis div[data-testid="stButton"] {display:flex;justify-content:center;width:auto!important' in css
+    assert ".intake-no-upload {display:flex;align-items:center;justify-content:center;min-height:230px" in css
+    assert (
+        '.st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"]'
+        ':not(:has([data-testid="stFileChips"])){min-height:230px;}'
+    ) in css
+    assert captured["unsafe_allow_html"] is True
 
 
 def _payload() -> dict[str, object]:
@@ -119,7 +174,8 @@ def test_executive_supervisor_view_keeps_document_summary_separate_from_competit
     view = executive_supervisor_view(payload)
     assert view["mode"] == "deterministic_fallback"
     assert view["title"] == "确定性 Document Supervisor 汇总"
-    assert "0 unresolved" in view["body"]
+    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "unresolved" not in view["body"]
     assert view["conflict_counts"] == {"partially_resolved": 2, "unresolved": 3}
     assert "transport request failed" in view["llm_reason"]
 
@@ -131,6 +187,7 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
             "status": "available",
             "reason": "grounded supervisory synthesis available",
             "judgement": {
+                "overall_risk": "medium",
                 "final_explanation": "Grounded competition-wide explanation.",
                 "overall_risk_rationale": "Fallback rationale.",
             },
@@ -141,8 +198,144 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
     view = executive_supervisor_view(payload)
     assert view["mode"] == "llm"
     assert view["title"] == "LLM Final Supervisor 综合判断"
-    assert view["body"] == "Grounded competition-wide explanation."
+    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "Grounded competition-wide explanation." not in view["body"]
     assert view["conflict_counts"] == {"resolved": 1}
+    assert view["overall_risk"] == "medium"
+    assert view["risk_basis_label"] == "综合风险等级"
+
+
+def test_reader_report_is_chinese_and_excludes_backend_metadata() -> None:
+    payload = _payload()
+    payload["profile"] = {
+        "company_name": "示例公司",
+        "stock_code": "0001.HK",
+        "listing_date": "2024-01-01",
+        "industry": "消费",
+    }
+    payload["prediction"] = {"risk_score": 42, "risk_level": "medium"}
+    payload["final_supervision"]["channel_states"][2]["status"] = "available"
+    payload["final_supervision"]["model_prediction"] = {
+        "status": "available",
+        "score": 0.731,
+        "drivers": [{"feature": "feature_alpha", "shap_value": 0.66}],
+        "model_version": "lightgbm-v2-private",
+    }
+    risk = payload["domains"]["financial"]["risks"][0]
+    risk["evidence"] = [{"evidence_id": "internal-e1", "page": 7, "text": "引用原文"}]
+    risk["metadata"] = {"prospectus_sha256": "secret-technical-hash"}
+
+    report = reader_markdown_report(payload)
+
+    assert report.startswith("# 示例公司港股 IPO 风险分析报告")
+    assert "引用原文" in report
+    assert "结构化字段" not in report
+    assert "Structured section metadata" not in report
+    assert "component_diagnostics" not in report
+    assert "prospectus_sha256" not in report
+    assert "secret-technical-hash" not in report
+    assert "internal-e1" not in report
+    assert "推理注释" in report
+    assert "形成依据" in report
+    assert "风险影响" in report
+    assert "判断边界" in report
+    assert "复核重点" in report
+    assert "模型已形成辅助排序信号" in report
+    assert "未经概率校准" in report
+    assert "规则评分" not in report
+    assert "模型评分" not in report
+    assert "0.731" not in report
+    assert "feature_alpha" not in report
+    assert "shap_value" not in report
+    assert "lightgbm-v2-private" not in report
+
+
+def test_reader_market_model_summary_is_human_readable_without_raw_details() -> None:
+    payload = _payload()
+    payload["prediction"] = {"risk_score": 87, "risk_level": "high"}
+    payload["final_supervision"]["channel_states"][2]["status"] = "available"
+    payload["market_context"] = {
+        "status": "available",
+        "observations": [
+            {
+                "name": "same_industry_ipo_count_180d",
+                "value": 0,
+                "availability": "available",
+            },
+            {
+                "name": "prior_ipo_count_30d",
+                "value": 4,
+                "availability": "available",
+            },
+            {
+                "name": "same_industry_recent_return_5d",
+                "value": None,
+                "availability": "unavailable",
+                "missing_reason": "insufficient_governed_prelisting_history",
+            },
+        ],
+    }
+    payload["market_intelligence"] = {
+        "ipo_heat": {"ipo_heat": "HOT", "sample_strength": "STRONG"},
+        "market_regime": {
+            "market_regime": "INSUFFICIENT_DATA",
+            "liquidity_condition": "UNAVAILABLE",
+        },
+    }
+    payload["final_supervision"]["model_prediction"] = {
+        "status": "available",
+        "score": 0.123,
+        "drivers": [{"feature": "feature_alpha", "shap_value": -0.456}],
+        "model_version": "lightgbm-v2-private",
+    }
+
+    summary = reader_market_model_summary(payload)
+    text = " ".join(summary.values())
+
+    assert set(summary) == {
+        "market_title",
+        "market_body",
+        "market_coverage",
+        "model_title",
+        "model_body",
+        "review_guidance",
+    }
+    assert "近期新股市场热度偏热，整体市场环境仍需结合更多信息判断" in text
+    assert "近期缺少同业新股样本" in text
+    assert "取得 2/3 项上市前市场信息" in text
+    assert "主要原因：受管的上市前历史不足" in text
+    assert "受管的上市前历史不足 ·" not in text
+    assert "模型已形成辅助排序信号" in text
+    assert "未经概率校准" in text
+    assert "逐项市场指标、模型分数和影响因素均保留在后台" in text
+    for raw_detail in (
+        "87",
+        "0.123",
+        "-0.456",
+        "feature_alpha",
+        "shap_value",
+        "lightgbm-v2-private",
+        "insufficient_governed_prelisting_history",
+        "same_industry_recent_return_5d",
+    ):
+        assert raw_detail not in text
+
+
+def test_reader_model_summary_respects_explicit_unavailable_channel_state() -> None:
+    payload = _payload()
+    payload["final_supervision"]["model_prediction"] = {
+        "status": "available",
+        "score": 0.91,
+        "drivers": [{"feature": "stale_feature", "shap_value": 0.8}],
+    }
+
+    summary = reader_market_model_summary(payload)
+    text = " ".join(summary.values())
+
+    assert summary["model_title"] == "当前没有可核验的逐案模型结果"
+    assert "模型缺失不代表低风险" in summary["model_body"]
+    assert "0.91" not in text
+    assert "stale_feature" not in text
 
 
 def test_workspace_inventory_localizes_display_without_changing_source_values() -> None:

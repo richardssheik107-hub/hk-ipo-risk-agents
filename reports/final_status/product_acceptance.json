@@ -46,6 +46,7 @@
     "tests/unit/test_ipo_structure_features.py",
     "tests/contract/test_v046_human_review_api.py",
     "tests/integration/test_v04_final_supervision_pipeline.py",
+    "tests/integration/test_streamlit_information_architecture.py",
     "tests/unit/test_v045_competition_runtime_view.py",
     "tests/unit/test_v045_team_clone_ready.py"
   ],
@@ -67,18 +68,18 @@
     },
     {
       "path": "app/streamlit_app.py",
-      "sha256": "d9c4f121c04410e9519e2334162a7555174199244fceecb3997f631c31cf441f",
-      "size_bytes": 43650
+      "sha256": "b1dece8adde7c044ddfd7120ddaa9904d3ee58fa0c1f436fc01fce78b7883055",
+      "size_bytes": 59047
     },
     {
       "path": "app/competition_ui.py",
-      "sha256": "e5a7c0d5a1bc88949a708dd1b4414ae111923a2e1c4eac78c15647094ba76136",
-      "size_bytes": 145614
+      "sha256": "7c1ac7596182e3555784bc8f4b9e22b261e88d6ca7299adb46b72681ddc1b945",
+      "size_bytes": 170517
     },
     {
       "path": "src/ipo_risk/runtime/demo_replay.py",
-      "sha256": "e5f0d6658f7f2fdb2208bd8af7eb55c04252d9aac84a08ded7a5657429928726",
-      "size_bytes": 20636
+      "sha256": "792ec20f6092f7f8d990f16bf2aca6fab6c4d6a732dc6baa2d24ecbf66425179",
+      "size_bytes": 21156
     }
   ],
   "governance": {
@@ -87,5 +88,5 @@
     "ui_computes_or_invents_channel_values": false,
     "human_review_required": false
   },
-  "content_hash": "0956b910ac1ffcad073e32ce31c480b4be056bd9f6c1f93126f0c0e198482d13"
+  "content_hash": "70af630482ebd1c71850e21d7122cc515ed79415c63e6887d10206bf0f655e4e"
 }
