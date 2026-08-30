@@ -18,6 +18,7 @@ v1.0.0 之后不再维护第二套 Roadmap、并行冲刺计划或“当前 Batc
 | `COMPETITION_CLOSURE_PLAN.md` | 冻结后的最终收口状态，不再是研发 Roadmap |
 | `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2 / Gold / split / M1/M2/M3/M5 口径 |
 | `SUBMISSION_RUNBOOK.md` | one-shot Validation、fresh clone、安全审计、封包操作手册 |
+| `AUTHORIZED_SOURCE_HANDOFF.md` | 赛题来源哈希、授权数据复用方式与不可上传边界 |
 | `TEAM_QUICKSTART.md` | fresh clone / canonical replay /统一产品入口 |
 | `FRONTEND_JUDGE_FACING_HANDOFF.md` | 最终评审入口与 canonical UI 信息架构 |
 | `ROLE_D_MODEL_DECISION.md` | Role-D V2 最终模型决议与边界 |

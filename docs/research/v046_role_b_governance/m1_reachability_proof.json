@@ -1,0 +1,102 @@
+{
+  "audit_version": "v100_m1_reachability_proof_v2",
+  "status": "INTERNAL_G2_PROVENANCE_CEILING_CONFIRMED",
+  "basis_revision": "e8ea7d7804e4af907b6444cf26908ae63026becf",
+  "scope": "Frozen Existing-Gold Metric-v2 on Development only",
+  "sources": [
+    {
+      "path": "docs/COMPETITION_METRIC_PROTOCOL.md",
+      "sha256": "22b444b34e1bf117af3be4970a9e1b36b908aea506894d7c1b9e3e3e69ca752b"
+    },
+    {
+      "path": "data/catalog/ipo_prospectus_manifest.csv",
+      "sha256": "eec1e4f28309ca85d79218032754b7f92ed8c3238fed31511fd6ae6dfb704bbe"
+    },
+    {
+      "path": "reports/v045_role_b/existing_gold_evaluable_manifest.json",
+      "sha256": "28d700c79bdabb37e877aa5f9519a53b5790c75802c6b05a6660bf5b6df0ee8d"
+    },
+    {
+      "path": "docs/research/v046_source_unlock_provenance.json",
+      "sha256": "4d859884662f489d2213f8fcccd31ba31a49632a23ae9a35177bad6c94161260"
+    },
+    {
+      "path": "docs/research/V046_ROLE_B_SOURCE_EDITION_UNLOCK.md",
+      "sha256": "00a364a8856230a5d5e230cbb52764c99cf672cfad90bd2786a153eba39444eb"
+    },
+    {
+      "path": "reports/v045_role_b/document_benchmark_summary.json",
+      "sha256": "a71ad5b6aa2e67b8f5e3144417f8b2e984e66199adf755e9c7b76c2ce8f1d29c"
+    },
+    {
+      "path": "reports/v045_role_b/risk_benchmark.csv",
+      "sha256": "f8258e84d3d7ddbba6009b791ff31a34e515cb04c8286ba61517cd31dae62354"
+    },
+    {
+      "path": "reports/v045_role_b/all79_final/offline_document_benchmark_summary.json",
+      "sha256": "0ef5ac23774f2d366e2770f29ae974da5207628781e709ae7b24b5daec374a5a"
+    },
+    {
+      "path": "reports/v045_role_b/all79_final/offline_risk_benchmark.csv",
+      "sha256": "f753adae293ddb8cf42c5ffd4164d71460eb542e2d11d25ce70e49fe1ed122a3"
+    }
+  ],
+  "source_provenance_audit": {
+    "affected_case_count": 14,
+    "affected_primary_m1_unit_count": 21,
+    "affected_primary_evidence_anchor_count": 27,
+    "m1_facts_recoverable_from_chinese": 21,
+    "exact_english_anchors_absent_from_frozen_chinese_source": 27,
+    "records": [
+      {"case_id": "ipo_2022_00314", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_00816", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_01204", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_01406", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_01880", "primary_m1_units": 2},
+      {"case_id": "ipo_2022_02145", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_02372", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_02407", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_02602", "primary_m1_units": 2},
+      {"case_id": "ipo_2022_06610", "primary_m1_units": 3},
+      {"case_id": "ipo_2022_06698", "primary_m1_units": 2},
+      {"case_id": "ipo_2022_06922", "primary_m1_units": 2},
+      {"case_id": "ipo_2022_09863", "primary_m1_units": 1},
+      {"case_id": "ipo_2022_09886", "primary_m1_units": 2}
+    ]
+  },
+  "final_result_observation": {
+    "real_llm_gated": {
+      "affected_m1_rows": 21,
+      "correct": 0,
+      "evidence_hit": 0
+    },
+    "deterministic_offline": {
+      "affected_m1_rows": 21,
+      "correct": 0,
+      "evidence_hit": 0
+    }
+  },
+  "reachability": {
+    "total_m1": 102,
+    "required_m1": 82,
+    "proven_source_binding_affected_m1_units": 21,
+    "maximum_legitimate_m1": 81,
+    "maximum_legitimate_rate": 0.7941176470588235,
+    "internal_g2_target_reachable": false
+  },
+  "interpretation": {
+    "official_organizer_ruling_claimed": false,
+    "risk_facts_absent_from_chinese_claimed": false,
+    "reason_for_ceiling": "Frozen project Metric-v2 requires an Existing-Gold Evidence hit for M1 correctness when Gold contains Evidence; exact English anchors are not present in the bound Chinese source bytes.",
+    "measured_g2_status_changed": false
+  },
+  "governance": {
+    "gold_modified": false,
+    "runtime_received_gold": false,
+    "catalog_modified": false,
+    "validation_opened": false,
+    "blind_2025_outcome_accessed": false,
+    "runtime_or_model_modified": false,
+    "submission_freeze_preserved": true
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "inventory_version": "authorized_source_inventory_20260830_v1",
+  "audit_date": "2026-08-30",
+  "basis_revision": "e8ea7d7804e4af907b6444cf26908ae63026becf",
+  "purpose": "Hash-only handoff for authorized local competition sources; no raw source bytes are included.",
+  "raw_included": false,
+  "absolute_paths_included": false,
+  "personal_contact_data_included": false,
+  "sources": {
+    "competition_brief": {
+      "format": "docx",
+      "size_bytes": 18326,
+      "sha256": "11338865003435dd0f725dbf35a40eeb5cdf2dc9b56a20b601d88ce742a42a2d",
+      "contains_personal_contact_data": true,
+      "repository_policy": "summary_and_hash_only"
+    },
+    "competition_source_container": {
+      "format": "zip",
+      "size_bytes": 6739350746,
+      "sha256": "2f7c90dfd61f1aa569e4ad25880a71ae5a65c0989e7d7a214cf9c8deed69af1d",
+      "member_listing_inspected": true,
+      "raw_payload_included": false,
+      "contains_2025_blind_documents": true,
+      "blind_document_content_read_in_this_audit": false,
+      "blind_outcome_accessed_in_this_audit": false,
+      "note": "This audit statement is limited to the 2026-08-30 inventory action and does not replace the repository's historical Blind disclosure."
+    },
+    "prospectus_2020_2024_subset": {
+      "file_count": 449,
+      "size_bytes": 6162145323,
+      "year_counts": {
+        "2020": 138,
+        "2021": 88,
+        "2022": 87,
+        "2023": 63,
+        "2024": 73
+      },
+      "contains_2025_blind_documents": false,
+      "catalog_binding": {
+        "path": "data/catalog/ipo_prospectus_manifest.csv",
+        "sha256": "eec1e4f28309ca85d79218032754b7f92ed8c3238fed31511fd6ae6dfb704bbe",
+        "catalog_total_rows": 565,
+        "audited_2020_2024_rows": 449,
+        "relative_path_matches": 449,
+        "size_matches": 449,
+        "sha256_matches": 449,
+        "mismatches": 0
+      },
+      "raw_payload_included": false
+    },
+    "competition_csvs": [
+      {
+        "logical_name": "hkcompanyinfo.csv",
+        "size_bytes": 5650977,
+        "sha256": "de871e2f9b06ce4a62428f9d9fdeeb21ebdc45bb71831dfb3937654449184446",
+        "already_recorded_in_v04_source_manifest": false,
+        "raw_payload_included": false
+      },
+      {
+        "logical_name": "hksharedescription.csv",
+        "size_bytes": 262144,
+        "sha256": "d04064097e776d54b7e32ad391a0ba162443bc2246432cdc0ad6da91df8df863",
+        "already_recorded_in_v04_source_manifest": true,
+        "raw_payload_included": false
+      },
+      {
+        "logical_name": "hkshareeodprices.csv",
+        "size_bytes": 1119216303,
+        "sha256": "190e45ffb0e3b2708410d854bf9d59176816d4b1eea656b6ba1f27964c007152",
+        "already_recorded_in_v04_source_manifest": true,
+        "raw_payload_included": false
+      }
+    ]
+  },
+  "governance": {
+    "catalog_modified": false,
+    "existing_gold_modified": false,
+    "validation_executed": false,
+    "blind_outcome_accessed": false,
+    "runtime_or_model_modified": false,
+    "authorized_rehydration_required": true
+  }
+}
