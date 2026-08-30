@@ -61,7 +61,7 @@ def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
         ("continuous_loss", 10),
         ("revenue_growth", 10),
         ("customer_concentration", 20),
-        ("supplier_concentration", 20),
+        ("supplier_concentration", 30),
     ]
 
 
@@ -459,7 +459,7 @@ def test_top_ranked_type_specific_disclosure_is_retained_as_evidence_only() -> N
     assert observed.metadata["ranked_disclosure_evidence_augmented"] == 1
 
 
-def test_ranked_disclosure_support_is_type_and_rank_bounded() -> None:
+def test_customer_ranked_disclosure_support_remains_top_five_bounded() -> None:
     base = v03_agent().analyze(
         IPOProfile(company_name="Demo"),
         [concentration_chunk("customer", "45", "80", page=30)],
@@ -499,6 +499,51 @@ def test_ranked_disclosure_support_is_type_and_rank_bounded() -> None:
     )
 
     assert observed is risk
+
+
+def test_supplier_ranked_disclosure_support_is_top_twenty_five_bounded() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    unrelated = [
+        Evidence(
+            evidence_id=f"e-supplier-unrelated-{index}",
+            document_id="doc",
+            chunk_id=f"supplier-unrelated-{index}",
+            page=31 + index,
+            text="一般業務資料。",
+        )
+        for index in range(24)
+    ]
+    rank_twenty_five = Evidence(
+        evidence_id="e-rank-twenty-five-supplier",
+        document_id="doc",
+        chunk_id="rank-twenty-five-supplier",
+        page=60,
+        text="五大供應商的採購詳情。",
+    )
+    rank_twenty_six = Evidence(
+        evidence_id="e-rank-twenty-six-supplier",
+        document_id="doc",
+        chunk_id="rank-twenty-six-supplier",
+        page=61,
+        text="主要供應商的採購詳情。",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [*unrelated, rank_twenty_five, rank_twenty_six],
+        {},
+    )
+
+    assert observed is not None
+    observed_ids = [item.evidence_id for item in observed.evidence]
+    assert rank_twenty_five.evidence_id in observed_ids
+    assert rank_twenty_six.evidence_id not in observed_ids
 
 
 def diagnostic_by_code(agent: V03FinancialAgent, risk_code: str) -> ComponentDiagnostic:

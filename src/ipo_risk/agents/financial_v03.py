@@ -114,6 +114,7 @@ _CONCENTRATION_SUPPORT_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = 
 }
 
 _MAX_RANKED_DISCLOSURE_SUPPORT = 5
+_MAX_SUPPLIER_RANKED_DISCLOSURE_SUPPORT = 25
 
 _QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS: Mapping[
     str, tuple[tuple[str, re.Pattern[str]], ...]
@@ -545,7 +546,12 @@ class V03FinancialAgent:
         # itself contain a second parseable percentage.  This is deliberately
         # evidence-only: it cannot create a risk or alter its decision fields.
         ranked_disclosure_support = 0
-        for evidence in retrieved[:_MAX_RANKED_DISCLOSURE_SUPPORT]:
+        support_limit = (
+            _MAX_SUPPLIER_RANKED_DISCLOSURE_SUPPORT
+            if risk_code == "supplier_concentration"
+            else _MAX_RANKED_DISCLOSURE_SUPPORT
+        )
+        for evidence in retrieved[:support_limit]:
             if (
                 evidence.evidence_id in retained_ids
                 or evidence.evidence_id in structurally_invalid_ids
@@ -641,10 +647,13 @@ class V03FinancialAgent:
         retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
         if callable(retrieve_for_risk):
             try:
-                limit = 20 if risk_code in {
-                    "customer_concentration",
-                    "supplier_concentration",
-                } else 10
+                limit = (
+                    30
+                    if risk_code == "supplier_concentration"
+                    else 20
+                    if risk_code == "customer_concentration"
+                    else 10
+                )
                 candidates = list(retrieve_for_risk(chunks, risk_code, limit=limit))
                 if any(not isinstance(item, Evidence) for item in candidates):
                     raise TypeError("retriever_item_type_invalid")
