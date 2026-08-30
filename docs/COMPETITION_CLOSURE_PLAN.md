@@ -2,7 +2,8 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Role-B runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze：`006c7f302be5c278680d136371f6ef0db45fecc0`  
 > Role-B benchmark SHA：`dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b`  
 > Product release：**APPROVED**  
 > Internal Competition Ready：**FALSE — G2 BELOW SELF-DEFINED TARGET**  
@@ -32,7 +33,7 @@ Result: 79/79 real LLM coverage was achieved, but G2 remains **BLOCKED**. Develo
 | Track | Final status | Post-release rule |
 |---|---|---|
 | A — Document Intelligence | **FROZEN / BELOW G2 TARGET** | no more score-driven tuning |
-| B — Frontend / Product | **PASS / CLOSED** | regression protection only |
+| B — Frontend / Product | **PASS / CLOSED** | one canonical workspace; fatal/truthful regression fixes only |
 | C — Dynamic Market-X | **PASS / CLOSED** | regression protection only |
 | D — Dynamic Model / SHAP | **PASS / CLOSED** | frozen identity; no retraining |
 | E — Release / Submission | **OPERATIONS ONLY** | Validation / audit / package / defense assets |
@@ -52,10 +53,17 @@ G3 Dynamic Market-X = PASS
 G4 Dynamic Model / SHAP = PASS
 G5 Final Frontend / Product = PASS
 G6 Capability demonstrations = PASS
-main tests / Role D runtime / Team demo runtime = PASS
 ```
 
-## 4. Runtime freeze
+Final product-surface CI on `006c7f3...`:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
+```
+
+## 4. Runtime and product-surface freeze
 
 Machine source:
 
@@ -63,9 +71,16 @@ Machine source:
 reports/final_status/final_freeze_manifest.json
 ```
 
-Frozen identities include Role-B config/prompt/schema/provider, evaluator, Market runtime, Role-D V2 model/feature/alert identity, and model score semantics.
+Two identities are intentionally separated:
 
-Release-document and packaging-only commits may follow the runtime freeze if they do not modify those identities.
+```text
+Role-B runtime freeze main = ab3390cc...
+Final product-surface freeze = 006c7f30...
+```
+
+The later product-surface closeout unifies standard/judge launch commands on `app/streamlit_app.py`; it does not alter the frozen Role-B benchmark/runtime identity.
+
+Release-document and packaging-only commits may follow these freezes if they do not modify frozen runtime semantics.
 
 ## 5. v1.0.0 release decision
 
@@ -74,7 +89,8 @@ The project is formally released as **v1.0.0 — Competition Submission Product 
 This means:
 
 - the product feature set is closed;
-- the runtime identity is frozen;
+- Role-B/Market/Model runtime identities are frozen;
+- the approved frontend surface is frozen;
 - current measurements are recorded without reinterpretation;
 - known limitations are accepted and documented;
 - the repository is suitable as the final competition product codebase.
@@ -87,14 +103,27 @@ It does **not** mean:
 - Validation has already been completed;
 - unavailable channels can be shown as available.
 
-## 6. Remaining competition-submission operations
+## 6. Final product entrypoint
+
+All supported launch commands converge on one canonical application:
+
+```text
+START_DEMO.bat       ─┐
+start_demo.sh         ├─→ app/streamlit_app.py
+START_JUDGE_DEMO.bat  ┤
+start_judge_demo.sh  ─┘
+```
+
+The judge commands are compatibility aliases. There is no longer a second active presentation shell competing with the approved workspace.
+
+## 7. Remaining competition-submission operations
 
 These are the only active items after v1.0.0:
 
 ```text
 1. one-shot ALL19 2024 Existing-Gold Validation
 2. write reports/final_status/one_shot_validation_receipt.json
-3. rebuild G5/G6 manifests on the exact final submission tree
+3. run exact-tree G5/G6 verification
 4. fresh clone and execute validators / demo / frontend smoke
 5. Blind / provenance / determinism / security / licensing / path audit
 6. build final artifact index and SHA-256 manifest
@@ -104,13 +133,13 @@ These are the only active items after v1.0.0:
 
 No item above permits Development or Validation-driven retuning.
 
-## 7. Submission material groups
+## 8. Submission material groups
 
 ### Product/code
 
 - source code and allowed configs;
 - README / Quickstart / Runbook;
-- judge-facing and standard UI launchers;
+- canonical Streamlit application and compatibility launchers;
 - canonical offline replay;
 - frozen model package and governed manifests;
 - Market / Model / Evidence / report capability artifacts allowed by licensing.
@@ -135,7 +164,7 @@ No item above permits Development or Validation-driven retuning.
 - Q&A memo;
 - fallback offline replay flow.
 
-## 8. Non-negotiable governance
+## 9. Non-negotiable governance
 
 ```text
 Existing Gold immutable
@@ -153,8 +182,8 @@ fallback != real-provider success
 no secrets / licensed PDFs / raw EOD / raw provider journal in public/submission package
 ```
 
-## 9. Closure definition
+## 10. Closure definition
 
-Development is **CLOSED**.
+Product development is **CLOSED**.
 
 The remaining work is operational release/submission work only. Any future algorithmic improvement belongs to a post-competition version and must not silently alter the v1.0.0 frozen benchmark identity.

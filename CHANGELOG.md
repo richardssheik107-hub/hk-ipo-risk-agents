@@ -12,7 +12,7 @@ This file is the release-level changelog. Detailed experiment-by-experiment hist
 - Financial / Legal / Business multi-agent document analysis.
 - Deterministic Calculation and specialized Verifier paths.
 - Document supervision, conflict detection, bounded re-check and Final Supervisor.
-- Judge-facing and standard Streamlit workspaces.
+- Unified the standard and judge launch commands onto one approved canonical Streamlit workspace (`app/streamlit_app.py`) to remove presentation-shell drift.
 - Offline Demo Replay, Historical Governed IPO and Fresh New-IPO Analysis modes.
 - Evidence screenshots, trace, single-case and batch reports.
 
@@ -40,7 +40,8 @@ The repository's self-defined G2 threshold (M1 >=80%, M2 >=85%, real LLM 79/79) 
 - Gold does not enter runtime Retriever / Prompt / Agent paths.
 - No issuer/case/page/Gold-text hardcoding is accepted.
 - 2025 Blind outcomes are not used for optimization.
-- Runtime identity is frozen and recorded in `reports/final_status/final_freeze_manifest.json`.
+- Role-B runtime identity is frozen and recorded in `reports/final_status/final_freeze_manifest.json`.
+- Final product-surface freeze is `006c7f302be5c278680d136371f6ef0db45fecc0`; all three main workflows passed on that commit.
 - Final Role-B benchmark truth is recorded in `reports/v045_role_b/document_benchmark_summary.json`.
 - G3 Dynamic Market-X = PASS.
 - G4 Dynamic Model / SHAP = PASS.
@@ -59,11 +60,13 @@ The repository's self-defined G2 threshold (M1 >=80%, M2 >=85%, real LLM 79/79) 
 
 ### Release documentation
 
+- `README.md`
 - `docs/RELEASE_NOTES_V1.0.0.md`
 - `docs/V1_RELEASE_ACCEPTANCE.md`
 - `docs/FINAL_SUBMISSION_STATUS.md`
 - `docs/SUBMISSION_RUNBOOK.md`
 - `docs/TEAM_QUICKSTART.md`
+- `docs/FRONTEND_JUDGE_FACING_HANDOFF.md`
 
 ## 0.3.0 — Multi-Agent Risk Analysis
 

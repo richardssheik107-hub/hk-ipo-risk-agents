@@ -2,7 +2,9 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> Product status: **FROZEN / FORMALLY RELEASED FOR COMPETITION SUBMISSION**
+> Product status: **FROZEN / FORMALLY RELEASED FOR COMPETITION SUBMISSION**  
+> Role-B runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`
 
 ## 1. Product goal
 
@@ -27,11 +29,12 @@ Human Review remains an optional product surface, not a mandatory release gate.
 | Area | v1.0.0 status |
 |---|---|
 | Document Intelligence | ALL79 complete; internal G2 target not met; frozen |
-| Final Frontend / Product | PASS |
+| Final Frontend / Product | PASS; one canonical workspace |
 | Dynamic Market-X | PASS |
 | Dynamic Model / Prediction / SHAP | PASS |
 | Capability demonstrations | PASS 8/8 |
-| Runtime freeze | COMPLETE |
+| Role-B runtime freeze | COMPLETE |
+| Product-surface freeze | COMPLETE |
 | One-shot Validation / final competition package | post-release governed operation |
 
 The v1.0.0 product release is approved even though the repository's stricter internal `COMPETITION_READY` condition remains false because G2 is below target.
@@ -133,7 +136,27 @@ Historical Governed IPO
 Fresh New-IPO Analysis
 ```
 
-The interface emphasizes Risk/Evidence, Market, Model/SHAP, Conflict/Recheck, Final Supervisor and Report/Trace rather than raw internal JSON.
+The final presentation contract has one canonical workspace:
+
+```text
+START_DEMO.*       ─┐
+START_JUDGE_DEMO.*  ├─→ app/streamlit_app.py
+```
+
+The judge launch commands are compatibility aliases, not a second presentation shell.
+
+Canonical product information architecture:
+
+```text
+首页
+→ 新建分析
+→ 案例工作台
+   ├─ 案例概览
+   ├─ 原文证据
+   ├─ 市场与模型
+   └─ 综合结论与报告
+→ 后台
+```
 
 All availability states are sourced from the runtime contract. UI code does not mint or fill missing Market/Model/Evidence values.
 
@@ -149,7 +172,14 @@ Evidence screenshots = 17/17 precise
 seven-stage = 21/21
 canonical replay = 66 files
 G3/G4/G5/G6 = PASS
-main tests / Role D runtime / Team demo runtime = PASS
+```
+
+Final product-surface commit `006c7f3...`:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
 ```
 
 ## 9. Non-negotiable governance

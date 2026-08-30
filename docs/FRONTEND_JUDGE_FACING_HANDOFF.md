@@ -1,12 +1,10 @@
 # Judge-facing Frontend — v1.0.0 Final Handoff
 
 > Release: `v1.0.0`  
-> Status: **G5 PASS / FROZEN**
+> Status: **G5 PASS / FROZEN**  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`
 
-The judge-facing launch commands now open the same canonical reader workspace as
-the standard launch commands. This prevents a second presentation shell from
-overriding the user-approved frontend while preserving the governed runtime,
-demo bundle and clone-ready preflight.
+The judge-facing launch commands open the same canonical reader workspace as the standard launch commands. This prevents a second presentation shell from overriding the user-approved frontend while preserving the governed runtime, demo bundle and clone-ready preflight.
 
 ## Run
 
@@ -22,8 +20,7 @@ macOS / Linux:
 ./start_judge_demo.sh
 ```
 
-Both commands are compatibility aliases for `app/streamlit_app.py` and fail fast
-when the governed runtime/demo prerequisites are not ready.
+Both commands are compatibility aliases for `app/streamlit_app.py` and fail fast when the governed runtime/demo prerequisites are not ready.
 
 ## Judge-facing information architecture
 
@@ -58,6 +55,16 @@ Provider/Prompt/raw diagnostics stay behind expert mode. Original Evidence text 
 - `unavailable_error` is shown as an error/unavailable condition, not a low-risk signal.
 - Replay is clearly labeled as a recorded run.
 - The UI consumes governed runtime values; it does not recompute Risk, Market or Model results.
+
+## Release validation
+
+On `006c7f302be5c278680d136371f6ef0db45fecc0`:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
+```
 
 ## Governance
 

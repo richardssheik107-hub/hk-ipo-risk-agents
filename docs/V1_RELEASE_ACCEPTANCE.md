@@ -2,7 +2,8 @@
 
 > Release: `v1.0.0`  
 > Release date: `2026-08-30`  
-> Runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Role-B runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`  
 > Metric protocol: `v045_competition_metric_protocol_v2_existing_gold_only`  
 > Product release decision: **APPROVED**  
 > Internal `COMPETITION_READY`: **FALSE — G2 remains below the self-defined threshold**
@@ -18,7 +19,7 @@ v1.0.0 product release = APPROVED
 COMPETITION_READY under internal gates = FALSE
 ```
 
-The first means the competition product is feature-complete, frozen and ready to package/submit with known limitations. The second remains false because the project's own Document Intelligence target was not achieved.
+The product is feature-complete and frozen for competition submission with documented limitations. The stricter internal readiness flag remains false because Document Intelligence did not reach the project's self-defined M1/M2 target.
 
 No threshold, evaluator or Gold record is changed to make the release green.
 
@@ -29,7 +30,7 @@ No threshold, evaluator or Gold record is changed to make the release green.
 | Best offline | 79/79 | **70/102 = 68.63%** | **103/191 = 53.93%** |
 | Real LLM gated | 79/79 | **61/102 = 59.80%** | **93/191 = 48.69%** |
 
-Formal real-provider facts:
+Formal provider-backed facts:
 
 ```text
 real_llm_cases = 79/79
@@ -40,7 +41,7 @@ G2 M2 threshold = 85%
 G2 status = BLOCKED
 ```
 
-The offline result is a separate engineering reference and must never replace the real-LLM gated result in claims that require a provider-backed run.
+The offline result is a separate engineering reference and must never replace the real-LLM gated result in provider-backed claims.
 
 Machine-readable source:
 
@@ -52,14 +53,14 @@ reports/v045_role_b/document_benchmark_summary.json
 
 | Gate | Status | Release interpretation |
 |---|---|---|
-| G0 Runtime / contracts / CI | PASS | release baseline healthy |
+| G0 Runtime / contracts / CI | PASS | final product surface has green core CI |
 | G1 Stable final-three baseline | PASS | canonical demo/regression baseline protected |
-| G2 ALL79 Document Intelligence | **BLOCKED** | known research/quality limitation |
-| G3 Dynamic Market-X | PASS | governed historical + dynamic PIT runtime |
+| G2 ALL79 Document Intelligence | **BLOCKED** | accepted research/quality limitation |
+| G3 Dynamic Market-X | PASS | governed historical + Dynamic PIT runtime |
 | G4 Dynamic Model / SHAP | PASS | frozen V2 inference + native SHAP |
-| G5 Final Frontend / Product | PASS | truthful Demo/Historical/Fresh modes |
+| G5 Final Frontend / Product | PASS | truthful Demo/Historical/Fresh modes; one canonical UI |
 | G6 Capability demonstrations | PASS | 8/8 hash-bound qualitative proofs |
-| G7 Freeze / Validation / package | **PARTIAL** | runtime freeze complete; local one-shot Validation/package actions remain |
+| G7 Freeze / Validation / package | **PARTIAL** | runtime freeze complete; one-shot Validation/package actions remain |
 
 ## 4. Frozen product capabilities
 
@@ -73,7 +74,8 @@ reports/v045_role_b/document_benchmark_summary.json
 - Offline Demo Replay;
 - Historical Governed IPO;
 - Fresh New-IPO Analysis;
-- judge-facing UI;
+- one canonical Streamlit reader workspace;
+- standard and judge compatibility launchers with the same runtime/preflight;
 - Evidence screenshot / trace / single-case / batch report;
 - API/UI capability surface.
 
@@ -85,11 +87,12 @@ Runtime freeze evidence:
 reports/final_status/final_freeze_manifest.json
 ```
 
-Key identities include:
+Key identities:
 
 ```text
 Role-B benchmark commit = dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b
-Runtime freeze main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
+Role-B runtime freeze main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
+Final product-surface freeze = 006c7f302be5c278680d136371f6ef0db45fecc0
 Role-B provider = openai_responses
 Role-B model = ark-code-latest
 Role-D V2 model SHA-256 = 320e810e85dcdb7e6caa40f9ef2b20157005e7a1d1af38ad7d586dd0feee72e2
@@ -97,9 +100,30 @@ Model score semantics = uncalibrated_model_score
 Market missingness = missing_is_not_zero
 ```
 
-Release-document and packaging changes after the runtime freeze are allowed only if they do not alter the frozen runtime identity.
+The final product-surface commit changes launch/presentation behavior only. It does not alter the frozen Role-B benchmark/runtime identity.
 
-## 6. Product acceptance
+## 6. Final product surface and CI
+
+The final product-surface freeze unifies:
+
+```text
+START_DEMO.bat        ─┐
+start_demo.sh          ├─→ app/streamlit_app.py
+START_JUDGE_DEMO.bat   ┤
+start_judge_demo.sh   ─┘
+```
+
+The judge commands are compatibility aliases rather than a second competing UI shell.
+
+On `006c7f302be5c278680d136371f6ef0db45fecc0`, GitHub Actions completed successfully for:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
+```
+
+## 7. Product acceptance
 
 G5 and G6 are represented by:
 
@@ -120,7 +144,7 @@ capability demonstrations = 8/8 PASS
 
 Capability demonstrations without Existing Gold are qualitative proof and are not added to M1/M2.
 
-## 7. Known limitations accepted for v1.0.0
+## 8. Known limitations accepted for v1.0.0
 
 1. G2 is below the internal M1/M2 target.
 2. Real-LLM gated output is worse than the selected offline path on the final Development measurement.
@@ -128,9 +152,9 @@ Capability demonstrations without Existing Gold are qualitative proof and are no
 4. Dynamic Market-X may honestly degrade outside governed PIT coverage.
 5. The Role-D V2 signal is uncalibrated and remains a triage signal rather than a probability forecast.
 6. Remote LLM prose is not byte-for-byte deterministic.
-7. Licensed PDFs, raw market data and secrets are intentionally absent from the public release.
+7. Licensed PDFs, raw market data, raw provider journals and secrets are intentionally absent from the public release.
 
-## 8. Governance retained in v1.0.0
+## 9. Governance retained in v1.0.0
 
 - Existing Gold immutable;
 - `UNJUDGED != negative`;
@@ -144,14 +168,14 @@ Capability demonstrations without Existing Gold are qualitative proof and are no
 - 2025 Blind outcomes not used for optimization;
 - no secrets, licensed PDFs, raw EOD or raw provider journals in the public/submission package.
 
-## 9. Remaining governed submission actions
+## 10. Remaining governed submission actions
 
 These do not reopen product development:
 
 ```text
 one-shot ALL19 2024 Existing-Gold Validation
 → one_shot_validation_receipt.json
-→ final G5/G6 rehash on exact submission tree
+→ exact-tree G5/G6 verification
 → fresh-clone verification
 → security / provenance / licensing / path audit
 → final artifact index
@@ -161,7 +185,7 @@ one-shot ALL19 2024 Existing-Gold Validation
 
 Validation results must not drive post-freeze Retriever, Prompt, Agent, Verifier, threshold, model or evaluator changes.
 
-## 10. v1.0.0 acceptance decision
+## 11. v1.0.0 acceptance decision
 
 **APPROVE v1.0.0 as the final competition submission product release with the above known limitations.**
 
@@ -175,4 +199,4 @@ model score as a probability
 full availability when a governed channel is partial/unavailable
 ```
 
-The release is complete as a product version; competition packaging and one-shot Validation remain governed operational follow-up tasks.
+The product release is complete. One-shot Validation and secure competition packaging remain governed operational follow-up tasks.
