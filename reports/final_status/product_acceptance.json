@@ -78,8 +78,8 @@
     },
     {
       "path": "src/ipo_risk/runtime/demo_replay.py",
-      "sha256": "792ec20f6092f7f8d990f16bf2aca6fab6c4d6a732dc6baa2d24ecbf66425179",
-      "size_bytes": 21156
+      "sha256": "e5f0d6658f7f2fdb2208bd8af7eb55c04252d9aac84a08ded7a5657429928726",
+      "size_bytes": 20636
     }
   ],
   "governance": {
@@ -88,5 +88,5 @@
     "ui_computes_or_invents_channel_values": false,
     "human_review_required": false
   },
-  "content_hash": "969a361a6a949814a9e4c3424018ecc4295f9243c36b42b3277174d51ed13843"
+  "content_hash": "c4c8745babbf98bc97b2d98a09f07d969d5be42a5b9c0ce9559a6a4c96443b37"
 }
