@@ -1,39 +1,44 @@
 # Person 1 — M1 / M2 Document Intelligence Owner — CLOSED
 
+> Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
 > Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
 > Benchmark SHA：`dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b`  
-> 当前状态：**DEVELOPMENT CLOSED / G2 BELOW SELF-DEFINED TARGET**
+> Final status：**DEVELOPMENT CLOSED / G2 BLOCKED**
 
-## 1. Final ALL79 result
+## Final ALL79 truth
 
-| 模式 | Cases | M1 | M2 |
+| Mode | Cases | M1 | M2 |
 |---|---:|---:|---:|
 | Best offline | 79/79 | **70/102 = 68.63%** | **103/191 = 53.93%** |
 | Real LLM gated | 79/79 | **61/102 = 59.80%** | **93/191 = 48.69%** |
 
-正式目标仍为：
+Internal G2 target:
 
 ```text
-M1 >= 0.80
-M2 >= 0.85
+M1 >= 80%
+M2 >= 85%
 real_llm_cases = 79/79
 ```
 
-因此：
+Result:
 
 ```text
-real LLM 79/79 = PASS
-M1 = BLOCKED
-M2 = BLOCKED
+real LLM coverage = PASS
+M1 threshold = BLOCKED
+M2 threshold = BLOCKED
 G2 = BLOCKED
 ```
 
-机器事实源：`reports/v045_role_b/document_benchmark_summary.json`。
+Machine source:
 
-## 2. 当前决定
+```text
+reports/v045_role_b/document_benchmark_summary.json
+```
 
-比赛提交时间已进入最后收口，Person 1 不再继续 Development 优化。
+## Final engineering state
+
+The accepted Role-B work is merged into the frozen release line. Development optimization stops at v1.0.0.
 
 ```text
 AUTO_CONTINUE = FALSE
@@ -41,75 +46,30 @@ DEVELOPMENT_TUNING = STOP
 VALIDATION_DRIVEN_TUNING = FORBIDDEN
 ```
 
-较高的 offline 指标作为工程参考保留，但不能替代 real-provider gated 指标。
+The higher offline measurement is retained as an engineering reference only and is never substituted for the provider-backed result.
 
-## 3. 最终保留的工程收益
+## Retained generic improvements
 
-最终 main 已吸收本轮 Role-B 的通用修复与治理增强，包括：
+The final runtime contains the accepted cross-case/generalized repairs accumulated during the competition work, including Financial extraction hardening, concentration lifecycle/binding improvements, Legal shareholder-right lifecycle handling, Evidence/provenance controls, and full-Development/smoke/evaluator hardening.
 
-- concentration track-record lifecycle / companion-period binding；
-- cash conflict 与 bounded concentration reconciliation；
-- supplier deeper Evidence retention；
-- fail-closed redemption / granted pre-IPO special-rights recognition；
-- structured smoke 从 3-task 升级到冻结 profile 的完整 4-task identity；
-- full-Development evaluator / subset provenance 文案修复；
-- runtime/evaluator 对 full Development 与 debug subset 的边界区分；
-- Existing Gold、Validation、Blind 治理保持不变。
+Historical rejected experiments remain historical and are not silently reintroduced.
 
-这些改动继续进入 regression protection，不再继续微调。
+## Final quality observation
 
-## 4. 最终解释
+The real LLM path did not outperform the best offline path on the final ALL79 measurement. Under the strict schema/Evidence-scope contract, some provider-generated candidates were rejected or caused negative monotonicity. v1.0.0 therefore preserves the real measurement as-is rather than relaxing Evidence guards to improve the score.
 
-当前差距不再解释为单一实现 bug。剩余问题主要来自：
+## Governance
 
-```text
-retrieval / Evidence exact binding residual
-source-edition / exact-anchor provenance gap
-complex Business structured-schema / Evidence-scope failure
-real-LLM augmentation variance / negative transfer
-remaining deterministic extraction conflicts
-```
+- Existing Gold immutable;
+- Gold does not enter runtime;
+- `UNJUDGED != negative`;
+- no issuer/case/page/Gold-text hardcoding;
+- no fabricated Evidence;
+- no retry-to-improve benchmark;
+- no post-freeze Development tuning;
+- no Validation-driven tuning;
+- 2025 Blind outcomes not used for optimization.
 
-其中 source edition 和 exact-anchor 问题已经证明不能通过简单扩大 TopK 或替换英文版来安全解决；Business LLM 的真实复杂样本也暴露出严格 schema 与“事实不足时不能编造”之间的张力。
+## Post-release rule
 
-## 5. Release handoff
-
-Person 1 交付给 Release owner：
-
-```text
-final benchmark SHA
-offline M1/M2
-real-LLM gated M1/M2
-real_llm_cases = 79
-formal benchmark summary
-runtime/config/prompt/provider/evaluator identity
-known limitations
-```
-
-后续只允许：
-
-- 回归修复；
-- provenance / hash / packaging；
-- one-shot Validation 结果记录；
-- 文档 truth alignment。
-
-禁止：
-
-```text
-根据 Validation 错例继续优化
-按 case/company/page/Gold 特判
-降低正式 G2 门槛来制造 PASS
-把 offline 结果冒充 real LLM
-```
-
-## 6. 历史追溯
-
-历史 Batch / Bundle 仍通过：
-
-```text
-docs/V046_ROLE_B_EXPERIMENT_LEDGER.md
-reports/v046_role_b/
-Git history
-```
-
-追溯；本文件只保留 final truth，不再作为新的优化指令。
+Person 1 has no active competition-development task after v1.0.0. Any future Document Intelligence experimentation belongs to a later version and must not rewrite the v1.0.0 benchmark truth.
