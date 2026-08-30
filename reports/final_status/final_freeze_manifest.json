@@ -1,10 +1,11 @@
 {
-  "schema_version": "competition_final_freeze_manifest_v2",
+  "schema_version": "competition_final_freeze_manifest_v3",
   "status": "frozen",
   "release_version": "1.0.0",
   "release_type": "competition_submission_product_release",
   "freeze_date": "2026-08-30",
   "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
+  "product_surface_freeze_main_sha": "006c7f302be5c278680d136371f6ef0db45fecc0",
   "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
   "role_b_benchmark_run_id": "finaldayA_bundle10_real_all79_001",
   "development_optimization_closed": true,
@@ -25,6 +26,22 @@
       "src/ipo_risk/evaluation/existing_gold_metrics.py": "74178905ded0247d8fd13cc7a37e4d55428138fa"
     },
     "note": "Each listed blob hash is identical between the Role-B benchmark commit and the promoted runtime freeze."
+  },
+  "product_surface_identity": {
+    "status": "frozen_pass",
+    "canonical_entrypoint": "app/streamlit_app.py",
+    "launchers": [
+      "START_DEMO.bat",
+      "start_demo.sh",
+      "START_JUDGE_DEMO.bat",
+      "start_judge_demo.sh"
+    ],
+    "judge_launchers_are_compatibility_aliases": true,
+    "ci_at_product_surface_freeze": {
+      "tests": "success",
+      "role_d_runtime": "success",
+      "team_demo_runtime": "success"
+    }
   },
   "provider_identity": {
     "provider": "openai_responses",
@@ -55,7 +72,8 @@
   "post_freeze_policy": [
     "No Development-driven tuning after this freeze.",
     "One-shot Validation may be executed and recorded, but its results must not drive Retriever, Prompt, Agent, Verifier, threshold, model, or evaluator changes.",
-    "Release-document, version, packaging, hash-manifest, and non-runtime metadata changes remain allowed when they do not alter the frozen runtime identity.",
+    "Release-document, version, packaging, hash-manifest, and truthful presentation-only changes remain allowed when they do not alter the frozen runtime identity.",
+    "The final product-surface freeze unifies judge and standard launchers on app/streamlit_app.py without changing the Role-B benchmark identity.",
     "The v1.0.0 product release does not imply G2 PASS or COMPETITION_READY=true."
   ]
 }
