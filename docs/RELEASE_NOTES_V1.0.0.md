@@ -2,7 +2,8 @@
 
 > Release date: `2026-08-30`  
 > Release type: **final competition submission product release**  
-> Runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Role-B runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`  
 > Role-B benchmark commit: `dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b`
 
 ## Release decision
@@ -10,6 +11,8 @@
 `v1.0.0` marks the end of feature development for the competition version of HK IPO Risk Agents. It is a formal product release, not a claim that every internal research target was met.
 
 The repository's self-defined `COMPETITION_READY` gate remains false because G2 did not reach the internal M1/M2 threshold. This release keeps that limitation explicit rather than weakening the benchmark or replacing real-provider results with offline results.
+
+The final frontend closeout also removes a second presentation shell: standard and judge launch commands now open the same approved `app/streamlit_app.py` workspace. The judge launchers remain as compatibility commands with the same fail-fast runtime and clone-ready checks.
 
 ## Final Development measurements
 
@@ -33,7 +36,7 @@ The provider-backed result is the formal real-LLM Development measurement. The o
 - Offline Demo Replay.
 - Historical Governed IPO mode.
 - Fresh New-IPO Analysis mode.
-- Judge-facing Streamlit interface.
+- One canonical Streamlit reader workspace with standard/judge compatibility launchers.
 - Evidence screenshots, trace, single-case reports and batch reports.
 - API/UI capability surfaces.
 - Hash-bound G5 product acceptance and G6 capability manifests.
@@ -49,10 +52,10 @@ recheck = 17/17
 seven-stage = 21/21
 Evidence screenshots = 17/17 precise
 canonical replay = 3 cases / 66 files
-Team demo runtime = PASS
-Role D runtime = PASS
-main tests = PASS
+G3 / G4 / G5 / G6 = PASS
 ```
+
+On the final product-surface freeze `006c7f3...`, GitHub Actions `tests`, `Role D runtime` and `Team demo runtime` all completed successfully.
 
 ## Gate truth at release
 
@@ -95,7 +98,7 @@ The product release is complete, but the competition submission environment stil
 
 1. one-shot ALL19 2024 Existing-Gold Validation under the frozen identity;
 2. write `reports/final_status/one_shot_validation_receipt.json`;
-3. rebuild G5/G6 manifests on the exact final submission commit;
+3. run exact-tree G5/G6 verification on the final submission commit;
 4. fresh-clone verification in a clean directory;
 5. security / licensing / provenance / path audit;
 6. build final artifact index and SHA-256 manifest;
@@ -107,10 +110,12 @@ These steps must not reopen Development tuning.
 ## Launch
 
 ```text
-Windows standard UI: START_DEMO.bat
-Windows judge UI:    START_JUDGE_DEMO.bat
-Unix standard UI:    ./start_demo.sh
-Unix judge UI:       ./start_judge_demo.sh
+Windows canonical UI: START_DEMO.bat
+Windows judge alias:   START_JUDGE_DEMO.bat
+Unix canonical UI:     ./start_demo.sh
+Unix judge alias:      ./start_judge_demo.sh
 ```
 
-See `README.md`, `docs/V1_RELEASE_ACCEPTANCE.md`, `docs/FINAL_SUBMISSION_STATUS.md` and `docs/SUBMISSION_RUNBOOK.md` for the final source-of-truth documents.
+All four commands ultimately launch `app/streamlit_app.py`; the judge commands are maintained for presentation compatibility, not as a separate UI implementation.
+
+See `README.md`, `docs/V1_RELEASE_ACCEPTANCE.md`, `docs/FINAL_SUBMISSION_STATUS.md`, `docs/FRONTEND_JUDGE_FACING_HANDOFF.md` and `docs/SUBMISSION_RUNBOOK.md` for the final source-of-truth documents.
