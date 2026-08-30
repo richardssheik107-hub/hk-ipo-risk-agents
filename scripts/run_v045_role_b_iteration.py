@@ -304,6 +304,8 @@ def _build_runtime_cases_manifest(
     subset: dict[str, Any],
     bridge_path: Path,
     destination: Path,
+    *,
+    full_development: bool = False,
 ) -> None:
     names = _bridge_names(bridge_path)
     cases = []
@@ -311,16 +313,24 @@ def _build_runtime_cases_manifest(
         case_id = item["case_id"]
         company_name = names.get(case_id, "")
         if not company_name:
-            raise IterationRunnerError(f"company name unavailable for fixed case {case_id}")
+            raise IterationRunnerError(f"company name unavailable for runtime case {case_id}")
         cases.append({"case_id": case_id, "company_name": company_name})
     _write_json(
         destination,
         {
-            "manifest_version": "v045_role_b_fixed10_runtime_cases_v1",
+            "manifest_version": (
+                "v046_role_b_development_runtime_cases_v1"
+                if full_development
+                else "v045_role_b_fixed10_runtime_cases_v1"
+            ),
             "note": (
-                "Generated locally from the frozen Existing-Gold debug subset. "
+                "Generated locally from the exact governed ALL-Development universe. "
+                "Development-only; no Validation or Blind cases."
+                if full_development
+                else "Generated locally from the frozen Existing-Gold debug subset. "
                 "Development-only; no Validation or Blind cases."
             ),
+            "scope": "full_development" if full_development else "debug_subset",
             "cases": cases,
         },
     )
@@ -519,34 +529,36 @@ def _evaluate(
     root: Path,
     coverage_path: Path,
     results_path: Path,
-    case_ids: list[str],
+    case_ids: list[str] | None,
     output_dir: Path,
     log_path: Path,
 ) -> dict[str, Any]:
+    command = [
+        sys.executable,
+        "scripts/evaluate_v045_existing_gold.py",
+        "--root",
+        str(root),
+        "--coverage-manifest",
+        str(coverage_path),
+        "--results",
+        str(results_path),
+        "--split",
+        "development",
+    ]
+    # ``--case-ids`` is explicitly a debug-subset switch in the evaluator.
+    # Omitting it is therefore required for an ALL-Development full-split run.
+    if case_ids is not None:
+        command.extend(("--case-ids", ",".join(case_ids)))
+    command.extend(("--output-dir", str(output_dir)))
     process = _run_captured(
-        [
-            sys.executable,
-            "scripts/evaluate_v045_existing_gold.py",
-            "--root",
-            str(root),
-            "--coverage-manifest",
-            str(coverage_path),
-            "--results",
-            str(results_path),
-            "--split",
-            "development",
-            "--case-ids",
-            ",".join(case_ids),
-            "--output-dir",
-            str(output_dir),
-        ],
+        command,
         cwd=root,
         log_path=log_path,
     )
     summary_path = output_dir / "document_benchmark_summary.json"
     if process.returncode != 0 or not summary_path.is_file():
         raise IterationRunnerError(
-            "Existing-Gold debug evaluation failed; see the local evaluation.log"
+            "Existing-Gold evaluation failed; see the local evaluation.log"
         )
     return _read_json(summary_path)
 

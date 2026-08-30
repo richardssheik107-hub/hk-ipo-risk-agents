@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from ipo_risk.evaluation.existing_gold_metrics import (
+    EVALUATOR_VERSION,
     METRIC_PROTOCOL_VERSION,
     _manifest_hash,
     build_existing_gold_coverage,
@@ -146,6 +147,58 @@ def test_existing_gold_evaluator_scores_exact_supported_prediction() -> None:
     assert summary["measurement_gate"]["competition_pass_claim_eligible"] is True
     assert risk_rows[0]["correct"] is True
     assert evidence_rows[0]["covered"] is True
+
+
+def test_full_split_completeness_counts_present_negative_control_cases() -> None:
+    manifest = _mini_manifest()
+    manifest["official_existing_gold_case_count"] = 2
+    manifest["evaluable_development_case_count"] = 2
+    manifest["risk_unit_count"] = 2
+    manifest["risk_units"].append(
+        {
+            **manifest["risk_units"][0],
+            "risk_unit_id": "risk-unit-negative-control",
+            "case_id": "ipo_2023_00002",
+            "stock_code": "0002.HK",
+            "source_manifest_key": "source-key-negative-control",
+            "source_annotation_hash": "source-hash-negative-control",
+            "source_risk_code": "customer_concentration",
+            "competition_risk_family": "customer_concentration",
+            "applicable": False,
+            "expected_status": "rejected",
+            "expected_level": None,
+            "gold_evidence_unit_count": 0,
+            "evaluable_positive": False,
+        }
+    )
+    manifest["manifest_hash"] = _manifest_hash(manifest)
+
+    negative_control = _matching_result()
+    negative_control["stock_code"] = "0002.HK"
+    negative_control["verified_risks"] = []
+    negative_control["metadata"]["case_id"] = "ipo_2023_00002"
+
+    summary, _, _ = evaluate_existing_gold(
+        manifest,
+        [_matching_result(), negative_control],
+    )
+
+    assert summary["evaluation_scope"] == "full_split"
+    assert summary["expected_case_count_for_split"] == 2
+    assert summary["evaluated_case_count"] == 2
+    assert summary["evaluator_version"] == EVALUATOR_VERSION
+    assert summary["missing_case_ids"] == []
+    assert summary["real_llm_cases"] == 2
+    assert summary["risk_extraction"]["evaluable_positive_count"] == 1
+    assert summary["evidence_coverage"]["evaluable_existing_gold_count"] == 1
+    assert summary["risk_extraction"]["official_aligned_accuracy"] == 1.0
+    assert summary["evidence_coverage"]["coverage_recall"] == 1.0
+
+    incomplete, _, _ = evaluate_existing_gold(manifest, [_matching_result()])
+    assert incomplete["evaluated_case_count"] == 1
+    assert incomplete["real_llm_cases"] == 1
+    assert incomplete["missing_case_ids"] == ["ipo_2023_00002"]
+    assert incomplete["measurement_gate"]["all_expected_cases_present"] is False
 
 
 def test_evidence_same_page_wrong_text_does_not_cover_gold_anchor() -> None:

@@ -13,14 +13,21 @@ from ipo_risk.core.config import Settings
 from ipo_risk.runtime.llm_journal import JournaledLLMProvider, LocalLLMJournal
 from ipo_risk.runtime.role_b_ablation import RoleBAblationScopeError
 from ipo_risk.schemas import Evidence, IPOAnalysisResult, TaskStatus
+from scripts.check_v046_role_b_structured_smoke import (
+    SMOKE_VERSION,
+    smoke_profile_identity,
+)
 from scripts.run_v046_role_b_ablation import (
     CaseInputs,
+    RUNNER_VERSION,
     RoleBAblationRunnerError,
     _TracingRetriever,
     _all_development_subset,
     _build_journaled_router,
     _canonical_hash,
+    _evaluation_case_filter,
     _experiment_registry,
+    _full_development_execution_complete,
     _mode_identity,
     _journal_manifest,
     _offline_settings,
@@ -34,7 +41,6 @@ from scripts.run_v046_role_b_ablation import (
     _smoke_gate,
     _subset_identity_hash,
     _write_governed_run_artifacts,
-    _TracingRetriever,
     orchestrate_case_modes,
 )
 
@@ -547,6 +553,9 @@ def test_governed_run_writes_every_required_top_level_artifact(tmp_path: Path) -
     best = json.loads((tmp_path / "best_iteration.json").read_text(encoding="utf-8"))
     assert best["selected_mode"] == "gated"
     assert best["fixed10_target_reached"] is False
+    assert best["full_development_executed"] is False
+    ablation = json.loads((tmp_path / "ablation_summary.json").read_text(encoding="utf-8"))
+    assert ablation["full_development_executed"] is False
 
 
 @pytest.mark.parametrize(
@@ -592,6 +601,8 @@ def test_preflight_binds_exact_prompt_hashes_and_has_no_secret_or_url() -> None:
     runtime_hash = _runtime_config_hash(settings, profile, _digest("code"))
 
     assert len(_prompt_hashes(profile, settings.llm_provider)) == 4
+    assert safe_identity["runner_version"] == RUNNER_VERSION
+    assert RUNNER_VERSION == "v046_role_b_ablation_runner_v2"
     assert all(len(value) == 64 for value in report["prompt_hashes"].values())
     assert "llm_api_key" not in safe_identity
     assert "llm_base_url" not in safe_identity
@@ -716,33 +727,36 @@ def test_glm_openai_compatible_profile_is_separate_and_supported() -> None:
     assert len(_prompt_hashes(profile, settings.llm_provider)) == 4
 
 
-def test_fixed10_smoke_gate_requires_same_provider_model_and_three_tasks(
+def test_smoke_gate_requires_profile_identity_and_complete_allowed_task_set(
     tmp_path: Path,
 ) -> None:
     path = tmp_path / "structured_smoke_summary.json"
-    tasks = [
-        "shareholder_rights_extract",
-        "litigation_compliance_extract",
-        "business_precommercial_commercialization_extract",
-    ]
     profile = {**_profile(), "smoke_required_before_fixed10": True}
+    tasks = list(profile["allowed_tasks"])
+    expected_count = len(tasks)
+    profile_identity = smoke_profile_identity(profile)
     prompt_hashes = _prompt_hashes(profile, "openai_responses")
     schema_hashes = _response_schema_hashes()
     payload = {
-        "smoke_version": "v046_role_b_structured_smoke_v1",
+        "smoke_version": SMOKE_VERSION,
+        "profile_identity": profile_identity,
+        "profile_identity_hash": _canonical_hash(profile_identity),
+        "allowed_tasks": profile_identity["allowed_tasks"],
         "dataset_split": "development",
         "synthetic_sanitized_payload": True,
         "full_pdf_opened": False,
         "validation_opened": False,
         "blind_2025_outcome_accessed": False,
-        "call_count": 3,
-        "passed_count": 3,
+        "call_count": expected_count,
+        "passed_count": expected_count,
         "passed": True,
         "tasks": [
             {
                 "task_name": task,
                 "provider": "openai_responses",
                 "model": "ark-code-latest",
+                "structured_valid": True,
+                "scope_valid": True,
                 "prompt_version": profile["prompt_versions"][task],
                 "prompt_hash": prompt_hashes[(task, profile["prompt_versions"][task])],
                 "response_schema_hash": schema_hashes[task],
@@ -761,6 +775,25 @@ def test_fixed10_smoke_gate_requires_same_provider_model_and_three_tasks(
         )["passed"]
         is False
     )
+    missing_task_payload = {**payload, "tasks": payload["tasks"][:-1]}
+    missing_task_payload["call_count"] = expected_count - 1
+    missing_task_payload["passed_count"] = expected_count - 1
+    path.write_text(
+        __import__("json").dumps(missing_task_payload), encoding="utf-8"
+    )
+    missing_task_gate = _smoke_gate(
+        path=path, settings=_settings(), profile=profile
+    )
+    assert missing_task_gate["passed"] is False
+    assert missing_task_gate["task_set_match"] is False
+
+    payload["profile_identity_hash"] = _digest("wrong profile identity")
+    path.write_text(__import__("json").dumps(payload), encoding="utf-8")
+    identity_gate = _smoke_gate(path=path, settings=_settings(), profile=profile)
+    assert identity_gate["passed"] is False
+    assert identity_gate["summary_identity_match"] is False
+
+    payload["profile_identity_hash"] = _canonical_hash(profile_identity)
     payload["tasks"][0]["prompt_hash"] = _digest("drifted prompt")
     path.write_text(__import__("json").dumps(payload), encoding="utf-8")
     assert _smoke_gate(path=path, settings=_settings(), profile=profile)["passed"] is False
@@ -842,3 +875,97 @@ def test_all_development_subset_keeps_negative_control_cases(tmp_path: Path) -> 
     ]
     assert subset["validation_opened"] is False
     assert subset["blind_2025_outcome_accessed"] is False
+    assert _evaluation_case_filter(subset, manifest) is None
+    assert _full_development_execution_complete(
+        subset,
+        manifest,
+        {
+            "split": "development",
+            "evaluation_scope": "full_split",
+            "expected_case_count_for_split": 2,
+            "evaluated_case_count": 2,
+            "missing_case_ids": [],
+            "measurement_gate": {"all_expected_cases_present": True},
+        },
+    ) is True
+
+    filtered = {
+        **subset,
+        "case_count": 1,
+        "cases": subset["cases"][:1],
+        "selection_scope": "all_development_child_filter",
+    }
+    assert _evaluation_case_filter(filtered, manifest) == ["ipo_2020_negative"]
+    assert _full_development_execution_complete(
+        filtered,
+        manifest,
+        {
+            "split": "development",
+            "evaluation_scope": "debug_subset",
+            "expected_case_count_for_split": 1,
+            "evaluated_case_count": 1,
+            "missing_case_ids": [],
+            "measurement_gate": {"all_expected_cases_present": True},
+        },
+    ) is False
+
+    full_summary = {
+        "split": "development",
+        "evaluation_scope": "full_split",
+        "expected_case_count_for_split": 2,
+        "evaluated_case_count": 2,
+        "missing_case_ids": [],
+        "measurement_gate": {"all_expected_cases_present": True},
+        "risk_extraction": {
+            "official_aligned_accuracy": 0.5,
+            "per_risk": {},
+            "evaluable_positive_count": 1,
+        },
+        "evidence_coverage": {
+            "coverage_recall": 0.5,
+            "evaluable_existing_gold_count": 1,
+        },
+        "retrieval_diagnostics": {"recall_at_20": 0.5},
+    }
+    mode_payload = {
+        "summary": full_summary,
+        "failure_focus": {"dominant_failure_reason": None},
+        "artifacts": {
+            "retrieval_waterfall": {"report_version": "test", "units": []},
+            "risk_pipeline_waterfall": {"report_version": "test", "units": []},
+        },
+    }
+    artifact_root = tmp_path / "artifacts"
+    _write_governed_run_artifacts(
+        output_root=artifact_root,
+        subset=subset,
+        coverage=manifest,
+        git_state={
+            "git_head": _digest("head"),
+            "code_fingerprint": _digest("code"),
+            "git_dirty": False,
+        },
+        preflight={
+            "effective_provider": "openai_responses",
+            "effective_model": "ark-code-latest",
+            "transport": "responses",
+            "prompt_hashes": {},
+            "runtime_config_hash": _digest("runtime"),
+        },
+        profile=_profile(),
+        journal_manifest={"records": []},
+        evaluation={
+            "modes": {"offline": mode_payload},
+            "monotonicity": {"status": "NOT_PROVEN", "satisfied": "NOT_PROVEN"},
+        },
+        modes=("offline",),
+    )
+
+    best = json.loads(
+        (artifact_root / "best_iteration.json").read_text(encoding="utf-8")
+    )
+    ablation = json.loads(
+        (artifact_root / "ablation_summary.json").read_text(encoding="utf-8")
+    )
+    assert best["full_development_executed"] is True
+    assert ablation["full_development_executed"] is True

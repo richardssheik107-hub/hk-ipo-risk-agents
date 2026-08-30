@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from ipo_risk.agents.legal_models import ShareholderRightCandidate
 from ipo_risk.extraction import ExtractionStatus, ShareholderRightsExtractor
 from ipo_risk.providers.mock import MockLLMProvider
@@ -350,6 +352,137 @@ def test_explicit_fallback_accepts_special_rights_granted_out_to_investors() -> 
 
     assert result is not None
     assert result.right_type == "special_right"
+
+
+def test_explicit_fallback_scans_bounded_top_twenty_for_terminated_adviser_right() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id=f"unrelated-{index}",
+            document_id="ipo-case",
+            chunk_id=f"ipo-case:page:{index}",
+            page=index,
+            text="General listing disclosure without an investor right.",
+        )
+        for index in range(1, 19)
+    ]
+    evidence.append(
+        Evidence(
+            evidence_id="management-adviser-right",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:19",
+            page=19,
+            text=(
+                "首次公開發售前投資者甲並無行使管理顧問權；"
+                "投資者乙已於上市前終止其管理顧問權。"
+            ),
+        )
+    )
+
+    result = extractor.extract_explicit_needs_review(evidence)
+
+    assert result is not None
+    assert result.right_type == "special_right"
+    assert result.evidence_ids == ["management-adviser-right"]
+
+
+def test_explicit_fallback_does_not_scan_beyond_top_twenty() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id=f"unrelated-{index}",
+            document_id="ipo-case",
+            chunk_id=f"ipo-case:page:{index}",
+            page=index,
+            text="General listing disclosure without an investor right.",
+        )
+        for index in range(1, 21)
+    ]
+    evidence.append(
+        Evidence(
+            evidence_id="right-beyond-bound",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:21",
+            page=21,
+            text=(
+                "首次公開發售前投資者已於上市前終止其管理顧問權。"
+            ),
+        )
+    )
+
+    assert extractor.extract_explicit_needs_review(evidence) is None
+
+
+def test_explicit_fallback_rejects_unterminated_management_adviser_right() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id="management-adviser-negated",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text="首次公開發售前投資者並無行使管理顧問權，股份其後上市。",
+        )
+    ]
+
+    assert extractor.extract_explicit_needs_review(evidence) is None
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "首次公開發售前投資者並無管理顧問權；相關服務安排已於上市前終止。",
+        "首次公開發售前投資者並無管理顧問權，相關服務安排已於上市前終止。",
+        "首次公開發售前投資者並無終止其管理顧問權，股份其後上市。",
+        "首次公開發售前投資者的管理顧問權不會於上市前終止。",
+        "首次公開發售前投資者尚未終止管理顧問權，股份其後上市。",
+    ],
+)
+def test_explicit_fallback_rejects_negated_management_adviser_termination(
+    text: str,
+) -> None:
+    extractor = ShareholderRightsExtractor(MockLLMProvider())
+    evidence = [
+        Evidence(
+            evidence_id="management-adviser-negated-termination",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text=text,
+        )
+    ]
+
+    assert extractor.extract_explicit_needs_review(evidence) is None
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "首次公开发售前投资者已于上市前终止其管理顾问权。",
+        "首次公開發售前投資者甲並無行使管理顧問權，但投資者乙已終止其管理顧問權。",
+    ],
+)
+def test_explicit_fallback_accepts_affirmative_management_adviser_termination(
+    text: str,
+) -> None:
+    extractor = ShareholderRightsExtractor(MockLLMProvider())
+    evidence = [
+        Evidence(
+            evidence_id="management-adviser-terminated",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text=text,
+        )
+    ]
+
+    result = extractor.extract_explicit_needs_review(evidence)
+
+    assert result is not None
+    assert result.evidence_ids == ["management-adviser-terminated"]
 
 
 def test_explicit_fallback_rejects_negated_special_rights_boilerplate() -> None:
