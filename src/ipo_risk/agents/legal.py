@@ -256,9 +256,12 @@ class LegalAgent:
         risk_code: str,
     ) -> tuple[list[Evidence], ComponentDiagnostic | None]:
         try:
-            candidates = self.retriever.retrieve(
-                chunks, query, limit=self.max_evidence
+            limit = (
+                self.rights_extractor.explicit_review_max_evidence
+                if risk_code == self.rights_risk_code
+                else self.max_evidence
             )
+            candidates = self.retriever.retrieve(chunks, query, limit=limit)
             if any(not isinstance(item, Evidence) for item in candidates):
                 raise TypeError("retriever_item_type_invalid")
             return list(candidates), None

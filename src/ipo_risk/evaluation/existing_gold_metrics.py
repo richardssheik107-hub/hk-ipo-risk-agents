@@ -31,7 +31,10 @@ from ipo_risk.schemas.market import expected_market_split
 
 METRIC_PROTOCOL_VERSION = "v045_competition_metric_protocol_v2_existing_gold_only"
 COVERAGE_MANIFEST_VERSION = "v045_existing_gold_evaluable_manifest_v1"
-EVALUATOR_VERSION = "v045_existing_gold_evaluator_v1"
+# Coverage identity is frozen with the immutable Existing-Gold inventory.  Runtime
+# evaluation semantics may evolve without rewriting that manifest or its hash.
+FROZEN_COVERAGE_EVALUATOR_VERSION = "v045_existing_gold_evaluator_v1"
+EVALUATOR_VERSION = "v045_existing_gold_evaluator_v2"
 FROZEN_ORACLE_MANIFEST = Path("reports/frozen/v04_oracle_v2_manifest.json")
 
 COMPETITION_PRIORITY_FAMILIES = (
@@ -380,7 +383,7 @@ def build_existing_gold_coverage(root: Path) -> dict[str, Any]:
     manifest: dict[str, Any] = {
         "manifest_version": COVERAGE_MANIFEST_VERSION,
         "metric_protocol_version": METRIC_PROTOCOL_VERSION,
-        "evaluator_version": EVALUATOR_VERSION,
+        "evaluator_version": FROZEN_COVERAGE_EVALUATOR_VERSION,
         "existing_gold_source": "frozen Expert Annotation / Oracle v2 source inventory",
         "source_governance": {
             "frozen_manifest_path": FROZEN_ORACLE_MANIFEST.as_posix(),
@@ -837,9 +840,13 @@ def evaluate_existing_gold(
         )
         recall_at[f"recall_at_{k}"] = hits / evidence_total if evidence_total else None
 
-    evaluated_case_ids = {
-        row["case_id"] for row in risk_rows if row["case_id"] in results_by_case
-    }
+    # Completeness is a case-level runtime fact, not a positive-Gold fact.
+    # Some governed Development cases intentionally contain only explicit
+    # negative/unjudged primary units and therefore emit no ``risk_rows``.
+    # Counting through the scored positive rows would silently drop those
+    # negative-control cases from ``evaluated_case_count`` and
+    # ``real_llm_cases`` even when their governed result is present.
+    evaluated_case_ids = expected_case_ids & set(results_by_case)
     missing_case_ids = sorted(expected_case_ids - set(results_by_case))
     real_llm_cases = sum(
         _provider_mode(results_by_case[case_id]) == "real_external_llm"

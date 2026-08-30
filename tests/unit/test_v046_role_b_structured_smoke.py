@@ -2,12 +2,33 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from ipo_risk.agents.business_models import CommercializationCandidate
+from ipo_risk.agents.business_models import (
+    CommercializationCandidate,
+    CoreProductCandidate,
+)
 from ipo_risk.agents.legal_models import (
     LitigationComplianceCandidate,
     ShareholderRightCandidate,
 )
 from scripts.check_v046_role_b_structured_smoke import run_probe
+
+
+def _profile() -> dict:
+    return {
+        "profile_version": "v046_role_b_ablation_test",
+        "allowed_tasks": [
+            "shareholder_rights_extract",
+            "litigation_compliance_extract",
+            "business_precommercial_commercialization_extract",
+            "business_precommercial_core_product_extract",
+        ],
+        "prompt_versions": {
+            "shareholder_rights_extract": "legal_shareholder_rights_v1",
+            "litigation_compliance_extract": "legal_litigation_compliance_v1",
+            "business_precommercial_commercialization_extract": "business_precommercial_v1",
+            "business_precommercial_core_product_extract": "business_precommercial_v1",
+        },
+    }
 
 
 class _SafeProvider:
@@ -50,21 +71,34 @@ class _SafeProvider:
                 current_status="not_applicable",
                 evidence_ids=[evidence_id],
             )
-        assert response_model is CommercializationCandidate
+        if response_model is CommercializationCandidate:
+            return response_model(
+                product_name="Candidate Alpha",
+                development_stage="phase_ii",
+                has_product_revenue=False,
+                evidence_ids=[evidence_id],
+            )
+        assert response_model is CoreProductCandidate
         return response_model(
             product_name="Candidate Alpha",
-            development_stage="phase_ii",
-            has_product_revenue=False,
+            is_core_product=True,
+            approval_status="not_approved",
+            launch_status="not_launched",
             evidence_ids=[evidence_id],
         )
 
 
-def test_three_task_smoke_is_bounded_synthetic_and_scope_valid() -> None:
-    summary = run_probe(_SafeProvider())
+def test_allowed_task_smoke_is_bounded_synthetic_and_scope_valid() -> None:
+    summary = run_probe(_SafeProvider(), profile=_profile())
 
     assert summary["passed"] is True
-    assert summary["call_count"] == 3
-    assert summary["passed_count"] == 3
+    assert summary["call_count"] == 4
+    assert summary["passed_count"] == 4
+    assert set(summary["allowed_tasks"]) == set(_profile()["allowed_tasks"])
+    assert {item["task_name"] for item in summary["tasks"]} == set(
+        _profile()["allowed_tasks"]
+    )
+    assert len(summary["profile_identity_hash"]) == 64
     assert summary["dataset_split"] == "development"
     assert summary["full_pdf_opened"] is False
     assert summary["validation_opened"] is False
@@ -78,7 +112,7 @@ def test_three_task_smoke_is_bounded_synthetic_and_scope_valid() -> None:
 
 
 def test_scope_violation_fails_smoke_without_accepting_candidate() -> None:
-    summary = run_probe(_SafeProvider(out_of_scope=True))
+    summary = run_probe(_SafeProvider(out_of_scope=True), profile=_profile())
 
     assert summary["passed"] is False
     assert summary["passed_count"] == 0

@@ -92,6 +92,10 @@ from ipo_risk.retrieval.role_b_financial_v046 import (
 from ipo_risk.schemas import Evidence, IPOAnalysisRequest, IPOAnalysisResult
 from ipo_risk.services.analysis_service import IPOAnalysisService
 
+from scripts.check_v046_role_b_structured_smoke import (
+    SMOKE_VERSION,
+    smoke_profile_identity,
+)
 from scripts.run_v045_role_b_iteration import (
     DEFAULT_BRIDGE,
     DEFAULT_COVERAGE,
@@ -115,7 +119,7 @@ from scripts.run_v04_role_e_demo import (
 )
 
 
-RUNNER_VERSION = "v046_role_b_ablation_runner_v1"
+RUNNER_VERSION = "v046_role_b_ablation_runner_v2"
 DEFAULT_CONFIG = Path("configs/experiments/v046_role_b_ai_responses.yaml")
 DEFAULT_OUTPUT_ROOT = Path("reports/v046_role_b/ablation")
 DEFAULT_SMOKE_SUMMARY = Path(
@@ -388,6 +392,67 @@ def _load_role_b_subset(
     )
 
 
+def _expected_development_case_ids(coverage: Mapping[str, Any]) -> set[str]:
+    return {
+        str(row.get("case_id") or "")
+        for row in coverage.get("risk_units") or []
+        if isinstance(row, Mapping)
+        and row.get("split") == "development"
+        and row.get("primary_scope") is True
+        and row.get("case_id")
+    }
+
+
+def _is_full_development_subset(
+    subset: Mapping[str, Any], coverage: Mapping[str, Any]
+) -> bool:
+    expected = _expected_development_case_ids(coverage)
+    expected_count = int(coverage.get("evaluable_development_case_count") or 0)
+    case_ids = _case_ids(dict(subset)) if subset.get("cases") else []
+    return all(
+        (
+            subset.get("split") == "development",
+            subset.get("debug_subset_only") is False,
+            expected_count > 0,
+            len(expected) == expected_count,
+            subset.get("case_count") == expected_count,
+            len(case_ids) == expected_count,
+            len(set(case_ids)) == expected_count,
+            set(case_ids) == expected,
+        )
+    )
+
+
+def _evaluation_case_filter(
+    subset: Mapping[str, Any], coverage: Mapping[str, Any]
+) -> list[str] | None:
+    """Return ``None`` only for the exact governed ALL-Development universe."""
+
+    case_ids = _case_ids(dict(subset))
+    return None if _is_full_development_subset(subset, coverage) else case_ids
+
+
+def _full_development_execution_complete(
+    subset: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    summary: Mapping[str, Any],
+) -> bool:
+    if not _is_full_development_subset(subset, coverage):
+        return False
+    expected_count = int(coverage.get("evaluable_development_case_count") or 0)
+    gate = summary.get("measurement_gate") or {}
+    return all(
+        (
+            summary.get("split") == "development",
+            summary.get("evaluation_scope") == "full_split",
+            summary.get("expected_case_count_for_split") == expected_count,
+            summary.get("evaluated_case_count") == expected_count,
+            not (summary.get("missing_case_ids") or []),
+            gate.get("all_expected_cases_present") is True,
+        )
+    )
+
+
 def _read_profile(path: Path) -> dict[str, Any]:
     try:
         payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -572,7 +637,7 @@ def _smoke_gate(
     settings: Settings,
     profile: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Validate the local three-call smoke without exposing its payloads."""
+    """Validate the complete frozen task-set smoke without exposing its payloads."""
 
     required = profile.get("smoke_required_before_fixed10") is True
     base = {
@@ -593,17 +658,28 @@ def _smoke_gate(
     if not isinstance(payload, dict):
         return {**base, "reason": "summary_invalid"}
     tasks = payload.get("tasks")
-    expected_tasks = {
-        "shareholder_rights_extract",
-        "litigation_compliance_extract",
-        "business_precommercial_commercialization_extract",
-    }
-    observed_tasks = {
+    expected_identity = smoke_profile_identity(profile)
+    expected_identity_hash = _canonical_hash(expected_identity)
+    expected_tasks = set(expected_identity["allowed_tasks"])
+    expected_count = len(expected_tasks)
+    observed_task_names = [
         str(item.get("task_name") or "")
         for item in tasks or []
         if isinstance(item, dict)
-    }
-    provider_model_match = bool(tasks) and all(
+    ]
+    observed_tasks = set(observed_task_names)
+    task_set_match = (
+        isinstance(tasks, list)
+        and len(tasks) == expected_count
+        and len(observed_task_names) == expected_count
+        and observed_tasks == expected_tasks
+    )
+    summary_identity_match = (
+        payload.get("profile_identity") == expected_identity
+        and payload.get("profile_identity_hash") == expected_identity_hash
+        and payload.get("allowed_tasks") == expected_identity["allowed_tasks"]
+    )
+    provider_model_match = task_set_match and all(
         isinstance(item, dict)
         and item.get("provider") == settings.llm_provider
         and item.get("model") == settings.llm_model
@@ -612,7 +688,7 @@ def _smoke_gate(
     prompt_versions = profile.get("prompt_versions") or {}
     expected_prompt_hashes = _prompt_hashes(profile, settings.llm_provider)
     expected_schema_hashes = _response_schema_hashes()
-    contract_match = bool(tasks) and all(
+    contract_match = task_set_match and all(
         isinstance(item, dict)
         and item.get("prompt_version")
         == prompt_versions.get(str(item.get("task_name") or ""))
@@ -627,29 +703,41 @@ def _smoke_gate(
         == expected_schema_hashes.get(str(item.get("task_name") or ""))
         for item in tasks
     )
+    task_results_match = task_set_match and all(
+        isinstance(item, dict)
+        and item.get("structured_valid") is True
+        and item.get("scope_valid") is True
+        for item in tasks
+    )
     passed = (
-        payload.get("smoke_version") == "v046_role_b_structured_smoke_v1"
+        payload.get("smoke_version") == SMOKE_VERSION
         and payload.get("dataset_split") == "development"
         and payload.get("synthetic_sanitized_payload") is True
         and payload.get("full_pdf_opened") is False
         and payload.get("validation_opened") is False
         and payload.get("blind_2025_outcome_accessed") is False
-        and payload.get("call_count") == 3
-        and payload.get("passed_count") == 3
+        and payload.get("call_count") == expected_count
+        and payload.get("passed_count") == expected_count
         and payload.get("passed") is True
-        and observed_tasks == expected_tasks
+        and task_set_match
+        and summary_identity_match
         and provider_model_match
         and contract_match
+        and task_results_match
     )
     return {
         **base,
         "passed": passed,
-        "reason": "pass" if passed else "provider_model_or_contract_mismatch",
+        "reason": "pass" if passed else "task_set_identity_or_contract_mismatch",
         "call_count": payload.get("call_count"),
         "passed_count": payload.get("passed_count"),
+        "expected_tasks": sorted(expected_tasks),
         "observed_tasks": sorted(observed_tasks),
+        "task_set_match": task_set_match,
+        "summary_identity_match": summary_identity_match,
         "provider_model_match": provider_model_match,
         "prompt_schema_contract_match": contract_match,
+        "task_results_match": task_results_match,
         "validation_opened": payload.get("validation_opened"),
         "blind_2025_outcome_accessed": payload.get("blind_2025_outcome_accessed"),
     }
@@ -1214,6 +1302,7 @@ def _evaluate_modes(
 ) -> dict[str, Any]:
     mode_results: dict[str, dict[str, Any]] = {}
     case_ids = _case_ids(dict(subset))
+    evaluation_case_ids = _evaluation_case_filter(subset, coverage)
     prompt_set_hash = _canonical_hash(
         {
             f"{task_name}:{prompt_version}": digest
@@ -1232,7 +1321,7 @@ def _evaluate_modes(
             root=root,
             coverage_path=coverage_path,
             results_path=results_path,
-            case_ids=case_ids,
+            case_ids=evaluation_case_ids,
             output_dir=evaluation_dir,
             log_path=mode_dir / "evaluation.log",
         )
@@ -1415,6 +1504,13 @@ def _write_governed_run_artifacts(
         else "offline"
     )
     selected = summaries.get(selected_mode) or {}
+    selected_payload = mode_results.get(selected_mode) or {}
+    selected_raw_summary = selected_payload.get("summary") or {}
+    full_development_executed = _full_development_execution_complete(
+        subset,
+        coverage,
+        selected_raw_summary,
+    )
     prompt_hashes = preflight.get("prompt_hashes") or {}
     baseline_manifest = {
         "manifest_version": "v046_role_b_baseline_manifest_v1",
@@ -1513,6 +1609,7 @@ def _write_governed_run_artifacts(
         },
         "monotonicity_satisfied": monotonicity.get("satisfied"),
         "fixed10_target_reached": fixed10_target_reached,
+        "full_development_executed": full_development_executed,
         "selected_mode": selected_mode,
         "cache": cache_by_mode,
         "performance": {
@@ -1529,7 +1626,6 @@ def _write_governed_run_artifacts(
     }
     _safe_json_write(output_root / "ablation_summary.json", ablation_summary)
 
-    selected_payload = mode_results.get(selected_mode) or {}
     selected_artifacts = selected_payload.get("artifacts") or {}
     for name in ("retrieval_waterfall", "risk_pipeline_waterfall"):
         artifact = dict(selected_artifacts.get(name) or {})
@@ -1555,7 +1651,7 @@ def _write_governed_run_artifacts(
             "real_llm_candidate_accepted": selected_mode == "gated",
             "monotonicity_satisfied": monotonicity.get("satisfied"),
             "fixed10_target_reached": fixed10_target_reached,
-            "full_development_executed": False,
+            "full_development_executed": full_development_executed,
             "validation_opened": False,
             "blind_2025_outcome_accessed": False,
         },
@@ -1676,7 +1772,7 @@ def main() -> int:
         and preflight["structured_smoke"]["passed"] is not True
     ):
         raise RoleBAblationRunnerError(
-            "the matching 3/3 synthetic structured smoke must pass before fixed-10"
+            "the matching complete-task-set synthetic structured smoke must pass before execution"
         )
 
     prospectus_root = args.prospectus_root
@@ -1686,7 +1782,12 @@ def main() -> int:
         raise RoleBAblationRunnerError("licensed prospectus root is unavailable")
 
     runtime_cases_path = output_root / "runtime_cases.json"
-    _build_runtime_cases_manifest(subset, bridge_path, runtime_cases_path)
+    _build_runtime_cases_manifest(
+        subset,
+        bridge_path,
+        runtime_cases_path,
+        full_development=_is_full_development_subset(subset, coverage),
+    )
     runtime_cases = _runtime_cases(runtime_cases_path)
     catalog = _read_catalog(catalog_path, "case_id")
     bridge = _read_catalog(bridge_path, "case_id")
