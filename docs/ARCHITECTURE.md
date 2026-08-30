@@ -1,6 +1,8 @@
-# Architecture — Current Runtime and Open Generalization Paths
+# Architecture — v1.0.0 Frozen Runtime
 
-> 状态日期：`2026-08-30`
+> Release: `v1.0.0`  
+> 状态日期：`2026-08-30`  
+> Architecture status: **FROZEN FOR COMPETITION RELEASE**
 
 ## 1. Production analysis path
 
@@ -10,7 +12,7 @@ IPOAnalysisRequest
 Prospectus Parser
       ↓ DocumentChunk(page, text, bbox)
 Retriever
-      ↓ Evidence
+      ↓ bounded Evidence
 Financial ─┬─ Legal ─┬─ Business
            └─────────┘
                  ↓
@@ -20,44 +22,39 @@ Financial ─┬─ Legal ─┬─ Business
                  ↓
 Governed MarketContext + Skills
                  ↓
-Governed ModelSignal
+Frozen Model inference + native SHAP
                  ↓
 Conflict Detection
                  ↓
 bounded Targeted Re-check
                  ↓
-LLM Final Supervisor
+Final Supervisor
 + deterministic fallback
                  ↓
 Trace + Evidence / Screenshot + Report / UI / API
 ```
 
-Release evaluation 位于 runtime 之后：M1 / M2 / M3 / M5、Dynamic generalization、freeze / Validation / audits / package。
+Evaluation and release governance sit outside the runtime path: M1/M2/M3/M5, frozen identity, one-shot Validation, audits and package generation.
 
 ## 2. Document / Role-B boundary
 
-Parser 拥有 physical page identity；page/text/bbox 由解析/Evidence layer 提供，UI 不猜坐标。
+Parser owns physical page identity; page/text/bbox come from the parser/Evidence layer. UI does not guess Evidence coordinates.
 
-Financial 保持 deterministic-first；Legal / Business 只消费 bounded Evidence，受 Pydantic schema 与 Evidence scope guard 约束。
+Financial is deterministic-first. Legal / Business consume bounded Evidence and are constrained by Pydantic response schemas plus Evidence-scope guards.
 
-最终 ALL79 Development checkpoint：
+Final ALL79 Development checkpoint:
 
 ```text
 real-LLM gated M1 = 61/102 = 59.80%
 real-LLM gated M2 = 93/191 = 48.69%
-offline selected M1 = 70/102 = 68.63%
-offline selected M2 = 103/191 = 53.93%
+best offline M1 = 70/102 = 68.63%
+best offline M2 = 103/191 = 53.93%
+real_llm_cases = 79/79
 ```
 
-real LLM 已覆盖 79/79；316 tasks 中 310 valid、6 fallback、0 transport failure。
-单调性失败且删除正确 deterministic candidate，因此不 promote。两种模式均未达到
-M1/M2 Gate；当前停止算法迭代并冻结为提交证据。
+The real LLM path does not beat the selected offline path and the internal G2 threshold is not met. The release keeps the strict Evidence/schema contract and freezes the measured limitation instead of loosening guards for score.
 
-历史诊断曾采用 multi-root wide sprint；该冲刺已随本次 ALL79 冻结结束，不再作为当前执行指令。
-
-已拒绝的 direct ranked concentration-table candidate 因无 canonical M1/M2 gain 且 supplier existence F1 回归，不得原样恢复。broad Parser preservation / period candidate generation 只有出现新 proof 才重新打开。
-
-## 3. Market runtime
+## 3. Market runtime — closed / G3 PASS
 
 ### Historical governed path
 
@@ -68,83 +65,105 @@ M1/M2 Gate；当前停止算法迭代并冻结为提交证据。
 → MarketContext
 ```
 
-### Target unified resolver
+### Dynamic PIT path
 
 ```text
 case identity
-→ validated cache/artifact exists?
-   ├─ yes → load
-   └─ no  → governed historical/online source
-             → PIT-safe builder
-             → validation
-             → optional governed cache
+→ governed frozen artifact available?
+   ├─ yes → validated frozen load
+   └─ no  → Dynamic PIT Market-X
+             → governed pre-listing history
+             → feature builder
+             → schema / identity / provenance / cutoff validation
 → MarketContext
 ```
 
-新 IPO 不要求强行生成数字：合法历史不足时 `PARTIAL / UNAVAILABLE` 是正确产品行为。
+Final strict audit facts include 562 governed cases, 0 integrity violations, 438 frozen-path cases, 124 Dynamic PIT cases and a Model handoff of 550 bound / 12 not-projectable.
 
-LLM / Skill 不能 mint market numbers。missing 不得 zero-fill；目标 IPO 上市后数据和 Blind outcome 不得进入 pre-listing runtime。
+New IPOs do not have to produce every number. Insufficient governed history results in explicit `PARTIAL / UNAVAILABLE` states. Missing values are never silently zero-filled.
 
-## 4. Model runtime
+## 4. Model runtime — closed / G4 PASS
 
-### Current stable baseline
+### Stable final-three compatibility
 
 ```text
 receipt-bound final-three handoff
-→ Frozen Model 3/3
-→ uncalibrated_model_score + drivers
+→ governed frozen result
 ```
 
-该路径用于稳定 Demo / regression，不是最终泛化机制。
+This remains a stable compatibility/demo path.
 
-### Target dynamic path
+### Generalized frozen inference
 
 ```text
 governed feature vector
-+ final frozen model artifact/hash
-+ feature / alert manifests
-→ LightGBM inference (no retraining)
++ models/role_d_v2 frozen model
++ feature manifest
++ alert policy
+→ runtime inference (no retraining)
 → uncalibrated_model_score
 → native pred_contrib / SHAP
 → ModelSignal
 ```
 
-`PROMOTE_V2` 决议已通过 A-owned PR #184 生效。晋升模型使用新的 versioned identity，未覆盖历史 frozen PR-F；独立 freeze、四项 artifact、strict receipt 与 product handoff 均已落地，两条身份不互相覆盖。
+`PROMOTE_V2` is effective. Generalized inference is implemented and audited; it is no longer an open architecture target.
 
-SHAP 必须来自当前 inference；不得复制 final-three drivers。
+Strict audit facts:
+
+```text
+governed cases = 562
+inference available = 540
+available outside per-case handoff = 537
+inference error = 0
+degenerate SHAP = 0
+published parity = 70/70
+mismatch = 0
+```
+
+Frozen model SHA-256:
+
+```text
+320e810e85dcdb7e6caa40f9ef2b20157005e7a1d1af38ad7d586dd0feee72e2
+```
+
+The model is an uncalibrated triage signal, not a probability forecast.
 
 ## 5. Supervision / conflict / trace
 
-Final Supervisor 只能引用 supplied in-scope Risk、Evidence、Conflict、Recheck、MarketContext、ModelSignal；severity 不低于 deterministic verified-risk floor。
+Final Supervisor only consumes supplied in-scope Risk, Evidence, Conflict, Recheck, MarketContext and ModelSignal. It cannot mint new Evidence or market numbers.
 
-当前 regression baseline：
+Deterministic verified-risk severity floors remain authoritative.
+
+Regression baseline:
 
 ```text
 E1 = 3/3
-first-attempt accepted = 3/3
-fallback = 0
 M3 = 1.0 x 3
 recheck = 17/17
+seven-stage = 21/21
 ```
 
-`unresolved + recheck executed` 是合法状态，不等于 workflow failure。
+`unresolved + recheck executed` is a valid governed state, not a workflow crash.
 
-## 6. Evidence and product surfaces
-
-当前 final-three：
+## 6. Evidence architecture
 
 ```text
 Evidence ID
-→ source PDF hash
+→ source PDF identity/hash
 → physical page
-→ unique localisation / truthful fallback
+→ bounded text / provenance
+→ unique localisation or truthful fallback
 → screenshot
 → screenshot manifest / hash
 ```
 
-实测 `17/17` precise。
+Canonical final-three screenshot baseline remains 17/17 precise.
 
-最终 UI 明确支持：
+No UI path may fabricate bbox/page or replace an unavailable Evidence localisation with another item's coordinates.
+
+## 7. Product surfaces — G5 PASS
+
+v1.0.0 supports:
 
 ```text
 Offline Demo Replay
@@ -152,29 +171,36 @@ Historical Governed IPO
 Fresh New-IPO Analysis
 ```
 
-Frontend 只消费正式 schema/state/provenance，不自己计算 Market/Model，也不把 unavailable 染成 available。
+Standard and judge-facing Streamlit surfaces consume runtime schema/state/provenance; they do not recompute or invent Document/Market/Model values.
 
-发行人输入已支持 official catalog-backed 快速匹配；正式 downstream join 仍使用 governed identity，而不是 fuzzy company-name join。
+Issuer lookup may assist user input, while formal downstream joins remain governed by case/stock/listing identities rather than fuzzy company-name matching alone.
 
-## 7. Current stable baseline
-
-进入 regression-protection：
-
-- final-three Market/Model `3/3`；
-- Final Supervisor E1 `3/3`；
-- M3 `1.0 x 3`；
-- recheck `17/17`；
-- precise screenshot `17/17`；
-- seven-stage `21/21`；
-- canonical replay `66` files；
-- fresh clone / Streamlit smoke / team-ready checks PASS。
-
-## 8. Open architecture work
+## 8. Frozen stable baseline
 
 ```text
-G2 M1/M2 threshold failure（frozen）
-one-shot Validation（not executed / blocked under strict policy）
-final audits / clean clone / secure package
+Final Supervisor E1 = 3/3
+M3 = 1.0 x 3
+Market final-three = 3/3
+Model final-three = 3/3
+recheck = 17/17
+Evidence screenshots = 17/17 precise
+seven-stage = 21/21
+canonical replay = 66 files
+G3/G4/G5/G6 = PASS
+main tests / Role D runtime / Team demo runtime = PASS
 ```
 
-Human Review sidecar/UI/export 可保留为 optional 人机协同能力，不是当前 Release Gate。
+## 9. Remaining work is not architecture development
+
+After v1.0.0, only competition-submission operations remain:
+
+```text
+one-shot Validation
+final artifact/hash rebinding
+fresh clone
+security / licensing / provenance audit
+secure package
+PPT / defense / recording
+```
+
+G2 remains a frozen known limitation. Any new algorithmic/generalization work belongs to a post-competition release and must not silently rewrite the v1.0.0 frozen architecture or benchmark identity.
