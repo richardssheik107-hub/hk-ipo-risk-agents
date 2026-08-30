@@ -37,6 +37,14 @@ def _button(app: AppTest, label: str):
     return next(button for button in app.button if button.label == label)
 
 
+def _tab(app: AppTest, label: str):
+    return next(tab for tab in app.tabs if tab.label == label)
+
+
+def _markdown_text(container) -> str:
+    return "\n".join(str(block.value) for block in container.markdown)
+
+
 def test_primary_navigation_has_four_reader_or_admin_destinations(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -48,6 +56,18 @@ def test_primary_navigation_has_four_reader_or_admin_destinations(
     assert "运行与回放" not in _tab_labels(app)
     assert not app.selectbox
     assert not app.json
+
+
+def test_new_session_defaults_to_latest_competition_ai_runtime(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    app = _run_app(monkeypatch)
+
+    assert app.session_state["runtime_scenario"] == "v0.4.5 比赛版（AI）"
+
+    app.segmented_control[0].set_value("后台").run()
+    runtime_picker = next(widget for widget in app.selectbox if widget.label == "运行模式")
+    assert runtime_picker.value == "v0.4.5 比赛版（AI）"
 
 
 @pytest.mark.skipif(not DEMO_BUNDLE.is_dir(), reason="canonical replay bundle is unavailable")
@@ -77,6 +97,20 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
     assert not any(button.label == "下载结构化 JSON" for button in app.get("download_button"))
     assert not app.json
 
+    market_model_tab = _tab(app, "市场与模型")
+    market_model_copy = _markdown_text(market_model_tab)
+    assert "市场与模型解读" in market_model_copy
+    assert "未经概率校准" in market_model_copy
+    assert "不能理解为风险发生概率" in market_model_copy
+    assert not market_model_tab.metric
+    assert not market_model_tab.dataframe
+    for machine_detail in ("模型评分", "规则评分", "SHAP"):
+        assert machine_detail not in market_model_copy
+
+    evidence_copy = _markdown_text(_tab(app, "原文证据"))
+    for reasoning_label in ("推理注释", "形成依据", "判断边界", "复核重点"):
+        assert reasoning_label in evidence_copy
+
     # Native navigation reruns the script without dropping the governed result.
     app.segmented_control[0].set_value("后台").run()
     assert not app.exception
@@ -84,6 +118,13 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
     assert "运行与回放" in _tab_labels(app)
     assert any(button.label == "下载结构化 JSON" for button in app.get("download_button"))
     assert app.json
+
+    data_audit_tab = _tab(app, "数据审计")
+    audit_metrics = {metric.label: metric.value for metric in data_audit_tab.metric}
+    assert "模型评分" in audit_metrics
+    assert "规则评分" in audit_metrics
+    assert "主要驱动因素（SHAP）" in _markdown_text(data_audit_tab)
+    assert data_audit_tab.dataframe
 
 
 def test_successful_no_pdf_run_clears_an_older_case_pdf(

@@ -17,7 +17,13 @@ from typing import Any, Iterable
 import streamlit as st
 import streamlit.components.v1 as components
 
-from judge_copy import risk_conclusion_zh, supervisor_summary_zh, to_simplified_ui
+from judge_copy import (
+    risk_conclusion_zh,
+    risk_reasoning_annotation,
+    supervisor_narrative_zh,
+    supervisor_summary_zh,
+    to_simplified_ui,
+)
 
 
 @dataclass(frozen=True)
@@ -446,6 +452,160 @@ def market_degradation_summary(
     return "；".join(parts)
 
 
+_MARKET_HEAT_LABELS = {
+    "HOT": "偏热",
+    "HIGH": "偏热",
+    "WARM": "偏热",
+    "NEUTRAL": "中性",
+    "COOL": "偏冷",
+    "COLD": "偏冷",
+    "INSUFFICIENT_DATA": "暂无法充分判断",
+    "UNAVAILABLE": "暂无法充分判断",
+}
+
+
+def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
+    """把市场与模型载荷投影为评审可读结论，不展示逐项技术指标。"""
+
+    market = payload.get("market_context") or {}
+    observations = market.get("observations") or []
+    available, total = available_market_observation_count(payload)
+    provenance = market.get("provenance") or {}
+    intelligence = (
+        payload.get("market_intelligence")
+        or market.get("market_intelligence")
+        or provenance.get("market_intelligence")
+        or {}
+    )
+    heat_payload = intelligence.get("ipo_heat") or {}
+    raw_heat = (
+        heat_payload.get("ipo_heat")
+        if isinstance(heat_payload, dict)
+        else heat_payload
+    )
+    heat = _MARKET_HEAT_LABELS.get(
+        str(raw_heat or "").upper(),
+        "暂无法充分判断",
+    )
+    regime_payload = intelligence.get("market_regime") or {}
+    raw_regime = (
+        regime_payload.get("market_regime")
+        if isinstance(regime_payload, dict)
+        else regime_payload
+    )
+    raw_liquidity = (
+        regime_payload.get("liquidity_condition")
+        if isinstance(regime_payload, dict)
+        else intelligence.get("liquidity_condition")
+    )
+    raw_market_risk = intelligence.get("risk_level")
+    market_risk = risk_level_label(raw_market_risk)
+    if intelligence and raw_market_risk:
+        market_title = f"近期新股市场热度{heat}，市场侧风险为{market_risk}"
+    elif intelligence:
+        market_title = f"近期新股市场热度{heat}，整体市场环境仍需结合更多信息判断"
+    elif total and available == total:
+        market_title = "上市前市场信息较完整"
+    elif available:
+        market_title = "上市前市场信息部分可用"
+    else:
+        market_title = "当前市场环境暂无法充分判断"
+
+    market_sentences = [
+        "这部分信息用于说明发行时点的外部环境，只作为招股书基本面判断的补充。"
+    ]
+    regime = str(raw_regime or "").upper()
+    liquidity = str(raw_liquidity or "").upper()
+    if regime in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
+        market_sentences.append("整体市场状态所需信息仍不完整，本页不据缺失数据作方向性推断。")
+    if liquidity in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
+        market_sentences.append("市场流动性暂无法可靠判断。")
+
+    same_industry_count = next(
+        (
+            item.get("value")
+            for item in observations
+            if str(item.get("feature") or item.get("name") or "")
+            == "same_industry_ipo_count_180d"
+            and item.get("availability") == "available"
+        ),
+        None,
+    )
+    try:
+        no_same_industry_cases = float(same_industry_count) == 0
+    except (TypeError, ValueError):
+        no_same_industry_cases = False
+    if no_same_industry_cases:
+        market_sentences.append("近期缺少同业新股样本，因此不对同业上市表现作比较。")
+
+    missing_reason_labels: list[str] = []
+    for item in observations:
+        if item.get("availability") == "available":
+            continue
+        label = market_missing_reason_label(
+            item.get("missing_reason"), include_code=False
+        )
+        if label not in missing_reason_labels:
+            missing_reason_labels.append(label)
+    if total:
+        coverage = f"本次取得 {available}/{total} 项上市前市场信息。"
+        if missing_reason_labels:
+            coverage += (
+                f"未取得 {total - available}/{total} 项，主要原因："
+                f"{'；'.join(missing_reason_labels)}。"
+                "缺失项不会被补成 0。"
+            )
+    else:
+        coverage = "本次没有可展示的上市前市场信息；缺失不等同于市场风险较低。"
+
+    final = payload.get("final_supervision") or {}
+    states = channel_state_map(payload)
+    model = final.get("model_prediction") or payload.get("model_prediction") or {}
+    explicit_model_state = states.get("model")
+    if explicit_model_state is None:
+        effective_model_state = (
+            str(model.get("status") or "available")
+            if isinstance(model, dict) and model
+            else "unavailable"
+        )
+    else:
+        effective_model_state = explicit_model_state
+    if effective_model_state == "available":
+        model_title = "模型已形成辅助排序信号"
+        model_body = (
+            "模型结果用于提示哪些案例需要优先审阅。它未经概率校准，不能理解为风险发生概率，"
+            "也不能替代招股书原文和人工判断。"
+        )
+    elif effective_model_state == "partial":
+        model_title = "模型信号仅部分可用"
+        model_body = (
+            "当前模型信息不足以形成完整的逐案解释，只能作为有限的审阅参考。"
+            "缺失部分不会被推测补全，也不能据此判断为低风险。"
+        )
+    else:
+        model_title = "当前没有可核验的逐案模型结果"
+        model_body = (
+            "本页不对模型方向作推断；模型缺失不代表低风险，仍应依据招股书风险、验证状态和"
+            "市场边界进行判断。"
+        )
+
+    prediction = payload.get("prediction") or {}
+    rule_level = risk_level_label(prediction.get("risk_level"))
+    review_guidance = (
+        f"规则化风险判断当前为{rule_level}风险。评审时建议先查看风险点的推理注释和原文证据，"
+        "再把市场环境与模型信号作为辅助背景。逐项市场指标、模型分数和影响因素均保留在后台"
+        "的数据审计中。"
+    )
+    return {
+        "market_title": market_title,
+        "market_body": "".join(market_sentences),
+        "market_coverage": coverage,
+        "model_title": model_title,
+        "model_body": model_body,
+        "review_guidance": review_guidance,
+    }
+
+
 def localize_market_observation_rows(
     rows: Iterable[dict[str, object]], *, include_reason_codes: bool = True
 ) -> list[dict[str, object]]:
@@ -523,7 +683,8 @@ def apply_competition_theme() -> None:
         [data-testid="stMetricValue"] {font-weight:760;color:var(--ipo-ink);font-size:1.42rem;line-height:1.25;white-space:normal;overflow-wrap:anywhere;}
         div[data-testid="stExpander"] {border:1px solid var(--ipo-line);border-radius:10px;overflow:hidden;background:var(--ipo-surface);}
         div[data-testid="stDataFrame"] {border:1px solid var(--ipo-line);border-radius:10px;overflow:hidden;background:var(--ipo-surface);}
-        [data-testid="stAlert"] {border-radius:10px;border-width:1px;}
+        [data-testid="stAlert"] {border-radius:10px;border-width:1px;color:var(--ipo-ink)!important;}
+        [data-testid="stAlert"] p,[data-testid="stAlert"] strong,[data-testid="stAlert"] span {color:var(--ipo-ink)!important;}
         hr {border-color:var(--ipo-line)!important;margin:1.4rem 0!important;}
         .stTabs [data-baseweb="tab-list"] {gap:.15rem;overflow-x:auto;padding:.28rem;background:#e9eef3;border:1px solid #dbe2e9;border-radius:10px;}
         .stTabs [data-baseweb="tab"] {border-radius:7px;padding:.56rem .78rem;font-size:.79rem;font-weight:670;color:#536173;white-space:nowrap;}
@@ -733,13 +894,20 @@ def apply_competition_theme() -> None:
         .product-nav-links a:after {content:"";position:absolute;left:8%;right:8%;bottom:0;height:4px;border-radius:999px;background:#16a6a1;transform:scaleX(0);transform-origin:left center;transition:transform var(--motion-standard) var(--ease-product);}
         .product-nav-links a.nav-active {color:#0f6471;font-weight:650;}
         .product-nav-links a.nav-active:after {transform:scaleX(1);}
-        .st-key-product_navigation_shell {position:sticky;top:var(--streamlit-header-height);z-index:990;margin-bottom:.8rem;padding:.65rem 1rem;background:rgba(255,255,255,.95);border-bottom:1px solid rgba(20,184,166,.16);backdrop-filter:blur(12px);}
+        .st-key-product_navigation_shell {position:sticky;top:var(--streamlit-header-height);z-index:990;margin-bottom:.8rem;padding:.65rem 1rem;background:rgba(255,255,255,.95);border:1px solid rgba(20,184,166,.13);border-radius:0 0 18px 18px;box-shadow:0 7px 22px rgba(20,184,166,.055);backdrop-filter:blur(12px);}
         .st-key-product_navigation_shell .native-product-brand {display:flex;align-items:center;height:100%;min-height:40px;}
         .st-key-product_navigation_shell .native-product-brand img {display:block;height:34px;width:auto;max-width:190px;object-fit:contain;}
-        .st-key-product_navigation_shell [data-testid="stSegmentedControl"] {display:flex;justify-content:flex-end;}
-        .st-key-product_navigation_shell [data-testid="stSegmentedControl"] > div {width:auto;}
-        .st-key-home_start_analysis {display:flex;justify-content:flex-start;margin:.9rem 0 1.8rem;}
-        .st-key-home_start_analysis button {min-width:220px;min-height:48px;}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) {display:flex;justify-content:center;width:100%;}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) > div {width:min(100%,620px);}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radiogroup"] {display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%;padding:5px;border:1px solid rgba(20,184,166,.15);border-radius:15px;background:linear-gradient(110deg,rgba(96,213,200,.11),rgba(217,204,255,.22));box-shadow:inset 0 1px 2px rgba(22,59,56,.025);}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"] {display:flex;align-items:center;justify-content:center;min-width:0;min-height:42px;padding:.55rem .8rem!important;border:0!important;border-radius:11px!important;background:transparent!important;color:#526D69!important;font-size:.84rem!important;font-weight:650!important;line-height:1.15!important;box-shadow:none!important;transition:background-color 170ms var(--ease-product),color 170ms var(--ease-product),box-shadow 170ms var(--ease-product),transform 170ms var(--ease-product);}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"] p {width:100%;margin:0;text-align:center;color:inherit!important;font-size:inherit!important;font-weight:inherit!important;line-height:inherit!important;}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"]:hover {background:rgba(255,255,255,.64)!important;color:var(--ipo-ink)!important;}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"][aria-checked="true"],.st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"][aria-selected="true"],.st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"][data-selected="true"] {background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(230,250,246,.94) 54%,rgba(242,238,255,.94))!important;color:#16766F!important;box-shadow:0 4px 12px rgba(20,184,166,.12),inset 0 0 0 1px rgba(20,184,166,.18)!important;transform:translateY(-1px);}
+        .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) [role="radio"]:focus-visible {outline:3px solid rgba(20,184,166,.24)!important;outline-offset:2px;}
+        .st-key-home_start_analysis {display:flex;justify-content:center;width:100%!important;margin:1.15rem 0 1.8rem;}
+        .st-key-home_start_analysis div[data-testid="stButton"] {display:flex;justify-content:center;width:auto!important;}
+        .st-key-home_start_analysis button {min-width:240px;min-height:48px;}
         .st-key-case_workspace_shell {margin-top:1.35rem;padding:22px 24px 26px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.82);border-radius:24px;box-shadow:0 10px 28px rgba(45,70,95,.07);}
         .result-breadcrumb {display:flex;align-items:center;gap:.62rem;min-width:0;margin:0 0 16px;font-size:13px;line-height:1.5;color:#81909d;}
         .result-breadcrumb a {color:#687b8b;text-decoration:none;transition:color var(--motion-fast) ease;}
@@ -948,6 +1116,8 @@ def apply_competition_theme() -> None:
         .st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button {width:min(100%,180px);min-height:46px;}
         .st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"] {isolation:isolate;}
         .st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"] > span svg {color:var(--ipo-primary);}
+        .st-key-analysis_intake_shell .landing-intake-copy {min-height:3.1rem;}
+        .intake-no-upload {display:flex;align-items:center;justify-content:center;min-height:230px;padding:1.1rem;border:1px dashed rgba(20,184,166,.3);border-radius:14px;background:rgba(255,255,255,.78);color:var(--ipo-muted);font-size:.84rem;line-height:1.65;text-align:center;}
         /* Result workspace accents remain subtle and inherit the governed nine-colour palette. */
         .st-key-case_workspace_shell {--workspace-accent:var(--ipo-primary);--workspace-tint:rgba(20,184,166,.055);}
         .st-key-case_workspace_shell:has([role="tab"]:nth-child(2)[aria-selected="true"]) {--workspace-accent:var(--ipo-secondary);--workspace-tint:rgba(96,213,200,.065);}
@@ -976,6 +1146,10 @@ def apply_competition_theme() -> None:
         .st-key-risk_command_shell .section-head,.st-key-evidence_section_shell .section-head,.st-key-market_model_section_shell .section-head,.st-key-agent_trace_section_shell .section-head,.st-key-review_report_section_shell .section-head {border-left-color:var(--section-accent)!important;}
         .st-key-risk_command_shell .section-eyebrow,.st-key-evidence_section_shell .section-eyebrow,.st-key-market_model_section_shell .section-eyebrow,.st-key-agent_trace_section_shell .section-eyebrow,.st-key-review_report_section_shell .section-eyebrow {color:color-mix(in srgb,var(--section-accent) 72%,#163B38);}
         .st-key-risk_command_shell .metric-card,.st-key-evidence_section_shell .metric-card,.st-key-market_model_section_shell .metric-card,.st-key-agent_trace_section_shell .metric-card,.st-key-review_report_section_shell .metric-card {border-top:2px solid color-mix(in srgb,var(--section-accent) 68%,white)!important;}
+        .reasoning-note {display:grid;gap:.62rem;margin:.35rem 0 .9rem;padding:.9rem 1rem;border:1px solid rgba(20,184,166,.13);border-radius:14px;background:linear-gradient(135deg,rgba(96,213,200,.075),rgba(217,204,255,.12));color:var(--ipo-ink);font-size:.8rem;line-height:1.66;}
+        .reasoning-note>div {display:grid;grid-template-columns:72px minmax(0,1fr);gap:.7rem;align-items:start;}
+        .reasoning-note span {color:#18857C;font-size:.72rem;font-weight:720;letter-spacing:.015em;}
+        .st-key-case_workspace_shell [data-testid="stMarkdownContainer"] p,.st-key-case_workspace_shell [data-testid="stMarkdownContainer"] li {color:var(--ipo-ink);}
         /* Evidence sub-tabs are a compact child navigation, not another workspace switcher. */
         .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs {margin:.35rem 0 .4rem;}
         .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab-list"],.st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tablist"] {box-sizing:border-box;width:calc(100% - clamp(2.3rem,10vw,8.5rem));max-width:100%;min-width:0;min-height:42px!important;margin-inline:auto;gap:4px!important;padding:4px!important;border:1px solid rgba(96,213,200,.18)!important;border-radius:11px!important;background:rgba(96,213,200,.075)!important;box-shadow:none!important;}
@@ -1022,7 +1196,8 @@ def apply_competition_theme() -> None:
         @media(max-width:620px){div[data-testid="stElementContainer"]:has(.product-nav){top:var(--streamlit-header-height)}.product-nav{padding:0 .7rem}.product-nav-logo{height:30px;max-width:150px}.product-nav-links{max-width:66%;gap:17px}.product-nav-links a{font-size:.73rem}.landing-hero-v3{padding:1.5rem 1.15rem;border-radius:14px}.hero-v3-title{font-size:2.25rem}.risk-flow-visual{margin-top:.5rem}.capability-image-frame{border-radius:18px}.product-footer{padding-top:44px}.product-footer-grid{grid-template-columns:1fr;gap:2rem}.footer-system{grid-column:auto;max-width:none}.footer-lower{align-items:flex-start;flex-direction:column;gap:1rem;margin-top:34px}.metric-grid,.channel-grid,.pipeline-grid,.profile-grid,.empty-flow,.roadmap-grid,.bento-kpis{grid-template-columns:1fr;}.ipo-hero{padding:1rem;min-height:auto}.command-health{grid-template-columns:1fr 1fr}.case-shell{align-items:flex-start}.trace-flow{grid-template-columns:1fr}.trace-flow-step:after{display:none!important}.trace-card{grid-template-columns:30px 1fr}.trace-action{grid-column:2}.trace-card .status-chip{grid-column:2;justify-self:start}}
         @media(max-width:900px){.st-key-case_workspace_shell{padding:20px;border-radius:22px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{padding:1.25rem;border-radius:22px}}
         @media(max-width:620px){.st-key-case_workspace_shell{padding:16px;border-radius:18px}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"]{border-radius:14px;padding:5px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{margin-top:18px;padding:1rem;border-radius:18px}}
-        @media(max-width:620px){.st-key-analysis_intake_shell{padding:1rem;border-radius:22px}.st-key-analysis_intake_shell:before{left:8%;right:8%;bottom:-8px}.st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button{width:100%}}
+        @media(min-width:901px){.st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"]:not(:has([data-testid="stFileChips"])){min-height:230px;}}
+        @media(max-width:620px){.st-key-analysis_intake_shell{padding:1rem;border-radius:22px}.st-key-analysis_intake_shell:before{left:8%;right:8%;bottom:-8px}.st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button{width:100%}.st-key-analysis_intake_shell .landing-intake-copy{min-height:0}.intake-no-upload{min-height:150px}}
         @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.hero-prospectus,.hero-evidence,.hero-market,.hero-rule,.hero-risk,.hero-final,.hero-connector{animation:none!important;transform:none!important;opacity:.96!important}.motion-enter,.editorial-stepper,.editorial-step-no,.result-enter,.section-reveal .landing-section-title,.section-reveal .landing-section-copy,.scroll-content-target,.capability-band .capability-copy,.capability-band .capability-visual,.product-footer{opacity:1!important;transform:none!important}.section-reveal .landing-section-title:after,.product-nav-links a.nav-active:after{transform:scaleX(1)!important}}
         </style>
         """,
@@ -1063,7 +1238,9 @@ def render_product_navigation(*, result_mode: bool = False) -> str:
         st.session_state["product_navigation_choice"] = "案例工作台" if result_mode else "首页"
 
     with st.container(key="product_navigation_shell"):
-        brand_col, navigation_col = st.columns((0.9, 1.5), vertical_alignment="center")
+        brand_col, navigation_col, spacer_col = st.columns(
+            (0.55, 1.8, 0.55), vertical_alignment="center"
+        )
         with brand_col:
             st.markdown(
                 "<span class='product-nav' style='display:none' aria-hidden='true'></span>"
@@ -1077,7 +1254,10 @@ def render_product_navigation(*, result_mode: bool = False) -> str:
                 labels,
                 key="product_navigation_choice",
                 label_visibility="collapsed",
+                width="stretch",
             )
+        with spacer_col:
+            st.empty()
     return views.get(str(selected), "case" if result_mode else "home")
 
 
@@ -1417,22 +1597,36 @@ def executive_supervisor_view(
 
     llm_judgement = synthesis.get("judgement") if synthesis.get("status") == "available" else None
     if isinstance(llm_judgement, dict):
+        overall_risk = llm_judgement.get("overall_risk")
         return {
             "title": "综合风险判断" if reader else "LLM Final Supervisor 综合判断",
-            "body": supervisor_summary_zh(payload),
+            "body": (
+                supervisor_narrative_zh(payload)
+                if reader
+                else supervisor_summary_zh(payload)
+            ),
             "mode": "llm",
             "llm_status": "available",
             "llm_reason": synthesis.get("reason") or "",
             "conflict_counts": conflict_counts,
+            "overall_risk": overall_risk,
+            "risk_basis_label": "综合风险等级",
         }
 
+    rule_risk = (payload.get("prediction") or {}).get("risk_level")
     return {
         "title": "规则化综合判断" if reader else "确定性 Document Supervisor 汇总",
-        "body": supervisor_summary_zh(payload),
+        "body": (
+            supervisor_narrative_zh(payload)
+            if reader
+            else supervisor_summary_zh(payload)
+        ),
         "mode": "deterministic_fallback",
         "llm_status": synthesis.get("status") or "not_configured",
         "llm_reason": synthesis.get("reason") or "",
         "conflict_counts": conflict_counts,
+        "overall_risk": rule_risk,
+        "risk_basis_label": "规则化风险等级",
     }
 
 
@@ -1451,17 +1645,8 @@ def reader_markdown_report(payload: dict[str, Any]) -> str:
 
     profile = payload.get("profile") or {}
     prediction = payload.get("prediction") or {}
-    final = payload.get("final_supervision") or {}
-    model = final.get("model_prediction") or payload.get("model_prediction") or {}
     view = executive_supervisor_view(payload, reader=True)
-    available_market, total_market = available_market_observation_count(payload)
-    degradation = market_degradation_summary(payload, include_codes=False)
-
-    raw_model_score = model.get("score") if isinstance(model, dict) else None
-    try:
-        model_score = f"{float(raw_model_score):.3f}"
-    except (TypeError, ValueError):
-        model_score = "不可用"
+    signals = reader_market_model_summary(payload)
 
     lines = [
         f"# {to_simplified_ui(profile.get('company_name') or '发行人')}港股 IPO 风险分析报告",
@@ -1478,8 +1663,8 @@ def reader_markdown_report(payload: dict[str, Any]) -> str:
         "",
         str(view.get("body") or "本次分析没有可展示的综合判断。"),
         "",
-        f"- 规则风险等级：{risk_level_label(prediction.get('risk_level'))}",
-        f"- 规则评分：{prediction.get('risk_score', '不可用')}（用于风险排序，不是概率）",
+        f"- 综合审阅风险：{risk_level_label(view.get('overall_risk'))}风险",
+        f"- 规则化排序参考：{risk_level_label(prediction.get('risk_level'))}风险",
         "",
         "## 风险事项与原文依据",
         "",
@@ -1487,12 +1672,17 @@ def reader_markdown_report(payload: dict[str, Any]) -> str:
 
     risk_count = 0
     for domain in ("financial", "legal", "business"):
-        domain_risks = ((payload.get("domains") or {}).get(domain) or {}).get("risks") or []
+        domain_risks = [
+            risk
+            for risk in (((payload.get("domains") or {}).get(domain) or {}).get("risks") or [])
+            if str(risk.get("verification_status") or "").lower() != "rejected"
+        ]
         if not domain_risks:
             continue
         lines.extend([f"### {_DOMAIN_LABELS.get(domain, domain)}", ""])
         for risk in domain_risks:
             risk_count += 1
+            annotation = risk_reasoning_annotation(risk)
             lines.extend(
                 [
                     f"#### {risk_display_name(risk.get('risk_code'))}",
@@ -1500,6 +1690,11 @@ def reader_markdown_report(payload: dict[str, Any]) -> str:
                     f"- 风险等级：{risk_level_label(risk.get('level'))}",
                     f"- 验证状态：{status_label(risk.get('verification_status'))}",
                     f"- 结论：{risk_conclusion_zh(risk)}",
+                    "- 推理注释：",
+                    f"  - 形成依据：{annotation['basis']}",
+                    f"  - 风险影响：{annotation['impact']}",
+                    f"  - 判断边界：{annotation['boundary'] or '当前没有额外验证限制。'}",
+                    f"  - 复核重点：{annotation['review_focus']}",
                 ]
             )
             evidence_items = risk.get("evidence") or []
@@ -1519,19 +1714,21 @@ def reader_markdown_report(payload: dict[str, Any]) -> str:
         [
             "## 市场与模型信号",
             "",
-            f"- 上市前市场观测：{available_market}/{total_market} 项可用。",
+            f"- 市场结论：{signals['market_title']}。",
+            f"- 市场说明：{signals['market_body']}",
+            f"- 信息边界：{signals['market_coverage']}",
+            f"- 模型结论：{signals['model_title']}。",
+            f"- 模型说明：{signals['model_body']}",
+            f"- 阅读建议：{signals['review_guidance']}",
         ]
     )
-    if degradation:
-        lines.append(f"- 未取得的市场信息：{degradation}。")
     lines.extend(
         [
-            f"- 模型评分：{model_score}（未经概率校准，仅用于风险排序）",
             "",
             "## 结论边界",
             "",
             "- 缺失信息保持缺失，不以 0 或推测值替代。",
-            "- 模型评分和规则评分均不是事件发生概率，也不是收益预测。",
+            "- 模型信号和规则判断均不是事件发生概率，也不是收益预测。",
             "- 引用的招股书原文保持原样，其他说明使用简体中文。",
         ]
     )
@@ -1882,7 +2079,8 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
     view = executive_supervisor_view(payload, reader=True)
     assessment_status = view["title"] if final else "综合判断不可用"
     assessment_copy = view["body"] if final else "本次运行没有可展示的 Supervisor 综合结论。"
-    rule_level = risk_level_label(prediction.get("risk_level"))
+    displayed_level = risk_level_label(view.get("overall_risk"))
+    level_basis = str(view.get("risk_basis_label") or "风险等级参考")
     channel_rows = "".join(
         "<div class='channel-line'>"
         f"<div class='channel-line-name'>{escape(_CHANNEL_LABELS[channel])}</div>"
@@ -1893,7 +2091,7 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
         "<div class='bento-shell result-enter'>"
         "<div class='assessment-panel'><div class='assessment-label'>综合判断</div>"
         f"<div class='assessment-status'>{escape(assessment_status)}</div>"
-        f"<div class='assessment-risk'>规则风险等级 · {escape(rule_level)}</div>"
+        f"<div class='assessment-risk'>{escape(level_basis)} · {escape(displayed_level)}</div>"
         f"<div class='assessment-copy'>{escape(str(assessment_copy))}</div></div>"
         "<div class='health-panel'><div class='health-panel-title'>运行与通道状态</div>"
         f"<div class='channel-list'>{channel_rows}</div></div></div>",
@@ -1903,7 +2101,7 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
         (counts.get("verified", 0), "已验证风险"),
         (evidence_reference_count(payload), "原文证据"),
         (sum(view["conflict_counts"].values()), "冲突"),
-        (prediction.get("risk_score", "不可用"), "规则评分"),
+        (counts.get("needs_review", counts.get("pending", 0)), "待复核风险"),
     )
     st.markdown(
         "<div class='bento-kpis'>"
@@ -1917,7 +2115,9 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
         unsafe_allow_html=True,
     )
     if total_market:
-        st.caption(f"Market-X 可用观测 {available_market}/{total_market}。")
+        st.caption(
+            f"上市前市场信息可用 {available_market}/{total_market} 项；逐项指标在后台的数据审计中查看。"
+        )
     if final and view["mode"] == "deterministic_fallback" and view["llm_status"] == "unavailable":
         render_state_panel(
             "智能综合审阅不可用",

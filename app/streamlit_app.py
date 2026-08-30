@@ -16,6 +16,7 @@ from competition_ui import (
     available_market_observation_count,
     market_degradation_summary,
     market_runtime_summary,
+    reader_market_model_summary,
     channel_state_map,
     domain_label,
     domain_summary_rows,
@@ -63,7 +64,13 @@ from competition_runtime_view import (
 from evidence_viewer_compat import render_evidence_viewer
 from human_review_ui import render_human_review
 from issuer_identity_ui import render_issuer_identity_inputs
-from judge_copy import risk_conclusion_zh, supervisor_summary_zh, to_simplified_ui, verifier_note_zh
+from judge_copy import (
+    risk_conclusion_zh,
+    risk_reasoning_annotation,
+    supervisor_summary_zh,
+    to_simplified_ui,
+    verifier_note_zh,
+)
 from ipo_risk.runtime.demo_replay import (
     available_recorded_cases,
     load_recorded_case,
@@ -99,6 +106,7 @@ SCENARIO_REPLAY = "已记录运行回放"
 SCENARIO_V04_OFFLINE = "v0.4 离线模式 + Final Supervisor"
 SCENARIO_V04_OFFLINE_TABLE = "v0.4 离线模式（表格）+ Final Supervisor"
 SCENARIO_V04_AI_TABLE = "v0.4 AI 模式（表格）+ Final Supervisor"
+DEFAULT_ANALYSIS_SCENARIO = SCENARIO_COMPETITION_AI
 
 SCENARIOS = {
     SCENARIO_COMPETITION_OFFLINE: ("configs/v045_competition_offline.yaml", True),
@@ -414,24 +422,45 @@ def _render_risk(risk: dict[str, object], *, expert: bool = False) -> None:
             f"{code_html}</div>",
             unsafe_allow_html=True,
         )
+        score_html = f"<span class='risk-chip'>规则评分 {escape(score)}</span>" if expert else ""
         st.markdown(
             "<div style='display:flex;gap:.4rem;flex-wrap:wrap;margin:-.2rem 0 .7rem 0'>"
             f"<span class='risk-chip {_risk_level_tone(level)}'>风险等级：{escape(risk_level_label(level))}</span>"
             f"<span class='risk-chip {_verification_tone(verification)}'>{escape(status_label(verification))}</span>"
-            f"<span class='risk-chip'>规则评分 {escape(score)}</span>"
+            f"{score_html}"
             "</div>",
             unsafe_allow_html=True,
         )
         st.markdown("**结论**")
         st.write(risk_conclusion_zh(risk))
 
+        if not expert:
+            annotation = risk_reasoning_annotation(risk)
+            st.markdown("**推理注释**")
+            st.markdown(
+                "<div class='reasoning-note'>"
+                f"<div><span>形成依据</span>{escape(annotation['basis'])}</div>"
+                f"<div><span>风险影响</span>{escape(annotation['impact'])}</div>"
+                f"<div><span>判断边界</span>{escape(annotation['boundary'] or '当前没有额外验证限制。')}</div>"
+                f"<div><span>复核重点</span>{escape(annotation['review_focus'])}</div>"
+                "</div>",
+                unsafe_allow_html=True,
+            )
+
         notes = risk.get("verification_notes")
         if notes:
             st.caption(f"复核说明 · {verifier_note_zh(notes)}")
         if risk.get("category") in {"legal", "business"}:
-            st.caption(
-                "当前 v0.3 文档策略下，法律与业务风险等级仍属于暂定结果；确定性规则不会自动将其提升为高或极高。"
-            )
+            if expert:
+                st.caption(
+                    "当前 v0.3 文档策略下，法律与业务风险等级仍属于暂定结果；"
+                    "确定性规则不会自动将其提升为高或极高。"
+                )
+            else:
+                st.caption(
+                    "法律与业务事项需要结合条款语境和后续进展审阅；"
+                    "当前等级不会因单一规则自动上调。"
+                )
 
         evidence_items = risk.get("evidence") or []
         if evidence_items:
@@ -509,11 +538,11 @@ def _render_overview(payload: dict[str, object], stages) -> None:
                 "领域": row.get("领域"),
                 "风险项": row.get("风险项"),
                 "等级": row.get("等级"),
-                "规则评分": row.get("规则评分"),
                 "验证状态": row.get("验证状态"),
                 "原文证据": row.get("Evidence"),
             }
             for row in risk_inventory_rows(payload)
+            if row.get("验证状态") != "已驳回"
         ]
         if inventory:
             st.dataframe(inventory, hide_index=True, width="stretch")
@@ -522,7 +551,7 @@ def _render_overview(payload: dict[str, object], stages) -> None:
 
     section_header("七阶段运行链路", "从招股书解析到最终报告的受治理处理链。", "处理流程")
     render_pipeline_strip(stages)
-    st.caption("规则评分仅用于确定性风险排序，不代表发生概率、股价走势，也不构成投资或法律建议。")
+    st.caption("风险等级用于提示审阅优先级，不代表发生概率、股价走势，也不构成投资或法律建议。")
 
 
 def _render_risks_and_evidence(payload: dict[str, object], *, expert: bool = False) -> None:
@@ -536,26 +565,75 @@ def _render_risks_and_evidence(payload: dict[str, object], *, expert: bool = Fal
         with tab:
             domain_data = payload["domains"][domain]
             counts = domain_data["status_counts"]
-            render_metric_grid(
-                (
+            visible_risks = [
+                risk
+                for risk in domain_data["risks"]
+                if expert
+                or str(risk.get("verification_status") or "").lower() != "rejected"
+            ]
+            if expert:
+                metrics = (
                     ("风险项", domain_data["risk_count"], domain_label(domain)),
                     ("已验证", counts.get("verified", 0), "已完成验证"),
                     ("待复核", counts.get("needs_review", 0), "需要复核"),
                     ("待处理 / 已驳回", counts.get("pending", 0) + counts.get("rejected", 0), "其他状态"),
                 )
-            )
-            if not domain_data["risks"]:
+            else:
+                metrics = (
+                    ("关注事项", len(visible_risks), domain_label(domain)),
+                    ("已验证", counts.get("verified", 0), "已有证据支持"),
+                    ("待复核", counts.get("needs_review", 0) + counts.get("pending", 0), "仍需审阅"),
+                    (
+                        "原文证据",
+                        sum(len(risk.get("evidence") or []) for risk in visible_risks),
+                        "可回到原文核验",
+                    ),
+                )
+            render_metric_grid(metrics)
+            if not visible_risks:
                 render_state_panel("该领域暂无正式风险项", domain_data.get("status", "unavailable"), "本次运行未在该领域识别到正式风险项。")
-            for risk in domain_data["risks"]:
+            for risk in visible_risks:
                 _render_risk(risk, expert=expert)
             if expert and domain_data["diagnostics"]:
                 with st.expander("Agent 诊断信息", expanded=False):
                     st.json(domain_data["diagnostics"])
 
 
+def _render_reader_market_and_model(payload: dict[str, object]) -> None:
+    """Render only the conclusions a research reviewer needs on the case page."""
+
+    signals = reader_market_model_summary(payload)
+    section_header(
+        "市场与模型解读",
+        "把上市前市场环境与模型信号转化为可阅读结论；逐项指标和影响因素集中放在后台。",
+        "辅助判断",
+    )
+    market_col, model_col = st.columns(2, gap="large", vertical_alignment="top")
+    with market_col:
+        with st.container(border=True):
+            section_header("市场环境结论", "说明发行时点的外部环境，不替代招股书基本面。")
+            st.markdown(f"#### {signals['market_title']}")
+            st.write(signals["market_body"])
+            st.info(signals["market_coverage"])
+    with model_col:
+        with st.container(border=True):
+            section_header("模型使用说明", "只说明模型能否辅助审阅以及应如何理解。")
+            st.markdown(f"#### {signals['model_title']}")
+            st.write(signals["model_body"])
+            st.info("模型信号只用于审阅排序，不构成投资、交易或收益预测。")
+
+    with st.container(border=True):
+        section_header("评审阅读建议", "先证据、后信号，避免把技术分数当成事实结论。")
+        st.write(signals["review_guidance"])
+
+
 def _render_market_and_model(
     payload: dict[str, object], stages_by_id: dict[str, object], *, expert: bool = False
 ) -> None:
+    if not expert:
+        _render_reader_market_and_model(payload)
+        return
+
     section_header(
         "市场与模型信号",
         "展示上市前市场环境、模型信号及其适用边界；缺失信息不会被补成 0。",
@@ -754,6 +832,7 @@ def _render_front_report(payload: dict[str, object], result) -> None:
         "最终报告",
     )
     view = executive_supervisor_view(payload, reader=True)
+    signals = reader_market_model_summary(payload)
     with st.container(border=True):
         st.markdown(f"#### {view['title']}")
         st.write(view["body"])
@@ -780,15 +859,17 @@ def _render_front_report(payload: dict[str, object], result) -> None:
             continue
         order = section["order"]
         title = reader_titles.get(order, report_section_title(order, section["title"]))
-        with st.expander(title, expanded=section["order"] in {1, 9}):
-            if order == 8:
-                model = (payload.get("final_supervision") or {}).get(
-                    "model_prediction"
-                ) or payload.get("model_prediction") or {}
-                st.write(
-                    f"冻结模型评分为 {_display_score(model.get('score'))}；该分数未经概率校准，"
-                    "仅用于风险排序，不能解读为概率。"
-                )
+        with st.expander(title, expanded=section["order"] == 1):
+            if order == 7:
+                st.markdown(f"**{signals['market_title']}**")
+                st.write(signals["market_body"])
+                st.info(signals["market_coverage"])
+            elif order == 8:
+                st.markdown(f"**{signals['model_title']}**")
+                st.write(signals["model_body"])
+                st.caption("具体模型分数、版本和影响因素可在后台的数据审计中核验。")
+            elif order == 9:
+                st.write(view["body"])
             else:
                 st.write(report_section_summary_zh(payload, section))
 
@@ -1108,7 +1189,9 @@ def _render_analysis_intake(*, needs_pdf: bool) -> tuple[bool, str, str, date, o
         unsafe_allow_html=True,
     )
     with st.container(key="analysis_intake_shell"):
-        identity_col, upload_col = st.columns((0.4, 0.6), gap="large")
+        identity_col, upload_col = st.columns(
+            (1, 1), gap="large", vertical_alignment="top"
+        )
         with identity_col:
             st.markdown("<div class='landing-intake-label'>IPO 身份信息</div>", unsafe_allow_html=True)
             st.markdown("<div class='landing-intake-title'>发行人信息</div>", unsafe_allow_html=True)
@@ -1125,7 +1208,15 @@ def _render_analysis_intake(*, needs_pdf: bool) -> tuple[bool, str, str, date, o
                 unsafe_allow_html=True,
             )
             with st.form("analysis"):
-                uploaded = st.file_uploader("招股书 PDF", type=["pdf"]) if needs_pdf else None
+                if needs_pdf:
+                    uploaded = st.file_uploader("招股书 PDF", type=["pdf"])
+                else:
+                    uploaded = None
+                    st.markdown(
+                        "<div class='intake-no-upload'>当前运行模式使用内置演示材料，"
+                        "无需上传招股书。</div>",
+                        unsafe_allow_html=True,
+                    )
                 submitted = st.form_submit_button("开始分析", type="primary", width="stretch")
     return submitted, company, code, listing, uploaded
 
@@ -1138,9 +1229,9 @@ st.set_page_config(
 )
 apply_competition_theme()
 
-scenario = st.session_state.get("runtime_scenario", SCENARIO_COMPETITION_OFFLINE)
+scenario = st.session_state.get("runtime_scenario", DEFAULT_ANALYSIS_SCENARIO)
 if scenario not in SCENARIOS:
-    scenario = SCENARIO_COMPETITION_OFFLINE
+    scenario = DEFAULT_ANALYSIS_SCENARIO
 st.session_state["runtime_scenario"] = scenario
 config_path, needs_pdf = SCENARIOS[scenario]
 

@@ -56,6 +56,17 @@ RISK_REVIEW_FOCUS: dict[str, str] = {
     "precommercial_product": "复核研发/注册进度、商业化里程碑、预计上市时间、渠道和收入转化假设。",
 }
 
+RISK_DISPLAY_NAMES: dict[str, str] = {
+    "cash_runway": "现金可支撑期",
+    "continuous_loss": "持续亏损",
+    "revenue_growth": "收入增长",
+    "customer_concentration": "客户集中度",
+    "supplier_concentration": "供应商集中度",
+    "redemption_rights": "特殊股东权利与赎回安排",
+    "material_litigation_compliance": "重大诉讼与合规",
+    "precommercial_product": "产品尚未商业化",
+}
+
 _STATUS_LABELS = {
     "available": "可用", "partial": "部分可用", "pending_gate": "待完善",
     "completed": "已完成", "completed_with_real_llm": "已完成",
@@ -66,6 +77,14 @@ _STATUS_LABELS = {
     "error": "异常", "disabled": "未启用", "unavailable": "暂不可用",
     "unavailable_error": "暂不可用", "no_risk_emitted": "未识别到正式风险",
     "resolved": "已解决", "partial_resolved": "部分解决", "unresolved": "待复核",
+}
+
+_RISK_LEVEL_LABELS = {
+    "critical": "极高",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "unavailable": "暂不可用",
 }
 
 # 仅用于非证据展示字段。原文 Evidence 不得经过此转换。
@@ -207,6 +226,66 @@ def verifier_note_zh(note: object) -> str:
     return "当前风险尚未完成最终验证，建议结合原文证据与计算依据进一步复核。"
 
 
+def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
+    """将既有风险字段投影为可审阅的“依据—影响—复核”解释。
+
+    该函数不生成新风险，也不展示内部思维过程；它只说明已经产出的风险项
+    为什么值得关注、当前验证到了哪一步，以及评审下一步应核对什么。
+    """
+
+    code = str(risk.get("risk_code") or "")
+    verification = str(risk.get("verification_status") or "unavailable").lower()
+    evidence_count = len(risk.get("evidence") or [])
+    governed_finding = risk_conclusion_zh(risk)
+    calculation_copy = (
+        "相关数值另有确定性计算支持。"
+        if isinstance(risk.get("calculation"), Mapping)
+        else ""
+    )
+    if verification == "verified":
+        basis = (
+            f"{governed_finding} 本次关联 {evidence_count} 条招股书原文，并已通过当前验证规则。"
+            f"{calculation_copy}"
+            if evidence_count
+            else f"{governed_finding} 该风险已通过当前验证规则，但本页没有可展示的关联原文。"
+        )
+    elif verification in {"needs_review", "pending"}:
+        basis = (
+            f"{governed_finding} 系统已定位 {evidence_count} 条相关原文并形成风险候选，"
+            "但关键事实仍未完成核验，"
+            "因此保留为待复核，而不是直接视为已确认风险。"
+            f"{calculation_copy}"
+            if evidence_count
+            else f"{governed_finding} 当前缺少足够的关联原文，不能视为已确认风险。"
+        )
+    elif verification == "rejected":
+        basis = "该候选风险未通过当前验证规则，不纳入已确认风险结论。"
+    else:
+        basis = "该风险项的验证状态尚未完整形成，当前结论应结合原文谨慎阅读。"
+
+    if verification == "verified":
+        boundary = (
+            "已验证仅表示该风险在本次运行中获得了当前证据和规则的支持，"
+            "不代表风险必然发生；仍需关注招股书之后的事项变化。"
+        )
+    elif verification in {"needs_review", "pending"}:
+        boundary = verifier_note_zh(risk.get("verification_notes")) or (
+            "关键事实、计算依据或事项状态仍未完全闭合，因此当前只能作为待复核风险阅读。"
+        )
+    elif verification == "rejected":
+        boundary = "该候选未通过当前验证规则，不应作为已确认风险引用。"
+    else:
+        boundary = verifier_note_zh(risk.get("verification_notes")) or (
+            "验证状态尚未完整形成，当前结论不能作为已确认事实。"
+        )
+    return {
+        "basis": basis,
+        "impact": risk_reasoning(code),
+        "boundary": boundary,
+        "review_focus": risk_review_focus(code),
+    }
+
+
 def calculation_summary_zh(risk: Mapping[str, Any]) -> str:
     calculation = risk.get("calculation")
     if not isinstance(calculation, Mapping):
@@ -225,7 +304,13 @@ def supervisor_summary_zh(payload: Mapping[str, Any]) -> str:
         if isinstance(domain, Mapping)
         for risk in (domain.get("risks") or [])
         if isinstance(risk, Mapping)
+        and str(risk.get("verification_status") or "").lower() != "rejected"
     )
+    if not summary["total"]:
+        return (
+            "本次没有形成通过验证或待复核的正式风险项。"
+            "这只表示当前证据与验证规则未产出正式风险，不等同于发行人不存在风险。"
+        )
     parts = [f"本次共识别 {summary['total']} 项正式风险"]
     if summary["high_or_critical"]:
         parts.append(f"其中 {summary['high_or_critical']} 项为高或极高风险")
@@ -233,4 +318,169 @@ def supervisor_summary_zh(payload: Mapping[str, Any]) -> str:
         parts.append(f"{summary['needs_review']} 项仍需进一步复核")
     if summary["evidence_count"]:
         parts.append(f"已绑定 {summary['evidence_count']} 条原文证据")
-    return "，".join(parts) + "。建议优先查看高风险事项及其原文依据。"
+    if summary["high_or_critical"]:
+        guidance = "建议优先查看高或极高风险事项及其原文依据。"
+    elif summary["needs_review"]:
+        guidance = "建议优先查看待复核事项及其原文依据。"
+    else:
+        guidance = "建议结合原文依据逐项审阅。"
+    return "，".join(parts) + "。" + guidance
+
+
+def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
+    """生成面向评审的长版综合结论，不复述原始技术载荷。"""
+
+    risks = [
+        risk
+        for domain in (payload.get("domains") or {}).values()
+        if isinstance(domain, Mapping)
+        for risk in (domain.get("risks") or [])
+        if isinstance(risk, Mapping)
+        and str(risk.get("verification_status") or "").lower() != "rejected"
+    ]
+    summary = summarize_risks(risks)
+    prediction = payload.get("prediction") or {}
+    rule_level = _RISK_LEVEL_LABELS.get(
+        str(prediction.get("risk_level") or "unavailable").lower(),
+        "暂不可用",
+    ) if isinstance(prediction, Mapping) else "暂不可用"
+    diagnostics = payload.get("component_diagnostics") or {}
+    synthesis = (
+        diagnostics.get("final_supervision_llm") or {}
+        if isinstance(diagnostics, Mapping)
+        else {}
+    )
+    judgement = (
+        synthesis.get("judgement")
+        if isinstance(synthesis, Mapping) and synthesis.get("status") == "available"
+        else None
+    )
+    raw_overall = (
+        judgement.get("overall_risk") if isinstance(judgement, Mapping) else None
+    )
+    overall_level = _RISK_LEVEL_LABELS.get(
+        str(raw_overall or "unavailable").lower(),
+        "暂不可用",
+    )
+    if raw_overall:
+        opening = (
+            f"多通道综合审阅结论为{overall_level}风险，规则化排序参考为{rule_level}风险。"
+            "综合结论同时考虑招股书风险、验证状态、市场环境、模型信号与跨通道分歧；"
+            "当两者不同，应以综合审阅及其证据边界为准，不能用单一规则等级覆盖尚未解决的风险。"
+        )
+    else:
+        opening = (
+            f"当前未形成可用的智能综合审阅，页面采用规则化判断作为降级参考，"
+            f"风险等级为{rule_level}风险。"
+        )
+    paragraphs = [opening, supervisor_summary_zh(payload)]
+
+    if risks:
+        names: list[str] = []
+        for risk in risks:
+            code = str(risk.get("risk_code") or "")
+            name = RISK_DISPLAY_NAMES.get(code, "其他风险事项")
+            if name not in names:
+                names.append(name)
+        paragraphs.append(
+            f"风险结构上，当前主要关注{'、'.join(names[:4])}。"
+            "这些事项分别反映发行人的经营韧性、合规责任或商业兑现不确定性，"
+            "最终判断应回到对应原文和验证状态，而不能只看单一评分。"
+        )
+
+    if summary["needs_review"]:
+        paragraphs.append(
+            f"其中 {summary['needs_review']} 项仍处于待复核状态。"
+            "这表示系统已经形成有依据的风险候选，但报告期口径、事项进展、影响程度或"
+            "确定性计算仍有尚未闭合的环节；本结论既不把它们当作已证实事实，也不会因"
+            "尚未验证而忽略。"
+        )
+
+    market = payload.get("market_context") or {}
+    observations = (
+        (market.get("observations") or []) if isinstance(market, Mapping) else []
+    )
+    available_market = sum(
+        1 for item in observations
+        if isinstance(item, Mapping) and item.get("availability") == "available"
+    )
+    final = payload.get("final_supervision") or {}
+    channel_states = {
+        str(item.get("channel")): str(item.get("status") or "unavailable")
+        for item in (final.get("channel_states") or [])
+        if isinstance(item, Mapping)
+    } if isinstance(final, Mapping) else {}
+    if observations:
+        market_copy = (
+            f"市场方面，本次取得 {available_market}/{len(observations)} 项上市前环境信息；"
+            "未取得的项目保持缺失，不以 0 或推测值替代。"
+        )
+    else:
+        market_copy = "市场方面，当前没有足够的上市前环境信息，不能据此判断外部环境为低风险。"
+    if channel_states.get("model") == "available":
+        model_copy = (
+            "模型方面已形成辅助排序信号，但该信号未经概率校准，不能理解为风险发生概率"
+            "或上市后收益预测。"
+        )
+    else:
+        model_copy = "模型方面当前没有可核验的逐案信号；模型缺失同样不代表低风险。"
+    market_intelligence = payload.get("market_intelligence") or {}
+    if isinstance(market_intelligence, Mapping):
+        heat_payload = market_intelligence.get("ipo_heat") or {}
+        regime_payload = market_intelligence.get("market_regime") or {}
+        raw_heat = (
+            heat_payload.get("ipo_heat")
+            if isinstance(heat_payload, Mapping)
+            else heat_payload
+        )
+        raw_regime = (
+            regime_payload.get("market_regime")
+            if isinstance(regime_payload, Mapping)
+            else regime_payload
+        )
+        raw_liquidity = (
+            regime_payload.get("liquidity_condition")
+            if isinstance(regime_payload, Mapping)
+            else None
+        )
+        heat_label = {
+            "HOT": "偏热",
+            "HIGH": "偏热",
+            "WARM": "偏热",
+            "NEUTRAL": "中性",
+            "COOL": "偏冷",
+            "COLD": "偏冷",
+        }.get(str(raw_heat or "").upper())
+        if heat_label:
+            market_copy += f"近期新股发行热度判断为{heat_label}。"
+        if str(raw_regime or "").upper() in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
+            market_copy += "整体市场状态所需信息不足，暂不作方向性推断。"
+        if str(raw_liquidity or "").upper() in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
+            market_copy += "市场流动性状况暂无法可靠判断。"
+    paragraphs.append(market_copy + model_copy)
+
+    conflicts = (
+        ((payload.get("component_diagnostics") or {}).get("conflict_detection") or {}).get("conflicts")
+        or []
+    )
+    unsettled = sum(
+        str(item.get("status") or "").lower() in {"partially_resolved", "unresolved"}
+        for item in conflicts
+        if isinstance(item, Mapping)
+    )
+    if unsettled:
+        paragraphs.append(
+            f"跨通道审阅仍保留 {unsettled} 项部分解决或未解决的分歧。"
+            "这些分歧提示评审应优先核对相互矛盾的原文、数值口径与事项状态，而不是强行合并为"
+            "单一答案。"
+        )
+
+    focuses: list[str] = []
+    for risk in risks:
+        focus = risk_review_focus(risk.get("risk_code")).rstrip("。；")
+        if focus not in focuses:
+            focuses.append(focus)
+    if focuses:
+        paragraphs.append("建议后续复核：" + "；".join(focuses[:3]) + "。")
+
+    return "\n\n".join(paragraphs)

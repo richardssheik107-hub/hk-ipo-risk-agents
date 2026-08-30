@@ -2,7 +2,9 @@ from judge_copy import (
     highest_risk_level,
     judge_status_label,
     risk_reasoning,
+    risk_reasoning_annotation,
     risk_review_focus,
+    supervisor_narrative_zh,
     summarize_risks,
     to_simplified_ui,
 )
@@ -45,3 +47,119 @@ def test_evidence_text_is_not_implicitly_converted() -> None:
     # 原文只能由证据视图直接展示；转换函数不会自动遍历或修改载荷。
     payload = {"text": evidence}
     assert payload["text"] == evidence
+
+
+def test_risk_reasoning_annotation_explains_basis_impact_and_review_boundary() -> None:
+    annotation = risk_reasoning_annotation(
+        {
+            "risk_code": "customer_concentration",
+            "verification_status": "needs_review",
+            "verification_notes": "Calculation is missing.",
+            "evidence": [{"page": 10}, {"page": 12}],
+        }
+    )
+
+    assert "2 条" in annotation["basis"]
+    assert "待复核" in annotation["basis"]
+    assert "客户" in annotation["impact"]
+    assert "计算依据" in annotation["boundary"]
+    assert "合同期限" in annotation["review_focus"]
+
+
+def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
+    payload = {
+        "domains": {
+            "financial": {
+                "risks": [
+                    {
+                        "risk_code": "customer_concentration",
+                        "level": "medium",
+                        "verification_status": "needs_review",
+                        "evidence": [{"page": 10}],
+                    }
+                ]
+            }
+        },
+        "market_context": {
+            "observations": [
+                {"availability": "available"},
+                {"availability": "unavailable"},
+            ]
+        },
+        "final_supervision": {
+            "channel_states": [{"channel": "model", "status": "available"}]
+        },
+        "component_diagnostics": {
+            "final_supervision_llm": {
+                "status": "available",
+                "judgement": {"overall_risk": "medium"},
+            },
+            "conflict_detection": {
+                "conflicts": [{"status": "unresolved"}]
+            }
+        },
+    }
+
+    narrative = supervisor_narrative_zh(payload)
+
+    assert "综合审阅结论为中风险" in narrative
+    assert "规则化排序参考为暂不可用风险" in narrative
+    assert "风险结构上" in narrative
+    assert "待复核状态" in narrative
+    assert "1/2 项上市前环境信息" in narrative
+    assert "未经概率校准" in narrative
+    assert "未解决的分歧" in narrative
+    assert "建议后续复核" in narrative
+    assert "。；" not in narrative
+
+
+def test_verified_risk_annotation_does_not_claim_verification_is_incomplete() -> None:
+    annotation = risk_reasoning_annotation(
+        {
+            "risk_code": "cash_runway",
+            "verification_status": "verified",
+            "verification_notes": "legacy verifier note",
+            "evidence": [{"page": 20}],
+        }
+    )
+
+    assert "已通过当前验证规则" in annotation["basis"]
+    assert "已验证仅表示" in annotation["boundary"]
+    assert "尚未完成最终验证" not in annotation["boundary"]
+
+
+def test_pending_risk_annotation_never_says_there_is_no_boundary() -> None:
+    annotation = risk_reasoning_annotation(
+        {
+            "risk_code": "customer_concentration",
+            "verification_status": "needs_review",
+            "verification_notes": "",
+            "evidence": [{"page": 7}],
+        }
+    )
+
+    assert "仍未完全闭合" in annotation["boundary"]
+
+
+def test_supervisor_narrative_excludes_rejected_candidates_from_formal_risks() -> None:
+    payload = {
+        "domains": {
+            "financial": {
+                "risks": [
+                    {
+                        "risk_code": "cash_runway",
+                        "level": "critical",
+                        "verification_status": "rejected",
+                        "evidence": [{"page": 2}],
+                    }
+                ]
+            }
+        },
+        "prediction": {"risk_level": "low"},
+    }
+
+    narrative = supervisor_narrative_zh(payload)
+
+    assert "没有形成通过验证或待复核的正式风险项" in narrative
+    assert "其中 1 项为高或极高风险" not in narrative
+    assert "不等同于发行人不存在风险" in narrative
