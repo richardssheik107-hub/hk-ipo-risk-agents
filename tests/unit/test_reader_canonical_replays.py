@@ -186,6 +186,8 @@ def test_canonical_reader_projection_preserves_real_risk_findings(case_id: str) 
         assert risk["evidence"]
         assert all(item.get("page") and item.get("text") for item in risk["evidence"])
         assert "该风险项尚未形成足够" not in risk["conclusion"]
+        assert risk["interpretation"]
+        assert "原文证据" in risk["interpretation"] or "结构化" in risk["interpretation"] or "财务证据" in risk["interpretation"]
         for fragment in expected_risk["fragments"]:
             assert fragment in risk["conclusion"]
 
@@ -216,6 +218,8 @@ def test_canonical_reader_report_is_one_continuous_article_with_exact_quotes(cas
     article = reader_article_projection(payload)
     screen = reader_article_markdown(payload)
     download = reader_markdown_report(payload)
+
+    assert "。。" not in screen
 
     headings = (
         "## 案例与综合判断",

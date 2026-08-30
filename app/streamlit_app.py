@@ -438,13 +438,14 @@ def _render_risk(risk: dict[str, object], *, expert: bool = False) -> None:
 
         if not expert:
             annotation = risk_reasoning_annotation(risk)
-            st.markdown("**推理注释**")
+            st.markdown("**证据推导分析**")
             st.markdown(
                 "<div class='reasoning-note'>"
-                f"<div><span>证据与逻辑</span>{escape(annotation['basis'])}</div>"
-                f"<div><span>业务影响</span>{escape(annotation['impact'])}</div>"
-                f"<div><span>结论边界</span>{escape(annotation['boundary'] or '当前没有额外验证限制。')}</div>"
-                f"<div><span>建议复核</span>{escape(annotation['review_focus'])}</div>"
+                f"<div><span>证据范围</span>{escape(annotation['basis'])}</div>"
+                f"<div><span>原文解读</span>{escape(annotation.get('interpretation') or annotation['basis'])}</div>"
+                f"<div><span>风险传导</span>{escape(annotation['impact'])}</div>"
+                f"<div><span>判断边界</span>{escape(annotation['boundary'] or '当前没有额外验证限制。')}</div>"
+                f"<div><span>复核重点</span>{escape(annotation['review_focus'])}</div>"
                 "</div>",
                 unsafe_allow_html=True,
             )
@@ -511,45 +512,57 @@ def _render_overview(payload: dict[str, object], stages) -> None:
     profile = payload["profile"]
 
     section_header("IPO 概览", "发行资料、数据来源与案例匹配状态。", "案例信息")
-    render_profile_grid(
-        (
-            ("公司", _display_value(profile.get("company_name"))),
-            ("股票代码", _display_value(profile.get("stock_code"))),
-            ("上市日期", _display_value(profile.get("listing_date"))),
-            ("行业", _display_value(profile.get("industry"))),
-            ("发行价", _display_value(profile.get("issue_price"))),
-            ("发行规模", _display_value(profile.get("issue_size"))),
-            ("证券类别", _display_value(profile.get("security_category"))),
-            ("IPO 数据来源", _display_value(profile.get("source"))),
-            ("匹配状态", _display_value(profile.get("match_status"))),
+    with st.container(key="overview_profile_matrix"):
+        render_profile_grid(
+            (
+                ("公司", _display_value(profile.get("company_name"))),
+                ("股票代码", _display_value(profile.get("stock_code"))),
+                ("上市日期", _display_value(profile.get("listing_date"))),
+                ("行业", _display_value(profile.get("industry"))),
+                ("发行价", _display_value(profile.get("issue_price"))),
+                ("发行规模", _display_value(profile.get("issue_size"))),
+                ("证券类别", _display_value(profile.get("security_category"))),
+                ("IPO 数据来源", _display_value(profile.get("source"))),
+                ("匹配状态", _display_value(profile.get("match_status"))),
+            )
         )
-    )
 
-    left, right = st.columns((1.05, 1.45))
-    with left:
-        section_header("风险覆盖", "财务、法律与业务风险覆盖情况。", "覆盖情况")
-        render_modern_table(
-            domain_summary_rows(payload),
-            badge_columns={"领域": "domain", "状态": "status"},
-            compact=True,
-        )
-    with right:
-        section_header("风险清单", "进入审阅范围的风险事项与原文证据数量。", "风险清单")
-        inventory = [
-            {
-                "领域": row.get("领域"),
-                "风险项": row.get("风险项"),
-                "等级": row.get("等级"),
-                "验证状态": row.get("验证状态"),
-                "原文证据": row.get("Evidence"),
-            }
-            for row in risk_inventory_rows(payload)
-            if row.get("验证状态") != "已驳回"
-        ]
-        if inventory:
-            st.dataframe(inventory, hide_index=True, width="stretch")
-        else:
-            render_state_panel("暂无风险事项", "unavailable", "本次运行未产出进入审阅范围的风险事项；界面不会用低风险或 0 替代未知状态。")
+    with st.container(key="overview_risk_split"):
+        left, right = st.columns((1, 1), gap="large")
+        with left:
+            with st.container(border=True, key="overview_coverage_card"):
+                section_header("风险覆盖", "财务、法律与业务风险覆盖情况。", "覆盖情况")
+                render_modern_table(
+                    domain_summary_rows(payload),
+                    badge_columns={"领域": "domain", "状态": "status"},
+                    compact=True,
+                )
+        with right:
+            with st.container(border=True, key="overview_inventory_card"):
+                section_header("风险清单", "进入审阅范围的风险事项与原文证据数量。", "风险清单")
+                inventory = [
+                    {
+                        "领域": row.get("领域"),
+                        "风险项": row.get("风险项"),
+                        "等级": row.get("等级"),
+                        "验证状态": row.get("验证状态"),
+                        "原文证据": row.get("Evidence"),
+                    }
+                    for row in risk_inventory_rows(payload)
+                    if row.get("验证状态") != "已驳回"
+                ]
+                if inventory:
+                    render_modern_table(
+                        inventory,
+                        badge_columns={
+                            "领域": "domain",
+                            "等级": "risk",
+                            "验证状态": "status",
+                        },
+                        compact=True,
+                    )
+                else:
+                    render_state_panel("暂无风险事项", "unavailable", "本次运行未产出进入审阅范围的风险事项；界面不会用低风险或 0 替代未知状态。")
 
     section_header("七阶段运行链路", "从招股书解析到最终报告的受治理处理链。", "处理流程")
     render_pipeline_strip(stages)

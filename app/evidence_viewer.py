@@ -49,6 +49,7 @@ from competition_ui import (
     status_badge,
 )
 from judge_copy import (
+    evidence_item_interpretation_zh,
     judge_status_label,
     risk_conclusion_zh,
     risk_reasoning_annotation,
@@ -209,14 +210,27 @@ def render_evidence_viewer(
             st.write(risk_conclusion_zh(risk_payload))
             if not expert:
                 annotation = risk_reasoning_annotation(risk_payload)
-                st.markdown("**为什么形成这一判断**")
+                st.markdown("**本页证据说明了什么**")
                 st.markdown(
-                    "<div class='evidence-reasoning'>"
-                    f"<p><strong>证据链：</strong>{escape(annotation['basis'])}</p>"
-                    f"<p><strong>当前边界：</strong>{escape(annotation['boundary'])}</p>"
-                    f"<p><strong>复核方向：</strong>{escape(annotation['review_focus'])}</p>"
+                    "<div class='evidence-page-interpretation'>"
+                    f"{escape(evidence_item_interpretation_zh(risk_payload, item))}"
                     "</div>",
                     unsafe_allow_html=True,
+                )
+                st.markdown("**综合分析**")
+                st.markdown(
+                    "<div class='evidence-reasoning'>"
+                    f"<p><strong>证据范围：</strong>{escape(annotation['basis'])}</p>"
+                    f"<p><strong>原文解读：</strong>{escape(annotation.get('interpretation') or annotation['basis'])}</p>"
+                    f"<p><strong>风险传导：</strong>{escape(annotation['impact'])}</p>"
+                    f"<p><strong>判断边界：</strong>{escape(annotation['boundary'])}</p>"
+                    f"<p><strong>复核重点：</strong>{escape(annotation['review_focus'])}</p>"
+                    "</div>",
+                    unsafe_allow_html=True,
+                )
+                st.caption(
+                    "以上内容是基于当前招股书原文和已落盘结构化字段的风险解释，"
+                    "用于研究审阅，不构成投资、证券、法律或交易建议。"
                 )
             notes = item.get("verification_notes")
             if notes and expert:

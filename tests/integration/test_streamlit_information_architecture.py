@@ -119,7 +119,14 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
         assert machine_detail not in market_model_copy
 
     evidence_copy = _markdown_text(_tab(app, "原文证据"))
-    for reasoning_label in ("推理注释", "证据与逻辑", "结论边界", "建议复核"):
+    for reasoning_label in (
+        "证据推导分析",
+        "证据范围",
+        "原文解读",
+        "风险传导",
+        "判断边界",
+        "复核重点",
+    ):
         assert reasoning_label in evidence_copy
     assert "风险等级：暂定中等" in evidence_copy
 

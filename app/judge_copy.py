@@ -14,8 +14,9 @@ from typing import Any
 
 RISK_REASONING: dict[str, str] = {
     "cash_runway": (
-        "现金可支撑期偏短意味着公司对后续经营现金流改善、再融资或外部资金补充更敏感；"
-        "一旦融资节奏或经营回款不及预期，流动性压力可能较快显现。"
+        "现金可支撑期把期末现金与同口径经营现金消耗联系起来，反映公司在当前消耗速度下"
+        "能够承受多长时间的经营压力。支撑期越短，公司对回款改善、支出控制和后续融资时点"
+        "越敏感；但它只是基于已披露期间的静态测算，不是未来现金余额预测。"
     ),
     "continuous_loss": (
         "持续亏损会持续消耗资本与现金储备，并提高公司对融资、收入增长和成本控制的依赖；"
@@ -26,20 +27,24 @@ RISK_REASONING: dict[str, str] = {
         "也会削弱公司通过经营增长覆盖成本的能力。"
     ),
     "customer_concentration": (
-        "收入对少数核心客户依赖较高时，主要客户的订单变化、议价或流失都可能对收入和"
-        "利润造成较大影响，因此需要重点关注客户关系的稳定性。"
+        "客户集中度反映收入是否依赖少数交易对手。若复核确认少数客户长期贡献较高，"
+        "核心客户的订单缩减、续约失败、价格谈判或回款变化可能较快传导至收入、利润和"
+        "经营现金流；判断时还需区分同一控制下客户以及不同报告期的统计口径。"
     ),
     "supplier_concentration": (
-        "采购对少数供应商依赖较高时，关键供应商的价格、产能、交付或合作关系变化可能"
-        "影响成本和经营连续性，需要核查替代供应能力。"
+        "供应商集中度反映采购和生产是否依赖少数交易对手。若复核确认关键投入长期集中，"
+        "供应商提价、产能收缩、质量或交付异常可能传导至成本、生产进度和履约能力；"
+        "实际影响取决于替代来源、切换周期、认证要求和合同约束。"
     ),
     "redemption_rights": (
-        "特殊股东权利、赎回或恢复安排可能影响资本结构、现金安排和其他股东权益；"
-        "若相关权利仍存续或触发条件复杂，需要持续关注其终止、恢复和结算机制。"
+        "特殊股东权利需要同时看终止与恢复条款，不能仅凭“已经终止”或“曾经存在”单独下结论。"
+        "若权利只在上市失败等条件下恢复，成功上市后的直接影响通常受到约束；若恢复条件被触发，"
+        "赎回、撤资或反摊薄安排仍可能影响上市前现金、股权结构及其他股东权益。"
     ),
     "material_litigation_compliance": (
-        "重大诉讼、监管或合规事项可能带来罚款、赔偿、业务限制和声誉影响；"
-        "风险判断应以招股书披露的事项、进展与管理层说明为依据。"
+        "诉讼与合规分析需要把已披露事项、可能承担的责任、当前进展以及管理层或法律顾问的"
+        "缓释观点分开阅读。未受处罚、风险较低或不构成重大不利影响的观点可以降低担忧，"
+        "但不等同于义务已经消失、整改已经完成或未来不会产生现金及经营影响。"
     ),
     "precommercial_product": (
         "核心产品尚未商业化意味着收入实现仍依赖研发、审批、量产和市场接受度等后续环节，"
@@ -152,8 +157,8 @@ _TRAD_TO_SIMP = str.maketrans({
     "給": "给", "屬": "属", "幣": "币", "約": "约", "億": "亿", "條": "条",
     "滿": "满", "屆": "届", "觸": "触", "勞": "劳", "員": "员", "徑": "径",
     "許": "许", "須": "须", "轉": "转", "讓": "让", "達": "达", "聨": "联",
-    "聞": "闻", "創": "创",
-    "積": "积", "獲": "获", "償": "偿", "眾": "众", "歷": "历", "廠": "厂",
+    "聞": "闻", "創": "创", "敗": "败", "薦": "荐",
+    "積": "积", "獲": "获", "賠": "赔", "償": "偿", "眾": "众", "歷": "历", "廠": "厂",
     "佔": "占", "況": "况", "視": "视", "護": "护", "訂": "订", "維": "维",
     "減": "减", "擔": "担", "繼": "继", "載": "载", "範": "范", "遷": "迁",
     "遞": "递", "計": "计", "內": "内", "猶": "犹", "滯": "滞", "強": "强",
@@ -290,6 +295,477 @@ def _page_basis(risk: Mapping[str, Any]) -> str:
     return f"本项关联 {evidence_count} 条招股书原文，分布在第 {shown} 页{suffix}。"
 
 
+def _evidence_text(risk: Mapping[str, Any]) -> str:
+    """Return raw Evidence text for presence checks only.
+
+    The text is never rendered through this helper, translated, or paraphrased as
+    a quotation.  It only lets reader copy state which disclosure dimensions are
+    actually present in the persisted Evidence attached to this risk.
+    """
+
+    return "\n".join(
+        str(item.get("text") or "")
+        for item in (risk.get("evidence") or [])
+        if isinstance(item, Mapping) and item.get("text")
+    )
+
+
+def _contains_any(text: str, values: Iterable[str]) -> bool:
+    lowered = text.lower()
+    return any(value.lower() in lowered for value in values)
+
+
+def _concentration_evidence_dimensions(
+    risk: Mapping[str, Any], *, subject: str
+) -> list[str]:
+    """Describe, without extracting new numbers, what the bound Evidence covers."""
+
+    text = _evidence_text(risk)
+    if not text:
+        return []
+    is_customer = subject == "客户"
+    dimensions: list[str] = []
+    party_terms = (
+        ("五大客戶", "五大客户", "主要客戶", "主要客户", "largest customer", "top five customers")
+        if is_customer
+        else ("五大供應商", "五大供应商", "主要供應商", "主要供应商", "largest supplier", "top five suppliers")
+    )
+    if _contains_any(text, party_terms):
+        dimensions.append(f"主要及前五大{subject}")
+    share_terms = (
+        ("佔總收入", "占总收入", "收入百分比", "% of total revenue")
+        if is_customer
+        else ("佔採購", "占采购", "採購額百分比", "采购额百分比", "% of total purchases")
+    )
+    if _contains_any(text, share_terms):
+        dimensions.append("交易金额及占比")
+    if _contains_any(
+        text,
+        (
+            "開始業務關係",
+            "开始业务关系",
+            "業務關係的年份",
+            "业务关系的年份",
+            "business relationship",
+            "合約",
+            "合同",
+        ),
+    ):
+        dimensions.append("合作关系或合作年限")
+    if _contains_any(
+        text,
+        (
+            "同一實體最終控制",
+            "同一实体最终控制",
+            "共同控制",
+            "common control",
+            "ultimately controlled",
+        ),
+    ):
+        dimensions.append("同一控制下交易对手的合并口径")
+    if _contains_any(
+        text,
+        (
+            "客戶兼供應商",
+            "客户兼供应商",
+            "客戶及供應商重疊",
+            "客户及供应商重叠",
+            "客戶與供應商重疊",
+            "客户与供应商重叠",
+            "同時為我們的客戶及供應商",
+            "同时为我们的客户及供应商",
+            "既是我們的客戶亦是我們的供應商",
+            "既是我们的客户也是我们的供应商",
+            "亦為我們的供應商",
+            "亦为我们的供应商",
+            "同時為我們的供應商",
+            "同时为我们的供应商",
+            "供應商－客戶",
+            "供应商－客户",
+            "供應商-客戶",
+            "供应商-客户",
+            "客戶－供應商",
+            "客户－供应商",
+            "both a customer and a supplier",
+        ),
+    ):
+        dimensions.append("同一交易对手兼具客户与供应商身份")
+    if _contains_any(
+        text,
+        (
+            "推廣服務",
+            "推广服务",
+            "營銷服務",
+            "营销服务",
+            "promotion service",
+            "marketing service",
+        ),
+    ):
+        dimensions.append("推广或营销服务交易")
+    if _contains_any(text, ("ODM", "OEM", "原設計製造", "原设计制造", "代工生產", "代工生产")):
+        dimensions.append("ODM/OEM 业务或生产分工")
+    return dimensions
+
+
+def _has_readable_chinese(value: object) -> bool:
+    text = str(value or "")
+    han_count = len(re.findall(r"[\u3400-\u9fff]", text))
+    latin_count = len(re.findall(r"[A-Za-z]", text))
+    return han_count >= 4 and latin_count <= max(24, han_count * 3)
+
+
+def _legal_evidence_topics(risk: Mapping[str, Any]) -> list[str]:
+    text = _evidence_text(risk)
+    topics: list[str] = []
+    specific_topic_terms = (
+        (
+            "社会保险及住房公积金缴纳",
+            ("社會保險", "社会保险", "住房公積金", "住房公积金", "social insurance", "housing provident fund"),
+        ),
+        (
+            "土地使用权或物业权属",
+            ("土地使用權", "土地使用权", "房屋所有權", "房屋所有权", "物業權屬", "物业权属", "land use right"),
+        ),
+        (
+            "行政许可或业务资质",
+            ("行政許可", "行政许可", "牌照", "許可證", "许可证", "license", "permit"),
+        ),
+        (
+            "环境合规",
+            ("環境保護", "环境保护", "環保", "环保", "排污", "environmental compliance"),
+        ),
+    )
+    for label, terms in specific_topic_terms:
+        if _contains_any(text, terms):
+            topics.append(label)
+    # Full prospectus pages often mention litigation incidentally in a nearby
+    # paragraph.  Use it as the topic only when no more specific governed
+    # compliance subject is present on this Evidence item.
+    if not topics and _contains_any(text, ("訴訟", "诉讼", "仲裁", "litigation", "arbitration")):
+        topics.append("诉讼或仲裁")
+    return topics
+
+
+def _legal_evidence_consequence(risk: Mapping[str, Any]) -> str:
+    text = _evidence_text(risk)
+    consequences: list[str] = []
+    consequence_terms = (
+        ("补缴", ("補繳", "补缴", "make up", "underpayment")),
+        ("滞纳金", ("滯納金", "滞纳金", "late-payment surcharge")),
+        ("罚款或行政处罚", ("罰款", "罚款", "行政處罰", "行政处罚", "fine", "penalty")),
+        ("赔偿", ("賠償", "赔偿", "compensation", "indemnif")),
+        ("法院强制执行", ("強制執行", "强制执行", "court-enforced")),
+        ("拆除或恢复原状", ("拆除", "恢復原狀", "恢复原状", "demolish", "restore")),
+        ("资产使用或业务限制", ("停止使用", "業務限制", "业务限制", "use restriction", "business restriction")),
+    )
+    for label, terms in consequence_terms:
+        if _contains_any(text, terms):
+            consequences.append(label)
+    if not consequences:
+        return ""
+    return "原文涉及的条件性后果包括" + "、".join(consequences[:5])
+
+
+def _legal_evidence_mitigation(risk: Mapping[str, Any]) -> str:
+    text = _evidence_text(risk)
+    mitigations: list[str] = []
+    if _contains_any(text, ("未受到任何行政處罰", "未受到任何行政处罚", "無行政處罰", "无行政处罚", "no penalty")):
+        mitigations.append("截至披露时点未受相关行政处罚")
+    if _contains_any(text, ("不构成重大不利", "不會造成重大不利", "不会造成重大不利", "重大不利影響", "重大不利影响")):
+        mitigations.append("原文包含管理层关于重大不利影响的判断")
+    if _contains_any(text, ("風險較低", "风险较低", "low risk", "remote risk")):
+        mitigations.append("原文包含法律顾问或专业意见的低风险判断")
+    return "、".join(mitigations)
+
+
+def _legal_reader_facts(risk: Mapping[str, Any]) -> tuple[str, str, str]:
+    """Prefer concise Chinese Evidence cues over long English structured prose."""
+
+    metadata = _risk_metadata(risk)
+    topics = _legal_evidence_topics(risk)
+    topic_copy = "、".join(topics)
+    raw_subject = metadata.get("subject")
+    subject = (
+        _compact_ui_fact(raw_subject, limit=300)
+        if _has_readable_chinese(raw_subject)
+        else (f"{topic_copy}相关事项" if topic_copy else "")
+    )
+    raw_impact = metadata.get("potential_impact")
+    impact = (
+        _compact_ui_fact(raw_impact, limit=240)
+        if _has_readable_chinese(raw_impact)
+        else _legal_evidence_consequence(risk)
+    )
+    raw_management = metadata.get("management_materiality")
+    management = (
+        _compact_ui_fact(raw_management, limit=220)
+        if _has_readable_chinese(raw_management)
+        else _legal_evidence_mitigation(risk)
+    )
+    return subject, impact, management
+
+
+def _rights_type_zh(value: object) -> str:
+    labels = {
+        "redemption_right": "赎回或撤资权",
+        "anti_dilution_right": "反摊薄权",
+        "liquidation_preference": "清算优先权",
+    }
+    raw = str(value or "").strip()
+    return labels.get(raw.lower(), _compact_ui_fact(raw.replace("_", " "), limit=60))
+
+
+def _risk_interpretation_zh(risk: Mapping[str, Any]) -> str:
+    """Explain what the persisted facts mean without creating a new finding."""
+
+    code = str(risk.get("risk_code") or "")
+    verification = str(risk.get("verification_status") or "unavailable").lower()
+    metadata = _risk_metadata(risk)
+    if code in {"customer_concentration", "supplier_concentration"}:
+        subject = "客户" if code.startswith("customer") else "供应商"
+        dimensions = _concentration_evidence_dimensions(risk, subject=subject)
+        covered = (
+            "、".join(dimensions)
+            if dimensions
+            else f"往绩记录期的{subject}构成、交易关系和占比口径"
+        )
+        overlap_copy = ""
+        if "同一交易对手兼具客户与供应商身份" in dimensions:
+            service_side = (
+                "采购或推广服务端"
+                if "推广或营销服务交易" in dimensions
+                else "供应端"
+            )
+            overlap_copy = (
+                f"证据还提示同一交易对手可能同时出现在销售端和{service_side}；这种关系重叠会影响"
+                "交易对手归并及交易实质判断，但本身不等于集中度已经较高。"
+            )
+        mechanism = (
+            "这些字段共同用于判断收入是否实质依赖少数客户，以及这种依赖在不同报告期是否持续。"
+            "客户兼供应商、同一控制下主体或 ODM/OEM 分工若确有披露，还会影响交易对手如何归并，"
+            "不能把单张表中的名称或比例直接当成最终集中度。"
+            if subject == "客户"
+            else "这些字段共同用于判断采购与生产是否实质依赖少数供应商，以及这种依赖在不同报告期"
+            "是否持续。同一控制下主体、客户兼供应商或 ODM/OEM 分工若确有披露，还会影响交易对手"
+            "如何归并，不能把单张表中的名称或比例直接当成最终集中度。"
+        )
+        return (
+            f"原文证据实际覆盖{covered}。{overlap_copy}{mechanism}"
+            + (
+                "当前数值与报告期尚未完成一致性复算，因此这里形成的是有明确证据入口的风险线索，"
+                "不是“集中度已经较高”的事实判断。"
+                if verification != "verified"
+                else "当前结构化数值已经通过验证，但仍需结合交易关系稳定性判断其业务重要性。"
+            )
+        )
+    if code == "cash_runway":
+        calculation = risk.get("calculation")
+        if _calculation_is_safe(risk) and isinstance(calculation, Mapping):
+            inputs = calculation.get("inputs") or {}
+            period = (
+                _decimal_text(inputs.get("period_months"), places=0)
+                if isinstance(inputs, Mapping)
+                else ""
+            )
+            period_copy = f"{period} 个月" if period else "同一披露期间"
+            level = str(risk.get("level") or "").lower()
+            significance = (
+                "从流动性压力角度看，这段缓冲偏短，"
+                if level in {"critical", "high"}
+                else "这段缓冲用于衡量公司应对经营消耗的时间窗口，"
+            )
+            return (
+                f"两条财务证据分别提供期末现金与{period_copy}经营活动现金净流量，确定性公式把现金"
+                f"除以月均经营净流出，得到在当前消耗速度下的现金缓冲。{significance}"
+                "从而形成对经营改善或新资金到位时间的敏感性分析；它没有预测未来"
+                "收入、融资或支出变化。"
+            )
+        return (
+            "原文候选涉及现金余额与经营现金消耗，但当前输入或证据关联不足以完成同口径复算。"
+            "现金消耗只有在金额、期间和单位对齐后，才能转化为可解释的流动性缓冲指标。"
+        )
+    if code == "redemption_rights":
+        right_type = _rights_type_zh(metadata.get("right_type")) or "特殊股东权利"
+        has_termination = bool(metadata.get("termination_event"))
+        has_restoration = metadata.get("restoration_clause") is True
+        clause_shape = (
+            "原文结构化字段同时覆盖权利终止与条件恢复"
+            if has_termination and has_restoration
+            else "原文结构化字段覆盖特殊权利的状态或触发条件"
+        )
+        return (
+            f"{clause_shape}，识别的权利类型为{right_type}。因此分析重点不是简单判断权利“有”或“无”，"
+            "而是判断在上市申请、成功上市或上市失败等不同情形下，权利是否仍可生效。只有权利"
+            "主体、终止时点和恢复条件逐句对应后，才能进一步判断潜在影响偏向现金退出、股权摊薄"
+            "还是仅属于上市前历史安排。"
+        )
+    if code == "material_litigation_compliance":
+        subject, impact, management = _legal_reader_facts(risk)
+        subject = subject[:180].rstrip("。；")
+        impact = impact[:180].rstrip("。；")
+        management = management[:160].rstrip("。；")
+        facts: list[str] = []
+        if subject:
+            facts.append(f"结构化提取将事项概括为：{subject}")
+        if impact:
+            facts.append(f"结构化字段记录的可能后果为：{impact}")
+        if management:
+            facts.append(f"同时记录管理层或法律顾问的缓释观点：{management}")
+        fact_copy = "；".join(facts) if facts else "原文涉及一项诉讼、监管或合规事项"
+        return (
+            fact_copy
+            + "。这些信息之所以形成风险线索，是因为已披露义务或瑕疵在被追究、整改未完成或业务"
+            "依赖相关资产时，可能转化为现金支出、资产使用限制或经营扰动；缓释观点可以用于判断"
+            "影响程度，但不能替代对事项状态、整改证据和主管机构意见的核验。"
+        )
+    if code == "continuous_loss":
+        return (
+            "原文事实用于判断多个可比报告期是否连续亏损。连续亏损本身说明经营产生的利润尚不足以"
+            "覆盖成本费用，进一步的风险含义取决于亏损趋势、毛利率、费用结构和现金消耗是否同步恶化。"
+        )
+    if code == "revenue_growth":
+        return (
+            "原文事实用于比较口径一致的相邻报告期收入。收入变化只有结合基数、业务构成、客户与"
+            "一次性因素，才能说明需求或商业化能力；单一增长率不能独立证明经营质量改善或恶化。"
+        )
+    if code == "precommercial_product":
+        product = _compact_ui_fact(metadata.get("product_name") or metadata.get("subject"), limit=100)
+        subject = product or "核心产品"
+        return (
+            f"结构化事实将{subject}识别为尚未进入稳定商业化阶段，因此收入实现仍取决于研发、审批、"
+            "量产和市场接受度等后续环节。该线索说明的是兑现路径尚未闭合，不等同于产品必然失败。"
+        )
+    return (
+        "原文证据为该事项提供了可追溯的审阅入口；风险线索来自已落盘结构化字段之间的关系，"
+        "而不是页面根据关键词补写的新事实。"
+    )
+
+
+def evidence_item_interpretation_zh(
+    risk: Mapping[str, Any], evidence: Mapping[str, Any]
+) -> str:
+    """Explain the role of one Evidence item without rewriting its source text.
+
+    This helper performs presence checks against only ``evidence['text']``.  It
+    never parses an unverified percentage or amount into a reader-facing fact;
+    the original Evidence remains the sole quotation shown by the viewer.
+    """
+
+    fallback = "本页提供相关原文入口，需与其他证据合并判断。"
+    if not isinstance(evidence, Mapping) or not str(evidence.get("text") or "").strip():
+        return fallback
+    scoped_risk = dict(risk)
+    scoped_risk["evidence"] = [evidence]
+    text = str(evidence.get("text") or "")
+    code = str(risk.get("risk_code") or "")
+
+    if code in {"customer_concentration", "supplier_concentration"}:
+        subject = "客户" if code.startswith("customer") else "供应商"
+        dimensions = _concentration_evidence_dimensions(scoped_risk, subject=subject)
+        notes: list[str] = []
+        if any(
+            dimension in dimensions
+            for dimension in (f"主要及前五大{subject}", "交易金额及占比")
+        ):
+            notes.append(
+                f"本页包含{subject}构成、交易金额或占比表述，是核对集中度口径与报告期的直接入口"
+            )
+        if "同一控制下交易对手的合并口径" in dimensions:
+            notes.append("本页提示若干交易对手受同一实体控制，复核时应先按经济实质判断是否需要合并归组")
+        if "同一交易对手兼具客户与供应商身份" in dimensions:
+            service_side = (
+                "采购或推广服务端"
+                if "推广或营销服务交易" in dimensions
+                else "供应端"
+            )
+            notes.append(
+                f"本页提示同一交易对手可能同时出现在销售端和{service_side}，这种角色重叠会影响交易实质与归并口径"
+            )
+        if "ODM/OEM 业务或生产分工" in dimensions:
+            notes.append("本页涉及 ODM/OEM 业务或生产分工，需要结合替代供应能力理解交易依赖")
+        if notes:
+            return "；".join(notes) + "。本页不单独证明集中度高低，也不据此提取未经验证的具体占比。"
+        return fallback
+
+    if code == "material_litigation_compliance":
+        topics = _legal_evidence_topics(scoped_risk)
+        consequence = _legal_evidence_consequence(scoped_risk)
+        mitigation = _legal_evidence_mitigation(scoped_risk)
+        notes = []
+        if "社会保险及住房公积金缴纳" in topics:
+            notes.append("本页说明社会保险或住房公积金缴纳义务及相关合规事项")
+        if "土地使用权或物业权属" in topics:
+            notes.append("本页说明土地使用权或物业权属瑕疵及其处理状态")
+        if consequence:
+            notes.append(consequence)
+        if _contains_any(text, ("產量", "产量", "產能", "产能", "production volume", "capacity")):
+            notes.append("本页还提供相关产量或产能信息，可作为衡量经营影响范围的缓释线索")
+        if mitigation:
+            notes.append(mitigation)
+        if notes:
+            return (
+                "；".join(notes)
+                + "。这些内容构成事项、条件性后果与缓释依据的一部分，但本页不能单独证明事项已经解决或影响必然发生。"
+            )
+        return fallback
+
+    if code == "redemption_rights":
+        has_termination = _contains_any(
+            text,
+            ("終止", "终止", "失效", "不再生效", "terminate", "cease to have effect"),
+        )
+        has_restoration = _contains_any(
+            text,
+            ("恢復", "恢复", "自動恢復", "自动恢复", "restore", "revive"),
+        )
+        if has_termination and has_restoration:
+            return (
+                "本页同时包含特殊权利的终止安排与条件恢复安排，说明权利状态取决于上市进程或其他"
+                "触发条件，不能只看“终止”一词判断其法律效果；仍需与权利主体和其他条款合并核对。"
+            )
+        if has_termination:
+            return "本页提供特殊权利终止时点或失效安排，需要与恢复条款合并判断上市后是否仍可能生效。"
+        if has_restoration:
+            return "本页提供特殊权利恢复条件，需要与原权利内容及终止时点合并判断潜在现金或股权影响。"
+        return fallback
+
+    if code == "cash_runway":
+        has_cash = _contains_any(
+            text,
+            (
+                "現金及現金等價物",
+                "现金及现金等价物",
+                "現金及銀行結餘",
+                "现金及银行结余",
+                "cash and cash equivalents",
+                "cash and bank balances",
+            ),
+        )
+        has_operating_flow = _contains_any(
+            text,
+            (
+                "經營活動現金流",
+                "经营活动现金流",
+                "經營活動所用現金",
+                "经营活动所用现金",
+                "operating cash flow",
+                "cash used in operating activities",
+            ),
+        )
+        if has_cash and has_operating_flow:
+            return (
+                "本页同时提供现金余额与经营活动现金流口径，是现金支撑期复算的输入来源之一；"
+                "具体结果仍须使用已验证的期间、单位和证据关联完成确定性计算。"
+            )
+        if has_cash:
+            return "本页提供披露时点的现金余额口径，是现金支撑期计算的分子输入，需与同期间经营现金净流出合并复算。"
+        if has_operating_flow:
+            return "本页提供经营活动现金流口径，是估算现金消耗速度的输入，需与同期间现金余额和期间长度合并复算。"
+        return fallback
+
+    return fallback
+
+
 def _verification_issue_codes(risk: Mapping[str, Any]) -> list[str]:
     metadata = _risk_metadata(risk)
     codes: list[str] = []
@@ -359,10 +835,12 @@ def _calculation_conclusion(risk: Mapping[str, Any]) -> str | None:
 
 
 def _calculation_is_safe(risk: Mapping[str, Any]) -> bool:
-    """Only expose a numeric calculation when its governed links are intact."""
+    """Only expose a numeric calculation after both governance and verification."""
 
     calculation = risk.get("calculation")
     if not isinstance(calculation, Mapping):
+        return False
+    if str(risk.get("verification_status") or "").lower() != "verified":
         return False
     if calculation.get("success") is not True or calculation.get("result") in (None, ""):
         return False
@@ -389,9 +867,30 @@ def risk_conclusion_zh(risk: Mapping[str, Any]) -> str:
     metadata = _risk_metadata(risk)
     calculated = _calculation_conclusion(risk) if verification == "verified" else None
     if calculated:
+        if code == "cash_runway":
+            level = str(risk.get("level") or "").lower()
+            significance = (
+                "从流动性审阅角度看，这一现金缓冲偏短，公司对经营回款改善、支出节奏和外部资金"
+                "到位时间更为敏感。"
+                if level in {"critical", "high"}
+                else "该结果用于衡量公司应对当前经营消耗的时间窗口。"
+            )
+            return (
+                calculated
+                + " "
+                + significance
+                + "该测算没有纳入披露期后的融资、回款或支出"
+                "变化，因此应作为流动性压力测试阅读，而不是对未来资金耗尽时点的预测。"
+            )
         return calculated
     if code in {"customer_concentration", "supplier_concentration"}:
         subject = "客户" if code.startswith("customer") else "供应商"
+        dimensions = _concentration_evidence_dimensions(risk, subject=subject)
+        dimensions_copy = (
+            "原文覆盖的判断维度包括" + "、".join(dimensions) + "。"
+            if dimensions
+            else "当前证据用于核对交易对手构成、交易占比和报告期口径。"
+        )
         values = []
         if verification == "verified" and metadata.get("largest_counterparty_pct") not in (None, ""):
             values.append(f"最大{subject}占比约 {metadata['largest_counterparty_pct']}%")
@@ -400,19 +899,34 @@ def risk_conclusion_zh(risk: Mapping[str, Any]) -> str:
         if values:
             return (
                 "，".join(values)
-                + f"。这些结构化数值提示{subject}依赖值得关注，但仍需结合报告期口径和验证状态阅读。"
+                + f"。{dimensions_copy}这些结构化数值提供了衡量{subject}依赖程度的依据，但集中度本身不是损失结论；"
+                + (
+                    "还需要判断核心客户的订单、续约、议价和回款变化能否被其他客户承接。"
+                    if subject == "客户"
+                    else "还需要判断关键供应商的价格、产能、质量或交付变化能否由替代来源承接。"
+                )
             )
         issues = _verification_issues_zh(risk)
         issue_copy = "；".join(issues)
         pages = _evidence_pages(risk)
-        location = f"系统已在招股书第 {'、'.join(pages[:5])} 页定位相关披露" if pages else "系统已形成相关披露候选"
+        location = f"招股书第 {'、'.join(pages[:5])} 页包含相关披露" if pages else "当前已形成相关披露候选"
+        mechanism = (
+            "若逐期复核后确认收入持续依赖少数客户，订单缩减、续约失败、议价或回款变化才可能"
+            "较快传导至收入、利润和经营现金流。"
+            if subject == "客户"
+            else "若逐期复核后确认采购持续依赖少数供应商，提价、停供、质量或交付异常才可能"
+            "传导至成本、生产进度和履约能力。"
+        )
         if issue_copy:
             return (
                 f"{location}，内容涉及往绩记录期的{subject}构成、集中度或交易关系。"
-                f"由于{issue_copy}，本次尚未完成口径一致的集中度复算，"
-                "因此只能保留为待复核线索，不能据此判断集中程度或风险等级。"
+                f"{dimensions_copy}由于{issue_copy}，本次尚未完成口径一致的集中度复算，"
+                f"因此只能保留为待复核线索，不能据此判断集中程度或风险等级。{mechanism}"
             )
-        return f"{location}；当前尚需把{subject}占比与对应报告期逐项对齐后，才能判断集中程度。"
+        return (
+            f"{location}；{dimensions_copy}当前尚需把{subject}占比与对应报告期逐项对齐后，"
+            f"才能判断集中程度。{mechanism}"
+        )
     if code == "continuous_loss":
         count = metadata.get("latest_loss_period_count")
         return f"最新可比报告序列中已核验连续 {count} 个亏损期；该判断仍需结合各期损益和现金流理解经营压力。" if verification == "verified" and count not in (None, "") else "当前原文候选显示发行人可能存在持续亏损，但报告期与数值尚未形成可复核的连续序列，因此不能把候选直接写成已确认事实。"
@@ -421,35 +935,64 @@ def risk_conclusion_zh(risk: Mapping[str, Any]) -> str:
         return f"最新两个可比报告期的收入变动已核验为约 {growth}%；该变化需结合收入基数、业务构成和报告期口径解释。" if verification == "verified" and growth not in (None, "") else "当前原文候选包含收入增长或下滑信号，但尚未形成口径一致的可比序列，现阶段只能作为待核对事项。"
     if code == "cash_runway":
         months = next((metadata.get(key) for key in ("runway_months", "cash_runway_months", "months_of_runway") if metadata.get(key) not in (None, "")), None)
-        return f"按当前可核验数据估算，现金可支撑期约为 {months} 个月；仍需结合最新现金余额、经营现金流和融资安排持续观察。" if verification == "verified" and months is not None else "当前资料提示现金消耗压力，但缺少完成现金可支撑期复算所需的完整输入，暂不能形成确定性结论。"
+        return (
+            f"按当前可核验数据估算，现金可支撑期约为 {months} 个月。该指标把披露时点现金与"
+            "当前经营净流出相比较，用于观察流动性缓冲，并不预测未来资金耗尽时点；仍需结合"
+            "最新现金余额、经营现金流、融资安排和支出计划持续观察。"
+            if verification == "verified" and months is not None
+            else "当前资料提示现金消耗压力，但缺少完成现金可支撑期复算所需的完整输入，暂不能形成"
+            "确定性结论。只有把同口径现金余额、经营净流出和期间长度对齐后，才能判断当前消耗速度"
+            "是否会使公司对融资时点或经营回款更为敏感。"
+        )
     if code == "redemption_rights":
+        right_type = _rights_type_zh(metadata.get("right_type"))
         holder = _compact_ui_fact(metadata.get("holder"), limit=90).rstrip("。；")
         termination = _compact_ui_fact(metadata.get("termination_event"), limit=220).rstrip("。；")
         restoration = _compact_ui_fact(metadata.get("restoration_condition"), limit=260).rstrip("。；")
         parts = []
+        if right_type:
+            parts.append(f"结构化条款将相关权利识别为{right_type}")
         if holder:
-            parts.append(f"招股书条款将相关权利人记为{holder}")
+            parts.append(f"候选权利人记为{holder}")
         if termination:
             parts.append(f"终止安排为：{termination}")
         if metadata.get("restoration_clause") is True and restoration:
             parts.append(f"同时存在恢复条件：{restoration}")
         if parts:
-            return "；".join(parts) + "。如果相关权利按披露在上市后终止且未触发恢复条件，对上市后公众股东的直接影响应较为有限；但权利主体范围、终止时点和恢复条件仍需逐句核对。"
-        return "招股书条款候选涉及特殊股东权利的终止或恢复安排；当前需要核对权利主体、触发条件和上市后的存续状态。"
+            return (
+                "；".join(parts)
+                + "。这组条款呈现的是“终止后在特定情形下恢复”的条件结构，而不是权利无条件持续存在。"
+                "若成功上市时相关权利已经终止且没有触发恢复条件，上市后对公众股东的直接影响通常"
+                "受到约束；若上市失败等恢复条件被触发，相关安排仍可能影响上市前现金、股权结构或"
+                "其他股东权益。权利主体范围、终止时点和恢复条件仍需逐句核对。"
+            )
+        return (
+            "招股书条款候选涉及特殊股东权利的终止或恢复安排。这里需要同时回答权利由谁持有、"
+            "何时终止、何种情形下恢复以及上市后是否仍存续，才能判断其可能产生现金影响还是股权"
+            "摊薄影响；当前证据链尚不足以确认这些条件。"
+        )
     if code == "material_litigation_compliance":
-        subject = _compact_ui_fact(metadata.get("subject"), limit=300)
-        management = _compact_ui_fact(metadata.get("management_materiality"), limit=220)
-        impact = _compact_ui_fact(metadata.get("potential_impact"), limit=240)
+        subject, impact, management = _legal_reader_facts(risk)
         parts = []
         if subject:
-            parts.append(f"招股书披露：{subject}")
+            parts.append(f"结合已关联原文，结构化分析将事项概括为：{subject}")
         if impact:
-            parts.append(f"系统整理的潜在责任或缓释说明包括：{impact}")
+            parts.append(f"原文所对应的潜在责任或后果包括：{impact}")
         if management:
-            parts.append(f"招股书同时记录管理层或法律顾问观点：{management}")
+            parts.append(f"结构化字段同时记录管理层或法律顾问观点：{management}")
         if parts:
-            return "；".join(parts) + "。这些披露能够说明事项及相关缓释观点，但事项是否持续、整改是否完成和重大性仍待复核。"
-        return "当前原文候选涉及诉讼、监管或合规事项，但事项身份、进展和潜在责任尚未形成可验证的完整链条。"
+            return (
+                "；".join(parts)
+                + "。这组信息形成了“原文事项候选—可能责任—缓释观点”的分析链。潜在风险并不等同于"
+                "处罚已经发生，而是相关义务若被主管机构追究或整改未完成，可能转化为补缴、罚款、"
+                "赔偿、资产处置或经营限制；管理层的重大性判断属于缓释依据，不能单独证明事项已经"
+                "解决。事项是否持续、整改是否完成和重大性仍待复核。"
+            )
+        return (
+            "当前原文候选涉及诉讼、监管或合规事项，但事项身份、进展和潜在责任尚未形成可验证的"
+            "完整链条。只有把事项本身、法定或合同后果、当前处理状态和管理层缓释依据相互对应，"
+            "才能判断它主要构成一次性现金影响、持续经营约束还是披露层面的待核问题。"
+        )
     if code == "precommercial_product":
         product = _compact_ui_fact(metadata.get("product_name") or metadata.get("subject"), limit=120)
         fact_kind = "结构化事实" if verification == "verified" else "结构化候选"
@@ -491,14 +1034,15 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
     calculation = risk.get("calculation")
     calculation_safe = _calculation_is_safe(risk)
     extraction_method = str(metadata.get("extraction_method") or "")
+    interpretation = _risk_interpretation_zh(risk)
     if calculation_safe and verification == "verified":
-        basis = page_copy + "相关财务输入已经过确定性公式复算，计算引用均能回到本风险项的原文证据，本项也已通过验证。"
+        basis = page_copy + "相关财务输入已经过确定性公式复算，计算所用数据都能回到这些原文。"
     elif isinstance(calculation, Mapping):
-        basis = page_copy + "上游已形成计算候选，但计算状态、证据关联或风险验证尚未全部满足，因此页面不把候选数值写成确定性结论。"
+        basis = page_copy + "目前已有计算候选，但计算状态、证据关联或风险验证尚未全部满足，因此不把候选数值写成确定性结论。"
     elif extraction_method.startswith("llm_structured"):
-        basis = page_copy + "系统先从原文整理候选事实，再检查各字段能否被同一组证据支持。"
+        basis = page_copy + "分析先从这些原文归纳候选事项，再核对主体、时点、责任和状态能否相互印证。"
     else:
-        basis = page_copy + "结论只使用本次运行已经产出的结构化字段和验证状态，不根据页面展示补写新事实。"
+        basis = page_copy + "分析只引用这些已经关联的原文，不根据页面上的关键词补写新事实。"
 
     if verification == "verified":
         basis += "本项已通过当前验证规则。"
@@ -528,13 +1072,52 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
         boundary = verifier_note_zh(risk.get("verification_notes")) or (
             "验证状态尚未完整形成，当前结论不能作为已确认事实。"
         )
+    if code == "cash_runway" and verification == "verified":
+        boundary = (
+            "已验证仅表示输入关联和公式结果通过了当前规则。现金可支撑期只反映披露时点现金与"
+            "已披露期间经营净流出的静态关系，没有纳入后续融资、收入回款、资本开支或成本变化；"
+            "它不表示未来流动性事件必然发生，更不是风险发生概率。"
+        )
+    elif code in {"customer_concentration", "supplier_concentration"} and verification in {
+        "needs_review",
+        "pending",
+    }:
+        issues = _verification_issues_zh(risk)
+        issue_copy = "；".join(issues) if issues else "报告期、交易对手归并口径和占比仍需逐项对齐"
+        boundary = (
+            f"当前仍未完全闭合的环节包括：{issue_copy}。在这些环节闭合前，不能判断集中度高低，"
+            "也不能把潜在的订单、议价、交付或替代风险写成已经发生的经营影响。"
+        )
+    elif code == "redemption_rights" and verification in {"needs_review", "pending"}:
+        issues = _verification_issues_zh(risk)
+        issue_copy = "；".join(issues) if issues else "权利主体、终止时点和恢复条件仍需核对"
+        boundary = (
+            f"当前仍未完全闭合的环节包括：{issue_copy}。因此只能说明条款可能形成条件性权利，"
+            "不能断言权利在上市后仍存续、恢复条件已经触发或公众股东已经受到影响。"
+        )
+    elif code == "material_litigation_compliance" and verification in {
+        "needs_review",
+        "pending",
+    }:
+        issues = _verification_issues_zh(risk)
+        issue_copy = "；".join(issues) if issues else "事项身份、状态、整改和重大性仍需核对"
+        boundary = (
+            f"当前仍未完全闭合的环节包括：{issue_copy}。招股书中的“未受处罚”、管理层重大性判断或"
+            "法律顾问风险意见均属于缓释依据，不能单独推出事项已经结束、整改已经完成或不会产生影响。"
+        )
     impact = risk_reasoning(code)
     if code == "cash_runway" and calculation_safe and verification == "verified" and isinstance(calculation, Mapping):
         result = _decimal_text(calculation.get("result"), places=2)
         if result:
+            level = str(risk.get("level") or "").lower()
+            significance = (
+                "较短的现金缓冲会提高公司对融资进度、回款改善和支出控制的敏感度。"
+                if level in {"critical", "high"}
+                else "该结果用于衡量公司对融资进度、回款改善和支出控制的敏感度。"
+            )
             impact = (
                 f"按本次复算，现有现金约可覆盖 {result} 个月的当前经营净流出。"
-                "缓冲期较短会提高公司对融资进度、回款改善和支出控制的敏感度。"
+                + significance
             )
     elif code in {"customer_concentration", "supplier_concentration"}:
         subject = "客户" if code.startswith("customer") else "供应商"
@@ -542,18 +1125,24 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
             f"该事项关系到发行人对少数{subject}的依赖程度。"
             f"在占比尚未完成报告期对齐前，不能断言集中度高低；一旦确认依赖集中，{subject}流失、议价或履约变化才可能形成实质影响。"
         )
-    elif code == "redemption_rights" and metadata.get("impact_on_public_shareholders"):
+    elif code == "redemption_rights" and _has_readable_chinese(
+        metadata.get("impact_on_public_shareholders")
+    ):
         impact = (
             "结构化条款同时记录了对上市后公众股东影响的候选判断："
-            + _compact_ui_fact(metadata.get("impact_on_public_shareholders"), limit=260)
+            + _compact_ui_fact(
+                metadata.get("impact_on_public_shareholders"), limit=260
+            ).rstrip("。；")
             + "。该判断仍受权利主体和条款状态验证结果约束。"
         )
-    elif code == "material_litigation_compliance" and metadata.get("potential_impact"):
-        impact = (
-            "结构化法律事实记录的候选影响为："
-            + _compact_ui_fact(metadata.get("potential_impact"), limit=260)
-            + "。当前仅用于说明需要核查的责任范围，不代表影响已经发生。"
-        )
+    elif code == "material_litigation_compliance":
+        _, candidate_impact, _ = _legal_reader_facts(risk)
+        if candidate_impact:
+            impact = (
+                "结构化候选及其原文线索指向的责任范围包括："
+                + candidate_impact.rstrip("。；")
+                + "。当前仅用于解释潜在影响如何传导，不代表责任或影响已经发生。"
+            )
 
     review_focus = risk_review_focus(code)
     if code in {"customer_concentration", "supplier_concentration"} and _verification_issues_zh(risk):
@@ -565,6 +1154,7 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
 
     return {
         "basis": basis,
+        "interpretation": interpretation,
         "impact": impact,
         "boundary": boundary,
         "review_focus": review_focus,
@@ -574,6 +1164,10 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
 def calculation_summary_zh(risk: Mapping[str, Any]) -> str:
     calculation = risk.get("calculation")
     if not _calculation_is_safe(risk) or not isinstance(calculation, Mapping):
+        if isinstance(calculation, Mapping) and str(
+            risk.get("verification_status") or ""
+        ).lower() != "verified":
+            return "上游已形成计算候选，但本风险项尚未通过验证，因此不展示候选结果。"
         return "暂无可展示的确定性计算依据。"
     result, unit = calculation.get("result"), calculation.get("unit")
     if result not in (None, ""):

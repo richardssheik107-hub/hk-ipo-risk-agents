@@ -239,8 +239,9 @@ def test_reader_report_is_chinese_and_excludes_backend_metadata() -> None:
     assert "prospectus_sha256" not in report
     assert "secret-technical-hash" not in report
     assert "internal-e1" not in report
-    assert "**判断依据。**" in report
-    assert "**对发行人的含义。**" in report
+    assert "**证据范围。**" in report
+    assert "**原文解读。**" in report
+    assert "**风险如何传导。**" in report
     assert "**尚待确认。**" in report
     assert "后续复核应" in report
     assert "模型已形成辅助排序信号" in report

@@ -1339,6 +1339,20 @@ def apply_competition_theme() -> None:
         .profile-item:after {content:"";position:absolute;left:.9rem;right:.9rem;bottom:0;border-bottom:1px solid rgba(20,184,166,.075);}
         .profile-label {color:#7F94A3!important;font-size:.64rem!important;font-weight:620!important;letter-spacing:.02em;}
         .profile-value {color:var(--ipo-ink)!important;font-weight:680!important;}
+        /* The nine IPO facts form two deliberate, full-width rows on desktop. */
+        .st-key-overview_profile_matrix .profile-grid {grid-template-columns:repeat(20,minmax(0,1fr))!important;align-items:stretch;}
+        .st-key-overview_profile_matrix .profile-item:nth-child(-n+5) {grid-column:span 4;}
+        .st-key-overview_profile_matrix .profile-item:nth-child(n+6) {grid-column:span 5;}
+        .st-key-overview_profile_matrix .profile-item {display:flex;min-height:76px;flex-direction:column;justify-content:center;}
+        /* Coverage and inventory are peers: equal columns, equal cards and one shared gap. */
+        .st-key-overview_risk_split {margin:.35rem 0 1.15rem;}
+        .st-key-overview_risk_split [data-testid="stHorizontalBlock"] {align-items:stretch;gap:1.15rem;}
+        .st-key-overview_risk_split [data-testid="stColumn"] {display:flex;min-width:0;}
+        .st-key-overview_risk_split [data-testid="stColumn"]>[data-testid="stVerticalBlock"] {width:100%;}
+        .st-key-overview_coverage_card,.st-key-overview_inventory_card {box-sizing:border-box;height:100%;min-height:336px;padding:1.05rem 1.1rem!important;border:1px solid rgba(20,184,166,.13)!important;border-radius:17px!important;background:rgba(255,255,255,.82)!important;box-shadow:0 6px 18px rgba(20,184,166,.05)!important;}
+        .st-key-overview_coverage_card .section-head,.st-key-overview_inventory_card .section-head {margin-top:.15rem;}
+        .st-key-overview_coverage_card .modern-table-shell,.st-key-overview_inventory_card .modern-table-shell {margin-bottom:0;}
+        .st-key-overview_inventory_card .modern-table-shell {max-height:230px;overflow:auto;}
         .st-key-evidence_section_shell .metric-card {text-align:center;}
         .st-key-evidence_risk_summary .profile-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
         .st-key-evidence_risk_summary .profile-item {text-align:center;}
@@ -1346,6 +1360,7 @@ def apply_competition_theme() -> None:
         .evidence-reasoning {margin:.35rem 0 .9rem;padding:.9rem 1rem;border:1px solid rgba(96,213,200,.18);border-radius:14px;background:linear-gradient(135deg,rgba(96,213,200,.08),rgba(217,204,255,.12));}
         .evidence-reasoning p {margin:.36rem 0;color:#284B47!important;font-size:.82rem;line-height:1.65;}
         .evidence-reasoning strong {color:#11766F;}
+        .evidence-page-interpretation {margin:.35rem 0 .9rem;padding:.9rem 1rem;border-left:4px solid var(--ipo-primary);border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(20,184,166,.11),rgba(255,255,255,.76));color:#173F3B;font-size:.84rem;font-weight:560;line-height:1.72;}
         .reader-signal-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:stretch;margin:.5rem 0 1rem;}
         .reader-signal-card,.reader-guidance-card {box-sizing:border-box;border:1px solid rgba(20,184,166,.15);border-radius:18px;background:rgba(255,255,255,.82);box-shadow:0 6px 18px rgba(20,184,166,.055);}
         .reader-signal-card {display:flex;min-height:100%;flex-direction:column;padding:1.3rem 1.35rem;}
@@ -1372,7 +1387,9 @@ def apply_competition_theme() -> None:
         @media(max-width:620px){div[data-testid="stElementContainer"]:has(.product-nav){top:var(--streamlit-header-height)}.product-nav{padding:0 .7rem}.product-nav-logo{height:30px;max-width:150px}.product-nav-links{max-width:66%;gap:17px}.product-nav-links a{font-size:.73rem}.landing-hero-v3{padding:1.5rem 1.15rem;border-radius:14px}.hero-v3-title{font-size:2.25rem}.risk-flow-visual{margin-top:.5rem}.capability-image-frame{border-radius:18px}.product-footer{padding-top:44px}.product-footer-grid{grid-template-columns:1fr;gap:2rem}.footer-system{grid-column:auto;max-width:none}.footer-lower{align-items:flex-start;flex-direction:column;gap:1rem;margin-top:34px}.metric-grid,.channel-grid,.pipeline-grid,.profile-grid,.empty-flow,.roadmap-grid,.bento-kpis{grid-template-columns:1fr;}.ipo-hero{padding:1rem;min-height:auto}.command-health{grid-template-columns:1fr 1fr}.case-shell{align-items:flex-start}.trace-flow{grid-template-columns:1fr}.trace-flow-step:after{display:none!important}.trace-card{grid-template-columns:30px 1fr}.trace-action{grid-column:2}.trace-card .status-chip{grid-column:2;justify-self:start}}
         @media(max-width:1100px){.reader-report-hero{grid-template-columns:1fr}.st-key-evidence_section_shell [data-testid="stHorizontalBlock"]:has(.st-key-evidence_risk_summary){flex-direction:column}.st-key-evidence_section_shell [data-testid="stHorizontalBlock"]:has(.st-key-evidence_risk_summary)>[data-testid="stColumn"]{width:100%!important;flex:1 1 100%!important}}
         @media(max-width:900px){.st-key-case_workspace_shell{padding:20px;border-radius:22px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{padding:1.25rem;border-radius:22px}.reader-signal-grid{grid-template-columns:1fr}.reader-report-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        @media(max-width:900px){.st-key-overview_profile_matrix .profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.st-key-overview_profile_matrix .profile-item{grid-column:span 1!important}.st-key-overview_profile_matrix .profile-item:last-child:nth-child(odd){grid-column:1/-1!important}.st-key-overview_coverage_card,.st-key-overview_inventory_card{min-height:0}}
         @media(max-width:620px){.st-key-case_workspace_shell{padding:16px;border-radius:18px}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"]{border-radius:14px;padding:5px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{margin-top:18px;padding:1rem;border-radius:18px}}
+        @media(max-width:620px){.st-key-overview_profile_matrix .profile-grid{grid-template-columns:1fr!important}.st-key-overview_profile_matrix .profile-item:last-child:nth-child(odd){grid-column:auto!important}.st-key-overview_risk_split [data-testid="stHorizontalBlock"]{gap:.8rem}.st-key-overview_coverage_card,.st-key-overview_inventory_card{padding:.9rem!important;border-radius:14px!important}}
         @media(min-width:901px){.st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"]:not(:has([data-testid="stFileChips"])){min-height:230px;}}
         @media(max-width:620px){.st-key-analysis_intake_shell{padding:1rem;border-radius:22px}.st-key-analysis_intake_shell:before{left:8%;right:8%;bottom:-8px}.st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button{width:100%}.st-key-analysis_intake_shell .landing-intake-copy{min-height:0}.intake-no-upload{min-height:150px}}
         @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.hero-prospectus,.hero-evidence,.hero-market,.hero-rule,.hero-risk,.hero-final,.hero-connector{animation:none!important;transform:none!important;opacity:.96!important}.motion-enter,.editorial-stepper,.editorial-step-no,.result-enter,.section-reveal .landing-section-title,.section-reveal .landing-section-copy,.scroll-content-target,.capability-band .capability-copy,.capability-band .capability-visual,.product-footer{opacity:1!important;transform:none!important}.section-reveal .landing-section-title:after,.product-nav-links a.nav-active:after{transform:scaleX(1)!important}}
@@ -1849,6 +1866,7 @@ def reader_article_projection(payload: dict[str, Any]) -> dict[str, Any]:
                     "status": status_label(risk.get("verification_status")),
                     "conclusion": risk_conclusion_zh(risk),
                     "basis": annotation["basis"],
+                    "interpretation": annotation.get("interpretation") or annotation["basis"],
                     "impact": annotation["impact"],
                     "boundary": annotation["boundary"],
                     "review_focus": annotation["review_focus"],
@@ -1908,9 +1926,11 @@ def reader_article_markdown(payload: dict[str, Any]) -> str:
                     "",
                     risk["conclusion"],
                     "",
-                    f"**判断依据。** {risk['basis']}",
+                    f"**证据范围。** {risk['basis']}",
                     "",
-                    f"**对发行人的含义。** {risk['impact']}",
+                    f"**原文解读。** {risk['interpretation']}",
+                    "",
+                    f"**风险如何传导。** {risk['impact']}",
                     "",
                     f"**尚待确认。** {risk['boundary']}后续复核应{risk['review_focus']}",
                     "",
@@ -1947,6 +1967,8 @@ def reader_article_markdown(payload: dict[str, Any]) -> str:
             "",
             "本报告把原文证据放在首位。缺失信息保持缺失，规则与模型信号均不解释为发生概率或收益预测；"
             "仍待复核的条款、数值和事项状态，需要由评审结合招股书原文作最终判断。",
+            "",
+            "以上分析用于 IPO 风险研究与审阅，不构成投资、证券、法律或交易建议。",
         ]
     )
     return "\n".join(lines)

@@ -1,6 +1,9 @@
 from judge_copy import (
+    calculation_summary_zh,
+    evidence_item_interpretation_zh,
     highest_risk_level,
     judge_status_label,
+    risk_conclusion_zh,
     risk_reasoning,
     risk_reasoning_annotation,
     risk_review_focus,
@@ -39,6 +42,7 @@ def test_summary_is_presentation_only_counting() -> None:
 
 def test_non_evidence_ui_copy_is_simplified() -> None:
     assert to_simplified_ui("風險審閱與證據鏈") == "风险审阅与证据链"
+    assert to_simplified_ui("上市失敗及保薦人現金賠償") == "上市失败及保荐人现金赔偿"
     assert judge_status_label("needs_review") == "待复核"
 
 
@@ -142,6 +146,92 @@ def test_pending_risk_annotation_never_says_there_is_no_boundary() -> None:
     )
 
     assert "仍未完全闭合" in annotation["boundary"]
+
+
+def test_customer_overlap_analysis_uses_real_evidence_without_declaring_high_concentration() -> None:
+    risk = {
+        "risk_code": "customer_concentration",
+        "verification_status": "needs_review",
+        "metadata": {
+            "extraction_issues": ["value_period_count_mismatch", "calculation_missing"]
+        },
+        "evidence": [
+            {
+                "evidence_id": "overlap-evidence",
+                "page": 268,
+                "text": (
+                    "主要客戶及供應商重疊。客戶A亦為我們的供應商，"
+                    "並為我們提供電子商務推廣服務。"
+                ),
+            }
+        ],
+    }
+
+    annotation = risk_reasoning_annotation(risk)
+    conclusion = risk_conclusion_zh(risk)
+
+    assert "同时出现在销售端和采购或推广服务端" in annotation["interpretation"]
+    assert "不等于集中度已经较高" in annotation["interpretation"]
+    assert "不能据此判断集中程度或风险等级" in conclusion
+    assert "集中度已高" not in conclusion
+
+
+def test_selected_evidence_interpretation_does_not_borrow_another_page_fact() -> None:
+    risk = {
+        "risk_code": "customer_concentration",
+        "verification_status": "needs_review",
+    }
+    table_page = {
+        "page": 263,
+        "text": "五大客戶收入及佔總收入的百分比。",
+    }
+    overlap_page = {
+        "page": 268,
+        "text": "主要客戶及供應商重疊，客戶A亦為我們的供應商並提供推廣服務。",
+    }
+
+    table_copy = evidence_item_interpretation_zh(risk, table_page)
+    overlap_copy = evidence_item_interpretation_zh(risk, overlap_page)
+
+    assert "集中度口径与报告期" in table_copy
+    assert "销售端和采购或推广服务端" not in table_copy
+    assert "销售端和采购或推广服务端" in overlap_copy
+
+
+def test_pending_cash_calculation_never_exposes_safe_looking_candidate_numbers() -> None:
+    risk = {
+        "risk_code": "cash_runway",
+        "level": "critical",
+        "verification_status": "needs_review",
+        "evidence": [
+            {"evidence_id": "cash", "page": 562},
+            {"evidence_id": "flow", "page": 563},
+        ],
+        "calculation": {
+            "success": True,
+            "result": 2.76,
+            "unit": "months",
+            "inputs": {
+                "cash": 77208,
+                "operating_cash_flow": -83918,
+                "period_months": 3,
+            },
+            "evidence_ids": ["cash", "flow"],
+        },
+    }
+
+    combined = " ".join(
+        (
+            risk_conclusion_zh(risk),
+            risk_reasoning_annotation(risk)["interpretation"],
+            calculation_summary_zh(risk),
+        )
+    )
+
+    assert "计算候选" in combined
+    assert "2.76" not in combined
+    assert "77,208" not in combined
+    assert "83,918" not in combined
 
 
 def test_supervisor_narrative_excludes_rejected_candidates_from_formal_risks() -> None:
