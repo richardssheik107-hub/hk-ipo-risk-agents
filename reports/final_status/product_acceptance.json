@@ -68,13 +68,13 @@
     },
     {
       "path": "app/streamlit_app.py",
-      "sha256": "c7510024ff00b39a25e765bac4ae371213e41a0704784dfe30eb49508ef524d2",
-      "size_bytes": 59628
+      "sha256": "92131f9662a4fbb36ce81725c5111d46a9af6fa5fb08fb9c3ef8038b9dfa37c2",
+      "size_bytes": 69243
     },
     {
       "path": "app/competition_ui.py",
-      "sha256": "cf2aaa47a2edbe5d76d2d3df2132a00b9e5db6d17bd6b49966b51aa862dd457d",
-      "size_bytes": 189582
+      "sha256": "c78e5ce4f17bed3fb169b36999a1babfceaeed14ec4140d65ca97f3e44011704",
+      "size_bytes": 192608
     },
     {
       "path": "src/ipo_risk/runtime/demo_replay.py",
@@ -88,5 +88,5 @@
     "ui_computes_or_invents_channel_values": false,
     "human_review_required": false
   },
-  "content_hash": "c023d17eae65e429ede626872eba572aacd42d963a2fc9456c38af8f111e4838"
+  "content_hash": "00095a46b84a986691fed569ec906b7c4c4198a7d1801f7a50811ce9820952e2"
 }
