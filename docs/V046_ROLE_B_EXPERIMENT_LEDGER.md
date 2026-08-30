@@ -1,10 +1,25 @@
-# Role-B v0.4.6 — Batch 001–010 Experiment Ledger
+# Role-B v0.4.6 — Experiment Ledger
 
 > 文档类型：**HISTORICAL EXPERIMENT LEDGER / NOT A CURRENT PLAN**  
 > 当前执行计划：`team/01_M1_M2_OWNER.md`  
 > 当前 Release 状态：`V0.4_RELEASE_ACCEPTANCE.md`
 
 本文件是 Role-B fixed10 / fixed-journal 历史实验的单一人类可读总账。过去的逐批 Markdown 说明已从 `docs/` 主目录清理；完整 diff 由 Git history 保留，机器可读结果继续保留在 `reports/v046_role_b/`。
+
+## All-rounds machine-readable archive
+
+截至 `2026-08-30` 的本地 Role-B 轮次已导出为仓库安全的紧凑归档：
+
+```text
+docs/research/v046_role_b_all_rounds/all_rounds_manifest.json
+docs/research/v046_role_b_all_rounds/all_rounds_metrics.csv
+```
+
+归档覆盖完整结果和仅完成 preflight 的中止尝试；后者明确标记为
+`preflight_only`，不会冒充 benchmark PASS。原始 6.4 GiB report tree 不进入 Git，
+因为它包含 licensed PDF、runtime/cache、完整分析载荷、私有 LLM journal 和本地
+执行信息。归档只保留 summary-level 数据、状态、指标与 SHA-256 provenance，且
+不包含 raw prompt/response、Evidence 原文、secret、PDF、cache 或绝对路径。
 
 | Batch | Decision | Main finding | Governed result |
 |---|---|---|---|
