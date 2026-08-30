@@ -2,7 +2,9 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> Architecture status: **FROZEN FOR COMPETITION RELEASE**
+> Architecture status: **FROZEN FOR COMPETITION RELEASE**  
+> Role-B runtime freeze: `ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`
 
 ## 1. Production analysis path
 
@@ -161,9 +163,9 @@ Canonical final-three screenshot baseline remains 17/17 precise.
 
 No UI path may fabricate bbox/page or replace an unavailable Evidence localisation with another item's coordinates.
 
-## 7. Product surfaces — G5 PASS
+## 7. Product surface — G5 PASS
 
-v1.0.0 supports:
+v1.0.0 supports three runtime modes in one canonical reader workspace:
 
 ```text
 Offline Demo Replay
@@ -171,9 +173,22 @@ Historical Governed IPO
 Fresh New-IPO Analysis
 ```
 
-Standard and judge-facing Streamlit surfaces consume runtime schema/state/provenance; they do not recompute or invent Document/Market/Model values.
+`START_DEMO.*` and `START_JUDGE_DEMO.*` now converge on `app/streamlit_app.py`. The judge commands are compatibility aliases, not a second presentation shell. This removes frontend drift while preserving the same governed runtime, demo bundle and fail-fast preflight.
 
-Issuer lookup may assist user input, while formal downstream joins remain governed by case/stock/listing identities rather than fuzzy company-name matching alone.
+Canonical information architecture:
+
+```text
+首页
+→ 新建分析
+→ 案例工作台
+   ├─ 案例概览
+   ├─ 原文证据
+   ├─ 市场与模型
+   └─ 综合结论与报告
+→ 后台
+```
+
+The UI consumes runtime schema/state/provenance; it does not recompute or invent Document/Market/Model values.
 
 ## 8. Frozen stable baseline
 
@@ -187,7 +202,7 @@ Evidence screenshots = 17/17 precise
 seven-stage = 21/21
 canonical replay = 66 files
 G3/G4/G5/G6 = PASS
-main tests / Role D runtime / Team demo runtime = PASS
+tests / Role D runtime / Team demo runtime = PASS on 006c7f3...
 ```
 
 ## 9. Remaining work is not architecture development
