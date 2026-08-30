@@ -1,11 +1,16 @@
 {
-  "schema_version": "competition_final_freeze_manifest_v1",
+  "schema_version": "competition_final_freeze_manifest_v2",
   "status": "frozen",
+  "release_version": "1.0.0",
+  "release_type": "competition_submission_product_release",
   "freeze_date": "2026-08-30",
   "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
   "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
   "role_b_benchmark_run_id": "finaldayA_bundle10_real_all79_001",
   "development_optimization_closed": true,
+  "product_release_approved": true,
+  "competition_ready": false,
+  "competition_ready_blocker": "self_defined_G2_below_threshold",
   "validation_opened_at_freeze": false,
   "blind_2025_y_accessed": false,
   "role_b_runtime_equivalence": {
@@ -19,7 +24,7 @@
       "src/ipo_risk/extraction/financial.py": "856431d6cc7ddaef4fa00de2db63a8181cdb4272",
       "src/ipo_risk/evaluation/existing_gold_metrics.py": "74178905ded0247d8fd13cc7a37e4d55428138fa"
     },
-    "note": "Each listed blob hash is identical between the Role-B benchmark commit and the promoted main runtime freeze."
+    "note": "Each listed blob hash is identical between the Role-B benchmark commit and the promoted runtime freeze."
   },
   "provider_identity": {
     "provider": "openai_responses",
@@ -39,6 +44,7 @@
     "score_semantics": "uncalibrated_model_score"
   },
   "release_state": {
+    "v1_product_release_approved": true,
     "g2_formal_gate_passed": false,
     "g3_market_passed": true,
     "g4_model_shap_passed": true,
@@ -49,6 +55,7 @@
   "post_freeze_policy": [
     "No Development-driven tuning after this freeze.",
     "One-shot Validation may be executed and recorded, but its results must not drive Retriever, Prompt, Agent, Verifier, threshold, model, or evaluator changes.",
-    "Release-document, packaging, hash-manifest, and non-runtime metadata changes remain allowed when they do not alter the frozen runtime identity."
+    "Release-document, version, packaging, hash-manifest, and non-runtime metadata changes remain allowed when they do not alter the frozen runtime identity.",
+    "The v1.0.0 product release does not imply G2 PASS or COMPETITION_READY=true."
   ]
 }
