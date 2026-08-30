@@ -47,7 +47,13 @@ _PERIOD_SPAN_PHRASE = re.compile(
 )
 
 
-_NARRATIVE_BARE_YEAR_RE = re.compile(r"(20\d{2})\s*年(?!\s*\d{1,2}\s*月)")
+_NARRATIVE_BARE_YEAR_RE = re.compile(
+    r"(20\d{2})\s*(?:年(?!\s*\d{1,2}\s*月)|財政年度|财政年度)"
+)
+_NARRATIVE_BARE_CHINESE_YEAR_RE = re.compile(
+    r"([〇零一二三四五六七八九]{4})\s*"
+    r"(?:年(?!\s*[一二三四五六七八九十]{1,3}\s*月)|財政年度|财政年度)"
+)
 _ENGLISH_DATE_DAY_FIRST_RE = re.compile(
     r"(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})",
     re.I,
@@ -154,12 +160,35 @@ _CONCENTRATION_LABELS = {
     },
     "supplier": {
         "largest": _concentration_pattern(
-            ["單一最大供應商", "单一最大供应商", "最大供應商", "最大供应商"],
-            ["single largest supplier", "largest supplier"],
+            [
+                "單一最大供應商",
+                "单一最大供应商",
+                "最大最終供應商",
+                "最大最终供应商",
+                "最大供應商",
+                "最大供应商",
+            ],
+            [
+                "single largest supplier",
+                "largest ultimate supplier",
+                "largest supplier",
+            ],
         ),
         "top_five": _concentration_pattern(
-            ["前五大供應商", "前五大供应商", "五大供應商", "五大供应商"],
-            ["five largest suppliers", "top five suppliers"],
+            [
+                "前五大供應商",
+                "前五大供应商",
+                "五大最終供應商",
+                "五大最终供应商",
+                "五大供應商",
+                "五大供应商",
+            ],
+            [
+                "five largest ultimate suppliers",
+                "five largest suppliers",
+                "top five ultimate suppliers",
+                "top five suppliers",
+            ],
         ),
     },
 }
@@ -210,12 +239,20 @@ _LABELS = {
         re.compile(
             r"經營(?:活動)?(?:所得|所用|產生|使用)"
             r"(?:\s*[╱／/]\s*[（(]?(?:所得|所用|產生|使用)[）)]?)?"
-            r"\s*現金淨額"
+            r"\s*現金(?:流量)?淨額"
         ),
         re.compile(
             r"经营(?:活动)?(?:所得|所用|产生|使用)"
             r"(?:\s*[╱／/]\s*[（(]?(?:所得|所用|产生|使用)[）)]?)?"
-            r"\s*现金净额"
+            r"\s*现金(?:流量)?净额"
+        ),
+        re.compile(
+            r"經營活動\s*[（(](?:所用|所得|產生|使用)[）)]\s*"
+            r"[╱／/]\s*(?:所得|所用|產生|使用)\s*現金(?:流量)?淨額"
+        ),
+        re.compile(
+            r"经营活动\s*[（(](?:所用|所得|产生|使用)[）)]\s*"
+            r"[╱／/]\s*(?:所得|所用|产生|使用)\s*现金(?:流量)?净额"
         ),
         re.compile(r"net cash (?:used in|generated from|from) operating activities", re.I),
         re.compile(r"net cash flows? (?:used in|generated from) operating activities", re.I),
@@ -421,7 +458,7 @@ class FinancialEvidenceExtractor:
                     or cash_value.currency != flow_value.currency
                     or cash_value.unit is None
                     or cash_value.unit != flow_value.unit
-                    or flow_value.period_months not in {3, 6, 9, 12}
+                    or flow_value.period_months not in range(1, 13)
                 ):
                     continue
                 pairs.append((cash, flow))
@@ -455,18 +492,61 @@ class FinancialEvidenceExtractor:
                 if self._financial_fact_conflicts(selected.result, candidate.result):
                     return None
 
+        equivalent_cash_ids = self._equivalent_evidence_ids(
+            selected_cash.result, cash_candidates
+        )
+        equivalent_flow_ids = self._equivalent_evidence_ids(
+            selected_flow.result, flow_candidates
+        )
+
         pair_metadata = {
             "pair_selection": "latest_common_compatible_period",
             "compatible_pair_count": len(pairs),
             "pair_period_end": selected_cash.result.period_end.isoformat(),
         }
         cash_result = selected_cash.result.model_copy(
-            update={"metadata": {**selected_cash.result.metadata, **pair_metadata}}
+            update={
+                "metadata": {
+                    **selected_cash.result.metadata,
+                    **pair_metadata,
+                    "equivalent_evidence_ids": equivalent_cash_ids,
+                }
+            }
         )
         flow_result = selected_flow.result.model_copy(
-            update={"metadata": {**selected_flow.result.metadata, **pair_metadata}}
+            update={
+                "metadata": {
+                    **selected_flow.result.metadata,
+                    **pair_metadata,
+                    "equivalent_evidence_ids": equivalent_flow_ids,
+                }
+            }
         )
         return cash_result, flow_result
+
+    @staticmethod
+    def _equivalent_evidence_ids(
+        selected: FinancialMetricValue,
+        candidates: Sequence[_Candidate],
+    ) -> list[str]:
+        """Keep every independently retrieved source proving the same fact."""
+
+        fields = (
+            "normalized_value",
+            "currency",
+            "unit",
+            "period_end",
+            "period_months",
+        )
+        identifiers: list[str] = []
+        for candidate in candidates:
+            value = candidate.result
+            if not value.evidence_id or any(
+                getattr(value, field) != getattr(selected, field) for field in fields
+            ):
+                continue
+            identifiers.append(value.evidence_id)
+        return list(dict.fromkeys(identifiers))
 
     @staticmethod
     def _candidate_sort_key(candidate: _Candidate) -> tuple[object, ...]:
@@ -682,7 +762,7 @@ class FinancialEvidenceExtractor:
         if selected_value is None:
             issues.append("latest_complete_value_not_determinable")
         if metric_name == "operating_cash_flow" and (
-            selected_period is None or selected_period.months not in {3, 6, 9, 12}
+            selected_period is None or selected_period.months not in range(1, 13)
         ):
             issues.append("operating_cash_flow_period_months_missing")
 
@@ -743,6 +823,13 @@ class FinancialEvidenceExtractor:
                 match = pattern.search(line)
                 if match:
                     return index, match.group(0)
+                if index + 1 < len(lines):
+                    joined = f"{line}\n{lines[index + 1]}"
+                    match = pattern.search(joined)
+                    if match:
+                        # Values start after the continuation line, so return
+                        # its index while preserving the exact joined label.
+                        return index + 1, match.group(0)
         return None, ""
 
     @staticmethod
@@ -1091,7 +1178,10 @@ class FinancialEvidenceExtractor:
 
     @staticmethod
     def _period_months(line: str) -> int | None:
-        chinese = re.search(r"(?:止|為|为|共)\s*([一二三四五六七八九十0-9]+)\s*[個个]?月", line)
+        chinese = re.search(
+            r"(?:止|為|为|共)\s*([一二三四五六七八九十兩两0-9]+)\s*[個个]?\s*月",
+            line,
+        )
         if chinese:
             values = {
                 "一": 1,
@@ -1106,6 +1196,8 @@ class FinancialEvidenceExtractor:
                 "十": 10,
                 "十一": 11,
                 "十二": 12,
+                "兩": 2,
+                "两": 2,
             }
             return values.get(chinese.group(1), int(chinese.group(1)) if chinese.group(1).isdigit() else None)
         english = re.search(r"(3|6|9|12|three|six|nine|twelve)\s+months?", line, re.I)
@@ -1578,6 +1670,10 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             "largest": None,
             "top_five": None,
         }
+        selected_label_starts: dict[str, int | None] = {
+            "largest": None,
+            "top_five": None,
+        }
         for name, occurrences in occurrence_series.items():
             selected_index: int | None = None
             selected_basis: str | None = None
@@ -1602,7 +1698,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 selected_basis = "first_nonempty_fail_closed"
 
             if selected_index is not None:
-                _, selected_values, selected_raw, selected_count, selected_local_period = (
+                selected_start, selected_values, selected_raw, selected_count, selected_local_period = (
                     occurrences[selected_index]
                 )
                 values[name] = selected_values
@@ -1610,6 +1706,7 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 selected_enumerated_counts[name] = selected_count
                 occurrence_selection[name] = selected_basis
                 selected_local_periods[name] = selected_local_period
+                selected_label_starts[name] = selected_start
 
             occurrence_diagnostics[name] = [
                 {
@@ -1627,6 +1724,79 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 ) in enumerate(occurrences)
             ]
 
+        # If one label selected a short period-count occurrence but its nearby
+        # companion label exposes a unique, equally-sized aggregate series,
+        # prefer that structurally paired occurrence.  This repairs repeated
+        # detail labels without truncating values or guessing a period.  Ties
+        # remain fail-closed.
+        for name, companion in (("largest", "top_five"), ("top_five", "largest")):
+            companion_count = len(values[companion])
+            companion_start = selected_label_starts[companion]
+            if (
+                companion_count < 2
+                or len(values[name]) == companion_count
+                or companion_start is None
+            ):
+                continue
+            aligned = [
+                (index, occurrence)
+                for index, occurrence in enumerate(occurrence_series[name])
+                if len(occurrence[1]) == companion_count
+                and occurrence[3] in {None, companion_count}
+                and abs(occurrence[0] - companion_start) <= 1200
+            ]
+            if len(aligned) != 1:
+                continue
+            selected_index, occurrence = aligned[0]
+            selected_start, selected_values, selected_raw, selected_count, selected_local_period = occurrence
+            values[name] = selected_values
+            raw_percentages[name] = selected_raw
+            selected_enumerated_counts[name] = selected_count
+            occurrence_selection[name] = "companion_series_count_match"
+            selected_local_periods[name] = selected_local_period
+            selected_label_starts[name] = selected_start
+            for index, diagnostic in enumerate(occurrence_diagnostics[name]):
+                diagnostic["selected"] = index == selected_index
+
+        # When both labels explicitly enumerate the same period count and one
+        # series contains exactly one trailing percentage beyond that count,
+        # the shared enumerated prefix is the only structurally comparable
+        # series.  Do not apply this repair without matching explicit counts.
+        enumerated_values = {
+            count for count in selected_enumerated_counts.values() if count is not None
+        }
+        localized_prefix_truncated = False
+        if len(enumerated_values) == 1:
+            enumerated_count = next(iter(enumerated_values))
+            if (
+                enumerated_count >= 2
+                and all(
+                    selected_enumerated_counts[name] == enumerated_count
+                    for name in ("largest", "top_five")
+                )
+            ):
+                lengths = {name: len(values[name]) for name in ("largest", "top_five")}
+                longer = [
+                    name
+                    for name, length in lengths.items()
+                    if length == enumerated_count + 1
+                ]
+                aligned = [
+                    name
+                    for name, length in lengths.items()
+                    if length == enumerated_count
+                ]
+                if len(longer) == 1 and len(aligned) == 1:
+                    name = longer[0]
+                    values[name] = values[name][:enumerated_count]
+                    raw_percentages[name] = raw_percentages[name][:enumerated_count]
+                    occurrence_selection[name] = "companion_enumerated_prefix"
+                    label_start = selected_label_starts[name]
+                    if label_start is not None:
+                        _, localized_prefix_truncated = self._enumerated_period_details(
+                            target.text, label_start
+                        )
+
         # A concentration sentence can enumerate several bare years and one
         # final full date while the adjacent page contains a newer, unrelated
         # date.  When both percentage series independently align to that same
@@ -1637,6 +1807,37 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             for period in selected_local_periods.values()
             if period is not None
         }
+        selected_counts = {
+            count for count in selected_enumerated_counts.values() if count is not None
+        }
+        selected_starts = [
+            start for start in selected_label_starts.values() if start is not None
+        ]
+        shared_value_count = len(values["largest"])
+        missing_count_companion_unique_pair = (
+            not selected_counts
+            and (
+                len(occurrence_series["largest"]) == 1
+                or len(occurrence_series["top_five"]) == 1
+            )
+        )
+        companion_series_period_aligned = (
+            shared_value_count >= 2
+            and shared_value_count == len(values["top_five"])
+            # Some licensed PDFs preserve the two parallel percentage series
+            # and their shared label-local final period, but corrupt the bare
+            # comparative years used by ``_enumerated_period_count``.  Equal
+            # multi-value companion series remain structurally aligned when
+            # neither label exposes a contradictory enumerated count.  A
+            # present mismatched count still fails closed.
+            and (
+                selected_counts == {shared_value_count}
+                or missing_count_companion_unique_pair
+            )
+            and len(local_period_values) == 1
+            and len(selected_starts) == 2
+            and max(selected_starts) - min(selected_starts) <= 1200
+        )
         label_local_period_aligned = (
             len(local_period_values) == 1
             and all(period is not None for period in selected_local_periods.values())
@@ -1646,7 +1847,13 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
             == len(values["largest"])
             == len(values["top_five"])
         )
-        if label_local_period_aligned:
+        if companion_series_period_aligned and not label_local_period_aligned:
+            for name, count in selected_enumerated_counts.items():
+                if count is None:
+                    selected_enumerated_counts[name] = shared_value_count
+                    if occurrence_selection[name] != "companion_series_count_match":
+                        occurrence_selection[name] = "companion_series_period_count"
+        if label_local_period_aligned or companion_series_period_aligned:
             periods = [next(iter(local_period_values))]
             period_source = target
             period_issues = []
@@ -1667,6 +1874,8 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         )
         issues.extend(largest_issue)
         issues.extend(top_five_issue)
+        if localized_prefix_truncated:
+            issues.append("localized_series_trailing_percentage_ambiguous")
         if largest is None or top_five is None:
             issues.append("incomplete_concentration_values")
         if any(value < 0 or value > 100 for value in [largest, top_five] if value is not None):
@@ -1717,7 +1926,11 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 "concentration_period_selection": (
                     "aligned_label_local_period"
                     if label_local_period_aligned
-                    else "best_available_period_context"
+                    else (
+                        "companion_series_label_local_period"
+                        if companion_series_period_aligned
+                        else "best_available_period_context"
+                    )
                 ),
                 # Records that a receivable/payable share was read and discarded,
                 # so a dropped segment is auditable rather than silently absent.
@@ -1752,20 +1965,42 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
         mismatch against a single period. Returns ``None`` when no sentence above
         the label names a series, which leaves the caller's behaviour unchanged.
         """
+        return cls._enumerated_period_details(text, label_start)[0]
+
+    @classmethod
+    def _enumerated_period_details(
+        cls, text: str, label_start: int
+    ) -> tuple[int | None, bool]:
+        """Return period count and whether Chinese-word years govern it."""
+
         sentences = [item for item in re.split(r"[。;；]", text[:label_start]) if item.strip()]
         for sentence in reversed(sentences):
-            years = {match.group(1) for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)}
+            years = {
+                int(match.group(1))
+                for match in _NARRATIVE_BARE_YEAR_RE.finditer(sentence)
+            }
+            localized_years = {
+                year
+                for match in _NARRATIVE_BARE_CHINESE_YEAR_RE.finditer(sentence)
+                if (year := cls._year_value(match.group(1))) is not None
+            }
+            years.update(localized_years)
             dates = {match.group(0) for match in _CHINESE_DATE_RE.finditer(sentence)}
+            dates |= {
+                match.group(0) for match in _CHINESE_WORD_DATE_RE.finditer(sentence)
+            }
             dates |= {match.group(0) for match in _ISO_DATE_RE.finditer(sentence)}
             # A full date carries its own year, which the bare-year pattern is
             # written to skip, so the two counts never double-count a period.
             total = len(years) + len(dates)
             if total >= 2:
-                return None if _PERIOD_SPAN_PHRASE.search(sentence) else total
+                if _PERIOD_SPAN_PHRASE.search(sentence):
+                    return None, False
+                return total, bool(localized_years)
             if total == 1:
                 # A lone year is a mention ("於2011年上市"), not a series.
-                return None
-        return None
+                return None, False
+        return None, False
 
     @classmethod
     def _label_local_period(cls, text: str, label_start: int) -> _Period | None:
@@ -1907,6 +2142,20 @@ class V03FinancialFactExtractor(FinancialEvidenceExtractor):
                 clause_end = text.find("。", match.end())
                 clause = text[clause_start : clause_end if clause_end >= 0 else len(text)]
                 located.append((match.start(), _Period(end, cls._period_months(clause))))
+        for match in _CHINESE_WORD_DATE_RE.finditer(text):
+            year = cls._year_value(match.group(1))
+            month = cls._chinese_integer(match.group(2))
+            day = cls._chinese_integer(match.group(3))
+            if year is None or month is None or day is None:
+                continue
+            try:
+                end = date(year, month, day)
+            except ValueError:
+                continue
+            clause_start = max(0, text.rfind("。", 0, match.start()) + 1)
+            clause_end = text.find("。", match.end())
+            clause = text[clause_start : clause_end if clause_end >= 0 else len(text)]
+            located.append((match.start(), _Period(end, cls._period_months(clause))))
         located.sort(key=lambda item: item[0])
         return cls._dedupe_periods([period for _, period in located])
 
@@ -2038,6 +2287,180 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         (re.compile(rf"(?<!百)(?:萬|万)\s*{_CURRENCY_WORD}"), "ten_thousand"),
         (re.compile(rf"(?:千|仟)\s*{_CURRENCY_WORD}"), "thousand"),
     )
+
+    _NARRATIVE_POSITIVE_OCF_RE = re.compile(
+        r"截至(?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日止"
+        r"(?P<months>[一二三四五六七八九十兩两\d]+)[個个]月"
+        r"[^。]{0,48}?經營活動(?:所得|產生|经营活动所得|产生)(?:正)?"
+        r"現金流量(?:淨額)?"
+        r"(?P<currency>人民幣|人民币|港元|港幣|港币|美元)"
+        r"(?P<amount>\d+(?:\.\d+)?)"
+        r"(?P<unit>百萬元|百万元|萬元|万元|千元|元)"
+    )
+    _NARRATIVE_DATED_CASH_RE = re.compile(
+        r"截至(?P<year>20\d{2})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日"
+        r"(?:的|為|为)?"
+        r"(?P<currency>人民幣|人民币|港元|港幣|港币|美元)"
+        r"(?P<amount>\d+(?:\.\d+)?)"
+        r"(?P<unit>百萬元|百万元|萬元|万元|千元|元)"
+    )
+
+    def extract(
+        self,
+        cash_evidence_candidates: Sequence[Evidence],
+        operating_cash_flow_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> FinancialExtractionResult:
+        result = super().extract(
+            cash_evidence_candidates,
+            operating_cash_flow_candidates,
+            chunks_by_id,
+        )
+        narrative_pair = self._latest_positive_narrative_cash_pair(
+            [*cash_evidence_candidates[:20], *operating_cash_flow_candidates[:20]],
+            chunks_by_id,
+        )
+        if narrative_pair is None:
+            return result
+        current_period = result.operating_cash_flow.period_end
+        if current_period is not None and narrative_pair[1].period_end <= current_period:
+            return result
+        return FinancialExtractionResult(
+            cash_and_cash_equivalents=narrative_pair[0],
+            operating_cash_flow=narrative_pair[1],
+        )
+
+    @classmethod
+    def _latest_positive_narrative_cash_pair(
+        cls,
+        evidence_candidates: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> tuple[FinancialMetricValue, FinancialMetricValue] | None:
+        """Read a newer explicit positive-OCF/cash pair from one narrative page.
+
+        The pair is accepted only when both values name the same full date and
+        carry identical explicit currency/unit tokens.  This is deliberately
+        narrower than general prose extraction: it can suppress an obsolete
+        cash-burn period, but cannot manufacture a runway from partial prose.
+        """
+
+        currency_map = {
+            "人民幣": "CNY",
+            "人民币": "CNY",
+            "港元": "HKD",
+            "港幣": "HKD",
+            "港币": "HKD",
+            "美元": "USD",
+        }
+        unit_map = {
+            "百萬元": "million",
+            "百万元": "million",
+            "萬元": "ten_thousand",
+            "万元": "ten_thousand",
+            "千元": "thousand",
+            "元": "unit",
+        }
+        pairs: list[tuple[date, FinancialMetricValue, FinancialMetricValue]] = []
+        seen: set[str] = set()
+        for evidence in evidence_candidates:
+            if evidence.evidence_id in seen:
+                continue
+            seen.add(evidence.evidence_id)
+            chunk = chunks_by_id.get(evidence.chunk_id or "")
+            if chunk is None or any(
+                getattr(evidence, field) != getattr(chunk, field)
+                for field in ("chunk_id", "document_id", "page")
+            ):
+                continue
+            compact = re.sub(r"\s+", "", chunk.text)
+            ocf_matches = list(cls._NARRATIVE_POSITIVE_OCF_RE.finditer(compact))
+            if not ocf_matches:
+                continue
+            cash_sentences = [
+                sentence
+                for sentence in re.split(r"[。；;]", compact)
+                if re.search(r"現金及現金等價物|现金及现金等价物", sentence)
+            ]
+            cash_matches = [
+                match
+                for sentence in cash_sentences
+                for match in cls._NARRATIVE_DATED_CASH_RE.finditer(sentence)
+            ]
+            for ocf_match in ocf_matches:
+                try:
+                    period_end = date(
+                        int(ocf_match.group("year")),
+                        int(ocf_match.group("month")),
+                        int(ocf_match.group("day")),
+                    )
+                except ValueError:
+                    continue
+                months = cls._chinese_integer(ocf_match.group("months"))
+                if months not in range(1, 13):
+                    continue
+                matching_cash = [
+                    match
+                    for match in cash_matches
+                    if (
+                        int(match.group("year")),
+                        int(match.group("month")),
+                        int(match.group("day")),
+                        match.group("currency"),
+                        match.group("unit"),
+                    )
+                    == (
+                        period_end.year,
+                        period_end.month,
+                        period_end.day,
+                        ocf_match.group("currency"),
+                        ocf_match.group("unit"),
+                    )
+                ]
+                if len(matching_cash) != 1:
+                    continue
+                cash_match = matching_cash[0]
+                cash_value = cls._normalize_amount(cash_match.group("amount"))
+                ocf_value = cls._normalize_amount(ocf_match.group("amount"))
+                if cash_value is None or cash_value < 0 or ocf_value is None:
+                    continue
+                common = {
+                    "evidence_id": evidence.evidence_id,
+                    "document_id": chunk.document_id,
+                    "chunk_id": chunk.chunk_id,
+                    "page": chunk.page,
+                    "status": ExtractionStatus.EXTRACTED,
+                    "issues": [],
+                    "currency": currency_map[ocf_match.group("currency")],
+                    "unit": unit_map[ocf_match.group("unit")],
+                    "period_end": period_end,
+                    "context_chunk_ids": [chunk.chunk_id],
+                    "context_pages": [chunk.page],
+                    "extraction_method": "bounded_positive_cash_narrative_pair",
+                    "metadata": {
+                        "pair_selection": "latest_explicit_positive_narrative_period",
+                        "query_intent": evidence.metadata.get("query_intent"),
+                    },
+                }
+                cash = FinancialMetricValue(
+                    metric_name="cash_and_cash_equivalents",
+                    raw_label="現金及現金等價物",
+                    raw_value=cash_match.group("amount"),
+                    normalized_value=cash_value,
+                    **common,
+                )
+                ocf = FinancialMetricValue(
+                    metric_name="operating_cash_flow",
+                    raw_label="經營活動所得正現金流量",
+                    raw_value=ocf_match.group("amount"),
+                    normalized_value=abs(ocf_value),
+                    period_months=months,
+                    **common,
+                )
+                pairs.append((period_end, cash, ocf))
+        if not pairs:
+            return None
+        _, cash, ocf = max(pairs, key=lambda item: item[0])
+        return cash, ocf
 
     @classmethod
     def _currency_unit_candidates(cls, text: str) -> tuple[set[str], set[str]]:
@@ -2272,7 +2695,7 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
         if selected_value is None:
             issues.append("latest_complete_value_not_determinable")
         if metric_name == "operating_cash_flow" and (
-            selected_period is None or selected_period.months not in {3, 6, 9, 12}
+            selected_period is None or selected_period.months not in range(1, 13)
         ):
             issues.append("operating_cash_flow_period_months_missing")
 

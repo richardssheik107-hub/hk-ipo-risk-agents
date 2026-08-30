@@ -175,6 +175,33 @@ def test_interim_column_without_a_repeated_year_falls_back_to_geometry() -> None
     ]
 
 
+def test_wrapped_chinese_period_caption_is_rejoined_before_column_assignment() -> None:
+    """A split interim caption must not make its columns inherit annual basis."""
+    words = [
+        _word(290, 10, "截至12月31日止年度", width=105),
+        _word(450, 10, "截至8", width=30),
+        _word(481, 10, "月31日止八個月", width=75),
+        _word(290, 32, "2020年"),
+        _word(360, 32, "2021年"),
+        _word(430, 32, "2021年"),
+        _word(500, 32, "2022年"),
+        _word(40, 55, "經營活動所用現金流量淨額", width=150),
+        _word(292, 55, "(34,199)"),
+        _word(362, 55, "(62,491)"),
+        _word(432, 55, "(33,880)"),
+        _word(502, 55, "(59,969)"),
+    ]
+
+    table = reconstruct_page_tables(words)[0]
+
+    assert [column["group_line"] for column in table["period_columns"]] == [
+        "截至12月31日止年度",
+        "截至12月31日止年度",
+        "截至8月31日止八個月",
+        "截至8月31日止八個月",
+    ]
+
+
 def test_period_group_grammar_matches_the_extractor() -> None:
     """The parser's caption grammar must not drift from the extractor's."""
     from ipo_risk.extraction.financial import V03FinancialFactExtractor

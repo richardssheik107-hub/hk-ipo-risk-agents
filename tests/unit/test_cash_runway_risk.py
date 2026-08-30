@@ -141,6 +141,53 @@ def test_one_page_can_support_both_cash_and_operating_cash_flow() -> None:
     assert result.calculation.evidence_ids == ["combined-e"]
 
 
+def test_equivalent_financial_sources_are_retained_as_supporting_evidence() -> None:
+    extraction, evidence = inputs()
+    cash_support = evidence["cash-e"].model_copy(
+        update={
+            "evidence_id": "cash-support",
+            "chunk_id": "doc:page:171",
+            "page": 171,
+            "text": "same cash fact in a second prospectus section",
+        }
+    )
+    flow_support = evidence["ocf-e"].model_copy(
+        update={
+            "evidence_id": "ocf-support",
+            "chunk_id": "doc:page:172",
+            "page": 172,
+            "text": "same cash-flow fact in a second prospectus section",
+        }
+    )
+    cash = extraction.cash_and_cash_equivalents.model_copy(
+        update={"metadata": {"equivalent_evidence_ids": ["cash-e", "cash-support"]}}
+    )
+    cash_flow = extraction.operating_cash_flow.model_copy(
+        update={"metadata": {"equivalent_evidence_ids": ["ocf-e", "ocf-support"]}}
+    )
+
+    result = CashRunwayRiskBuilder().build(
+        extraction.model_copy(
+            update={
+                "cash_and_cash_equivalents": cash,
+                "operating_cash_flow": cash_flow,
+            }
+        ),
+        {**evidence, "cash-support": cash_support, "ocf-support": flow_support},
+    )
+
+    assert result.status == CashRunwayBuildStatus.BUILT
+    assert result.risk_item is not None
+    assert [item.evidence_id for item in result.risk_item.evidence] == [
+        "cash-e",
+        "ocf-e",
+        "cash-support",
+        "ocf-support",
+    ]
+    assert result.calculation is not None
+    assert result.calculation.evidence_ids == ["cash-e", "ocf-e"]
+
+
 @pytest.mark.parametrize("field", ["cash_and_cash_equivalents", "operating_cash_flow"])
 @pytest.mark.parametrize("status", [ExtractionStatus.NEEDS_REVIEW, ExtractionStatus.NOT_FOUND])
 def test_non_extracted_metric_never_builds(field: str, status: ExtractionStatus) -> None:
@@ -160,7 +207,7 @@ def test_non_extracted_metric_never_builds(field: str, status: ExtractionStatus)
         ("unit", "million", "unit_mismatch"),
         ("period_end", date(2024, 6, 30), "period_end_mismatch"),
         ("period_months", None, "operating_cash_flow_period_months_invalid"),
-        ("period_months", 2, "operating_cash_flow_period_months_invalid"),
+        ("period_months", 13, "operating_cash_flow_period_months_invalid"),
     ],
 )
 def test_incompatible_financial_facts_never_build(
@@ -174,6 +221,16 @@ def test_incompatible_financial_facts_never_build(
     assert result.status == CashRunwayBuildStatus.NEEDS_REVIEW
     assert issue in result.issues
     assert result.calculation is None
+
+
+def test_four_month_interim_cash_flow_builds_without_rescaling() -> None:
+    extraction, evidence = inputs(cash="3864", cash_flow="-31645", period_months=4)
+
+    result = CashRunwayRiskBuilder().build(extraction, evidence)
+
+    assert result.status == CashRunwayBuildStatus.BUILT
+    assert result.calculation is not None
+    assert result.calculation.result == str(Decimal("3864") * Decimal("4") / Decimal("31645"))
 
 
 def test_extraction_issues_prevent_calculation() -> None:
@@ -228,7 +285,6 @@ def test_negative_cash_needs_review() -> None:
     [
         ("-100", RiskLevel.HIGH, 80),
         ("-50", RiskLevel.MEDIUM, 60),
-        ("-25", RiskLevel.LOW, 20),
     ],
 )
 def test_policy_boundaries_are_explicit(
@@ -239,6 +295,18 @@ def test_policy_boundaries_are_explicit(
     assert result.risk_item is not None
     assert result.risk_item.level == level
     assert result.risk_item.score == score
+
+
+def test_twelve_month_or_longer_runway_is_not_a_risk_item() -> None:
+    extraction, evidence = inputs(cash="100", cash_flow="-25", period_months=3)
+
+    result = CashRunwayRiskBuilder().build(extraction, evidence)
+
+    assert result.status == CashRunwayBuildStatus.NOT_APPLICABLE
+    assert result.risk_item is None
+    assert result.calculation is None
+    assert result.metadata["runway_months_exact"] == "12"
+    assert result.metadata["threshold_months"] == "12"
 
 
 def test_builder_consumes_skill_output_instead_of_reimplementing_formula(monkeypatch) -> None:

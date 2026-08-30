@@ -540,3 +540,49 @@ def test_chat_compatible_schema_correction_is_not_counted_as_transport_retry(
     assert record.attempt_count == 2
     assert record.transport_retry_count == 0
     assert record.structured_correction_count == 1
+
+
+def test_responses_bounded_normalization_is_recorded_as_structured_correction(
+    tmp_path: Path,
+) -> None:
+    delegate = _Delegate(_Result(finding="supported", evidence_ids=["ev-1"]))
+    original = delegate.generate_structured
+
+    def normalized(**kwargs):
+        result = original(**kwargs)
+        delegate.last_attempt_trace = [
+            {
+                "stage": "transport",
+                "structured_attempt": 1,
+                "attempt": 1,
+                "outcome": "success",
+            },
+            {
+                "stage": "bounded_normalization",
+                "structured_attempt": 1,
+                "outcome": "success",
+                "fields": ["amount"],
+            },
+            {
+                "stage": "structured_validation",
+                "structured_attempt": 1,
+                "outcome": "success",
+            },
+        ]
+        return result
+
+    delegate.generate_structured = normalized
+    wrapper = _wrapper(tmp_path, delegate)
+    wrapper.generate_structured(
+        task_name="shareholder_rights_extract",
+        prompt_version="legal_shareholder_rights_v1",
+        evidence=[_evidence()],
+        response_model=_Result,
+    )
+    identity = wrapper.last_journal_identity
+    assert identity is not None
+    record = wrapper.journal.read(identity)
+    assert record is not None
+    assert record.attempt_count == 1
+    assert record.transport_retry_count == 0
+    assert record.structured_correction_count == 1

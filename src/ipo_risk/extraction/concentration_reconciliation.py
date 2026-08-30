@@ -31,7 +31,10 @@ from ipo_risk.extraction.models import ConcentrationFact, ExtractionStatus
 from ipo_risk.schemas import DocumentChunk, Evidence
 
 
-_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v1"
+_RECONCILIATION_VERSION = "v045_concentration_period_value_reconciliation_v2"
+_STRUCTURALLY_INVALID_PERCENTAGE_ISSUES = frozenset(
+    {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
+)
 
 
 class _ConcentrationReconciliationMixin:
@@ -128,19 +131,37 @@ class _ConcentrationReconciliationMixin:
             "top_five": top_five_count,
         }
 
-        can_reconcile_count = (
-            "value_period_count_mismatch" in issues
+        occurrence_selection = metadata.get("percentage_occurrence_selection", {})
+        companion_occurrence_aligned = (
+            isinstance(occurrence_selection, Mapping)
+            and "companion_series_count_match" in occurrence_selection.values()
             and fact.largest_counterparty_pct is not None
             and fact.top_five_pct is not None
             and largest_count == top_five_count
             and largest_count >= 2
-            and largest_count <= len(periods)
-            and len(periods) - largest_count <= 1
+        )
+        can_reconcile_count = (
+            "value_period_count_mismatch" in issues
+            and fact.largest_counterparty_pct is not None
+            and fact.top_five_pct is not None
+            and (
+                (
+                    largest_count == top_five_count
+                    and largest_count >= 2
+                    and largest_count <= len(periods)
+                    and len(periods) - largest_count <= 1
+                )
+                or companion_occurrence_aligned
+            )
         )
         if can_reconcile_count:
             issues = [item for item in issues if item != "value_period_count_mismatch"]
             metadata["value_period_count_reconciled"] = True
-            metadata["value_period_alignment"] = "dual_series_to_latest_period_suffix"
+            metadata["value_period_alignment"] = (
+                "companion_occurrence_to_latest_period"
+                if companion_occurrence_aligned
+                else "dual_series_to_latest_period_suffix"
+            )
         else:
             metadata["value_period_count_reconciled"] = False
 
@@ -185,12 +206,30 @@ class _ConcentrationReconciliationMixin:
             item
             for item in facts
             if item.period_end is not None
+            and not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(item.issues)
             and (
                 item.largest_counterparty_pct is not None
                 or item.top_five_pct is not None
             )
         ]
-        dated = usable or [item for item in facts if item.period_end is not None]
+        # A later fragment with an unresolved duration or an incomplete value
+        # pair must not displace an older, fully governed observation.  The
+        # latter is the latest fact that can actually support a deterministic
+        # concentration decision.  This remains fail-closed: when no clean,
+        # complete candidate exists, the previous latest-usable selection and
+        # conflict handling are retained unchanged.
+        governed_usable = [
+            item
+            for item in usable
+            if item.status == ExtractionStatus.EXTRACTED
+            and not item.issues
+            and item.period_months is not None
+            and item.largest_counterparty_pct is not None
+            and item.top_five_pct is not None
+        ]
+        dated = governed_usable or usable or [
+            item for item in facts if item.period_end is not None
+        ]
         selected_date = max((item.period_end for item in dated), default=None)
         selected = (
             [item for item in facts if item.period_end == selected_date]
@@ -206,12 +245,21 @@ class _ConcentrationReconciliationMixin:
             and item.largest_counterparty_pct is not None
             and item.top_five_pct is not None
         ]
+        selected_value_candidates = [
+            item
+            for item in selected
+            if not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(item.issues)
+            and (
+                item.largest_counterparty_pct is not None
+                or item.top_five_pct is not None
+            )
+        ]
         # A clean, complete candidate governs partial same-date disclosures.
         # Partial summaries remain auditable Evidence, but a single quoted
         # percentage must not veto a complete primary reading.  Multiple clean
         # complete candidates still vote together and therefore fail closed if
         # their values genuinely disagree.
-        value_candidates = governing or selected
+        value_candidates = governing or selected_value_candidates or selected
         period_month_values = {
             item.period_months
             for item in value_candidates
@@ -221,7 +269,7 @@ class _ConcentrationReconciliationMixin:
         if len(period_month_values) > 1:
             issues.append("period_months_conflict")
         if not governing:
-            issues.extend(issue for item in selected for issue in item.issues)
+            issues.extend(issue for item in value_candidates for issue in item.issues)
 
         largest_values = {
             item.largest_counterparty_pct
@@ -254,8 +302,23 @@ class _ConcentrationReconciliationMixin:
             issues.append("largest_percentage_exceeds_top_five")
 
         issues = self._dedupe_strings(issues)
+        equivalent_supporting = (
+            [
+                item
+                for item in facts
+                if item not in selected
+                and item.largest_counterparty_pct == largest
+                and item.top_five_pct == top_five
+                and not _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(
+                    item.issues
+                )
+            ]
+            if largest is not None and top_five is not None
+            else []
+        )
+        evidence_facts = [*selected, *equivalent_supporting]
         evidence_ids = self._dedupe_strings(
-            [evidence_id for item in selected for evidence_id in item.evidence_ids]
+            [evidence_id for item in evidence_facts for evidence_id in item.evidence_ids]
         )
         first = value_candidates[0]
         selected_months = (
@@ -276,6 +339,7 @@ class _ConcentrationReconciliationMixin:
                         else None
                     ),
                     "top_five_pct": str(item.top_five_pct) if item.top_five_pct is not None else None,
+                    "evidence_ids": list(item.evidence_ids),
                     "status": item.status.value,
                     "issues": list(item.issues),
                     "source_context": item.metadata.get("source_context"),
@@ -308,10 +372,10 @@ class _ConcentrationReconciliationMixin:
             status=ExtractionStatus.EXTRACTED if not issues else ExtractionStatus.NEEDS_REVIEW,
             issues=issues,
             context_chunk_ids=self._dedupe_strings(
-                [chunk_id for item in selected for chunk_id in item.context_chunk_ids]
+                [chunk_id for item in evidence_facts for chunk_id in item.context_chunk_ids]
             ),
             context_pages=self._dedupe_ints(
-                [page for item in selected for page in item.context_pages]
+                [page for item in evidence_facts for page in item.context_pages]
             ),
             metadata={
                 "candidate_count": len(facts),
@@ -328,10 +392,24 @@ class _ConcentrationReconciliationMixin:
                 "candidate_pages": [item.page for item in facts],
                 "selected_candidate_pages": [item.page for item in selected],
                 "merge_selection_basis": (
-                    "latest_usable_concentration_period"
+                    "latest_governed_concentration_period"
+                    if governed_usable
+                    else "latest_usable_concentration_period"
                     if usable
                     else "latest_dated_candidate"
                 ),
+                "structurally_invalid_candidate_count": sum(
+                    bool(
+                        _STRUCTURALLY_INVALID_PERCENTAGE_ISSUES.intersection(
+                            item.issues
+                        )
+                    )
+                    for item in facts
+                ),
+                "equivalent_supporting_candidate_count": len(equivalent_supporting),
+                "equivalent_supporting_candidate_pages": [
+                    item.page for item in equivalent_supporting
+                ],
                 "reconciliation_version": _RECONCILIATION_VERSION,
                 "candidate_diagnostics": candidate_diagnostics,
             },

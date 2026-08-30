@@ -22,7 +22,7 @@ from ipo_risk.schemas import (
 )
 
 
-def valid_case() -> tuple[RiskItem, dict[str, Evidence]]:
+def valid_case(period_months: int = 3) -> tuple[RiskItem, dict[str, Evidence]]:
     cash_evidence = Evidence(
         evidence_id="cash-e",
         document_id="doc",
@@ -57,7 +57,7 @@ def valid_case() -> tuple[RiskItem, dict[str, Evidence]]:
             currency="CNY",
             unit="thousand",
             period_end=date(2024, 3, 31),
-            period_months=3,
+            period_months=period_months,
             evidence_id="ocf-e",
             document_id="doc",
             chunk_id="ocf-chunk",
@@ -104,6 +104,15 @@ def test_valid_cash_runway_is_independently_verified() -> None:
     assert "not a probability" in result.verified_risk.verification_notes
     assert result.issues == []
     assert all(result.checks.values())
+
+
+def test_four_month_interim_cash_runway_is_independently_verified() -> None:
+    risk, evidence = valid_case(period_months=4)
+
+    result = CashRunwayRiskVerifier().verify(risk, evidence)
+
+    assert result.status == CashRunwayVerificationStatus.VERIFIED
+    assert result.verified_risk is not None
 
 
 def test_one_evidence_item_can_support_both_cash_metrics() -> None:
@@ -310,6 +319,28 @@ def test_three_evidence_items_need_review() -> None:
     result = CashRunwayRiskVerifier().verify(changed, evidence)
     assert result.status == CashRunwayVerificationStatus.NEEDS_REVIEW
     assert "risk_evidence_count_invalid" in result.issues
+
+
+def test_marked_equivalent_supporting_evidence_is_independently_verified() -> None:
+    risk, evidence = valid_case()
+    support = risk.evidence[0].model_copy(
+        update={
+            "evidence_id": "cash-support",
+            "chunk_id": "cash-support-chunk",
+            "page": 110,
+            "metadata": {
+                "equivalent_financial_fact_support": True,
+                "supports_evidence_id": "cash-e",
+            },
+        }
+    )
+    evidence[support.evidence_id] = support
+    changed = risk.model_copy(update={"evidence": [*risk.evidence, support]})
+
+    result = CashRunwayRiskVerifier().verify(changed, evidence)
+
+    assert result.status == CashRunwayVerificationStatus.VERIFIED
+    assert result.issues == []
 
 
 def test_calculation_with_extra_evidence_id_needs_review() -> None:

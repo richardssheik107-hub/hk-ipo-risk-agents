@@ -119,6 +119,22 @@ class CashRunwayRiskBuilder:
                 issues=["cash_runway_skill_output_invalid"],
             )
 
+        # The frozen risk boundary treats 12 months as sufficient runway.
+        # Preserve the deterministic calculation in diagnostics, but do not
+        # manufacture a LOW RiskItem for a condition outside the risk scope.
+        if exact_runway >= Decimal("12"):
+            return CashRunwayBuildResult(
+                status=CashRunwayBuildStatus.NOT_APPLICABLE,
+                issues=["cash_runway_not_below_risk_threshold"],
+                metadata={
+                    "runway_months_exact": str(exact_runway),
+                    "runway_months_rounded": str(rounded_runway),
+                    "monthly_burn": str(monthly_burn),
+                    "threshold_months": "12",
+                    "evidence_ids": evidence_ids,
+                },
+            )
+
         calculation = Calculation(
             skill_name="cash_runway",
             skill_version="1.1",
@@ -220,7 +236,7 @@ class CashRunwayRiskBuilder:
             issues.append("cash_value_negative")
         if cash_flow.normalized_value is None:
             issues.append("operating_cash_flow_value_missing")
-        if cash_flow.period_months not in {3, 6, 9, 12}:
+        if cash_flow.period_months not in range(1, 13):
             issues.append("operating_cash_flow_period_months_invalid")
         if cash.period_months is not None:
             issues.append("cash_period_months_should_be_none")
@@ -253,6 +269,7 @@ class CashRunwayRiskBuilder:
         evidence_by_id: Mapping[str, Evidence],
     ) -> tuple[list[Evidence], list[str]]:
         resolved: list[Evidence] = []
+        supporting_evidence: list[Evidence] = []
         issues: list[str] = []
         for label, metric in (("cash", cash), ("operating_cash_flow", cash_flow)):
             if not metric.evidence_id:
@@ -274,7 +291,39 @@ class CashRunwayRiskBuilder:
                 continue
             if all(item.evidence_id != evidence.evidence_id for item in resolved):
                 resolved.append(evidence)
-        if len(resolved) == 2 and resolved[0].document_id != resolved[1].document_id:
+
+            equivalents = metric.metadata.get("equivalent_evidence_ids")
+            if not isinstance(equivalents, list):
+                continue
+            for evidence_id in equivalents:
+                if not isinstance(evidence_id, str) or not evidence_id:
+                    continue
+                support = evidence_by_id.get(evidence_id)
+                if (
+                    support is None
+                    or support.source_type != EvidenceSourceType.PROSPECTUS
+                    or support.document_id != metric.document_id
+                ):
+                    continue
+                if all(
+                    item.evidence_id != support.evidence_id
+                    for item in [*resolved, *supporting_evidence]
+                ):
+                    supporting_evidence.append(
+                        support.model_copy(
+                            update={
+                                "metadata": {
+                                    **support.metadata,
+                                    "equivalent_financial_fact_support": True,
+                                    "supports_evidence_id": metric.evidence_id,
+                                }
+                            }
+                        )
+                    )
+        resolved.extend(supporting_evidence)
+        if resolved and any(
+            item.document_id != resolved[0].document_id for item in resolved[1:]
+        ):
             issues.append("evidence_document_mismatch")
         return resolved, issues
 

@@ -93,7 +93,11 @@ class V03BusinessAgent:
         extraction, llm_issue, llm_metadata = self._enhance_with_llm(
             extraction, evidence
         )
-        if llm_issue in {"evidence_out_of_scope", "candidate_conflict"}:
+        if llm_issue in {
+            "provider_failure",
+            "evidence_out_of_scope",
+            "candidate_conflict",
+        }:
             # The LLM is an augmentation layer, not an authority allowed to
             # erase facts established by the deterministic extractor.  The
             # enhancer has already returned the unmodified deterministic
@@ -152,24 +156,37 @@ class V03BusinessAgent:
             "llm_provider": getattr(self.llm_provider, "name", "unknown"),
             "prompt_version": PROMPT_VERSION,
         }
-        try:
-            llm_commercial = self.llm_provider.generate_structured(
-                task_name="business_precommercial_commercialization_extract",
-                prompt_version=PROMPT_VERSION,
-                evidence=evidence,
-                response_model=CommercializationCandidate,
-            )
-            llm_core = self.llm_provider.generate_structured(
-                task_name="business_precommercial_core_product_extract",
-                prompt_version=PROMPT_VERSION,
-                evidence=evidence,
-                response_model=CoreProductCandidate,
-            )
-        except LLMProviderError as exc:
-            metadata["llm_failure_kind"] = exc.kind.value
-            return deterministic, "provider_failure", metadata
-        except Exception:
-            metadata["llm_failure_kind"] = "safe_provider_failure"
+        task_failures: dict[str, str] = {}
+
+        def call_task(task_name: str, response_model: Any) -> Any | None:
+            try:
+                return self.llm_provider.generate_structured(
+                    task_name=task_name,
+                    prompt_version=PROMPT_VERSION,
+                    evidence=evidence,
+                    response_model=response_model,
+                )
+            except LLMProviderError as exc:
+                task_failures[task_name] = exc.kind.value
+            except Exception:
+                task_failures[task_name] = "safe_provider_failure"
+            return None
+
+        # These are independent structured facts.  A malformed response for
+        # one task must not suppress the sibling provider call and erase its
+        # reliability signal.  Partial output is still fail-closed below: both
+        # candidates are required before LLM augmentation can affect runtime.
+        llm_commercial = call_task(
+            "business_precommercial_commercialization_extract",
+            CommercializationCandidate,
+        )
+        llm_core = call_task(
+            "business_precommercial_core_product_extract",
+            CoreProductCandidate,
+        )
+        if task_failures:
+            metadata["llm_task_failures"] = dict(task_failures)
+            metadata["llm_failure_kind"] = next(iter(task_failures.values()))
             return deterministic, "provider_failure", metadata
 
         if not set(llm_commercial.evidence_ids) <= allowed_ids or not set(

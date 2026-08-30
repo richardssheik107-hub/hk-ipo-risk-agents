@@ -134,6 +134,42 @@ def test_balanced_fusion_keeps_a_bm25_only_page_in_the_top_results() -> None:
     assert recovered.metadata["bm25_rank"] == 1
 
 
+def test_balanced_fusion_keeps_ranked_table_body_on_original_page() -> None:
+    candidate = Evidence(
+        evidence_id="domain:8",
+        document_id="doc",
+        chunk_id="doc:page:8",
+        page=8,
+        section="business",
+        text="排名 供應商 採購額 佔總採購額",
+        source_type=EvidenceSourceType.PROSPECTUS,
+        relevance_score=0.5,
+        metadata={"retrieval_lane": "domain_v21"},
+    )
+    body = "截至二零二三年十二月三十一日止年度\n1\n供應商甲\n100\n40\n總計\n200\n70"
+
+    observed = RoleBFinancialHighRecallRetriever()._fuse(
+        "supplier_concentration",
+        [candidate],
+        [],
+        limit=1,
+        page_supplements={8: [body]},
+    )
+
+    assert observed[0].page == 8
+    assert observed[0].chunk_id == "doc:page:8"
+    assert body in observed[0].text
+    assert observed[0].metadata["page_supplement_count"] == 1
+
+
+def test_fragment_merge_retains_a_third_distinct_view_within_bound() -> None:
+    observed = RoleBFinancialHighRecallRetriever._merge_fragments(
+        ["domain context", "bm25 context", "ranked table body"]
+    )
+
+    assert observed == "domain context\nbm25 context\nranked table body"
+
+
 def test_legal_query_uses_high_recall_lane_without_minting_chunk_identity() -> None:
     target = "投資者所享安排在上市申請撤回後恢復"
     chunk = DocumentChunk(

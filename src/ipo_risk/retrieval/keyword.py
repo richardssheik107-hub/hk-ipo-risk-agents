@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
+from hashlib import sha256
+import inspect
 from math import isfinite
+from pathlib import Path
 import re
-from typing import Iterable
+import time
+from typing import Any, Iterable, Mapping
 from unicodedata import normalize
 from uuid import NAMESPACE_URL, uuid5
 
@@ -114,6 +119,18 @@ class _PageContext:
     audited_context: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True)
+class _PreparedChunk:
+    source: _NormalizedText
+    compact_source: _NormalizedText
+    page_context: _PageContext | None
+    normalized_section: str
+    financial_table: bool
+
+
+_RETRIEVAL_PREPROCESSING_CONTRACT = "v046_keyword_preprocessing_v1"
+
+
 def normalize_with_index_map(text: str) -> tuple[str, list[int]]:
     """Return matching text and a normalized-index to original-index map.
 
@@ -145,6 +162,12 @@ def normalize_for_match(text: str) -> str:
     return normalize_with_index_map(text)[0]
 
 
+@lru_cache(maxsize=4096)
+def _normalize_term(text: str) -> str:
+    """Cache bounded query/phrase normalization, never document bodies."""
+    return normalize_for_match(text)
+
+
 def _compact(value: _NormalizedText) -> _NormalizedText:
     return _NormalizedText(
         text="".join(char for char in value.text if not char.isspace()),
@@ -167,18 +190,33 @@ class KeywordDocumentRetriever:
 
     name = "keyword"
 
+    def __init__(
+        self,
+        *,
+        cache_root: str | Path | None = None,
+        preprocessing_fingerprint_override: str | None = None,
+    ) -> None:
+        self.cache_root = Path(cache_root) if cache_root is not None else None
+        self._preprocessing_fingerprint_override = preprocessing_fingerprint_override
+        self._memory_preprocessing: dict[str, tuple[_PreparedChunk, ...]] = {}
+        self.last_cache_metrics: dict[str, Any] = {
+            "retrieval_cache_hits": 0,
+            "retrieval_cache_misses": 0,
+            "stage_wall_clock_ms": {},
+        }
+
     def retrieve(self, chunks: list[DocumentChunk], query: str, limit: int = 3) -> list[Evidence]:
         """Return deterministically ranked evidence; no match never has a fallback."""
         if limit <= 0 or not query or not query.strip():
             return []
-        normalized_query = normalize_for_match(query)
+        normalized_query = _normalize_term(query)
         if not normalized_query:
             return []
         intent, aliases = self._resolve_intent(normalized_query)
-        page_contexts = self._build_page_contexts(chunks)
+        prepared = self._preprocess(chunks)
         evidence = [
             item
-            for chunk in chunks
+            for chunk, prepared_chunk in zip(chunks, prepared, strict=True)
             if (
                 item := self._build_evidence(
                     chunk,
@@ -186,17 +224,171 @@ class KeywordDocumentRetriever:
                     normalized_query,
                     intent,
                     aliases,
-                    page_contexts.get(chunk.chunk_id),
+                    prepared_chunk,
                 )
             )
         ]
         evidence.sort(key=lambda item: (-item.relevance_score, item.page or 0, item.chunk_id or "", item.evidence_id))
         return evidence[:limit]
 
+    def _preprocess(self, chunks: list[DocumentChunk]) -> tuple[_PreparedChunk, ...]:
+        """Normalize a corpus once; never cache query-dependent rankings."""
+        from ipo_risk.parsers.role_b_cache import (
+            CacheRunMetrics,
+            RoleBContentCache,
+            canonical_json_hash,
+        )
+
+        document_groups: dict[str, int] = {}
+        content_rows: list[dict[str, Any]] = []
+        for chunk in chunks:
+            group = document_groups.setdefault(chunk.document_id, len(document_groups))
+            content_rows.append(
+                {
+                    "document_group": group,
+                    "page": chunk.page,
+                    "section": chunk.section,
+                    "text": chunk.text,
+                }
+            )
+        input_hash = canonical_json_hash(content_rows)
+        memory_cache = getattr(self, "_memory_preprocessing", None)
+        if memory_cache is None:
+            memory_cache = {}
+            self._memory_preprocessing = memory_cache
+        if not hasattr(self, "last_cache_metrics"):
+            self.last_cache_metrics = {
+                "retrieval_cache_hits": 0,
+                "retrieval_cache_misses": 0,
+                "stage_wall_clock_ms": {},
+            }
+        cached_memory = memory_cache.get(input_hash)
+        if cached_memory is not None:
+            self.last_cache_metrics["retrieval_cache_hits"] = int(
+                self.last_cache_metrics.get("retrieval_cache_hits") or 0
+            ) + 1
+            return cached_memory
+
+        fingerprint = getattr(
+            self, "_preprocessing_fingerprint_override", None
+        ) or sha256(
+            "\n".join(
+                (
+                    _RETRIEVAL_PREPROCESSING_CONTRACT,
+                    inspect.getsource(normalize_with_index_map),
+                    inspect.getsource(_compact),
+                    inspect.getsource(KeywordDocumentRetriever._build_page_contexts),
+                    inspect.getsource(KeywordDocumentRetriever._looks_like_financial_table),
+                    repr(_FORMAL_CASH_FLOW_TITLES),
+                    repr(_AUDITED_STATEMENT_CONTEXT),
+                )
+            ).encode("utf-8")
+        ).hexdigest()
+        started = time.perf_counter()
+        metrics = CacheRunMetrics()
+
+        def build_payload() -> dict[str, Any]:
+            normalized: dict[str, str] = {}
+            sources: list[_NormalizedText] = []
+            for chunk in chunks:
+                text, index_map = normalize_with_index_map(chunk.text)
+                source = _NormalizedText(text, tuple(index_map))
+                sources.append(source)
+                normalized[chunk.chunk_id] = text
+            contexts = KeywordDocumentRetriever._build_page_contexts(
+                chunks, normalized=normalized
+            )
+            return {
+                "items": [
+                    {
+                        "normalized_text": source.text,
+                        "index_map": list(source.index_map),
+                        "compact_text": compact.text,
+                        "compact_index_map": list(compact.index_map),
+                        "normalized_section": _normalize_term(chunk.section or ""),
+                        "financial_table": KeywordDocumentRetriever._looks_like_financial_table(
+                            chunk.text, source.text
+                        ),
+                        "page_context": (
+                            {
+                                "statement_distance": context.statement_distance,
+                                "statement_titles": list(context.statement_titles),
+                                "audited_context": list(context.audited_context),
+                            }
+                            if (context := contexts.get(chunk.chunk_id)) is not None
+                            else None
+                        ),
+                    }
+                    for chunk, source in zip(chunks, sources, strict=True)
+                    for compact in (_compact(source),)
+                ]
+            }
+
+        cache_root = getattr(self, "cache_root", None)
+        if cache_root is None:
+            payload = build_payload()
+            metrics.misses["retrieval_preprocessing"] += 1
+        else:
+            payload = RoleBContentCache(cache_root).load_or_build(
+                stage="retrieval_preprocessing",
+                input_hash=input_hash,
+                fingerprint=fingerprint,
+                builder=build_payload,
+                metrics=metrics,
+            )
+        items = payload.get("items") if isinstance(payload, Mapping) else None
+        if not isinstance(items, list) or len(items) != len(chunks):
+            raise ValueError("invalid retrieval preprocessing cache payload")
+        prepared: list[_PreparedChunk] = []
+        for item in items:
+            if not isinstance(item, Mapping):
+                raise ValueError("invalid retrieval preprocessing cache item")
+            context_payload = item.get("page_context")
+            context = None
+            if isinstance(context_payload, Mapping):
+                context = _PageContext(
+                    statement_distance=context_payload.get("statement_distance"),
+                    statement_titles=tuple(context_payload.get("statement_titles") or ()),
+                    audited_context=tuple(context_payload.get("audited_context") or ()),
+                )
+            source = _NormalizedText(
+                str(item.get("normalized_text") or ""),
+                tuple(int(value) for value in (item.get("index_map") or ())),
+            )
+            compact = _NormalizedText(
+                str(item.get("compact_text") or ""),
+                tuple(int(value) for value in (item.get("compact_index_map") or ())),
+            )
+            if len(source.text) != len(source.index_map) or len(compact.text) != len(compact.index_map):
+                raise ValueError("invalid retrieval preprocessing index map")
+            prepared.append(
+                _PreparedChunk(
+                    source=source,
+                    compact_source=compact,
+                    page_context=context,
+                    normalized_section=str(item.get("normalized_section") or ""),
+                    financial_table=bool(item.get("financial_table")),
+                )
+            )
+        result = tuple(prepared)
+        memory_cache[input_hash] = result
+        self.last_cache_metrics = {
+            "retrieval_cache_hits": metrics.hits["retrieval_preprocessing"],
+            "retrieval_cache_misses": metrics.misses["retrieval_preprocessing"],
+            "retrieval_fingerprint": fingerprint,
+            "retrieval_input_hash": input_hash,
+            "stage_wall_clock_ms": {
+                "retrieval_preprocessing": round(
+                    (time.perf_counter() - started) * 1000, 3
+                )
+            },
+        }
+        return result
+
     @staticmethod
     def _resolve_intent(normalized_query: str) -> tuple[str, tuple[str, ...]]:
         compact_query = _compact(_NormalizedText(normalized_query, tuple(range(len(normalized_query))))).text
-        normalized_ending_aliases = tuple(normalize_for_match(alias) for alias in _CASH_FLOW_ENDING_ALIASES)
+        normalized_ending_aliases = tuple(_normalize_term(alias) for alias in _CASH_FLOW_ENDING_ALIASES)
         compact_ending_aliases = {
             "".join(char for char in alias if not char.isspace()) for alias in normalized_ending_aliases
         }
@@ -211,14 +403,14 @@ class KeywordDocumentRetriever:
             ("cash_and_cash_equivalents", _CASH_ALIASES),
             ("operating_cash_flow", _OPERATING_CASH_FLOW_ALIASES),
         ):
-            normalized_aliases = tuple(normalize_for_match(alias) for alias in aliases)
+            normalized_aliases = tuple(_normalize_term(alias) for alias in aliases)
             compact_aliases = {"".join(char for char in alias if not char.isspace()) for alias in normalized_aliases}
             if compact_query in compact_aliases:
                 return intent, aliases
         for family in QUERY_FAMILIES:
             family_terms = (family.name, *family.aliases)
             compact_terms = {
-                "".join(char for char in normalize_for_match(term) if not char.isspace())
+                "".join(char for char in _normalize_term(term) if not char.isspace())
                 for term in family_terms
             }
             if compact_query in compact_terms:
@@ -234,11 +426,11 @@ class KeywordDocumentRetriever:
         normalized_query: str,
         intent: str,
         aliases: tuple[str, ...],
-        page_context: _PageContext | None,
+        prepared: _PreparedChunk,
     ) -> Evidence | None:
-        normalized_text, index_map = normalize_with_index_map(chunk.text)
-        source = _NormalizedText(normalized_text, tuple(index_map))
-        compact_source = _compact(source)
+        source = prepared.source
+        compact_source = prepared.compact_source
+        page_context = prepared.page_context
         matches = self._matches(source, compact_source, normalized_query, aliases)
         if not matches:
             return None
@@ -252,7 +444,7 @@ class KeywordDocumentRetriever:
         cash_flow_companions = self._cash_flow_companions(source.text)
         statement_neighborhood = page_context is not None and page_context.statement_distance is not None
         audited_context = list(page_context.audited_context) if page_context else []
-        table_context = self._looks_like_financial_table(chunk.text)
+        table_context = prepared.financial_table
         structured_table_row = self._structured_table_row_match(chunk, normalized_query, aliases)
         query_family = QUERY_FAMILY_BY_NAME.get(intent)
         domain_context = (
@@ -268,8 +460,7 @@ class KeywordDocumentRetriever:
         # PyMuPDF currently emits ``section="unknown"``.  Include visible page
         # headings in the deterministic section signal so real parsed pages can
         # still benefit from preferred/discouraged section weighting.
-        normalized_section = normalize_for_match(chunk.section or "")
-        section_context_source = f"{normalized_section} {source.text}".strip()
+        section_context_source = f"{prepared.normalized_section} {source.text}".strip()
         preferred_section_context = (
             self._matching_context(section_context_source, query_family.preferred_sections)
             if query_family
@@ -284,7 +475,7 @@ class KeywordDocumentRetriever:
         aliases_matched = {match.keyword for match in matches if match.kind == "full_alias"}
         compact_query = "".join(character for character in normalized_query if not character.isspace())
         broad_query = compact_query in {
-            "".join(character for character in normalize_for_match(term) if not character.isspace())
+            "".join(character for character in _normalize_term(term) if not character.isspace())
             for term in _BROAD_QUERY_TERMS
         }
         if query_family is not None:
@@ -376,7 +567,7 @@ class KeywordDocumentRetriever:
 
     @staticmethod
     def _matching_context(normalized_text: str, phrases: tuple[str, ...]) -> list[str]:
-        return [phrase for phrase in phrases if normalize_for_match(phrase) in normalized_text]
+        return [phrase for phrase in phrases if _normalize_term(phrase) in normalized_text]
 
     @classmethod
     def _primary_statement_context(cls, normalized_text: str, intent: str) -> list[str]:
@@ -389,8 +580,15 @@ class KeywordDocumentRetriever:
         return cls._matching_context(normalized_text, phrases)
 
     @classmethod
-    def _build_page_contexts(cls, chunks: list[DocumentChunk]) -> dict[str, _PageContext]:
-        normalized = {chunk.chunk_id: normalize_for_match(chunk.text) for chunk in chunks}
+    def _build_page_contexts(
+        cls,
+        chunks: list[DocumentChunk],
+        *,
+        normalized: Mapping[str, str] | None = None,
+    ) -> dict[str, _PageContext]:
+        normalized = normalized or {
+            chunk.chunk_id: normalize_for_match(chunk.text) for chunk in chunks
+        }
         title_chunks: dict[str, list[tuple[DocumentChunk, tuple[str, ...], tuple[str, ...]]]] = {}
         for chunk in chunks:
             text = normalized[chunk.chunk_id]
@@ -424,10 +622,16 @@ class KeywordDocumentRetriever:
         return [name for name, phrases in groups if cls._matching_context(normalized_text, phrases)]
 
     @staticmethod
-    def _looks_like_financial_table(text: str) -> bool:
+    def _looks_like_financial_table(
+        text: str, normalized_text: str | None = None
+    ) -> bool:
         digits = len(re.findall(r"\d", text))
         year_or_date_columns = len(re.findall(r"(?:19|20)\d{2}|\d{1,2}月\d{1,2}日", text))
-        units = any(term in normalize_for_match(text) for term in ("人民币千元", "人民幣千元", "港币千元", "港幣千元", "rmb'000", "hk$'000", "usd'000"))
+        normalized_text = normalized_text or normalize_for_match(text)
+        units = any(
+            _normalize_term(term) in normalized_text
+            for term in ("人民币千元", "人民幣千元", "港币千元", "港幣千元", "rmb'000", "hk$'000", "usd'000")
+        )
         return digits >= 30 and (year_or_date_columns >= 2 or units)
 
     @staticmethod
@@ -446,7 +650,7 @@ class KeywordDocumentRetriever:
         tables = chunk.metadata.get("tables") if chunk.metadata else None
         if not isinstance(tables, list) or not tables:
             return False
-        terms = {normalized_query, *(normalize_for_match(alias) for alias in aliases)}
+        terms = {normalized_query, *(_normalize_term(alias) for alias in aliases)}
         compact_terms = {
             "".join(char for char in term if not char.isspace())
             for term in terms
@@ -460,7 +664,7 @@ class KeywordDocumentRetriever:
             for row in table.get("rows") or []:
                 label = "".join(
                     char
-                    for char in normalize_for_match(str(row.get("label", "")))
+                    for char in _normalize_term(str(row.get("label", "")))
                     if not char.isspace()
                 )
                 if label and any(label.startswith(term) for term in compact_terms):
@@ -475,7 +679,7 @@ class KeywordDocumentRetriever:
         aliases: tuple[str, ...],
     ) -> list[_Match]:
         raw_matches: list[_Match] = []
-        terms = [(normalized_query, "exact_query")] + [(normalize_for_match(alias), "full_alias") for alias in aliases]
+        terms = [(normalized_query, "exact_query")] + [(_normalize_term(alias), "full_alias") for alias in aliases]
         seen: set[tuple[int, int, str, str]] = set()
         for term, kind in terms:
             for haystack, mapped_term in ((source, term), (compact_source, "".join(char for char in term if not char.isspace()))):

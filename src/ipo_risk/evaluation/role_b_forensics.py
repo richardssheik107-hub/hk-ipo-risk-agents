@@ -1,4 +1,4 @@
-"""Post-run, Existing-Gold-only forensics for the Role-B fixed-10 cohort.
+"""Post-run, Existing-Gold-only forensics for a frozen Role-B cohort.
 
 The module joins frozen evaluator rows to already-persisted runtime artifacts.
 Gold is loaded only after analysis has finished and is never exposed to the
@@ -33,6 +33,7 @@ RISK_ROOT_CAUSES = frozenset(
         "retrieved_page_anchor_truncated",
         "retrieval_ranking_or_topk_miss",
         "llm_not_invoked_due_to_no_evidence",
+        "llm_required_but_offline_mode",
         "llm_not_invoked_unexpectedly",
         "llm_transport_failure",
         "llm_authentication_or_request_failure",
@@ -611,6 +612,8 @@ def _risk_root_cause(
     retrieval_units: Sequence[Mapping[str, Any]],
     diagnostic: Mapping[str, Any] | None,
     llm: Mapping[str, Any] | None,
+    *,
+    llm_expected_available: bool = True,
 ) -> tuple[str, str, list[str]]:
     if as_bool(row.get("correct")):
         return "correct", "PROVEN", []
@@ -637,6 +640,8 @@ def _risk_root_cause(
         }
         return mapping.get(str(llm.get("failure_kind")), "llm_authentication_or_request_failure"), "PROVEN", []
     if risk_code in RISK_TO_TASK and llm is None:
+        if not llm_expected_available:
+            return "llm_required_but_offline_mode", "PROVEN", []
         return "llm_not_invoked_unexpectedly", "PROVEN", []
     if diagnostic and diagnostic.get("diagnostic_code") != "risk_generated":
         issues = [str(item) for item in diagnostic.get("issue_codes") or []]
@@ -676,6 +681,8 @@ def build_risk_lifecycle(
     retrieval_rows: Sequence[Mapping[str, Any]],
     results: Mapping[str, Mapping[str, Any]],
     quality: Mapping[str, Any],
+    *,
+    llm_expected_available: bool = True,
 ) -> list[dict[str, Any]]:
     risk_manifest = _index(coverage.get("risk_units") or [], "risk_unit_id")
     evidence_by_case_risk: dict[tuple[str, str], list[Mapping[str, Any]]] = defaultdict(list)
@@ -705,7 +712,12 @@ def build_risk_lifecycle(
             or builder_status in {"built", "needs_review"}
         )
         root, proof, observations = _risk_root_cause(
-            row, parser_units, retrieval_units, diagnostic, llm
+            row,
+            parser_units,
+            retrieval_units,
+            diagnostic,
+            llm,
+            llm_expected_available=llm_expected_available,
         )
         if root not in RISK_ROOT_CAUSES or proof not in PROOF_LEVELS:
             raise RoleBForensicsError(f"invalid_root_cause:{root}:{proof}")
@@ -1083,7 +1095,15 @@ def _write_fix_priority(
     risk_units: Sequence[Mapping[str, Any]],
     evidence_units: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
-    dominant = next((row for row in counts if row.get("root_cause") not in {"correct", "final_evidence_covered"}), None)
+    non_actionable = {
+        "correct",
+        "final_evidence_covered",
+        "llm_required_but_offline_mode",
+    }
+    dominant = next(
+        (row for row in counts if row.get("root_cause") not in non_actionable),
+        None,
+    )
     if dominant is None:
         recommendation = {"root_cause": "none", "module": "none", "smallest_change": "none"}
     else:
@@ -1147,8 +1167,12 @@ def run_forensics(inputs: ForensicInputs) -> dict[str, Any]:
     preflight = load_json(run_root / "preflight.json")
     quality = load_json(run_root / "llm_call_quality.json")
     case_ids = [str(row.get("case_id")) for row in subset.get("cases") or []]
-    if len(case_ids) != 10 or subset.get("subset_hash") != baseline.get("subset_hash"):
-        raise RoleBForensicsError("fixed10_identity_mismatch")
+    if (
+        not case_ids
+        or len(case_ids) != int(baseline.get("case_count") or 0)
+        or subset.get("subset_hash") != baseline.get("subset_hash")
+    ):
+        raise RoleBForensicsError("cohort_identity_mismatch")
     if coverage.get("manifest_hash") != baseline.get("gold_manifest_hash"):
         raise RoleBForensicsError("gold_manifest_hash_drift")
     if baseline.get("validation_opened") is not False or baseline.get("blind_2025_outcome_accessed") is not False:
@@ -1219,7 +1243,7 @@ def run_forensics(inputs: ForensicInputs) -> dict[str, Any]:
         f"- Authoritative run: `{scope['authoritative_run']}`\n"
         f"- Artifact SHA: `{artifact_head}`\n"
         f"- Role-B runtime tree identical: `{str(scope['role_b_runtime_tree_identical_to_current_head']).lower()}`\n"
-        f"- Fixed-10: `{scope['subset_hash']}`\n"
+        f"- Frozen cohort ({len(case_ids)} cases): `{scope['subset_hash']}`\n"
         f"- Gold manifest: `{scope['gold_manifest_hash']}`\n"
         "- Validation opened: `false`\n- Blind accessed: `false`\n",
         encoding="utf-8",
@@ -1273,7 +1297,13 @@ def run_forensics(inputs: ForensicInputs) -> dict[str, Any]:
     _json_dump(inputs.output_dir / "04_llm_stage.json", llm_summary)
     _csv_dump(inputs.output_dir / "04_llm_stage.csv", llm_rows)
     risk_units = build_risk_lifecycle(
-        risk_rows, coverage, parser_rows, retrieval_rows, results, quality
+        risk_rows,
+        coverage,
+        parser_rows,
+        retrieval_rows,
+        results,
+        quality,
+        llm_expected_available=selected_mode != "offline",
     )
     _json_dump(inputs.output_dir / "05_candidate_lifecycle.json", {"report_version": FORENSIC_VERSION, "units": risk_units})
     _csv_dump(inputs.output_dir / "05_candidate_lifecycle.csv", risk_units)
@@ -1388,7 +1418,8 @@ def run_forensics(inputs: ForensicInputs) -> dict[str, Any]:
         "branch": scope["branch"],
         "run_id": inputs.output_dir.name,
         "baseline": {
-            "fixed10_hash": subset.get("subset_hash"),
+            "cohort_hash": subset.get("subset_hash"),
+            "fixed10_hash": subset.get("subset_hash") if len(case_ids) == 10 else None,
             "case_count": len(case_ids),
             "m1_numerator": denominators["m1_correct_count"],
             "m1_denominator": len(risk_rows),
@@ -1410,7 +1441,8 @@ def run_forensics(inputs: ForensicInputs) -> dict[str, Any]:
         "governance": {
             "existing_gold_modified": False,
             "evaluator_modified": False,
-            "fixed10_modified": False,
+            "frozen_cohort_modified": False,
+            "fixed10_modified": False if len(case_ids) == 10 else None,
             "validation_opened": False,
             "blind_accessed": False,
             "runtime_received_gold": False,

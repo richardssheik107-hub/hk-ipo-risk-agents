@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import date
+from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from hashlib import sha256
 import json
@@ -544,6 +546,19 @@ class OpenAIResponsesLLMProvider:
                 )
             try:
                 payload = json.loads(arguments)
+                payload, normalized_fields = self._normalize_optional_litigation_scalars(
+                    task_name,
+                    payload,
+                )
+                if normalized_fields:
+                    self.last_attempt_trace.append(
+                        {
+                            "stage": "bounded_normalization",
+                            "structured_attempt": structured_attempt,
+                            "outcome": "success",
+                            "fields": list(normalized_fields),
+                        }
+                    )
                 result = response_model.model_validate(payload)
                 self.last_attempt_trace.append(
                     {
@@ -581,7 +596,7 @@ class OpenAIResponsesLLMProvider:
                     "arguments_length": len(arguments),
                     "first_char_class": self._first_char_class(arguments),
                     "arguments_hash": sha256(arguments.encode("utf-8")).hexdigest(),
-                    "errors": self._safe_validation_errors(exc),
+                    "errors": self._safe_validation_errors(exc, payload),
                 }
                 self.last_attempt_trace.append(
                     {
@@ -592,7 +607,11 @@ class OpenAIResponsesLLMProvider:
                         "retry_scheduled": structured_attempt < total_validation_attempts,
                     }
                 )
-                validation_feedback = self._validation_feedback(exc)
+                validation_feedback = self._validation_feedback(
+                    exc,
+                    payload,
+                    task_name=task_name,
+                )
             if structured_attempt >= total_validation_attempts:
                 raise LLMProviderError(
                     LLMFailureKind.RESPONSE_VALIDATION,
@@ -642,29 +661,159 @@ class OpenAIResponsesLLMProvider:
                 return arguments if isinstance(arguments, str) else None
         return None
 
-    @staticmethod
-    def _safe_validation_errors(exc: ValidationError) -> list[dict[str, str]]:
+    @classmethod
+    def _safe_validation_errors(
+        cls, exc: ValidationError, payload: Any | None = None
+    ) -> list[dict[str, str]]:
         safe_errors = []
         for error in exc.errors(include_input=False)[:8]:
-            path = ".".join(str(part) for part in error.get("loc", ())) or "<root>"
-            safe_errors.append(
-                {
-                    "path": path,
-                    "type": str(error.get("type", "validation_error")),
-                    "message": str(error.get("msg", "invalid value")),
-                }
-            )
+            location = tuple(error.get("loc", ()))
+            item = {
+                "path": ".".join(str(part) for part in location) or "<root>",
+                "type": str(error.get("type", "validation_error")),
+                "message": str(error.get("msg", "invalid value")),
+            }
+            if payload is not None:
+                item["input_class"] = cls._safe_input_class(payload, location)
+            safe_errors.append(item)
         return safe_errors
 
+    @staticmethod
+    def _normalize_optional_litigation_scalars(
+        task_name: str,
+        payload: Any,
+    ) -> tuple[Any, tuple[str, ...]]:
+        """Fail closed on non-canonical optional Legal scalar strings.
+
+        The remote schema already defines ``amount`` and ``event_date`` as
+        nullable. Some Responses-compatible models nevertheless return prose
+        (for example, a range or an undisclosed placeholder) in those fields.
+        Such prose cannot support one exact numeric/date fact. Converting only
+        those invalid optional strings to ``null`` preserves the matter and its
+        Evidence while explicitly declining to invent a value.
+        """
+
+        if task_name != "litigation_compliance_extract" or not isinstance(
+            payload, dict
+        ):
+            return payload, ()
+        normalized = dict(payload)
+        changed: list[str] = []
+
+        amount = normalized.get("amount")
+        if isinstance(amount, str):
+            try:
+                parsed_amount = Decimal(amount.strip())
+                amount_is_exact = parsed_amount.is_finite()
+            except (InvalidOperation, ValueError):
+                amount_is_exact = False
+            if not amount_is_exact:
+                normalized["amount"] = None
+                changed.append("amount")
+
+        event_date = normalized.get("event_date")
+        if isinstance(event_date, str):
+            try:
+                date.fromisoformat(event_date.strip())
+                date_is_exact = True
+            except ValueError:
+                date_is_exact = False
+            if not date_is_exact:
+                normalized["event_date"] = None
+                changed.append("event_date")
+
+        return normalized, tuple(changed)
+
     @classmethod
-    def _validation_feedback(cls, exc: ValidationError) -> str:
-        safe_errors = cls._safe_validation_errors(exc)
-        return (
+    def _validation_feedback(
+        cls,
+        exc: ValidationError,
+        payload: Any | None = None,
+        *,
+        task_name: str = "",
+    ) -> str:
+        safe_errors = cls._safe_validation_errors(exc, payload)
+        feedback = (
             "The previous structured result failed local schema validation. Submit a "
             "corrected function call using only the same supplied Evidence; do not invent "
             "facts just to satisfy the schema. Validation errors: "
             + json.dumps(safe_errors, ensure_ascii=False, separators=(",", ":"))
         )
+        error_paths = {item["path"] for item in safe_errors}
+        error_types = {item["type"] for item in safe_errors}
+        if task_name == "litigation_compliance_extract":
+            corrections: list[str] = []
+            if "amount" in error_paths and "decimal_parsing" in error_types:
+                corrections.append(
+                    "amount must be a plain JSON number; if Evidence does not support "
+                    "one exact numeric amount, use null rather than prose, a range, a "
+                    "currency-formatted string, or an unknown placeholder"
+                )
+            if "event_date" in error_paths and any(
+                value.startswith("date_") for value in error_types
+            ):
+                corrections.append(
+                    "event_date must be one exact YYYY-MM-DD date; if Evidence does not "
+                    "support a complete calendar date, use null rather than a partial, "
+                    "natural-language, or placeholder date"
+                )
+            if corrections:
+                feedback += " Field-specific correction: " + "; ".join(corrections) + "."
+        elif (
+            task_name == "business_precommercial_core_product_extract"
+            and "is_core_product" in error_paths
+            and "missing" in error_types
+        ):
+            feedback += (
+                " Field-specific correction: is_core_product is required. Set it to true "
+                "only when the supplied Evidence explicitly identifies the product as a "
+                "core product; otherwise set it to false."
+            )
+        return feedback
+
+    @staticmethod
+    def _safe_input_class(payload: Any, location: tuple[Any, ...]) -> str:
+        """Describe an invalid value without persisting provider content."""
+
+        value = payload
+        try:
+            for part in location:
+                value = value[part] if isinstance(part, int) else value[str(part)]
+        except (KeyError, IndexError, TypeError):
+            return "unavailable"
+        if value is None:
+            return "null"
+        if isinstance(value, bool):
+            return "boolean"
+        if isinstance(value, (int, float)):
+            return "number"
+        if isinstance(value, list):
+            return "array"
+        if isinstance(value, dict):
+            return "object"
+        if not isinstance(value, str):
+            return "other"
+        stripped = value.strip()
+        if not stripped:
+            return "string_empty"
+        normalized = stripped.casefold().replace("_", " ").replace("-", " ")
+        if normalized in {
+            "unknown",
+            "not disclosed",
+            "not available",
+            "not applicable",
+            "n/a",
+            "na",
+            "none",
+            "null",
+            "undisclosed",
+            "未知",
+            "未披露",
+            "不适用",
+            "不適用",
+        }:
+            return "string_placeholder"
+        return "string_other"
 
     @staticmethod
     def _first_char_class(value: str) -> str:

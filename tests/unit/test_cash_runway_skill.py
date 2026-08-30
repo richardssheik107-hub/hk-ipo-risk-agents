@@ -31,7 +31,7 @@ def test_real_case_uses_decimal_and_preserves_audit_metadata() -> None:
     assert result.evidence_ids == ["cash-evidence", "ocf-evidence"]
 
 
-@pytest.mark.parametrize("period_months", [3, 6, 9, 12])
+@pytest.mark.parametrize("period_months", [1, 3, 4, 5, 6, 8, 9, 12])
 def test_supported_period_lengths_use_the_reported_period(period_months: int) -> None:
     result = cash_runway_from_operating_cash_flow(Decimal("120"), Decimal("-60"), period_months)
     assert result.success
@@ -51,8 +51,8 @@ def test_zero_cash_is_a_valid_zero_month_runway() -> None:
         (Decimal("-1"), Decimal("-10"), 3, "cash must be non-negative"),
         (Decimal("10"), Decimal("0"), 3, "operating_cash_flow must be negative"),
         (Decimal("10"), Decimal("1"), 3, "operating_cash_flow must be negative"),
-        (Decimal("10"), Decimal("-1"), None, "period_months must be one of"),
-        (Decimal("10"), Decimal("-1"), 2, "period_months must be one of"),
+        (Decimal("10"), Decimal("-1"), None, "period_months must be an integer"),
+        (Decimal("10"), Decimal("-1"), 13, "period_months must be an integer"),
     ],
 )
 def test_invalid_inputs_fail_without_division(

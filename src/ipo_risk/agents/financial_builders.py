@@ -395,6 +395,54 @@ class V03FinancialRiskBuilder:
         )
         return self._generated(risk, metadata)
 
+    def build_qualitative_concentration_review(
+        self,
+        *,
+        concentration_type: str,
+        signal_code: str,
+        evidence_ids: Sequence[str],
+        evidence_by_id: Mapping[str, Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+    ) -> _RiskDecision:
+        """Preserve explicit qualitative ambiguity without inventing a ratio."""
+
+        risk_code = f"{concentration_type}_concentration"
+        evidence, evidence_issue = self._resolve_evidence(
+            evidence_ids,
+            evidence_by_id,
+            chunks_by_id,
+        )
+        if evidence_issue or not evidence:
+            return self._review(
+                risk_code,
+                evidence_issue or "qualitative_concentration_evidence_missing",
+                evidence_ids,
+            )
+        label = "Customer" if concentration_type == "customer" else "Supplier"
+        metadata = {
+            "rule_version": self.policy.version,
+            "concentration_type": concentration_type,
+            "issue": signal_code,
+            "candidate_state": "qualitative_concentration_signal_requires_review",
+            "provisional_level": True,
+            "calculation_unavailable": True,
+            "percentage_inferred": False,
+        }
+        risk = self._risk(
+            risk_code=risk_code,
+            risk_type=f"{label} concentration",
+            level=RiskLevel.MEDIUM,
+            conclusion=(
+                f"Explicit {label.lower()} concentration disclosure requires "
+                "human review because no deterministic percentage can be established."
+            ),
+            evidence=evidence,
+            calculation=None,
+            identity_values=["qualitative_review", signal_code],
+            metadata=metadata,
+        )
+        return self._generated(risk, metadata)
+
     def _build_unresolved_concentration(
         self,
         fact: ConcentrationFact,
