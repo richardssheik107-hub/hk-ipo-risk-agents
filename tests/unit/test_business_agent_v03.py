@@ -4,7 +4,11 @@ from typing import Any
 
 from ipo_risk.agents.business_extraction import DeterministicBusinessExtractor
 from ipo_risk.agents.business_v03 import V03BusinessAgent
-from ipo_risk.providers.llm import UnavailableLLMProvider
+from ipo_risk.providers.llm import (
+    LLMFailureKind,
+    LLMProviderError,
+    UnavailableLLMProvider,
+)
 from ipo_risk.providers.mock import MockLLMProvider
 from ipo_risk.schemas import (
     DiagnosticCode,
@@ -228,6 +232,48 @@ def test_unavailable_llm_does_not_block_sufficient_deterministic_facts() -> None
     agent, chunks = agent_for(POSITIVE, llm_provider=UnavailableLLMProvider())
     assert len(agent.analyze(IPOProfile(company_name="Demo"), chunks)) == 1
     assert agent.last_diagnostics[0].metadata["llm_failure_kind"] == "unavailable"
+
+
+def test_business_structured_tasks_fail_independently_but_augmentation_stays_closed() -> None:
+    class FirstTaskFailsProvider:
+        name = "isolated-failure"
+
+        def __init__(self) -> None:
+            self.tasks: list[str] = []
+
+        def generate_structured(self, *, task_name, response_model, **kwargs):
+            self.tasks.append(task_name)
+            if task_name == "business_precommercial_commercialization_extract":
+                raise LLMProviderError(
+                    LLMFailureKind.RESPONSE_VALIDATION,
+                    "sanitized structured failure",
+                    recoverable=False,
+                )
+            return response_model.model_validate(
+                {
+                    "product_name": "ABC-101",
+                    "is_core_product": True,
+                    "launch_status": "not_launched",
+                    "evidence_ids": ["e1"],
+                }
+            )
+
+    provider = FirstTaskFailsProvider()
+    agent, chunks = agent_for(POSITIVE, llm_provider=provider)
+
+    risks = agent.analyze(IPOProfile(company_name="Demo"), chunks)
+
+    assert len(risks) == 1
+    assert provider.tasks == [
+        "business_precommercial_commercialization_extract",
+        "business_precommercial_core_product_extract",
+    ]
+    diagnostic = agent.last_diagnostics[0]
+    assert diagnostic.metadata["llm_task_failures"] == {
+        "business_precommercial_commercialization_extract": "response_validation"
+    }
+    assert diagnostic.metadata["llm_augmentation_applied"] is False
+    assert diagnostic.metadata["deterministic_candidate_preserved"] is True
 
 
 def test_llm_failure_with_insufficient_facts_degrades_honestly() -> None:

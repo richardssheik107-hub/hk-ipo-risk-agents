@@ -300,7 +300,7 @@ def test_negative_litigation_short_circuits_without_llm_key() -> None:
     assert "negation_detected" in diagnostic.metadata["internal_issue_codes"]
 
 
-def test_actual_legal_text_without_llm_key_has_structured_unavailable_diagnostics() -> None:
+def test_explicit_rights_without_llm_key_emits_fail_closed_review_candidate() -> None:
     agent = LegalAgent(
         retriever=RoutedRetriever([RIGHT_EVIDENCE], [LITIGATION_EVIDENCE]),
         llm_provider=UnavailableLLMProvider("test unavailable"),
@@ -308,24 +308,64 @@ def test_actual_legal_text_without_llm_key_has_structured_unavailable_diagnostic
 
     risks = agent.analyze(_profile(), [])
 
-    assert risks == []
+    assert [item.risk_code for item in risks] == ["redemption_rights"]
+    rights = risks[0]
+    assert rights.verification_status == VerificationStatus.NEEDS_REVIEW
+    assert rights.metadata["extraction_method"] == (
+        "deterministic_explicit_signal_needs_review_v1"
+    )
     assert len(agent.last_diagnostics) == 2
-    for diagnostic in agent.last_diagnostics:
-        assert diagnostic.code == DiagnosticCode.EXTRACTION_FAILED
-        assert "llm_provider_unavailable" in diagnostic.metadata["internal_issue_codes"]
-        assert diagnostic.metadata["failure_isolated"] is True
-        assert diagnostic.metadata["failure_kind"] == "unavailable"
-        assert diagnostic.metadata["attempts"] == 0
+    rights_diagnostic = _diagnostic(agent, "redemption_rights")
+    assert rights_diagnostic.code == DiagnosticCode.NEEDS_REVIEW
+    assert "llm_provider_unavailable" in rights_diagnostic.metadata[
+        "internal_issue_codes"
+    ]
+    assert rights_diagnostic.metadata["provider_fallback_reason"] == (
+        "provider_unavailable"
+    )
+    litigation_diagnostic = _diagnostic(agent, "material_litigation_compliance")
+    assert litigation_diagnostic.code == DiagnosticCode.EXTRACTION_FAILED
+    assert "llm_provider_unavailable" in litigation_diagnostic.metadata[
+        "internal_issue_codes"
+    ]
+
+
+def test_ordinary_share_redemption_without_llm_key_remains_unavailable() -> None:
+    ordinary = _evidence(
+        "The articles permit all ordinary shareholders to redeem shares before Listing.",
+        "e-ordinary-right",
+        21,
+    )
+    agent = LegalAgent(
+        retriever=RoutedRetriever([ordinary], []),
+        llm_provider=UnavailableLLMProvider("test unavailable"),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert risks == []
+    diagnostic = _diagnostic(agent, "redemption_rights")
+    assert diagnostic.code == DiagnosticCode.EXTRACTION_FAILED
+    assert diagnostic.metadata["failure_kind"] == "unavailable"
+
+
+def test_transport_failure_does_not_use_deterministic_rights_fallback() -> None:
+    agent = LegalAgent(
+        retriever=RoutedRetriever([RIGHT_EVIDENCE], []),
+        llm_provider=FailingLLMProvider(LLMFailureKind.TRANSPORT),
+    )
+
+    risks = agent.analyze(_profile(), [])
+
+    assert risks == []
+    diagnostic = _diagnostic(agent, "redemption_rights")
+    assert diagnostic.code == DiagnosticCode.COMPONENT_FAILURE
+    assert diagnostic.metadata["failure_kind"] == "transport"
 
 
 @pytest.mark.parametrize(
     ("kind", "expected_code", "expected_issue"),
     [
-        (
-            LLMFailureKind.UNAVAILABLE,
-            DiagnosticCode.EXTRACTION_FAILED,
-            "llm_provider_unavailable",
-        ),
         (
             LLMFailureKind.RESPONSE_VALIDATION,
             DiagnosticCode.EXTRACTION_FAILED,

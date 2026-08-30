@@ -1,4 +1,4 @@
-"""Generate post-run Role-B fixed-10 forensic artifacts without changing runtime."""
+"""Generate post-run Role-B frozen-cohort forensic artifacts without changing runtime."""
 
 from __future__ import annotations
 

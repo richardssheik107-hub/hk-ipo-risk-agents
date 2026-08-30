@@ -96,6 +96,55 @@ _NEGATIVE_CONCENTRATION_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] =
     ),
 }
 
+_CONCENTRATION_SUPPORT_DISCLOSURES: Mapping[str, tuple[re.Pattern[str], ...]] = {
+    "customer": (
+        re.compile(r"(?:五大|前五大|最大|主要).{0,6}(?:客戶|客户)", re.I | re.S),
+        re.compile(
+            r"(?:top\s*(?:five|5)|largest|major|principal).{0,16}customers?",
+            re.I | re.S,
+        ),
+    ),
+    "supplier": (
+        re.compile(r"(?:五大|前五大|最大|主要).{0,6}(?:供應商|供应商)", re.I | re.S),
+        re.compile(
+            r"(?:top\s*(?:five|5)|largest|major|principal).{0,16}suppliers?",
+            re.I | re.S,
+        ),
+    ),
+}
+
+_MAX_RANKED_DISCLOSURE_SUPPORT = 5
+_MAX_SUPPLIER_RANKED_DISCLOSURE_SUPPORT = 25
+
+_QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS: Mapping[
+    str, tuple[tuple[str, re.Pattern[str]], ...]
+] = {
+    "customer": (
+        (
+            "customer_denominator_unavailable_pre_revenue",
+            re.compile(
+                r"(?:pre[- ]?revenue|"
+                r"(?:尚未|未曾|並無|并无|沒有|没有).{0,36}"
+                r"(?:產生|产生|錄得|录得).{0,24}"
+                r"(?:產品銷售|产品销售|商業化|商业化|收益|收入)|"
+                r"has\s+not\s+generated.{0,40}revenue)",
+                re.I | re.S,
+            ),
+        ),
+    ),
+    "supplier": (
+        (
+            "major_supplier_term_undefined",
+            re.compile(
+                r"(?:並無|并无|沒有|没有|無|无).{0,12}"
+                r"(?:重大|主要)(?:供應商|供应商)|"
+                r"no\s+(?:major|principal)\s+suppliers?",
+                re.I | re.S,
+            ),
+        ),
+    ),
+}
+
 
 @dataclass(frozen=True, slots=True)
 class _RetrievalResult:
@@ -307,6 +356,35 @@ class V03FinancialAgent:
             extraction, retrieval.evidence
         )
         if (status != ExtractionStatus.EXTRACTED or issues) and not unresolved_concentration_signal:
+            qualitative_signal = self._qualitative_concentration_review_signal(
+                risk_code,
+                retrieval.evidence,
+            )
+            if qualitative_signal is not None:
+                signal_code, signal_evidence_ids = qualitative_signal
+                decision = self.risk_builder.build_qualitative_concentration_review(
+                    concentration_type=(
+                        "customer"
+                        if risk_code == "customer_concentration"
+                        else "supplier"
+                    ),
+                    signal_code=signal_code,
+                    evidence_ids=signal_evidence_ids,
+                    evidence_by_id={
+                        item.evidence_id: item for item in retrieval.evidence
+                    },
+                    chunks_by_id=chunks_by_id,
+                )
+                if decision.risk is not None:
+                    diagnostic = decision.diagnostic.model_copy(
+                        update={
+                            "metadata": {
+                                **decision.diagnostic.metadata,
+                                **query_metadata,
+                            }
+                        }
+                    )
+                    return decision.risk, diagnostic
             return None, self._diagnostic(
                 risk_code,
                 self._issue_code(issues, status=status),
@@ -338,7 +416,175 @@ class V03FinancialAgent:
                 "metadata": {**decision.diagnostic.metadata, **query_metadata}
             }
         )
-        return decision.risk, diagnostic
+        risk = self._augment_ranked_concentration_evidence(
+            risk_code,
+            decision.risk,
+            retrieval.evidence,
+            chunks_by_id,
+            extraction,
+        )
+        return risk, diagnostic
+
+    @staticmethod
+    def _qualitative_concentration_review_signal(
+        risk_code: str,
+        evidence: Sequence[Evidence],
+    ) -> tuple[str, list[str]] | None:
+        """Identify explicit non-numeric disclosures that require review.
+
+        This path never infers a percentage or threshold result.  It only
+        preserves narrowly defined, source-backed ambiguity as a pending risk:
+        customer concentration has no usable revenue denominator, or an issuer
+        uses an undefined qualitative supplier-importance term.
+        """
+
+        concentration_type = {
+            "customer_concentration": "customer",
+            "supplier_concentration": "supplier",
+        }.get(risk_code)
+        if concentration_type is None:
+            return None
+        for signal_code, pattern in _QUALITATIVE_CONCENTRATION_REVIEW_SIGNALS[
+            concentration_type
+        ]:
+            matched = [item.evidence_id for item in evidence if pattern.search(item.text)]
+            if matched:
+                return signal_code, list(dict.fromkeys(matched[:3]))
+        return None
+
+    @staticmethod
+    def _augment_ranked_concentration_evidence(
+        risk_code: str,
+        risk: RiskItem | None,
+        retrieved: Sequence[Evidence],
+        chunks_by_id: Mapping[str, DocumentChunk],
+        extraction: FinancialPeriodSeriesResult | ConcentrationFact | None = None,
+    ) -> RiskItem | None:
+        """Attach parser-governed table views without changing the decision.
+
+        Complete ranked tables often span several physical pages.  Extraction
+        may correctly emit one bounded pending/positive concentration risk from
+        one page while the other pages remain retrieval-only context.  Retaining
+        those already-retrieved pages on an existing risk improves source
+        traceability; it never creates a risk and never changes level, status,
+        score, calculation, or the fact used by policy.
+        """
+
+        expected_type = {
+            "customer_concentration": "customer",
+            "supplier_concentration": "supplier",
+        }.get(risk_code)
+        if risk is None or expected_type is None:
+            return risk
+
+        retained = list(risk.evidence)
+        retained_ids = {item.evidence_id for item in retained}
+        parsed_support_ids: set[str] = set()
+        structurally_invalid_ids: set[str] = set()
+        if isinstance(extraction, ConcentrationFact):
+            diagnostics = extraction.metadata.get("candidate_diagnostics", [])
+            if isinstance(diagnostics, Sequence) and not isinstance(
+                diagnostics, (str, bytes)
+            ):
+                for item in diagnostics:
+                    if not isinstance(item, Mapping):
+                        continue
+                    issues = {str(value) for value in item.get("issues") or []}
+                    if issues.intersection(
+                        {"percentage_out_of_range", "largest_percentage_exceeds_top_five"}
+                    ):
+                        structurally_invalid_ids.update(
+                            str(value)
+                            for value in item.get("evidence_ids") or []
+                            if str(value)
+                        )
+                        continue
+                    if (
+                        item.get("largest_counterparty_pct") is None
+                        and item.get("top_five_pct") is None
+                    ):
+                        continue
+                    parsed_support_ids.update(
+                        str(value)
+                        for value in item.get("evidence_ids") or []
+                        if str(value)
+                    )
+        for evidence in retrieved:
+            if evidence.evidence_id in retained_ids or not evidence.chunk_id:
+                continue
+            if evidence.evidence_id in parsed_support_ids:
+                retained.append(evidence)
+                retained_ids.add(evidence.evidence_id)
+                continue
+            chunk = chunks_by_id.get(evidence.chunk_id)
+            if chunk is None:
+                continue
+            table = chunk.metadata.get("ranked_numeric_table")
+            if not isinstance(table, Mapping):
+                continue
+            rows = table.get("rank_rows")
+            ranks = (
+                [item.get("rank") for item in rows if isinstance(item, Mapping)]
+                if isinstance(rows, list)
+                else []
+            )
+            if (
+                table.get("detector") != "ranked_numeric_1_to_5_v1"
+                or table.get("counterparty_type") != expected_type
+                or ranks != [1, 2, 3, 4, 5]
+                or table.get("largest_counterparty_pct") is None
+                or table.get("top_five_pct") is None
+            ):
+                continue
+            retained.append(evidence)
+            retained_ids.add(evidence.evidence_id)
+
+        # Retain a small, rank-bounded provenance window for an already-created
+        # concentration risk.  Some prospectuses separate the governing
+        # percentage table from a nearby top-five/principal-counterparty
+        # disclosure.  That disclosure is useful support even when it does not
+        # itself contain a second parseable percentage.  This is deliberately
+        # evidence-only: it cannot create a risk or alter its decision fields.
+        ranked_disclosure_support = 0
+        support_limit = (
+            _MAX_SUPPLIER_RANKED_DISCLOSURE_SUPPORT
+            if risk_code == "supplier_concentration"
+            else _MAX_RANKED_DISCLOSURE_SUPPORT
+        )
+        for evidence in retrieved[:support_limit]:
+            if (
+                evidence.evidence_id in retained_ids
+                or evidence.evidence_id in structurally_invalid_ids
+            ):
+                continue
+            if not any(
+                pattern.search(evidence.text)
+                for pattern in _CONCENTRATION_SUPPORT_DISCLOSURES[expected_type]
+            ):
+                continue
+            retained.append(evidence)
+            retained_ids.add(evidence.evidence_id)
+            ranked_disclosure_support += 1
+
+        if len(retained) == len(risk.evidence):
+            return risk
+        return risk.model_copy(
+            update={
+                "evidence": retained,
+                "metadata": {
+                    **risk.metadata,
+                    "ranked_table_evidence_augmented": (
+                        len(retained) - len(risk.evidence)
+                    ),
+                    "parsed_concentration_evidence_augmented": len(
+                        parsed_support_ids.difference(
+                            item.evidence_id for item in risk.evidence
+                        )
+                    ),
+                    "ranked_disclosure_evidence_augmented": ranked_disclosure_support,
+                },
+            }
+        )
 
     @staticmethod
     def _has_bounded_concentration_signal(
@@ -401,10 +647,13 @@ class V03FinancialAgent:
         retrieve_for_risk = getattr(self.retriever, "retrieve_for_risk", None)
         if callable(retrieve_for_risk):
             try:
-                limit = 20 if risk_code in {
-                    "customer_concentration",
-                    "supplier_concentration",
-                } else 10
+                limit = (
+                    30
+                    if risk_code == "supplier_concentration"
+                    else 20
+                    if risk_code == "customer_concentration"
+                    else 10
+                )
                 candidates = list(retrieve_for_risk(chunks, risk_code, limit=limit))
                 if any(not isinstance(item, Evidence) for item in candidates):
                     raise TypeError("retriever_item_type_invalid")

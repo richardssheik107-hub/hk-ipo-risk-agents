@@ -113,6 +113,12 @@ class LegalAgent:
 
         try:
             fact = self.rights_extractor.extract(evidence)
+        except LLMProviderError as exc:
+            if exc.kind != LLMFailureKind.UNAVAILABLE:
+                return [], self._extraction_failure(risk_code, exc, evidence)
+            fact = self.rights_extractor.extract_explicit_needs_review(evidence)
+            if fact is None:
+                return [], self._extraction_failure(risk_code, exc, evidence)
         except Exception as exc:
             return [], self._extraction_failure(risk_code, exc, evidence)
 
@@ -129,8 +135,10 @@ class LegalAgent:
         metadata = {
             "stage": "risk_builder",
             "extraction_status": fact.status.value,
+            "extraction_method": fact.extraction_method,
             "builder_status": built.status.value,
             "failure_isolated": True,
+            "provider_fallback_reason": fact.metadata.get("fallback_reason"),
         }
         if built.status == RedemptionRightsBuildStatus.NOT_APPLICABLE:
             return [], self._diagnostic(

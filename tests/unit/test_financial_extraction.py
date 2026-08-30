@@ -33,6 +33,95 @@ def evidence(source: DocumentChunk, *, score: float = 1.0, evidence_id: str | No
     )
 
 
+def test_table_aware_cash_flow_accepts_parenthesized_bilingual_direction_label() -> None:
+    source = DocumentChunk(
+        document_id="doc",
+        chunk_id="doc:page:610",
+        page=610,
+        text=(
+            "截至十二月三十一日止年度\n"
+            "截至四月三十日止四個月\n"
+            "2017年\n2018年\n2019年\n2019年\n2020年\n"
+            "人民幣千元\n"
+            "經營活動（所用）╱\n"
+            "所得現金流量淨額\n"
+            "(291,844)\n686,062\n5,530,348\n(68,811)\n(3,168,273)"
+        ),
+    )
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        [], [evidence(source)], {source.chunk_id: source}
+    ).operating_cash_flow
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.normalized_value == Decimal("-3168273")
+    assert result.period_end == date(2020, 4, 30)
+    assert result.period_months == 4
+
+
+def test_table_aware_cash_flow_does_not_treat_section_heading_as_net_row() -> None:
+    source = DocumentChunk(
+        document_id="doc",
+        chunk_id="doc:page:385",
+        page=385,
+        text=(
+            "經營活動所得現金流量\n"
+            "除稅前利潤\n1,000\n2,000\n"
+            "新增銀行貸款\n30,000\n"
+        ),
+        metadata={
+            "tables": [
+                {
+                    "header_lines": ["2019年", "2020年", "人民幣千元"],
+                    "period_header_cells": ["2019年", "2020年"],
+                    "rows": [
+                        {"label": "經營活動所得現金流量", "cells": [], "y": 10.0},
+                        {"label": "除稅前利潤", "cells": ["1,000", "2,000"], "y": 20.0},
+                        {"label": "新增銀行貸款", "cells": ["30,000"], "y": 30.0},
+                    ],
+                }
+            ],
+            "has_structured_tables": True,
+        },
+    )
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        [], [evidence(source)], {source.chunk_id: source}
+    ).operating_cash_flow
+
+    assert result.status != ExtractionStatus.EXTRACTED
+
+
+@pytest.mark.parametrize(
+    "label",
+    [
+        "經營活動所得╱（所用）現金流量淨額",
+        "經營活動所用現金流量淨額",
+        "经营活动所得/（所用）现金流量净额",
+        "经营活动所用现金流量净额",
+    ],
+)
+def test_operating_cash_flow_accepts_cash_flow_net_amount_wording(
+    label: str,
+) -> None:
+    source = chunk(
+        "截至2022年6月30日止六個月\n"
+        "人民幣千元\n"
+        f"{label}\n"
+        "(74,558)"
+    )
+
+    result = FinancialEvidenceExtractor().extract(
+        [],
+        [evidence(source)],
+        {source.chunk_id: source},
+    ).operating_cash_flow
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.normalized_value == Decimal("-74558")
+    assert result.period_months == 6
+
+
 def table(label: str, values: list[str], *, unit: str = "人民幣千元") -> str:
     return "\n".join(
         [
@@ -404,6 +493,37 @@ def test_shared_cash_runway_query_intent_is_valid_for_both_metrics() -> None:
     )
 
 
+def test_table_aware_newer_explicit_positive_narrative_pair_outranks_old_burn() -> None:
+    older = chunk(
+        "截至2020年6月30日止六個月\n人民幣百萬元\n"
+        "期末現金及現金等價物\n22.7\n"
+        "經營活動所用現金流量淨額\n(28.1)",
+        page=20,
+    )
+    newer = chunk(
+        "我們於截至2020年9月30日止三個月錄得"
+        "經營活動所得正現金流量人民幣19 .0百萬元。\n"
+        "我們的現金及現金等價物結餘由截至2020年6月30日"
+        "的人民幣22 .7百萬元增至截至2020年9月30日的人民幣44 .4百萬元。",
+        page=21,
+    )
+    candidates = [evidence(older), evidence(newer)]
+
+    result = TableAwareV03FinancialFactExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in (older, newer)},
+    )
+
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("44.4")
+    assert result.operating_cash_flow.normalized_value == Decimal("19.0")
+    assert result.operating_cash_flow.period_end == date(2020, 9, 30)
+    assert result.operating_cash_flow.period_months == 3
+    assert result.operating_cash_flow.extraction_method == (
+        "bounded_positive_cash_narrative_pair"
+    )
+
+
 def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
     cash_latest = chunk(
         "截至2024年9月30日止九個月\n人民幣千元\n"
@@ -432,6 +552,120 @@ def test_selects_latest_common_compatible_cash_and_ocf_period() -> None:
     assert result.cash_and_cash_equivalents.normalized_value == Decimal("120")
     assert result.cash_and_cash_equivalents.period_end == date(2024, 6, 30)
     assert result.operating_cash_flow.period_end == date(2024, 6, 30)
+
+
+def test_compatible_pair_retains_strictly_equivalent_evidence_ids() -> None:
+    cash_summary = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n3,864",
+        page=20,
+    )
+    cash_statement = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n3,864",
+        page=200,
+    )
+    flow_summary = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(31,645)",
+        page=21,
+    )
+    flow_statement = chunk(
+        "截至2024年4月30日止四個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(31,645)",
+        page=201,
+    )
+    sources = (cash_summary, cash_statement, flow_summary, flow_statement)
+
+    result = FinancialEvidenceExtractor().extract(
+        [evidence(cash_summary), evidence(cash_statement, score=0.8)],
+        [evidence(flow_summary), evidence(flow_statement, score=0.8)],
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.cash_and_cash_equivalents.metadata["equivalent_evidence_ids"] == [
+        "e:20",
+        "e:200",
+    ]
+    assert result.operating_cash_flow.metadata["equivalent_evidence_ids"] == [
+        "e:21",
+        "e:201",
+    ]
+
+
+def test_replicated_colocated_pair_can_resolve_value_only_statement_conflict() -> None:
+    summary_text = (
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120\n"
+        "經營活動所用淨現金流量\n(60)"
+    )
+    first_summary = chunk(summary_text, page=20)
+    repeated_summary = chunk(summary_text, page=40)
+    statement_cash = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120",
+        page=200,
+    )
+    conflicting_flow = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(65)",
+        page=201,
+    )
+    sources = (first_summary, repeated_summary, statement_cash, conflicting_flow)
+    candidates = [evidence(item) for item in sources]
+
+    result = FinancialEvidenceExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("120")
+    assert result.operating_cash_flow.normalized_value == Decimal("-60")
+    assert result.cash_and_cash_equivalents.metadata["pair_selection"] == (
+        "replicated_colocated_pair_with_value_only_conflict"
+    )
+    assert result.operating_cash_flow.metadata["pair_selection"] == (
+        "replicated_colocated_pair_with_value_only_conflict"
+    )
+    assert result.operating_cash_flow.metadata["replicated_pair_evidence_ids"] == [
+        "e:20",
+        "e:40",
+    ]
+    assert result.operating_cash_flow.metadata["suppressed_pair_conflicts"] == [
+        {
+            "metric_name": "operating_cash_flow",
+            "evidence_id": "e:201",
+            "page": 201,
+            "conflict_fields": ["normalized_value"],
+            "normalized_value": "-65",
+        }
+    ]
+
+
+def test_single_colocated_pair_does_not_override_value_conflict() -> None:
+    summary = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120\n"
+        "經營活動所用淨現金流量\n(60)",
+        page=20,
+    )
+    conflicting_flow = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(65)",
+        page=201,
+    )
+    sources = (summary, conflicting_flow)
+    candidates = [evidence(item) for item in sources]
+
+    result = FinancialEvidenceExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.operating_cash_flow.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_values_for_same_period" in result.operating_cash_flow.issues
 
 
 def test_bounded_extractor_can_use_clean_candidate_beyond_old_top_five() -> None:

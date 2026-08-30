@@ -4,6 +4,7 @@ import json
 
 from pydantic import BaseModel, Field
 
+from ipo_risk.agents.legal_models import LitigationComplianceCandidate
 from ipo_risk.core.config import Settings
 from ipo_risk.providers.llm import OpenAIResponsesLLMProvider
 from ipo_risk.services.analysis_service import IPOAnalysisService
@@ -74,6 +75,21 @@ class _SequenceResponses:
 class _SequenceClient:
     def __init__(self) -> None:
         self.responses = _SequenceResponses()
+
+
+class _SingleStructuredResponses:
+    def __init__(self, arguments: dict[str, object]) -> None:
+        self.calls: list[dict[str, object]] = []
+        self.arguments = arguments
+
+    def create(self, **kwargs):
+        self.calls.append(kwargs)
+        return _StructuredResponse("resp-normalized", self.arguments)
+
+
+class _SingleStructuredClient:
+    def __init__(self, arguments: dict[str, object]) -> None:
+        self.responses = _SingleStructuredResponses(arguments)
 
 
 def test_responses_provider_records_trace_metadata_on_success():
@@ -168,6 +184,56 @@ def test_responses_provider_retries_schema_invalid_function_arguments_with_safe_
         {
             "stage": "structured_validation",
             "structured_attempt": 2,
+            "outcome": "success",
+        },
+    ]
+
+
+def test_responses_provider_normalizes_only_invalid_optional_litigation_scalars():
+    client = _SingleStructuredClient(
+        {
+            "matter_type": "litigation",
+            "current_status": "pending",
+            "event_date": "during the year",
+            "amount": "about HKD 10 million",
+            "evidence_ids": ["e1"],
+        }
+    )
+    provider = OpenAIResponsesLLMProvider(
+        api_key="test-key",
+        base_url="https://example.invalid/v1",
+        model="test-model",
+        max_retries=1,
+        client=client,
+    )
+
+    result = provider.generate_structured(
+        task_name="litigation_compliance_extract",
+        prompt_version="legal_litigation_compliance_v1",
+        evidence=[],
+        response_model=LitigationComplianceCandidate,
+    )
+
+    assert result.event_date is None
+    assert result.amount is None
+    assert result.matter_type == "litigation"
+    assert len(client.responses.calls) == 1
+    assert provider.last_attempt_trace == [
+        {
+            "stage": "transport",
+            "structured_attempt": 1,
+            "attempt": 1,
+            "outcome": "success",
+        },
+        {
+            "stage": "bounded_normalization",
+            "structured_attempt": 1,
+            "outcome": "success",
+            "fields": ["amount", "event_date"],
+        },
+        {
+            "stage": "structured_validation",
+            "structured_attempt": 1,
             "outcome": "success",
         },
     ]
