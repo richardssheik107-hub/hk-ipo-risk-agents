@@ -2,7 +2,8 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> 文档状态：**FINAL / CLOSED FOR COMPETITION RELEASE**
+> 文档状态：**FINAL / CLOSED FOR COMPETITION RELEASE**  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`
 
 v1.0.0 之后不再维护第二套 Roadmap、并行冲刺计划或“当前 Batch”状态页。所有开发型 owner 文档均已收口为最终状态/历史职责说明。
 
@@ -17,7 +18,8 @@ v1.0.0 之后不再维护第二套 Roadmap、并行冲刺计划或“当前 Batc
 | `COMPETITION_CLOSURE_PLAN.md` | 冻结后的最终收口状态，不再是研发 Roadmap |
 | `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2 / Gold / split / M1/M2/M3/M5 口径 |
 | `SUBMISSION_RUNBOOK.md` | one-shot Validation、fresh clone、安全审计、封包操作手册 |
-| `TEAM_QUICKSTART.md` | fresh clone / canonical replay / judge demo 快速启动 |
+| `TEAM_QUICKSTART.md` | fresh clone / canonical replay /统一产品入口 |
+| `FRONTEND_JUDGE_FACING_HANDOFF.md` | 最终评审入口与 canonical UI 信息架构 |
 | `ROLE_D_MODEL_DECISION.md` | Role-D V2 最终模型决议与边界 |
 | `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 冻结技术合同 |
 
@@ -32,6 +34,8 @@ reports/final_status/capability_manifest.json
 reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json
 ```
 
+`one_shot_validation_receipt.json` 只有在授权环境真实执行一次 Validation 后才能加入。
+
 文档与 artifact 冲突时，以代码 validator / frozen manifest / machine-readable receipt 为优先事实源。
 
 ## 3. Final Development measurements
@@ -43,13 +47,32 @@ reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json
 
 G2 内部门槛仍是 M1 >=80%、M2 >=85%、real LLM 79/79，因此 G2 为 **BLOCKED**。v1.0.0 是正式比赛产品发布版，不等于 `COMPETITION_READY=true`。
 
-## 4. Team owner 文档
+## 4. Final product surface
+
+Latest approved product-surface commit:
+
+```text
+006c7f302be5c278680d136371f6ef0db45fecc0
+```
+
+All launch paths converge on the same canonical app:
+
+```text
+START_DEMO.bat       ─┐
+start_demo.sh         ├─→ app/streamlit_app.py
+START_JUDGE_DEMO.bat  ┤
+start_judge_demo.sh  ─┘
+```
+
+The judge commands are compatibility aliases. On `006c7f3...`, `tests`, `Role D runtime` and `Team demo runtime` all passed.
+
+## 5. Team owner 文档
 
 `team/` 不再表示活跃开发队列，而是最终职责归档：
 
 ```text
-01_M1_M2_OWNER.md              CLOSED / FROZEN
-02_FRONTEND_OWNER.md           CLOSED / G5 PASS
+01_M1_M2_OWNER.md              CLOSED / FROZEN / G2 BLOCKED
+02_FRONTEND_OWNER.md           CLOSED / G5 PASS / CANONICAL UI
 03_DYNAMIC_MARKET_X_OWNER.md   CLOSED / G3 PASS
 04_DYNAMIC_MODEL_OWNER.md      CLOSED / G4 PASS
 05_RELEASE_SUBMISSION_OWNER.md RELEASE OPERATIONS ONLY
@@ -57,7 +80,7 @@ G2 内部门槛仍是 M1 >=80%、M2 >=85%、real LLM 79/79，因此 G2 为 **BLO
 
 `team/README.md` 给出最终状态摘要。
 
-## 5. 长期规范 / 冻结技术文档
+## 6. 长期规范 / 冻结技术文档
 
 以下文档继续保留，不因 v1.0.0 改名或重写内部 protocol identity：
 
@@ -73,13 +96,13 @@ G2 内部门槛仍是 M1 >=80%、M2 >=85%、real LLM 79/79，因此 G2 为 **BLO
 
 这些是技术合同、研究证据或历史 provenance，不是当前研发计划。
 
-## 6. Historical / superseded docs
+## 7. Historical / superseded docs
 
 `V0.4_RELEASE_ACCEPTANCE.md` 仅保留为 v0.4 阶段历史入口，已由 `V1_RELEASE_ACCEPTANCE.md` 取代。
 
 Batch / Bundle / fixed-journal / forensic 等历史结果只能用于追溯，不能覆盖 v1.0.0 Final Truth。
 
-## 7. Source-of-truth hierarchy
+## 8. Source-of-truth hierarchy
 
 出现冲突时按顺序：
 
@@ -92,7 +115,7 @@ Batch / Bundle / fixed-journal / forensic 等历史结果只能用于追溯，�
 7. frozen technical contracts；
 8. historical experiment/research docs and Git history。
 
-## 8. Release governance
+## 9. Release governance
 
 不可移除的边界：
 
