@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 import re
 from typing import Any
@@ -82,7 +83,7 @@ _STATUS_LABELS = {
     "degraded": "已降级", "verified": "已验证", "needs_review": "待复核",
     "pending": "待处理", "rejected": "已驳回", "failed": "未完成",
     "error": "异常", "disabled": "未启用", "unavailable": "暂不可用",
-    "unavailable_error": "暂不可用", "no_risk_emitted": "未识别到正式风险",
+    "unavailable_error": "运行异常", "no_risk_emitted": "未识别到正式风险",
     "resolved": "已解决", "partial_resolved": "部分解决", "unresolved": "待复核",
 }
 
@@ -174,6 +175,142 @@ def to_simplified_ui(value: object) -> str:
 
 def judge_status_label(value: object) -> str:
     return _STATUS_LABELS.get(str(value or "unavailable").lower(), "暂不可用")
+
+
+_MODEL_ERROR_STATUSES = frozenset({"error", "failed", "unavailable_error"})
+_MODEL_KNOWN_STATUSES = frozenset({
+    "available",
+    "partial",
+    "pending_gate",
+    "degraded",
+    "disabled",
+    "unavailable",
+    *_MODEL_ERROR_STATUSES,
+})
+
+
+@dataclass(frozen=True)
+class ModelChannelProjection:
+    """One conservative presentation view of the governed model channel.
+
+    ``FinalSupervisionResult.channel_states`` is the channel-level authority,
+    while its nested model prediction is the preferred result payload. Older
+    persisted results may carry only the top-level prediction, so that remains
+    a compatibility fallback. A channel can be shown as available only when
+    both its state and a usable score-bearing prediction agree.
+    """
+
+    status: str
+    prediction: Mapping[str, Any] | None
+    reason: str = ""
+    source: str = "none"
+    consistency_issue: str = ""
+
+    @property
+    def is_available(self) -> bool:
+        return self.status == "available"
+
+    @property
+    def is_error(self) -> bool:
+        return self.status == "unavailable_error"
+
+
+def model_channel_projection(payload: Mapping[str, Any]) -> ModelChannelProjection:
+    """Resolve model payload, channel state and fallbacks exactly once.
+
+    The function never repairs backend data. Contradictory ``available``
+    claims fail closed to ``unavailable_error`` so no frontend surface can turn
+    a missing or failed model result into a green model signal.
+    """
+
+    final = payload.get("final_supervision") or {}
+    if not isinstance(final, Mapping):
+        final = {}
+
+    channel_status = ""
+    channel_reason = ""
+    for item in final.get("channel_states") or []:
+        if not isinstance(item, Mapping) or str(item.get("channel") or "") != "model":
+            continue
+        channel_status = str(item.get("status") or "unavailable").strip().lower()
+        channel_reason = str(item.get("reason") or "")
+
+    candidates = (
+        ("final_supervision.model_prediction", final.get("model_prediction")),
+        ("model_prediction", payload.get("model_prediction")),
+        ("model", payload.get("model")),
+    )
+    source = "none"
+    prediction: Mapping[str, Any] | None = None
+    for candidate_source, candidate in candidates:
+        if isinstance(candidate, Mapping) and candidate:
+            source = candidate_source
+            prediction = candidate
+            break
+
+    prediction_status = "unavailable"
+    prediction_reason = ""
+    if prediction is not None:
+        prediction_status = str(prediction.get("status") or "available").strip().lower()
+        prediction_reason = str(prediction.get("reason") or "")
+
+    if channel_status in _MODEL_ERROR_STATUSES or prediction_status in _MODEL_ERROR_STATUSES:
+        return ModelChannelProjection(
+            status="unavailable_error",
+            prediction=prediction,
+            reason=prediction_reason or channel_reason,
+            source=source,
+        )
+
+    unknown = next(
+        (
+            status
+            for status in (channel_status, prediction_status)
+            if status and status not in _MODEL_KNOWN_STATUSES
+        ),
+        "",
+    )
+    if unknown:
+        return ModelChannelProjection(
+            status="unavailable_error",
+            prediction=prediction,
+            reason=prediction_reason or channel_reason,
+            source=source,
+            consistency_issue=f"unknown model status: {unknown}",
+        )
+
+    if channel_status and channel_status != "available":
+        return ModelChannelProjection(
+            status=channel_status,
+            prediction=prediction,
+            reason=channel_reason or prediction_reason,
+            source=source,
+        )
+
+    if channel_status == "available" and prediction is None:
+        return ModelChannelProjection(
+            status="unavailable_error",
+            prediction=None,
+            reason=channel_reason,
+            source=source,
+            consistency_issue="model channel is available but prediction payload is missing",
+        )
+
+    if prediction_status == "available" and prediction is not None and prediction.get("score") is None:
+        return ModelChannelProjection(
+            status="unavailable_error",
+            prediction=prediction,
+            reason=prediction_reason or channel_reason,
+            source=source,
+            consistency_issue="available model prediction has no score",
+        )
+
+    return ModelChannelProjection(
+        status=prediction_status,
+        prediction=prediction,
+        reason=prediction_reason or channel_reason,
+        source=source,
+    )
 
 
 def risk_reasoning(risk_code: object) -> str:
@@ -1368,11 +1505,7 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         1 for item in observations
         if isinstance(item, Mapping) and item.get("availability") == "available"
     )
-    channel_states = {
-        str(item.get("channel")): str(item.get("status") or "unavailable")
-        for item in (final.get("channel_states") or [])
-        if isinstance(item, Mapping)
-    } if isinstance(final, Mapping) else {}
+    model_projection = model_channel_projection(payload)
     if observations:
         market_copy = (
             f"市场方面，本次取得 {available_market}/{len(observations)} 项 Market-X 核心观测；"
@@ -1380,10 +1513,15 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         )
     else:
         market_copy = "市场方面，当前没有足够的上市前环境信息，不能据此判断外部环境为低风险。"
-    if channel_states.get("model") == "available":
+    if model_projection.is_available:
         model_copy = (
             "模型方面已形成辅助排序信号，但该信号未经概率校准，不能理解为风险发生概率"
             "或上市后收益预测。"
+        )
+    elif model_projection.is_error:
+        model_copy = (
+            "模型通道本次运行异常，当前没有可核验的逐案信号；异常原因保留在后台，"
+            "且模型异常不代表低风险。"
         )
     else:
         model_copy = "模型方面当前没有可核验的逐案信号；模型缺失同样不代表低风险。"

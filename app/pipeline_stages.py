@@ -19,6 +19,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import StrEnum
 
+try:  # Streamlit runs ``app`` as the import root; package tools import ``app.*``.
+    from judge_copy import model_channel_projection
+except ModuleNotFoundError:  # pragma: no cover - package-style scripts use this path.
+    from app.judge_copy import model_channel_projection
+
 
 class StageStatus(StrEnum):
     AVAILABLE = "available"
@@ -50,6 +55,8 @@ class StageView:
     blocking_reason: str = ""
     what_appears_when_unblocked: tuple[str, ...] = ()
     metrics: tuple[Metric, ...] = field(default_factory=tuple)
+    channel_name: str | None = None
+    channel_status: str | None = None
 
     @property
     def is_available(self) -> bool:
@@ -185,6 +192,8 @@ def _market_features(payload: dict[str, object]) -> StageView:
                 Metric("Market channel", state),
             )
             + ((Metric("Market runtime path", runtime_path),) if runtime_path else ()),
+            channel_name="Market-X",
+            channel_status=state,
         )
     if _runtime_completed(payload):
         return StageView(
@@ -194,6 +203,8 @@ def _market_features(payload: dict[str, object]) -> StageView:
                 "The current-case runtime completed without a materialized Market-X projection. The product surface remains available and records the market channel as unavailable; no proxy or zero fill is created."
             ),
             metrics=(Metric("Market channel", "unavailable"),),
+            channel_name="Market-X",
+            channel_status="unavailable",
         )
     return StageView(
         stage_id="market_features", ordinal=3, title="Market Features",
@@ -209,20 +220,20 @@ def _market_features(payload: dict[str, object]) -> StageView:
 
 def _prediction(payload: dict[str, object]) -> StageView:
     prediction = payload.get("prediction") or {}
-    model = payload.get("model_prediction") or {}
+    model_projection = model_channel_projection(payload)
+    model = model_projection.prediction or {}
     metrics: list[Metric] = []
     if prediction:
         metrics.extend((
             Metric("Rule score", str(prediction.get("risk_score", "Unavailable"))),
             Metric("Rule level", str(prediction.get("risk_level", "Unavailable"))),
         ))
-    model_available = bool(model and model.get("status", "available") == "available")
-    if model_available:
+    if model_projection.is_available:
         metrics.append(Metric("Model score", str(model.get("score", "Unavailable"))))
         if model.get("alert") is not None:
             metrics.append(Metric("V2 triage alert", "yes" if model["alert"] else "no"))
-    elif _runtime_completed(payload):
-        metrics.append(Metric("Model channel", str(model.get("status") or "unavailable")))
+    if _runtime_completed(payload):
+        metrics.append(Metric("Model channel", model_projection.status))
 
     if _runtime_completed(payload):
         summary = (
@@ -233,6 +244,8 @@ def _prediction(payload: dict[str, object]) -> StageView:
             status=StageStatus.COMPLETED,
             summary=summary,
             metrics=tuple(metrics),
+            channel_name="模型",
+            channel_status=model_projection.status,
         )
     return StageView(
         stage_id="prediction", ordinal=4, title="Prediction",
@@ -250,16 +263,19 @@ def _prediction(payload: dict[str, object]) -> StageView:
 
 
 def _explainability(payload: dict[str, object]) -> StageView:
-    model = payload.get("model_prediction") or {}
-    model_available = bool(model and model.get("status", "available") == "available")
+    model_projection = model_channel_projection(payload)
+    model = model_projection.prediction or {}
     drivers = (model.get("drivers") or []) if isinstance(model, dict) else []
     if _runtime_completed(payload):
         summary = (
             "The explainability surface completed with the current-case Document Evidence/Calculation provenance. "
             "Per-case model drivers are additive: they appear only when the authentic model handoff is available and are otherwise reported as unavailable."
         )
-        metrics = [Metric("Evidence anchors", str(_evidence_count(payload)))]
-        if model_available:
+        metrics = [
+            Metric("Evidence anchors", str(_evidence_count(payload))),
+            Metric("Model channel", model_projection.status),
+        ]
+        if model_projection.is_available:
             metrics.append(Metric("Model drivers", str(len(drivers))))
         else:
             metrics.append(Metric("Model drivers", "unavailable"))
@@ -268,6 +284,8 @@ def _explainability(payload: dict[str, object]) -> StageView:
             status=StageStatus.COMPLETED,
             summary=summary,
             metrics=tuple(metrics),
+            channel_name="模型",
+            channel_status=model_projection.status,
         )
     return StageView(
         stage_id="explainability", ordinal=5, title="Evidence / Explainability",
@@ -287,7 +305,16 @@ def _final_supervisor(payload: dict[str, object]) -> StageView:
     completion = str(payload.get("runtime_completion_status") or "")
     if final:
         states = final.get("channel_states", [])
-        available = sum(1 for state in states if state.get("status") == "available")
+        model_projection = model_channel_projection(payload)
+        available = sum(
+            1
+            for state in states
+            if (
+                model_projection.status
+                if state.get("channel") == "model"
+                else state.get("status")
+            ) == "available"
+        )
         degraded = completion in {
             "completed_with_partial_llm",
             "completed_with_deterministic_fallback",

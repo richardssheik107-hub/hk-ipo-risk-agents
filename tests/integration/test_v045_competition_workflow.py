@@ -103,6 +103,42 @@ def test_final_three_runtime_enters_supervision_with_market_and_model_available(
     assert len(model["drivers"]) == 7
 
 
+def test_case_outside_final_three_reaches_dynamic_model_and_native_shap(tmp_path) -> None:
+    """The product config must not stop at the three-case handoff boundary."""
+
+    settings = replace(
+        load_settings("configs/v045_competition_offline.yaml"),
+        parser="mock",
+        retriever="mock",
+        financial_agent="mock",
+        legal_agent="mock",
+        business_agent="mock",
+        use_mock=True,
+        llm_provider="mock",
+        data_dir=str(tmp_path / "repo"),
+    )
+    outcome = IPOAnalysisService(settings=settings).analyze(
+        IPOAnalysisRequest(
+            company_name="方舟健客",
+            stock_code="6086.HK",
+            listing_date=date(2024, 7, 9),
+            use_mock=True,
+        )
+    )
+
+    assert outcome.status is TaskStatus.COMPLETED, outcome.errors
+    final = outcome.metadata["final_supervision"]
+    states = {row["channel"]: row["status"] for row in final["channel_states"]}
+    assert states["market"] == "available"
+    assert states["model"] == "available"
+    model = final["model_prediction"]
+    assert model["status"] == "available"
+    assert model["score"] == pytest.approx(0.10483735801133905)
+    assert model["score_semantics"] == "uncalibrated_model_score"
+    assert len(model["drivers"]) == 7
+    assert all(driver["shap_value"] is not None for driver in model["drivers"])
+
+
 def test_conflict_detection_and_the_recheck_both_report_their_policy_version(result) -> None:
     diagnostics = _diagnostics(result)
     assert diagnostics["conflict_detection"]["policy_version"] == "v04_e_conflict_policy_v1"

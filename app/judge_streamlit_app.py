@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from datetime import date
 from html import escape
+from pathlib import Path
+import hashlib
+import inspect
 import json
 
 import streamlit as st
@@ -41,6 +44,7 @@ from competition_runtime_view import (
 from evidence_viewer_compat import render_evidence_viewer
 from ipo_risk.core.config import load_settings
 from ipo_risk.services.analysis_service import IPOAnalysisService
+from ipo_risk.schemas import IPOAnalysisResult
 from issuer_identity_ui import render_issuer_identity_inputs
 from judge_copy import risk_reasoning, risk_review_focus, summarize_risks
 from presenters import (
@@ -57,6 +61,150 @@ SCENARIOS = {
     "比赛演示（离线，可复现）": "configs/v045_competition_offline.yaml",
     "AI 增强分析": "configs/v045_competition_ai.yaml",
 }
+
+RUNTIME_FINGERPRINT_SCHEMA = "ipo_frontend_runtime_fingerprint_v1"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _sha256_file(path: Path) -> str:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return "unreadable"
+
+
+def _source_path(value: object) -> Path:
+    return Path(inspect.getsourcefile(value) or inspect.getfile(value)).resolve()
+
+
+def _runtime_fingerprint(config_path: str) -> dict[str, object]:
+    resolved_config = Path(config_path)
+    if not resolved_config.is_absolute():
+        resolved_config = (REPO_ROOT / resolved_config).resolve()
+    settings = load_settings(str(resolved_config))
+    service_source = _source_path(IPOAnalysisService)
+    config_source = _source_path(load_settings)
+    expected_source_root = (REPO_ROOT / "src").resolve()
+    material = {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "entrypoint": "judge",
+        "config_path": resolved_config.relative_to(REPO_ROOT).as_posix(),
+        "config_sha256": _sha256_file(resolved_config),
+        "entrypoint_sha256": _sha256_file(Path(__file__).resolve()),
+        "analysis_service_sha256": _sha256_file(service_source),
+        "config_runtime_sha256": _sha256_file(config_source),
+        "backend_source_root": str(service_source.parent),
+        "settings_contract": {
+            key: getattr(settings, key, None)
+            for key in (
+                "workflow_version",
+                "runtime_mode",
+                "llm_provider",
+                "market_dynamic_context",
+                "model_dynamic_runtime",
+                "model_artifact_dir",
+                "pr_f_run_dir",
+            )
+        },
+    }
+    return {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "entrypoint": "judge",
+        "config_path": material["config_path"],
+        "runtime_digest": hashlib.sha256(
+            json.dumps(material, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest(),
+        "source_matches_checkout": all(
+            path.is_relative_to(expected_source_root)
+            for path in (service_source, config_source)
+        ),
+    }
+
+
+def _result_identity(result: IPOAnalysisResult) -> dict[str, str]:
+    return {
+        "analysis_id": str(result.analysis_id),
+        "workflow_version": str(result.workflow_version),
+        "stock_code": str(result.stock_code or ""),
+    }
+
+
+def _result_fingerprint(
+    result: IPOAnalysisResult,
+    runtime: dict[str, object],
+    scenario: str,
+) -> dict[str, object]:
+    return {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "scenario": scenario,
+        "config_path": runtime.get("config_path"),
+        "runtime_digest": runtime.get("runtime_digest"),
+        "result_identity": _result_identity(result),
+    }
+
+
+def _result_compatibility(
+    result: IPOAnalysisResult,
+    fingerprint: object,
+) -> tuple[bool, str]:
+    if not isinstance(fingerprint, dict) or fingerprint.get("schema_version") != RUNTIME_FINGERPRINT_SCHEMA:
+        return False, "当前结果缺少可核验的运行指纹，已停止将它当作当前代码的分析结果。"
+    if fingerprint.get("result_identity") != _result_identity(result):
+        return False, "当前结果与运行指纹的案例身份不一致，已停止展示以避免串案。"
+    config_path = str(fingerprint.get("config_path") or "")
+    if not config_path:
+        return False, "当前结果没有记录生成它的配置，已停止将它当作当前结果。"
+    try:
+        current = _runtime_fingerprint(config_path)
+    except Exception as exc:
+        return False, f"无法复核当前结果的运行配置：{exc}"
+    if fingerprint.get("runtime_digest") != current.get("runtime_digest"):
+        return False, "生成当前结果的代码或配置已变化；旧结果仍保留，但不再冒充本次运行结果。"
+    return True, ""
+
+
+def _analysis_failed(result: IPOAnalysisResult) -> bool:
+    return str(getattr(result.status, "value", result.status)).lower() == "failed"
+
+
+def _clear_judge_intake_state() -> None:
+    for key in (
+        "judge_company",
+        "judge_code",
+        "judge_listing",
+        "judge_issuer_lookup",
+        "judge_issuer_match_choice",
+        "judge_issuer_match_applied",
+        "judge_issuer_applied_case",
+    ):
+        st.session_state.pop(key, None)
+
+
+def _clear_judge_result() -> None:
+    for key in (
+        "judge_result",
+        "judge_result_fingerprint",
+        "judge_result_scenario",
+        "judge_result_config_path",
+        "judge_prospectus_bytes",
+    ):
+        st.session_state.pop(key, None)
+
+
+def _model_projection(
+    payload: dict[str, object],
+) -> tuple[dict[str, object] | None, dict[str, object]]:
+    final = payload.get("final_supervision") or {}
+    raw = (
+        final.get("model_prediction")
+        if isinstance(final, dict)
+        else None
+    ) or payload.get("model_prediction") or {}
+    if not isinstance(raw, dict):
+        return None, {}
+    if str(raw.get("status") or "").lower() != "available":
+        return None, raw
+    return raw, raw
 
 
 def _inject_css() -> None:
@@ -244,7 +392,6 @@ def _run_analysis(
         raise ValueError("请先上传招股书 PDF。")
     content = uploaded.getvalue()
     validate_pdf_upload(uploaded.name, content)
-    st.session_state["judge_prospectus_bytes"] = content
     settings = load_settings(config_path)
     with temporary_pdf(content) as prospectus_path:
         request = build_analysis_request(
@@ -256,7 +403,7 @@ def _run_analysis(
             workflow_version=settings.workflow_version,
         )
         with st.spinner("正在解析招股书、识别风险、绑定 Evidence，并形成综合研判……"):
-            return IPOAnalysisService(settings=settings).analyze(request)
+            return IPOAnalysisService(settings=settings).analyze(request), content
 
 
 def _render_overview(payload: dict[str, object]) -> None:
@@ -353,10 +500,9 @@ def _render_market_model(payload: dict[str, object], *, expert: bool) -> None:
                 st.json(market.get("provenance") or {})
 
     with right:
-        final = payload.get("final_supervision") or {}
-        model = final.get("model_prediction")
+        model, raw_model = _model_projection(payload)
         st.markdown("### 模型与规则信号")
-        if model:
+        if model is not None:
             st.metric("模型评分", model.get("score", "不可用"))
             st.caption(
                 f"评分语义：{model.get('score_semantics', '不可用')} · "
@@ -368,10 +514,14 @@ def _render_market_model(payload: dict[str, object], *, expert: bool) -> None:
                 st.dataframe(drivers, hide_index=True, width="stretch")
         else:
             states = channel_state_map(payload)
+            raw_status = str(raw_model.get("status") or states.get("model") or "unavailable")
+            detail = "该 IPO 暂无可核验的冻结逐案例模型评分。"
+            if expert and raw_model.get("reason"):
+                detail += f" 技术原因：{raw_model['reason']}"
             render_state_panel(
                 "冻结模型结果不可用",
-                states.get("model"),
-                "该 IPO 暂无可核验的冻结逐案例模型评分。",
+                raw_status,
+                detail,
             )
         prediction = payload.get("prediction") or {}
         col1, col2 = st.columns(2)
@@ -458,13 +608,27 @@ scenario = st.sidebar.selectbox("分析模式", list(SCENARIOS), index=0)
 config_path = SCENARIOS[scenario]
 st.sidebar.caption("市场与结果类数据遵循受治理的时点/冻结边界；不可用信息不会被填成 0。")
 
+previous_scenario = st.session_state.get("_judge_runtime_scenario_seen")
+if previous_scenario is not None and previous_scenario != scenario:
+    _clear_judge_intake_state()
+st.session_state["_judge_runtime_scenario_seen"] = scenario
+
+current_runtime = _runtime_fingerprint(config_path)
+if not current_runtime["source_matches_checkout"]:
+    st.error(
+        "前端加载的后端代码不属于当前项目目录。"
+        "为避免新界面与旧运行时混用，系统已停止本次展示；"
+        "请使用当前项目的 src 路径重新启动。"
+    )
+    st.stop()
+
 _hero()
 
 company, code, listing = render_issuer_identity_inputs(key_prefix="judge")
 uploaded = st.file_uploader("上传招股书 PDF", type=["pdf"])
 if st.button("开始风险研判", type="primary", use_container_width=True):
     try:
-        result = _run_analysis(
+        new_result, new_prospectus_bytes = _run_analysis(
             config_path=config_path,
             company=company,
             code=code,
@@ -474,16 +638,57 @@ if st.button("开始风险研判", type="primary", use_container_width=True):
     except Exception as exc:
         st.error(f"分析未完成，系统已安全停止：{exc}")
     else:
-        st.session_state["judge_result"] = result
-        st.rerun()
+        if _analysis_failed(new_result):
+            error_detail = next(
+                (str(item.message) for item in new_result.errors if item.message),
+                "运行返回了失败状态",
+            )
+            st.error(
+                f"分析未完成：{error_detail}。"
+                "上一份成功结果及其原文文件已保留，未被本次失败运行覆盖。"
+            )
+        else:
+            completed_runtime = _runtime_fingerprint(config_path)
+            result_fingerprint = _result_fingerprint(
+                new_result,
+                completed_runtime,
+                scenario,
+            )
+            # Install the result, its PDF and its runtime identity as one bundle.
+            # Nothing from the previous successful case is removed until the
+            # replacement has completed and passed the failed-status boundary.
+            _clear_judge_result()
+            st.session_state["judge_result"] = new_result
+            st.session_state["judge_result_fingerprint"] = result_fingerprint
+            st.session_state["judge_result_scenario"] = scenario
+            st.session_state["judge_result_config_path"] = config_path
+            st.session_state["judge_prospectus_bytes"] = new_prospectus_bytes
+            st.rerun()
 
-result = st.session_state.get("judge_result")
+stored_result = st.session_state.get("judge_result")
+result = stored_result
+if stored_result is not None:
+    compatible, compatibility_notice = _result_compatibility(
+        stored_result,
+        st.session_state.get("judge_result_fingerprint"),
+    )
+    if not compatible:
+        result = None
+        st.warning(compatibility_notice)
+    else:
+        origin_scenario = (
+            st.session_state.get("judge_result_fingerprint") or {}
+        ).get("scenario")
+        if origin_scenario not in {None, scenario}:
+            st.info(
+                f"当前案例由“{origin_scenario}”生成；已选的“{scenario}”"
+                "只用于下一次新分析，不会改写当前结果。"
+            )
 if result is None:
     st.info("上传招股书后，系统将依次给出风险总览、风险解释与原文证据、市场与模型、结论形成过程和最终报告。")
 else:
     if st.sidebar.button("清除当前结果"):
-        st.session_state.pop("judge_result", None)
-        st.session_state.pop("judge_prospectus_bytes", None)
+        _clear_judge_result()
         st.rerun()
 
     payload = result_payload(result)

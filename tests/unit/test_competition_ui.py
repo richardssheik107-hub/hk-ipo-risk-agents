@@ -24,6 +24,8 @@ from competition_ui import (  # noqa: E402
     reader_article_projection,
     reader_market_model_summary,
     reader_markdown_report,
+    render_pipeline_strip,
+    report_section_summary_zh,
     report_section_title,
     risk_display_name,
     risk_inventory_rows,
@@ -343,6 +345,52 @@ def test_reader_model_summary_respects_explicit_unavailable_channel_state() -> N
     assert "模型缺失不代表低风险" in summary["model_body"]
     assert "0.91" not in text
     assert "stale_feature" not in text
+
+
+def test_model_error_is_chinese_and_never_projected_as_available() -> None:
+    payload = _payload()
+    payload["final_supervision"]["channel_states"][2]["status"] = "available"
+    payload["final_supervision"]["model_prediction"] = {
+        "status": "unavailable_error",
+        "reason": "artifact integrity check failed",
+    }
+
+    summary = reader_market_model_summary(payload)
+    section = report_section_summary_zh(payload, {"order": 8})
+
+    assert channel_state_map(payload)["model"] == "unavailable_error"
+    assert status_label("unavailable_error") == "运行异常"
+    assert summary["model_title"] == "模型通道运行异常，当前没有可核验的逐案结果"
+    assert "模型异常不代表低风险" in summary["model_body"]
+    assert "运行异常" in section
+    assert "artifact integrity check failed" not in " ".join((*summary.values(), section))
+
+
+def test_pipeline_strip_shows_execution_and_bad_model_channel_separately(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def _capture(body: str, *, unsafe_allow_html: bool = False) -> None:
+        captured["body"] = body
+        captured["unsafe_allow_html"] = unsafe_allow_html
+
+    monkeypatch.setattr(competition_ui_module.st, "markdown", _capture)
+    stage = SimpleNamespace(
+        stage_id="prediction",
+        ordinal=4,
+        title="Prediction",
+        status=SimpleNamespace(value="available"),
+        channel_name="模型",
+        channel_status="unavailable_error",
+    )
+
+    render_pipeline_strip((stage,))
+
+    html = str(captured["body"])
+    assert "tone-bad" in html
+    assert "已完成 · 模型运行异常" in html
+    assert "unavailable_error" not in html
+    assert "tone-good" not in html
+    assert captured["unsafe_allow_html"] is True
 
 
 def test_workspace_inventory_localizes_display_without_changing_source_values() -> None:

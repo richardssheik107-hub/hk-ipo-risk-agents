@@ -169,6 +169,35 @@ def test_completed_runtime_stays_green_when_optional_market_and_model_are_missin
     assert all(pending_notice(stage) is None for stage in stages.values())
 
 
+def test_model_runtime_error_is_separate_from_completed_stage_execution() -> None:
+    payload = {
+        **_runtime_complete_payload(),
+        "model_prediction": {
+            "status": "unavailable_error",
+            "reason": "model artifact integrity check failed",
+        },
+    }
+    payload["final_supervision"] = dict(payload["final_supervision"])
+    payload["final_supervision"]["model_prediction"] = payload["model_prediction"]
+    payload["final_supervision"]["channel_states"] = [
+        {**state, "status": "unavailable_error"}
+        if state["channel"] == "model"
+        else state
+        for state in payload["final_supervision"]["channel_states"]
+    ]
+
+    stages = {item.stage_id: item for item in resolve_stages(payload)}
+
+    for stage_id in ("prediction", "explainability"):
+        stage = stages[stage_id]
+        assert stage.status is StageStatus.COMPLETED
+        assert stage.channel_name == "模型"
+        assert stage.channel_status == "unavailable_error"
+        assert {metric.label: metric.value for metric in stage.metrics}["Model channel"] == "unavailable_error"
+    assert "Model score" not in {metric.label for metric in stages["prediction"].metrics}
+    assert {metric.label: metric.value for metric in stages["final_supervisor"].metrics}["Channels available"] == "3 of 4"
+
+
 def test_market_partial_state_can_complete_product_surface_without_imputation() -> None:
     payload = {
         **_runtime_complete_payload(),

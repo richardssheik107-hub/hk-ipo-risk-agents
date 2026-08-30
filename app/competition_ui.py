@@ -18,6 +18,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from judge_copy import (
+    model_channel_projection,
     risk_conclusion_zh,
     risk_reasoning_annotation,
     supervisor_narrative_zh,
@@ -117,6 +118,7 @@ _STATUS_LABELS = {
     "error": "错误",
     "disabled": "未启用",
     "unavailable": "不可用",
+    "unavailable_error": "运行异常",
     "no_risk_emitted": "未识别到风险",
 }
 
@@ -298,6 +300,14 @@ def stage_summary_zh(stage: object) -> str:
         degraded = _market_stage_degraded_summary(stage)
         if degraded:
             return degraded
+    if stage_id in {"prediction", "explainability"}:
+        degraded = _model_stage_degraded_summary(stage)
+        if degraded:
+            return degraded
+    if stage_id == "final_supervisor":
+        degraded = _final_supervisor_channel_summary(stage)
+        if degraded:
+            return degraded
     display_status = "available" if status == "completed" else status
     return _STAGE_SUMMARIES.get((stage_id, display_status), to_simplified_ui(getattr(stage, "summary", "")))
 
@@ -326,6 +336,52 @@ def _market_stage_degraded_summary(stage: object) -> str:
     return (
         f"本阶段已执行，但 Market 通道为「{status_label(channel)}」，"
         f"未取得任何可用观测（0/{total or '—'}）；缺失原因逐条保留在市场情报面板，界面不做填补。"
+    )
+
+
+def _model_stage_degraded_summary(stage: object) -> str:
+    """Keep stage execution separate from model-channel availability."""
+
+    metrics = _stage_metrics(stage)
+    channel = str(
+        getattr(stage, "channel_status", None)
+        or metrics.get("Model channel")
+        or ""
+    )
+    if not channel or channel == "available":
+        return ""
+    stage_id = str(getattr(stage, "stage_id", ""))
+    boundary = (
+        "模型运行异常，技术原因保留在后台；界面不展示无效评分或驱动因素。"
+        if channel == "unavailable_error"
+        else "模型缺失或仅部分可用不会被补写，也不能据此判断为低风险。"
+    )
+    if stage_id == "prediction":
+        return (
+            f"本阶段已执行，确定性规则结果仍可查看；模型通道为「{status_label(channel)}」。"
+            f"{boundary}"
+        )
+    return (
+        "本阶段已执行，招股书原文证据与确定性计算仍可查看；"
+        f"模型通道为「{status_label(channel)}」。{boundary}"
+    )
+
+
+def _final_supervisor_channel_summary(stage: object) -> str:
+    metrics = _stage_metrics(stage)
+    raw = metrics.get("Channels available", "")
+    parts = raw.split(" of ")
+    if len(parts) != 2:
+        return ""
+    try:
+        available, total = int(parts[0]), int(parts[1])
+    except ValueError:
+        return ""
+    if available >= total:
+        return ""
+    return (
+        f"该案例的 Final Supervisor 阶段已执行；{available}/{total} 个通道可用。"
+        "未贡献的通道保持不可用或异常状态，不会被绿色阶段状态掩盖。"
     )
 
 
@@ -381,9 +437,13 @@ def report_section_summary_zh(payload: dict[str, Any], section: dict[str, Any]) 
         available, total = available_market_observation_count(payload)
         return f"上市前 Market-X 共提供 {available}/{total} 项可用观测；缺失值保持缺失，不补零。"
     if order == 8:
-        model = payload.get("model_prediction") or payload.get("model") or {}
-        score = model.get("score", "不可用") if isinstance(model, dict) else "不可用"
-        return f"冻结模型评分为 {score}；该分数是未校准模型信号，仅用于风险排序，不能解读为概率。"
+        projection = model_channel_projection(payload)
+        if projection.is_available:
+            score = (projection.prediction or {}).get("score", "不可用")
+            return f"冻结模型评分为 {score}；该分数是未校准模型信号，仅用于风险排序，不能解读为概率。"
+        if projection.is_error:
+            return "模型通道本次运行异常，当前不展示逐案评分；异常原因保留在后台，且异常不代表低风险。"
+        return f"模型通道当前为{status_label(projection.status)}，没有可核验的逐案评分；缺失不代表低风险。"
     if order == 10:
         return f"本次风险分析共引用 {sum(len(row.get('evidence') or []) for row in risks)} 条原文证据。"
     if order == 11:
@@ -647,18 +707,9 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
     else:
         coverage = "本次没有可展示的上市前市场信息；缺失不等同于市场风险较低。"
 
-    final = payload.get("final_supervision") or {}
-    states = channel_state_map(payload)
-    model = final.get("model_prediction") or payload.get("model_prediction") or {}
-    explicit_model_state = states.get("model")
-    if explicit_model_state is None:
-        effective_model_state = (
-            str(model.get("status") or "available")
-            if isinstance(model, dict) and model
-            else "unavailable"
-        )
-    else:
-        effective_model_state = explicit_model_state
+    model_projection = model_channel_projection(payload)
+    model = model_projection.prediction or {}
+    effective_model_state = model_projection.status
     if effective_model_state == "available":
         conflicts = (
             ((payload.get("component_diagnostics") or {}).get("conflict_detection") or {}).get("conflicts")
@@ -694,6 +745,12 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
         model_body = (
             "当前模型信息不足以形成完整的逐案解释，只能作为有限的审阅参考。"
             "缺失部分不会被推测补全，也不能据此判断为低风险。"
+        )
+    elif model_projection.is_error:
+        model_title = "模型通道运行异常，当前没有可核验的逐案结果"
+        model_body = (
+            "本页不展示无效评分，也不据此推断模型方向；技术原因保留在后台核验。"
+            "模型异常不代表低风险，仍应依据招股书风险、验证状态和市场边界进行判断。"
         )
     else:
         model_title = "当前没有可核验的逐案模型结果"
@@ -1765,7 +1822,13 @@ def render_landing_runtime(runtime_label: str) -> None:
 def channel_state_map(payload: dict[str, Any]) -> dict[str, str]:
     final = payload.get("final_supervision") or {}
     states = final.get("channel_states") or []
-    return {str(item.get("channel")): str(item.get("status", "unavailable")) for item in states}
+    projected = {
+        str(item.get("channel")): str(item.get("status", "unavailable"))
+        for item in states
+        if isinstance(item, dict)
+    }
+    projected["model"] = model_channel_projection(payload).status
+    return projected
 
 
 def executive_supervisor_view(
@@ -2146,7 +2209,7 @@ def _status_tone(status: object) -> str:
         "pending_gate",
     }:
         return "status-warn"
-    if normalized in {"failed", "rejected", "error"}:
+    if normalized in {"failed", "rejected", "error", "unavailable_error"}:
         return "status-bad"
     return "status-muted"
 
@@ -2432,15 +2495,24 @@ def render_pipeline_strip(stages: Iterable[object]) -> None:
         raw_status = getattr(status_obj, "value", status_obj)
         ordinal = str(getattr(stage, "ordinal", ""))
         stage_id = str(getattr(stage, "stage_id", ""))
-        tone = _status_tone(raw_status).replace("status-", "tone-")
+        channel_status = getattr(stage, "channel_status", None)
+        tone_status = channel_status if channel_status and channel_status != "available" else raw_status
+        tone = _status_tone(tone_status).replace("status-", "tone-")
         title = _READER_STAGE_TITLES.get(stage_id, stage_title_zh(stage))
         summary = _READER_STAGE_SUMMARIES.get(stage_id, "该阶段状态已按本次运行结果记录。")
+        execution_label = stage_status_label(stage)
+        channel_name = getattr(stage, "channel_name", None)
+        display_status = (
+            f"{execution_label} · {channel_name}{status_label(channel_status)}"
+            if channel_name and channel_status
+            else execution_label
+        )
         cards.append(
             f"<div class='pipeline-card {tone}' title='{escape(summary, quote=True)}'>"
             f"<div class='pipeline-node'>{escape(ordinal.zfill(2))}</div>"
             f"<div class='pipeline-title'>{escape(title)}</div>"
             "<div class='pipeline-status'><span class='pipeline-dot'></span>"
-            f"{escape(status_label(raw_status))}</div></div>"
+            f"{escape(display_status)}</div></div>"
         )
     st.markdown("<div class='pipeline-grid'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
 

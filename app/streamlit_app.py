@@ -6,6 +6,8 @@ from dataclasses import replace
 from datetime import date
 from html import escape
 from pathlib import Path
+import hashlib
+import inspect
 import json
 import os
 
@@ -78,6 +80,7 @@ from ipo_risk.runtime.demo_replay import (
     available_recorded_cases,
     load_recorded_case,
     replay_screenshots,
+    verify_demo_bundle,
 )
 from ipo_risk.runtime.review_projection import resolve_identity
 from pipeline_stages import resolve_stages
@@ -111,6 +114,9 @@ SCENARIO_V04_OFFLINE_TABLE = "v0.4 离线模式（表格）+ Final Supervisor"
 SCENARIO_V04_AI_TABLE = "v0.4 AI 模式（表格）+ Final Supervisor"
 DEFAULT_ANALYSIS_SCENARIO = SCENARIO_COMPETITION_AI
 
+RUNTIME_FINGERPRINT_SCHEMA = "ipo_frontend_runtime_fingerprint_v1"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 SCENARIOS = {
     SCENARIO_COMPETITION_OFFLINE: ("configs/v045_competition_offline.yaml", True),
     SCENARIO_COMPETITION_AI: ("configs/v045_competition_ai.yaml", True),
@@ -126,6 +132,127 @@ SCENARIOS = {
     SCENARIO_V04_AI_TABLE: ("configs/v04_ai_table.yaml", True),
     SCENARIO_PREDICTOR_FAILURE: ("configs/mock.yaml", False),
 }
+
+
+def _sha256_file(path: Path) -> str:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return "unreadable"
+
+
+def _source_path(value: object) -> Path:
+    source = inspect.getsourcefile(value) or inspect.getfile(value)
+    return Path(source).resolve()
+
+
+def _runtime_fingerprint(config_path: str, *, entrypoint: str = "standard") -> dict[str, object]:
+    """Identify the code and governed configuration behind one UI run.
+
+    The digest deliberately contains no credential values.  Its primary job is
+    to stop a Streamlit session from silently combining an old result with a
+    newly reloaded app, and to detect an editable install from another checkout.
+    """
+
+    resolved_config = Path(config_path)
+    if not resolved_config.is_absolute():
+        resolved_config = (REPO_ROOT / resolved_config).resolve()
+    settings = load_settings(str(resolved_config))
+    service_source = _source_path(IPOAnalysisService)
+    config_source = _source_path(load_settings)
+    expected_source_root = (REPO_ROOT / "src").resolve()
+    source_matches_checkout = all(
+        path.is_relative_to(expected_source_root)
+        for path in (service_source, config_source)
+    )
+    material = {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "entrypoint": entrypoint,
+        "config_path": resolved_config.relative_to(REPO_ROOT).as_posix(),
+        "config_sha256": _sha256_file(resolved_config),
+        "entrypoint_sha256": _sha256_file(Path(__file__).resolve()),
+        "analysis_service_sha256": _sha256_file(service_source),
+        "config_runtime_sha256": _sha256_file(config_source),
+        "backend_source_root": str(service_source.parent),
+        "settings_contract": {
+            key: getattr(settings, key, None)
+            for key in (
+                "workflow_version",
+                "runtime_mode",
+                "llm_provider",
+                "market_dynamic_context",
+                "model_dynamic_runtime",
+                "model_artifact_dir",
+                "pr_f_run_dir",
+            )
+        },
+    }
+    digest = hashlib.sha256(
+        json.dumps(material, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "entrypoint": entrypoint,
+        "config_path": material["config_path"],
+        "runtime_digest": digest,
+        "source_matches_checkout": source_matches_checkout,
+    }
+
+
+def _result_identity(result: IPOAnalysisResult) -> dict[str, str]:
+    return {
+        "analysis_id": str(result.analysis_id),
+        "workflow_version": str(result.workflow_version),
+        "stock_code": str(result.stock_code or ""),
+    }
+
+
+def _session_result_fingerprint(
+    result: IPOAnalysisResult,
+    runtime: dict[str, object],
+    *,
+    scenario: str,
+    kind: str = "live",
+) -> dict[str, object]:
+    return {
+        "schema_version": RUNTIME_FINGERPRINT_SCHEMA,
+        "kind": kind,
+        "scenario": scenario,
+        "config_path": runtime.get("config_path"),
+        "runtime_digest": runtime.get("runtime_digest"),
+        "result_identity": _result_identity(result),
+    }
+
+
+def _result_compatibility(
+    result: IPOAnalysisResult,
+    fingerprint: object,
+) -> tuple[bool, str]:
+    """Return whether a stored result still belongs to this loaded runtime."""
+
+    if not isinstance(fingerprint, dict) or fingerprint.get("schema_version") != RUNTIME_FINGERPRINT_SCHEMA:
+        return False, "当前结果缺少可核验的运行指纹，已不再将它当作当前代码的分析结果。"
+    if fingerprint.get("result_identity") != _result_identity(result):
+        return False, "当前结果与会话运行指纹的案例身份不一致，已停止展示以避免串案。"
+    if fingerprint.get("kind") == "replay":
+        provenance = st.session_state.get("replay_provenance") or {}
+        if str(provenance.get("analysis_id") or "") != str(result.analysis_id):
+            return False, "回放来源与当前分析标识不一致，已停止展示以避免串案。"
+        return True, ""
+    config_path = str(fingerprint.get("config_path") or "")
+    if not config_path:
+        return False, "当前结果没有记录生成它的配置，已停止将它当作当前结果。"
+    try:
+        current = _runtime_fingerprint(config_path)
+    except Exception as exc:
+        return False, f"无法复核当前结果的运行配置：{exc}"
+    if fingerprint.get("runtime_digest") != current.get("runtime_digest"):
+        return False, "生成当前结果的代码或配置已变化；旧结果仍保留在会话中，但不再冒充本次运行结果。"
+    return True, ""
+
+
+def _analysis_failed(result: IPOAnalysisResult) -> bool:
+    return str(getattr(result.status, "value", result.status)).lower() == "failed"
 
 MARKET_FEATURE_LABELS = {
     "ipo_count_30d": "近 30 日前序 IPO 数量",
@@ -230,9 +357,46 @@ def _model_driver_rows(drivers: list[dict[str, object]]) -> list[dict[str, objec
     return rows
 
 
+def _model_projection(
+    payload: dict[str, object],
+) -> tuple[dict[str, object] | None, dict[str, object]]:
+    """Return an available model only when its governed status says so."""
+
+    final = payload.get("final_supervision") or {}
+    raw = (
+        final.get("model_prediction")
+        if isinstance(final, dict)
+        else None
+    ) or payload.get("model_prediction") or {}
+    if not isinstance(raw, dict):
+        return None, {}
+    if str(raw.get("status") or "").lower() != "available":
+        return None, raw
+    return raw, raw
+
+
+def _clear_analysis_intake_state() -> None:
+    """Clear case-specific intake values after an explicit mode/case switch."""
+
+    exact = {
+        "analysis_company",
+        "analysis_code",
+        "analysis_listing",
+        "analysis_issuer_lookup",
+        "analysis_issuer_match_choice",
+        "analysis_issuer_match_applied",
+        "analysis_issuer_applied_case",
+    }
+    for key in list(st.session_state):
+        if key in exact:
+            st.session_state.pop(key, None)
+
+
 def _clear_result() -> None:
     st.session_state.pop("analysis_result", None)
+    st.session_state.pop("analysis_result_fingerprint", None)
     st.session_state.pop("analysis_scenario", None)
+    st.session_state.pop("analysis_config_path", None)
     st.session_state.pop("prospectus_bytes", None)
     # A replay must never outlive the result it belongs to: a stale replay
     # banner on a live run, or stale screenshots under a new run, would both
@@ -249,6 +413,18 @@ def _demo_bundle_dir() -> Path:
 def _load_replay(case_dir: Path) -> None:
     """Put one recorded case on screen, labelled as the recording it is."""
 
+    verification = verify_demo_bundle(case_dir.parent)
+    if not verification.get("passed"):
+        affected = [
+            *verification.get("mismatched", []),
+            *verification.get("missing", []),
+        ]
+        detail = "、".join(str(item) for item in affected[:3])
+        reason = str(verification.get("reason") or "回放包未通过完整性校验")
+        if detail:
+            reason = f"{reason}（{detail}）"
+        raise ValueError(f"演示回放完整性校验失败：{reason}")
+
     matrix_path = case_dir.parent / "summary.json"
     matrix = {}
     if matrix_path.is_file():
@@ -257,13 +433,27 @@ def _load_replay(case_dir: Path) -> None:
         except (OSError, json.JSONDecodeError):
             matrix = {}
     case = load_recorded_case(case_dir, matrix)
+    # Validate every new object before touching the previous good case.  A
+    # malformed replay must never clear a usable result as a side effect.
+    validated_result = IPOAnalysisResult.model_validate(case.result)
+    validated_screenshots = replay_screenshots(case)
+    recorded_runtime = {
+        "config_path": str(case.provenance.get("config") or "recorded-replay"),
+        "runtime_digest": str(case.provenance.get("code_base_sha") or "recorded-replay"),
+    }
+    result_fingerprint = _session_result_fingerprint(
+        validated_result,
+        recorded_runtime,
+        scenario=SCENARIO_REPLAY,
+        kind="replay",
+    )
     _clear_result()
-    # Validated through the same schema the service produces, so every workspace
-    # reads a recorded run exactly as it reads a live one.
-    st.session_state["analysis_result"] = IPOAnalysisResult.model_validate(case.result)
+    _clear_analysis_intake_state()
+    st.session_state["analysis_result"] = validated_result
+    st.session_state["analysis_result_fingerprint"] = result_fingerprint
     st.session_state["analysis_scenario"] = SCENARIO_REPLAY
     st.session_state["replay_provenance"] = case.provenance
-    st.session_state["replay_screenshots"] = replay_screenshots(case)
+    st.session_state["replay_screenshots"] = validated_screenshots
 
 
 def _render_replay_banner(provenance: dict, *, expert: bool = False) -> None:
@@ -711,9 +901,9 @@ def _render_market_and_model(
         with st.container(border=True):
             final = payload.get("final_supervision") or {}
             states = channel_state_map(payload)
-            model = final.get("model_prediction")
+            model, raw_model = _model_projection(payload)
             section_header("模型 / 规则情报", "冻结模型信号与确定性规则信号对照。")
-            if model:
+            if model is not None:
                 st.metric("模型评分", _display_score(model.get("score"), exact=expert))
                 if model.get("alert") is not None:
                     st.metric("V2 风险初筛告警", "是" if model["alert"] else "否")
@@ -729,10 +919,13 @@ def _render_market_and_model(
                         width="stretch",
                     )
             else:
+                raw_status = raw_model.get("status") or states.get("model")
+                reason = str(raw_model.get("reason") or "").strip()
+                reason_copy = f"技术原因：{reason}。" if expert and reason else ""
                 render_state_panel(
                     "冻结模型结果不可用",
-                    states.get("model"),
-                    f"该 IPO 暂无可核验的冻结逐案例模型评分；当前通道状态为“{status_label(states.get('model'))}”。",
+                    raw_status,
+                    f"该 IPO 暂无可核验的冻结逐案例模型评分；当前通道状态为“{status_label(raw_status)}”。{reason_copy}",
                 )
 
             prediction = payload.get("prediction") or {}
@@ -1155,6 +1348,7 @@ def _render_backend_workspace(
             st.divider()
             if st.button("清除当前案例结果", key="backend_clear_result"):
                 _clear_result()
+                _clear_analysis_intake_state()
                 st.session_state["_pending_product_view"] = "new"
                 st.rerun()
 
@@ -1248,8 +1442,41 @@ if scenario not in SCENARIOS:
 st.session_state["runtime_scenario"] = scenario
 config_path, needs_pdf = SCENARIOS[scenario]
 
-result = st.session_state.get("analysis_result")
-replay_provenance = st.session_state.get("replay_provenance")
+previous_scenario = st.session_state.get("_runtime_scenario_seen")
+if previous_scenario is not None and previous_scenario != scenario:
+    _clear_analysis_intake_state()
+st.session_state["_runtime_scenario_seen"] = scenario
+
+current_runtime = _runtime_fingerprint(config_path)
+if not current_runtime["source_matches_checkout"]:
+    st.error(
+        "前端加载的后端代码不属于当前项目目录。"
+        "为避免新界面与旧运行时混用，系统已停止本次展示；"
+        "请使用当前项目的 src 路径重新启动。"
+    )
+    st.stop()
+
+stored_result = st.session_state.get("analysis_result")
+result = stored_result
+compatibility_notice = ""
+if stored_result is not None:
+    compatible, compatibility_notice = _result_compatibility(
+        stored_result,
+        st.session_state.get("analysis_result_fingerprint"),
+    )
+    if not compatible:
+        result = None
+        st.warning(compatibility_notice)
+    else:
+        origin_scenario = (st.session_state.get("analysis_result_fingerprint") or {}).get("scenario")
+        if origin_scenario not in {None, SCENARIO_REPLAY, scenario}:
+            st.info(
+                f"当前案例由“{origin_scenario}”生成；已选的“{scenario}”"
+                "只用于下一次新分析，不会改写当前结果。"
+            )
+replay_provenance = (
+    st.session_state.get("replay_provenance") if result is not None else None
+)
 payload = result_payload(result) if result is not None else None
 stages = resolve_stages(payload) if payload is not None else []
 stages_by_id = {stage.stage_id: stage for stage in stages}
@@ -1294,18 +1521,33 @@ elif active_view == "new":
         except Exception as exc:  # UI boundary: fail visibly instead of blanking the app.
             st.error(f"分析未完成，系统已安全停止：{exc}")
         else:
-            # A fresh run replaces any replay outright; a leftover replay banner or
-            # its screenshots would describe a different run than the one on screen.
-            st.session_state.pop("replay_provenance", None)
-            st.session_state.pop("replay_screenshots", None)
-            if new_prospectus_bytes is None:
-                st.session_state.pop("prospectus_bytes", None)
+            if _analysis_failed(new_result):
+                error_detail = next(
+                    (str(item.message) for item in new_result.errors if item.message),
+                    "运行返回了失败状态",
+                )
+                st.error(
+                    f"分析未完成：{error_detail}。"
+                    "上一份成功结果及其原文文件已保留，未被本次失败运行覆盖。"
+                )
             else:
-                st.session_state["prospectus_bytes"] = new_prospectus_bytes
-            st.session_state["analysis_result"] = new_result
-            st.session_state["analysis_scenario"] = scenario
-            st.session_state["_pending_product_view"] = "case"
-            st.rerun()
+                completed_runtime = _runtime_fingerprint(config_path)
+                result_fingerprint = _session_result_fingerprint(
+                    new_result,
+                    completed_runtime,
+                    scenario=scenario,
+                )
+                # Replace the case as one atomic session bundle only after the
+                # new result and its runtime identity have both been validated.
+                _clear_result()
+                if new_prospectus_bytes is not None:
+                    st.session_state["prospectus_bytes"] = new_prospectus_bytes
+                st.session_state["analysis_result"] = new_result
+                st.session_state["analysis_result_fingerprint"] = result_fingerprint
+                st.session_state["analysis_scenario"] = scenario
+                st.session_state["analysis_config_path"] = config_path
+                st.session_state["_pending_product_view"] = "case"
+                st.rerun()
 
 elif active_view == "case":
     if payload is None or result is None:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
+import shutil
 import sys
 from pathlib import Path
 
@@ -20,6 +22,7 @@ for source_dir in (APP_DIR, SRC_DIR):
         sys.path.insert(0, str(source_dir))
 
 from ipo_risk.services.analysis_service import IPOAnalysisService  # noqa: E402
+from ipo_risk.schemas import TaskStatus  # noqa: E402
 
 
 def _run_app(monkeypatch: pytest.MonkeyPatch) -> AppTest:
@@ -96,6 +99,11 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
     assert not app.exception
     assert app.segmented_control[0].value == "案例工作台"
     assert "analysis_result" in app.session_state
+    replay_fingerprint = app.session_state["analysis_result_fingerprint"]
+    assert replay_fingerprint["kind"] == "replay"
+    assert replay_fingerprint["result_identity"]["analysis_id"] == str(
+        app.session_state["analysis_result"].analysis_id
+    )
 
     reader_tabs = _tab_labels(app)
     for label in ("案例概览", "原文证据", "市场与模型", "综合结论与报告"):
@@ -198,6 +206,12 @@ def test_successful_no_pdf_run_clears_an_older_case_pdf(
     assert not app.exception
     assert app.segmented_control[0].value == "案例工作台"
     assert "analysis_result" in app.session_state
+    fingerprint = app.session_state["analysis_result_fingerprint"]
+    assert fingerprint["kind"] == "live"
+    assert fingerprint["scenario"] == "Mock 架构演示"
+    assert fingerprint["result_identity"]["analysis_id"] == str(
+        app.session_state["analysis_result"].analysis_id
+    )
     assert "prospectus_bytes" not in app.session_state
 
 
@@ -225,3 +239,121 @@ def test_failed_pdf_run_keeps_the_previous_result_and_its_pdf(
     assert app.session_state["analysis_result"].analysis_id == previous_result.analysis_id
     assert app.session_state["prospectus_bytes"] == previous_pdf
     assert any("controlled test failure" in item.value for item in app.error)
+
+
+@pytest.mark.skipif(not DEMO_BUNDLE.is_dir(), reason="canonical replay bundle is unavailable")
+def test_failed_status_keeps_the_previous_successful_case_bundle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    app = _run_app(monkeypatch)
+    app.segmented_control[0].set_value("后台").run()
+    _button(app, "载入回放").click().run()
+    previous_result = app.session_state["analysis_result"]
+    previous_fingerprint = dict(app.session_state["analysis_result_fingerprint"])
+    previous_pdf = b"previous-case-pdf"
+    app.session_state["prospectus_bytes"] = previous_pdf
+
+    failed_result = previous_result.model_copy(update={"status": TaskStatus.FAILED})
+    monkeypatch.setattr(
+        IPOAnalysisService,
+        "analyze",
+        lambda *_args, **_kwargs: failed_result,
+    )
+    app.segmented_control[0].set_value("后台").run()
+    runtime_picker = next(widget for widget in app.selectbox if widget.label == "运行模式")
+    runtime_picker.set_value("Mock 架构演示").run()
+    app.segmented_control[0].set_value("新建分析").run()
+    _button(app, "开始分析").click().run()
+
+    assert not app.exception
+    assert app.session_state["analysis_result"].analysis_id == previous_result.analysis_id
+    assert dict(app.session_state["analysis_result_fingerprint"]) == previous_fingerprint
+    assert app.session_state["prospectus_bytes"] == previous_pdf
+    assert any("未被本次失败运行覆盖" in item.value for item in app.error)
+
+
+def test_runtime_fingerprint_mismatch_quarantines_but_retains_the_old_result(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    app = _run_app(monkeypatch)
+    app.segmented_control[0].set_value("后台").run()
+    runtime_picker = next(widget for widget in app.selectbox if widget.label == "运行模式")
+    runtime_picker.set_value("Mock 架构演示").run()
+    app.segmented_control[0].set_value("新建分析").run()
+    _button(app, "开始分析").click().run()
+    previous_result = app.session_state["analysis_result"]
+    fingerprint = dict(app.session_state["analysis_result_fingerprint"])
+    fingerprint["runtime_digest"] = "stale-runtime-digest"
+    # Seed a fresh browser session so the assertion exercises runtime
+    # compatibility, independent of AppTest's retired intake widget tree.
+    quarantined = _run_app(monkeypatch)
+    quarantined.session_state["analysis_result"] = previous_result
+    quarantined.session_state["analysis_result_fingerprint"] = fingerprint
+    quarantined.run()
+
+    assert not quarantined.exception
+    assert quarantined.session_state["analysis_result"].analysis_id == previous_result.analysis_id
+    assert any("代码或配置已变化" in item.value for item in quarantined.warning)
+
+
+@pytest.mark.skipif(not DEMO_BUNDLE.is_dir(), reason="canonical replay bundle is unavailable")
+def test_truthy_model_error_mapping_is_not_rendered_as_a_model_result(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    app = _run_app(monkeypatch)
+    app.segmented_control[0].set_value("后台").run()
+    _button(app, "载入回放").click().run()
+
+    result = app.session_state["analysis_result"]
+    metadata = deepcopy(result.metadata)
+    error_model = {
+        "status": "unavailable_error",
+        "reason": "controlled_model_failure",
+        "score": 0.91,
+        "drivers": [{"feature": "must_not_render", "shap_value": 99}],
+    }
+    metadata["model_prediction"] = error_model
+    metadata["final_supervision"] = {
+        **metadata["final_supervision"],
+        "model_prediction": error_model,
+    }
+    app.session_state["analysis_result"] = result.model_copy(update={"metadata": metadata})
+    app.segmented_control[0].set_value("后台").run()
+
+    assert not app.exception
+    audit = _tab(app, "数据审计")
+    assert "模型评分" not in {metric.label for metric in audit.metric}
+    audit_copy = _markdown_text(audit)
+    assert "冻结模型结果不可用" in audit_copy
+    assert "controlled_model_failure" in audit_copy
+    assert "must_not_render" not in audit_copy
+
+
+@pytest.mark.skipif(not DEMO_BUNDLE.is_dir(), reason="canonical replay bundle is unavailable")
+def test_tampered_replay_bundle_cannot_replace_the_current_case(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    app = _run_app(monkeypatch)
+    app.segmented_control[0].set_value("后台").run()
+    _button(app, "载入回放").click().run()
+    previous_result = app.session_state["analysis_result"]
+    previous_fingerprint = dict(app.session_state["analysis_result_fingerprint"])
+
+    tampered_bundle = tmp_path / "tampered_bundle"
+    shutil.copytree(DEMO_BUNDLE, tampered_bundle)
+    tampered_result = tampered_bundle / "ipo_2024_01318" / "analysis_result.json"
+    tampered_result.write_text("{}", encoding="utf-8")
+    monkeypatch.setenv("IPO_RISK_DEMO_BUNDLE", str(tampered_bundle))
+
+    app.segmented_control[0].set_value("后台").run()
+    replay_picker = next(
+        widget for widget in app.selectbox if widget.label == "已记录运行"
+    )
+    replay_picker.set_value("ipo_2024_01318").run()
+    _button(app, "载入回放").click().run()
+
+    assert not app.exception
+    assert app.session_state["analysis_result"].analysis_id == previous_result.analysis_id
+    assert dict(app.session_state["analysis_result_fingerprint"]) == previous_fingerprint
+    assert any("完整性校验失败" in item.value for item in app.error)

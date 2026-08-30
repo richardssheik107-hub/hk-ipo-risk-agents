@@ -1,8 +1,18 @@
+import sys
+from pathlib import Path
+
+
+APP_DIR = Path(__file__).resolve().parents[2] / "app"
+if str(APP_DIR) not in sys.path:
+    sys.path.insert(0, str(APP_DIR))
+
+
 from judge_copy import (
     calculation_summary_zh,
     evidence_item_interpretation_zh,
     highest_risk_level,
     judge_status_label,
+    model_channel_projection,
     risk_conclusion_zh,
     risk_reasoning,
     risk_reasoning_annotation,
@@ -91,7 +101,8 @@ def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
             ]
         },
         "final_supervision": {
-            "channel_states": [{"channel": "model", "status": "available"}]
+            "channel_states": [{"channel": "model", "status": "available"}],
+            "model_prediction": {"status": "available", "score": 0.42},
         },
         "component_diagnostics": {
             "final_supervision_llm": {
@@ -118,6 +129,56 @@ def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
     assert "未解决的分歧" in narrative
     assert "建议后续复核" in narrative
     assert "。；" not in narrative
+
+
+def test_model_projection_fails_closed_when_available_state_has_error_payload() -> None:
+    payload = {
+        "model_prediction": {"status": "available", "score": 0.75},
+        "final_supervision": {
+            "channel_states": [{"channel": "model", "status": "available"}],
+            "model_prediction": {
+                "status": "unavailable_error",
+                "reason": "artifact integrity check failed",
+            },
+        },
+    }
+
+    projection = model_channel_projection(payload)
+
+    assert projection.status == "unavailable_error"
+    assert projection.is_error is True
+    assert projection.is_available is False
+    assert projection.source == "final_supervision.model_prediction"
+    assert judge_status_label(projection.status) == "运行异常"
+
+
+def test_model_projection_keeps_ordinary_unavailability_as_a_boundary() -> None:
+    payload = {
+        "final_supervision": {
+            "channel_states": [{"channel": "model", "status": "unavailable"}],
+            "model_prediction": {
+                "status": "unavailable",
+                "reason": "governed inputs are incomplete",
+            },
+        },
+    }
+
+    projection = model_channel_projection(payload)
+
+    assert projection.status == "unavailable"
+    assert projection.is_error is False
+    assert judge_status_label(projection.status) == "暂不可用"
+
+
+def test_model_projection_rejects_available_state_without_a_result() -> None:
+    projection = model_channel_projection({
+        "final_supervision": {
+            "channel_states": [{"channel": "model", "status": "available"}],
+        },
+    })
+
+    assert projection.status == "unavailable_error"
+    assert "prediction payload is missing" in projection.consistency_issue
 
 
 def test_verified_risk_annotation_does_not_claim_verification_is_incomplete() -> None:
