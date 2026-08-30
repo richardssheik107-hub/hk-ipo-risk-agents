@@ -31,10 +31,7 @@ from ipo_risk.schemas.market import expected_market_split
 
 METRIC_PROTOCOL_VERSION = "v045_competition_metric_protocol_v2_existing_gold_only"
 COVERAGE_MANIFEST_VERSION = "v045_existing_gold_evaluable_manifest_v1"
-# Coverage identity is frozen with the immutable Existing-Gold inventory.  Runtime
-# evaluation semantics may evolve without rewriting that manifest or its hash.
-FROZEN_COVERAGE_EVALUATOR_VERSION = "v045_existing_gold_evaluator_v1"
-EVALUATOR_VERSION = "v045_existing_gold_evaluator_v2"
+EVALUATOR_VERSION = "v045_existing_gold_evaluator_v1"
 FROZEN_ORACLE_MANIFEST = Path("reports/frozen/v04_oracle_v2_manifest.json")
 
 COMPETITION_PRIORITY_FAMILIES = (
@@ -383,7 +380,7 @@ def build_existing_gold_coverage(root: Path) -> dict[str, Any]:
     manifest: dict[str, Any] = {
         "manifest_version": COVERAGE_MANIFEST_VERSION,
         "metric_protocol_version": METRIC_PROTOCOL_VERSION,
-        "evaluator_version": FROZEN_COVERAGE_EVALUATOR_VERSION,
+        "evaluator_version": EVALUATOR_VERSION,
         "existing_gold_source": "frozen Expert Annotation / Oracle v2 source inventory",
         "source_governance": {
             "frozen_manifest_path": FROZEN_ORACLE_MANIFEST.as_posix(),

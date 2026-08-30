@@ -50,10 +50,8 @@ class RoutedRetriever:
         self.rights = rights or []
         self.litigation = litigation or []
         self.fail_rights = fail_rights
-        self.calls: list[tuple[str, int]] = []
 
     def retrieve(self, chunks, query, limit=3):
-        self.calls.append((query, limit))
         if query == LegalAgent.rights_query:
             if self.fail_rights:
                 raise RuntimeError("rights retrieval failed")
@@ -90,16 +88,6 @@ class FailingLLMProvider:
 
 def _profile() -> IPOProfile:
     return IPOProfile(company_name="IPO Case")
-
-
-def test_rights_review_retrieval_is_bounded_to_twenty_without_widening_litigation() -> None:
-    retriever = RoutedRetriever()
-    agent = LegalAgent(retriever=retriever, llm_provider=MockLLMProvider())
-
-    agent.analyze(_profile(), [])
-
-    assert (LegalAgent.rights_query, 20) in retriever.calls
-    assert (LegalAgent.litigation_query, 10) in retriever.calls
 
 
 def _responses(

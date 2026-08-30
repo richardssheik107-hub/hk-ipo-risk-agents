@@ -17,28 +17,24 @@ from copy import deepcopy
 from typing import Any
 
 
-ACTIVE_RELEASE_POLICY_VERSION = "v045_release_policy_current_docs_demo_bundle_v2"
-DEFAULT_ROLE_E_DIR = "reports/v045_demo_bundle"
+ACTIVE_RELEASE_POLICY_VERSION = "v045_release_policy_no_required_human_review_v1"
 _OPTIONAL_ROLE_E_CASE_FILES = frozenset({"human_review_export.json"})
 _OPTIONAL_ARTIFACT_SUFFIXES = (
     "/explanation_quality.json",
     "/human_review_export.json",
 )
 _ACTIVE_SUBMISSION_DOCS = (
-    "docs/README.md",
     "docs/SUBMISSION_RUNBOOK.md",
     "docs/V0.4_RELEASE_ACCEPTANCE.md",
-    "docs/FINAL_SUBMISSION_STATUS.md",
     "docs/COMPETITION_CLOSURE_PLAN.md",
-    "docs/COMPETITION_METRIC_PROTOCOL.md",
+    "docs/ROADMAP.md",
+    "docs/V045_CURRENT_EXECUTION_PLAN.md",
     "docs/TEAM_QUICKSTART.md",
     "docs/PROJECT_SPEC.md",
     "docs/ARCHITECTURE.md",
     "docs/DATA_SCHEMA.md",
+    "docs/ROLE_B_M1_M2_PLAN.md",
     "docs/ROLE_D_MODEL_DECISION.md",
-    "docs/V045_ROLE_D_FINAL_CLOSURE.md",
-    "docs/FRONTEND_JUDGE_FACING_HANDOFF.md",
-    "docs/V1_RELEASE_NOTES_DRAFT.md",
 )
 
 

@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from ipo_risk.evaluation.existing_gold_metrics import (
-    EVALUATOR_VERSION,
     METRIC_PROTOCOL_VERSION,
     _manifest_hash,
     build_existing_gold_coverage,
@@ -186,7 +185,6 @@ def test_full_split_completeness_counts_present_negative_control_cases() -> None
     assert summary["evaluation_scope"] == "full_split"
     assert summary["expected_case_count_for_split"] == 2
     assert summary["evaluated_case_count"] == 2
-    assert summary["evaluator_version"] == EVALUATOR_VERSION
     assert summary["missing_case_ids"] == []
     assert summary["real_llm_cases"] == 2
     assert summary["risk_extraction"]["evaluable_positive_count"] == 1

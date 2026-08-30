@@ -180,57 +180,6 @@ def test_cash_flow_metrics_extract_from_structured_table() -> None:
     assert ocf.period_months == 12
 
 
-def test_cash_flow_net_outflow_label_extracts_only_on_structured_table_path() -> None:
-    table = {
-        "header_lines": ["截至12月31日止年度", "2019年", "2020年", "人民幣千元"],
-        "period_columns": [
-            {
-                "column": 0,
-                "year_label": "2019年",
-                "group_line": "截至12月31日止年度",
-            },
-            {
-                "column": 1,
-                "year_label": "2020年",
-                "group_line": "截至12月31日止年度",
-            },
-        ],
-        "period_basis_mixed": False,
-        "rows": [
-            {
-                "label": "經營活動所得現金流出淨額",
-                "cells": ["(53,092)", "(82,334)"],
-                "y": 50.0,
-            },
-            {
-                "label": "年末現金及現金等價物",
-                "cells": ["46,130", "59,556"],
-                "y": 62.0,
-            },
-        ],
-    }
-    chunk = DocumentChunk(
-        document_id="doc",
-        chunk_id="doc:page:36",
-        page=36,
-        section="財務資料",
-        text="人民幣千元\n經營活動所得現金流出淨額\n年末現金及現金等價物",
-        metadata={"tables": [table], "has_structured_tables": True},
-    )
-
-    result = TableAwareV03FinancialFactExtractor().extract(
-        cash_evidence_candidates=[_evidence_for(chunk)],
-        operating_cash_flow_candidates=[_evidence_for(chunk)],
-        chunks_by_id={chunk.chunk_id: chunk},
-    )
-
-    assert result.cash_and_cash_equivalents.status == ExtractionStatus.EXTRACTED
-    assert result.operating_cash_flow.status == ExtractionStatus.EXTRACTED
-    assert result.operating_cash_flow.normalized_value == Decimal("-82334")
-    assert result.operating_cash_flow.period_end.isoformat() == "2020-12-31"
-    assert result.operating_cash_flow.period_months == 12
-
-
 def test_cash_extraction_falls_back_without_tables() -> None:
     # No structured tables -> base flattened-text path (behaviour unchanged).
     chunk = DocumentChunk(

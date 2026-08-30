@@ -11,7 +11,6 @@ import zipfile
 import pytest
 
 from ipo_risk.runtime.submission_readiness import (
-    ROLE_B_ALL79_REQUIRED,
     ROLE_E_CASE_REQUIRED,
     _scan_path_for_sensitive_material,
     build_artifact_index,
@@ -39,35 +38,27 @@ def _csv(path: Path, fieldnames: list[str], row: dict | list[dict]) -> None:
 def _repo(root: Path) -> None:
     (root / "docs").mkdir(parents=True, exist_ok=True)
     protocol = "v045_competition_metric_protocol_v2_existing_gold_only"
-    metrics = "61/102 93/191 70/102 103/191"
     (root / "README.md").write_text(
-        f"# project\n{protocol}\n当前结论：**NOT COMPETITION_READY**\n{metrics}\n",
-        encoding="utf-8",
+        f"# project\n{protocol}\n尚未标记 `COMPETITION_READY`\n", encoding="utf-8"
     )
     for name in (
-        "README.md",
         "V0.4_RELEASE_ACCEPTANCE.md",
-        "FINAL_SUBMISSION_STATUS.md",
-        "COMPETITION_CLOSURE_PLAN.md",
-        "COMPETITION_METRIC_PROTOCOL.md",
-        "PROJECT_SPEC.md",
-        "ARCHITECTURE.md",
+        "V045_CURRENT_EXECUTION_PLAN.md",
+        "ROADMAP.md",
         "SUBMISSION_RUNBOOK.md",
     ):
         text = f"# {name}\n{protocol}\n"
         if name == "V0.4_RELEASE_ACCEPTANCE.md":
-            text += "当前结论：**NOT COMPETITION_READY**\n"
-        if name in {
-            "V0.4_RELEASE_ACCEPTANCE.md",
-            "FINAL_SUBMISSION_STATUS.md",
-            "COMPETITION_CLOSURE_PLAN.md",
-            "SUBMISSION_RUNBOOK.md",
-        }:
-            text += f"{metrics}\n"
+            text += "Current verdict: **NOT YET COMPETITION_READY**\n"
         (root / "docs" / name).write_text(text, encoding="utf-8")
     (root / ".env.example").write_text("IPO_RISK_LLM_API_KEY=\n", encoding="utf-8")
     for name in ("CHANGELOG.md", "AGENTS.md", "pyproject.toml", "environment.yml"):
         (root / name).write_text(f"fixture {name}\n", encoding="utf-8")
+    for name in (
+        "COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md",
+        "V04_FIVE_PERSON_EXECUTION_PLAN.md",
+    ):
+        (root / "docs" / name).write_text(f"# {name}\n{protocol}\n", encoding="utf-8")
     for dirname in ("src", "app", "configs", "scripts"):
         path = root / dirname / "fixture.txt"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -77,7 +68,7 @@ def _repo(root: Path) -> None:
 def _role_b(root: Path) -> None:
     manifest_hash = "ef" * 32
     _json(
-        root / "existing_gold_manifest_receipt.json",
+        root / "existing_gold_evaluable_manifest.json",
         {
             "metric_protocol_version": "v045_competition_metric_protocol_v2_existing_gold_only",
             "manifest_hash": manifest_hash,
@@ -135,18 +126,6 @@ def _role_b(root: Path) -> None:
         ["risk_code", "source_manifest_key", "source_annotation_hash"],
         {"risk_code": "r", "source_manifest_key": "m", "source_annotation_hash": "ab" * 32},
     )
-    details = root / "all79_final"
-    for name in ROLE_B_ALL79_REQUIRED:
-        path = details / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        if path.suffix == ".json":
-            _json(path, {"fixture": True})
-        elif path.suffix == ".csv":
-            _csv(path, ["fixture"], {"fixture": "safe"})
-        else:
-            path.write_text("fixture\n", encoding="utf-8")
-
-
 def _role_d(root: Path) -> None:
     case_ids = [f"ipo_2024_{index:05d}" for index in range(1, 71)]
     prediction_fields = [

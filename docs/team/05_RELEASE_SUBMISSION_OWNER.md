@@ -1,222 +1,353 @@
-# Person 5 — Final Integration / Release / Submission Owner — P0 ACTIVE
+# Person 5 — Final Integration / Release / Submission Owner
 
-> 状态日期：`2026-08-30`  
-> Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
-> 当前状态：**FINAL SUBMISSION CLOSEOUT**
+> 状态日期：2026-08-29  
+> 建议分支：`codex/release-submission`  
+> 主优先级：前期 **P1**，进入冻结/提交阶段后升为 **P0**  
+> 核心职责：把前四个人的成果变成一个可复现、可审计、可提交、不会泄密的最终版本
 
 ## 1. 主目标
 
-算法与产品功能已经冻结。本岗位现在是唯一 active P0：
+这个岗位不负责继续调算法，而负责最终工程闭环：
 
 ```text
-final truth alignment
+integration
+→ release readiness
+→ freeze
 → one-shot Validation
-→ final hashes / CI
 → audits
-→ fresh clone
-→ artifact index
+→ final artifacts
 → secure submission package
-→ presentation materials
+→ fresh-clone verification
 ```
 
-## 2. Final truth
+最终必须做到：
+
+> 一个干净环境只拿最终仓库/提交包，就能按照 Runbook 复现应该复现的内容；所有指标、模型、Market、Evidence、Replay、版本、哈希和限制都能解释清楚。
+
+## 2. 当前稳定基线
+
+当前已经有一个 known-good team-ready baseline：
 
 ```text
-Best offline ALL79:
-M1 = 70/102 = 68.63%
-M2 = 103/191 = 53.93%
-
-Real LLM gated ALL79:
-M1 = 61/102 = 59.80%
-M2 = 93/191 = 48.69%
-real_llm_cases = 79/79
+canonical 3-case replay
+Market = 3/3
+Model = 3/3
+Final Supervisor E1 = 3/3
+M3 = 1.0 x 3
+recheck = 17/17
+budget skipped = 0
+seven-stage = 21/21
+Evidence screenshots = 17/17 precise
+bundle = 66 files
+fresh clone = PASS
+CI = PASS
 ```
 
-正式 G2 自定义门槛 M1 `>=80%`、M2 `>=85%` 未达到，因此 G2 必须继续 BLOCKED。Release owner 的责任是记录真实结果，不是把 Gate 改绿。
+本岗位必须保护这条稳定基线，不能为了接入新功能破坏最终可用 Demo。
 
-## 3. 当前 Gate
+## 3. 当前真正未关闭的 Release 项
+
+以当前 Release Acceptance 为准，主要还有：
 
 ```text
-G0 Runtime / CI                 PASS
-G1 Stable final-three           PASS
-G2 Document Intelligence        BLOCKED
-G3 Dynamic Market-X             PASS
-G4 Dynamic Model / SHAP         PASS
-G5 Final Frontend / Product     PASS
-G6 Capability demonstrations    PASS
-G7 Freeze / Validation / package PARTIAL
+Person 1:
+ALL79 M1 >= 0.80
+ALL79 M2 >= 0.85
+
+Person 3:
+Dynamic Market-X historical + fresh path（PR #191 已关闭，持续回归保护）
+
+Person 4:
+formal model decision（已关闭）
+Dynamic Model / SHAP（PR #197 已关闭，持续回归保护）
+capability coverage
+
+Person 2:
+final answer-ready frontend
+
+本岗位:
+freeze / Validation / audits / package
 ```
 
-机器事实源：
+Human Review / M4 已明确：
 
 ```text
-reports/v045_role_b/document_benchmark_summary.json
-reports/final_status/final_freeze_manifest.json
-reports/final_status/product_acceptance.json
-reports/final_status/capability_manifest.json
+OPTIONAL
+NOT_REQUIRED_FOR_RELEASE
 ```
 
-## 4. Runtime freeze
+不需要 6 份真人 review，不得重新把它加回硬 Gate。
 
-Runtime freeze 已记录：
+## 4. 负责范围
+
+本岗位负责：
+
+- Release Acceptance 文档；
+- Closure Plan / Roadmap / Runbook；
+- final status snapshot；
+- repository-level integration；
+- merge sequencing；
+- version / schema / artifact identity；
+- latest-main CI；
+- fresh-clone verification；
+- Blind audit；
+- provenance audit；
+- determinism audit；
+- security / secret / path / licensing audit；
+- final artifact index；
+- one-shot Validation 的执行治理；
+- final submission ZIP；
+- submission manifest / SHA-256；
+- release note；
+- teammate/judge quickstart；
+- final source/artifact allowlist。
+
+本岗位**不负责**：
+
+- 为 M1/M2 改 Retriever/Agent；
+- 为模型效果重新调参；
+- 修改 Market 数值逻辑；
+- 为 UI 好看改变 runtime truth；
+- 用 Validation 结果反向调系统。
+
+## 5. 前期工作：持续做 Integration Watch
+
+在其他人开发期间，本岗位持续检查每个 PR 是否破坏关键边界。
+
+### Person 1 PR
+
+检查：
 
 ```text
-main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
-Role-B benchmark = dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b
-Development tuning = STOP
-Validation opened at freeze = false
-Blind outcome accessed = false
+Gold unchanged
+Validation untouched
+Blind untouched
+metric definition unchanged
+no case/page hardcoding
+formal artifacts retained
 ```
 
-Release-document / packaging metadata 可以继续修改，但不能改变 frozen runtime identity。
+### Person 2 PR
 
-## 5. One-shot Validation
-
-下一硬任务：
+检查：
 
 ```text
-ALL19 2024 Existing-Gold Validation
-ONE SHOT
+no fake available
+no stale bundle discovery
+no provenance loss
+no Evidence bbox fabrication
+canonical 3-case no regression
 ```
 
-执行前确认：
+### Person 3 PR
+
+检查：
+
+```text
+PIT strict
+no post-listing outcome
+no zero-fill
+no raw licensed EOD committed
+identity/hash/provenance complete
+```
+
+### Person 4 PR
+
+检查：
+
+```text
+no Validation retuning
+no Blind outcome
+model hash/manifest bound
+runtime inference only
+score != probability
+SHAP not copied from final-three
+```
+
+## 6. Merge / Branch 原则
+
+其他四人尽量独立分支：
+
+```text
+codex/role-b-m1-m2
+codex/final-product-ui
+codex/dynamic-market-x
+codex/dynamic-model-runtime
+```
+
+本岗位使用：
+
+```text
+codex/release-submission
+```
+
+每条线进入 main 前至少要求：
+
+```text
+targeted tests PASS
+relevant integration tests PASS
+git diff --check PASS
+no security / data-boundary violation
+```
+
+高风险功能优先 PR → CI → merge，不用 force push main。
+
+## 7. Freeze 条件
+
+只有当以下条件都满足时才允许进入最终 freeze：
+
+### Document
+
+```text
+ALL79 complete
+M1 >= 0.80
+M2 >= 0.85
+real LLM = 79/79
+```
+
+### Market
+
+```text
+historical universe path audited
+Dynamic New-IPO path implemented or external-data boundary formally documented
+PIT / missingness PASS
+```
+
+### Model
+
+```text
+PROMOTE / RETAIN decision complete
+final model version frozen
+feature manifest frozen
+alert policy frozen
+Dynamic inference + SHAP governed
+```
+
+### Product
+
+```text
+canonical 3-case no regression
+historical / fresh UI modes truthful
+capability cases complete
+```
+
+如果任一项仍在开放调参，不能跑最终 one-shot Validation。
+
+## 8. Freeze Manifest
+
+进入 freeze 后生成一个明确 manifest，至少绑定：
+
+```text
+main SHA
+config SHA
+Prompt versions
+Schema versions
+Retriever version
+Verifier version
+Market schema/provider version
+model version/hash
+feature manifest hash
+alert policy version
+Final Supervisor prompt/version
+Evaluator identity
+```
+
+Freeze 后任何改变这些内容的 commit 都必须使 Validation 失效并重新评估治理状态。
+
+## 9. One-shot Validation
+
+这是本岗位的核心责任之一。
+
+### 执行前
+
+必须确认：
 
 ```text
 Development optimization stopped
-runtime identity frozen
+all relevant code frozen
 Validation not previously used for tuning
-Blind outcome untouched
+Blind untouched
 ```
 
-执行后生成：
+### 执行
 
 ```text
-reports/final_status/one_shot_validation_receipt.json
+ALL19 Validation
+ONE SHOT
 ```
 
-至少包含：
+### 执行后
 
-```text
-status
-one_shot = true
-post_hoc_tuning = false
-blind_2025_y_accessed = false
-freeze SHA
-metric summary
-```
+只允许：
+
+- 记录结果；
+- 修复纯包装/非算法错误且明确不使用 Validation 内容做选择；
+- 如果出现真正 runtime crash，必须留下治理记录说明为什么重跑以及哪些代码改变。
 
 禁止：
 
 ```text
 看 Validation 错例
-→ 改 Retriever / Prompt / Risk rule / Verifier / Model
+→ 改 Retriever / Prompt / Risk rule / Model
 → 再跑 Validation
 ```
 
-## 6. Final G5/G6 rehash
+## 10. Final Audits
 
-最终提交 commit 上运行：
+### 10.1 Blind Audit
 
-```bash
-python scripts/check_final_product_capabilities.py
-```
-
-重新生成/核对：
-
-```text
-reports/final_status/product_acceptance.json
-reports/final_status/capability_manifest.json
-```
-
-禁止手工修改 hash。
-
-## 7. Final CI
-
-最终 main 至少必须通过：
-
-```text
-pytest
-compileall
-project validator
-competition data validator
-competition runtime validator
-Role-D receipt / strict release checker
-Market strict audit
-Dynamic Model / SHAP strict audit
-product runtime
-team clone ready
-git diff --check
-```
-
-GitHub Actions：
-
-```text
-tests
-Role D runtime
-Team demo runtime
-```
-
-## 8. Fresh clone
-
-第二个干净目录只从远端 `main` clone。
-
-禁止复制：
-
-```text
-.env
-PDF
-raw EOD / CSMAR
-local reports
-cache
-API key / token
-```
-
-然后执行安装、validators、product runtime、team clone checker、demo bundle verify、frontend smoke。
-
-## 9. Final audits
-
-### Blind
+确认：
 
 ```text
 2025 Blind outcome not accessed
-no Blind outcome artifact in package
-no Blind-driven optimization
+Blind split not selected by runtime
+no hidden Blind artifact in package
 ```
 
-### Provenance
+### 10.2 Provenance Audit
 
-覆盖：
+至少覆盖：
 
 ```text
-Role-B benchmark / Gold / evaluator identity
-Market PIT identity
-Role-D model / feature / alert identity
-Final Supervisor provider/model/prompt identity
-Demo replay recorded provenance
+Role-B Gold manifest/hash
+Role-D model/source identity
+Role-E PDF/config/code identity
+Market PIT provenance
+Final Supervisor provider/model/prompt/request/response hash
 ```
 
-### Determinism
+### 10.3 Determinism Audit
 
-明确区分 deterministic calculation / identity / feature / score 与 remote LLM variance。不得声称远程 LLM byte-for-byte deterministic。
+需要区分：
 
-### Security / licensing / path
+```text
+deterministic calculation / identity / feature / score
+vs
+remote LLM prose variance
+```
+
+不得虚假声称远程 LLM 文本 byte-for-byte deterministic。
+
+### 10.4 Security Audit
 
 拒绝：
 
 ```text
 .env
-API key / Bearer / token / private key
-licensed prospectus PDF
-raw licensed EOD / CSMAR
-raw provider journal
-absolute local path
-cache / temp / failed experiment payload
+API key
+Bearer/token
+private key
+licensed PDF
+raw EOD
+raw LLM journal
+local absolute path
+large unintended artifact
 unauthorized model/data
 ```
 
-## 10. Artifact index
+## 11. Final Artifact Index
 
-建立单一 index：
+建立单一 artifact index，至少包含：
 
 ```text
 logical path
@@ -230,84 +361,198 @@ allowed_in_submission
 rejection reason
 ```
 
-Human Review artifact 仍是 optional，缺失不能阻塞。
-
-## 11. 最终提交材料
-
-建议 package 至少包含：
+Human Review artifact 若存在：
 
 ```text
-source code / allowed configs
-README / FINAL_SUBMISSION_STATUS / TEAM_QUICKSTART / Runbook
-Role-B final benchmark summary
-freeze manifest
-Validation receipt
-Market / Model governed audits
-G5/G6 acceptance artifacts
-Role-D frozen manifests
-case reports / trace
-Evidence screenshot manifests / selected images
+optional
+```
+
+缺失不能阻塞 Release。
+
+## 12. 最终提交物
+
+最终 package 应按比赛实际要求和仓库当前 allowlist 生成，典型包括：
+
+```text
+source code
+configs
+README
+TEAM_QUICKSTART / Submission Runbook
+metric summary
+prediction table
+Risk/Evidence benchmark artifacts
+Agent Trace / reasoning artifacts
+Market / Model governed outputs
+case reports
+Evidence screenshot manifests/images
 canonical demo replay
+capability-case evidence
+release audits
 artifact index
 release note
-submission manifest
-SHA256SUMS
+submission_manifest.json
 ```
 
 明确排除：
 
 ```text
 original prospectus PDFs
-raw licensed market data
+raw licensed EOD
 .env / credentials
 raw provider journal
-cache / temp
+cache
 failed experiments
-Validation working files
-Blind outcomes
+local temp paths
+Validation private working files
+Blind artifacts/outcomes
 ```
 
-## 12. 答辩材料
+## 13. Canonical Demo / Team Runtime
 
-还需准备：
-
-- 最终 PPT；
-- 讲稿；
-- Q&A 备忘；
-- 演示视频/录屏（若平台要求）；
-- 现场 Demo 步骤；
-- offline replay fallback；
-- 关键 Evidence 截图；
-- 一页 known limitations / metric truth。
-
-评委叙事只回答：有什么风险、为什么、证据在哪、为什么可信。正文默认简体中文，Evidence 原文不改写。
-
-## 13. Release 命名
-
-当前仓库自定义 G2 未通过，因此：
+最终始终维护：
 
 ```text
-COMPETITION_READY = false
+reports/v045_demo_bundle
 ```
 
-如果 GitHub 版本号需要在提交前冻结，优先考虑 release candidate；不要仅为了“正式 1.0”修改 readiness 真相。比赛平台若不以仓库自定义 G2 为上传条件，作品本身仍可按真实状态提交。
-
-## 14. DONE 定义
-
-本岗位可完成的最终闭环：
+并确保：
 
 ```text
-one-shot Validation recorded
-final G5/G6 rehash
-latest-main CI PASS
-Blind / provenance / determinism / security / licensing / path audits PASS
-artifact index complete
+bundle verify PASS
+TEAM_CLONE_READY PASS
 fresh clone PASS
+Streamlit smoke PASS
+```
+
+如果 Dynamic New-IPO 功能加入，也不要删除 3-case offline replay；它是答辩时最稳定的 fallback/demo baseline。
+
+## 14. Final CI
+
+最终 main 至少检查：
+
+```text
+compileall
+project validator
+competition data validator
+competition runtime validator
+Role-D receipt
+product runtime
+team clone ready
+full pytest
+git diff --check
+security scan
+```
+
+以及现有 GitHub Actions：
+
+```text
+tests
+Role D runtime
+Team demo runtime
+```
+
+新 Dynamic Market / Model 若有独立 contract，应加入相应 CI。
+
+## 15. Fresh Clone 验证
+
+最终必须从远端 `main` 在第二个干净目录 clone。
+
+不能复制：
+
+```text
+.env
+PDF
+raw EOD
+local reports
+cache
+API keys
+```
+
+然后执行：
+
+```text
+install
+validators
+product runtime checker
+team clone checker
+demo bundle verify
+frontend smoke
+```
+
+只有远端 clone 自己能工作才算真正完成。
+
+## 16. Release 文档口径
+
+所有文档最终必须同步同一个事实源。
+
+禁止出现：
+
+- README 说 PASS、Acceptance 说 FAIL；
+- 旧 M4 仍被写成硬 Gate；
+- 旧三案例结果被当成 Dynamic New-IPO proof；
+- v2 candidate 写成已正式晋升但实际上没有 receipt；
+- fixed10 写成 ALL79；
+- Demo Replay 写成实时推理。
+
+## 17. Final Status 输出
+
+最终报告至少包含：
+
+```text
+FINAL_STATUS
+MAIN_SHA
+M1 / M2 / split / real LLM count
+Validation result
+Market coverage
+Dynamic New-IPO status
+model decision / model hash
+M3
+Final Supervisor
+Evidence coverage
+capability cases
+CI
+fresh clone
+security/provenance/determinism
+submission ZIP path/hash
+known limitations
+```
+
+当前 G5/G6 交付已关闭：`product_acceptance.json` 证明 Offline Demo Replay、Historical
+Governed IPO、Fresh New-IPO Analysis 三模式；`capability_manifest.json` 证明 8/8
+competition capabilities。两者由 `scripts/check_final_product_capabilities.py` 根据当前
+artifact/hash 重建校验，均不打开 Validation 或 Blind，且 capability 不计入 M1/M2。
+
+## 18. 禁止事项
+
+禁止：
+
+- 为了让 readiness 绿而删真实 Gate；
+- 把 M4 重新加成硬 Gate；
+- 用 mock/fallback 冒充 real success；
+- 用 Validation 调参；
+- 访问 Blind outcome；
+- 修改 upstream 算法但不通知 owner；
+- 手工改 artifact 指标；
+- 手工改 SHA 伪造 provenance；
+- 把整个 `reports/` 强行上传；
+- 提交受限 PDF / raw EOD / secrets。
+
+## 19. 完成定义
+
+本岗位 DONE 条件：
+
+```text
+all true active Gates closed
+freeze manifest complete
+one-shot Validation governed and recorded
+latest-main CI PASS
+Blind / provenance / determinism / security PASS
+artifact index PASS
 canonical demo PASS
+fresh clone PASS
 final docs consistent
 secure submission package generated
 submission manifest + SHA-256 complete
-presentation materials ready
 ```
 
-即使最终 G2 仍 BLOCKED，也不能通过改门槛消除它；最终提交材料应诚实携带这个 known limitation。
+这个岗位的价值不是“最后压个 ZIP”，而是确保所有前期成果最终真的构成一个可信、可复现、能提交的比赛作品。

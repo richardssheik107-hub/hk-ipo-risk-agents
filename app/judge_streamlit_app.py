@@ -7,7 +7,6 @@ it does not change backend semantics.
 
 from __future__ import annotations
 
-import base64
 from datetime import date
 from html import escape
 from pathlib import Path
@@ -28,11 +27,7 @@ from competition_ui import (
     market_runtime_summary,
     render_case_header,
     render_channel_grid,
-    render_empty_state,
-    render_landing_runtime,
     render_modern_table,
-    render_product_capabilities,
-    render_product_header,
     render_profile_grid,
     render_state_panel,
     risk_display_name,
@@ -254,145 +249,14 @@ def _inject_css() -> None:
         .judge-story span {color:#425d5a;font-size:.81rem;line-height:1.65;}
         .trust-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;margin:.5rem 0 1rem;}
         .trust-grid div {padding:.6rem .7rem;text-align:center;border-radius:12px;background:#effcf9;border:1px solid rgba(13,148,136,.14);font-size:.74rem;color:#285653;font-weight:650;}
-        .judge-intake-heading {margin:4rem 0 1.2rem;padding-top:1rem;border-top:1px solid rgba(20,184,166,.18);}
-        .judge-intake-kicker {color:#148081;font-size:.7rem;font-weight:800;letter-spacing:.075em;}
-        .judge-intake-heading h2 {margin:.5rem 0 .28rem!important;color:#173f3b;font-size:clamp(1.65rem,2.5vw,2.2rem)!important;}
-        .judge-intake-heading p {max-width:720px;margin:0;color:#657b77;font-size:.86rem;line-height:1.65;}
-        .judge-product-nav {height:58px;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:0 1.15rem;margin-bottom:.8rem;background:rgba(255,255,255,.94);border-bottom:1px solid rgba(20,184,166,.16);backdrop-filter:blur(12px);}
-        .judge-product-nav img {display:block;height:34px;width:auto;max-width:190px;object-fit:contain;}
-        .judge-product-links {display:flex;align-items:stretch;gap:30px;height:100%;overflow-x:auto;scrollbar-width:none;}
-        .judge-product-links a {position:relative;display:flex;align-items:center;color:#647975!important;font-size:.84rem;font-weight:600;text-decoration:none!important;white-space:nowrap;}
-        .judge-product-links a:after {content:"";position:absolute;left:8%;right:8%;bottom:0;height:4px;border-radius:999px;background:#22b8a9;transform:scaleX(0);transition:transform .18s ease;}
-        .judge-product-links a:hover,.judge-product-links a.nav-active {color:#0f766e!important;}
-        .judge-product-links a:hover:after,.judge-product-links a.nav-active:after {transform:scaleX(1);}
-        .st-key-judge_intake_shell {position:relative;isolation:isolate;margin:.15rem 0 2.1rem;padding:clamp(1.15rem,2.4vw,2rem);border:1px solid rgba(255,255,255,.92);border-radius:30px;background:rgba(255,255,255,.72);box-shadow:0 18px 42px rgba(20,184,166,.09);backdrop-filter:blur(16px);}
-        .st-key-judge_intake_shell:before {content:"";position:absolute;z-index:-1;left:5%;right:5%;bottom:-12px;height:42%;border-radius:28px;background:linear-gradient(100deg,rgba(96,213,200,.16),rgba(217,204,255,.22));filter:blur(10px);}
-        .st-key-judge_intake_shell [data-testid="stFileUploaderDropzone"] {min-height:172px;border:1px dashed rgba(20,184,166,.34)!important;border-radius:14px;background:rgba(255,255,255,.86)!important;}
-        .st-key-judge_intake_shell [data-testid="stButton"] button {min-height:46px;background:linear-gradient(110deg,#0f766e,#19a99b)!important;box-shadow:0 9px 20px rgba(15,118,110,.18);}
-        .judge-intake-label {margin-bottom:.32rem;color:#16766f;font-size:.72rem;font-weight:780;letter-spacing:.055em;}
-        .judge-intake-title {margin-bottom:.32rem;color:#173f3b;font-size:1.38rem;font-weight:760;}
-        .judge-intake-copy {min-height:3rem;margin-bottom:.68rem;color:#6b7f7b;font-size:.82rem;line-height:1.55;}
-
-        /* Five peer workspaces use distinct macaron identities without implying rank. */
-        .st-key-judge_workspace_shell {margin-top:1rem;padding:clamp(.8rem,1.6vw,1.25rem);border:1px solid rgba(20,184,166,.13);border-radius:26px;background:rgba(255,255,255,.72);box-shadow:0 16px 38px rgba(50,88,82,.075);}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tablist"] {display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:7px;border:1px solid rgba(103,90,155,.06);border-radius:18px;background:linear-gradient(100deg,rgba(230,249,244,.58),rgba(244,240,255,.6) 28%,rgba(255,247,236,.6) 52%,rgba(239,247,255,.62) 76%,rgba(255,241,246,.6));}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"] {min-width:0;min-height:52px;justify-content:center;border:1px solid transparent!important;border-radius:13px!important;color:#536a66!important;font-size:.81rem!important;font-weight:680!important;white-space:normal!important;line-height:1.25!important;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"]:nth-child(1) {background:rgba(232,250,245,.72)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"]:nth-child(2) {background:rgba(246,243,255,.78)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"]:nth-child(3) {background:rgba(255,248,239,.78)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"]:nth-child(4) {background:rgba(241,248,255,.8)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"]:nth-child(5) {background:rgba(255,243,247,.78)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"][aria-selected="true"] {transform:translateY(-2px);border-color:rgba(57,74,88,.16)!important;color:#263e3b!important;box-shadow:0 7px 16px rgba(58,74,88,.12)!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-highlight"] {display:none!important;}
-        .st-key-judge_panel_overview,.st-key-judge_panel_evidence,.st-key-judge_panel_market,.st-key-judge_panel_reasoning,.st-key-judge_panel_report {margin-top:1rem;padding:clamp(1rem,2vw,1.45rem);border-radius:20px;border:1px solid transparent;}
-        .st-key-judge_panel_overview {background:linear-gradient(140deg,rgba(230,249,244,.38),rgba(255,255,255,.94));border-color:rgba(85,190,160,.12);}
-        .st-key-judge_panel_evidence {background:linear-gradient(140deg,rgba(244,240,255,.42),rgba(255,255,255,.95));border-color:rgba(142,117,215,.12);}
-        .st-key-judge_panel_market {background:linear-gradient(140deg,rgba(255,247,236,.42),rgba(255,255,255,.95));border-color:rgba(222,154,91,.12);}
-        .st-key-judge_panel_reasoning {background:linear-gradient(140deg,rgba(239,247,255,.44),rgba(255,255,255,.95));border-color:rgba(91,155,215,.11);}
-        .st-key-judge_panel_report {background:linear-gradient(140deg,rgba(255,241,246,.42),rgba(255,255,255,.95));border-color:rgba(215,111,147,.11);}
-
-        /* Financial, legal and business are equally weighted peer views. */
-        .st-key-judge_domain_workspace {margin:.9rem 0 1.1rem;padding:.65rem;border-radius:18px;background:rgba(255,255,255,.56);border:1px solid rgba(122,110,168,.08);}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) .st-key-judge_domain_workspace [role="tablist"] {display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:6px;border-radius:15px;background:rgba(246,243,255,.58);}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) .st-key-judge_domain_workspace [role="tab"] {justify-content:center;min-height:48px;border:1px solid rgba(145,130,190,.09)!important;border-radius:12px!important;background:rgba(255,255,255,.72)!important;color:#61706e!important;font-weight:700!important;transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,color .16s ease,transform .16s ease;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) .st-key-judge_domain_workspace [role="tab"]:hover {background:rgba(250,248,255,.9)!important;border-color:rgba(132,105,194,.16)!important;color:#6854a2!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) .st-key-judge_domain_workspace [role="tab"][aria-selected="true"] {transform:translateY(-1px);background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(235,227,255,.92))!important;border-color:rgba(128,102,194,.28)!important;box-shadow:0 6px 16px rgba(112,86,176,.13)!important;color:#6b52ae!important;}
-        .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) .st-key-judge_domain_workspace [data-baseweb="tab-highlight"] {display:none!important;}
         @media (max-width:900px) {
           .judge-values,.judge-kpis,.trust-grid {grid-template-columns:1fr 1fr;}
           .judge-story-grid {grid-template-columns:1fr;}
-          .judge-product-links {gap:18px;}
-          .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tablist"] {display:flex!important;overflow-x:auto;}
-          .st-key-judge_workspace_shell .stTabs:has([role="tab"]:nth-child(5)) [role="tab"] {min-width:155px;}
-        }
-        @media (max-width:620px) {
-          .judge-product-nav {padding:0 .7rem;}.judge-product-nav img{height:29px}.judge-product-links{max-width:70%;gap:15px}.judge-product-links a{font-size:.72rem}
-          .st-key-judge_intake_shell {padding:1rem;border-radius:22px;}
-          .st-key-judge_domain_workspace [role="tablist"] {grid-template-columns:1fr;}
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
-
-
-def _asset_data_uri(relative_path: str) -> str:
-    asset_path = Path(__file__).resolve().parent / "assets" / relative_path
-    encoded = base64.b64encode(asset_path.read_bytes()).decode("ascii")
-    return f"data:image/png;base64,{encoded}"
-
-
-def _render_judge_navigation(*, result_mode: bool) -> None:
-    logo_uri = _asset_data_uri("ipo_risk_logo.png")
-    if result_mode:
-        links = (
-            "<a href='#new-analysis'>新建分析</a>"
-            "<a class='nav-active' aria-current='location' href='#judge-results'>案例结果</a>"
-            "<a href='#judge-results'>五大板块</a>"
-        )
-        target = "#judge-results"
-    else:
-        links = (
-            "<a class='nav-active' aria-current='location' href='#overview'>概览</a>"
-            "<a href='#new-analysis'>新建分析</a>"
-            "<a href='#workflow'>研究流程</a>"
-            "<a href='#capabilities'>核心能力</a>"
-            "<a href='#runtime'>运行环境</a>"
-        )
-        target = "#overview"
-    st.markdown(
-        "<nav class='judge-product-nav' aria-label='评委前端产品导航'>"
-        f"<a href='{target}' aria-label='返回当前页面顶部'><img src='{logo_uri}' alt='IPO Risk'></a>"
-        f"<div class='judge-product-links'>{links}</div></nav>",
-        unsafe_allow_html=True,
-    )
-
-
-def _render_judge_intake() -> tuple[str, str, date, object | None, bool]:
-    st.markdown(
-        "<section id='new-analysis' class='judge-intake-heading'>"
-        "<div class='judge-intake-kicker'>01 · 新股分析</div>"
-        "<h2>开始一次 IPO 风险研判</h2>"
-        "<p>填写发行人信息并上传招股书。分析仍由最新 main 的受治理服务完成，主题层不改写任何后端输入或输出。</p>"
-        "</section>",
-        unsafe_allow_html=True,
-    )
-    with st.container(key="judge_intake_shell"):
-        identity_col, upload_col = st.columns(
-            (1, 1), gap="large", vertical_alignment="top"
-        )
-        with identity_col:
-            st.markdown(
-                "<div class='judge-intake-label'>IPO 身份信息</div>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<div class='judge-intake-title'>发行人信息</div>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<div class='judge-intake-copy'>输入公司名称、股票代码、案例编号或上市日期，可从官方目录匹配并保留手工调整能力。</div>",
-                unsafe_allow_html=True,
-            )
-            company, code, listing = render_issuer_identity_inputs(key_prefix="judge")
-        with upload_col:
-            st.markdown(
-                "<div class='judge-intake-label'>招股书</div>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<div class='judge-intake-title'>上传招股书</div>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<div class='judge-intake-copy'>PDF 仅在本次研判期间用于解析、原文证据定位与复核。</div>",
-                unsafe_allow_html=True,
-            )
-            uploaded = st.file_uploader("上传招股书 PDF", type=["pdf"])
-            submitted = st.button(
-                "开始风险研判", type="primary", use_container_width=True
-            )
-    return company, code, listing, uploaded, submitted
 
 
 def _hero() -> None:
@@ -585,20 +449,18 @@ def _render_risks(payload: dict[str, object], *, expert: bool) -> None:
     st.markdown("## 风险解释与原文证据")
     st.caption("先解释为什么值得关注，再回到招股书原文、计算依据和复核状态。")
     domains = payload.get("domains") or {}
-    with st.container(key="judge_domain_workspace"):
-        st.caption("财务、法律与合规、业务为三个并列审阅视角，不代表主次或隶属关系。")
-        tabs = st.tabs([domain_label(x) for x in ("financial", "legal", "business")])
-        for domain, tab in zip(("financial", "legal", "business"), tabs, strict=True):
-            with tab:
-                risks = (domains.get(domain) or {}).get("risks") or []
-                if not risks:
-                    render_state_panel(
-                        "该领域暂无正式风险项",
-                        (domains.get(domain) or {}).get("status", "unavailable"),
-                        "本次运行未在该领域识别到正式风险项。",
-                    )
-                for risk in risks:
-                    _risk_card(risk, expert=expert)
+    tabs = st.tabs([domain_label(x) for x in ("financial", "legal", "business")])
+    for domain, tab in zip(("financial", "legal", "business"), tabs, strict=True):
+        with tab:
+            risks = (domains.get(domain) or {}).get("risks") or []
+            if not risks:
+                render_state_panel(
+                    "该领域暂无正式风险项",
+                    (domains.get(domain) or {}).get("status", "unavailable"),
+                    "本次运行未在该领域识别到正式风险项。",
+                )
+            for risk in risks:
+                _risk_card(risk, expert=expert)
 
     st.divider()
     render_evidence_viewer(
@@ -760,37 +622,11 @@ if not current_runtime["source_matches_checkout"]:
     )
     st.stop()
 
-stored_result = st.session_state.get("judge_result")
-result = stored_result
-if stored_result is not None:
-    compatible, compatibility_notice = _result_compatibility(
-        stored_result,
-        st.session_state.get("judge_result_fingerprint"),
-    )
-    if not compatible:
-        result = None
-        st.warning(compatibility_notice)
-    else:
-        origin_scenario = (
-            st.session_state.get("judge_result_fingerprint") or {}
-        ).get("scenario")
-        if origin_scenario not in {None, scenario}:
-            st.info(
-                f"当前案例由“{origin_scenario}”生成；已选的“{scenario}”"
-                "只用于下一次新分析，不会改写当前结果。"
-            )
+_hero()
 
-payload = result_payload(result) if result is not None else None
-_render_judge_navigation(result_mode=result is not None)
-render_product_header(payload, runtime_label=scenario)
-
-if result is None:
-    company, code, listing, uploaded, submitted = _render_judge_intake()
-else:
-    with st.expander("新建或重新分析其他招股书"):
-        company, code, listing, uploaded, submitted = _render_judge_intake()
-
-if submitted:
+company, code, listing = render_issuer_identity_inputs(key_prefix="judge")
+uploaded = st.file_uploader("上传招股书 PDF", type=["pdf"])
+if st.button("开始风险研判", type="primary", use_container_width=True):
     try:
         new_result, new_prospectus_bytes = _run_analysis(
             config_path=config_path,
@@ -829,39 +665,49 @@ if submitted:
             st.session_state["judge_prospectus_bytes"] = new_prospectus_bytes
             st.rerun()
 
+stored_result = st.session_state.get("judge_result")
+result = stored_result
+if stored_result is not None:
+    compatible, compatibility_notice = _result_compatibility(
+        stored_result,
+        st.session_state.get("judge_result_fingerprint"),
+    )
+    if not compatible:
+        result = None
+        st.warning(compatibility_notice)
+    else:
+        origin_scenario = (
+            st.session_state.get("judge_result_fingerprint") or {}
+        ).get("scenario")
+        if origin_scenario not in {None, scenario}:
+            st.info(
+                f"当前案例由“{origin_scenario}”生成；已选的“{scenario}”"
+                "只用于下一次新分析，不会改写当前结果。"
+            )
 if result is None:
     st.info("上传招股书后，系统将依次给出风险总览、风险解释与原文证据、市场与模型、结论形成过程和最终报告。")
-    render_empty_state()
-    render_product_capabilities()
-    render_landing_runtime(scenario)
 else:
     if st.sidebar.button("清除当前结果"):
         _clear_judge_result()
         st.rerun()
 
-    st.markdown("<div id='judge-results'></div>", unsafe_allow_html=True)
-    with st.container(key="judge_workspace_shell"):
-        tabs = st.tabs(
-            [
-                "风险总览",
-                "风险解释与证据",
-                "市场与模型",
-                "结论形成过程",
-                "专家复核与报告",
-            ]
-        )
-        with tabs[0]:
-            with st.container(key="judge_panel_overview"):
-                _render_overview(payload)
-        with tabs[1]:
-            with st.container(key="judge_panel_evidence"):
-                _render_risks(payload, expert=expert_mode)
-        with tabs[2]:
-            with st.container(key="judge_panel_market"):
-                _render_market_model(payload, expert=expert_mode)
-        with tabs[3]:
-            with st.container(key="judge_panel_reasoning"):
-                _render_reasoning_trace(payload, expert=expert_mode)
-        with tabs[4]:
-            with st.container(key="judge_panel_report"):
-                _render_report(payload, result, expert=expert_mode)
+    payload = result_payload(result)
+    tabs = st.tabs(
+        [
+            "风险总览",
+            "风险解释与证据",
+            "市场与模型",
+            "结论形成过程",
+            "专家复核与报告",
+        ]
+    )
+    with tabs[0]:
+        _render_overview(payload)
+    with tabs[1]:
+        _render_risks(payload, expert=expert_mode)
+    with tabs[2]:
+        _render_market_model(payload, expert=expert_mode)
+    with tabs[3]:
+        _render_reasoning_trace(payload, expert=expert_mode)
+    with tabs[4]:
+        _render_report(payload, result, expert=expert_mode)

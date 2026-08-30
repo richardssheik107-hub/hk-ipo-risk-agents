@@ -91,27 +91,6 @@ _EXPLICIT_SPECIAL_RIGHT = re.compile(
     r"\bvaluation adjustment mechanism\b|\bVAM\b",
     re.I,
 )
-_EXPLICIT_GRANTED_STANDARD_RIGHT = re.compile(
-    r"(?:授予|授出|獲授|获授|享有|擁有|拥有|持有).{0,80}(?:特别权利|特別權利)|"
-    r"(?:撤资权|撤資權)",
-    re.I | re.S,
-)
-_EXPLICIT_NEGATED_STANDARD_RIGHT = re.compile(
-    r"(?:並無|并无|概無|概无|沒有|没有|不會|不会).{0,80}"
-    r"(?:特别权利|特別權利|撤资权|撤資權)|"
-    r"(?:無|无).{0,24}(?:任何|其他).{0,16}(?:特别权利|特別權利)|"
-    r"\b(?:no|not (?:have|hold|enjoy))\b.{0,40}\bspecial rights?\b",
-    re.I | re.S,
-)
-_MANAGEMENT_ADVISER_TERMINATION = re.compile(r"終止|终止", re.I)
-_MANAGEMENT_ADVISER_RIGHT_AFTER_TERMINATION = re.compile(
-    r"^[\s，,、:：]*(?:其|該|该)?\s*(?:管理顧問權|管理顾问权)", re.I
-)
-_NEGATED_TERMINATION_PREFIX = re.compile(
-    r"(?:並無|并无|概無|概无|沒有|没有|尚未|未曾|並未|并未|"
-    r"不會|不会|不予|未予).{0,8}$",
-    re.I | re.S,
-)
 _EXPLICIT_SPECIAL_INVESTOR = re.compile(
     r"投资者|投資者|优先股股东|優先股股東|首次公开发售前|首次公開發售前|"
     r"\binvestors?\b|\bpreferred shareholders?\b|\bpre[- ]IPO\b|"
@@ -125,8 +104,7 @@ _EXPLICIT_LISTING_CONTEXT = re.compile(
 _EXPLICIT_LIFECYCLE_CONTEXT = re.compile(
     r"终止|終止|失效|届满|屆滿|豁免|放弃|放棄|恢复|恢復|重新生效|"
     r"重启|重啟|可予行使|再次行使|仍然有效|继续有效|繼續有效|上市后仍|"
-    r"上市後仍|不會[\s\S]{0,8}上市後存續|不会[\s\S]{0,8}上市后存续|"
-    r"\bterminat(?:e|ed|ion)\b|\bcease[ds]?\b|\blapse[ds]?\b|"
+    r"上市後仍|\bterminat(?:e|ed|ion)\b|\bcease[ds]?\b|\blapse[ds]?\b|"
     r"\bexpir(?:e|ed|y)\b|\bwaiv(?:e|ed|er)\b|\brestor(?:e|ed|ation)\b|"
     r"\brev(?:ive|ived)\b|\breinstate[dm]?\b|\bresume[ds]?\b|"
     r"\bremain(?:s|ed)? effective\b|\bcontinue[ds]? (?:to be )?effective\b|"
@@ -167,43 +145,12 @@ def _describes_failed_listing_restoration(value: str) -> bool:
     )
 
 
-def _has_terminated_management_adviser_right(value: str) -> bool:
-    """Bind an affirmative termination token to a nearby adviser-right mention."""
-
-    for clause in re.split(r"[；;。.!?！？\r\n]+", value):
-        for termination in _MANAGEMENT_ADVISER_TERMINATION.finditer(clause):
-            after = clause[termination.end() : termination.end() + 16]
-            if not _MANAGEMENT_ADVISER_RIGHT_AFTER_TERMINATION.search(after):
-                continue
-            negation_window = clause[
-                max(0, termination.start() - 12) : termination.start()
-            ]
-            if _NEGATED_TERMINATION_PREFIX.search(negation_window):
-                continue
-            return True
-    return False
-
-
-def _has_explicit_special_right(value: str) -> bool:
-    """Accept established signals or an affirmatively granted standard right."""
-
-    if _EXPLICIT_SPECIAL_RIGHT.search(value):
-        return True
-    if _has_terminated_management_adviser_right(value):
-        return True
-    return bool(
-        _EXPLICIT_GRANTED_STANDARD_RIGHT.search(value)
-        and not _EXPLICIT_NEGATED_STANDARD_RIGHT.search(value)
-    )
-
-
 class ShareholderRightsExtractor:
     """Ask an LLM for typed facts, then normalize them without making a risk decision."""
 
     task_name = "shareholder_rights_extract"
     prompt_version = "legal_shareholder_rights_v1"
     max_evidence = 10
-    explicit_review_max_evidence = 20
 
     def __init__(self, llm_provider: LLMProvider) -> None:
         self.llm_provider = llm_provider
@@ -243,11 +190,10 @@ class ShareholderRightsExtractor:
         Listing context, and lifecycle language available for legal review.
         """
 
-        review_evidence = evidence_candidates[: self.explicit_review_max_evidence]
         matched = [
             item
-            for item in review_evidence
-            if _has_explicit_special_right(item.text)
+            for item in evidence_candidates[: self.max_evidence]
+            if _EXPLICIT_SPECIAL_RIGHT.search(item.text)
             and _EXPLICIT_SPECIAL_INVESTOR.search(item.text)
             and _EXPLICIT_LISTING_CONTEXT.search(item.text)
             and _EXPLICIT_LIFECYCLE_CONTEXT.search(item.text)
@@ -258,7 +204,7 @@ class ShareholderRightsExtractor:
         matched_ids = {item.evidence_id for item in matched}
         supporting = [
             item
-            for item in review_evidence
+            for item in evidence_candidates[: self.max_evidence]
             if item.evidence_id not in matched_ids
             and _EXPLICIT_REVIEW_SUPPORT_RIGHT.search(item.text)
             and _EXPLICIT_SPECIAL_INVESTOR.search(item.text)

@@ -2358,12 +2358,6 @@ class TableAwareV03FinancialFactExtractor(V03FinancialFactExtractor):
             *_LABELS["operating_cash_flow"],
             re.compile(r"經營活動(?:所得|所用|產生|使用|經營).*?現金淨額"),
             re.compile(r"经营活动(?:所得|所用|产生|使用|经营).*?现金净额"),
-            # A small but legitimate statement variant names the signed row as
-            # net cash *inflow/outflow* rather than net cash.  Keep this on the
-            # coordinate-backed table path so narrative mentions cannot be
-            # mistaken for the primary OCF metric.
-            re.compile(r"經營活動(?:所得|所用|產生|使用).*?現金流(?:入|出)淨額"),
-            re.compile(r"经营活动(?:所得|所用|产生|使用).*?现金流(?:入|出)净额"),
         ),
     }
 

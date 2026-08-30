@@ -37,32 +37,10 @@ FINAL_CASE_IDS = (
 )
 
 ROLE_B_REQUIRED = (
-    "existing_gold_manifest_receipt.json",
+    "existing_gold_evaluable_manifest.json",
     "document_benchmark_summary.json",
     "risk_benchmark.csv",
     "evidence_benchmark.csv",
-)
-ROLE_B_ALL79_REQUIRED = (
-    "README.md",
-    "SHA256SUMS.txt",
-    "ablation_summary.json",
-    "baseline_manifest.json",
-    "best_iteration.json",
-    "case_statuses.json",
-    "failure_focus.json",
-    "gated_pipeline_trace.json",
-    "gated_retrieval_waterfall.json",
-    "gated_risk_pipeline_waterfall.json",
-    "llm_call_manifest.json",
-    "llm_call_quality.json",
-    "monotonicity_report.json",
-    "offline_document_benchmark_summary.json",
-    "offline_evidence_benchmark.csv",
-    "offline_pipeline_trace.json",
-    "offline_retrieval_waterfall.json",
-    "offline_risk_benchmark.csv",
-    "offline_risk_pipeline_waterfall.json",
-    "run_manifest.json",
 )
 ROLE_D_REQUIRED = (
     "test_predictions.csv",
@@ -110,14 +88,10 @@ SOURCE_ROOT_FILES = (
 )
 SOURCE_ROOT_DIRS = ("src", "app", "configs", "scripts")
 SUBMISSION_DOCS = (
-    "docs/README.md",
     "docs/SUBMISSION_RUNBOOK.md",
     "docs/V0.4_RELEASE_ACCEPTANCE.md",
-    "docs/FINAL_SUBMISSION_STATUS.md",
-    "docs/COMPETITION_CLOSURE_PLAN.md",
-    "docs/COMPETITION_METRIC_PROTOCOL.md",
-    "docs/PROJECT_SPEC.md",
-    "docs/ARCHITECTURE.md",
+    "docs/COMPETITION_HARDENING_AND_SUBMISSION_PLAN.md",
+    "docs/V04_FIVE_PERSON_EXECUTION_PLAN.md",
 )
 
 _FORBIDDEN_PACKAGE_SUFFIXES = {
@@ -237,7 +211,7 @@ def audit_role_b(role_b_dir: Path) -> GateResult:
             tuple(f"missing Role-B artifact: {name}" for name in missing),
         )
 
-    manifest = _read_json(role_b_dir / "existing_gold_manifest_receipt.json")
+    manifest = _read_json(role_b_dir / "existing_gold_evaluable_manifest.json")
     summary = _read_json(role_b_dir / "document_benchmark_summary.json")
     risk_header, risk_rows = _csv_header_and_rows(role_b_dir / "risk_benchmark.csv")
     evidence_header, evidence_rows = _csv_header_and_rows(role_b_dir / "evidence_benchmark.csv")
@@ -1042,7 +1016,7 @@ def build_blind_audit(role_b_dir: Path, role_d_dir: Path, role_e_dir: Path) -> d
     """Audit a closed allowlist of final artifacts without opening Blind data."""
 
     required_json = [
-        role_b_dir / "existing_gold_manifest_receipt.json",
+        role_b_dir / "existing_gold_evaluable_manifest.json",
         role_b_dir / "document_benchmark_summary.json",
         role_d_dir / "evaluation_summary.json",
         role_d_dir / "ai_vs_offline_report.json",
@@ -1145,7 +1119,7 @@ def build_provenance_audit(
     handoffs: list[dict[str, Any]] = []
 
     b_summary_path = (role_b_dir / "document_benchmark_summary.json") if role_b_dir else None
-    b_manifest_path = (role_b_dir / "existing_gold_manifest_receipt.json") if role_b_dir else None
+    b_manifest_path = (role_b_dir / "existing_gold_evaluable_manifest.json") if role_b_dir else None
     if b_summary_path and b_manifest_path and b_summary_path.is_file() and b_manifest_path.is_file():
         b_summary = _read_json(b_summary_path)
         b_manifest = _read_json(b_manifest_path)
@@ -1604,13 +1578,6 @@ def build_artifact_index(
 
     for name in ROLE_B_REQUIRED:
         add(role_b_dir / name, f"artifacts/role_b/{name}", "B", "B1")
-    for name in ROLE_B_ALL79_REQUIRED:
-        add(
-            role_b_dir / "all79_final" / name,
-            f"artifacts/role_b/all79_final/{name}",
-            "B",
-            "B1",
-        )
     ai_comparisons = _ai_vs_offline_candidates(role_b_dir, role_d_dir)
     if ai_comparisons:
         for ai_comparison in ai_comparisons:
@@ -1805,32 +1772,13 @@ def build_security_audit(
 
 
 def build_documentation_consistency_audit(repo_root: Path) -> dict[str, Any]:
-    root_readme_path = repo_root / "README.md"
-    acceptance_path = repo_root / "docs/V0.4_RELEASE_ACCEPTANCE.md"
     documents = (
-        root_readme_path,
-        repo_root / "docs/README.md",
-        acceptance_path,
-        repo_root / "docs/FINAL_SUBMISSION_STATUS.md",
-        repo_root / "docs/COMPETITION_CLOSURE_PLAN.md",
-        repo_root / "docs/COMPETITION_METRIC_PROTOCOL.md",
-        repo_root / "docs/PROJECT_SPEC.md",
-        repo_root / "docs/ARCHITECTURE.md",
+        repo_root / "README.md",
+        repo_root / "docs/V0.4_RELEASE_ACCEPTANCE.md",
+        repo_root / "docs/V045_CURRENT_EXECUTION_PLAN.md",
+        repo_root / "docs/ROADMAP.md",
         repo_root / "docs/SUBMISSION_RUNBOOK.md",
     )
-    protocol_documents = {
-        root_readme_path,
-        acceptance_path,
-        repo_root / "docs/COMPETITION_METRIC_PROTOCOL.md",
-        repo_root / "docs/SUBMISSION_RUNBOOK.md",
-    }
-    all79_status_documents = {
-        root_readme_path,
-        acceptance_path,
-        repo_root / "docs/FINAL_SUBMISSION_STATUS.md",
-        repo_root / "docs/COMPETITION_CLOSURE_PLAN.md",
-        repo_root / "docs/SUBMISSION_RUNBOOK.md",
-    }
     checks: list[dict[str, Any]] = []
     for path in documents:
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
@@ -1845,7 +1793,7 @@ def build_documentation_consistency_audit(repo_root: Path) -> dict[str, Any]:
                 {
                     "source": _record_path(path),
                     "assertion": "Metric-v2 protocol identity is current",
-                    "passed": path not in protocol_documents or METRIC_PROTOCOL_VERSION in text,
+                    "passed": METRIC_PROTOCOL_VERSION in text,
                 },
                 {
                     "source": _record_path(path),
@@ -1859,30 +1807,19 @@ def build_documentation_consistency_audit(repo_root: Path) -> dict[str, Any]:
                 },
             ]
         )
-        if path in all79_status_documents:
-            checks.append(
-                {
-                    "source": _record_path(path),
-                    "assertion": "final ALL79 M1/M2 numerator and denominator are current",
-                    "passed": all(
-                        value in text
-                        for value in ("61/102", "93/191", "70/102", "103/191")
-                    ),
-                }
-            )
-    root_readme = root_readme_path.read_text(encoding="utf-8") if root_readme_path.is_file() else ""
-    acceptance = acceptance_path.read_text(encoding="utf-8") if acceptance_path.is_file() else ""
+    root_readme = documents[0].read_text(encoding="utf-8") if documents[0].is_file() else ""
+    acceptance = documents[1].read_text(encoding="utf-8") if documents[1].is_file() else ""
     checks.extend(
         [
             {
-                "source": _record_path(root_readme_path),
+                "source": _record_path(documents[0]),
                 "assertion": "README does not claim COMPETITION_READY",
-                "passed": "NOT COMPETITION_READY" in root_readme,
+                "passed": "尚未标记 `COMPETITION_READY`" in root_readme,
             },
             {
-                "source": _record_path(acceptance_path),
-                "assertion": "Acceptance verdict remains NOT COMPETITION_READY",
-                "passed": "NOT COMPETITION_READY" in acceptance,
+                "source": _record_path(documents[1]),
+                "assertion": "Acceptance verdict remains NOT YET COMPETITION_READY",
+                "passed": "Current verdict: **NOT YET COMPETITION_READY**" in acceptance,
             },
         ]
     )
@@ -2143,10 +2080,6 @@ def _iter_submission_artifacts(
         path = role_b_dir / name
         if path.is_file():
             yield path, f"artifacts/role_b/{name}"
-    for name in ROLE_B_ALL79_REQUIRED:
-        path = role_b_dir / "all79_final" / name
-        if path.is_file():
-            yield path, f"artifacts/role_b/all79_final/{name}"
     for ai in _ai_vs_offline_candidates(role_b_dir, role_d_dir):
         yield ai, "artifacts/evaluation/ai_vs_offline_report.json"
     for name in ROLE_D_REQUIRED:

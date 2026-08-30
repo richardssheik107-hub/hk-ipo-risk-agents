@@ -15,7 +15,7 @@ import argparse
 import json
 from pathlib import Path
 
-from ipo_risk.runtime.release_policy import DEFAULT_ROLE_E_DIR, activate_active_release_policy
+from ipo_risk.runtime.release_policy import activate_active_release_policy
 from ipo_risk.runtime.submission_readiness import package_submission_bundle
 
 
@@ -24,7 +24,7 @@ def main() -> int:
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--role-b-dir", type=Path, default=Path("reports/v045_role_b"))
     parser.add_argument("--role-d-dir", type=Path, default=Path("reports/v045_role_d"))
-    parser.add_argument("--role-e-dir", type=Path, default=Path(DEFAULT_ROLE_E_DIR))
+    parser.add_argument("--role-e-dir", type=Path, default=Path("reports/v045_role_e"))
     parser.add_argument("--a-output-dir", type=Path, default=Path("reports/v045_submission"))
     parser.add_argument(
         "--output-zip",
