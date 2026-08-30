@@ -1,6 +1,6 @@
 # Project Specification — Competition Scope
 
-> 状态日期：`2026-08-29`
+> 状态日期：`2026-08-30`
 
 ## 1. 产品目标
 
@@ -26,11 +26,11 @@ Human Review 是 optional 产品 surface，不是当前 final Release Gate。
 
 | 主任务 | 完成目标 | 优先级 |
 |---|---|---|
-| M1/M2 Document Intelligence | ALL79 M1 `>=80%`、M2 `>=85%` | P0 |
-| Final Frontend / Product | Demo/Historical/Fresh 三种模式真实、清晰、答辩可用 | P0/P1 |
-| Dynamic Market-X | 任意合法新 IPO 得到真实 PIT Market-X 或诚实降级 | P0 |
-| Dynamic Model / Prediction / SHAP | 满足 feature contract 的案例真实 frozen-model inference + SHAP | P0 |
-| Final Integration / Submission | Freeze / Validation / audits / fresh clone / secure bundle | P1 → final P0 |
+| M1/M2 Document Intelligence | ALL79 已完成；M1/M2 未达门槛并冻结 | FAIL / FROZEN |
+| Final Frontend / Product | Demo/Historical/Fresh 三种模式与 channel truth 已验收 | PASS |
+| Dynamic Market-X | 562 个受治理案例 strict audit 已通过 | PASS |
+| Dynamic Model / Prediction / SHAP | 满足 feature contract 的案例真实 frozen-model inference + SHAP | PASS |
+| Final Integration / Submission | 最终审计 / clean clone / secure bundle；Validation 被 G2 阻塞 | OPEN / P0 |
 
 完整执行细节见 `COMPETITION_CLOSURE_PLAN.md` 和 `team/README.md`。
 
@@ -55,31 +55,22 @@ Human Review 是 optional 产品 surface，不是当前 final Release Gate。
 
 无 Existing Gold 的新增能力作为 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2 分母。
 
-## 4. Role-B 当前执行方式
-
-PR #189 后最新正式 fixed-journal gated：
+## 4. Role-B 最终冻结测量
 
 ```text
-Batch009 M1 = 14/30 = 46.67%
-Batch009 M2 = 21/48 = 43.75%
-Batch009 offline = 9/30, 15/48
+real-LLM gated: 79/79 cases
+M1 = 61/102 = 59.80%
+M2 = 93/191 = 48.69%
+316 tasks; 310 structured+scope valid; 6 fallback; 0 transport failure
+
+deterministic offline (selected):
+M1 = 70/102 = 68.63%
+M2 = 103/191 = 53.93%
 ```
 
-最后一个真实 fresh-provider checkpoint 仍是 Batch005 `11/30,17/48`。fixed-journal gain 与 fresh-provider evidence 必须严格区分。
-
-已接受 Batch008 cash-statement compatibility 和 Batch009 Legal lifecycle recognition；direct ranked concentration-table candidate 已因无 M1/M2 gain 且 supplier existence F1 回归而完整回滚。
-
-当前优先级：
-
-```text
-retrieval candidate generation / ranking
-→ exact page / anchor Evidence binding
-→ remaining deterministic / numeric extraction
-→ genuine conflict fail-closed
-→ fixed-vs-fresh LLM / Evidence variance
-```
-
-Role-B 可同时修复多个经过 Development evidence 证明的兼容 root，通过 independent commit + bundle benchmark + partial revert 控制回归。有 meaningful gain 后尽快扩样。
+real-LLM candidate 删除 9 个正确 deterministic Risk 和 12 个正确 Evidence，
+monotonicity 失败，因此不 promote。ALL79 已完成但未达 M1 80% / M2 85%；
+submission freeze 下不再迭代算法。
 
 正式目标：
 
@@ -92,9 +83,9 @@ real_llm_cases =79/79
 
 ## 5. Dynamic Market-X
 
-final-three `3/3` 与 438 historical artifacts 已证明 historical governed path 可用，但任意新 IPO 仍需要 dynamic runtime。
+Dynamic Market-X 已通过 562 个受治理案例的 strict audit：438 frozen + 124 dynamic PIT，0 integrity violation；覆盖外或合法历史不足时诚实降级。
 
-目标：
+已实现链路：
 
 ```text
 identity
@@ -109,9 +100,10 @@ or governed dynamic PIT source
 
 ## 6. Dynamic Model / SHAP
 
-当前 final-three frozen Model `3/3 available` 是稳定产品基线，但主要来自 receipt-bound per-case handoff。
+final-three frozen Model `3/3 available` 是稳定产品基线；泛化 runtime 已通过严格审计，
+达到 540/562 inference、537 outside per-case handoff、70/70 parity、0 mismatch。
 
-最终目标：
+已实现链路：
 
 ```text
 governed feature vector
@@ -123,11 +115,12 @@ governed feature vector
 → ModelSignal
 ```
 
-必须完成 frozen PR-F vs v2 candidate 的正式 promote/retain 决议。任何 promotion 都创建新的 versioned freeze / receipt，不允许覆盖历史身份或根据 2024 Validation 继续调参。V2 promotion package（独立 freeze/receipt/handoff）已实现，A-owned merge 后生效，不覆盖 frozen PR-F 身份。
+`PROMOTE_V2` 已通过 A-owned PR #184 生效。V2 使用独立 versioned freeze / receipt / handoff，
+不覆盖历史 PR-F 身份；禁止根据 2024 Validation 继续调参。
 
 ## 7. Final Frontend
 
-最终前端必须同时支持：
+最终前端验收已通过，并同时支持：
 
 ```text
 Offline Demo Replay

@@ -1,0 +1,12 @@
+{
+  "blind_2025_outcome_accessed": false,
+  "fixed10_target_reached": false,
+  "full_development_executed": true,
+  "m1": 0.6862745098039216,
+  "m2": 0.5392670157068062,
+  "monotonicity_satisfied": false,
+  "real_llm_candidate_accepted": false,
+  "report_version": "v046_role_b_best_iteration_v1",
+  "selected_mode": "offline",
+  "validation_opened": false
+}
