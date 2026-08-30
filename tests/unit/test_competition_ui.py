@@ -119,7 +119,8 @@ def test_executive_supervisor_view_keeps_document_summary_separate_from_competit
     view = executive_supervisor_view(payload)
     assert view["mode"] == "deterministic_fallback"
     assert view["title"] == "确定性 Document Supervisor 汇总"
-    assert "0 unresolved" in view["body"]
+    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "unresolved" not in view["body"]
     assert view["conflict_counts"] == {"partially_resolved": 2, "unresolved": 3}
     assert "transport request failed" in view["llm_reason"]
 
@@ -141,7 +142,8 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
     view = executive_supervisor_view(payload)
     assert view["mode"] == "llm"
     assert view["title"] == "LLM Final Supervisor 综合判断"
-    assert view["body"] == "Grounded competition-wide explanation."
+    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "Grounded competition-wide explanation." not in view["body"]
     assert view["conflict_counts"] == {"resolved": 1}
 
 

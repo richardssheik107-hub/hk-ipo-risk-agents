@@ -20,7 +20,7 @@ from ipo_risk.schemas.competition_runtime import HumanReviewDecision
 DECISION_LABELS = {
     HumanReviewDecision.ACCEPT: "接受（Accept）",
     HumanReviewDecision.REJECT: "驳回（Reject）",
-    HumanReviewDecision.NEEDS_FOLLOW_UP: "需继续跟进（Needs Follow-up）",
+    HumanReviewDecision.NEEDS_FOLLOW_UP: "需继续跟进",
 }
 
 def render_human_review(
@@ -33,8 +33,8 @@ def render_human_review(
 ) -> None:
     section_header(
         "人机复核",
-        "人工结论写入独立 reviewer sidecar，与机器结论并列保留；不会修改 RiskItem、Evidence 或分析结果文件。",
-        "Human oversight",
+        "人工结论写入独立复核记录，与机器结论并列保留；不会修改风险项、原文证据或分析结果文件。",
+        "人工监督",
     )
 
     targets = review_targets(payload)
@@ -103,7 +103,7 @@ def render_human_review(
                 st.success("复核结论已写入独立的人工复核记录。")
                 st.rerun()
 
-    section_header("机器结论 vs 人工结论", "两套结论始终并列展示，不自动合并或改写。", "Decision ledger")
+    section_header("机器结论与人工结论", "两套结论始终并列展示，不自动合并或改写。", "决策记录")
     render_modern_table(
         machine_vs_human_rows(payload, latest),
         badge_columns={

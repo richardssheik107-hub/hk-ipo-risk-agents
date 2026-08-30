@@ -17,6 +17,8 @@ from typing import Any, Iterable
 import streamlit as st
 import streamlit.components.v1 as components
 
+from judge_copy import supervisor_summary_zh, to_simplified_ui
+
 
 @dataclass(frozen=True)
 class FutureModule:
@@ -128,15 +130,17 @@ _STAGE_TITLES = {
 }
 
 _STAGE_SUMMARIES = {
-    ("document_analysis", "available"): "v0.3 Document Intelligence 已可用，包括 PDF 解析、检索以及 Financial / Legal / Business Agents。",
+    ("document_analysis", "available"): "招股书分析已完成，包括 PDF 解析、检索以及财务、法律与业务智能体。",
+    ("document_features", "available"): "已生成受治理的风险项、原文证据与确定性计算；本页面不依赖单独的冻结建模特征矩阵。",
     ("document_features", "partial"): "Document-X 特征规范已冻结，但当前 checkout 不包含 PR-A 物化运行生成的逐 IPO 100 维特征文件。",
     ("market_features", "available"): "当前案例已经接入受治理的上市前 Market-X，并按 PIT 口径提供可用市场观测。",
     ("market_features", "partial"): "PR-B Market-X Core 已冻结，但当前运行环境尚未向 Market 通道提供该案例的受治理投影。",
     ("prediction", "available"): "该案例已有冻结模型评分；评分仍是未校准的模型信号，不代表概率。",
     ("prediction", "partial"): "确定性规则评分与 PR-F 整体模型证据可用；逐案例模型评分只有在 hash 绑定的 PR-F runtime handoff 存在时才展示。",
-    ("explainability", "available"): "Document Evidence / Calculation 与冻结模型的逐案例解释信息均可用。",
+    ("explainability", "available"): "招股书原文证据、确定性计算与冻结模型的逐案例解释信息均可用。",
     ("explainability", "partial"): "Evidence 原文、PDF 页码和确定性 Calculation 已可用；逐案例 SHAP 驱动因素仍依赖本地 PR-F runtime handoff。",
-    ("final_supervisor", "available"): "Document、Market、Model 与 Rule 通道已进入 Final Supervisor；冲突会被保留并明确展示，而不是被静默抹平。",
+    ("final_supervisor", "available"): "招股书、Market-X、模型与规则通道已进入 Final Supervisor；冲突会被保留并明确展示。",
+    ("final_report", "available"): "本次运行已生成受治理的最终报告；比赛就绪 Gate 另行跟踪，不影响查看当前案例报告。",
     ("final_supervisor", "partial"): "Document Supervisor 可用，但当前配置尚未启用跨通道 Final Supervisor。",
     ("final_report", "partial"): "v0.4 报告链路已可运行；PR-H 仍需完成 3–5 个真实 IPO 的完整 E2E 案例矩阵后才能正式冻结。",
 }
@@ -242,7 +246,8 @@ def stage_summary_zh(stage: object) -> str:
         degraded = _market_stage_degraded_summary(stage)
         if degraded:
             return degraded
-    return _STAGE_SUMMARIES.get((stage_id, status), str(getattr(stage, "summary", "")))
+    display_status = "available" if status == "completed" else status
+    return _STAGE_SUMMARIES.get((stage_id, display_status), to_simplified_ui(getattr(stage, "summary", "")))
 
 
 def _market_stage_degraded_summary(stage: object) -> str:
@@ -294,8 +299,48 @@ def report_section_title(order: object, fallback: object) -> str:
     try:
         key = int(order)
     except (TypeError, ValueError):
-        return str(fallback)
-    return _REPORT_TITLES.get(key, str(fallback))
+        return to_simplified_ui(fallback)
+    return _REPORT_TITLES.get(key, to_simplified_ui(fallback))
+
+
+def report_section_summary_zh(payload: dict[str, Any], section: dict[str, Any]) -> str:
+    """从已治理字段生成简体中文章节摘要，避免直接展示后端英文模板。"""
+
+    order = int(section.get("order") or 0)
+    domains = payload.get("domains") or {}
+    risks = [
+        risk for domain in domains.values() if isinstance(domain, dict)
+        for risk in (domain.get("risks") or []) if isinstance(risk, dict)
+    ]
+    if order == 1:
+        profile = payload.get("profile") or {}
+        return f"{to_simplified_ui(profile.get('company_name') or '发行人')}（{profile.get('stock_code') or '代码不可用'}），上市日期 {profile.get('listing_date') or '不可用'}，行业为{to_simplified_ui(profile.get('industry') or '不可用')}。"
+    if order == 2:
+        counts, prediction = payload.get("risk_status_counts") or {}, payload.get("prediction") or {}
+        return f"已验证 {counts.get('verified', 0)} 项，待复核 {counts.get('needs_review', counts.get('pending', 0))} 项，已驳回 {counts.get('rejected', 0)} 项；规则评分为 {prediction.get('risk_score', '不可用')}/100，风险等级为{risk_level_label(prediction.get('risk_level'))}。"
+    if order in {3, 4, 5}:
+        key = {3: "financial", 4: "legal", 5: "business"}[order]
+        rows = (domains.get(key) or {}).get("risks") or []
+        names = "、".join(risk_display_name(row.get("risk_code")) for row in rows)
+        return f"本领域共识别 {len(rows)} 项正式风险" + (f"：{names}。" if names else "。")
+    if order in {6, 9}:
+        return supervisor_summary_zh(payload)
+    if order == 7:
+        available, total = available_market_observation_count(payload)
+        return f"上市前 Market-X 共提供 {available}/{total} 项可用观测；缺失值保持缺失，不补零。"
+    if order == 8:
+        model = payload.get("model_prediction") or payload.get("model") or {}
+        score = model.get("score", "不可用") if isinstance(model, dict) else "不可用"
+        return f"冻结模型评分为 {score}；该分数是未校准模型信号，仅用于风险排序，不能解读为概率。"
+    if order == 10:
+        return f"本次风险分析共引用 {sum(len(row.get('evidence') or []) for row in risks)} 条原文证据。"
+    if order == 11:
+        return f"本次共保留 {sum(bool(row.get('calculation')) for row in risks)} 个确定性计算对象。"
+    if order == 12:
+        return f"仍有 {sum(str(row.get('verification_status') or '').lower() in {'needs_review', 'pending'} for row in risks)} 项风险需要复核。"
+    if order == 13:
+        return "本版本结合招股书风险、受治理的上市前市场环境与冻结模型信号。规则评分和模型评分均不是概率，也不构成投资、法律、上市或股价收益建议。"
+    return to_simplified_ui(section.get("summary") or "本节暂无摘要。")
 
 
 # The market channel states why a feature is absent in a machine-readable
@@ -1104,13 +1149,13 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
             f"<div class='hero-static-bg'{_hero_static_background_style()}></div>"
             "<div class='hero-reading-overlay' aria-hidden='true'></div>"
             "<div class='hero-v3-copy'>"
-            "<div class='hero-v3-label'>IPO Risk Review</div>"
+            "<div class='hero-v3-label'>IPO 风险审阅</div>"
             "<h1 class='hero-v3-title'>港股 IPO 风险分析</h1>"
             "<div class='hero-v3-subtitle'>从招股书证据到最终审阅，构建可追溯、可核验的 IPO 风险研究链。</div>"
-            "<div class='hero-v3-detail'>统一连接 Prospectus、Evidence、Risk、Market Signal 与 Final Review。</div>"
+            "<div class='hero-v3-detail'>统一连接招股书、原文证据、风险、市场信号与最终审阅。</div>"
             "<div class='hero-v3-actions'><a class='hero-v3-cta' href='#new-analysis'>开始一次 IPO 分析 →</a></div>"
-            "<div class='hero-v3-meta'><span><i></i>Evidence traceable</span>"
-            "<span><i></i>Fail-closed</span><span><i></i>Human review</span></div>"
+            "<div class='hero-v3-meta'><span><i></i>证据可追溯</span>"
+            "<span><i></i>失败即关闭</span><span><i></i>人工复核</span></div>"
             "</div>"
             "<div class='risk-flow-visual' aria-hidden='true'>"
             "<svg viewBox='0 0 640 430' role='img'>"
@@ -1129,12 +1174,12 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
             "<rect x='167' y='52' width='260' height='322' rx='18' fill='#c7dce0' opacity='.28' transform='rotate(-5 297 213)'/><rect x='180' y='44' width='260' height='324' rx='18' fill='#dce9eb' opacity='.52' transform='rotate(2.5 310 206)'/>"
             "<rect x='164' y='38' width='270' height='330' rx='20' fill='url(#heroPaper)' stroke='#bcd2d7' stroke-width='1.2'/><path d='M382 38h32c11 0 20 9 20 20v31z' fill='#d7e7e9'/><path d='M382 38v31c0 11 9 20 20 20h32' fill='#edf4f5' stroke='#c3d7db'/>"
             "<rect x='164' y='38' width='38' height='330' rx='20' fill='#163d52'/><rect x='164' y='66' width='38' height='282' fill='#163d52'/><circle cx='183' cy='68' r='8' fill='#2a8790'/><path d='M179 68l3 3 6-7' fill='none' stroke='#d8f1ef' stroke-width='1.8'/><rect x='176' y='111' width='14' height='17' rx='3' fill='#eef6f5' opacity='.88'/><rect x='176' y='153' width='14' height='3' rx='1.5' fill='#84c8c4'/><rect x='176' y='164' width='14' height='3' rx='1.5' fill='#84c8c4' opacity='.65'/><circle cx='183' cy='216' r='7' fill='none' stroke='#8fc8c6'/><path d='M179 216h8M183 212v8' stroke='#8fc8c6'/><rect x='176' y='268' width='14' height='14' rx='4' fill='#d8b15a' opacity='.85'/><circle cx='183' cy='329' r='5' fill='#8fc8c6'/>"
-            "<text x='224' y='68' fill='#203f52' font-size='12' font-weight='750' letter-spacing='.8'>PROSPECTUS</text><text x='224' y='85' fill='#7b8d98' font-size='7.5' font-weight='650'>IPO FILING · RESEARCH COPY</text><rect x='348' y='57' width='57' height='18' rx='9' fill='#e4f1f0'/><circle cx='360' cy='66' r='3' fill='#249a95'/><text x='368' y='69' fill='#397078' font-size='6.5' font-weight='700'>SOURCE</text>"
+            "<text x='224' y='68' fill='#203f52' font-size='12' font-weight='750'>招股书</text><text x='224' y='85' fill='#7b8d98' font-size='7.5' font-weight='650'>IPO 申报 · 研究副本</text><rect x='348' y='57' width='57' height='18' rx='9' fill='#e4f1f0'/><circle cx='360' cy='66' r='3' fill='#249a95'/><text x='368' y='69' fill='#397078' font-size='6.5' font-weight='700'>来源</text>"
             "<rect x='224' y='111' width='142' height='8' rx='4' fill='#b8c9cf'/><rect x='224' y='130' width='176' height='5' rx='2.5' fill='#d2dde1'/><rect x='224' y='143' width='148' height='5' rx='2.5' fill='#dce5e8'/><rect x='224' y='189' width='170' height='5' rx='2.5' fill='#d3dee2'/><rect x='224' y='202' width='132' height='5' rx='2.5' fill='#dce5e8'/><rect x='224' y='248' width='174' height='5' rx='2.5' fill='#d3dee2'/><rect x='224' y='261' width='151' height='5' rx='2.5' fill='#dce5e8'/><rect x='224' y='307' width='154' height='5' rx='2.5' fill='#d3dee2'/><rect x='224' y='320' width='112' height='5' rx='2.5' fill='#dce5e8'/>"
             "<rect x='218' y='158' width='188' height='22' rx='5' fill='#f4dfae' opacity='.86'/><rect x='224' y='165' width='134' height='4' rx='2' fill='#bb9140' opacity='.65'/><rect x='218' y='217' width='168' height='22' rx='5' fill='#d9eeee'/><rect x='224' y='224' width='116' height='4' rx='2' fill='#4c9997' opacity='.58'/><text x='377' y='351' fill='#82939c' font-size='7' font-weight='650'>156 / 423</text>"
             "</g>"
-            "<g class='hero-evidence'><rect x='88' y='135' width='206' height='76' rx='14' fill='#f8fbfb' stroke='#b9d7d8'/><rect x='88' y='135' width='5' height='76' rx='2.5' fill='#d8b15a'/><text x='108' y='157' fill='#8b6a27' font-size='7.5' font-weight='650' letter-spacing='.4'>EVIDENCE · SOURCE LINKED</text><rect class='hero-evidence-sweep' x='108' y='169' width='158' height='11' rx='4' fill='url(#heroEvidenceFill)'/><rect x='108' y='187' width='128' height='4' rx='2' fill='#cad8dd'/><circle cx='272' cy='174' r='7' fill='#fff7e6' stroke='#d2a64c'/><path d='M269 174l2 2 4-5' fill='none' stroke='#a8791d' stroke-width='1.4'/></g>"
-            "<g class='hero-market'><rect x='404' y='56' width='184' height='108' rx='17' fill='url(#heroGlass)' stroke='#4c7c89'/><text x='426' y='80' fill='#b9d8da' font-size='8' font-weight='650' letter-spacing='.4'>MARKET SIGNAL</text><text x='426' y='94' fill='#739aa5' font-size='6.5' font-weight='500'>CONTEXT LAYER</text><g clip-path='url(#marketClip)'><path d='M430 140L447 132L463 136L480 116L497 124L515 105L535 113L556 90V148H430Z' fill='#3ba9ab' opacity='.14'/><path class='hero-market-line' d='M430 140L447 132L463 136L480 116L497 124L515 105L535 113L556 90' fill='none' stroke='#75d0cb' stroke-width='2'/></g><line x1='430' y1='148' x2='562' y2='148' stroke='#557987' stroke-opacity='.55'/><circle cx='568' cy='76' r='4' fill='#d8b15a'/></g>"
+            "<g class='hero-evidence'><rect x='88' y='135' width='206' height='76' rx='14' fill='#f8fbfb' stroke='#b9d7d8'/><rect x='88' y='135' width='5' height='76' rx='2.5' fill='#d8b15a'/><text x='108' y='157' fill='#8b6a27' font-size='7.5' font-weight='650'>原文证据 · 已关联来源</text><rect class='hero-evidence-sweep' x='108' y='169' width='158' height='11' rx='4' fill='url(#heroEvidenceFill)'/><rect x='108' y='187' width='128' height='4' rx='2' fill='#cad8dd'/><circle cx='272' cy='174' r='7' fill='#fff7e6' stroke='#d2a64c'/><path d='M269 174l2 2 4-5' fill='none' stroke='#a8791d' stroke-width='1.4'/></g>"
+            "<g class='hero-market'><rect x='404' y='56' width='184' height='108' rx='17' fill='url(#heroGlass)' stroke='#4c7c89'/><text x='426' y='80' fill='#b9d8da' font-size='8' font-weight='650'>市场信号</text><text x='426' y='94' fill='#739aa5' font-size='6.5' font-weight='500'>环境层</text><g clip-path='url(#marketClip)'><path d='M430 140L447 132L463 136L480 116L497 124L515 105L535 113L556 90V148H430Z' fill='#3ba9ab' opacity='.14'/><path class='hero-market-line' d='M430 140L447 132L463 136L480 116L497 124L515 105L535 113L556 90' fill='none' stroke='#75d0cb' stroke-width='2'/></g><line x1='430' y1='148' x2='562' y2='148' stroke='#557987' stroke-opacity='.55'/><circle cx='568' cy='76' r='4' fill='#d8b15a'/></g>"
             "<g class='hero-risk'><rect x='38' y='268' width='204' height='116' rx='18' fill='#f7fafb' stroke='#b7d0d5'/><text x='60' y='292' fill='#25495b' font-size='8' font-weight='650' letter-spacing='.4'>RISK REVIEW</text><circle cx='211' cy='288' r='8' fill='#e7f2f1'/><path d='M207 288l3 3 6-7' fill='none' stroke='#238d89' stroke-width='1.5'/><text x='60' y='319' fill='#607783' font-size='7'>FINANCIAL</text><rect x='119' y='313' width='90' height='7' rx='3.5' fill='#d8e4e7'/><rect x='119' y='313' width='54' height='7' rx='3.5' fill='#73bbb8'/><text x='60' y='342' fill='#607783' font-size='7'>LEGAL</text><rect x='119' y='336' width='90' height='7' rx='3.5' fill='#d8e4e7'/><rect x='119' y='336' width='66' height='7' rx='3.5' fill='#d8b15a'/><text x='60' y='365' fill='#607783' font-size='7'>BUSINESS</text><rect x='119' y='359' width='90' height='7' rx='3.5' fill='#d8e4e7'/><rect x='119' y='359' width='44' height='7' rx='3.5' fill='#5c9fa3'/></g>"
             "<g class='hero-rule'><rect x='430' y='178' width='145' height='58' rx='15' fill='#173f52' stroke='#527f8b'/><path d='M448 194l8-4 8 4v7c0 6-4 10-8 12-4-2-8-6-8-12z' fill='#74c5c1' opacity='.9'/><path d='M452 201l3 3 5-7' fill='none' stroke='#103c4e' stroke-width='1.5'/><text x='474' y='199' fill='#c5dfdf' font-size='7.5' font-weight='650'>RULE / GOVERNANCE</text><text x='474' y='214' fill='#789ca6' font-size='6.5'>Policy checks retained</text></g>"
             "<g class='hero-final'><rect x='368' y='248' width='238' height='142' rx='21' fill='url(#heroFinal)' stroke='#8bc9c5' stroke-width='1.2'/><circle cx='398' cy='280' r='15' fill='#d8f1ee'/><g class='hero-audit-mark'><path d='M391 280l5 5 10-12' fill='none' stroke='#176b75' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></g><text x='423' y='275' fill='#ffffff' font-size='10.5' font-weight='650' letter-spacing='.3'>FINAL REVIEW</text><text x='423' y='290' fill='#9ed0cf' font-size='7'>GOVERNED SUMMARY</text><line x1='390' y1='307' x2='581' y2='307' stroke='#92c3c3' stroke-opacity='.32'/><circle cx='397' cy='326' r='3.5' fill='#84d0cb'/><text x='409' y='329' fill='#d4e9e8' font-size='7.5'>Evidence linked</text><rect x='510' y='321' width='66' height='12' rx='6' fill='#2e7d83'/><text x='522' y='329.5' fill='#c7e6e4' font-size='6'>TRACEABLE</text><circle cx='397' cy='350' r='3.5' fill='#d8b15a'/><text x='409' y='353' fill='#d4e9e8' font-size='7.5'>Limits retained</text><rect x='510' y='345' width='66' height='12' rx='6' fill='#2e7d83'/><text x='524' y='353.5' fill='#c7e6e4' font-size='6'>REVIEWED</text><path d='M577 370h-76' stroke='#86b8b9' stroke-width='1.2'/><circle cx='584' cy='370' r='4' fill='#d8b15a'/></g>"
@@ -1148,10 +1193,10 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
     llm_state = (diagnostics.get("final_supervision_llm") or {}).get("status") or "unavailable"
     runtime_state = (payload or {}).get("runtime_completion_status") or (payload or {}).get("status") or "pending"
     indicators = (
-        ("Runtime", runtime_state, runtime_label),
+        ("运行模式", runtime_state, runtime_label),
         ("LLM", llm_state, status_label(llm_state) if payload else "待分析"),
         ("Market-X", states.get("market", "unavailable"), status_label(states.get("market")) if payload else "待分析"),
-        ("Model", states.get("model", "unavailable"), status_label(states.get("model")) if payload else "待分析"),
+        ("模型", states.get("model", "unavailable"), status_label(states.get("model")) if payload else "待分析"),
     )
     health_html = "".join(
         "<div class='health-item'><div class='health-label'>"
@@ -1163,7 +1208,7 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
         "<div id='result-overview' class='ipo-hero landing-section-anchor'><div class='ipo-hero-row'><div>"
         "<div class='ipo-kicker'>HK IPO Risk Intelligence</div>"
         "<div class='ipo-title'>港股 IPO 风险分析工作台</div>"
-        "<div class='ipo-subtitle'>Evidence-driven Multi-Agent IPO Risk Intelligence · "
+        "<div class='ipo-subtitle'>证据驱动的多智能体 IPO 风险分析 · "
         "招股书风险、证据链、市场信号与治理结论汇聚于同一审计工作台。</div>"
         "</div><div class='command-health'>"
         f"{health_html}</div></div></div>",
@@ -1174,7 +1219,7 @@ def render_product_header(payload: dict[str, Any] | None = None, *, runtime_labe
 def render_empty_state() -> None:
     st.markdown(
         "<section id='workflow' class='landing-section-head landing-section-anchor section-reveal'>"
-        "<div class='landing-section-index'>02 · RESEARCH WORKFLOW</div>"
+        "<div class='landing-section-index'>02 · 研究流程</div>"
         "<div><div class='landing-section-title'>研究流程</div>"
         "<div class='landing-section-copy'>从招股书输入到最终审阅，四个阶段保持证据、状态与限制可追溯。</div></div>"
         "</section>",
@@ -1206,25 +1251,25 @@ def render_product_capabilities() -> None:
     review_image = _asset_png_data_uri("capabilities/capability_human_review_report.png")
     st.markdown(
         "<section id='capabilities' class='landing-section-head landing-section-anchor section-reveal'>"
-        "<div class='landing-section-index'>03 · PRODUCT CAPABILITIES</div>"
+        "<div class='landing-section-index'>03 · 产品能力</div>"
         "<div><div class='landing-section-title'>核心能力</div>"
         "<div class='landing-section-copy'>所有能力均对应当前系统已有的受治理输出；右侧视觉为无数据的界面抽象，不代表分析结论。</div></div>"
         "</section>"
         "<div class='capability-stack'>"
         "<section class='capability-band'><div class='capability-copy'><div class='capability-no'>01 / 02</div>"
         "<div class='capability-title'>证据驱动的多领域风险审阅</div>"
-        "<div class='capability-text'>Financial、Legal 与 Business 风险从招股书 Evidence 出发，保留原文、PDF 页码、Calculation 与 Verifier 状态。</div>"
-        "<div class='capability-list'><div>Evidence traceability</div><div>Financial / Legal / Business</div></div></div>"
+        "<div class='capability-text'>财务、法律与业务风险从招股书原文证据出发，保留原文、PDF 页码、计算依据与验证状态。</div>"
+        "<div class='capability-list'><div>证据可追溯</div><div>财务 / 法律 / 业务</div></div></div>"
         f"<figure class='capability-visual'><div class='capability-image-frame'><img class='capability-image' src='{evidence_image}' alt='证据驱动的多领域风险审阅示意图'></div>"
         "<figcaption class='capability-caption'>界面示意 · 不代表当前案例分析结果</figcaption></figure></section>"
         "<section class='capability-band reverse'><div class='capability-copy'><div class='capability-no'>03</div>"
-        "<div class='capability-title'>跨通道风险融合</div><div class='capability-text'>Document、Market、Rule 与 Model 通道按真实可用状态进入综合审阅；不可用、部分可用与失败不会被界面掩盖。</div>"
-        "<div class='capability-list'><div>Governed channel status</div><div>Conflict-aware synthesis</div></div></div>"
+        "<div class='capability-title'>跨通道风险融合</div><div class='capability-text'>招股书、Market-X、规则与模型通道按真实可用状态进入综合审阅；不可用、部分可用与失败不会被界面掩盖。</div>"
+        "<div class='capability-list'><div>受治理的通道状态</div><div>保留冲突的综合判断</div></div></div>"
         f"<figure class='capability-visual'><div class='capability-image-frame'><img class='capability-image' src='{fusion_image}' alt='跨通道风险融合示意图'></div>"
         "<figcaption class='capability-caption'>界面示意 · 不代表当前案例分析结果</figcaption></figure></section>"
         "<section class='capability-band'><div class='capability-copy'><div class='capability-no'>04 / 05</div>"
         "<div class='capability-title'>人工复核与结构化报告</div><div class='capability-text'>机器结论与人工决定并列保留，最终输出可下载的 Markdown 研究报告与结构化 JSON 审计结果。</div>"
-        "<div class='capability-list'><div>Human Review sidecar</div><div>Final Report / Downloads</div></div></div>"
+        "<div class='capability-list'><div>人工复核记录</div><div>最终报告 / 下载</div></div></div>"
         f"<figure class='capability-visual'><div class='capability-image-frame'><img class='capability-image' src='{review_image}' alt='人工复核与结构化报告示意图'></div>"
         "<figcaption class='capability-caption'>界面示意 · 不代表当前案例分析结果</figcaption></figure></section>"
         "</div>",
@@ -1293,15 +1338,9 @@ def executive_supervisor_view(payload: dict[str, Any]) -> dict[str, Any]:
 
     llm_judgement = synthesis.get("judgement") if synthesis.get("status") == "available" else None
     if isinstance(llm_judgement, dict):
-        body = (
-            llm_judgement.get("final_explanation")
-            or llm_judgement.get("overall_risk_rationale")
-            or final.get("summary")
-            or "本次运行未生成综合结论。"
-        )
         return {
             "title": "LLM Final Supervisor 综合判断",
-            "body": body,
+            "body": supervisor_summary_zh(payload),
             "mode": "llm",
             "llm_status": "available",
             "llm_reason": synthesis.get("reason") or "",
@@ -1310,7 +1349,7 @@ def executive_supervisor_view(payload: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "title": "确定性 Document Supervisor 汇总",
-        "body": final.get("summary") or "本次运行未生成文档汇总结论。",
+        "body": supervisor_summary_zh(payload),
         "mode": "deterministic_fallback",
         "llm_status": synthesis.get("status") or "not_configured",
         "llm_reason": synthesis.get("reason") or "",
@@ -1319,7 +1358,13 @@ def executive_supervisor_view(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def evidence_reference_count(payload: dict[str, Any]) -> int:
-    return sum(len(risk.get("evidence") or []) for risk in payload.get("verified_risks") or [])
+    return sum(
+        len(risk.get("evidence") or [])
+        for domain in (payload.get("domains") or {}).values()
+        if isinstance(domain, dict)
+        for risk in (domain.get("risks") or [])
+        if isinstance(risk, dict)
+    )
 
 
 def available_market_observation_count(payload: dict[str, Any]) -> tuple[int, int]:
@@ -1671,19 +1716,19 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
     )
     st.markdown(
         "<div class='bento-shell result-enter'>"
-        "<div class='assessment-panel'><div class='assessment-label'>OVERALL ASSESSMENT</div>"
+        "<div class='assessment-panel'><div class='assessment-label'>综合判断</div>"
         f"<div class='assessment-status'>{escape(assessment_status)}</div>"
         f"<div class='assessment-risk'>规则风险等级 · {escape(rule_level)}</div>"
         f"<div class='assessment-copy'>{escape(str(assessment_copy))}</div></div>"
-        "<div class='health-panel'><div class='health-panel-title'>Run / Channel Health</div>"
+        "<div class='health-panel'><div class='health-panel-title'>运行与通道状态</div>"
         f"<div class='channel-list'>{channel_rows}</div></div></div>",
         unsafe_allow_html=True,
     )
     kpis = (
-        (counts.get("verified", 0), "Verified Risks"),
-        (evidence_reference_count(payload), "Evidence"),
-        (sum(view["conflict_counts"].values()), "Conflicts"),
-        (prediction.get("risk_score", "不可用"), "Rule Score"),
+        (counts.get("verified", 0), "已验证风险"),
+        (evidence_reference_count(payload), "原文证据"),
+        (sum(view["conflict_counts"].values()), "冲突"),
+        (prediction.get("risk_score", "不可用"), "规则评分"),
     )
     st.markdown(
         "<div class='bento-kpis'>"
@@ -1706,7 +1751,7 @@ def render_executive_snapshot(payload: dict[str, Any]) -> None:
         )
     uncertainty = final.get("uncertainty_statement")
     if uncertainty:
-        st.caption(uncertainty)
+        st.caption("当前结论受通道可用性与待复核事项限制，请结合原文证据审阅。")
 
 
 def render_channel_grid(payload: dict[str, Any]) -> None:

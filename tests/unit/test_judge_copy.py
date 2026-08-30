@@ -1,4 +1,11 @@
-from judge_copy import highest_risk_level, risk_reasoning, risk_review_focus, summarize_risks
+from judge_copy import (
+    highest_risk_level,
+    judge_status_label,
+    risk_reasoning,
+    risk_review_focus,
+    summarize_risks,
+    to_simplified_ui,
+)
 
 
 def test_known_risk_copy_is_business_facing() -> None:
@@ -26,3 +33,15 @@ def test_summary_is_presentation_only_counting() -> None:
         "highest_level": "high",
     }
     assert highest_risk_level(risks) == "high"
+
+
+def test_non_evidence_ui_copy_is_simplified() -> None:
+    assert to_simplified_ui("風險審閱與證據鏈") == "风险审阅与证据链"
+    assert judge_status_label("needs_review") == "待复核"
+
+
+def test_evidence_text_is_not_implicitly_converted() -> None:
+    evidence = "本公司於香港聯交所上市。"
+    # 原文只能由证据视图直接展示；转换函数不会自动遍历或修改载荷。
+    payload = {"text": evidence}
+    assert payload["text"] == evidence

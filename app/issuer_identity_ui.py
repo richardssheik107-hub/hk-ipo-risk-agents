@@ -77,7 +77,7 @@ def render_issuer_identity_inputs(
         "快速匹配发行人",
         key=f"{key_prefix}_issuer_lookup",
         placeholder="公司名称 / 股票代码 / 上市日期，例如：华润饮料、2460、2024-10-23",
-        help="从官方 IPO catalog 匹配；匹配后仍可手工修改三个字段。",
+        help="从官方 IPO 目录匹配；匹配后仍可手工修改三个字段。",
     ).strip()
 
     records = _catalog()
@@ -85,9 +85,9 @@ def render_issuer_identity_inputs(
     selected: IssuerCatalogRecord | None = None
 
     if query and not records:
-        st.caption("官方 IPO catalog 当前不可读取；仍可直接手工填写发行人信息。")
+        st.caption("官方 IPO 目录当前不可读取；仍可直接手工填写发行人信息。")
     elif query and not matches:
-        st.caption("未在官方 IPO catalog 找到匹配项；可继续手工填写新 IPO。")
+        st.caption("未在官方 IPO 目录找到匹配项；可继续手工填写新 IPO。")
     elif len(matches) == 1:
         selected = matches[0]
     elif len(matches) > 1:

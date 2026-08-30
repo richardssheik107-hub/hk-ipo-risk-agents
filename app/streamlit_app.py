@@ -38,6 +38,7 @@ from competition_ui import (
     render_state_panel,
     render_trace_timeline,
     report_section_title,
+    report_section_summary_zh,
     risk_display_name,
     risk_inventory_rows,
     risk_level_label,
@@ -63,6 +64,7 @@ from competition_runtime_view import (
 from evidence_viewer_compat import render_evidence_viewer
 from human_review_ui import render_human_review
 from issuer_identity_ui import render_issuer_identity_inputs
+from judge_copy import risk_conclusion_zh, supervisor_summary_zh, to_simplified_ui, verifier_note_zh
 from ipo_risk.runtime.demo_replay import (
     available_recorded_cases,
     load_recorded_case,
@@ -117,7 +119,15 @@ SCENARIOS = {
 
 
 def _display_value(value: object) -> str:
-    return "不可用" if value in (None, "", {}) else str(value)
+    if value in (None, "", {}):
+        return "不可用"
+    text = str(value)
+    labels = {
+        "Unavailable": "不可用", "unavailable": "不可用",
+        "catalog": "官方目录", "matched": "已匹配", "unmatched": "未匹配",
+        "unknown": "未知", "available": "可用", "partial": "部分可用",
+    }
+    return labels.get(text, to_simplified_ui(text))
 
 
 def _clear_result() -> None:
@@ -175,7 +185,7 @@ def _render_replay_picker() -> None:
 
     bundle = _demo_bundle_dir()
     st.sidebar.markdown(
-        "<div class='sidebar-section-label'>Demo replay</div>", unsafe_allow_html=True
+        "<div class='sidebar-section-label'>演示回放</div>", unsafe_allow_html=True
     )
     cases = available_recorded_cases(bundle)
     if not cases:
@@ -318,14 +328,14 @@ def _render_risk(risk: dict[str, object]) -> None:
             unsafe_allow_html=True,
         )
         st.markdown("**结论**")
-        st.write(risk.get("conclusion") or "本次未生成风险结论。")
+        st.write(risk_conclusion_zh(risk))
 
         notes = risk.get("verification_notes")
         if notes:
-            st.caption(f"Verifier 复核说明 · {notes}")
+            st.caption(f"复核说明 · {verifier_note_zh(notes)}")
         if risk.get("category") in {"legal", "business"}:
             st.caption(
-                "当前 v0.3 文档策略下，Legal / Business 的风险等级仍属于暂定结果；确定性规则不会自动将其提升为 high / critical。"
+                "当前 v0.3 文档策略下，法律与业务风险等级仍属于暂定结果；确定性规则不会自动将其提升为高或极高。"
             )
 
         evidence_items = risk.get("evidence") or []
@@ -355,7 +365,7 @@ def _render_risk(risk: dict[str, object]) -> None:
 
 def _render_sidebar_status(payload: dict[str, object], stages) -> None:
     profile = payload.get("profile") or {}
-    st.sidebar.markdown("<div class='sidebar-section-label'>Current case</div>", unsafe_allow_html=True)
+    st.sidebar.markdown("<div class='sidebar-section-label'>当前案例</div>", unsafe_allow_html=True)
     st.sidebar.markdown(
         f"**{_display_value(profile.get('stock_code'))}** · {_display_value(profile.get('company_name'))}"
     )
@@ -371,7 +381,7 @@ def _render_sidebar_status(payload: dict[str, object], stages) -> None:
 def _render_overview(payload: dict[str, object], stages) -> None:
     profile = payload["profile"]
 
-    section_header("IPO Profile", "发行资料、数据来源与案例匹配状态。", "Case facts")
+    section_header("IPO 概览", "发行资料、数据来源与案例匹配状态。", "案例信息")
     render_profile_grid(
         (
             ("公司", _display_value(profile.get("company_name"))),
@@ -388,30 +398,30 @@ def _render_overview(payload: dict[str, object], stages) -> None:
 
     left, right = st.columns((1.05, 1.45))
     with left:
-        section_header("Risk Coverage", "Financial / Legal / Business 覆盖。", "Coverage")
+        section_header("风险覆盖", "财务、法律与业务风险覆盖情况。", "覆盖情况")
         render_modern_table(
             domain_summary_rows(payload),
             badge_columns={"领域": "domain", "状态": "status"},
             compact=True,
         )
     with right:
-        section_header("Risk Inventory", "正式风险项与 Evidence 数量。", "Inventory")
+        section_header("风险清单", "正式风险项与原文证据数量。", "风险清单")
         inventory = risk_inventory_rows(payload)
         if inventory:
             st.dataframe(inventory, hide_index=True, width="stretch")
         else:
             render_state_panel("暂无正式风险项", "unavailable", "本次运行未产出正式风险项；界面不会用低风险或 0 替代未知状态。")
 
-    section_header("七阶段运行链路", "从招股书解析到最终报告的受治理处理链。", "Pipeline")
+    section_header("七阶段运行链路", "从招股书解析到最终报告的受治理处理链。", "处理流程")
     render_pipeline_strip(stages)
     st.caption("规则评分仅用于确定性风险排序，不代表发生概率、股价走势，也不构成投资或法律建议。")
 
 
 def _render_risks_and_evidence(payload: dict[str, object]) -> None:
     section_header(
-        "风险与 Evidence",
-        "风险结论、验证状态与规则评分优先；Evidence、Calculation、metadata 和诊断仍可逐层核验。",
-        "Document intelligence",
+        "风险与原文证据",
+        "风险结论、验证状态与规则评分优先；原文证据、计算依据、结构化字段和诊断仍可逐层核验。",
+        "招股书风险分析",
     )
     domain_tabs = st.tabs([domain_label(domain) for domain in DOMAINS])
     for domain, tab in zip(DOMAINS, domain_tabs, strict=True):
@@ -422,7 +432,7 @@ def _render_risks_and_evidence(payload: dict[str, object]) -> None:
                 (
                     ("风险项", domain_data["risk_count"], domain_label(domain)),
                     ("已验证", counts.get("verified", 0), "Verified"),
-                    ("待复核", counts.get("needs_review", 0), "Needs review"),
+                    ("待复核", counts.get("needs_review", 0), "需要复核"),
                     ("待处理 / 已驳回", counts.get("pending", 0) + counts.get("rejected", 0), "Pending / Rejected"),
                 )
             )
@@ -439,7 +449,7 @@ def _render_market_and_model(payload: dict[str, object], stages_by_id: dict[str,
     section_header(
         "市场与模型信号",
         "Market-X 缺失值原样保留；仅在存在冻结且可核验的逐案例 runtime handoff 时展示模型评分。",
-        "Market & model intelligence",
+        "市场与模型分析",
     )
 
     left, right = st.columns((1.22, 1))
@@ -532,7 +542,7 @@ def _render_supervisor_and_report(payload: dict[str, object], result, stages_by_
     section_header(
         "Final Supervisor 与最终报告",
         "机器结论、受治理的不确定性与可下载审计成果保持一致。",
-        "Audit & research report",
+        "审计与研究报告",
     )
 
     stem = safe_download_stem(result.stock_code)
@@ -590,14 +600,14 @@ def _render_supervisor_and_report(payload: dict[str, object], result, stages_by_
             st.markdown("**规则评分组成**")
             st.json(supervision.get("metadata", {}).get("rule_score_components", []))
 
-    section_header("完整分析报告（13 节）", "按标准报告结构逐节审阅，结构化 metadata 保留在对应章节。", "Report workspace")
+    section_header("完整分析报告（13 节）", "按标准报告结构逐节审阅，结构化字段保留在对应章节。", "报告工作区")
     for section in sorted(payload["report_sections"], key=lambda item: item["order"]):
         expanded = section["order"] in {1, 2, 9}
         title = report_section_title(section["order"], section["title"])
         with st.expander(f"{section['order']}. {title}", expanded=expanded):
-            st.write(section["summary"])
+            st.write(report_section_summary_zh(payload, section))
             if section.get("metadata"):
-                with st.expander("结构化 section metadata", expanded=False):
+                with st.expander("章节结构化字段", expanded=False):
                     st.json(section["metadata"])
 
     stage = stages_by_id.get("final_report")
@@ -611,7 +621,7 @@ def _render_system(payload: dict[str, object], stages) -> None:
     section_header(
         "系统信息、追溯与诊断",
         "工程状态与风险结论分层展示；底层配置、错误和运行日志保持可审计。",
-        "Diagnostics",
+        "系统诊断",
     )
 
     stage_rows = []
@@ -712,38 +722,36 @@ def _render_supervisor_judgement(payload: dict[str, object]) -> None:
             "也不能引入未提供的 risk_id / evidence_id 或任何概率表述。"
         )
         st.markdown("**判断依据**")
-        st.write(verdict.get("overall_risk_rationale") or "未给出依据。")
+        st.write(supervisor_summary_zh(payload))
 
         findings = verdict.get("key_findings") or []
         st.markdown(f"**关键发现 · {len(findings)}**")
-        for finding in findings:
+        for index, finding in enumerate(findings, start=1):
             st.markdown(
-                f"- {finding.get('statement', '')}  \n"
-                f"  <span class='risk-chip'>risk {len(finding.get('risk_ids') or [])}</span> "
-                f"<span class='risk-chip'>evidence {len(finding.get('evidence_ids') or [])}</span>",
-                unsafe_allow_html=True,
+                f"- 关键发现 {index}：关联 {len(finding.get('risk_ids') or [])} 项风险、"
+                f"{len(finding.get('evidence_ids') or [])} 条原文证据。"
             )
 
         assessments = verdict.get("conflict_assessments") or []
         if assessments:
             with st.expander(f"冲突评述 · {len(assessments)}", expanded=False):
                 for item in assessments:
-                    st.markdown(f"- `{item.get('conflict_id', '')}` — {item.get('assessment', '')}")
+                    st.markdown(f"- `{item.get('conflict_id', '')}` — 该冲突已保留，需结合相关通道结果复核。")
 
         uncertainties = verdict.get("uncertainties") or []
         if uncertainties:
             st.markdown("**不确定性**")
-            for item in uncertainties:
-                st.markdown(f"- {item}")
+            for _item in uncertainties:
+                st.markdown("- 当前结论仍受证据完整性、通道可用性或待复核事项限制。")
 
         targets = verdict.get("recheck_targets") or []
         if targets:
             st.markdown("**建议的定向复核对象**")
             for item in targets:
-                st.markdown(f"- `{item.get('target', '')}` — {item.get('reason', '')}")
+                st.markdown(f"- `{item.get('target', '')}` — 建议对该对象进行定向复核。")
 
         st.markdown("**最终说明**")
-        st.write(verdict.get("final_explanation") or "未给出最终说明。")
+        st.write(supervisor_summary_zh(payload))
 
 
 def _render_command_center(payload: dict[str, object], stages) -> None:
@@ -752,9 +760,9 @@ def _render_command_center(payload: dict[str, object], stages) -> None:
 
     counts = conflict_status_counts(payload)
     if counts:
-        section_header("Competition Conflict 状态", "Resolved / Partial / Unresolved 冲突概览。", "Conflict summary")
+        section_header("跨通道冲突状态", "已解决、部分解决和待复核的冲突概览。", "冲突摘要")
         render_metric_grid(
-            (RESOLUTION_LABELS.get(status, status), count, "Competition conflict")
+            (RESOLUTION_LABELS.get(status, status), count, "跨通道冲突")
             for status, count in sorted(counts.items())
         )
         st.caption("冲突明细与定向复核结论见「Agent 协作轨迹」工作区。")
@@ -764,22 +772,22 @@ def _render_command_center(payload: dict[str, object], stages) -> None:
 
 def _render_agent_trace(payload: dict[str, object], stages) -> None:
     section_header(
-        "Agent 协作轨迹",
-        "Agent → Evidence → Risk → Conflict → Re-check → Supervisor；完整 Provider、Prompt、Evidence 与 Calculation 仍可审计。",
-        "Traceability",
+        "智能体协作轨迹",
+        "智能体 → 原文证据 → 风险 → 冲突 → 重新核验 → 综合审阅；完整的模型提供方、提示词、证据与计算仍可审计。",
+        "追溯链路",
     )
 
     st.markdown(
         "<div class='trace-flow'>"
-        "<div class='trace-flow-step'>Agent</div><div class='trace-flow-step'>Evidence</div>"
-        "<div class='trace-flow-step'>Risk</div><div class='trace-flow-step'>Conflict</div>"
-        "<div class='trace-flow-step'>Re-check</div><div class='trace-flow-step'>Supervisor</div>"
+        "<div class='trace-flow-step'>智能体</div><div class='trace-flow-step'>原文证据</div>"
+        "<div class='trace-flow-step'>风险</div><div class='trace-flow-step'>冲突</div>"
+        "<div class='trace-flow-step'>重新核验</div><div class='trace-flow-step'>综合审阅</div>"
         "</div>",
         unsafe_allow_html=True,
     )
     metrics = traceability_metrics(payload)
     if metrics:
-        section_header("可追溯率", "每项比例均来自本次 trace sidecar。", "Audit metrics")
+        section_header("可追溯率", "每项比例均来自本次运行轨迹。", "审计指标")
         st.dataframe(metrics, hide_index=True, width="stretch")
         unresolved = (traceability(payload) or {}).get("unresolved_evidence_ids") or []
         if unresolved:
@@ -789,7 +797,7 @@ def _render_agent_trace(payload: dict[str, object], stages) -> None:
         render_state_panel("Agent Trace 不可用", "unavailable", "当前运行模式没有生成 Agent Trace sidecar。")
 
     conflicts_table = conflict_rows(payload)
-    section_header("跨 Agent 冲突与定向复核", "冲突、参与方、复核状态与保留结论。", "Conflict & re-check")
+    section_header("跨智能体冲突与定向复核", "冲突、参与方、复核状态与保留结论。", "冲突与重新核验")
     if conflicts_table:
         render_modern_table(
             conflicts_table,
@@ -802,7 +810,7 @@ def _render_agent_trace(payload: dict[str, object], stages) -> None:
         render_state_panel("未检出跨 Agent 冲突", "available", "本次运行未记录跨 Agent 冲突；这不改变各风险项自身的验证状态。")
 
     rows = trace_rows(payload)
-    section_header(f"完整事件轨迹 · {len(rows)}", "按 sidecar 原始顺序呈现，紧凑视图下方保留完整字段表。", "Event timeline")
+    section_header(f"完整事件轨迹 · {len(rows)}", "按运行记录原始顺序呈现，紧凑视图下方保留完整字段表。", "事件时间线")
     if rows:
         render_trace_timeline(rows)
         with st.expander("完整事件字段表", expanded=False):
@@ -845,12 +853,12 @@ apply_competition_theme()
 
 st.sidebar.markdown(
     "<div class='sidebar-brand'><div class='sidebar-brand-title'>IPO Risk Intelligence</div>"
-    "<div class='sidebar-brand-copy'>Evidence-driven audit workspace</div></div>",
+    "<div class='sidebar-brand-copy'>证据驱动的风险审计工作台</div></div>",
     unsafe_allow_html=True,
 )
 scenario_names = list(SCENARIOS)
 default_scenario = scenario_names.index(SCENARIO_COMPETITION_OFFLINE)
-st.sidebar.markdown("<div class='sidebar-section-label'>Runtime scenario</div>", unsafe_allow_html=True)
+st.sidebar.markdown("<div class='sidebar-section-label'>运行场景</div>", unsafe_allow_html=True)
 scenario = st.sidebar.selectbox(
     "运行模式",
     scenario_names,
@@ -864,7 +872,7 @@ has_existing_result = st.session_state.get("analysis_result") is not None
 render_product_navigation(result_mode=has_existing_result)
 header_slot = st.container()
 
-st.sidebar.markdown("<div class='sidebar-section-label'>Configuration</div>", unsafe_allow_html=True)
+st.sidebar.markdown("<div class='sidebar-section-label'>配置</div>", unsafe_allow_html=True)
 st.sidebar.markdown(f"<div class='sidebar-config'>{escape(config_path)}</div>", unsafe_allow_html=True)
 st.sidebar.markdown(
     "<div class='sidebar-note'>离线模式不调用外部模型；AI 模式仅从环境变量读取凭证。"
@@ -878,7 +886,7 @@ _render_replay_picker()
 if not has_existing_result:
     st.markdown(
         "<section id='new-analysis' class='landing-section-head landing-section-anchor section-reveal'>"
-        "<div class='landing-section-index'>01 · NEW IPO ANALYSIS</div>"
+        "<div class='landing-section-index'>01 · 新股分析</div>"
         "<div><div class='landing-section-title'>开始一次 IPO 研究</div>"
         "<div class='landing-section-copy'>填写发行人信息并上传招股书。系统只基于本次提交启动受治理分析。</div></div>"
         "</section>",
@@ -887,7 +895,7 @@ if not has_existing_result:
     with st.container(key="analysis_intake_shell"):
         identity_col, upload_col = st.columns((0.4, 0.6), gap="large")
         with identity_col:
-            st.markdown("<div class='landing-intake-label'>IPO Identity</div>", unsafe_allow_html=True)
+            st.markdown("<div class='landing-intake-label'>IPO 身份信息</div>", unsafe_allow_html=True)
             st.markdown("<div class='landing-intake-title'>发行人信息</div>", unsafe_allow_html=True)
             st.markdown(
                 "<div class='landing-intake-copy'>输入公司名称、股票代码、case id 或上市日期即可从官方 catalog 自动匹配；匹配后仍可手工修改。</div>",
@@ -895,7 +903,7 @@ if not has_existing_result:
             )
             company, code, listing = render_issuer_identity_inputs(key_prefix="analysis")
         with upload_col:
-            st.markdown("<div class='landing-intake-label'>Prospectus</div>", unsafe_allow_html=True)
+            st.markdown("<div class='landing-intake-label'>招股书</div>", unsafe_allow_html=True)
             st.markdown("<div class='landing-intake-title'>上传招股书</div>", unsafe_allow_html=True)
             st.markdown(
                 "<div class='landing-intake-copy'>PDF 将在当前分析生命周期内用于解析、Evidence 定位与原页复核。</div>",
@@ -906,7 +914,7 @@ if not has_existing_result:
                 submitted = st.form_submit_button("开始分析", type="primary")
 else:
     st.markdown("<div id='new-analysis' class='landing-section-anchor'></div>", unsafe_allow_html=True)
-    section_header("Analysis Setup", "输入任一发行人身份线索即可匹配官方 catalog，也可手工填写新 IPO。")
+    section_header("分析设置", "输入任一发行人身份线索即可匹配官方目录，也可手工填写新 IPO。")
     with st.container(key="analysis_intake_shell"):
         company, code, listing = render_issuer_identity_inputs(key_prefix="analysis")
         with st.form("analysis"):
@@ -970,9 +978,9 @@ else:
         workspace_tabs = st.tabs(
             [
                 "案例概览",
-                "Evidence",
+                "原文证据",
                 "市场与模型",
-                "Agent 协作",
+                "智能体协作",
                 "人机复核与最终报告",
             ]
         )
