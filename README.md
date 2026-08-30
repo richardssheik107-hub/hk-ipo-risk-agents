@@ -180,13 +180,12 @@ python scripts/run_final_acceptance.py --ci-status pass --ci-evidence-url <LATES
 
 离线答辩基线：
 
-```bash
-python scripts/check_v045_team_clone_ready.py
-# Windows
-START_DEMO.bat
-# macOS / Linux
-./start_demo.sh
-```
+| 入口 | Windows | macOS / Linux |
+|---|---|---|
+| 标准分析工作台 | `START_DEMO.bat` | `./start_demo.sh` |
+| 评委展示界面 | `START_JUDGE_DEMO.bat` | `./start_judge_demo.sh` |
+
+四个入口都会先执行 clone-ready preflight；失败时不会继续启动 Streamlit。
 
 ## 文档入口
 
