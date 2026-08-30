@@ -311,6 +311,75 @@ def test_explicit_fallback_rejects_ordinary_share_redemption_language() -> None:
     assert extractor.extract_explicit_needs_review([evidence]) is None
 
 
+def test_explicit_fallback_accepts_affirmatively_granted_special_rights() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = Evidence(
+        evidence_id="granted-special-rights",
+        document_id="ipo-case",
+        chunk_id="ipo-case:page:1",
+        page=1,
+        text=(
+            "授予首次公開發售前投資者的特別權利將於上市後終止，"
+            "且不會於\n上市後存續。"
+        ),
+    )
+
+    result = extractor.extract_explicit_needs_review([evidence])
+
+    assert result is not None
+    assert result.right_type == "special_right"
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.evidence_ids == ["granted-special-rights"]
+
+
+def test_explicit_fallback_accepts_special_rights_granted_out_to_investors() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = Evidence(
+        evidence_id="rights-granted-out",
+        document_id="ipo-case",
+        chunk_id="ipo-case:page:1",
+        page=1,
+        text=(
+            "向首次公開發售前投資者授出的特別權利將在上市後終止。"
+        ),
+    )
+
+    result = extractor.extract_explicit_needs_review([evidence])
+
+    assert result is not None
+    assert result.right_type == "special_right"
+
+
+def test_explicit_fallback_rejects_negated_special_rights_boilerplate() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id="no-surviving-right",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text=(
+                "並無就首次公開發售前投資授予投資者於上市後仍然有效的"
+                "特別權利。"
+            ),
+        ),
+        Evidence(
+            evidence_id="no-other-right",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:2",
+            page=2,
+            text=(
+                "概無現有投資者有權委任董事或於上市後擁有任何其他特別權利。"
+            ),
+        ),
+    ]
+
+    assert extractor.extract_explicit_needs_review(evidence) is None
+
+
 def test_explicit_fallback_adds_only_bounded_same_family_support() -> None:
     provider = MockLLMProvider()
     extractor = ShareholderRightsExtractor(provider)
