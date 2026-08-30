@@ -3,7 +3,8 @@
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
 > Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`  
-> Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`
+> Role-B runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze：`006c7f302be5c278680d136371f6ef0db45fecc0`
 
 This Runbook covers only governed post-freeze competition-submission operations. Product/algorithm development is closed. Live release truth is `V1_RELEASE_ACCEPTANCE.md`; submission status is `FINAL_SUBMISSION_STATUS.md`.
 
@@ -11,7 +12,7 @@ This Runbook covers only governed post-freeze competition-submission operations.
 
 - Existing Gold immutable;
 - `UNJUDGED != negative`;
-- offline and real-provider metrics must remain separate;
+- offline and real-provider metrics remain separate;
 - Validation is one-shot after freeze;
 - Validation results cannot drive Retriever / Prompt / Agent / Verifier / threshold / model / evaluator tuning;
 - 2025 Blind outcomes are not used for optimization;
@@ -50,14 +51,36 @@ reports/final_status/submission_closeout_status.json
 Core freeze facts:
 
 ```text
-runtime freeze main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
+Role-B runtime freeze main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
+Final product-surface freeze = 006c7f302be5c278680d136371f6ef0db45fecc0
 Role-B benchmark = dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b
 Development tuning = STOP
 Validation opened at freeze = false
 Blind outcome accessed = false
 ```
 
-## 4. Clean-environment preflight
+## 4. Canonical product launch contract
+
+All four launch commands now enter the same approved workspace:
+
+```text
+START_DEMO.bat       ─┐
+start_demo.sh         ├─→ app/streamlit_app.py
+START_JUDGE_DEMO.bat  ┤
+start_judge_demo.sh  ─┘
+```
+
+Judge launch commands are compatibility aliases. Every launcher runs runtime/clone-ready preflight and fails closed instead of opening a stale or half-working checkout.
+
+The final product-surface commit `006c7f3...` passed:
+
+```text
+tests
+Role D runtime
+Team demo runtime
+```
+
+## 5. Clean-environment preflight
 
 ```bash
 python -m venv .venv
@@ -81,7 +104,7 @@ python scripts/check_final_product_capabilities.py
 
 A failure may justify a packaging/runtime-environment fix, but not a score-driven algorithm reopen.
 
-## 5. One-shot Validation
+## 6. One-shot Validation
 
 Run exactly once on the frozen identity in the authorized environment:
 
@@ -94,7 +117,8 @@ Before running, record:
 
 ```text
 release version
-frozen runtime SHA
+Role-B runtime freeze SHA
+final product-surface SHA
 Role-B benchmark SHA
 config / prompt / schema / evaluator identities
 Validation not previously used for tuning
@@ -122,7 +146,7 @@ execution timestamp
 
 Do not inspect Validation errors and then modify the model/retriever/prompt/rules for a second run.
 
-## 6. Final G5/G6 rehash
+## 7. Final G5/G6 exact-tree check
 
 On the exact final submission tree:
 
@@ -139,11 +163,11 @@ truthful_channel_states = true
 8/8 capability proofs present
 ```
 
-This is artifact/hash rebinding only, not feature development.
+If the checker rewrites hashes, commit only those deterministic manifest updates. This is artifact/hash rebinding, not feature development.
 
-## 7. Fresh clone verification
+## 8. Fresh clone verification
 
-Create a second clean directory and clone only the remote release/main tree. Do not copy `.env`, PDFs, market data, local reports, caches or credentials.
+Create a second clean directory and clone only the remote final `main`/release tree. Do not copy `.env`, PDFs, market data, local reports, caches or credentials.
 
 Then run:
 
@@ -153,13 +177,13 @@ compileall
 pytest / required validators
 team clone-ready checker
 canonical demo bundle verification
-standard UI smoke
-judge UI smoke
+START_DEMO / start_demo smoke
+START_JUDGE_DEMO / start_judge_demo smoke
 ```
 
-The release must work from the repository itself, not only from the original development machine.
+The last two launcher groups are expected to enter the same canonical Streamlit application.
 
-## 8. Security / licensing / provenance audit
+## 9. Security / licensing / provenance audit
 
 Reject from the public/submission package:
 
@@ -179,7 +203,7 @@ Blind outcomes
 
 Confirm all included model/data artifacts are allowed for distribution and have provenance/hash records where required.
 
-## 9. Final artifact index
+## 10. Final artifact index
 
 Create one index containing at least:
 
@@ -197,7 +221,7 @@ rejection_reason
 
 Human Review artifacts are optional and must not block submission.
 
-## 10. Secure competition package
+## 11. Secure competition package
 
 The final package may include, subject to the competition platform rules:
 
@@ -221,9 +245,9 @@ SHA256SUMS.txt
 
 Do not package the entire `reports/` tree blindly.
 
-## 11. Final acceptance command
+## 12. Final acceptance command
 
-After the one-shot Validation receipt, exact-tree G5/G6 rehash, clean clone and audits are complete:
+After the one-shot Validation receipt, exact-tree G5/G6 check, clean clone and audits are complete:
 
 ```bash
 python scripts/run_final_acceptance.py \
@@ -234,7 +258,7 @@ python scripts/run_final_acceptance.py \
 
 The command is fail-closed. If G2 remains blocked, its final acceptance report must continue to say so; do not edit the gate logic to make the report green.
 
-## 12. Defense package
+## 13. Defense package
 
 Prepare separately from the source ZIP:
 
@@ -257,6 +281,6 @@ Main defense narrative:
 → 已知边界是什么
 ```
 
-## 13. Release completion
+## 14. Release completion
 
 The v1.0.0 product is frozen. Remaining work is submission governance and packaging only. Any new algorithmic experiment belongs to a later version and must not rewrite the v1.0.0 benchmark truth.
