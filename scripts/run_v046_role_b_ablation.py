@@ -119,7 +119,7 @@ from scripts.run_v04_role_e_demo import (
 )
 
 
-RUNNER_VERSION = "v046_role_b_ablation_runner_v1"
+RUNNER_VERSION = "v046_role_b_ablation_runner_v2"
 DEFAULT_CONFIG = Path("configs/experiments/v046_role_b_ai_responses.yaml")
 DEFAULT_OUTPUT_ROOT = Path("reports/v046_role_b/ablation")
 DEFAULT_SMOKE_SUMMARY = Path(
@@ -1782,7 +1782,12 @@ def main() -> int:
         raise RoleBAblationRunnerError("licensed prospectus root is unavailable")
 
     runtime_cases_path = output_root / "runtime_cases.json"
-    _build_runtime_cases_manifest(subset, bridge_path, runtime_cases_path)
+    _build_runtime_cases_manifest(
+        subset,
+        bridge_path,
+        runtime_cases_path,
+        full_development=_is_full_development_subset(subset, coverage),
+    )
     runtime_cases = _runtime_cases(runtime_cases_path)
     catalog = _read_catalog(catalog_path, "case_id")
     bridge = _read_catalog(bridge_path, "case_id")

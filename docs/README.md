@@ -1,136 +1,112 @@
-# Documentation Index and Governance
+# Documentation Index — v1.0.0
 
-> 状态日期：`2026-08-29`
+> Release: `v1.0.0`  
+> 状态日期：`2026-08-30`  
+> 文档状态：**FINAL / CLOSED FOR COMPETITION RELEASE**
 
-仓库文档收敛为：**一个总计划、一个实时 Release Gate、一个冻结指标协议、五条 owner 执行线，以及少量长期规范 / 冻结证据。**
+v1.0.0 之后不再维护第二套 Roadmap、并行冲刺计划或“当前 Batch”状态页。所有开发型 owner 文档均已收口为最终状态/历史职责说明。
 
-不再同时维护多份 Roadmap / Current Plan / lane plan / 单批次实验说明作为“当前状态源”。
-
-## 1. 当前权威入口
+## 1. v1.0.0 当前权威入口
 
 | 文档 | 作用 |
 |---|---|
-| `../README.md` | 项目入口与当前五项主任务 |
-| `COMPETITION_CLOSURE_PLAN.md` | **唯一当前总计划 / 优先级 / 依赖关系** |
-| `V0.4_RELEASE_ACCEPTANCE.md` | **唯一实时 Release Gate / blocker 状态源** |
-| `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2、Gold、split、M1/M2/M3/M5 口径 |
-| `team/README.md` | 五人并行执行总入口 |
-| `team/01_M1_M2_OWNER.md` | M1/M2 autonomous wide-sprint 执行线 |
-| `team/02_FRONTEND_OWNER.md` | final frontend / product execution |
-| `team/03_DYNAMIC_MARKET_X_OWNER.md` | Dynamic Market-X execution |
-| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 泛化合同、PIT 边界、missing_reason 词表、Model handoff 绑定 |
-| `team/04_DYNAMIC_MODEL_OWNER.md` | Dynamic Model / Prediction / SHAP + D decision |
-| `team/05_RELEASE_SUBMISSION_OWNER.md` | integration / freeze / Validation / submission |
-| `V046_ROLE_B_EXPERIMENT_LEDGER.md` | Role-B Batch001–009 **历史总账**；不是 live plan |
-| `ROLE_D_MODEL_DECISION.md` | frozen PR-F vs v2 promote/retain 决策入口 |
-| `V045_ROLE_D_FINAL_CLOSURE.md` | Role-D hash-bound closure / receipt 历史证据 |
-| `SUBMISSION_RUNBOOK.md` | freeze 到 secure package 的操作手册 |
-| `TEAM_QUICKSTART.md` | fresh clone / canonical replay |
+| `../README.md` | 项目首页、v1.0.0 能力、最终指标与启动方式 |
+| `RELEASE_NOTES_V1.0.0.md` | **v1.0.0 正式 Release Notes** |
+| `V1_RELEASE_ACCEPTANCE.md` | **v1.0.0 Release / Gate 真相源** |
+| `FINAL_SUBMISSION_STATUS.md` | 最终比赛提交状态、材料与剩余本地动作 |
+| `COMPETITION_CLOSURE_PLAN.md` | 冻结后的最终收口状态，不再是研发 Roadmap |
+| `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2 / Gold / split / M1/M2/M3/M5 口径 |
+| `SUBMISSION_RUNBOOK.md` | one-shot Validation、fresh clone、安全审计、封包操作手册 |
+| `TEAM_QUICKSTART.md` | fresh clone / canonical replay / judge demo 快速启动 |
+| `ROLE_D_MODEL_DECISION.md` | Role-D V2 最终模型决议与边界 |
+| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 冻结技术合同 |
 
-## 2. 长期规范 / 研究证据
+## 2. Machine-readable final truth
 
-这些不是“当前计划”，而是稳定 contract / architecture / research：
+```text
+reports/v045_role_b/document_benchmark_summary.json
+reports/final_status/final_freeze_manifest.json
+reports/final_status/submission_closeout_status.json
+reports/final_status/product_acceptance.json
+reports/final_status/capability_manifest.json
+reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json
+```
+
+文档与 artifact 冲突时，以代码 validator / frozen manifest / machine-readable receipt 为优先事实源。
+
+## 3. Final Development measurements
+
+| Mode | Cases | M1 | M2 |
+|---|---:|---:|---:|
+| Best offline | 79/79 | 70/102 = 68.63% | 103/191 = 53.93% |
+| Real LLM gated | 79/79 | 61/102 = 59.80% | 93/191 = 48.69% |
+
+G2 内部门槛仍是 M1 >=80%、M2 >=85%、real LLM 79/79，因此 G2 为 **BLOCKED**。v1.0.0 是正式比赛产品发布版，不等于 `COMPETITION_READY=true`。
+
+## 4. Team owner 文档
+
+`team/` 不再表示活跃开发队列，而是最终职责归档：
+
+```text
+01_M1_M2_OWNER.md              CLOSED / FROZEN
+02_FRONTEND_OWNER.md           CLOSED / G5 PASS
+03_DYNAMIC_MARKET_X_OWNER.md   CLOSED / G3 PASS
+04_DYNAMIC_MODEL_OWNER.md      CLOSED / G4 PASS
+05_RELEASE_SUBMISSION_OWNER.md RELEASE OPERATIONS ONLY
+```
+
+`team/README.md` 给出最终状态摘要。
+
+## 5. 长期规范 / 冻结技术文档
+
+以下文档继续保留，不因 v1.0.0 改名或重写内部 protocol identity：
 
 - `PROJECT_SPEC.md`
 - `ARCHITECTURE.md`
 - `DATA_SCHEMA.md`
 - `COMPETITION_DATA_OVERVIEW.md`
+- `COMPETITION_METRIC_PROTOCOL.md`
+- `V046_ROLE_C_DYNAMIC_MARKET_X.md`
+- `V046_ROLE_B_EXPERIMENT_LEDGER.md`
 - `research/*`
 - `annotation/*`
 
-Research 文档可以保留历史研究结论，但不能覆盖当前 Release / Execution 状态。
+这些是技术合同、研究证据或历史 provenance，不是当前研发计划。
 
-## 3. 当前五项主任务
+## 6. Historical / superseded docs
 
-| 主任务 | 核心目标 | 优先级 |
-|---|---|---|
-| M1 / M2 文档智能优化 | ALL79 M1 `>=80%`、M2 `>=85%` | P0 |
-| 前端 / 产品展示 | 把真实系统做成答辩级最终 UI | P0/P1 |
-| Market-X 动态泛化 | 任意合法新 IPO 得到真实 Market-X 或诚实降级 | P0 |
-| Model / Prediction / SHAP 动态化 | 新案例真实 frozen-model inference + native SHAP | P0 |
-| 最终集成、验收、文档和提交包 | Freeze / one-shot Validation / audits / fresh clone / ZIP | P1 → 最后 P0 |
+`V0.4_RELEASE_ACCEPTANCE.md` 仅保留为 v0.4 阶段历史入口，已由 `V1_RELEASE_ACCEPTANCE.md` 取代。
 
-final-three 全链路已经稳定，后续主要作为回归保护和答辩 fallback。
+Batch / Bundle / fixed-journal / forensic 等历史结果只能用于追溯，不能覆盖 v1.0.0 Final Truth。
 
-## 4. Role-B 当前口径
-
-PR #189 已把 Batch008/009 accepted production fixes 和 fixed-journal checkpoint 合入 main：
-
-```text
-Batch009 fixed-journal gated M1 = 14/30 = 46.67%
-Batch009 fixed-journal gated M2 = 21/48 = 43.75%
-Batch009 offline M1 = 9/30
-Batch009 offline M2 = 15/48
-```
-
-最后一个真实 fresh-provider checkpoint 仍是 Batch005：
-
-```text
-fresh gated M1 = 11/30
-fresh gated M2 = 17/48
-structured valid = 38/40
-fallback = 2
-```
-
-因此 fixed-journal gain 与 fresh-provider evidence 必须分开写。
-
-最新 accepted：Batch008 cash statement compatibility、Batch009 Legal lifecycle recognition。direct ranked concentration-table candidate 已因无 M1/M2 gain 且 supplier existence F1 回归而完整回滚，不作为当前路线。
-
-当前 root 顺序：
-
-```text
-retrieval candidate generation / ranking
-→ exact page / anchor Evidence binding
-→ remaining deterministic / numeric extraction
-→ genuine conflict fail-closed
-→ fixed-vs-fresh LLM / Evidence variance
-```
-
-执行方式允许 multi-root wide sprint：多个 proven compatible roots 同轮推进、独立 commit、bundle benchmark、partial revert，仅保留 best checkpoint；有意义提升后尽快扩大 Development。
-
-## 5. Source-of-truth hierarchy
+## 7. Source-of-truth hierarchy
 
 出现冲突时按顺序：
 
-1. 代码 validator / Pydantic / fail-closed guard；
-2. `reports/frozen/*.json`、hash-bound manifest / receipt；
+1. runtime validator / Pydantic / fail-closed guard；
+2. frozen / final-status machine-readable artifacts；
 3. `COMPETITION_METRIC_PROTOCOL.md`；
-4. `V0.4_RELEASE_ACCEPTANCE.md`；
-5. `COMPETITION_CLOSURE_PLAN.md`；
-6. `team/*` owner 文档 / Runbook；
-7. experiment ledger / architecture / research / Git history。
+4. `V1_RELEASE_ACCEPTANCE.md`；
+5. `FINAL_SUBMISSION_STATUS.md`；
+6. `SUBMISSION_RUNBOOK.md`；
+7. frozen technical contracts；
+8. historical experiment/research docs and Git history。
 
-fixed10 结果不能冒充 ALL79；fixed-journal 结果不能冒充 fresh-provider；Replay 不能冒充实时推理。
+## 8. Release governance
 
-## 6. 文档生命周期
-
-长期保留文档至少满足一项：
-
-- 当前总计划 / Release Gate / Runbook；
-- 被代码或 CI 消费的合同；
-- 不可重建的冻结测量 / provenance / receipt；
-- 单一历史总账；
-- 有明确消费者的长期 research / annotation 证据。
-
-以下类型不再长期保留在 `docs/` 主目录：
-
-- 第二套 Roadmap；
-- compatibility-only Current Plan；
-- 已被 owner 文档替代的 lane plan；
-- 001/002/003… 单批次实验说明；
-- 一次性日期审计说明；
-- 已被正式 decision 文档吸收的 candidate report。
-
-这些历史信息仍可通过 Git history 和治理安全 `reports/` artifact 追溯。
-
-## 7. Release policy
+不可移除的边界：
 
 ```text
-current-case UI completed
-!=
-competition release passed
+Existing Gold immutable
+UNJUDGED != negative
+Gold never enters runtime
+Validation one-shot after freeze
+2025 Blind outcome not used for optimization
+PIT-safe Market
+missing != zero
+no issuer/case/page/Gold hardcoding
+no fabricated Evidence
+uncalibrated model score != probability
+fallback != real-provider success
+no secrets / licensed PDF / raw EOD / raw provider journal in release package
 ```
-
-Human Review UI/export 可保留为 optional 人机协同能力，但不要求额外真人标注，不是当前 Release Gate。
-
-不可移除的边界：Existing Gold immutable、Validation one-shot、Blind isolation、Evidence scope、PIT、deterministic Calculation、uncalibrated-score 语义、Secret/PDF/raw licensed data 安全。

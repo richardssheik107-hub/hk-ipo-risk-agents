@@ -20,12 +20,12 @@ docs/COMPETITION_CLOSURE_PLAN.md
 当前提交前真正的 Release blockers 是：
 
 ```text
-B ALL79 M1/M2
-D model promotion / retain decision + strict revalidation
-Dynamic New-IPO / competition capability coverage
-one-shot Validation
-final CI / provenance / determinism / security / package
+B ALL79 M1/M2 threshold failure（measurement complete / frozen）
+one-shot Validation（not executed; blocked by G2 under strict policy）
+final CI / provenance / determinism / security / licensing / package
 ```
+
+Role-D promotion、Dynamic Market/Model、产品与 capability coverage 已通过，进入回归保护。
 
 **Human Review / 历史 M4 rubric 不再是 Release Gate。** 不要求新增真人标注，不要求 3 案 × 2 reviewer。Human Review UI、export、review projection 可以继续作为可选产品能力保留，但不得因为没有真人 review 阻塞 ordinary PR、final readiness 或 submission package。
 
@@ -187,38 +187,39 @@ Structured output 必须 Schema validate；provider failure 必须诚实降级�
 
 fixed-10 是诊断加速器，不是最终目标。
 
-当前 source-of-truth checkpoint：
+最终冻结 checkpoint：
 
 ```text
-fixed-journal M1 = 12/30 = 40.00%
-fixed-journal M2 = 18/48 = 37.50%
-fresh gated M1 = 11/30
-fresh gated M2 = 17/48
-structured valid = 38/40
+real-LLM gated: 79/79 cases
+M1 = 61/102 = 59.80%
+M2 = 93/191 = 48.69%
+316 logical tasks; 310 structured+scope valid; 6 fallback; 0 transport failure
+
+deterministic offline (selected):
+M1 = 70/102 = 68.63%
+M2 = 103/191 = 53.93%
 ```
 
-已排除广泛 Parser preservation 与 period candidate generation 作为当前主根因。优先级：
+real-LLM candidate 删除 9 个正确 deterministic Risk 与 12 个正确 Evidence；
+monotonicity 失败，因此未 promote。当前 submission freeze 下不再修改算法。
 
 ```text
-deterministic_fact_missing
-→ retrieval_candidate_miss
-→ numeric extraction / true conflict
-→ LLM / Evidence variance
+results / call trace / waterfall provenance
+→ documentation truth
+→ security / clean-clone / package audit
 ```
 
-允许 Development-only 的 Parser、Retriever、Prompt、Schema、provider/model/transport、merge、Verifier、cache/replay 改进；禁止公司、股票、case、页码或 Gold 原句特判。
+禁止为提交继续修改 Parser、Retriever、Prompt、Schema、provider/model、merge 或 Verifier；
+禁止公司、股票、case、页码或 Gold 原句特判。
 
 最终 Gate：ALL79 Development M1 `>=0.80`、M2 `>=0.85`、real_llm_cases `=79`。
 
 ## 11. Role-D 规则
 
-已有 artifact/receipt 不等于业务价值充分。
-
-- frozen PR-F 仍是正式身份；
-- v2 candidate Recall/F1/PR-AUC 明显提升但未 promote；
+- `PROMOTE_V2` 已通过 A-owned PR #184 生效；历史 frozen PR-F 身份继续保留；
+- V2 独立 freeze/receipt/handoff 与 strict checker 已完成；
+- dynamic audit 为 540/562 inference、537 outside per-case handoff、70/70 parity、0 mismatch；
 - 不得继续根据 2024 调 feature、threshold、alert fraction 或 score direction；
-- A 必须做一次 promote/retain 决议；
-- promote 必须新 freeze/receipt/handoff；
 - dynamic inference 必须使用真实 frozen model / feature identity，不读取不存在的 per-case handoff 冒充推理。
 
 ## 12. Git / Codex

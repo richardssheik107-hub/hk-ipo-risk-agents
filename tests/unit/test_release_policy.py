@@ -1,10 +1,30 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from ipo_risk.runtime.release_policy import (
     ACTIVE_RELEASE_POLICY_VERSION,
+    DEFAULT_ROLE_E_DIR,
+    activate_active_release_policy,
     apply_active_release_artifact_index,
     apply_active_release_readiness,
 )
+
+
+def test_active_release_inputs_exist_in_the_repository() -> None:
+    from ipo_risk.runtime import submission_readiness as legacy
+
+    original_docs = legacy.SUBMISSION_DOCS
+    original_role_e_required = legacy.ROLE_E_CASE_REQUIRED
+    try:
+        activate_active_release_policy()
+        repo_root = Path(__file__).resolve().parents[2]
+        assert (repo_root / DEFAULT_ROLE_E_DIR / "summary.json").is_file()
+        assert legacy.SUBMISSION_DOCS
+        assert all((repo_root / name).is_file() for name in legacy.SUBMISSION_DOCS)
+    finally:
+        legacy.SUBMISSION_DOCS = original_docs
+        legacy.ROLE_E_CASE_REQUIRED = original_role_e_required
 
 
 def _gate(owner: str, *, passed: bool = True, blockers: list[str] | None = None) -> dict:

@@ -1,12 +1,12 @@
-# Project Specification — Competition Scope
+# Project Specification — v1.0.0 Competition Product
 
-> 状态日期：`2026-08-29`
+> Release: `v1.0.0`  
+> 状态日期：`2026-08-30`  
+> Product status: **FROZEN / FORMALLY RELEASED FOR COMPETITION SUBMISSION**
 
-## 1. 产品目标
+## 1. Product goal
 
-从港股 IPO 招股书、上市前受治理市场数据和冻结模型信号出发，输出方向性风险预警、财务/法务/业务/市场归因、原 PDF Evidence、Agent Trace、模型/SHAP 信号、上市后多周期验证和可运行原型。
-
-系统主链：
+Starting from Hong Kong IPO prospectuses, governed pre-listing market context and a frozen model signal, the product generates evidence-grounded risk analysis, Financial/Legal/Business attribution, physical-page Evidence, Agent Trace, Market-X, model/SHAP signals, supervisory reasoning and reviewable reports/UI/API output.
 
 ```text
 PDF
@@ -20,114 +20,112 @@ PDF
 → Trace / Report / UI / API
 ```
 
-Human Review 是 optional 产品 surface，不是当前 final Release Gate。
+Human Review remains an optional product surface, not a mandatory release gate.
 
-## 2. 当前五项主任务
+## 2. Final competition product state
 
-| 主任务 | 完成目标 | 优先级 |
-|---|---|---|
-| M1/M2 Document Intelligence | ALL79 M1 `>=80%`、M2 `>=85%` | P0 |
-| Final Frontend / Product | Demo/Historical/Fresh 三种模式真实、清晰、答辩可用 | P0/P1 |
-| Dynamic Market-X | 任意合法新 IPO 得到真实 PIT Market-X 或诚实降级 | P0 |
-| Dynamic Model / Prediction / SHAP | 满足 feature contract 的案例真实 frozen-model inference + SHAP | P0 |
-| Final Integration / Submission | Freeze / Validation / audits / fresh clone / secure bundle | P1 → final P0 |
+| Area | v1.0.0 status |
+|---|---|
+| Document Intelligence | ALL79 complete; internal G2 target not met; frozen |
+| Final Frontend / Product | PASS |
+| Dynamic Market-X | PASS |
+| Dynamic Model / Prediction / SHAP | PASS |
+| Capability demonstrations | PASS 8/8 |
+| Runtime freeze | COMPLETE |
+| One-shot Validation / final competition package | post-release governed operation |
 
-完整执行细节见 `COMPETITION_CLOSURE_PLAN.md` 和 `team/README.md`。
+The v1.0.0 product release is approved even though the repository's stricter internal `COMPETITION_READY` condition remains false because G2 is below target.
 
-## 3. 文档风险范围
+## 3. Document risk scope
 
-当前正式主链覆盖：
+Current production risk families include:
 
-- cash runway / cash-burn pressure；
-- continuous loss；
-- revenue growth；
-- customer / supplier concentration；
-- redemption rights；
-- material litigation / compliance；
-- precommercial product。
+- cash runway / cash-burn pressure;
+- continuous loss;
+- revenue growth;
+- customer / supplier concentration;
+- redemption / special shareholder rights;
+- material litigation / compliance;
+- precommercial product.
 
-比赛展示还需要真实可审计 proof：
+Additional competition capabilities such as core-pipeline progress, text embellishment, related-party transaction and comparable-IPO valuation are represented as governed qualitative demonstrations where no Existing Gold is available; they are not mixed into M1/M2.
 
-- core pipeline progress；
-- text embellishment；
-- related-party transaction；
-- comparable IPO valuation。
-
-无 Existing Gold 的新增能力作为 `QUALITATIVE DEMONSTRATION`，不混入 M1/M2 分母。
-
-## 4. Role-B 当前执行方式
-
-PR #189 后最新正式 fixed-journal gated：
+## 4. Final Role-B measurement
 
 ```text
-Batch009 M1 = 14/30 = 46.67%
-Batch009 M2 = 21/48 = 43.75%
-Batch009 offline = 9/30, 15/48
+Real LLM gated ALL79
+cases = 79/79
+M1 = 61/102 = 59.80%
+M2 = 93/191 = 48.69%
+
+Best offline ALL79
+cases = 79/79
+M1 = 70/102 = 68.63%
+M2 = 103/191 = 53.93%
 ```
 
-最后一个真实 fresh-provider checkpoint 仍是 Batch005 `11/30,17/48`。fixed-journal gain 与 fresh-provider evidence 必须严格区分。
-
-已接受 Batch008 cash-statement compatibility 和 Batch009 Legal lifecycle recognition；direct ranked concentration-table candidate 已因无 M1/M2 gain 且 supplier existence F1 回归而完整回滚。
-
-当前优先级：
+Internal G2 target:
 
 ```text
-retrieval candidate generation / ranking
-→ exact page / anchor Evidence binding
-→ remaining deterministic / numeric extraction
-→ genuine conflict fail-closed
-→ fixed-vs-fresh LLM / Evidence variance
+M1 >= 80%
+M2 >= 85%
+real_llm_cases = 79/79
 ```
 
-Role-B 可同时修复多个经过 Development evidence 证明的兼容 root，通过 independent commit + bundle benchmark + partial revert 控制回归。有 meaningful gain 后尽快扩样。
+G2 therefore remains BLOCKED. The real-provider result and offline engineering reference remain explicitly separated.
 
-正式目标：
+Machine source:
 
 ```text
-ALL79 Development
-M1 >=0.80
-M2 >=0.85
-real_llm_cases =79/79
+reports/v045_role_b/document_benchmark_summary.json
 ```
 
-## 5. Dynamic Market-X
+## 5. Dynamic Market-X — G3 PASS
 
-final-three `3/3` 与 438 historical artifacts 已证明 historical governed path 可用，但任意新 IPO 仍需要 dynamic runtime。
-
-目标：
+v1.0.0 includes a governed historical + Dynamic PIT Market runtime.
 
 ```text
 identity
-→ validated cache / historical artifact
-or governed dynamic PIT source
-→ strict Market-X builder
-→ provenance / schema / hash validation
+→ validated frozen Market artifact
+or Dynamic PIT Market source
+→ feature builder
+→ provenance / schema / hash / cutoff validation
 → MarketContext
 ```
 
-有合法数据时真实计算；合法历史不足时明确 `PARTIAL / UNAVAILABLE`。不能用 post-listing target、Blind outcome、zero-fill、final-three copy 或 unsourced proxy。
+Final strict audit facts include 562 governed cases, 0 integrity violations, 438 frozen-path cases and 124 Dynamic PIT cases.
 
-## 6. Dynamic Model / SHAP
+When legal historical coverage is insufficient, `PARTIAL / UNAVAILABLE` is a correct output. Missing Market features are never converted to zero or guessed values.
 
-当前 final-three frozen Model `3/3 available` 是稳定产品基线，但主要来自 receipt-bound per-case handoff。
+## 6. Frozen Model / SHAP — G4 PASS
 
-最终目标：
+Role-D V2 is promoted and frozen.
 
 ```text
 governed feature vector
-+ final frozen model artifact/hash
-→ runtime inference
++ frozen model / feature / alert manifests
+→ runtime inference (no retraining)
 → uncalibrated_model_score
-→ frozen alert/classification policy
 → native SHAP / signed drivers
 → ModelSignal
 ```
 
-必须完成 frozen PR-F vs v2 candidate 的正式 promote/retain 决议。任何 promotion 都创建新的 versioned freeze / receipt，不允许覆盖历史身份或根据 2024 Validation 继续调参。V2 promotion package（独立 freeze/receipt/handoff）已实现，A-owned merge 后生效，不覆盖 frozen PR-F 身份。
+Strict runtime audit:
 
-## 7. Final Frontend
+```text
+governed cases = 562
+inference available = 540
+available outside per-case handoff = 537
+inference error = 0
+published parity = 70/70
+mismatch = 0
+```
 
-最终前端必须同时支持：
+The model is a triage signal, not a probability forecast. Its known discrimination limitation remains disclosed.
+
+## 7. Final Frontend / Product — G5 PASS
+
+v1.0.0 supports:
 
 ```text
 Offline Demo Replay
@@ -135,63 +133,56 @@ Historical Governed IPO
 Fresh New-IPO Analysis
 ```
 
-重点展示 Risk/Evidence、Market、Model/SHAP、Conflict/Recheck、Final Supervisor、Report/Trace，而不是大段内部 JSON。
+The interface emphasizes Risk/Evidence, Market, Model/SHAP, Conflict/Recheck, Final Supervisor and Report/Trace rather than raw internal JSON.
 
-所有 `AVAILABLE / PARTIAL / UNAVAILABLE` 来自真实 runtime contract。UI 不自行计算、补值或伪造 channel state。
+All availability states are sourced from the runtime contract. UI code does not mint or fill missing Market/Model/Evidence values.
 
-发行人可通过 official catalog-backed search 自动匹配公司名、股票代码和上市日期；正式 downstream identity join 仍依赖 governed identity。
-
-## 8. 当前稳定基线
+## 8. Stable release baseline
 
 ```text
 Final Supervisor E1 = 3/3
 M3 = 1.0 x 3
 Market final-three = 3/3
-Frozen Model final-three = 3/3
+Model final-three = 3/3
 recheck = 17/17
-Evidence screenshot = 17/17 precise
+Evidence screenshots = 17/17 precise
 seven-stage = 21/21
 canonical replay = 66 files
-fresh clone / Streamlit smoke / team-ready checks = PASS
+G3/G4/G5/G6 = PASS
+main tests / Role D runtime / Team demo runtime = PASS
 ```
 
-这些能力后续原则上只做回归保护。
+## 9. Non-negotiable governance
 
-## 9. 不可破坏原则
+- Evidence for formal risk claims comes from real governed source material;
+- LLM output is Evidence-scope constrained;
+- UI does not guess page/bbox;
+- exact numeric claims are backed by deterministic calculation where required;
+- Market features are PIT-safe and missing is not zero;
+- model scores are `uncalibrated_model_score`, not probabilities;
+- Existing Gold remains immutable;
+- Gold does not enter runtime;
+- `UNJUDGED != negative`;
+- no issuer/stock/case/page/Gold hardcoding;
+- Validation is one-shot after freeze and cannot drive tuning;
+- 2025 Blind outcomes are not used for optimization;
+- secrets, licensed PDFs, raw market data, raw provider journals and absolute local paths are excluded from the public/submission package.
 
-- 正式风险引用真实 Evidence；LLM 不能越 scope；page/bbox 不由 UI 猜；
-- exact 数值、期间、比例、runway 和 outcome 由 deterministic Python 计算；
-- Market 只使用 PIT-safe facts，missing 不补零；
-- frozen score 只能称 `uncalibrated_model_score`；
-- dynamic model output 必须来自真实 frozen model inference；
-- Existing Gold immutable，Gold 不进 runtime，`UNJUDGED != negative`；
-- Validation freeze 后 one-shot；Blind 不用于优化；
-- 不提交 Secret、授权 PDF、raw EOD、raw journal、本地绝对路径。
+## 10. Release and readiness semantics
 
-## 10. 指标与完成定义
-
-Release 必需：
+v1.0.0 uses two separate concepts:
 
 ```text
-M1 Existing-Gold Risk Accuracy >=0.80 on ALL79 Development
-M2 Existing-Gold Evidence Coverage Recall >=0.85 on ALL79 Development
-M3 Traceability =1.0
-M5 1D / 5D / 20D / 60D recorded honestly
+Product release = APPROVED
+Internal COMPETITION_READY = FALSE
 ```
 
-完整完成条件：
+The product is complete enough to be formally versioned, demonstrated and packaged for the competition. The stricter internal readiness flag remains false because G2 did not meet the self-defined M1/M2 threshold and G7 still has local Validation/package operations pending.
+
+See:
 
 ```text
-ALL79 M1/M2
-+ M3 100%
-+ Dynamic Market-X
-+ formal D model decision + Dynamic Model / SHAP
-+ final frontend
-+ capability proof
-+ one-shot Validation
-+ CI / provenance / determinism / security / licensing
-+ fresh clone
-+ secure package
+docs/V1_RELEASE_ACCEPTANCE.md
+docs/FINAL_SUBMISSION_STATUS.md
+docs/SUBMISSION_RUNBOOK.md
 ```
-
-全部真实通过后才能宣称 `COMPETITION_READY`。

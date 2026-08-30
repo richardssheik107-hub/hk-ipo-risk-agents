@@ -19,6 +19,7 @@ from scripts.check_v046_role_b_structured_smoke import (
 )
 from scripts.run_v046_role_b_ablation import (
     CaseInputs,
+    RUNNER_VERSION,
     RoleBAblationRunnerError,
     _TracingRetriever,
     _all_development_subset,
@@ -600,6 +601,8 @@ def test_preflight_binds_exact_prompt_hashes_and_has_no_secret_or_url() -> None:
     runtime_hash = _runtime_config_hash(settings, profile, _digest("code"))
 
     assert len(_prompt_hashes(profile, settings.llm_provider)) == 4
+    assert safe_identity["runner_version"] == RUNNER_VERSION
+    assert RUNNER_VERSION == "v046_role_b_ablation_runner_v2"
     assert all(len(value) == 64 for value in report["prompt_hashes"].values())
     assert "llm_api_key" not in safe_identity
     assert "llm_base_url" not in safe_identity

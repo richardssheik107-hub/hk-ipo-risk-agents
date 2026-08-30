@@ -9,6 +9,7 @@ import pytest
 import scripts.run_v045_role_b_iteration as iteration_runner
 from scripts.run_v045_role_b_iteration import (
     IterationRunnerError,
+    _build_runtime_cases_manifest,
     _build_subset,
     _verify_subset,
     select_fixed_debug_cases,
@@ -117,6 +118,44 @@ def test_subset_payload_is_hash_bound_to_existing_gold_manifest() -> None:
     drifted["manifest_hash"] = "different-manifest-hash"
     with pytest.raises(IterationRunnerError, match="manifest drift"):
         _verify_subset(subset, drifted, size=10)
+
+
+def test_runtime_cases_manifest_distinguishes_full_development_from_debug(
+    tmp_path: Path,
+) -> None:
+    bridge = tmp_path / "bridge.csv"
+    bridge.write_text(
+        "case_id,selected_name\nipo_2023_00001,Issuer One\n",
+        encoding="utf-8",
+    )
+    destination = tmp_path / "runtime_cases.json"
+    subset = {
+        "debug_subset_only": False,
+        "cases": [{"case_id": "ipo_2023_00001"}],
+    }
+
+    # A caller must prove exact full-universe membership; the legacy flag alone
+    # is not sufficient because child filters inherit it.
+    _build_runtime_cases_manifest(subset, bridge, destination)
+    unproven_payload = iteration_runner._read_json(destination)
+    assert unproven_payload["scope"] == "debug_subset"
+
+    _build_runtime_cases_manifest(
+        subset,
+        bridge,
+        destination,
+        full_development=True,
+    )
+
+    payload = iteration_runner._read_json(destination)
+    assert payload["manifest_version"] == "v046_role_b_development_runtime_cases_v1"
+    assert payload["scope"] == "full_development"
+    assert "ALL-Development" in payload["note"]
+
+    _build_runtime_cases_manifest(subset, bridge, destination)
+    debug_payload = iteration_runner._read_json(destination)
+    assert debug_payload["manifest_version"] == "v045_role_b_fixed10_runtime_cases_v1"
+    assert debug_payload["scope"] == "debug_subset"
 
 
 def test_subset_tampering_fails_closed() -> None:
