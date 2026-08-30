@@ -78,6 +78,7 @@ main tests = PASS
 
 ```text
 reports/v045_role_b/document_benchmark_summary.json
+reports/v045_role_b/all79_final/README.md
 reports/final_status/final_freeze_manifest.json
 reports/final_status/product_acceptance.json
 reports/final_status/capability_manifest.json

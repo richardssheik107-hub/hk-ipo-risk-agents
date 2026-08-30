@@ -1,0 +1,136 @@
+{
+  "artifacts": [
+    {
+      "path": "all79_final/README.md",
+      "sha256": "67899b989715db2ae7f4871560e95b3eeaea4f1b6510a1138756ca79903d4608",
+      "size_bytes": 1591
+    },
+    {
+      "path": "all79_final/ablation_summary.json",
+      "sha256": "fd7841fe37d99cff400fa066bdfefe273b595ff739005c80c674737eacb23213",
+      "size_bytes": 9324
+    },
+    {
+      "path": "all79_final/baseline_manifest.json",
+      "sha256": "83cd0b7638bd9eb80342fc706bf5cf79716911b9067b931918cc3abf621fcf3b",
+      "size_bytes": 3722
+    },
+    {
+      "path": "all79_final/best_iteration.json",
+      "sha256": "63e0af81ab6eb63f221360e1e06b21e520172fa7e4f8e527a0ede2b61f557fa7",
+      "size_bytes": 359
+    },
+    {
+      "path": "all79_final/case_statuses.json",
+      "sha256": "ff9c80c54ecf6e5fa6c64c8ef0e4b0be5005deae9f3a84dd70d3127c021898bc",
+      "size_bytes": 42180
+    },
+    {
+      "path": "all79_final/failure_focus.json",
+      "sha256": "70bca9d890c23d7abb624f1796dddf58aaa1d73d11e7dc72df4edfcab69589aa",
+      "size_bytes": 1766
+    },
+    {
+      "path": "all79_final/gated_pipeline_trace.json",
+      "sha256": "ff6324915d80011f7d4947a1d8204e80c85d9b8a9b83449cd2d84ca016704c8d",
+      "size_bytes": 95719
+    },
+    {
+      "path": "all79_final/gated_retrieval_waterfall.json",
+      "sha256": "5a1651fc3d2a686d305b60f6f28df3199917e24a953ba53ceebd49164a066372",
+      "size_bytes": 150745
+    },
+    {
+      "path": "all79_final/gated_risk_pipeline_waterfall.json",
+      "sha256": "895723fae7f3b4f3fc935c7b9ac88940aec7970f32386940083e02be6dbf6e5f",
+      "size_bytes": 97364
+    },
+    {
+      "path": "all79_final/llm_call_manifest.json",
+      "sha256": "3b111a61dc96d2226e95f7f5703ee777a9b630198f626dba84567f3b21e04869",
+      "size_bytes": 413392
+    },
+    {
+      "path": "all79_final/llm_call_quality.json",
+      "sha256": "6292fe3b46741662038331d8627d650e12f9080160e8c86c6f71404a676c10da",
+      "size_bytes": 262261
+    },
+    {
+      "path": "all79_final/monotonicity_report.json",
+      "sha256": "ad8477f54826a351ba74a9f84b7d5915e075cdbc8c3a4f79efc53724dfae9f49",
+      "size_bytes": 4655
+    },
+    {
+      "path": "all79_final/offline_document_benchmark_summary.json",
+      "sha256": "0ef5ac23774f2d366e2770f29ae974da5207628781e709ae7b24b5daec374a5a",
+      "size_bytes": 4040
+    },
+    {
+      "path": "all79_final/offline_evidence_benchmark.csv",
+      "sha256": "c9cac441f4fca451329d4bb787bb59a8468b43d0283fc7b9f7c21038f5427b17",
+      "size_bytes": 74075
+    },
+    {
+      "path": "all79_final/offline_pipeline_trace.json",
+      "sha256": "ff6324915d80011f7d4947a1d8204e80c85d9b8a9b83449cd2d84ca016704c8d",
+      "size_bytes": 95719
+    },
+    {
+      "path": "all79_final/offline_retrieval_waterfall.json",
+      "sha256": "5181340bb5a2eb669fdc729ccdc1de12e4ffb35f5d864065dcd59355d3d7452c",
+      "size_bytes": 150707
+    },
+    {
+      "path": "all79_final/offline_risk_benchmark.csv",
+      "sha256": "f753adae293ddb8cf42c5ffd4164d71460eb542e2d11d25ce70e49fe1ed122a3",
+      "size_bytes": 40402
+    },
+    {
+      "path": "all79_final/offline_risk_pipeline_waterfall.json",
+      "sha256": "41e34f0657263aac6a41bd0f036235e2db1ce760937e7755c693b9ae38814f62",
+      "size_bytes": 97256
+    },
+    {
+      "path": "document_benchmark_summary.json",
+      "sha256": "a71ad5b6aa2e67b8f5e3144417f8b2e984e66199adf755e9c7b76c2ce8f1d29c",
+      "size_bytes": 4038
+    },
+    {
+      "path": "evidence_benchmark.csv",
+      "sha256": "8258e923f278a56e6140de1dcbacd62d762e83e7c5a413d2b93fc2b2ffc52e41",
+      "size_bytes": 74075
+    },
+    {
+      "path": "existing_gold_manifest_receipt.json",
+      "sha256": "74fd1304d114dce042f00caf24810c985258276d82e5047c23c43b53850cf2c5",
+      "size_bytes": 3072
+    },
+    {
+      "path": "risk_benchmark.csv",
+      "sha256": "f8258e84d3d7ddbba6009b791ff31a34e515cb04c8286ba61517cd31dae62354",
+      "size_bytes": 40348
+    }
+  ],
+  "blind_2025_outcome_accessed": false,
+  "case_count": 79,
+  "code_fingerprint": "70be74ca3038e18da154c6247d57da8edce0124fe187b5aa121db604b87fc033",
+  "full_development_executed": true,
+  "gold_manifest_hash": "fcd12d34fcc64853ed778d0026b1e2c943a863549cd1652c6ced7c6145214d1c",
+  "monotonicity_satisfied": false,
+  "pdf_or_cache_included": false,
+  "prospectus_or_evidence_text_included": false,
+  "raw_journal_included": false,
+  "raw_prompt_included": false,
+  "raw_response_included": false,
+  "run_id": "finaldayA_bundle10_real_all79_001",
+  "runtime_config_hash": "bf64dc573dd4c496b64575178670b8489de0135b0d9c7beb8bcb927eb0951136",
+  "schema_set_hash": "da2e46d94770548e92dedc356a69296e835ba28a271ca6febb2f353a3c6e8e99",
+  "schema_version": "v046_role_b_all79_release_receipt_v1",
+  "secret_included": false,
+  "selected_mode": "offline",
+  "source_execution_git_dirty": false,
+  "source_execution_git_head": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
+  "source_root_recorded": false,
+  "subset_hash": "ac1f39c5267fc5f824a717566f3b36f246d10eaa8b8c2fec3a947940984b2ff5",
+  "validation_opened": false
+}

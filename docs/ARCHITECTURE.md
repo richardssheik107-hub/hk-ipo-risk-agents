@@ -1,6 +1,6 @@
 # Architecture — Current Runtime and Open Generalization Paths
 
-> 状态日期：`2026-08-29`
+> 状态日期：`2026-08-30`
 
 ## 1. Production analysis path
 
@@ -40,28 +40,20 @@ Parser 拥有 physical page identity；page/text/bbox 由解析/Evidence layer �
 
 Financial 保持 deterministic-first；Legal / Business 只消费 bounded Evidence，受 Pydantic schema 与 Evidence scope guard 约束。
 
-PR #189 后正式 fixed-journal gated checkpoint：
+最终 ALL79 Development checkpoint：
 
 ```text
-Batch009 M1 = 14/30 = 46.67%
-Batch009 M2 = 21/48 = 43.75%
-Batch009 offline = 9/30, 15/48
-last real fresh checkpoint = Batch005 11/30, 17/48
+real-LLM gated M1 = 61/102 = 59.80%
+real-LLM gated M2 = 93/191 = 48.69%
+offline selected M1 = 70/102 = 68.63%
+offline selected M2 = 103/191 = 53.93%
 ```
 
-fixed journal 是诊断 microscope，不是 ALL79 Release score，也不能冒充 fresh-provider result。
+real LLM 已覆盖 79/79；316 tasks 中 310 valid、6 fallback、0 transport failure。
+单调性失败且删除正确 deterministic candidate，因此不 promote。两种模式均未达到
+M1/M2 Gate；当前停止算法迭代并冻结为提交证据。
 
-当前 Role-B root order：
-
-```text
-retrieval candidate generation / ranking
-→ exact page / anchor Evidence binding
-→ remaining deterministic / numeric extraction
-→ genuine conflict fail-closed
-→ fixed-vs-fresh LLM / Evidence variance
-```
-
-执行允许 multi-root wide sprint：多个 proven compatible subfix 独立 commit，targeted controls 后组成 bundle，出现回归只撤问题 subfix，保留 best checkpoint，再扩大 Development。
+历史诊断曾采用 multi-root wide sprint；该冲刺已随本次 ALL79 冻结结束，不再作为当前执行指令。
 
 已拒绝的 direct ranked concentration-table candidate 因无 canonical M1/M2 gain 且 supplier existence F1 回归，不得原样恢复。broad Parser preservation / period candidate generation 只有出现新 proof 才重新打开。
 
@@ -117,7 +109,7 @@ governed feature vector
 → ModelSignal
 ```
 
-必须完成明确的 `PROMOTE_V2 / RETAIN_FROZEN_PR_F` 决议。任何 promoted model 创建新 versioned identity，不覆盖历史 frozen PR-F。V2 已有独立 versioned freeze、四项 artifact、strict receipt 与 product handoff，A-owned merge 后晋升生效，两条身份不互相覆盖。
+`PROMOTE_V2` 决议已通过 A-owned PR #184 生效。晋升模型使用新的 versioned identity，未覆盖历史 frozen PR-F；独立 freeze、四项 artifact、strict receipt 与 product handoff 均已落地，两条身份不互相覆盖。
 
 SHAP 必须来自当前 inference；不得复制 final-three drivers。
 
@@ -180,13 +172,9 @@ Frontend 只消费正式 schema/state/provenance，不自己计算 Market/Model�
 ## 8. Open architecture work
 
 ```text
-ALL79 M1/M2
-Dynamic Market-X resolver / fresh-case PIT source
-formal D model decision
-frozen-model dynamic inference + native SHAP
-final answer-ready frontend
-capability proofs
-freeze / one-shot Validation / audits / secure package
+G2 M1/M2 threshold failure（frozen）
+one-shot Validation（not executed / blocked under strict policy）
+final audits / clean clone / secure package
 ```
 
 Human Review sidecar/UI/export 可保留为 optional 人机协同能力，不是当前 Release Gate。
