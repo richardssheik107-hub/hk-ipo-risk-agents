@@ -20,6 +20,8 @@ from competition_ui import (  # noqa: E402
     market_degradation_summary,
     market_missing_reason_label,
     market_runtime_summary,
+    reader_article_markdown,
+    reader_article_projection,
     reader_market_model_summary,
     reader_markdown_report,
     report_section_title,
@@ -174,7 +176,7 @@ def test_executive_supervisor_view_keeps_document_summary_separate_from_competit
     view = executive_supervisor_view(payload)
     assert view["mode"] == "deterministic_fallback"
     assert view["title"] == "确定性 Document Supervisor 汇总"
-    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "本次有 1 项风险事项进入审阅范围" in view["body"]
     assert "unresolved" not in view["body"]
     assert view["conflict_counts"] == {"partially_resolved": 2, "unresolved": 3}
     assert "transport request failed" in view["llm_reason"]
@@ -185,6 +187,9 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
     payload["component_diagnostics"] = {
         "final_supervision_llm": {
             "status": "available",
+            "outcome": "accepted",
+            "fail_closed": False,
+            "scope_check": {"status": "passed"},
             "reason": "grounded supervisory synthesis available",
             "judgement": {
                 "overall_risk": "medium",
@@ -198,7 +203,7 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
     view = executive_supervisor_view(payload)
     assert view["mode"] == "llm"
     assert view["title"] == "LLM Final Supervisor 综合判断"
-    assert "本次共识别 1 项正式风险" in view["body"]
+    assert "本次有 1 项风险事项进入审阅范围" in view["body"]
     assert "Grounded competition-wide explanation." not in view["body"]
     assert view["conflict_counts"] == {"resolved": 1}
     assert view["overall_risk"] == "medium"
@@ -229,17 +234,15 @@ def test_reader_report_is_chinese_and_excludes_backend_metadata() -> None:
 
     assert report.startswith("# 示例公司港股 IPO 风险分析报告")
     assert "引用原文" in report
-    assert "结构化字段" not in report
     assert "Structured section metadata" not in report
     assert "component_diagnostics" not in report
     assert "prospectus_sha256" not in report
     assert "secret-technical-hash" not in report
     assert "internal-e1" not in report
-    assert "推理注释" in report
-    assert "形成依据" in report
-    assert "风险影响" in report
-    assert "判断边界" in report
-    assert "复核重点" in report
+    assert "**判断依据。**" in report
+    assert "**对发行人的含义。**" in report
+    assert "**尚待确认。**" in report
+    assert "后续复核应" in report
     assert "模型已形成辅助排序信号" in report
     assert "未经概率校准" in report
     assert "规则评分" not in report
@@ -263,7 +266,7 @@ def test_reader_market_model_summary_is_human_readable_without_raw_details() -> 
                 "availability": "available",
             },
             {
-                "name": "prior_ipo_count_30d",
+                "name": "ipo_count_30d",
                 "value": 4,
                 "availability": "available",
             },
@@ -300,14 +303,17 @@ def test_reader_market_model_summary_is_human_readable_without_raw_details() -> 
         "model_body",
         "review_guidance",
     }
-    assert "近期新股市场热度偏热，整体市场环境仍需结合更多信息判断" in text
-    assert "近期缺少同业新股样本" in text
-    assert "取得 2/3 项上市前市场信息" in text
-    assert "主要原因：受管的上市前历史不足" in text
-    assert "受管的上市前历史不足 ·" not in text
+    assert "近期新股市场热度偏热，结论来自上市日前可用样本" in text
+    assert "近 30 日有 4 宗前序 IPO" in text
+    assert "近 180 日没有可用的同业前序 IPO 样本" in text
+    assert "Market-X 核心观测取得 2/3 项" in text
+    assert "主要原因：可用的上市前历史样本不足" in text
+    assert "用于判断整体市场状态的恒指、波动或成交额等扩展信息仍不可用" in text
+    assert "可用的上市前历史样本不足 ·" not in text
     assert "模型已形成辅助排序信号" in text
     assert "未经概率校准" in text
-    assert "逐项市场指标、模型分数和影响因素均保留在后台" in text
+    assert "具体分数与影响因素保留在后台核验" in text
+    assert "评审顺序应是" in text
     for raw_detail in (
         "87",
         "0.123",

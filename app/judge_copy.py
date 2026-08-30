@@ -7,6 +7,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from decimal import Decimal, InvalidOperation
+import re
 from typing import Any
 
 
@@ -87,6 +89,37 @@ _RISK_LEVEL_LABELS = {
     "unavailable": "暂不可用",
 }
 
+_VERIFICATION_ISSUE_LABELS = {
+    "calculation_missing": "缺少可复算的确定性计算",
+    "value_period_count_mismatch": "报告期与数值数量未能一一对应",
+    "incomplete_concentration_values": "集中度数值提取不完整",
+    "conflicting_values_for_same_period": "同一报告期出现相互冲突的候选数值",
+    "holder_not_supported_by_evidence": "权利主体的精确名称或适用范围仍需逐句核对",
+    "actual_matter_not_established": "该披露是否满足本风险类型的认定条件尚未完成验证",
+    "closure_status_not_established": "事项是否已经结束尚未确认",
+    "pending_status_not_supported_by_evidence": "持续或待处理状态尚未被当前证据支持",
+    "manual_legal_judgment_required": "仍需要法律专业判断",
+    "counterparty_or_regulator_not_identified": "相对方或主管机构尚未明确",
+    "management_materiality_not_established": "管理层关于重大性的判断尚未完成交叉核验",
+    "remediation_metadata_not_supported_by_evidence": "整改状态尚未被当前证据充分支持",
+    "material_impact_not_supported_by_evidence": "重大影响判断尚未被当前证据充分支持",
+    "period_value_reconciliation_required": "报告期与数值仍需重新对齐",
+    "evidence_missing": "缺少完成核验所需的原文证据",
+}
+
+_CURRENCY_LABELS = {
+    "CNY": "人民币",
+    "HKD": "港元",
+    "USD": "美元",
+}
+
+_UNIT_LABELS = {
+    "thousand": "千元",
+    "million": "百万元",
+    "months": "个月",
+    "percent": "%",
+}
+
 # 仅用于非证据展示字段。原文 Evidence 不得经过此转换。
 _TRAD_TO_SIMP = str.maketrans({
     "風": "风", "險": "险", "證": "证", "據": "据", "結": "结", "構": "构",
@@ -113,6 +146,18 @@ _TRAD_TO_SIMP = str.maketrans({
     "優": "优", "劣": "劣", "總": "总", "獨": "独", "嚴": "严", "謹": "谨",
     "邊": "边", "凍": "冻", "曆": "历", "當": "当", "後": "后", "衝": "冲",
     "歸": "归", "灣": "湾", "臺": "台", "啲": "些", "冊": "册", "圖": "图",
+    "於": "于", "補": "补", "繳": "缴", "納": "纳", "僱": "雇", "罰": "罚",
+    "監": "监", "請": "请", "緊": "紧", "適": "适", "決": "决", "絕": "绝",
+    "攤": "摊", "績": "绩", "記": "记", "樓": "楼", "顧": "顾", "門": "门",
+    "給": "给", "屬": "属", "幣": "币", "約": "约", "億": "亿", "條": "条",
+    "滿": "满", "屆": "届", "觸": "触", "勞": "劳", "員": "员", "徑": "径",
+    "許": "许", "須": "须", "轉": "转", "讓": "让", "達": "达", "聨": "联",
+    "聞": "闻", "創": "创",
+    "積": "积", "獲": "获", "償": "偿", "眾": "众", "歷": "历", "廠": "厂",
+    "佔": "占", "況": "况", "視": "视", "護": "护", "訂": "订", "維": "维",
+    "減": "减", "擔": "担", "繼": "继", "載": "载", "範": "范", "遷": "迁",
+    "遞": "递", "計": "计", "內": "内", "猶": "犹", "滯": "滞", "強": "强",
+    "執": "执", "響": "响", "訴": "诉", "暫": "暂", "問": "问", "穫": "获",
 })
 
 
@@ -178,37 +223,243 @@ def summarize_risks(risks: Iterable[Mapping[str, Any]]) -> dict[str, int | str]:
     }
 
 
+def _risk_metadata(risk: Mapping[str, Any]) -> Mapping[str, Any]:
+    metadata = risk.get("metadata") or {}
+    return metadata if isinstance(metadata, Mapping) else {}
+
+
+def _compact_ui_fact(value: object, *, limit: int = 320) -> str:
+    """Normalize an already-produced structured fact for reader copy.
+
+    Evidence quotes never pass through this helper.  It is only used for LLM or
+    deterministic structured fields that the workflow has already emitted.
+    """
+
+    text = (
+        to_simplified_ui(value)
+        .replace(";", "；")
+        .replace(",", "，")
+        .replace(":", "：")
+        .replace("(", "（")
+        .replace(")", "）")
+        .strip()
+    )
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\s*([，；。：])\s*", r"\1", text)
+    text = re.sub(r"\s*（\s*", "（", text)
+    text = re.sub(r"\s*）\s*", "）", text)
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip("，；。") + "…"
+
+
+def _decimal_text(value: object, *, places: int = 2, grouping: bool = False) -> str:
+    try:
+        number = Decimal(str(value))
+    except (InvalidOperation, TypeError, ValueError):
+        return str(value or "")
+    quantizer = Decimal(1).scaleb(-places)
+    rounded = number.quantize(quantizer)
+    rendered = format(rounded, ",f" if grouping else "f")
+    return rendered.rstrip("0").rstrip(".") or "0"
+
+
+def _evidence_pages(risk: Mapping[str, Any]) -> list[str]:
+    pages: list[str] = []
+    for item in risk.get("evidence") or []:
+        if not isinstance(item, Mapping) or item.get("page") in (None, ""):
+            continue
+        page = str(item.get("page"))
+        if page not in pages:
+            pages.append(page)
+    return sorted(
+        pages,
+        key=lambda page: (0, int(page)) if page.isdigit() else (1, page),
+    )
+
+
+def _page_basis(risk: Mapping[str, Any]) -> str:
+    pages = _evidence_pages(risk)
+    evidence_count = len(risk.get("evidence") or [])
+    if not evidence_count:
+        return "当前风险项没有附着可展示的招股书原文。"
+    if len(pages) == 1:
+        return f"本项关联 1 条招股书原文，位于第 {pages[0]} 页。"
+    shown = "、".join(pages[:5])
+    suffix = "等" if len(pages) > 5 else ""
+    return f"本项关联 {evidence_count} 条招股书原文，分布在第 {shown} 页{suffix}。"
+
+
+def _verification_issue_codes(risk: Mapping[str, Any]) -> list[str]:
+    metadata = _risk_metadata(risk)
+    codes: list[str] = []
+    for key in (
+        "extraction_issues",
+        "fact_issues",
+        "observation_issues",
+        "builder_issues",
+        "legal_verifier_issues",
+        "verification_issues",
+    ):
+        values = metadata.get(key) or []
+        if isinstance(values, str):
+            values = [values]
+        for value in values:
+            code = str(value or "").strip()
+            if code and code not in codes:
+                codes.append(code)
+
+    note = str(risk.get("verification_notes") or "").lower()
+    if "calculation" in note and "missing" in note and "calculation_missing" not in codes:
+        codes.append("calculation_missing")
+    if "period/value reconciliation" in note and "period_value_reconciliation_required" not in codes:
+        codes.append("period_value_reconciliation_required")
+    if "evidence" in note and "missing" in note and "evidence_missing" not in codes:
+        codes.append("evidence_missing")
+    return codes
+
+
+def _verification_issues_zh(risk: Mapping[str, Any], *, limit: int = 4) -> list[str]:
+    labels: list[str] = []
+    for code in _verification_issue_codes(risk):
+        label = _VERIFICATION_ISSUE_LABELS.get(code)
+        if label and label not in labels:
+            labels.append(label)
+        if len(labels) >= limit:
+            break
+    return labels
+
+
+def _calculation_conclusion(risk: Mapping[str, Any]) -> str | None:
+    calculation = risk.get("calculation")
+    if not _calculation_is_safe(risk):
+        return None
+    assert isinstance(calculation, Mapping)
+    code = str(risk.get("risk_code") or "")
+    result = _decimal_text(calculation.get("result"), places=2)
+    unit = _UNIT_LABELS.get(str(calculation.get("unit") or ""), str(calculation.get("unit") or ""))
+    inputs = calculation.get("inputs") or {}
+    if code == "cash_runway" and isinstance(inputs, Mapping):
+        cash = _decimal_text(inputs.get("cash"), places=0, grouping=True)
+        try:
+            outflow_value: object = abs(Decimal(str(inputs.get("operating_cash_flow"))))
+        except (InvalidOperation, TypeError, ValueError):
+            outflow_value = ""
+        outflow = _decimal_text(outflow_value, places=0, grouping=True) if outflow_value != "" else ""
+        period = _decimal_text(inputs.get("period_months"), places=0)
+        currency = _CURRENCY_LABELS.get(str(inputs.get("currency") or ""), str(inputs.get("currency") or ""))
+        source_unit = _UNIT_LABELS.get(str(inputs.get("source_unit") or ""), str(inputs.get("source_unit") or ""))
+        if cash and outflow and period:
+            return (
+                f"财务报表记录现金及现金等价物{currency} {cash} {source_unit}，{period} 个月经营活动净流出"
+                f"{currency} {outflow} {source_unit}；按“现金 ÷ 月均经营净流出”复算，现金可支撑期约为 "
+                f"{result} {unit}。该结论来自确定性计算，不是风险发生概率。"
+            )
+    return f"系统已按已记录的公式完成确定性复算，结果为 {result}{unit}；该结果不是概率。"
+
+
+def _calculation_is_safe(risk: Mapping[str, Any]) -> bool:
+    """Only expose a numeric calculation when its governed links are intact."""
+
+    calculation = risk.get("calculation")
+    if not isinstance(calculation, Mapping):
+        return False
+    if calculation.get("success") is not True or calculation.get("result") in (None, ""):
+        return False
+    calculation_ids = {
+        str(item) for item in (calculation.get("evidence_ids") or []) if str(item)
+    }
+    risk_ids = {
+        str(item.get("evidence_id"))
+        for item in (risk.get("evidence") or [])
+        if isinstance(item, Mapping) and item.get("evidence_id")
+    }
+    return bool(calculation_ids) and calculation_ids <= risk_ids
+
+
 def risk_conclusion_zh(risk: Mapping[str, Any]) -> str:
-    """根据结构化字段生成中文结论，不复述后端英文正文。"""
+    """把受治理的结构化事实投影为有内容的中文结论。
+
+    这里不调用模型，也不把待复核字段写成已证实事实。页面刷新时只读取分析
+    阶段已经生成并经过现有 Verifier/范围约束的字段。
+    """
 
     code = str(risk.get("risk_code") or "")
-    metadata = risk.get("metadata") or {}
-    if not isinstance(metadata, Mapping):
-        metadata = {}
+    verification = str(risk.get("verification_status") or "unavailable").lower()
+    metadata = _risk_metadata(risk)
+    calculated = _calculation_conclusion(risk) if verification == "verified" else None
+    if calculated:
+        return calculated
     if code in {"customer_concentration", "supplier_concentration"}:
         subject = "客户" if code.startswith("customer") else "供应商"
         values = []
-        if metadata.get("largest_counterparty_pct") not in (None, ""):
+        if verification == "verified" and metadata.get("largest_counterparty_pct") not in (None, ""):
             values.append(f"最大{subject}占比约 {metadata['largest_counterparty_pct']}%")
-        if metadata.get("top_five_pct") not in (None, ""):
+        if verification == "verified" and metadata.get("top_five_pct") not in (None, ""):
             values.append(f"前五大{subject}合计占比约 {metadata['top_five_pct']}%")
-        return ("，".join(values) + "，系统据此识别到集中度风险。") if values else f"系统识别到{subject}集中度风险，建议结合原文证据核查集中程度及持续性。"
+        if values:
+            return (
+                "，".join(values)
+                + f"。这些结构化数值提示{subject}依赖值得关注，但仍需结合报告期口径和验证状态阅读。"
+            )
+        issues = _verification_issues_zh(risk)
+        issue_copy = "；".join(issues)
+        pages = _evidence_pages(risk)
+        location = f"系统已在招股书第 {'、'.join(pages[:5])} 页定位相关披露" if pages else "系统已形成相关披露候选"
+        if issue_copy:
+            return (
+                f"{location}，内容涉及往绩记录期的{subject}构成、集中度或交易关系。"
+                f"由于{issue_copy}，本次尚未完成口径一致的集中度复算，"
+                "因此只能保留为待复核线索，不能据此判断集中程度或风险等级。"
+            )
+        return f"{location}；当前尚需把{subject}占比与对应报告期逐项对齐后，才能判断集中程度。"
     if code == "continuous_loss":
         count = metadata.get("latest_loss_period_count")
-        return f"最新可比报告序列中存在连续 {count} 个亏损期，系统据此识别到持续亏损风险。" if count not in (None, "") else "系统识别到持续亏损风险，建议结合可比报告期和原文证据核查亏损持续性。"
+        return f"最新可比报告序列中已核验连续 {count} 个亏损期；该判断仍需结合各期损益和现金流理解经营压力。" if verification == "verified" and count not in (None, "") else "当前原文候选显示发行人可能存在持续亏损，但报告期与数值尚未形成可复核的连续序列，因此不能把候选直接写成已确认事实。"
     if code == "revenue_growth":
         growth = metadata.get("growth_pct_rounded") or metadata.get("growth_pct_exact")
-        return f"最新两个可比报告期的收入变动约为 {growth}%，系统据此识别到收入增长风险。" if growth not in (None, "") else "系统识别到收入增长或收入下滑风险，建议结合可比报告期核查变化原因。"
+        return f"最新两个可比报告期的收入变动已核验为约 {growth}%；该变化需结合收入基数、业务构成和报告期口径解释。" if verification == "verified" and growth not in (None, "") else "当前原文候选包含收入增长或下滑信号，但尚未形成口径一致的可比序列，现阶段只能作为待核对事项。"
     if code == "cash_runway":
         months = next((metadata.get(key) for key in ("runway_months", "cash_runway_months", "months_of_runway") if metadata.get(key) not in (None, "")), None)
-        return f"按当前可核验数据估算，现金可支撑期约为 {months} 个月，需要关注流动性安排。" if months is not None else "系统识别到现金可支撑期风险，需要结合现金余额、经营现金流和融资计划进一步复核。"
+        return f"按当前可核验数据估算，现金可支撑期约为 {months} 个月；仍需结合最新现金余额、经营现金流和融资安排持续观察。" if verification == "verified" and months is not None else "当前资料提示现金消耗压力，但缺少完成现金可支撑期复算所需的完整输入，暂不能形成确定性结论。"
     if code == "redemption_rights":
-        return "招股书披露了需要关注的特殊股东权利或赎回安排，建议核查其终止、恢复及潜在资金影响。"
+        holder = _compact_ui_fact(metadata.get("holder"), limit=90).rstrip("。；")
+        termination = _compact_ui_fact(metadata.get("termination_event"), limit=220).rstrip("。；")
+        restoration = _compact_ui_fact(metadata.get("restoration_condition"), limit=260).rstrip("。；")
+        parts = []
+        if holder:
+            parts.append(f"招股书条款将相关权利人记为{holder}")
+        if termination:
+            parts.append(f"终止安排为：{termination}")
+        if metadata.get("restoration_clause") is True and restoration:
+            parts.append(f"同时存在恢复条件：{restoration}")
+        if parts:
+            return "；".join(parts) + "。如果相关权利按披露在上市后终止且未触发恢复条件，对上市后公众股东的直接影响应较为有限；但权利主体范围、终止时点和恢复条件仍需逐句核对。"
+        return "招股书条款候选涉及特殊股东权利的终止或恢复安排；当前需要核对权利主体、触发条件和上市后的存续状态。"
     if code == "material_litigation_compliance":
-        return "招股书披露了需要关注的诉讼、监管或合规事项，建议结合事项进展和潜在责任进一步复核。"
+        subject = _compact_ui_fact(metadata.get("subject"), limit=300)
+        management = _compact_ui_fact(metadata.get("management_materiality"), limit=220)
+        impact = _compact_ui_fact(metadata.get("potential_impact"), limit=240)
+        parts = []
+        if subject:
+            parts.append(f"招股书披露：{subject}")
+        if impact:
+            parts.append(f"系统整理的潜在责任或缓释说明包括：{impact}")
+        if management:
+            parts.append(f"招股书同时记录管理层或法律顾问观点：{management}")
+        if parts:
+            return "；".join(parts) + "。这些披露能够说明事项及相关缓释观点，但事项是否持续、整改是否完成和重大性仍待复核。"
+        return "当前原文候选涉及诉讼、监管或合规事项，但事项身份、进展和潜在责任尚未形成可验证的完整链条。"
     if code == "precommercial_product":
-        return "核心产品仍处于商业化前阶段，收入兑现依赖后续研发、审批、量产和市场接受度。"
-    return "系统已形成该风险项，建议结合下方原文证据和复核状态进行判断。"
+        product = _compact_ui_fact(metadata.get("product_name") or metadata.get("subject"), limit=120)
+        fact_kind = "结构化事实" if verification == "verified" else "结构化候选"
+        prefix = f"{fact_kind}显示{product}" if product else f"{fact_kind}显示核心产品"
+        return prefix + "仍处于商业化前阶段，收入兑现取决于研发、审批、量产和市场接受度等后续里程碑。"
+
+    pages = _evidence_pages(risk)
+    if pages:
+        return f"系统已在招股书第 {'、'.join(pages[:5])} 页定位与该事项相关的原文；当前结论应以这些原文和验证状态为边界。"
+    return "该风险项尚未形成足够的可读结构化事实，当前不补写推测性结论。"
 
 
 def verifier_note_zh(note: object) -> str:
@@ -235,33 +486,28 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
 
     code = str(risk.get("risk_code") or "")
     verification = str(risk.get("verification_status") or "unavailable").lower()
-    evidence_count = len(risk.get("evidence") or [])
-    governed_finding = risk_conclusion_zh(risk)
-    calculation_copy = (
-        "相关数值另有确定性计算支持。"
-        if isinstance(risk.get("calculation"), Mapping)
-        else ""
-    )
-    if verification == "verified":
-        basis = (
-            f"{governed_finding} 本次关联 {evidence_count} 条招股书原文，并已通过当前验证规则。"
-            f"{calculation_copy}"
-            if evidence_count
-            else f"{governed_finding} 该风险已通过当前验证规则，但本页没有可展示的关联原文。"
-        )
-    elif verification in {"needs_review", "pending"}:
-        basis = (
-            f"{governed_finding} 系统已定位 {evidence_count} 条相关原文并形成风险候选，"
-            "但关键事实仍未完成核验，"
-            "因此保留为待复核，而不是直接视为已确认风险。"
-            f"{calculation_copy}"
-            if evidence_count
-            else f"{governed_finding} 当前缺少足够的关联原文，不能视为已确认风险。"
-        )
-    elif verification == "rejected":
-        basis = "该候选风险未通过当前验证规则，不纳入已确认风险结论。"
+    metadata = _risk_metadata(risk)
+    page_copy = _page_basis(risk)
+    calculation = risk.get("calculation")
+    calculation_safe = _calculation_is_safe(risk)
+    extraction_method = str(metadata.get("extraction_method") or "")
+    if calculation_safe and verification == "verified":
+        basis = page_copy + "相关财务输入已经过确定性公式复算，计算引用均能回到本风险项的原文证据，本项也已通过验证。"
+    elif isinstance(calculation, Mapping):
+        basis = page_copy + "上游已形成计算候选，但计算状态、证据关联或风险验证尚未全部满足，因此页面不把候选数值写成确定性结论。"
+    elif extraction_method.startswith("llm_structured"):
+        basis = page_copy + "系统先从原文整理候选事实，再检查各字段能否被同一组证据支持。"
     else:
-        basis = "该风险项的验证状态尚未完整形成，当前结论应结合原文谨慎阅读。"
+        basis = page_copy + "结论只使用本次运行已经产出的结构化字段和验证状态，不根据页面展示补写新事实。"
+
+    if verification == "verified":
+        basis += "本项已通过当前验证规则。"
+    elif verification in {"needs_review", "pending"}:
+        basis += "本项尚未通过全部验证条件，因此保留为待复核，而不是已确认事实。"
+    elif verification == "rejected":
+        basis += "该候选未通过验证，不纳入面向评审的风险结论。"
+    else:
+        basis += "当前验证状态尚未完整形成。"
 
     if verification == "verified":
         boundary = (
@@ -269,26 +515,65 @@ def risk_reasoning_annotation(risk: Mapping[str, Any]) -> dict[str, str]:
             "不代表风险必然发生；仍需关注招股书之后的事项变化。"
         )
     elif verification in {"needs_review", "pending"}:
-        boundary = verifier_note_zh(risk.get("verification_notes")) or (
-            "关键事实、计算依据或事项状态仍未完全闭合，因此当前只能作为待复核风险阅读。"
-        )
+        issues = _verification_issues_zh(risk)
+        if issues:
+            boundary = "当前尚未闭合的环节包括：" + "；".join(issues) + "。"
+        else:
+            boundary = verifier_note_zh(risk.get("verification_notes")) or (
+                "关键事实、计算依据或事项状态仍未完全闭合，因此当前只能作为待复核风险阅读。"
+            )
     elif verification == "rejected":
         boundary = "该候选未通过当前验证规则，不应作为已确认风险引用。"
     else:
         boundary = verifier_note_zh(risk.get("verification_notes")) or (
             "验证状态尚未完整形成，当前结论不能作为已确认事实。"
         )
+    impact = risk_reasoning(code)
+    if code == "cash_runway" and calculation_safe and verification == "verified" and isinstance(calculation, Mapping):
+        result = _decimal_text(calculation.get("result"), places=2)
+        if result:
+            impact = (
+                f"按本次复算，现有现金约可覆盖 {result} 个月的当前经营净流出。"
+                "缓冲期较短会提高公司对融资进度、回款改善和支出控制的敏感度。"
+            )
+    elif code in {"customer_concentration", "supplier_concentration"}:
+        subject = "客户" if code.startswith("customer") else "供应商"
+        impact = (
+            f"该事项关系到发行人对少数{subject}的依赖程度。"
+            f"在占比尚未完成报告期对齐前，不能断言集中度高低；一旦确认依赖集中，{subject}流失、议价或履约变化才可能形成实质影响。"
+        )
+    elif code == "redemption_rights" and metadata.get("impact_on_public_shareholders"):
+        impact = (
+            "结构化条款同时记录了对上市后公众股东影响的候选判断："
+            + _compact_ui_fact(metadata.get("impact_on_public_shareholders"), limit=260)
+            + "。该判断仍受权利主体和条款状态验证结果约束。"
+        )
+    elif code == "material_litigation_compliance" and metadata.get("potential_impact"):
+        impact = (
+            "结构化法律事实记录的候选影响为："
+            + _compact_ui_fact(metadata.get("potential_impact"), limit=260)
+            + "。当前仅用于说明需要核查的责任范围，不代表影响已经发生。"
+        )
+
+    review_focus = risk_review_focus(code)
+    if code in {"customer_concentration", "supplier_concentration"} and _verification_issues_zh(risk):
+        review_focus = "先把每个占比与对应报告期逐项对齐、排除客户与供应商交叉口径，再核查合同稳定性和替代能力。"
+    elif code == "redemption_rights":
+        review_focus = "逐句核对权利人、终止时点、恢复触发条件和上市后是否存续，并确认每个结构化字段都能回到同一组原文。"
+    elif code == "material_litigation_compliance":
+        review_focus = "核对事项身份、主管机构、当前状态、整改证据及管理层重大性判断，尤其区分“未受处罚”与“事项已经解决”。"
+
     return {
         "basis": basis,
-        "impact": risk_reasoning(code),
+        "impact": impact,
         "boundary": boundary,
-        "review_focus": risk_review_focus(code),
+        "review_focus": review_focus,
     }
 
 
 def calculation_summary_zh(risk: Mapping[str, Any]) -> str:
     calculation = risk.get("calculation")
-    if not isinstance(calculation, Mapping):
+    if not _calculation_is_safe(risk) or not isinstance(calculation, Mapping):
         return "暂无可展示的确定性计算依据。"
     result, unit = calculation.get("result"), calculation.get("unit")
     if result not in (None, ""):
@@ -308,10 +593,10 @@ def supervisor_summary_zh(payload: Mapping[str, Any]) -> str:
     )
     if not summary["total"]:
         return (
-            "本次没有形成通过验证或待复核的正式风险项。"
-            "这只表示当前证据与验证规则未产出正式风险，不等同于发行人不存在风险。"
+            "本次没有风险事项进入审阅范围。"
+            "这只表示当前证据与验证规则未形成可供审阅的风险事项，不等同于发行人不存在风险。"
         )
-    parts = [f"本次共识别 {summary['total']} 项正式风险"]
+    parts = [f"本次有 {summary['total']} 项风险事项进入审阅范围"]
     if summary["high_or_critical"]:
         parts.append(f"其中 {summary['high_or_critical']} 项为高或极高风险")
     if summary["needs_review"]:
@@ -325,6 +610,97 @@ def supervisor_summary_zh(payload: Mapping[str, Any]) -> str:
     else:
         guidance = "建议结合原文依据逐项审阅。"
     return "，".join(parts) + "。" + guidance
+
+
+def _valid_final_synthesis(value: object) -> Mapping[str, Any] | None:
+    if not isinstance(value, Mapping):
+        return None
+    scope_check = value.get("scope_check") or {}
+    judgement = value.get("judgement")
+    if (
+        value.get("status") != "available"
+        or value.get("outcome") != "accepted"
+        or value.get("fail_closed") is not False
+        or not isinstance(scope_check, Mapping)
+        or scope_check.get("status") != "passed"
+        or not isinstance(judgement, Mapping)
+    ):
+        return None
+    return value
+
+
+def trusted_final_synthesis(payload: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    """Return the governed final synthesis only after all trust checks pass.
+
+    Component diagnostics are the primary source.  The copy stored under the
+    final result metadata is a compatibility fallback; if both exist and their
+    judgements disagree, the reader view fails closed instead of choosing one.
+    """
+
+    diagnostics = payload.get("component_diagnostics") or {}
+    primary_raw = (
+        diagnostics.get("final_supervision_llm")
+        if isinstance(diagnostics, Mapping)
+        else None
+    )
+    final = payload.get("final_supervision") or {}
+    final_metadata = final.get("metadata") or {} if isinstance(final, Mapping) else {}
+    secondary_raw = (
+        final_metadata.get("final_supervision_llm")
+        if isinstance(final_metadata, Mapping)
+        else None
+    )
+
+    if isinstance(primary_raw, Mapping) and primary_raw:
+        primary = _valid_final_synthesis(primary_raw)
+        if primary is None:
+            return None
+        secondary = _valid_final_synthesis(secondary_raw)
+        if secondary is not None and secondary.get("judgement") != primary.get("judgement"):
+            return None
+        return primary
+    return _valid_final_synthesis(secondary_raw)
+
+
+def trusted_final_judgement(payload: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    synthesis = trusted_final_synthesis(payload)
+    judgement = synthesis.get("judgement") if synthesis is not None else None
+    return judgement if isinstance(judgement, Mapping) else None
+
+
+def _prioritized_reader_risks(
+    payload: Mapping[str, Any], risks: list[Mapping[str, Any]]
+) -> list[Mapping[str, Any]]:
+    """Use trusted LLM references for order, then a deterministic safe order."""
+
+    judgement = trusted_final_judgement(payload)
+    referenced_ids: list[str] = []
+    if judgement is not None:
+        for finding in judgement.get("key_findings") or []:
+            if not isinstance(finding, Mapping):
+                continue
+            for risk_id in finding.get("risk_ids") or []:
+                text = str(risk_id)
+                if text and text not in referenced_ids:
+                    referenced_ids.append(text)
+
+    by_id = {str(risk.get("risk_id") or ""): risk for risk in risks}
+    ordered = [by_id[risk_id] for risk_id in referenced_ids if risk_id in by_id]
+    used = {str(risk.get("risk_id") or "") for risk in ordered}
+    severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    verification_rank = {"verified": 0, "needs_review": 1, "pending": 2}
+    remaining = [risk for risk in risks if str(risk.get("risk_id") or "") not in used]
+    remaining.sort(
+        key=lambda risk: (
+            severity_rank.get(str(risk.get("level") or "").lower(), 9),
+            verification_rank.get(
+                str(risk.get("verification_status") or "").lower(), 9
+            ),
+            -len(risk.get("evidence") or []),
+            str(risk.get("risk_code") or ""),
+        )
+    )
+    return ordered + remaining
 
 
 def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
@@ -344,17 +720,8 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         str(prediction.get("risk_level") or "unavailable").lower(),
         "暂不可用",
     ) if isinstance(prediction, Mapping) else "暂不可用"
-    diagnostics = payload.get("component_diagnostics") or {}
-    synthesis = (
-        diagnostics.get("final_supervision_llm") or {}
-        if isinstance(diagnostics, Mapping)
-        else {}
-    )
-    judgement = (
-        synthesis.get("judgement")
-        if isinstance(synthesis, Mapping) and synthesis.get("status") == "available"
-        else None
-    )
+    synthesis = trusted_final_synthesis(payload)
+    judgement = trusted_final_judgement(payload)
     raw_overall = (
         judgement.get("overall_risk") if isinstance(judgement, Mapping) else None
     )
@@ -364,29 +731,30 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
     )
     if raw_overall:
         opening = (
-            f"多通道综合审阅结论为{overall_level}风险，规则化排序参考为{rule_level}风险。"
+            f"多通道综合审阅结论为{overall_level}风险，规则筛选参考为{rule_level}风险。"
             "综合结论同时考虑招股书风险、验证状态、市场环境、模型信号与跨通道分歧；"
             "当两者不同，应以综合审阅及其证据边界为准，不能用单一规则等级覆盖尚未解决的风险。"
         )
     else:
         opening = (
-            f"当前未形成可用的智能综合审阅，页面采用规则化判断作为降级参考，"
-            f"风险等级为{rule_level}风险。"
+            "当前未形成通过范围检查的智能综合审阅。"
+            f"规则筛选参考为{rule_level}风险，但它只用于初步排序，不能替代总体风险判断。"
         )
     paragraphs = [opening, supervisor_summary_zh(payload)]
 
     if risks:
-        names: list[str] = []
-        for risk in risks:
+        priority_rows: list[str] = []
+        for risk in _prioritized_reader_risks(payload, risks)[:4]:
             code = str(risk.get("risk_code") or "")
             name = RISK_DISPLAY_NAMES.get(code, "其他风险事项")
-            if name not in names:
-                names.append(name)
-        paragraphs.append(
-            f"风险结构上，当前主要关注{'、'.join(names[:4])}。"
-            "这些事项分别反映发行人的经营韧性、合规责任或商业兑现不确定性，"
-            "最终判断应回到对应原文和验证状态，而不能只看单一评分。"
-        )
+            state = _STATUS_LABELS.get(
+                str(risk.get("verification_status") or "unavailable").lower(),
+                "状态不可用",
+            )
+            priority_rows.append(
+                f"{name}（{state}）：{risk_conclusion_zh(risk)}"
+            )
+        paragraphs.append("招股书风险的具体依据如下：" + " ".join(priority_rows))
 
     if summary["needs_review"]:
         paragraphs.append(
@@ -396,7 +764,9 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
             "尚未验证而忽略。"
         )
 
-    market = payload.get("market_context") or {}
+    final = payload.get("final_supervision") or {}
+    final_market = final.get("market_context") if isinstance(final, Mapping) else None
+    market = final_market or payload.get("market_context") or {}
     observations = (
         (market.get("observations") or []) if isinstance(market, Mapping) else []
     )
@@ -404,7 +774,6 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         1 for item in observations
         if isinstance(item, Mapping) and item.get("availability") == "available"
     )
-    final = payload.get("final_supervision") or {}
     channel_states = {
         str(item.get("channel")): str(item.get("status") or "unavailable")
         for item in (final.get("channel_states") or [])
@@ -412,7 +781,7 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
     } if isinstance(final, Mapping) else {}
     if observations:
         market_copy = (
-            f"市场方面，本次取得 {available_market}/{len(observations)} 项上市前环境信息；"
+            f"市场方面，本次取得 {available_market}/{len(observations)} 项 Market-X 核心观测；"
             "未取得的项目保持缺失，不以 0 或推测值替代。"
         )
     else:
@@ -424,7 +793,14 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         )
     else:
         model_copy = "模型方面当前没有可核验的逐案信号；模型缺失同样不代表低风险。"
-    market_intelligence = payload.get("market_intelligence") or {}
+    provenance = market.get("provenance") or {} if isinstance(market, Mapping) else {}
+    market_intelligence = (
+        provenance.get("market_intelligence")
+        if isinstance(provenance, Mapping)
+        else None
+    ) or (
+        market.get("market_intelligence") if isinstance(market, Mapping) else None
+    ) or payload.get("market_intelligence") or {}
     if isinstance(market_intelligence, Mapping):
         heat_payload = market_intelligence.get("ipo_heat") or {}
         regime_payload = market_intelligence.get("market_regime") or {}
@@ -469,18 +845,64 @@ def supervisor_narrative_zh(payload: Mapping[str, Any]) -> str:
         if isinstance(item, Mapping)
     )
     if unsettled:
+        model_divergence = sum(
+            "document_model_divergence" in str(item.get("conflict_id") or "")
+            for item in conflicts
+            if isinstance(item, Mapping)
+            and str(item.get("status") or "").lower() in {"partially_resolved", "unresolved"}
+        )
+        divergence_copy = (
+            f"其中 {model_divergence} 项是模型方向与招股书结论之间的分歧，"
+            "该分歧不能靠模型分数覆盖原文判断；"
+            if model_divergence
+            else ""
+        )
         paragraphs.append(
             f"跨通道审阅仍保留 {unsettled} 项部分解决或未解决的分歧。"
-            "这些分歧提示评审应优先核对相互矛盾的原文、数值口径与事项状态，而不是强行合并为"
-            "单一答案。"
+            + divergence_copy
+            + "其余分歧主要涉及部分线索与核验结论不一致、数值口径未闭合或新证据仍需进一步判断。"
+            "系统保留这些分歧，而不是强行合并为单一答案。"
+        )
+
+    unresolved_labels = {
+        "continuous_loss": "持续亏损",
+        "revenue_growth": "收入变化",
+        "customer_concentration": "客户集中度",
+        "supplier_concentration": "供应商集中度",
+        "precommercial_product": "产品商业化状态",
+    }
+    formal_codes = {str(risk.get("risk_code") or "") for risk in risks}
+    unresolved_clues: list[str] = []
+    for item in conflicts:
+        if not isinstance(item, Mapping):
+            continue
+        conflict_id = str(item.get("conflict_id") or "")
+        if "unresolved_agent_claim" not in conflict_id:
+            continue
+        for code, label in unresolved_labels.items():
+            if code in conflict_id and code not in formal_codes and label not in unresolved_clues:
+                unresolved_clues.append(label)
+    if unresolved_clues:
+        paragraphs.append(
+            "此外，系统还发现"
+            + "、".join(unresolved_clues)
+            + "方面的待核查线索，但现有数值存在冲突、报告期尚未对齐或结构化字段仍不完整，"
+            "因此没有把这些线索列为面向评审的风险结论。"
         )
 
     focuses: list[str] = []
     for risk in risks:
-        focus = risk_review_focus(risk.get("risk_code")).rstrip("。；")
+        focus = risk_reasoning_annotation(risk)["review_focus"].rstrip("。；")
         if focus not in focuses:
             focuses.append(focus)
     if focuses:
         paragraphs.append("建议后续复核：" + "；".join(focuses[:3]) + "。")
+
+    scope = synthesis.get("scope_check") if isinstance(synthesis, Mapping) else None
+    if isinstance(scope, Mapping) and scope.get("status") == "passed":
+        paragraphs.append(
+            "综合结论只使用本次列示的招股书证据、已保存的市场信息和辅助信号，"
+            "不新增未披露事实，也不把模型信号写成风险发生概率。"
+        )
 
     return "\n\n".join(paragraphs)

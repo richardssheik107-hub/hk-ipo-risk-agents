@@ -25,6 +25,7 @@ one came from.
 
 from __future__ import annotations
 
+from html import escape
 from typing import Any
 
 import streamlit as st
@@ -42,12 +43,18 @@ from competition_runtime_view import evidence_catalog
 from competition_ui import (
     render_profile_grid,
     render_state_panel,
+    reader_risk_level_label,
     risk_display_name,
-    risk_level_label,
     section_header,
     status_badge,
 )
-from judge_copy import judge_status_label, risk_conclusion_zh, to_simplified_ui, verifier_note_zh
+from judge_copy import (
+    judge_status_label,
+    risk_conclusion_zh,
+    risk_reasoning_annotation,
+    to_simplified_ui,
+    verifier_note_zh,
+)
 
 
 def _display(value: object) -> str:
@@ -166,33 +173,54 @@ def render_evidence_viewer(
         unsafe_allow_html=True,
     )
 
-    left, right = st.columns((0.82, 1.38), gap="large")
+    left, right = st.columns((1, 1), gap="large")
     with left:
-        section_header("风险与验证", "先理解风险，再对照右侧招股书原文。")
-        profile_rows = [
-            ("风险等级", risk_level_label(item.get("risk_level"))),
-            ("验证状态", judge_status_label(item.get("verification_status"))),
-            ("招股书页码", _display(item.get("page"))),
+        risk_evidence = [
+            candidate
+            for candidate in catalog
+            if candidate.get("risk_id") == item.get("risk_id")
         ]
-        if expert:
-            profile_rows.extend(
-                [
-                    ("产出智能体", _display(item.get("agent_name"))),
-                    ("证据编号", item["evidence_id"]),
-                    ("检索相关度", _display(item.get("relevance_score"))),
-                ]
-            )
-        render_profile_grid(profile_rows)
-        st.markdown("**结论**")
-        st.write(risk_conclusion_zh({
+        risk_payload = {
             "risk_code": item.get("risk_code"),
+            "level": item.get("risk_level"),
             "metadata": item.get("risk_metadata") or {},
             "calculation": item.get("calculation"),
-            "evidence": [item],
-        }))
-        notes = item.get("verification_notes")
-        if notes:
-            st.caption(f"复核说明 · {verifier_note_zh(notes)}")
+            "evidence": risk_evidence,
+            "verification_status": item.get("verification_status"),
+            "verification_notes": item.get("verification_notes"),
+        }
+        with st.container(key="evidence_risk_summary"):
+            section_header("风险与验证", "先理解风险，再对照右侧招股书原文。")
+            profile_rows = [
+                ("风险等级", reader_risk_level_label(risk_payload)),
+                ("验证状态", judge_status_label(item.get("verification_status"))),
+                ("招股书页码", _display(item.get("page"))),
+            ]
+            if expert:
+                profile_rows.extend(
+                    [
+                        ("产出智能体", _display(item.get("agent_name"))),
+                        ("证据编号", item["evidence_id"]),
+                        ("检索相关度", _display(item.get("relevance_score"))),
+                    ]
+                )
+            render_profile_grid(profile_rows)
+            st.markdown("**结论**")
+            st.write(risk_conclusion_zh(risk_payload))
+            if not expert:
+                annotation = risk_reasoning_annotation(risk_payload)
+                st.markdown("**为什么形成这一判断**")
+                st.markdown(
+                    "<div class='evidence-reasoning'>"
+                    f"<p><strong>证据链：</strong>{escape(annotation['basis'])}</p>"
+                    f"<p><strong>当前边界：</strong>{escape(annotation['boundary'])}</p>"
+                    f"<p><strong>复核方向：</strong>{escape(annotation['review_focus'])}</p>"
+                    "</div>",
+                    unsafe_allow_html=True,
+                )
+            notes = item.get("verification_notes")
+            if notes and expert:
+                st.caption(f"复核说明 · {verifier_note_zh(notes)}")
 
     with right:
         section_header("证据原文", "招股书原页、引用位置与被引用文本。")

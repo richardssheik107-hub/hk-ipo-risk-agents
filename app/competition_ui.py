@@ -23,6 +23,8 @@ from judge_copy import (
     supervisor_narrative_zh,
     supervisor_summary_zh,
     to_simplified_ui,
+    trusted_final_judgement,
+    trusted_final_synthesis,
 )
 
 
@@ -229,6 +231,16 @@ def risk_level_label(value: object) -> str:
     return _RISK_LEVEL_LABELS.get(normalized, str(value or "不可用"))
 
 
+def reader_risk_level_label(risk: dict[str, Any]) -> str:
+    """Make clear that an unverified document level remains provisional."""
+
+    label = risk_level_label(risk.get("level"))
+    verification = str(risk.get("verification_status") or "").lower()
+    if verification in {"needs_review", "pending"} and label != "不可用":
+        return f"暂定{'中等' if label == '中' else label}"
+    return label
+
+
 def risk_display_name(code: object) -> str:
     text = str(code or "Unavailable")
     return _RISK_LABELS.get(text, text)
@@ -400,7 +412,7 @@ _MARKET_MISSING_REASON_LABELS = {
     "no_prior_ipo_offer_amount_sample": "窗口内没有披露募资额的前序 IPO",
     "no_recent_ipo_outcome_sample": "窗口内没有已完成的前序 IPO 结果",
     "no_same_industry_recent_outcome_sample": "同业窗口内没有已完成的前序 IPO 结果",
-    "insufficient_governed_prelisting_history": "受管的上市前历史不足",
+    "insufficient_governed_prelisting_history": "可用的上市前历史样本不足",
     "INDUSTRY_MAPPING_PIT_BLOCKED": "行业分类映射不满足 PIT，按治理决定阻断",
     "MISSING_INDUSTRY_CLASSIFICATION": "缺少行业分类",
     "listing_year_outside_governed_market_split": "上市年份在冻结的数据集划分之外",
@@ -464,17 +476,63 @@ _MARKET_HEAT_LABELS = {
 }
 
 
-def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
-    """把市场与模型载荷投影为评审可读结论，不展示逐项技术指标。"""
+def _governed_market_context(payload: dict[str, Any]) -> dict[str, Any]:
+    """Prefer the exact market view carried into Final Supervisor."""
 
+    final = payload.get("final_supervision") or {}
+    final_market = final.get("market_context") or {} if isinstance(final, dict) else {}
+    if isinstance(final_market, dict) and final_market.get("observations") is not None:
+        return final_market
     market = payload.get("market_context") or {}
-    observations = market.get("observations") or []
+    return market if isinstance(market, dict) else {}
+
+
+def _market_observations_by_name(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    observations = _governed_market_context(payload).get("observations") or []
+    return {
+        str(item.get("name") or item.get("feature") or ""): item
+        for item in observations
+        if isinstance(item, dict) and (item.get("name") or item.get("feature"))
+    }
+
+
+def _available_market_value(
+    observations: dict[str, dict[str, Any]], name: str
+) -> object | None:
+    item = observations.get(name) or {}
+    if str(item.get("availability") or "").lower() != "available":
+        return None
+    return item.get("value")
+
+
+def _reader_number(value: object, *, percent: bool = False) -> str:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return str(value or "")
+    if percent:
+        return f"{number * 100:.1f}%"
+    if number.is_integer():
+        return str(int(number))
+    return f"{number:.2f}".rstrip("0").rstrip(".")
+
+
+def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
+    """把真实 Market-X / Model 载荷投影为有事实的评审结论。
+
+    这里只消费分析阶段已落盘的结构化结果。模型分数、SHAP 数值和版本留在
+    后台，但与判断相关的可用性、方向分歧和校准边界必须讲清楚。
+    """
+
+    market = _governed_market_context(payload)
+    observation_rows = market.get("observations") or []
+    observations = _market_observations_by_name(payload)
     available, total = available_market_observation_count(payload)
     provenance = market.get("provenance") or {}
     intelligence = (
-        payload.get("market_intelligence")
+        provenance.get("market_intelligence")
         or market.get("market_intelligence")
-        or provenance.get("market_intelligence")
+        or payload.get("market_intelligence")
         or {}
     )
     heat_payload = intelligence.get("ipo_heat") or {}
@@ -498,48 +556,74 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
         if isinstance(regime_payload, dict)
         else intelligence.get("liquidity_condition")
     )
-    raw_market_risk = intelligence.get("risk_level")
-    market_risk = risk_level_label(raw_market_risk)
-    if intelligence and raw_market_risk:
-        market_title = f"近期新股市场热度{heat}，市场侧风险为{market_risk}"
-    elif intelligence:
-        market_title = f"近期新股市场热度{heat}，整体市场环境仍需结合更多信息判断"
+    if intelligence and raw_heat:
+        market_title = f"近期新股市场热度{heat}，结论来自上市日前可用样本"
     elif total and available == total:
-        market_title = "上市前市场信息较完整"
+        market_title = "Market-X 核心观测完整"
     elif available:
         market_title = "上市前市场信息部分可用"
     else:
         market_title = "当前市场环境暂无法充分判断"
 
-    market_sentences = [
-        "这部分信息用于说明发行时点的外部环境，只作为招股书基本面判断的补充。"
-    ]
+    market_sentences: list[str] = []
+    count_30 = _available_market_value(observations, "ipo_count_30d")
+    count_60 = _available_market_value(observations, "ipo_count_60d")
+    if count_30 is not None or count_60 is not None:
+        windows = []
+        if count_30 is not None:
+            windows.append(f"近 30 日有 {_reader_number(count_30)} 宗前序 IPO")
+        if count_60 is not None:
+            windows.append(f"近 60 日有 {_reader_number(count_60)} 宗前序 IPO")
+        market_sentences.append("上市日前的发行样本显示，" + "，".join(windows) + "。")
+
+    break_rate = _available_market_value(observations, "recent_ipo_break_rate")
+    return_5d = _available_market_value(observations, "recent_ipo_return_5d")
+    break_sample = _available_market_value(observations, "recent_ipo_1d_sample_count")
+    return_sample = _available_market_value(observations, "recent_ipo_5d_sample_count")
+    recent_parts = []
+    if break_rate is not None:
+        sample_copy = f"（{_reader_number(break_sample)} 宗样本）" if break_sample is not None else ""
+        recent_parts.append(f"首日破发率为 {_reader_number(break_rate, percent=True)}{sample_copy}")
+    if return_5d is not None:
+        sample_copy = f"（{_reader_number(return_sample)} 宗样本）" if return_sample is not None else ""
+        recent_parts.append(f"上市后五个交易日平均回报为 {_reader_number(return_5d, percent=True)}{sample_copy}")
+    if recent_parts:
+        market_sentences.append("近期新股表现方面，" + "，".join(recent_parts) + "；这组事实是热度判断的主要依据。")
+
     regime = str(raw_regime or "").upper()
     liquidity = str(raw_liquidity or "").upper()
     if regime in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
-        market_sentences.append("整体市场状态所需信息仍不完整，本页不据缺失数据作方向性推断。")
+        market_sentences.append("恒指趋势、波动或成交额等整体市场信息仍不完整，因此不能把新股样本外推为完整的市场状态。")
     if liquidity in {"INSUFFICIENT_DATA", "UNAVAILABLE"}:
-        market_sentences.append("市场流动性暂无法可靠判断。")
+        market_sentences.append("市场流动性暂无法可靠判断，缺失不等于流动性充足。")
 
-    same_industry_count = next(
-        (
-            item.get("value")
-            for item in observations
-            if str(item.get("feature") or item.get("name") or "")
-            == "same_industry_ipo_count_180d"
-            and item.get("availability") == "available"
-        ),
-        None,
-    )
+    same_industry_count = _available_market_value(observations, "same_industry_ipo_count_180d")
     try:
         no_same_industry_cases = float(same_industry_count) == 0
     except (TypeError, ValueError):
         no_same_industry_cases = False
     if no_same_industry_cases:
-        market_sentences.append("近期缺少同业新股样本，因此不对同业上市表现作比较。")
+        market_sentences.append("近 180 日没有可用的同业前序 IPO 样本，因此不对同业上市表现作比较。")
+    elif same_industry_count is not None:
+        same_return = _available_market_value(observations, "same_industry_recent_return_5d")
+        same_break = _available_market_value(observations, "same_industry_recent_break_rate")
+        same_parts = [f"近 180 日有 {_reader_number(same_industry_count)} 宗同业前序 IPO"]
+        if same_break is not None:
+            same_parts.append(f"首日破发率 {_reader_number(same_break, percent=True)}")
+        if same_return is not None:
+            same_parts.append(f"五个交易日平均回报 {_reader_number(same_return, percent=True)}")
+        market_sentences.append("同业参照方面，" + "，".join(same_parts) + "。")
+        if same_break is not None and same_return is not None:
+            market_sentences.append("首日破发表现与五个交易日回报对应不同观察窗口，两者应结合阅读。")
+
+    if not market_sentences:
+        market_sentences.append("当前没有足够的上市前事实形成市场解读，本页不补写方向性判断。")
+    market_sentences.append("市场结论只用于解释发行时点的外部环境，不替代招股书基本面。")
 
     missing_reason_labels: list[str] = []
-    for item in observations:
+    for item in observation_rows:
+        if not isinstance(item, dict):
+            continue
         if item.get("availability") == "available":
             continue
         label = market_missing_reason_label(
@@ -548,13 +632,18 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
         if label not in missing_reason_labels:
             missing_reason_labels.append(label)
     if total:
-        coverage = f"本次取得 {available}/{total} 项上市前市场信息。"
+        coverage = f"Market-X 核心观测取得 {available}/{total} 项。"
         if missing_reason_labels:
             coverage += (
                 f"未取得 {total - available}/{total} 项，主要原因："
                 f"{'；'.join(missing_reason_labels)}。"
                 "缺失项不会被补成 0。"
             )
+        if regime in {"INSUFFICIENT_DATA", "UNAVAILABLE"} or liquidity in {
+            "INSUFFICIENT_DATA",
+            "UNAVAILABLE",
+        }:
+            coverage += "用于判断整体市场状态的恒指、波动或成交额等扩展信息仍不可用。"
     else:
         coverage = "本次没有可展示的上市前市场信息；缺失不等同于市场风险较低。"
 
@@ -571,10 +660,34 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
     else:
         effective_model_state = explicit_model_state
     if effective_model_state == "available":
-        model_title = "模型已形成辅助排序信号"
+        conflicts = (
+            ((payload.get("component_diagnostics") or {}).get("conflict_detection") or {}).get("conflicts")
+            or []
+        )
+        model_divergences = [
+            item for item in conflicts
+            if isinstance(item, dict)
+            and "document_model_divergence" in str(item.get("conflict_id") or "")
+            and str(item.get("status") or "").lower() in {"partially_resolved", "unresolved"}
+        ]
+        alert = model.get("alert") if isinstance(model, dict) else None
+        if model_divergences:
+            model_title = "模型已形成信号，但与招股书判断存在未解决分歧"
+            divergence_copy = (
+                f"本次记录 {len(model_divergences)} 项模型方向与文档结论的分歧。"
+                "综合审阅保留该分歧，不允许模型信号下调已经由原文或确定性计算支持的风险。"
+            )
+        else:
+            model_title = "模型已形成辅助排序信号"
+            divergence_copy = "本次未记录模型方向与招股书结论之间的未解决分歧。"
+        alert_copy = (
+            "冻结告警策略已触发。" if alert is True
+            else "冻结告警策略未触发。" if alert is False
+            else "本次分析结果没有提供可面向读者解释的告警结果。"
+        )
         model_body = (
-            "模型结果用于提示哪些案例需要优先审阅。它未经概率校准，不能理解为风险发生概率，"
-            "也不能替代招股书原文和人工判断。"
+            f"{alert_copy}{divergence_copy}模型分数未经概率校准，只能用于审阅排序，"
+            "不能理解为风险发生概率或上市后收益预测；具体分数与影响因素保留在后台核验。"
         )
     elif effective_model_state == "partial":
         model_title = "模型信号仅部分可用"
@@ -591,10 +704,35 @@ def reader_market_model_summary(payload: dict[str, Any]) -> dict[str, str]:
 
     prediction = payload.get("prediction") or {}
     rule_level = risk_level_label(prediction.get("risk_level"))
+    judgement = trusted_final_judgement(payload) or {}
+    overall_level = risk_level_label((judgement or {}).get("overall_risk"))
+    formal_risks = [
+        risk
+        for domain in (payload.get("domains") or {}).values()
+        if isinstance(domain, dict)
+        for risk in (domain.get("risks") or [])
+        if isinstance(risk, dict)
+        and str(risk.get("verification_status") or "").lower() != "rejected"
+    ]
+    pending_count = sum(
+        str(risk.get("verification_status") or "").lower() in {"needs_review", "pending"}
+        for risk in formal_risks
+    )
+    conflict_count = sum(
+        str(item.get("status") or "").lower() in {"partially_resolved", "unresolved"}
+        for item in (
+            ((payload.get("component_diagnostics") or {}).get("conflict_detection") or {}).get("conflicts")
+            or []
+        )
+        if isinstance(item, dict)
+    )
+    if judgement:
+        level_copy = f"智能综合审阅为{overall_level}风险，规则筛选参考为{rule_level}风险。"
+    else:
+        level_copy = f"当前没有可用的智能综合审阅，规则筛选参考为{rule_level}风险。"
     review_guidance = (
-        f"规则化风险判断当前为{rule_level}风险。评审时建议先查看风险点的推理注释和原文证据，"
-        "再把市场环境与模型信号作为辅助背景。逐项市场指标、模型分数和影响因素均保留在后台"
-        "的数据审计中。"
+        f"{level_copy}本次有 {pending_count} 项风险仍待复核、{conflict_count} 项跨通道分歧尚未完全解决。"
+        "评审顺序应是：先看逐项结论和原文证据，再核对验证边界，最后才把市场与模型作为辅助背景。"
     )
     return {
         "market_title": market_title,
@@ -659,7 +797,7 @@ def apply_competition_theme() -> None:
           --motion-fast:160ms; --motion-standard:220ms; --motion-enter:420ms;
           --motion-slow:700ms; --motion-hero:1100ms; --ease-product:cubic-bezier(.2,.8,.2,1);
           --ipo-font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI","Helvetica Neue",Arial,sans-serif;
-          --streamlit-header-height:3.75rem; --product-nav-height:66px;
+          --streamlit-header-height:3.75rem; --product-nav-height:70px;
           --section-scroll-offset:calc(var(--streamlit-header-height) + var(--product-nav-height) + 20px);
         }
         html,body,[class*="css"],button,input,textarea,select {font-family:var(--ipo-font);color:var(--ipo-ink);}
@@ -881,9 +1019,9 @@ def apply_competition_theme() -> None:
         .stTabs:has([role="tab"]:nth-child(5)) {animation:product-enter var(--motion-enter) var(--ease-product) 180ms both;}
         .status-chip {animation:status-enter var(--motion-standard) var(--ease-product) both;}
         html {scroll-behavior:smooth;scroll-padding-top:var(--section-scroll-offset);}
-        div[data-testid="stElementContainer"]:has(.product-nav) {position:sticky;top:var(--streamlit-header-height);z-index:990;margin-bottom:.8rem;}
+        div[data-testid="stElementContainer"]:has(.product-nav) {position:relative;top:auto;z-index:auto;margin-bottom:0;}
         .product-nav {height:var(--product-nav-height);display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:0 1.15rem;background:rgba(255,255,255,.94);border:0;border-bottom:1px solid #dce3e8;border-radius:3px;backdrop-filter:blur(12px);box-shadow:none;transition:box-shadow var(--motion-standard) var(--ease-product),border-color var(--motion-standard) var(--ease-product);}
-        .product-nav.nav-scrolled {border-bottom-color:#ccd7df;box-shadow:0 5px 14px rgba(26,44,60,.055);}
+        .product-nav.nav-scrolled,.st-key-product_navigation_shell.nav-scrolled {border-bottom-color:#ccd7df;box-shadow:0 5px 14px rgba(26,44,60,.055);}
         .product-nav-brand {display:flex;align-items:center;text-decoration:none!important;white-space:nowrap;transition:opacity var(--motion-fast) var(--ease-product),transform var(--motion-fast) var(--ease-product);}
         .product-nav-brand:hover {opacity:.88;transform:translateY(-1px);}
         .product-nav-logo {display:block;height:34px;width:auto;max-width:190px;object-fit:contain;object-position:left center;}
@@ -894,7 +1032,8 @@ def apply_competition_theme() -> None:
         .product-nav-links a:after {content:"";position:absolute;left:8%;right:8%;bottom:0;height:4px;border-radius:999px;background:#16a6a1;transform:scaleX(0);transform-origin:left center;transition:transform var(--motion-standard) var(--ease-product);}
         .product-nav-links a.nav-active {color:#0f6471;font-weight:650;}
         .product-nav-links a.nav-active:after {transform:scaleX(1);}
-        .st-key-product_navigation_shell {position:sticky;top:var(--streamlit-header-height);z-index:990;margin-bottom:.8rem;padding:.65rem 1rem;background:rgba(255,255,255,.95);border:1px solid rgba(20,184,166,.13);border-radius:0 0 18px 18px;box-shadow:0 7px 22px rgba(20,184,166,.055);backdrop-filter:blur(12px);}
+        div[data-testid="stLayoutWrapper"]:has(> .st-key-product_navigation_shell) {position:sticky;top:var(--streamlit-header-height);z-index:990;margin-bottom:.8rem;}
+        .st-key-product_navigation_shell {position:relative;top:auto;z-index:auto;margin-bottom:0;padding:.35rem 1rem;background:rgba(255,255,255,.95);border:1px solid rgba(20,184,166,.13);border-radius:0 0 18px 18px;box-shadow:0 7px 22px rgba(20,184,166,.055);backdrop-filter:blur(12px);}
         .st-key-product_navigation_shell .native-product-brand {display:flex;align-items:center;height:100%;min-height:40px;}
         .st-key-product_navigation_shell .native-product-brand img {display:block;height:34px;width:auto;max-width:190px;object-fit:contain;}
         .st-key-product_navigation_shell :is([data-testid="stSegmentedControl"],[data-testid="stButtonGroup"]) {display:flex;justify-content:center;width:100%;}
@@ -1146,18 +1285,27 @@ def apply_competition_theme() -> None:
         .st-key-risk_command_shell .section-head,.st-key-evidence_section_shell .section-head,.st-key-market_model_section_shell .section-head,.st-key-agent_trace_section_shell .section-head,.st-key-review_report_section_shell .section-head {border-left-color:var(--section-accent)!important;}
         .st-key-risk_command_shell .section-eyebrow,.st-key-evidence_section_shell .section-eyebrow,.st-key-market_model_section_shell .section-eyebrow,.st-key-agent_trace_section_shell .section-eyebrow,.st-key-review_report_section_shell .section-eyebrow {color:color-mix(in srgb,var(--section-accent) 72%,#163B38);}
         .st-key-risk_command_shell .metric-card,.st-key-evidence_section_shell .metric-card,.st-key-market_model_section_shell .metric-card,.st-key-agent_trace_section_shell .metric-card,.st-key-review_report_section_shell .metric-card {border-top:2px solid color-mix(in srgb,var(--section-accent) 68%,white)!important;}
-        .reasoning-note {display:grid;gap:.62rem;margin:.35rem 0 .9rem;padding:.9rem 1rem;border:1px solid rgba(20,184,166,.13);border-radius:14px;background:linear-gradient(135deg,rgba(96,213,200,.075),rgba(217,204,255,.12));color:var(--ipo-ink);font-size:.8rem;line-height:1.66;}
-        .reasoning-note>div {display:grid;grid-template-columns:72px minmax(0,1fr);gap:.7rem;align-items:start;}
-        .reasoning-note span {color:#18857C;font-size:.72rem;font-weight:720;letter-spacing:.015em;}
+        .risk-card-heading {display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.2rem;}
+        .risk-card-heading.reader {justify-content:center;text-align:center;}
+        .risk-card-heading.reader .section-title {font-size:1.02rem;font-weight:760;color:#163B38;}
+        .risk-card-badges {display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;margin:.15rem 0 .75rem;}
+        .risk-card-badges.reader {justify-content:center;}
+        .reasoning-note {display:grid;gap:.7rem;margin:.35rem 0 .9rem;padding:1rem 1.05rem;border:1px solid rgba(20,184,166,.16);border-radius:14px;background:linear-gradient(135deg,rgba(96,213,200,.09),rgba(217,204,255,.14));color:#1F4541;font-size:.82rem;font-weight:510;line-height:1.68;}
+        .reasoning-note>div {display:grid;grid-template-columns:88px minmax(0,1fr);gap:.78rem;align-items:start;}
+        .reasoning-note span {color:#11766F;font-size:.74rem;font-weight:760;letter-spacing:.015em;}
         .st-key-case_workspace_shell [data-testid="stMarkdownContainer"] p,.st-key-case_workspace_shell [data-testid="stMarkdownContainer"] li {color:var(--ipo-ink);}
+        .st-key-case_workspace_shell .section-copy {color:#4B6662!important;font-weight:540!important;}
+        .st-key-case_workspace_shell .profile-label {color:#526D69!important;font-weight:690!important;}
+        .st-key-case_workspace_shell :is(.metric-context,[data-testid="stCaptionContainer"] p) {color:#627873!important;font-weight:520!important;}
         /* Evidence sub-tabs are a compact child navigation, not another workspace switcher. */
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs {margin:.35rem 0 .4rem;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab-list"],.st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tablist"] {box-sizing:border-box;width:calc(100% - clamp(2.3rem,10vw,8.5rem));max-width:100%;min-width:0;min-height:42px!important;margin-inline:auto;gap:4px!important;padding:4px!important;border:1px solid rgba(96,213,200,.18)!important;border-radius:11px!important;background:rgba(96,213,200,.075)!important;box-shadow:none!important;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab"],.st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tab"] {min-height:32px!important;padding:.46rem .8rem!important;border-radius:8px!important;background:transparent!important;color:var(--ipo-muted)!important;font-size:.73rem!important;font-weight:610!important;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [aria-selected="true"] {background:rgba(255,255,255,.88)!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [data-baseweb="tab-highlight"] {height:2px!important;background:var(--ipo-secondary)!important;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs [role="tab"][data-testid="stTab"][data-selected="true"][aria-selected="true"] {background:rgba(255,255,255,.88)!important;background-image:none!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
-        .st-key-case_workspace_shell .st-key-evidence_section_shell .stTabs .react-aria-SelectionIndicator {height:2px!important;background:var(--ipo-secondary)!important;border-radius:999px!important;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs {margin:.35rem 0 .4rem;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [data-baseweb="tab-list"],.st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [role="tablist"] {display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;box-sizing:border-box;width:calc(100% - clamp(2.3rem,10vw,8.5rem));max-width:100%;min-width:0;min-height:42px!important;margin-inline:auto;gap:4px!important;padding:4px!important;border:1px solid rgba(96,213,200,.18)!important;border-radius:11px!important;background:rgba(96,213,200,.075)!important;box-shadow:none!important;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [data-baseweb="tab"],.st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [role="tab"] {justify-content:center!important;width:100%;min-width:0;min-height:32px!important;padding:.46rem .8rem!important;border-radius:8px!important;background:transparent!important;color:var(--ipo-muted)!important;font-size:.73rem!important;font-weight:650!important;text-align:center;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [role="tab"] p {width:100%;margin:0;text-align:center;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [aria-selected="true"] {background:rgba(255,255,255,.88)!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [data-baseweb="tab-highlight"] {height:2px!important;background:var(--ipo-secondary)!important;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs [role="tab"][data-testid="stTab"][data-selected="true"][aria-selected="true"] {background:rgba(255,255,255,.88)!important;background-image:none!important;color:color-mix(in srgb,var(--ipo-secondary) 72%,#163B38)!important;box-shadow:inset 0 0 0 1px rgba(96,213,200,.22)!important;}
+        .st-key-case_workspace_shell.st-key-case_workspace_shell .st-key-evidence_section_shell.st-key-evidence_section_shell .stTabs.stTabs.stTabs .react-aria-SelectionIndicator {height:2px!important;background:var(--ipo-secondary)!important;border-radius:999px!important;}
         /* Preserve interactive Streamlit dataframes while replacing the Excel-like grid treatment. */
         [data-testid="stDataFrame"] {overflow:visible;border:0!important;border-radius:15px!important;background:transparent!important;box-shadow:none!important;}
         [data-testid="stDataFrameResizable"] {overflow:hidden!important;border:1px solid rgba(20,184,166,.13)!important;border-radius:14px!important;background:rgba(255,255,255,.92)!important;box-shadow:0 4px 14px rgba(20,184,166,.04)!important;}
@@ -1191,10 +1339,39 @@ def apply_competition_theme() -> None:
         .profile-item:after {content:"";position:absolute;left:.9rem;right:.9rem;bottom:0;border-bottom:1px solid rgba(20,184,166,.075);}
         .profile-label {color:#7F94A3!important;font-size:.64rem!important;font-weight:620!important;letter-spacing:.02em;}
         .profile-value {color:var(--ipo-ink)!important;font-weight:680!important;}
+        .st-key-evidence_section_shell .metric-card {text-align:center;}
+        .st-key-evidence_risk_summary .profile-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+        .st-key-evidence_risk_summary .profile-item {text-align:center;}
+        .st-key-evidence_risk_summary .profile-item:last-child:nth-child(odd) {grid-column:1/-1;}
+        .evidence-reasoning {margin:.35rem 0 .9rem;padding:.9rem 1rem;border:1px solid rgba(96,213,200,.18);border-radius:14px;background:linear-gradient(135deg,rgba(96,213,200,.08),rgba(217,204,255,.12));}
+        .evidence-reasoning p {margin:.36rem 0;color:#284B47!important;font-size:.82rem;line-height:1.65;}
+        .evidence-reasoning strong {color:#11766F;}
+        .reader-signal-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:stretch;margin:.5rem 0 1rem;}
+        .reader-signal-card,.reader-guidance-card {box-sizing:border-box;border:1px solid rgba(20,184,166,.15);border-radius:18px;background:rgba(255,255,255,.82);box-shadow:0 6px 18px rgba(20,184,166,.055);}
+        .reader-signal-card {display:flex;min-height:100%;flex-direction:column;padding:1.3rem 1.35rem;}
+        .reader-signal-card.model-card {border-color:rgba(184,167,255,.22);}
+        .reader-signal-kicker,.reader-report-kicker {margin-bottom:.55rem;color:#16766F;font-size:.69rem;font-weight:780;letter-spacing:.08em;}
+        .reader-signal-card h3,.reader-guidance-card h3 {margin:.1rem 0 .7rem;color:#173D39;font-size:1.18rem;line-height:1.38;}
+        .reader-signal-card p,.reader-guidance-card p {margin:0;color:#345652;font-size:.88rem;font-weight:510;line-height:1.72;}
+        .reader-signal-note {margin-top:auto;padding-top:1rem;color:#536D68;font-size:.79rem;font-weight:540;line-height:1.62;}
+        .reader-guidance-card {padding:1.15rem 1.35rem;margin-bottom:.4rem;background:linear-gradient(120deg,rgba(96,213,200,.075),rgba(217,204,255,.12));}
+        .reader-report-hero {display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:1.25rem;align-items:center;margin:.5rem 0 1rem;padding:1.35rem 1.45rem;border:1px solid rgba(20,184,166,.16);border-radius:19px;background:linear-gradient(128deg,rgba(96,213,200,.11),rgba(255,255,255,.9) 52%,rgba(217,204,255,.18));}
+        .reader-report-hero h3 {margin:.1rem 0 .45rem;color:#153C38;font-size:1.34rem;line-height:1.35;}
+        .reader-report-hero p {margin:0;color:#46635F;font-size:.84rem;font-weight:520;line-height:1.62;}
+        .reader-report-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;}
+        .reader-report-stats>div {display:flex;min-width:0;flex-direction:column;align-items:center;justify-content:center;padding:.75rem .45rem;border:1px solid rgba(20,184,166,.12);border-radius:12px;background:rgba(255,255,255,.78);text-align:center;}
+        .reader-report-stats span {color:#617873;font-size:.65rem;font-weight:650;line-height:1.35;}
+        .reader-report-stats strong {margin-top:.25rem;color:#173F3A;font-size:1rem;line-height:1.25;}
+        .st-key-reader_report_body {padding:clamp(1.1rem,2.4vw,1.75rem)!important;border-color:rgba(20,184,166,.15)!important;background:rgba(255,255,255,.86)!important;}
+        .st-key-reader_report_body h2 {margin-top:1.55rem;color:#153E39;font-size:1.24rem;}
+        .st-key-reader_report_body h2:first-child {margin-top:.15rem;}
+        .st-key-reader_report_body h3 {margin-top:1.25rem;color:#1C5550;font-size:1rem;}
+        .st-key-reader_report_body p {color:#294B47!important;font-size:.88rem;font-weight:505;line-height:1.82;}
         @media(max-width:1200px){.landing-hero-v3{grid-template-columns:minmax(0,1.05fr) minmax(360px,.85fr);padding:2rem}.capability-band{gap:2.5rem}.ipo-hero-row{grid-template-columns:1fr}.ipo-hero{min-height:185px}.bento-shell{grid-template-columns:minmax(0,1.35fr) minmax(285px,1fr)}.pipeline-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}.pipeline-grid:before{display:none}.pipeline-card{background:#fff;border:1px solid var(--ipo-line);border-radius:10px;padding:.6rem}.trace-card{grid-template-columns:38px minmax(120px,.7fr) minmax(160px,1.3fr) auto;}}
         @media(max-width:900px){.product-nav-links{gap:20px}.product-nav-links a{font-size:.78rem}.landing-hero-v3{grid-template-columns:1fr;min-height:auto}.risk-flow-visual{max-width:620px;margin:0 auto}.risk-flow-visual svg{width:100%;margin-left:0}.landing-section-head,.capability-band{grid-template-columns:1fr;gap:1.3rem}.capability-band.reverse .capability-copy,.capability-band.reverse .capability-visual{order:initial}.product-footer-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}.footer-system{grid-column:1/-1;max-width:620px}.command-health{grid-template-columns:repeat(2,minmax(0,1fr))}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"]{display:flex!important;overflow-x:auto}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab"],.stTabs:has([role="tab"]:nth-child(5)) [role="tab"]{min-width:max-content}.bento-shell,.audit-split{grid-template-columns:1fr}.bento-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.trace-flow{grid-template-columns:repeat(3,1fr)}.trace-flow-step:nth-child(3):after{display:none}.channel-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.roadmap-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.editorial-stepper{grid-template-columns:repeat(2,1fr);gap:1.25rem}.editorial-stepper:before{display:none}.block-container{padding-left:1rem;padding-right:1rem}.trace-card{grid-template-columns:34px 1fr auto}.trace-action{grid-column:2/4}.stTabs [data-baseweb="tab"]{font-size:.74rem;padding:.5rem .6rem}}
         @media(max-width:620px){div[data-testid="stElementContainer"]:has(.product-nav){top:var(--streamlit-header-height)}.product-nav{padding:0 .7rem}.product-nav-logo{height:30px;max-width:150px}.product-nav-links{max-width:66%;gap:17px}.product-nav-links a{font-size:.73rem}.landing-hero-v3{padding:1.5rem 1.15rem;border-radius:14px}.hero-v3-title{font-size:2.25rem}.risk-flow-visual{margin-top:.5rem}.capability-image-frame{border-radius:18px}.product-footer{padding-top:44px}.product-footer-grid{grid-template-columns:1fr;gap:2rem}.footer-system{grid-column:auto;max-width:none}.footer-lower{align-items:flex-start;flex-direction:column;gap:1rem;margin-top:34px}.metric-grid,.channel-grid,.pipeline-grid,.profile-grid,.empty-flow,.roadmap-grid,.bento-kpis{grid-template-columns:1fr;}.ipo-hero{padding:1rem;min-height:auto}.command-health{grid-template-columns:1fr 1fr}.case-shell{align-items:flex-start}.trace-flow{grid-template-columns:1fr}.trace-flow-step:after{display:none!important}.trace-card{grid-template-columns:30px 1fr}.trace-action{grid-column:2}.trace-card .status-chip{grid-column:2;justify-self:start}}
-        @media(max-width:900px){.st-key-case_workspace_shell{padding:20px;border-radius:22px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{padding:1.25rem;border-radius:22px}}
+        @media(max-width:1100px){.reader-report-hero{grid-template-columns:1fr}.st-key-evidence_section_shell [data-testid="stHorizontalBlock"]:has(.st-key-evidence_risk_summary){flex-direction:column}.st-key-evidence_section_shell [data-testid="stHorizontalBlock"]:has(.st-key-evidence_risk_summary)>[data-testid="stColumn"]{width:100%!important;flex:1 1 100%!important}}
+        @media(max-width:900px){.st-key-case_workspace_shell{padding:20px;border-radius:22px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{padding:1.25rem;border-radius:22px}.reader-signal-grid{grid-template-columns:1fr}.reader-report-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
         @media(max-width:620px){.st-key-case_workspace_shell{padding:16px;border-radius:18px}.stTabs:has([role="tab"]:nth-child(5)) [data-baseweb="tab-list"],.stTabs:has([role="tab"]:nth-child(5)) [role="tablist"]{border-radius:14px;padding:5px}.st-key-risk_command_shell,.st-key-evidence_section_shell,.st-key-market_model_section_shell,.st-key-agent_trace_section_shell,.st-key-review_report_section_shell{margin-top:18px;padding:1rem;border-radius:18px}}
         @media(min-width:901px){.st-key-analysis_intake_shell [data-testid="stFileUploaderDropzone"]:not(:has([data-testid="stFileChips"])){min-height:230px;}}
         @media(max-width:620px){.st-key-analysis_intake_shell{padding:1rem;border-radius:22px}.st-key-analysis_intake_shell:before{left:8%;right:8%;bottom:-8px}.st-key-analysis_intake_shell div[data-testid="stFormSubmitButton"] button{width:100%}.st-key-analysis_intake_shell .landing-intake-copy{min-height:0}.intake-no-upload{min-height:150px}}
@@ -1243,7 +1420,6 @@ def render_product_navigation(*, result_mode: bool = False) -> str:
         )
         with brand_col:
             st.markdown(
-                "<span class='product-nav' style='display:none' aria-hidden='true'></span>"
                 "<div class='native-product-brand'>"
                 f"<img src='{_asset_png_data_uri('ipo_risk_logo.png')}' alt='IPO Risk'></div>",
                 unsafe_allow_html=True,
@@ -1274,10 +1450,10 @@ def render_navigation_behavior() -> None:
           if (previous && previous.destroy) previous.destroy();
 
           const ids = ["overview", "new-analysis", "workflow", "capabilities", "runtime"];
-          const nav = doc.querySelector(".product-nav");
+          const nav = doc.querySelector(".st-key-product_navigation_shell");
           const scroller = doc.querySelector('[data-testid="stMain"]') || root;
-          const navLinks = [...doc.querySelectorAll(".product-nav [data-section]")];
-          const scrollLinks = [...doc.querySelectorAll(".product-nav [data-section], .product-footer [data-section]")];
+          const navLinks = [...doc.querySelectorAll(".product-footer [data-section]")];
+          const scrollLinks = [...doc.querySelectorAll(".product-footer [data-section]")];
           const productLinks = [...doc.querySelectorAll("[data-product-view]")];
           const sections = ids.map((id) => doc.getElementById(id)).filter(Boolean);
           if (!nav || sections.length !== ids.length) return;
@@ -1595,7 +1771,8 @@ def executive_supervisor_view(
         status = str(conflict.get("status") or "unknown")
         conflict_counts[status] = conflict_counts.get(status, 0) + 1
 
-    llm_judgement = synthesis.get("judgement") if synthesis.get("status") == "available" else None
+    trusted_synthesis = trusted_final_synthesis(payload)
+    llm_judgement = trusted_final_judgement(payload)
     if isinstance(llm_judgement, dict):
         overall_risk = llm_judgement.get("overall_risk")
         return {
@@ -1607,15 +1784,14 @@ def executive_supervisor_view(
             ),
             "mode": "llm",
             "llm_status": "available",
-            "llm_reason": synthesis.get("reason") or "",
+            "llm_reason": trusted_synthesis.get("reason") if trusted_synthesis else "",
             "conflict_counts": conflict_counts,
             "overall_risk": overall_risk,
             "risk_basis_label": "综合风险等级",
         }
 
-    rule_risk = (payload.get("prediction") or {}).get("risk_level")
     return {
-        "title": "规则化综合判断" if reader else "确定性 Document Supervisor 汇总",
+        "title": "综合审阅暂不可用" if reader else "确定性 Document Supervisor 汇总",
         "body": (
             supervisor_narrative_zh(payload)
             if reader
@@ -1625,8 +1801,8 @@ def executive_supervisor_view(
         "llm_status": synthesis.get("status") or "not_configured",
         "llm_reason": synthesis.get("reason") or "",
         "conflict_counts": conflict_counts,
-        "overall_risk": rule_risk,
-        "risk_basis_label": "规则化风险等级",
+        "overall_risk": None,
+        "risk_basis_label": "总体风险暂不可用",
     }
 
 
@@ -1640,104 +1816,186 @@ def evidence_reference_count(payload: dict[str, Any]) -> int:
     )
 
 
-def reader_markdown_report(payload: dict[str, Any]) -> str:
-    """Build a Chinese reader report without runtime identities or raw metadata."""
+def reader_article_projection(payload: dict[str, Any]) -> dict[str, Any]:
+    """Build the one reader-facing article from governed result fields.
+
+    The screen and downloadable report consume this same projection.  This is
+    intentionally presentation-only: no provider call, risk mutation, market
+    calculation or model inference happens here.
+    """
 
     profile = payload.get("profile") or {}
-    prediction = payload.get("prediction") or {}
     view = executive_supervisor_view(payload, reader=True)
     signals = reader_market_model_summary(payload)
+    risk_articles: list[dict[str, Any]] = []
+    for domain in ("financial", "legal", "business"):
+        rows = (((payload.get("domains") or {}).get(domain) or {}).get("risks") or [])
+        for risk in rows:
+            if not isinstance(risk, dict):
+                continue
+            if str(risk.get("verification_status") or "").lower() == "rejected":
+                continue
+            annotation = risk_reasoning_annotation(risk)
+            pages: list[str] = []
+            for evidence in risk.get("evidence") or []:
+                page = str(evidence.get("page") or "") if isinstance(evidence, dict) else ""
+                if page and page not in pages:
+                    pages.append(page)
+            risk_articles.append(
+                {
+                    "domain": _DOMAIN_LABELS.get(domain, domain),
+                    "title": risk_display_name(risk.get("risk_code")),
+                    "level": reader_risk_level_label(risk),
+                    "status": status_label(risk.get("verification_status")),
+                    "conclusion": risk_conclusion_zh(risk),
+                    "basis": annotation["basis"],
+                    "impact": annotation["impact"],
+                    "boundary": annotation["boundary"],
+                    "review_focus": annotation["review_focus"],
+                    "pages": pages,
+                    "evidence": [
+                        item for item in (risk.get("evidence") or []) if isinstance(item, dict)
+                    ],
+                }
+            )
 
+    return {
+        "title": f"{to_simplified_ui(profile.get('company_name') or '发行人')}港股 IPO 风险分析报告",
+        "profile": {
+            "company_name": to_simplified_ui(profile.get("company_name") or "发行人"),
+            "stock_code": str(profile.get("stock_code") or "不可用"),
+            "listing_date": str(profile.get("listing_date") or "不可用"),
+            "industry": to_simplified_ui(profile.get("industry") or "不可用"),
+        },
+        "overall_level": risk_level_label(view.get("overall_risk")),
+        "rule_level": risk_level_label((payload.get("prediction") or {}).get("risk_level")),
+        "executive": str(view.get("body") or "本次分析没有可展示的综合判断。"),
+        "risks": risk_articles,
+        "market_title": signals["market_title"],
+        "market_body": signals["market_body"],
+        "market_coverage": signals["market_coverage"],
+        "model_title": signals["model_title"],
+        "model_body": signals["model_body"],
+        "review_guidance": signals["review_guidance"],
+        "conflict_counts": view.get("conflict_counts") or {},
+    }
+
+
+def reader_article_markdown(payload: dict[str, Any]) -> str:
+    """Render the shared reader projection as a continuous Markdown article."""
+
+    article = reader_article_projection(payload)
+    profile = article["profile"]
+    overview = (
+        f"{profile['company_name']}（{profile['stock_code']}）的上市日期为 {profile['listing_date']}，"
+        f"所属行业为{profile['industry']}。"
+    )
     lines = [
-        f"# {to_simplified_ui(profile.get('company_name') or '发行人')}港股 IPO 风险分析报告",
+        "## 案例与综合判断",
         "",
-        "> 本报告用于风险研究与审阅，不构成投资、证券、法律或交易建议。",
+        overview,
         "",
-        "## 基本信息",
+        article["executive"],
         "",
-        f"- 股票代码：{profile.get('stock_code') or '不可用'}",
-        f"- 上市日期：{profile.get('listing_date') or '不可用'}",
-        f"- 行业：{to_simplified_ui(profile.get('industry') or '不可用')}",
-        "",
-        "## 综合风险判断",
-        "",
-        str(view.get("body") or "本次分析没有可展示的综合判断。"),
-        "",
-        f"- 综合审阅风险：{risk_level_label(view.get('overall_risk'))}风险",
-        f"- 规则化排序参考：{risk_level_label(prediction.get('risk_level'))}风险",
-        "",
-        "## 风险事项与原文依据",
+        "## 招股书重点风险分析",
         "",
     ]
-
-    risk_count = 0
-    for domain in ("financial", "legal", "business"):
-        domain_risks = [
-            risk
-            for risk in (((payload.get("domains") or {}).get(domain) or {}).get("risks") or [])
-            if str(risk.get("verification_status") or "").lower() != "rejected"
-        ]
-        if not domain_risks:
-            continue
-        lines.extend([f"### {_DOMAIN_LABELS.get(domain, domain)}", ""])
-        for risk in domain_risks:
-            risk_count += 1
-            annotation = risk_reasoning_annotation(risk)
+    if article["risks"]:
+        for risk in article["risks"]:
             lines.extend(
                 [
-                    f"#### {risk_display_name(risk.get('risk_code'))}",
+                    f"### {risk['title']}｜{risk['level']}风险 · {risk['status']}",
                     "",
-                    f"- 风险等级：{risk_level_label(risk.get('level'))}",
-                    f"- 验证状态：{status_label(risk.get('verification_status'))}",
-                    f"- 结论：{risk_conclusion_zh(risk)}",
-                    "- 推理注释：",
-                    f"  - 形成依据：{annotation['basis']}",
-                    f"  - 风险影响：{annotation['impact']}",
-                    f"  - 判断边界：{annotation['boundary'] or '当前没有额外验证限制。'}",
-                    f"  - 复核重点：{annotation['review_focus']}",
+                    risk["conclusion"],
+                    "",
+                    f"**判断依据。** {risk['basis']}",
+                    "",
+                    f"**对发行人的含义。** {risk['impact']}",
+                    "",
+                    f"**尚待确认。** {risk['boundary']}后续复核应{risk['review_focus']}",
+                    "",
                 ]
             )
-            evidence_items = risk.get("evidence") or []
-            if evidence_items:
-                lines.append("- 原文依据：")
-                for evidence in evidence_items:
-                    lines.append(f"  - 招股书第 {evidence.get('page') or '不可用'} 页")
-                    quote = str(evidence.get("text") or "该条证据没有可展示的原文。")
-                    lines.extend(f"    > {part}" for part in quote.splitlines() or [quote])
-            else:
-                lines.append("- 原文依据：当前没有关联原文证据。")
-            lines.append("")
-    if not risk_count:
-        lines.extend(["本次分析没有产出正式风险项。", ""])
+    else:
+        lines.extend(
+            [
+                "本次没有风险事项进入审阅范围。这表示当前证据和验证规则没有形成可供审阅的风险事项，"
+                "不等同于发行人不存在风险。",
+                "",
+            ]
+        )
 
     lines.extend(
         [
-            "## 市场与模型信号",
+            "## 上市前市场环境",
             "",
-            f"- 市场结论：{signals['market_title']}。",
-            f"- 市场说明：{signals['market_body']}",
-            f"- 信息边界：{signals['market_coverage']}",
-            f"- 模型结论：{signals['model_title']}。",
-            f"- 模型说明：{signals['model_body']}",
-            f"- 阅读建议：{signals['review_guidance']}",
-        ]
-    )
-    lines.extend(
-        [
+            f"### {article['market_title']}",
             "",
-            "## 结论边界",
+            article["market_body"],
             "",
-            "- 缺失信息保持缺失，不以 0 或推测值替代。",
-            "- 模型信号和规则判断均不是事件发生概率，也不是收益预测。",
-            "- 引用的招股书原文保持原样，其他说明使用简体中文。",
+            article["market_coverage"],
+            "",
+            "## 模型信号及其边界",
+            "",
+            f"### {article['model_title']}",
+            "",
+            article["model_body"],
+            "",
+            "## 评审结论与复核顺序",
+            "",
+            article["review_guidance"],
+            "",
+            "本报告把原文证据放在首位。缺失信息保持缺失，规则与模型信号均不解释为发生概率或收益预测；"
+            "仍待复核的条款、数值和事项状态，需要由评审结合招股书原文作最终判断。",
         ]
     )
     return "\n".join(lines)
 
 
+def reader_markdown_report(payload: dict[str, Any]) -> str:
+    """Build a Chinese reader report without runtime identities or raw metadata."""
+
+    article = reader_article_projection(payload)
+    lines = [
+        f"# {article['title']}",
+        "",
+        "> 本报告用于风险研究与审阅，不构成投资、证券、法律或交易建议。",
+        "",
+        reader_article_markdown(payload),
+        "",
+        "## 原文证据附录",
+        "",
+        "以下引文保持招股书原样，未作繁简转换或内容改写。",
+        "",
+    ]
+    evidence_count = 0
+    for risk in article["risks"]:
+        if not risk["evidence"]:
+            continue
+        lines.extend([f"### {risk['title']}", ""])
+        for evidence in risk["evidence"]:
+            evidence_count += 1
+            lines.extend(
+                [
+                    f"#### 招股书第 {evidence.get('page') or '不可用'} 页",
+                    "",
+                ]
+            )
+            quote = str(evidence.get("text") or "该条证据没有可展示的原文。")
+            lines.extend(f"> {part}" for part in quote.splitlines() or [quote])
+            lines.append("")
+    if not evidence_count:
+        lines.append("本次报告没有可附着的原文证据。")
+    return "\n".join(lines)
+
+
 def available_market_observation_count(payload: dict[str, Any]) -> tuple[int, int]:
-    observations = (payload.get("market_context") or {}).get("observations") or []
-    available = sum(1 for item in observations if item.get("availability") == "available")
+    observations = _governed_market_context(payload).get("observations") or []
+    available = sum(
+        1
+        for item in observations
+        if isinstance(item, dict) and item.get("availability") == "available"
+    )
     return available, len(observations)
 
 

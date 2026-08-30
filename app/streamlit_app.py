@@ -32,6 +32,8 @@ from competition_ui import (
     render_profile_grid,
     render_product_header,
     render_product_navigation,
+    reader_article_markdown,
+    reader_article_projection,
     reader_markdown_report,
     render_landing_runtime,
     render_modern_table,
@@ -39,6 +41,7 @@ from competition_ui import (
     render_trace_timeline,
     report_section_title,
     report_section_summary_zh,
+    reader_risk_level_label,
     risk_display_name,
     risk_inventory_rows,
     risk_level_label,
@@ -416,16 +419,15 @@ def _render_risk(risk: dict[str, object], *, expert: bool = False) -> None:
     with st.container(border=True):
         code_html = f"<span class='risk-chip'>{escape(risk_code)}</span>" if expert else ""
         st.markdown(
-            "<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:.7rem;"
-            "flex-wrap:wrap;margin-bottom:.25rem'>"
+            f"<div class='risk-card-heading {'expert' if expert else 'reader'}'>"
             f"<div><div class='section-title'>{escape(risk_display_name(risk_code))}</div></div>"
             f"{code_html}</div>",
             unsafe_allow_html=True,
         )
         score_html = f"<span class='risk-chip'>规则评分 {escape(score)}</span>" if expert else ""
         st.markdown(
-            "<div style='display:flex;gap:.4rem;flex-wrap:wrap;margin:-.2rem 0 .7rem 0'>"
-            f"<span class='risk-chip {_risk_level_tone(level)}'>风险等级：{escape(risk_level_label(level))}</span>"
+            f"<div class='risk-card-badges {'expert' if expert else 'reader'}'>"
+            f"<span class='risk-chip {_risk_level_tone(level)}'>风险等级：{escape(reader_risk_level_label(risk))}</span>"
             f"<span class='risk-chip {_verification_tone(verification)}'>{escape(status_label(verification))}</span>"
             f"{score_html}"
             "</div>",
@@ -439,16 +441,16 @@ def _render_risk(risk: dict[str, object], *, expert: bool = False) -> None:
             st.markdown("**推理注释**")
             st.markdown(
                 "<div class='reasoning-note'>"
-                f"<div><span>形成依据</span>{escape(annotation['basis'])}</div>"
-                f"<div><span>风险影响</span>{escape(annotation['impact'])}</div>"
-                f"<div><span>判断边界</span>{escape(annotation['boundary'] or '当前没有额外验证限制。')}</div>"
-                f"<div><span>复核重点</span>{escape(annotation['review_focus'])}</div>"
+                f"<div><span>证据与逻辑</span>{escape(annotation['basis'])}</div>"
+                f"<div><span>业务影响</span>{escape(annotation['impact'])}</div>"
+                f"<div><span>结论边界</span>{escape(annotation['boundary'] or '当前没有额外验证限制。')}</div>"
+                f"<div><span>建议复核</span>{escape(annotation['review_focus'])}</div>"
                 "</div>",
                 unsafe_allow_html=True,
             )
 
         notes = risk.get("verification_notes")
-        if notes:
+        if notes and expert:
             st.caption(f"复核说明 · {verifier_note_zh(notes)}")
         if risk.get("category") in {"legal", "business"}:
             if expert:
@@ -532,7 +534,7 @@ def _render_overview(payload: dict[str, object], stages) -> None:
             compact=True,
         )
     with right:
-        section_header("风险清单", "正式风险项与原文证据数量。", "风险清单")
+        section_header("风险清单", "进入审阅范围的风险事项与原文证据数量。", "风险清单")
         inventory = [
             {
                 "领域": row.get("领域"),
@@ -547,7 +549,7 @@ def _render_overview(payload: dict[str, object], stages) -> None:
         if inventory:
             st.dataframe(inventory, hide_index=True, width="stretch")
         else:
-            render_state_panel("暂无正式风险项", "unavailable", "本次运行未产出正式风险项；界面不会用低风险或 0 替代未知状态。")
+            render_state_panel("暂无风险事项", "unavailable", "本次运行未产出进入审阅范围的风险事项；界面不会用低风险或 0 替代未知状态。")
 
     section_header("七阶段运行链路", "从招股书解析到最终报告的受治理处理链。", "处理流程")
     render_pipeline_strip(stages)
@@ -591,7 +593,7 @@ def _render_risks_and_evidence(payload: dict[str, object], *, expert: bool = Fal
                 )
             render_metric_grid(metrics)
             if not visible_risks:
-                render_state_panel("该领域暂无正式风险项", domain_data.get("status", "unavailable"), "本次运行未在该领域识别到正式风险项。")
+                render_state_panel("该领域暂无风险事项", domain_data.get("status", "unavailable"), "本次运行未在该领域识别到进入审阅范围的风险事项。")
             for risk in visible_risks:
                 _render_risk(risk, expert=expert)
             if expert and domain_data["diagnostics"]:
@@ -608,23 +610,28 @@ def _render_reader_market_and_model(payload: dict[str, object]) -> None:
         "把上市前市场环境与模型信号转化为可阅读结论；逐项指标和影响因素集中放在后台。",
         "辅助判断",
     )
-    market_col, model_col = st.columns(2, gap="large", vertical_alignment="top")
-    with market_col:
-        with st.container(border=True):
-            section_header("市场环境结论", "说明发行时点的外部环境，不替代招股书基本面。")
-            st.markdown(f"#### {signals['market_title']}")
-            st.write(signals["market_body"])
-            st.info(signals["market_coverage"])
-    with model_col:
-        with st.container(border=True):
-            section_header("模型使用说明", "只说明模型能否辅助审阅以及应如何理解。")
-            st.markdown(f"#### {signals['model_title']}")
-            st.write(signals["model_body"])
-            st.info("模型信号只用于审阅排序，不构成投资、交易或收益预测。")
-
-    with st.container(border=True):
-        section_header("评审阅读建议", "先证据、后信号，避免把技术分数当成事实结论。")
-        st.write(signals["review_guidance"])
+    st.markdown(
+        "<div class='reader-signal-grid'>"
+        "<article class='reader-signal-card market-card'>"
+        "<div class='reader-signal-kicker'>市场环境结论</div>"
+        f"<h3>{escape(signals['market_title'])}</h3>"
+        f"<p>{escape(signals['market_body'])}</p>"
+        f"<div class='reader-signal-note'>{escape(signals['market_coverage'])}</div>"
+        "</article>"
+        "<article class='reader-signal-card model-card'>"
+        "<div class='reader-signal-kicker'>模型使用说明</div>"
+        f"<h3>{escape(signals['model_title'])}</h3>"
+        f"<p>{escape(signals['model_body'])}</p>"
+        "<div class='reader-signal-note'>模型信号只用于审阅排序，不构成投资、交易或收益预测。</div>"
+        "</article>"
+        "</div>"
+        "<article class='reader-guidance-card'>"
+        "<div class='reader-signal-kicker'>评审阅读建议</div>"
+        "<h3>先核证据，再看辅助信号</h3>"
+        f"<p>{escape(signals['review_guidance'])}</p>"
+        "</article>",
+        unsafe_allow_html=True,
+    )
 
 
 def _render_market_and_model(
@@ -831,16 +838,24 @@ def _render_front_report(payload: dict[str, object], result) -> None:
         "聚焦风险结论、市场与模型边界以及需要继续复核的事项。",
         "最终报告",
     )
-    view = executive_supervisor_view(payload, reader=True)
-    signals = reader_market_model_summary(payload)
-    with st.container(border=True):
-        st.markdown(f"#### {view['title']}")
-        st.write(view["body"])
-        unresolved = view.get("conflict_counts", {}).get("unresolved", 0)
-        if unresolved:
-            st.warning(f"仍有 {unresolved} 项跨通道冲突没有解决，建议结合相关原文证据继续复核。")
-        else:
-            st.caption("当前没有未解决的跨通道冲突。")
+    article = reader_article_projection(payload)
+    unresolved = sum(
+        count
+        for status, count in article.get("conflict_counts", {}).items()
+        if status in {"partially_resolved", "unresolved"}
+    )
+    st.markdown(
+        "<div class='reader-report-hero'>"
+        "<div><div class='reader-report-kicker'>综合审阅</div>"
+        f"<h3>{escape(article['profile']['company_name'])}风险研究结论</h3>"
+        "<p>结论由招股书风险、验证状态、上市前市场、模型边界与跨通道分歧共同形成。</p></div>"
+        "<div class='reader-report-stats'>"
+        f"<div><span>综合风险</span><strong>{escape(article['overall_level'])}</strong></div>"
+        f"<div><span>规则参考</span><strong>{escape(article['rule_level'])}</strong></div>"
+        f"<div><span>未完全解决分歧</span><strong>{unresolved}</strong></div>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
     stem = safe_download_stem(result.stock_code)
     st.download_button(
@@ -851,27 +866,12 @@ def _render_front_report(payload: dict[str, object], result) -> None:
         use_container_width=True,
     )
 
-    section_header("报告正文", "按业务主题展开；结构化字段、索引和原始 JSON 可在后台查看。")
-    visible_orders = {1, 3, 4, 5, 7, 8, 9, 12, 13}
-    reader_titles = {8: "模型信号与不确定性", 9: "综合结论"}
-    for section in sorted(payload.get("report_sections") or [], key=lambda item: item["order"]):
-        if section.get("order") not in visible_orders:
-            continue
-        order = section["order"]
-        title = reader_titles.get(order, report_section_title(order, section["title"]))
-        with st.expander(title, expanded=section["order"] == 1):
-            if order == 7:
-                st.markdown(f"**{signals['market_title']}**")
-                st.write(signals["market_body"])
-                st.info(signals["market_coverage"])
-            elif order == 8:
-                st.markdown(f"**{signals['model_title']}**")
-                st.write(signals["model_body"])
-                st.caption("具体模型分数、版本和影响因素可在后台的数据审计中核验。")
-            elif order == 9:
-                st.write(view["body"])
-            else:
-                st.write(report_section_summary_zh(payload, section))
+    section_header(
+        "报告正文",
+        "以连续文章呈现综合判断、逐项风险分析和复核顺序；技术索引与原始 JSON 保留在后台。",
+    )
+    with st.container(border=True, key="reader_report_body"):
+        st.markdown(reader_article_markdown(payload))
 
 
 def _render_system(payload: dict[str, object], stages) -> None:

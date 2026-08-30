@@ -62,8 +62,8 @@ def test_risk_reasoning_annotation_explains_basis_impact_and_review_boundary() -
     assert "2 条" in annotation["basis"]
     assert "待复核" in annotation["basis"]
     assert "客户" in annotation["impact"]
-    assert "计算依据" in annotation["boundary"]
-    assert "合同期限" in annotation["review_focus"]
+    assert "缺少可复算的确定性计算" in annotation["boundary"]
+    assert "合同稳定性" in annotation["review_focus"]
 
 
 def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
@@ -92,6 +92,9 @@ def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
         "component_diagnostics": {
             "final_supervision_llm": {
                 "status": "available",
+                "outcome": "accepted",
+                "fail_closed": False,
+                "scope_check": {"status": "passed"},
                 "judgement": {"overall_risk": "medium"},
             },
             "conflict_detection": {
@@ -103,10 +106,10 @@ def test_supervisor_narrative_is_long_form_but_keeps_model_boundary() -> None:
     narrative = supervisor_narrative_zh(payload)
 
     assert "综合审阅结论为中风险" in narrative
-    assert "规则化排序参考为暂不可用风险" in narrative
-    assert "风险结构上" in narrative
+    assert "规则筛选参考为暂不可用风险" in narrative
+    assert "招股书风险的具体依据如下" in narrative
     assert "待复核状态" in narrative
-    assert "1/2 项上市前环境信息" in narrative
+    assert "1/2 项 Market-X 核心观测" in narrative
     assert "未经概率校准" in narrative
     assert "未解决的分歧" in narrative
     assert "建议后续复核" in narrative
@@ -160,6 +163,6 @@ def test_supervisor_narrative_excludes_rejected_candidates_from_formal_risks() -
 
     narrative = supervisor_narrative_zh(payload)
 
-    assert "没有形成通过验证或待复核的正式风险项" in narrative
+    assert "没有风险事项进入审阅范围" in narrative
     assert "其中 1 项为高或极高风险" not in narrative
     assert "不等同于发行人不存在风险" in narrative

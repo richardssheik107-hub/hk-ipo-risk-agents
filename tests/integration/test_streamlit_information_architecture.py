@@ -45,6 +45,16 @@ def _markdown_text(container) -> str:
     return "\n".join(str(block.value) for block in container.markdown)
 
 
+def _reader_article(container) -> str:
+    articles = [
+        str(block.value)
+        for block in container.markdown
+        if str(block.value).startswith("## 案例与综合判断")
+    ]
+    assert len(articles) == 1
+    return articles[0]
+
+
 def test_primary_navigation_has_four_reader_or_admin_destinations(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -100,6 +110,7 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
     market_model_tab = _tab(app, "市场与模型")
     market_model_copy = _markdown_text(market_model_tab)
     assert "市场与模型解读" in market_model_copy
+    assert "Market-X 核心观测" in market_model_copy
     assert "未经概率校准" in market_model_copy
     assert "不能理解为风险发生概率" in market_model_copy
     assert not market_model_tab.metric
@@ -108,8 +119,39 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
         assert machine_detail not in market_model_copy
 
     evidence_copy = _markdown_text(_tab(app, "原文证据"))
-    for reasoning_label in ("推理注释", "形成依据", "判断边界", "复核重点"):
+    for reasoning_label in ("推理注释", "证据与逻辑", "结论边界", "建议复核"):
         assert reasoning_label in evidence_copy
+    assert "风险等级：暂定中等" in evidence_copy
+
+    report_tab = _tab(app, "综合结论与报告")
+    assert not report_tab.expander
+    assert not report_tab.metric
+    assert not report_tab.dataframe
+    assert not report_tab.json
+    assert [button.label for button in report_tab.get("download_button")] == [
+        "下载可阅读报告"
+    ]
+
+    article = _reader_article(report_tab)
+    article_sections = (
+        "## 案例与综合判断",
+        "## 招股书重点风险分析",
+        "## 上市前市场环境",
+        "## 模型信号及其边界",
+        "## 评审结论与复核顺序",
+    )
+    positions = [article.index(section) for section in article_sections]
+    assert positions == sorted(positions)
+    assert article.count("\n\n") >= 10
+    assert "招股书第 20、263、268 页" in article
+    assert "报告期与数值数量未能一一对应" in article
+    assert "只能保留为待复核线索" in article
+    assert "### 客户集中度｜暂定中等风险 · 待复核" in article
+    assert "Market-X 核心观测" in article
+    assert "社会保险及住房公积金" in article
+    assert "未经概率校准" in article
+    assert "<details" not in article
+    assert "<summary" not in article
 
     # Native navigation reruns the script without dropping the governed result.
     app.segmented_control[0].set_value("后台").run()
@@ -125,6 +167,13 @@ def test_replay_moves_to_reader_workspace_without_leaking_backend_controls(
     assert "规则评分" in audit_metrics
     assert "主要驱动因素（SHAP）" in _markdown_text(data_audit_tab)
     assert data_audit_tab.dataframe
+
+    review_artifacts_tab = _tab(app, "复核与产物")
+    assert review_artifacts_tab.expander
+    assert review_artifacts_tab.json
+    assert "完整分析报告（13 节）" in _markdown_text(review_artifacts_tab)
+    backend_downloads = {button.label for button in review_artifacts_tab.get("download_button")}
+    assert {"下载 Markdown 报告", "下载结构化 JSON"} <= backend_downloads
 
 
 def test_successful_no_pdf_run_clears_an_older_case_pdf(
