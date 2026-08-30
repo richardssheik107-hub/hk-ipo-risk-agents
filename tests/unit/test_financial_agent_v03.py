@@ -808,6 +808,128 @@ def test_concentration_builder_preserves_stronger_disclosed_track_record_pair() 
     assert "Across the disclosed track-record series" in decision.risk.conclusion
 
 
+def test_concentration_builder_accepts_replicated_threshold_disclosure() -> None:
+    evidence_items = [
+        Evidence(
+            evidence_id=f"e-replicated-{page}",
+            document_id="doc",
+            chunk_id=f"replicated-{page}",
+            page=page,
+            text="Top five customers represented 70.5% of revenue.",
+        )
+        for page in (18, 54)
+    ]
+    chunks = {
+        item.chunk_id: DocumentChunk(
+            document_id=item.document_id,
+            chunk_id=item.chunk_id,
+            page=item.page,
+            text=item.text,
+        )
+        for item in evidence_items
+    }
+    fact = ConcentrationFact(
+        concentration_type="customer",
+        period_end=date(2023, 4, 30),
+        period_months=None,
+        top_five_pct=Decimal("70.5"),
+        evidence_ids=[item.evidence_id for item in evidence_items],
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["incomplete_concentration_values", "latest_period_months_ambiguous"],
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "status": "needs_review",
+                    "issues": ["value_period_count_mismatch", "incomplete_concentration_values"],
+                    "period_end": "2022-12-31",
+                    "period_months": 12,
+                    "largest_counterparty_pct": None,
+                    "top_five_pct": "70.5",
+                    "evidence_ids": [evidence_items[0].evidence_id],
+                },
+                {
+                    "status": "needs_review",
+                    "issues": ["incomplete_concentration_values"],
+                    "period_end": "2023-04-30",
+                    "period_months": None,
+                    "largest_counterparty_pct": None,
+                    "top_five_pct": "70.5",
+                    "evidence_ids": [evidence_items[1].evidence_id],
+                },
+            ]
+        },
+    )
+
+    decision = V03FinancialRiskBuilder(load_v03_financial_policy()).build_concentration(
+        fact,
+        {item.evidence_id: item for item in evidence_items},
+        chunks,
+    )
+
+    assert decision.risk is not None
+    assert decision.risk.level == RiskLevel.MEDIUM
+    assert decision.risk.calculation is not None
+    assert decision.risk.metadata["decision_basis"] == "replicated_threshold_disclosure"
+    assert decision.risk.metadata["replicated_threshold_field"] == "top_five_pct"
+    assert decision.risk.calculation.inputs["top_five_pct"] == "70.5"
+
+
+def test_concentration_builder_rejects_replicated_one_sided_total() -> None:
+    evidence_items = [
+        Evidence(
+            evidence_id=f"e-total-{page}",
+            document_id="doc",
+            chunk_id=f"total-{page}",
+            page=page,
+            text="The table total was 100%.",
+        )
+        for page in (20, 21)
+    ]
+    chunks = {
+        item.chunk_id: DocumentChunk(
+            document_id=item.document_id,
+            chunk_id=item.chunk_id,
+            page=item.page,
+            text=item.text,
+        )
+        for item in evidence_items
+    }
+    diagnostics = [
+        {
+            "status": "needs_review",
+            "issues": ["value_period_count_mismatch", "incomplete_concentration_values"],
+            "period_end": "2022-06-30",
+            "period_months": 6,
+            "largest_counterparty_pct": None,
+            "top_five_pct": "100",
+            "evidence_ids": [item.evidence_id],
+        }
+        for item in evidence_items
+    ]
+    fact = ConcentrationFact(
+        concentration_type="supplier",
+        period_end=date(2022, 6, 30),
+        period_months=6,
+        top_five_pct=Decimal("100"),
+        evidence_ids=[item.evidence_id for item in evidence_items],
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["value_period_count_mismatch", "incomplete_concentration_values"],
+        metadata={"candidate_diagnostics": diagnostics},
+    )
+
+    decision = V03FinancialRiskBuilder(load_v03_financial_policy()).build_concentration(
+        fact,
+        {item.evidence_id: item for item in evidence_items},
+        chunks,
+    )
+
+    assert decision.risk is not None
+    assert decision.risk.calculation is None
+    assert decision.risk.metadata["candidate_state"] == (
+        "bounded_percentage_signal_requires_review"
+    )
+
+
 def test_concentration_builder_binds_paired_series_to_companion_period_headers() -> None:
     evidence = Evidence(
         evidence_id="e-series-context",

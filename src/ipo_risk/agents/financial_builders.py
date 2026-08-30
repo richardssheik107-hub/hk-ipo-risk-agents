@@ -278,6 +278,7 @@ class V03FinancialRiskBuilder:
 
         fact = self._bind_track_record_period_context(fact)
         fact = self._select_track_record_peak(fact)
+        fact = self._select_replicated_threshold_candidate(fact)
         risk_code = f"{fact.concentration_type}_concentration"
         context, issue = self._map_concentration(fact)
         if issue or context is None:
@@ -358,6 +359,10 @@ class V03FinancialRiskBuilder:
             "track_record_largest_series",
             "track_record_top_five_series",
             "latest_selected_values_before_track_record",
+            "replicated_threshold_field",
+            "replicated_threshold_value",
+            "replicated_threshold_evidence_ids",
+            "latest_selected_values_before_replication",
         ):
             if field in fact.metadata:
                 metadata[field] = fact.metadata[field]
@@ -683,6 +688,165 @@ class V03FinancialRiskBuilder:
                 "metadata": metadata,
             }
         )
+
+    def _select_replicated_threshold_candidate(
+        self, fact: ConcentrationFact
+    ) -> ConcentrationFact:
+        """Promote a bounded threshold fact repeated by independent Evidence.
+
+        A complete table row can be marked for review when its number of values
+        does not match every period header, and a one-sided disclosure can omit
+        the companion largest/top-five metric entirely.  Neither condition
+        invalidates a directly disclosed value that independently repeats and
+        already crosses the frozen policy threshold.  Keep period binding
+        strict and exclude 100% one-sided totals, which are commonly table
+        totals rather than top-five concentration facts.
+        """
+
+        if fact.status == ExtractionStatus.EXTRACTED and not fact.issues:
+            return fact
+        diagnostics = fact.metadata.get("candidate_diagnostics", [])
+        if not isinstance(diagnostics, Sequence) or isinstance(
+            diagnostics, (str, bytes)
+        ):
+            return fact
+        allowed_issues = {
+            "value_period_count_mismatch",
+            "incomplete_concentration_values",
+        }
+        best: tuple[
+            int,
+            int,
+            date,
+            int,
+            Decimal | None,
+            Decimal | None,
+            str,
+            Decimal,
+            list[str],
+        ] | None = None
+        for item in diagnostics:
+            if not isinstance(item, Mapping):
+                continue
+            issues = {str(value) for value in item.get("issues") or []}
+            raw_end = item.get("period_end")
+            raw_months = item.get("period_months")
+            if (
+                not issues
+                or not issues <= allowed_issues
+                or not isinstance(raw_end, str)
+                or isinstance(raw_months, bool)
+                or not isinstance(raw_months, int)
+                or not 1 <= raw_months <= 12
+            ):
+                continue
+            try:
+                period_end = date.fromisoformat(raw_end)
+                largest = self._optional_decimal(item.get("largest_counterparty_pct"))
+                top_five = self._optional_decimal(item.get("top_five_pct"))
+            except (ValueError, ArithmeticError):
+                continue
+            if largest is not None and top_five is not None and largest > top_five:
+                continue
+            for field, value, level in (
+                (
+                    "largest_counterparty_pct",
+                    largest,
+                    self.policy.concentration_level(fact.concentration_type, largest, None),
+                ),
+                (
+                    "top_five_pct",
+                    top_five,
+                    self.policy.concentration_level(fact.concentration_type, None, top_five),
+                ),
+            ):
+                if value is None or value <= 0 or value >= 100 or level is None:
+                    continue
+                supporting_ids: list[str] = []
+                for other in diagnostics:
+                    if not isinstance(other, Mapping):
+                        continue
+                    try:
+                        other_value = self._optional_decimal(other.get(field))
+                    except (ValueError, ArithmeticError):
+                        continue
+                    if other_value != value:
+                        continue
+                    supporting_ids.extend(
+                        str(evidence_id)
+                        for evidence_id in other.get("evidence_ids") or []
+                        if isinstance(evidence_id, str) and evidence_id
+                    )
+                supporting_ids = list(dict.fromkeys(supporting_ids))
+                if len(supporting_ids) < 2:
+                    continue
+                candidate = (
+                    _LEVEL_RANK[level],
+                    int(largest is not None) + int(top_five is not None),
+                    period_end,
+                    raw_months,
+                    largest,
+                    top_five,
+                    field,
+                    value,
+                    supporting_ids,
+                )
+                if best is None or candidate[:3] > best[:3]:
+                    best = candidate
+        if best is None:
+            return fact
+        (
+            _rank,
+            _completeness,
+            period_end,
+            period_months,
+            largest,
+            top_five,
+            replicated_field,
+            replicated_value,
+            evidence_ids,
+        ) = best
+        return fact.model_copy(
+            update={
+                "period_end": period_end,
+                "period_months": period_months,
+                "largest_counterparty_pct": largest,
+                "top_five_pct": top_five,
+                "evidence_ids": evidence_ids,
+                "status": ExtractionStatus.EXTRACTED,
+                "issues": [],
+                "metadata": {
+                    **fact.metadata,
+                    "decision_basis": "replicated_threshold_disclosure",
+                    "replicated_threshold_field": replicated_field,
+                    "replicated_threshold_value": str(replicated_value),
+                    "replicated_threshold_evidence_ids": evidence_ids,
+                    "latest_selected_values_before_replication": {
+                        "period_end": fact.period_end.isoformat() if fact.period_end else None,
+                        "period_months": fact.period_months,
+                        "largest_counterparty_pct": (
+                            str(fact.largest_counterparty_pct)
+                            if fact.largest_counterparty_pct is not None
+                            else None
+                        ),
+                        "top_five_pct": (
+                            str(fact.top_five_pct)
+                            if fact.top_five_pct is not None
+                            else None
+                        ),
+                    },
+                },
+            }
+        )
+
+    @staticmethod
+    def _optional_decimal(value: object) -> Decimal | None:
+        if value is None:
+            return None
+        converted = Decimal(str(value))
+        if not converted.is_finite() or converted < 0 or converted > 100:
+            raise ValueError("concentration_percentage_invalid")
+        return converted
 
     def _track_record_review_fact(
         self, fact: ConcentrationFact
