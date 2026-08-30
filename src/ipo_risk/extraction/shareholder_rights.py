@@ -111,6 +111,16 @@ _EXPLICIT_LIFECYCLE_CONTEXT = re.compile(
     r"\bsurvive[ds]? (?:the )?listing\b",
     re.I,
 )
+_EXPLICIT_REVIEW_SUPPORT_RIGHT = re.compile(
+    _EXPLICIT_SPECIAL_RIGHT.pattern
+    + r"|特别权利|特別權利|优先购买权|優先購買權|优先认购权|優先認購權|"
+    r"随售权|隨售權|否决权|否決權|董事提名权|董事提名權|"
+    r"\bright of first refusal\b|\bpre[- ]emptive rights?\b|\bveto rights?\b|"
+    r"\bdirector nomination rights?\b",
+    re.I,
+)
+_MAX_EXPLICIT_PRIMARY_EVIDENCE = 5
+_MAX_EXPLICIT_SUPPORTING_EVIDENCE = 2
 
 
 def _compact(value: str) -> str:
@@ -190,7 +200,17 @@ class ShareholderRightsExtractor:
         ]
         if not matched:
             return None
-        selected = matched[:5]
+        primary = matched[:_MAX_EXPLICIT_PRIMARY_EVIDENCE]
+        matched_ids = {item.evidence_id for item in matched}
+        supporting = [
+            item
+            for item in evidence_candidates[: self.max_evidence]
+            if item.evidence_id not in matched_ids
+            and _EXPLICIT_REVIEW_SUPPORT_RIGHT.search(item.text)
+            and _EXPLICIT_SPECIAL_INVESTOR.search(item.text)
+            and _EXPLICIT_LISTING_CONTEXT.search(item.text)
+        ][:_MAX_EXPLICIT_SUPPORTING_EVIDENCE]
+        selected = [*primary, *supporting]
         right_type = (
             "redemption_right"
             if any(
@@ -227,6 +247,8 @@ class ShareholderRightsExtractor:
                 "provider_name": self.llm_provider.name,
                 "fallback_reason": "provider_unavailable",
                 "matched_evidence_count": len(matched),
+                "primary_evidence_count": len(primary),
+                "supporting_evidence_count": len(supporting),
                 "selected_evidence_count": len(selected),
             },
         )

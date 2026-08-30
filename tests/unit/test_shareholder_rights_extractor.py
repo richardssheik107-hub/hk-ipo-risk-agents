@@ -309,3 +309,48 @@ def test_explicit_fallback_rejects_ordinary_share_redemption_language() -> None:
     )
 
     assert extractor.extract_explicit_needs_review([evidence]) is None
+
+
+def test_explicit_fallback_adds_only_bounded_same_family_support() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id="support",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text=(
+                "The pre-IPO investors were granted special rights in connection "
+                "with the proposed listing."
+            ),
+        ),
+        Evidence(
+            evidence_id="primary",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:2",
+            page=2,
+            text=(
+                "The pre-IPO investors' redemption rights terminate upon listing "
+                "and may be restored if the listing application lapses."
+            ),
+        ),
+        Evidence(
+            evidence_id="accounting",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:3",
+            page=3,
+            text=(
+                "A subsidiary's minority shareholders hold redemption rights that "
+                "expire under the acquisition agreement."
+            ),
+        ),
+    ]
+
+    result = extractor.extract_explicit_needs_review(evidence)
+
+    assert result is not None
+    assert result.evidence_ids == ["primary", "support"]
+    assert result.metadata["primary_evidence_count"] == 1
+    assert result.metadata["supporting_evidence_count"] == 1
+    assert result.metadata["selected_evidence_count"] == 2
