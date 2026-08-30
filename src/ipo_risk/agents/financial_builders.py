@@ -276,6 +276,7 @@ class V03FinancialRiskBuilder:
     ) -> _RiskDecision:
         """Build customer or supplier concentration risk with period traceability."""
 
+        fact = self._bind_track_record_period_context(fact)
         fact = self._select_track_record_peak(fact)
         risk_code = f"{fact.concentration_type}_concentration"
         context, issue = self._map_concentration(fact)
@@ -430,6 +431,112 @@ class V03FinancialRiskBuilder:
             metadata=metadata,
         )
         return self._generated(risk, metadata)
+
+    def _bind_track_record_period_context(self, fact: ConcentrationFact) -> ConcentrationFact:
+        """Join an aligned percentage series to separately parsed period headers.
+
+        Wide prospectus tables are sometimes retrieved as overlapping chunks: one
+        chunk retains the paired largest/top-five series while another retains the
+        complete column headers.  Keep the extractor fail-closed, then perform this
+        join only when the series lengths agree and an independently parsed final
+        period has an exact month count.
+        """
+
+        if fact.status == ExtractionStatus.EXTRACTED and not fact.issues:
+            return fact
+        diagnostics = fact.metadata.get("candidate_diagnostics", [])
+        if not isinstance(diagnostics, Sequence) or isinstance(
+            diagnostics, (str, bytes)
+        ):
+            return fact
+
+        for series_item in diagnostics:
+            if not isinstance(series_item, Mapping):
+                continue
+            if set(series_item.get("issues") or []) != {"latest_period_months_ambiguous"}:
+                continue
+            raw = series_item.get("raw_percentages")
+            if not isinstance(raw, Mapping):
+                continue
+            largest_series = self._percentage_series(raw.get("largest"))
+            top_five_series = self._percentage_series(raw.get("top_five"))
+            if (
+                largest_series is None
+                or top_five_series is None
+                or len(largest_series) != len(top_five_series)
+                or len(largest_series) < 2
+                or any(
+                    largest > top_five
+                    for largest, top_five in zip(largest_series, top_five_series)
+                )
+            ):
+                continue
+
+            for context_item in diagnostics:
+                if not isinstance(context_item, Mapping):
+                    continue
+                raw_end = context_item.get("period_end")
+                raw_months = context_item.get("period_months")
+                if (
+                    not isinstance(raw_end, str)
+                    or isinstance(raw_months, bool)
+                    or not isinstance(raw_months, int)
+                    or not 1 <= raw_months <= 12
+                ):
+                    continue
+                try:
+                    period_end = date.fromisoformat(raw_end)
+                except ValueError:
+                    continue
+
+                sequence_item: Mapping[str, object] | None = None
+                for candidate in diagnostics:
+                    if not isinstance(candidate, Mapping):
+                        continue
+                    periods = candidate.get("period_candidates")
+                    if (
+                        not isinstance(periods, Sequence)
+                        or isinstance(periods, (str, bytes))
+                        or len(periods) != len(largest_series)
+                    ):
+                        continue
+                    last = periods[-1]
+                    if isinstance(last, Mapping) and last.get("period_end") == raw_end:
+                        sequence_item = candidate
+                        break
+                if sequence_item is None:
+                    continue
+
+                evidence_ids = list(
+                    dict.fromkeys(
+                        str(value)
+                        for item in (series_item, sequence_item, context_item)
+                        for value in item.get("evidence_ids", [])
+                        if isinstance(value, str)
+                    )
+                )
+                if not evidence_ids:
+                    continue
+                metadata = {
+                    **fact.metadata,
+                    "decision_basis": "track_record_companion_period_binding",
+                    "track_record_period_binding": "aligned_series_companion_headers",
+                    "track_record_largest_series": [str(value) for value in largest_series],
+                    "track_record_top_five_series": [str(value) for value in top_five_series],
+                }
+                return fact.model_copy(
+                    update={
+                        "period_end": period_end,
+                        "period_months": raw_months,
+                        "largest_counterparty_pct": largest_series[-1],
+                        "top_five_pct": top_five_series[-1],
+                        "evidence_ids": evidence_ids,
+                        "status": ExtractionStatus.EXTRACTED,
+                        "issues": [],
+                        "metadata": metadata,
+                    }
+                )
+        return fact
 
     def _select_track_record_peak(self, fact: ConcentrationFact) -> ConcentrationFact:
         """Recover a stronger source-backed point from a clean disclosed series.

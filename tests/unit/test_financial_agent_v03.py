@@ -808,6 +808,75 @@ def test_concentration_builder_preserves_stronger_disclosed_track_record_pair() 
     assert "Across the disclosed track-record series" in decision.risk.conclusion
 
 
+def test_concentration_builder_binds_paired_series_to_companion_period_headers() -> None:
+    evidence = Evidence(
+        evidence_id="e-series-context",
+        document_id="doc",
+        chunk_id="series-context",
+        page=30,
+        text="A wide table discloses paired customer concentration series and headers.",
+    )
+    chunk = DocumentChunk(
+        document_id=evidence.document_id,
+        chunk_id=evidence.chunk_id,
+        page=evidence.page,
+        text=evidence.text,
+    )
+    fact = ConcentrationFact(
+        concentration_type="customer",
+        period_end=date(2020, 12, 31),
+        period_months=None,
+        largest_counterparty_pct=Decimal("41.2"),
+        top_five_pct=Decimal("44.6"),
+        evidence_ids=[evidence.evidence_id],
+        status=ExtractionStatus.NEEDS_REVIEW,
+        issues=["latest_period_months_ambiguous"],
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "status": "needs_review",
+                    "issues": ["latest_period_months_ambiguous"],
+                    "period_end": "2020-12-31",
+                    "period_months": None,
+                    "evidence_ids": [evidence.evidence_id],
+                    "raw_percentages": {
+                        "largest": ["24.4%", "34.8%", "41.2%"],
+                        "top_five": ["24.8%", "35.2%", "44.6%"],
+                    },
+                },
+                {
+                    "status": "needs_review",
+                    "issues": ["incomplete_concentration_values"],
+                    "period_end": "2020-12-31",
+                    "period_months": 12,
+                    "period_candidates": [
+                        {"period_end": "2018-12-31", "period_months": 12},
+                        {"period_end": "2019-12-31", "period_months": 12},
+                        {"period_end": "2020-12-31", "period_months": 12},
+                    ],
+                    "evidence_ids": [evidence.evidence_id],
+                    "raw_percentages": {"largest": [], "top_five": ["1.7%"]},
+                },
+            ]
+        },
+    )
+
+    decision = V03FinancialRiskBuilder(load_v03_financial_policy()).build_concentration(
+        fact,
+        {evidence.evidence_id: evidence},
+        {chunk.chunk_id: chunk},
+    )
+
+    assert decision.risk is not None
+    assert decision.risk.verification_status == VerificationStatus.PENDING
+    assert decision.risk.level == RiskLevel.MEDIUM
+    assert decision.risk.calculation is not None
+    assert decision.risk.calculation.inputs["period_months"] == 12
+    assert decision.risk.metadata["decision_basis"] == (
+        "track_record_companion_period_binding"
+    )
+
+
 def test_low_concentration_with_incomplete_companion_series_requires_review() -> None:
     evidence = Evidence(
         evidence_id="e-clean-series",
