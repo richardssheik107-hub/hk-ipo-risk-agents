@@ -261,9 +261,11 @@ def test_the_frozen_summary_is_never_labelled_as_the_final_supervisor_conclusion
     assert "Final Supervisor 综合结论" not in _app_source()
 
 
-def test_the_channel_grid_is_rendered_once_per_page() -> None:
-    """It sits above the workspaces; a second copy inside a tab is redundant."""
-    assert _app_source().count("render_channel_grid(payload)") == 1
+def test_the_reader_has_one_channel_health_projection() -> None:
+    """The executive snapshot owns channel health; a second grid is redundant."""
+    source = _app_source()
+    assert "render_channel_grid(payload)" not in source
+    assert source.count("render_executive_snapshot(payload)") == 1
 
 
 def test_the_report_surface_reuses_the_shared_supervisor_projection() -> None:

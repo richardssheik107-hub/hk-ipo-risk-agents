@@ -9,6 +9,7 @@ APP_DIR = Path(__file__).resolve().parents[2] / "app"
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+import competition_ui as competition_ui_module  # noqa: E402
 from competition_ui import (  # noqa: E402
     available_market_observation_count,
     channel_state_map,
@@ -19,6 +20,7 @@ from competition_ui import (  # noqa: E402
     market_degradation_summary,
     market_missing_reason_label,
     market_runtime_summary,
+    reader_markdown_report,
     report_section_title,
     risk_display_name,
     risk_inventory_rows,
@@ -29,6 +31,24 @@ from competition_ui import (  # noqa: E402
     stage_title_zh,
     status_label,
 )
+
+
+def test_theme_localizes_visible_file_uploader_copy(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    def _capture(body: str, *, unsafe_allow_html: bool = False) -> None:
+        captured["body"] = body
+        captured["unsafe_allow_html"] = unsafe_allow_html
+
+    monkeypatch.setattr(competition_ui_module.st, "markdown", _capture)
+    competition_ui_module.apply_competition_theme()
+
+    css = str(captured["body"])
+    assert 'content:"选择文件"' in css
+    assert 'content:"单个文件不超过 200 MB · PDF"' in css
+    assert 'content:"已就绪"' in css
+    assert 'content:"Ready"' not in css
+    assert captured["unsafe_allow_html"] is True
 
 
 def _payload() -> dict[str, object]:
@@ -145,6 +165,31 @@ def test_executive_supervisor_view_prefers_available_llm_judgement() -> None:
     assert "本次共识别 1 项正式风险" in view["body"]
     assert "Grounded competition-wide explanation." not in view["body"]
     assert view["conflict_counts"] == {"resolved": 1}
+
+
+def test_reader_report_is_chinese_and_excludes_backend_metadata() -> None:
+    payload = _payload()
+    payload["profile"] = {
+        "company_name": "示例公司",
+        "stock_code": "0001.HK",
+        "listing_date": "2024-01-01",
+        "industry": "消费",
+    }
+    payload["prediction"] = {"risk_score": 42, "risk_level": "medium"}
+    risk = payload["domains"]["financial"]["risks"][0]
+    risk["evidence"] = [{"evidence_id": "internal-e1", "page": 7, "text": "引用原文"}]
+    risk["metadata"] = {"prospectus_sha256": "secret-technical-hash"}
+
+    report = reader_markdown_report(payload)
+
+    assert report.startswith("# 示例公司港股 IPO 风险分析报告")
+    assert "引用原文" in report
+    assert "结构化字段" not in report
+    assert "Structured section metadata" not in report
+    assert "component_diagnostics" not in report
+    assert "prospectus_sha256" not in report
+    assert "secret-technical-hash" not in report
+    assert "internal-e1" not in report
 
 
 def test_workspace_inventory_localizes_display_without_changing_source_values() -> None:

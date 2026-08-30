@@ -30,6 +30,7 @@ TARGETED_TEST_FILES = (
     "tests/unit/test_ipo_structure_features.py",
     "tests/contract/test_v046_human_review_api.py",
     "tests/integration/test_v04_final_supervision_pipeline.py",
+    "tests/integration/test_streamlit_information_architecture.py",
     "tests/unit/test_v045_competition_runtime_view.py",
     "tests/unit/test_v045_team_clone_ready.py",
 )
