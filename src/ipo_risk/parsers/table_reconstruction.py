@@ -256,6 +256,68 @@ def _nearest_caption_group_counts(
     return counts if all(count > 0 for count in counts) else None
 
 
+def _period_group_captions(header_words: Sequence[Sequence]) -> list[tuple[float, str]]:
+    """Return complete period captions, including narrowly wrapped Chinese ones.
+
+    Some summary tables wrap a caption between the month number and the rest of
+    the date (for example ``截至8`` / ``月31日止八個月``).  Neither visual line is a
+    valid period caption on its own, so treating words independently silently
+    assigns every year column to the neighbouring annual caption.  Rejoin only
+    the strongly delimited Chinese form: an ``截至`` prefix without ``止`` and
+    the nearest lower, horizontally overlapping suffix that contains ``止``.
+    This keeps the repair structural and prevents unrelated header prose from
+    being combined merely because it is nearby.
+    """
+
+    captions: list[tuple[float, str]] = [
+        (_x_center(word), str(word[4]).strip())
+        for word in header_words
+        if _PERIOD_GROUP_RE.search(str(word[4]).strip())
+    ]
+    incomplete_prefixes = [
+        word
+        for word in header_words
+        if str(word[4]).strip().startswith("截至")
+        and "止" not in str(word[4]).strip()
+    ]
+    for prefix in incomplete_prefixes:
+        lower_candidates = []
+        for suffix in header_words:
+            suffix_text = str(suffix[4]).strip()
+            vertical_gap = float(suffix[1]) - float(prefix[3])
+            horizontal_overlap = min(float(prefix[2]), float(suffix[2])) - max(
+                float(prefix[0]), float(suffix[0])
+            )
+            horizontal_gap = float(suffix[0]) - float(prefix[2])
+            same_line_continuation = (
+                abs(float(suffix[1]) - float(prefix[1])) <= Y_TOL
+                and 0.0 <= horizontal_gap <= SPACE_GAP
+            )
+            wrapped_continuation = (
+                0.0 <= vertical_gap <= 18.0 and horizontal_overlap >= 0.0
+            )
+            if (
+                "止" in suffix_text
+                and not suffix_text.startswith("截至")
+                and (same_line_continuation or wrapped_continuation)
+            ):
+                distance = abs(float(suffix[1]) - float(prefix[1])) + max(
+                    horizontal_gap, 0.0
+                )
+                lower_candidates.append((distance, suffix))
+        if not lower_candidates:
+            continue
+        _, suffix = min(lower_candidates, key=lambda item: item[0])
+        caption = f"{str(prefix[4]).strip()}{str(suffix[4]).strip()}"
+        if _PERIOD_GROUP_RE.search(caption):
+            centre = (min(float(prefix[0]), float(suffix[0])) + max(
+                float(prefix[2]), float(suffix[2])
+            )) / 2.0
+            captions.append((centre, caption))
+
+    return sorted(dict.fromkeys(captions), key=lambda item: item[0])
+
+
 def _period_columns(
     header_words: Sequence[Sequence], anchors: Sequence[float]
 ) -> list[dict] | None:
@@ -281,14 +343,7 @@ def _period_columns(
     if not year_by_column:
         return None
 
-    captions = sorted(
-        (
-            (_x_center(word), str(word[4]).strip())
-            for word in header_words
-            if _PERIOD_GROUP_RE.search(str(word[4]).strip())
-        ),
-        key=lambda item: item[0],
-    )
+    captions = _period_group_captions(header_words)
 
     ordered_columns = sorted(year_by_column)
     labels = [str(year_by_column[column][4]).strip() for column in ordered_columns]

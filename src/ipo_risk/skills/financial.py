@@ -745,13 +745,13 @@ def cash_runway_from_operating_cash_flow(
             error="operating_cash_flow must be negative to represent cash burn",
             metadata={**base_metadata, "no_cash_burn": cash_flow_value > 0},
         )
-    if period_months not in {3, 6, 9, 12}:
+    if period_months not in range(1, 13):
         return SkillResult(
             skill_name="cash_runway",
             skill_version="1.1",
             success=False,
             evidence_ids=retained_evidence_ids,
-            error="period_months must be one of 3, 6, 9, or 12",
+            error="period_months must be an integer from 1 through 12",
             metadata=base_metadata,
         )
 
