@@ -593,6 +593,81 @@ def test_compatible_pair_retains_strictly_equivalent_evidence_ids() -> None:
     ]
 
 
+def test_replicated_colocated_pair_can_resolve_value_only_statement_conflict() -> None:
+    summary_text = (
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120\n"
+        "經營活動所用淨現金流量\n(60)"
+    )
+    first_summary = chunk(summary_text, page=20)
+    repeated_summary = chunk(summary_text, page=40)
+    statement_cash = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120",
+        page=200,
+    )
+    conflicting_flow = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(65)",
+        page=201,
+    )
+    sources = (first_summary, repeated_summary, statement_cash, conflicting_flow)
+    candidates = [evidence(item) for item in sources]
+
+    result = FinancialEvidenceExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.cash_and_cash_equivalents.normalized_value == Decimal("120")
+    assert result.operating_cash_flow.normalized_value == Decimal("-60")
+    assert result.cash_and_cash_equivalents.metadata["pair_selection"] == (
+        "replicated_colocated_pair_with_value_only_conflict"
+    )
+    assert result.operating_cash_flow.metadata["pair_selection"] == (
+        "replicated_colocated_pair_with_value_only_conflict"
+    )
+    assert result.operating_cash_flow.metadata["replicated_pair_evidence_ids"] == [
+        "e:20",
+        "e:40",
+    ]
+    assert result.operating_cash_flow.metadata["suppressed_pair_conflicts"] == [
+        {
+            "metric_name": "operating_cash_flow",
+            "evidence_id": "e:201",
+            "page": 201,
+            "conflict_fields": ["normalized_value"],
+            "normalized_value": "-65",
+        }
+    ]
+
+
+def test_single_colocated_pair_does_not_override_value_conflict() -> None:
+    summary = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "現金流量表所述現金及現金等價物\n120\n"
+        "經營活動所用淨現金流量\n(60)",
+        page=20,
+    )
+    conflicting_flow = chunk(
+        "截至2024年6月30日止六個月\n人民幣千元\n"
+        "經營活動所用淨現金流量\n(65)",
+        page=201,
+    )
+    sources = (summary, conflicting_flow)
+    candidates = [evidence(item) for item in sources]
+
+    result = FinancialEvidenceExtractor().extract(
+        candidates,
+        candidates,
+        {item.chunk_id: item for item in sources},
+    )
+
+    assert result.operating_cash_flow.status == ExtractionStatus.NEEDS_REVIEW
+    assert "conflicting_values_for_same_period" in result.operating_cash_flow.issues
+
+
 def test_bounded_extractor_can_use_clean_candidate_beyond_old_top_five() -> None:
     noise = [
         chunk(f"不相關披露 {index}", page=50 + index) for index in range(5)
