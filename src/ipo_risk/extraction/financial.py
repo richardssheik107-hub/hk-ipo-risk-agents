@@ -478,7 +478,11 @@ class FinancialEvidenceExtractor:
 
         # Multiple clean readings for the selected date must agree.  A latest
         # compatible pair is not permission to hide a genuine disclosure
-        # conflict.
+        # conflict.  The sole exception is a complete cash/OCF pair that is
+        # co-located and independently repeated as the same complete pair.
+        # Even then, only a value-only conflict may be resolved; semantic
+        # conflicts in currency, unit or period remain fail-closed.
+        pair_conflicts: list[dict[str, object]] = []
         for selected, candidates in (
             (selected_cash, cash_candidates),
             (selected_flow, flow_candidates),
@@ -489,8 +493,35 @@ class FinancialEvidenceExtractor:
                     or candidate.result.period_end != selected.result.period_end
                 ):
                     continue
-                if self._financial_fact_conflicts(selected.result, candidate.result):
-                    return None
+                conflict_fields = self._financial_fact_conflicts(
+                    selected.result, candidate.result
+                )
+                if conflict_fields:
+                    pair_conflicts.append(
+                        {
+                            "metric_name": selected.result.metric_name,
+                            "evidence_id": candidate.result.evidence_id,
+                            "page": candidate.result.page,
+                            "conflict_fields": conflict_fields,
+                            "normalized_value": (
+                                str(candidate.result.normalized_value)
+                                if candidate.result.normalized_value is not None
+                                else None
+                            ),
+                        }
+                    )
+
+        replicated_pair_ids = self._replicated_colocated_pair_evidence_ids(
+            selected_cash, selected_flow, pairs
+        )
+        resolved_replicated_pair_conflict = bool(pair_conflicts) and bool(
+            replicated_pair_ids
+        ) and all(
+            item["conflict_fields"] == ["normalized_value"]
+            for item in pair_conflicts
+        )
+        if pair_conflicts and not resolved_replicated_pair_conflict:
+            return None
 
         equivalent_cash_ids = self._equivalent_evidence_ids(
             selected_cash.result, cash_candidates
@@ -500,10 +531,21 @@ class FinancialEvidenceExtractor:
         )
 
         pair_metadata = {
-            "pair_selection": "latest_common_compatible_period",
+            "pair_selection": (
+                "replicated_colocated_pair_with_value_only_conflict"
+                if resolved_replicated_pair_conflict
+                else "latest_common_compatible_period"
+            ),
             "compatible_pair_count": len(pairs),
             "pair_period_end": selected_cash.result.period_end.isoformat(),
         }
+        if resolved_replicated_pair_conflict:
+            pair_metadata.update(
+                {
+                    "replicated_pair_evidence_ids": replicated_pair_ids,
+                    "suppressed_pair_conflicts": pair_conflicts,
+                }
+            )
         cash_result = selected_cash.result.model_copy(
             update={
                 "metadata": {
@@ -523,6 +565,54 @@ class FinancialEvidenceExtractor:
             }
         )
         return cash_result, flow_result
+
+    @classmethod
+    def _replicated_colocated_pair_evidence_ids(
+        cls,
+        selected_cash: _Candidate,
+        selected_flow: _Candidate,
+        pairs: Sequence[tuple[_Candidate, _Candidate]],
+    ) -> list[str]:
+        """Return distinct sources that repeat the selected complete pair."""
+
+        if (
+            not selected_cash.result.evidence_id
+            or selected_cash.result.evidence_id != selected_flow.result.evidence_id
+        ):
+            return []
+
+        identifiers: list[str] = []
+        for cash, flow in pairs:
+            evidence_id = cash.result.evidence_id
+            if (
+                not evidence_id
+                or evidence_id != flow.result.evidence_id
+                or not cls._financial_facts_equivalent(
+                    selected_cash.result, cash.result
+                )
+                or not cls._financial_facts_equivalent(
+                    selected_flow.result, flow.result
+                )
+            ):
+                continue
+            identifiers.append(evidence_id)
+        identifiers = list(dict.fromkeys(identifiers))
+        return identifiers if len(identifiers) >= 2 else []
+
+    @staticmethod
+    def _financial_facts_equivalent(
+        first: FinancialMetricValue, second: FinancialMetricValue
+    ) -> bool:
+        fields = (
+            "metric_name",
+            "normalized_value",
+            "currency",
+            "unit",
+            "period_end",
+            "period_months",
+            "document_id",
+        )
+        return all(getattr(first, field) == getattr(second, field) for field in fields)
 
     @staticmethod
     def _equivalent_evidence_ids(
