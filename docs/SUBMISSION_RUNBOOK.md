@@ -1,59 +1,63 @@
-# Competition Submission Runbook — Final Closeout
+# Competition Submission Runbook — v1.0.0
 
+> Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
 > Metric protocol：`v045_competition_metric_protocol_v2_existing_gold_only`  
 > Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`
 
-本 Runbook 只描述最后提交步骤。当前实时状态见 `V0.4_RELEASE_ACCEPTANCE.md`，材料清单见 `FINAL_SUBMISSION_STATUS.md`。
+This Runbook covers only governed post-freeze competition-submission operations. Product/algorithm development is closed. Live release truth is `V1_RELEASE_ACCEPTANCE.md`; submission status is `FINAL_SUBMISSION_STATUS.md`.
 
-## 1. 不可变原则
+## 1. Immutable rules
 
-- Existing Gold immutable；
-- `UNJUDGED != negative`；
-- real-provider 与 offline 指标分开；
-- Validation 只允许 freeze 后 one-shot；
-- 2025 Blind outcome 不用于优化；
-- fallback 不冒充 real-provider success；
-- Market missing 不补 0；
-- `uncalibrated_model_score` 不称概率；
-- PDF、raw EOD/CSMAR、Secret、raw provider journal、绝对路径不进入 Git/bundle；
-- Human Review 是 optional，不是 Release Gate。
+- Existing Gold immutable;
+- `UNJUDGED != negative`;
+- offline and real-provider metrics must remain separate;
+- Validation is one-shot after freeze;
+- Validation results cannot drive Retriever / Prompt / Agent / Verifier / threshold / model / evaluator tuning;
+- 2025 Blind outcomes are not used for optimization;
+- fallback is not real-provider success;
+- Market missing values are not zero-filled;
+- `uncalibrated_model_score` is not a probability;
+- no issuer/case/page/Gold hardcoding;
+- no fabricated Evidence;
+- licensed PDFs, raw EOD/CSMAR, secrets, raw provider journals and local absolute paths do not enter the public/submission package.
 
 ## 2. Final Development truth
 
 ```text
-Best offline ALL79:
+Best offline ALL79
 M1 = 70/102 = 68.63%
 M2 = 103/191 = 53.93%
 
-Real LLM gated ALL79:
+Real LLM gated ALL79
 M1 = 61/102 = 59.80%
 M2 = 93/191 = 48.69%
 real_llm_cases = 79/79
 ```
 
-G2 自定义门槛 M1 `>=80%`、M2 `>=85%` 未达到，因此仓库 `COMPETITION_READY` 仍为 false。不要用 offline 结果替代 real-LLM gated 结果。
+G2 remains BLOCKED under the self-defined 80% / 85% threshold. `v1.0.0` is a formal competition product release, not a statement that G2 passed.
 
-## 3. Frozen identity
+## 3. Frozen identities
 
-机器事实源：
+Read:
 
 ```text
 reports/v045_role_b/document_benchmark_summary.json
 reports/final_status/final_freeze_manifest.json
+reports/final_status/submission_closeout_status.json
 ```
 
-冻结：
+Core freeze facts:
 
 ```text
-main SHA = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
-Role-B benchmark SHA = dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b
+runtime freeze main = ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a
+Role-B benchmark = dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b
 Development tuning = STOP
 Validation opened at freeze = false
 Blind outcome accessed = false
 ```
 
-## 4. 基础安装与验证
+## 4. Clean-environment preflight
 
 ```bash
 python -m venv .venv
@@ -75,270 +79,184 @@ python scripts/run_dynamic_model_runtime_audit.py --strict --no-write
 python scripts/check_final_product_capabilities.py
 ```
 
-任何命令失败都先修复非算法/包装问题；不得借机重新打开 Development 调参。
+A failure may justify a packaging/runtime-environment fix, but not a score-driven algorithm reopen.
 
 ## 5. One-shot Validation
 
-唯一一次执行：
+Run exactly once on the frozen identity in the authorized environment:
 
 ```text
 ALL19 2024 Existing-Gold Validation
 ONE SHOT
 ```
 
-执行前确认：
+Before running, record:
 
 ```text
-Development optimization stopped
-runtime identity frozen
+release version
+frozen runtime SHA
+Role-B benchmark SHA
+config / prompt / schema / evaluator identities
 Validation not previously used for tuning
 Blind outcome untouched
 ```
 
-执行后必须写：
+After running, write:
 
 ```text
 reports/final_status/one_shot_validation_receipt.json
 ```
 
-至少包含：
+Minimum fields:
 
 ```text
 status
 one_shot = true
 post_hoc_tuning = false
 blind_2025_y_accessed = false
-freeze SHA
-case count / metric summary
+freeze/runtime identity
+case count
+measured metrics
+execution timestamp
 ```
 
-执行后禁止根据 Validation 修改 Retriever、Prompt、Agent、Verifier、threshold、model、evaluator。
+Do not inspect Validation errors and then modify the model/retriever/prompt/rules for a second run.
 
-## 6. Market / Model 授权数据边界
+## 6. Final G5/G6 rehash
 
-公开仓库只提交 builder / schema / frozen governed artifacts；授权 EOD / CSMAR / prospectus PDF 留在本地。
-
-### Dynamic Market outcome pack
-
-如演示环境有授权 EOD，可本地物化：
-
-```bash
-python scripts/build_prior_ipo_outcome_pack.py \
-  --data-root <AUTHORIZED_COMPETITION_DATA_ROOT>
-```
-
-输出位于 ignored 本地目录，不允许强行 git add。
-
-### Extended Market-X
-
-若使用授权 Extended 数据：
-
-```bash
-export IPO_RISK_MARKET_DYNAMIC_EXTENDED_HSI_CSV=<AUTHORIZED_NORMALIZED_HSI>
-export IPO_RISK_MARKET_DYNAMIC_EXTENDED_TURNOVER_CSV=<AUTHORIZED_NORMALIZED_TURNOVER>
-```
-
-缺少时诚实 `PARTIAL / UNAVAILABLE`，不影响仓库安全边界。
-
-## 7. Final product / capability rehash
-
-最终提交 commit 上运行：
+On the exact final submission tree:
 
 ```bash
 python scripts/check_final_product_capabilities.py
 ```
 
-核对：
+Confirm:
 
 ```text
-reports/final_status/product_acceptance.json
-reports/final_status/capability_manifest.json
+reports/final_status/product_acceptance.json = pass
+reports/final_status/capability_manifest.json = pass
+truthful_channel_states = true
+8/8 capability proofs present
 ```
 
-禁止手工改两份文件的 hash 或 PASS 状态。
+This is artifact/hash rebinding only, not feature development.
 
-## 8. Canonical demo
+## 7. Fresh clone verification
 
-始终保留：
+Create a second clean directory and clone only the remote release/main tree. Do not copy `.env`, PDFs, market data, local reports, caches or credentials.
+
+Then run:
 
 ```text
-reports/v045_demo_bundle
+install
+compileall
+pytest / required validators
+team clone-ready checker
+canonical demo bundle verification
+standard UI smoke
+judge UI smoke
 ```
 
-核对：
+The release must work from the repository itself, not only from the original development machine.
 
-```bash
-python scripts/check_v045_product_runtime.py
-python scripts/check_v045_team_clone_ready.py
-python scripts/build_v045_demo_bundle.py \
-  --output-dir reports/v045_demo_bundle \
-  --verify
-```
+## 8. Security / licensing / provenance audit
 
-现场 provider/网络失败时使用 Offline Demo Replay；Replay 必须明确标注 recorded，不冒充 live inference。
-
-## 9. Evidence screenshot
-
-如需为新案例导出：
-
-```bash
-python scripts/build_v045_evidence_screenshots.py \
-  --input-dir <RUN_DIR> \
-  --prospectus-root <AUTHORIZED_ROOT>
-```
-
-必须绑定 PDF SHA、physical page、bbox source、match count、image SHA。多重/无匹配明确 unavailable，不画假框。
-
-## 10. Fresh clone
-
-在第二个干净目录：
-
-```bash
-git clone <REPO>
-cd hk-ipo-risk-agents
-python -m venv .venv
-# activate
-pip install -e ".[dev,retrieval-research]"
-```
-
-不要复制：
+Reject from the public/submission package:
 
 ```text
 .env
-PDF
-raw EOD / CSMAR
-local reports
-cache
-API key / token
-```
-
-然后执行第 4 节的 validators、demo bundle verify 和前端 smoke。
-
-## 11. Final audits
-
-### Blind
-
-```text
-2025 Blind outcome not accessed
-no Blind outcome in package
-no Blind-driven optimization
-```
-
-### Provenance
-
-至少覆盖：
-
-```text
-Role-B benchmark / Gold / evaluator
-Market PIT identity
-Role-D model / feature / alert
-Final Supervisor provider/model/prompt identity
-Demo replay recorded provenance
-```
-
-### Determinism
-
-明确区分 deterministic calculation / score / identity 与 remote LLM variance。远程 LLM 不得宣称 byte-for-byte deterministic。
-
-### Security / licensing / path
-
-拒绝：
-
-```text
-.env
-API key / Bearer / token / private key
-licensed prospectus PDF
-raw licensed EOD / CSMAR
-raw provider journal
-absolute local path
-cache / temp / failed experiment payload
-unauthorized model/data
+API keys / bearer tokens / refresh tokens
+private keys
+licensed prospectus PDFs
+raw licensed EOD
+raw or normalized restricted CSMAR data
+raw provider journals
+local absolute paths
+cache / temp / failed experiments
 Validation private working files
-Blind outcome artifact
+Blind outcomes
 ```
 
-## 12. Artifact index
+Confirm all included model/data artifacts are allowed for distribution and have provenance/hash records where required.
 
-最终建立：
+## 9. Final artifact index
+
+Create one index containing at least:
 
 ```text
-logical path
+logical_path
 owner
 gate
-required / optional
+required_or_optional
 exists
-size
-SHA-256
+size_bytes
+sha256
 allowed_in_submission
-rejection reason
+rejection_reason
 ```
 
-推荐纳入：
+Human Review artifacts are optional and must not block submission.
+
+## 10. Secure competition package
+
+The final package may include, subject to the competition platform rules:
 
 ```text
-source code / allowed configs
-README / FINAL_SUBMISSION_STATUS / TEAM_QUICKSTART / Runbook
-Role-B benchmark summary
-Role-B ALL79 detailed governed evidence receipt
-freeze manifest
-Validation receipt
-Market / Model audits
-G5/G6 manifests
-Role-D frozen manifests
+source code
+allowed configs
+README / quickstart / Runbook / release notes
+final metric summary
+frozen model manifests/artifacts allowed for redistribution
+Risk/Evidence benchmark summaries
+Market/Model governed audit summaries
 case reports / trace
-Evidence screenshot manifests / selected images
-canonical replay
+Evidence screenshot manifests/images allowed for submission
+canonical demo replay
+capability proof
+release/freeze/Validation receipts
 artifact index
-release note
-submission manifest
-SHA256SUMS
+submission_manifest.json
+SHA256SUMS.txt
 ```
 
-## 13. Final acceptance preflight
+Do not package the entire `reports/` tree blindly.
+
+## 11. Final acceptance command
+
+After the one-shot Validation receipt, exact-tree G5/G6 rehash, clean clone and audits are complete:
 
 ```bash
 python scripts/run_final_acceptance.py \
   --ci-status pass \
-  --ci-evidence-url <LATEST_MAIN_CI_URL> \
+  --ci-evidence-url <FINAL_MAIN_CI_URL> \
   --package-preflight
 ```
 
-如果 G2 仍 BLOCKED，该命令应继续 fail-closed；带 `README_NOT_FINAL.txt` 的 ZIP 只是 preflight evidence，不得改名冒充 `COMPETITION_READY` final bundle。
+The command is fail-closed. If G2 remains blocked, its final acceptance report must continue to say so; do not edit the gate logic to make the report green.
 
-## 14. 比赛平台实际提交包
+## 12. Defense package
 
-仓库自定义 G2 未达标不等于平台禁止上传作品。若比赛平台只要求作品/代码/说明/演示，可按真实状态提交，但必须保留 known limitation。
+Prepare separately from the source ZIP:
 
-准备：
+- final PPT;
+- speaking script;
+- Q&A memo;
+- 5–10 minute demo/recording if required;
+- key Evidence screenshots;
+- one-page system architecture / workflow;
+- backup offline replay procedure.
 
-- 源码/允许配置；
-- 项目说明书；
-- 最终 PPT；
-- 演示视频/录屏（若平台要求）；
-- 答辩讲稿与 Q&A；
-- offline replay fallback；
-- 关键 Evidence 截图；
-- 指标与 known limitations 一页说明。
-
-## 15. 现场启动
-
-| 入口 | Windows | macOS / Linux |
-|---|---|---|
-| 标准工作台 | `START_DEMO.bat` | `./start_demo.sh` |
-| 评委界面 | `START_JUDGE_DEMO.bat` | `./start_judge_demo.sh` |
-
-先现场演示 Offline Replay，确保评委在 30 秒内看到“风险—原因—证据—可信边界”；再按网络/provider 情况展示 live/fresh 分析。
-
-## 16. Final docs truth
-
-提交前再次核对：
+Main defense narrative:
 
 ```text
-README
-FINAL_SUBMISSION_STATUS
-V0.4_RELEASE_ACCEPTANCE
-COMPETITION_CLOSURE_PLAN
-SUBMISSION_RUNBOOK
+有什么风险
+→ 为什么值得关注
+→ 证据在哪里
+→ 系统如何保证不编造 / 不越界
+→ Market / Model 如何补充但不替代文档证据
+→ 已知边界是什么
 ```
 
-必须使用同一 M1/M2、同一 freeze SHA、同一 Gate 状态。禁止 README 说 PASS 而 Acceptance 说 BLOCKED。
+## 13. Release completion
+
+The v1.0.0 product is frozen. Remaining work is submission governance and packaging only. Any new algorithmic experiment belongs to a later version and must not rewrite the v1.0.0 benchmark truth.
