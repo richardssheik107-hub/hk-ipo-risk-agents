@@ -1,101 +1,112 @@
-# Documentation Index and Governance
+# Documentation Index — v1.0.0
 
-> 状态日期：`2026-08-30`
+> Release: `v1.0.0`  
+> 状态日期：`2026-08-30`  
+> 文档状态：**FINAL / CLOSED FOR COMPETITION RELEASE**
 
-仓库当前已经进入 **final submission closeout**。不再维护多套 Roadmap / Current Plan；所有当前事实必须能回到代码、机器 artifact、Release Gate 或 final submission status。
+v1.0.0 之后不再维护第二套 Roadmap、并行冲刺计划或“当前 Batch”状态页。所有开发型 owner 文档均已收口为最终状态/历史职责说明。
 
-## 1. 当前权威入口
+## 1. v1.0.0 当前权威入口
 
 | 文档 | 作用 |
 |---|---|
-| `../README.md` | 项目入口、最终指标、当前 Gate 状态 |
-| `FINAL_SUBMISSION_STATUS.md` | **最终提交状态、已完成/未完成、材料清单与 known limitations** |
-| `V0.4_RELEASE_ACCEPTANCE.md` | **唯一实时 Release Gate / blocker 状态源** |
-| `COMPETITION_CLOSURE_PLAN.md` | 最终收口执行顺序 |
-| `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2、Gold、split、M1/M2/M3/M5 口径 |
-| `SUBMISSION_RUNBOOK.md` | freeze → one-shot Validation → secure package 操作手册 |
-| `TEAM_QUICKSTART.md` | fresh clone / canonical replay |
-| `team/README.md` | owner 线最终状态 |
-| `ROLE_D_MODEL_DECISION.md` | Role-D frozen model 决策入口 |
-| `V045_ROLE_D_FINAL_CLOSURE.md` | Role-D hash-bound closure / receipt 历史证据 |
-| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 泛化合同 / PIT / missingness |
-| `V046_ROLE_B_EXPERIMENT_LEDGER.md` | Role-B 历史实验总账，不是 live plan |
+| `../README.md` | 项目首页、v1.0.0 能力、最终指标与启动方式 |
+| `RELEASE_NOTES_V1.0.0.md` | **v1.0.0 正式 Release Notes** |
+| `V1_RELEASE_ACCEPTANCE.md` | **v1.0.0 Release / Gate 真相源** |
+| `FINAL_SUBMISSION_STATUS.md` | 最终比赛提交状态、材料与剩余本地动作 |
+| `COMPETITION_CLOSURE_PLAN.md` | 冻结后的最终收口状态，不再是研发 Roadmap |
+| `COMPETITION_METRIC_PROTOCOL.md` | 冻结 Metric-v2 / Gold / split / M1/M2/M3/M5 口径 |
+| `SUBMISSION_RUNBOOK.md` | one-shot Validation、fresh clone、安全审计、封包操作手册 |
+| `TEAM_QUICKSTART.md` | fresh clone / canonical replay / judge demo 快速启动 |
+| `ROLE_D_MODEL_DECISION.md` | Role-D V2 最终模型决议与边界 |
+| `V046_ROLE_C_DYNAMIC_MARKET_X.md` | Dynamic Market-X 冻结技术合同 |
 
-## 2. Final Development truth
-
-```text
-Best offline ALL79:
-M1 = 70/102 = 68.63%
-M2 = 103/191 = 53.93%
-
-Real LLM gated ALL79:
-M1 = 61/102 = 59.80%
-M2 = 93/191 = 48.69%
-real_llm_cases = 79/79
-```
-
-仓库自定义 G2 门槛仍是 M1 `>=80%`、M2 `>=85%`，因此 G2 保持 **BLOCKED**。Offline 与 real-LLM 必须分开写，不能用较高的 offline 结果替代 provider-backed 结果。
-
-机器事实源：
+## 2. Machine-readable final truth
 
 ```text
 reports/v045_role_b/document_benchmark_summary.json
-reports/v045_role_b/all79_final/README.md
 reports/final_status/final_freeze_manifest.json
+reports/final_status/submission_closeout_status.json
 reports/final_status/product_acceptance.json
 reports/final_status/capability_manifest.json
+reports/v046_dynamic_model_runtime/dynamic_model_runtime_audit.json
 ```
 
-## 3. 当前工作状态
+文档与 artifact 冲突时，以代码 validator / frozen manifest / machine-readable receipt 为优先事实源。
 
-| Track | 状态 | 后续动作 |
-|---|---|---|
-| Document Intelligence | **FROZEN / G2 BELOW TARGET** | 不再 Development 调参；只记录最终事实 |
-| Frontend / Product | PASS | 回归保护；只修致命展示/启动问题 |
-| Dynamic Market-X | PASS | 回归保护 |
-| Dynamic Model / SHAP | PASS | 回归保护 |
-| Release / Submission | **P0** | Validation / audits / fresh clone / package |
+## 3. Final Development measurements
 
-## 4. Source-of-truth hierarchy
+| Mode | Cases | M1 | M2 |
+|---|---:|---:|---:|
+| Best offline | 79/79 | 70/102 = 68.63% | 103/191 = 53.93% |
+| Real LLM gated | 79/79 | 61/102 = 59.80% | 93/191 = 48.69% |
+
+G2 内部门槛仍是 M1 >=80%、M2 >=85%、real LLM 79/79，因此 G2 为 **BLOCKED**。v1.0.0 是正式比赛产品发布版，不等于 `COMPETITION_READY=true`。
+
+## 4. Team owner 文档
+
+`team/` 不再表示活跃开发队列，而是最终职责归档：
+
+```text
+01_M1_M2_OWNER.md              CLOSED / FROZEN
+02_FRONTEND_OWNER.md           CLOSED / G5 PASS
+03_DYNAMIC_MARKET_X_OWNER.md   CLOSED / G3 PASS
+04_DYNAMIC_MODEL_OWNER.md      CLOSED / G4 PASS
+05_RELEASE_SUBMISSION_OWNER.md RELEASE OPERATIONS ONLY
+```
+
+`team/README.md` 给出最终状态摘要。
+
+## 5. 长期规范 / 冻结技术文档
+
+以下文档继续保留，不因 v1.0.0 改名或重写内部 protocol identity：
+
+- `PROJECT_SPEC.md`
+- `ARCHITECTURE.md`
+- `DATA_SCHEMA.md`
+- `COMPETITION_DATA_OVERVIEW.md`
+- `COMPETITION_METRIC_PROTOCOL.md`
+- `V046_ROLE_C_DYNAMIC_MARKET_X.md`
+- `V046_ROLE_B_EXPERIMENT_LEDGER.md`
+- `research/*`
+- `annotation/*`
+
+这些是技术合同、研究证据或历史 provenance，不是当前研发计划。
+
+## 6. Historical / superseded docs
+
+`V0.4_RELEASE_ACCEPTANCE.md` 仅保留为 v0.4 阶段历史入口，已由 `V1_RELEASE_ACCEPTANCE.md` 取代。
+
+Batch / Bundle / fixed-journal / forensic 等历史结果只能用于追溯，不能覆盖 v1.0.0 Final Truth。
+
+## 7. Source-of-truth hierarchy
 
 出现冲突时按顺序：
 
-1. 代码 validator / Pydantic / fail-closed guard；
-2. hash-bound frozen manifest / receipt / machine benchmark；
+1. runtime validator / Pydantic / fail-closed guard；
+2. frozen / final-status machine-readable artifacts；
 3. `COMPETITION_METRIC_PROTOCOL.md`；
-4. `V0.4_RELEASE_ACCEPTANCE.md`；
+4. `V1_RELEASE_ACCEPTANCE.md`；
 5. `FINAL_SUBMISSION_STATUS.md`；
-6. `COMPETITION_CLOSURE_PLAN.md`；
-7. owner 文档 / Runbook；
-8. experiment ledger / research / Git history。
+6. `SUBMISSION_RUNBOOK.md`；
+7. frozen technical contracts；
+8. historical experiment/research docs and Git history。
 
-fixed10 不能冒充 ALL79；offline 不能冒充 real-provider；Replay 不能冒充实时推理；定性 capability proof 不混入 M1/M2。
+## 8. Release governance
 
-## 5. 文档生命周期
-
-长期保留文档至少满足一项：
-
-- 当前 Release Gate / Final Status / Runbook；
-- 被代码或 CI 消费的合同；
-- 不可重建的冻结测量 / provenance / receipt；
-- 单一历史总账；
-- 有明确消费者的长期 research / annotation 证据。
-
-已过时的多份 Current Plan、单批次实验说明不再作为当前入口；历史可通过 `reports/` 和 Git history 追溯。
-
-## 6. 不可移除的治理边界
-
-Existing Gold immutable、`UNJUDGED != negative`、Validation one-shot、Blind outcome isolation、Evidence scope、Market PIT、missing != zero、deterministic Calculation、uncalibrated-score 语义、fallback truthfulness、Secret/PDF/raw licensed data 安全。
-
-## 7. 当前剩余硬任务
+不可移除的边界：
 
 ```text
-one-shot ALL19 Validation
-→ one_shot_validation_receipt.json
-→ final G5/G6 rehash
-→ final CI / fresh clone
-→ Blind / provenance / determinism / security / licensing / path audits
-→ artifact index
-→ secure submission ZIP + SHA256SUMS
-→ PPT / 讲稿 / 演示视频或录屏（若比赛要求）
+Existing Gold immutable
+UNJUDGED != negative
+Gold never enters runtime
+Validation one-shot after freeze
+2025 Blind outcome not used for optimization
+PIT-safe Market
+missing != zero
+no issuer/case/page/Gold hardcoding
+no fabricated Evidence
+uncalibrated model score != probability
+fallback != real-provider success
+no secrets / licensed PDF / raw EOD / raw provider journal in release package
 ```
