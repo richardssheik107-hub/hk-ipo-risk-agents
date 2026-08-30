@@ -10,7 +10,7 @@ from ipo_risk.agents.financial_builders import V03FinancialRiskBuilder
 from ipo_risk.agents.financial_models import ConcentrationObservation
 from ipo_risk.agents.financial_policy import load_v03_financial_policy
 from ipo_risk.agents.financial_v03 import FINANCIAL_EVIDENCE_QUERIES, V03FinancialAgent
-from ipo_risk.extraction import V03FinancialFactExtractor
+from ipo_risk.extraction import ConcentrationFact, ExtractionStatus, V03FinancialFactExtractor
 from ipo_risk.retrieval.keyword import KeywordDocumentRetriever
 from ipo_risk.schemas import (
     ComponentDiagnostic,
@@ -43,6 +43,14 @@ class RiskSpecificRetriever:
         return []
 
 
+class EvidenceByRiskRetriever:
+    def __init__(self, values: dict[str, list[Evidence]]) -> None:
+        self.values = values
+
+    def retrieve_for_risk(self, chunks, risk_code, *, limit=20):
+        return list(self.values.get(risk_code, ()))[:limit]
+
+
 def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
     retriever = RiskSpecificRetriever()
     agent = v03_agent(retriever=retriever)
@@ -55,6 +63,84 @@ def test_financial_agent_prefers_bounded_risk_specific_candidate_pool() -> None:
         ("customer_concentration", 20),
         ("supplier_concentration", 20),
     ]
+
+
+@pytest.mark.parametrize(
+    ("risk_code", "text", "signal_code"),
+    [
+        (
+            "customer_concentration",
+            "The company is pre-revenue and has not generated any product sales revenue.",
+            "customer_denominator_unavailable_pre_revenue",
+        ),
+        (
+            "supplier_concentration",
+            "During the track record period the Group had no major suppliers.",
+            "major_supplier_term_undefined",
+        ),
+    ],
+)
+def test_explicit_qualitative_concentration_ambiguity_creates_pending_review(
+    risk_code: str,
+    text: str,
+    signal_code: str,
+) -> None:
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="qualitative",
+        page=7,
+        text=text,
+    )
+    evidence = Evidence(
+        evidence_id="e-qualitative",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+    retriever = EvidenceByRiskRetriever({risk_code: [evidence]})
+    agent = v03_agent(retriever=retriever)
+
+    observed = agent.analyze(IPOProfile(company_name="Demo"), [chunk])
+    risk = risk_by_code(observed, risk_code)
+
+    assert risk is not None
+    assert risk.verification_status == VerificationStatus.PENDING
+    assert risk.level == RiskLevel.MEDIUM
+    assert risk.calculation is None
+    assert risk.metadata["issue"] == signal_code
+    assert risk.metadata["percentage_inferred"] is False
+    assert [item.evidence_id for item in risk.evidence] == [evidence.evidence_id]
+
+
+def test_generic_concentration_language_does_not_create_qualitative_risk() -> None:
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="generic",
+        page=8,
+        text="We work with many customers and suppliers in the ordinary course.",
+    )
+    evidence = Evidence(
+        evidence_id="e-generic",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+    retriever = EvidenceByRiskRetriever(
+        {
+            "customer_concentration": [evidence],
+            "supplier_concentration": [evidence],
+        }
+    )
+
+    observed = v03_agent(retriever=retriever).analyze(
+        IPOProfile(company_name="Demo"),
+        [chunk],
+    )
+
+    assert risk_by_code(observed, "customer_concentration") is None
+    assert risk_by_code(observed, "supplier_concentration") is None
 
 
 def v03_agent(**kwargs) -> V03FinancialAgent:
@@ -168,6 +254,251 @@ def cash_chunks() -> list[DocumentChunk]:
 
 def risk_by_code(risks: list[RiskItem], risk_code: str) -> RiskItem | None:
     return next((item for item in risks if item.risk_code == risk_code), None)
+
+
+def test_ranked_table_evidence_augments_existing_risk_without_changing_decision() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    table_chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="supplier-table",
+        page=31,
+        text="ranked table source",
+        metadata={
+            "ranked_numeric_table": {
+                "detector": "ranked_numeric_1_to_5_v1",
+                "counterparty_type": "supplier",
+                "largest_counterparty_pct": "45",
+                "top_five_pct": "80",
+                "rank_rows": [{"rank": rank} for rank in range(1, 6)],
+            }
+        },
+    )
+    table_evidence = Evidence(
+        evidence_id="e-ranked-table",
+        document_id="doc",
+        chunk_id=table_chunk.chunk_id,
+        page=table_chunk.page,
+        text="ranked table source",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [*risk.evidence, table_evidence],
+        {table_chunk.chunk_id: table_chunk},
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == "e-ranked-table"
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+    assert observed.metadata["ranked_table_evidence_augmented"] == 1
+
+
+def test_ranked_table_evidence_cannot_cross_concentration_type() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    chunk = DocumentChunk(
+        document_id="doc",
+        chunk_id="supplier-table",
+        page=31,
+        text="ranked table source",
+        metadata={
+            "ranked_numeric_table": {
+                "detector": "ranked_numeric_1_to_5_v1",
+                "counterparty_type": "supplier",
+                "largest_counterparty_pct": "45",
+                "top_five_pct": "80",
+                "rank_rows": [{"rank": rank} for rank in range(1, 6)],
+            }
+        },
+    )
+    evidence = Evidence(
+        evidence_id="e-wrong-type",
+        document_id="doc",
+        chunk_id=chunk.chunk_id,
+        page=chunk.page,
+        text=chunk.text,
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration", risk, [evidence], {chunk.chunk_id: chunk}
+    )
+
+    assert observed is risk
+
+
+def test_parsed_concentration_support_is_retained_without_changing_decision() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    supporting = Evidence(
+        evidence_id="e-parsed-support",
+        document_id="doc",
+        chunk_id="supporting",
+        page=31,
+        text="五大客戶佔收益79%，最大客戶佔收益44%。",
+    )
+    extraction = ConcentrationFact(
+        concentration_type="customer",
+        status=ExtractionStatus.EXTRACTED,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "largest_counterparty_pct": "44",
+                    "top_five_pct": "79",
+                    "evidence_ids": [supporting.evidence_id],
+                    "issues": ["latest_period_months_ambiguous"],
+                }
+            ]
+        },
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration",
+        risk,
+        [supporting],
+        {supporting.chunk_id: DocumentChunk(
+            document_id="doc", chunk_id="supporting", page=31, text=supporting.text
+        )},
+        extraction,
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == supporting.evidence_id
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+
+
+def test_structurally_invalid_concentration_support_is_not_retained() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    invalid = Evidence(
+        evidence_id="e-invalid-support",
+        document_id="doc",
+        chunk_id="invalid",
+        page=31,
+        text="五大供應商佔採購753.1%。",
+    )
+    extraction = ConcentrationFact(
+        concentration_type="supplier",
+        status=ExtractionStatus.NEEDS_REVIEW,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "largest_counterparty_pct": None,
+                    "top_five_pct": "753.1",
+                    "evidence_ids": [invalid.evidence_id],
+                    "issues": ["percentage_out_of_range"],
+                }
+            ]
+        },
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [invalid],
+        {invalid.chunk_id: DocumentChunk(
+            document_id="doc", chunk_id="invalid", page=31, text=invalid.text
+        )},
+        extraction,
+    )
+
+    assert observed is risk
+
+
+def test_top_ranked_type_specific_disclosure_is_retained_as_evidence_only() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("supplier", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "supplier_concentration")
+    assert risk is not None
+    supporting = Evidence(
+        evidence_id="e-principal-suppliers",
+        document_id="doc",
+        chunk_id="principal-suppliers",
+        page=31,
+        text="我們與190多家供應商合作，並將其中四家公司視為主要供應商。",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "supplier_concentration",
+        risk,
+        [supporting],
+        {},
+    )
+
+    assert observed is not None
+    assert [item.evidence_id for item in observed.evidence][-1] == supporting.evidence_id
+    assert observed.level == risk.level
+    assert observed.score == risk.score
+    assert observed.verification_status == risk.verification_status
+    assert observed.calculation == risk.calculation
+    assert observed.metadata["ranked_disclosure_evidence_augmented"] == 1
+
+
+def test_ranked_disclosure_support_is_type_and_rank_bounded() -> None:
+    base = v03_agent().analyze(
+        IPOProfile(company_name="Demo"),
+        [concentration_chunk("customer", "45", "80", page=30)],
+    )
+    risk = risk_by_code(base, "customer_concentration")
+    assert risk is not None
+    wrong_type = Evidence(
+        evidence_id="e-wrong-type-disclosure",
+        document_id="doc",
+        chunk_id="wrong-type-disclosure",
+        page=31,
+        text="五大供應商的採購詳情。",
+    )
+    unrelated = [
+        Evidence(
+            evidence_id=f"e-unrelated-{index}",
+            document_id="doc",
+            chunk_id=f"unrelated-{index}",
+            page=32 + index,
+            text="一般業務資料。",
+        )
+        for index in range(4)
+    ]
+    rank_six = Evidence(
+        evidence_id="e-rank-six-customer",
+        document_id="doc",
+        chunk_id="rank-six-customer",
+        page=40,
+        text="五大客戶的收入詳情。",
+    )
+
+    observed = V03FinancialAgent._augment_ranked_concentration_evidence(
+        "customer_concentration",
+        risk,
+        [wrong_type, *unrelated, rank_six],
+        {},
+    )
+
+    assert observed is risk
 
 
 def diagnostic_by_code(agent: V03FinancialAgent, risk_code: str) -> ComponentDiagnostic:

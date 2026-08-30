@@ -17,6 +17,7 @@ from scripts.run_v046_role_b_ablation import (
     CaseInputs,
     RoleBAblationRunnerError,
     _TracingRetriever,
+    _all_development_subset,
     _build_journaled_router,
     _canonical_hash,
     _experiment_registry,
@@ -600,6 +601,43 @@ def test_preflight_binds_exact_prompt_hashes_and_has_no_secret_or_url() -> None:
     assert len(runtime_hash) == 64
 
 
+def test_preflight_rejects_effective_retry_override_that_drifted_from_profile() -> None:
+    profile = {
+        **_profile(),
+        "max_transport_attempts_per_structured_attempt": 2,
+        "max_structured_attempts": 2,
+        "max_network_calls_per_task": 4,
+    }
+
+    with pytest.raises(RoleBAblationRunnerError, match="effective transport retries"):
+        _preflight(
+            config_path=Path("configs/experiments/v046_role_b_ai_responses.yaml"),
+            settings=_settings(llm_max_retries=0),
+            profile=profile,
+            require_remote=True,
+        )
+
+
+def test_preflight_reports_effective_retry_contract() -> None:
+    profile = {
+        **_profile(),
+        "max_transport_attempts_per_structured_attempt": 2,
+        "max_structured_attempts": 2,
+        "max_network_calls_per_task": 4,
+    }
+
+    report = _preflight(
+        config_path=Path("configs/experiments/v046_role_b_ai_responses.yaml"),
+        settings=_settings(llm_max_retries=1),
+        profile=profile,
+        require_remote=True,
+    )
+
+    assert report["effective_transport_retries"] == 1
+    assert report["expected_transport_retries"] == 1
+    assert report["max_network_calls_per_task"] == 4
+
+
 def test_mode_identity_contains_every_waterfall_alignment_key() -> None:
     settings = _settings()
     profile = _profile()
@@ -761,6 +799,46 @@ def test_explicit_fixed_journal_replay_allows_offline_and_gated_without_shadow()
         execute_mode=execute,
         allow_gated_without_shadow=True,
     )
-
     assert tuple(results) == ("offline", "gated")
     assert calls == ["offline", "gated"]
+
+
+def test_all_development_subset_keeps_negative_control_cases(tmp_path: Path) -> None:
+    manifest = {
+        "evaluable_development_case_count": 2,
+        "metric_protocol_version": "metric-v2",
+        "manifest_hash": _digest("manifest"),
+        "risk_units": [
+            {
+                "case_id": "ipo_2020_positive",
+                "stock_code": "0001.HK",
+                "split": "development",
+                "primary_scope": True,
+                "evaluable_positive": True,
+                "competition_risk_family": "cash_burn_pressure",
+            },
+            {
+                "case_id": "ipo_2020_negative",
+                "stock_code": "0002.HK",
+                "split": "development",
+                "primary_scope": True,
+                "evaluable_positive": False,
+                "competition_risk_family": "cash_burn_pressure",
+            },
+        ],
+        "evidence_units": [],
+    }
+
+    subset = _all_development_subset(tmp_path / "all79.json", manifest, size=2)
+
+    assert subset is not None
+    assert [item["case_id"] for item in subset["cases"]] == [
+        "ipo_2020_negative",
+        "ipo_2020_positive",
+    ]
+    assert subset["cases"][0]["positive_primary_families"] == []
+    assert subset["cases"][1]["positive_primary_families"] == [
+        "cash_burn_pressure"
+    ]
+    assert subset["validation_opened"] is False
+    assert subset["blind_2025_outcome_accessed"] is False

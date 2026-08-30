@@ -273,6 +273,9 @@ def _attempt_counts(
             and item.get("outcome") == "failure"
             and item.get("retry_scheduled") is True
         )
+        structured_correction_count += sum(
+            1 for item in trace if item.get("stage") == "bounded_normalization"
+        )
         return attempt_count, transport_retry_count, structured_correction_count
 
     compatible_attempts = [

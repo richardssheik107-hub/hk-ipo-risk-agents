@@ -275,6 +275,57 @@ def test_extracts_customer_and_supplier_concentration(
     assert result.evidence_ids == ["e-concentration"]
 
 
+@pytest.mark.parametrize(
+    ("largest_label", "top_five_label"),
+    [
+        ("最大最終供應商", "五大最終供應商"),
+        ("最大最终供应商", "五大最终供应商"),
+        ("largest ultimate supplier", "top five ultimate suppliers"),
+    ],
+)
+def test_extracts_explicit_ultimate_supplier_concentration_labels(
+    largest_label: str,
+    top_five_label: str,
+) -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至2023年6月30日止六個月，"
+            f"{top_five_label}佔服務成本78.7%，"
+            f"{largest_label}佔服務成本60.8%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct == Decimal("60.8")
+    assert result.top_five_pct == Decimal("78.7")
+
+
+def test_no_major_supplier_statement_does_not_bind_unrelated_ownership_percentage() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "本集團並無主要供應商。董事或擁有本公司已發行股本5%或以上的股東，"
+            "概無於任何供應商中擁有權益。"
+        ),
+    )
+
+    assert result.status != ExtractionStatus.EXTRACTED
+    assert result.largest_counterparty_pct is None
+    assert result.top_five_pct is None
+
+
+def test_chinese_word_date_is_counted_and_parsed_as_a_narrative_period() -> None:
+    result = concentration(
+        "supplier",
+        "截至二零一九年十二月三十一日止年度，最大供應商佔比45%，五大供應商佔比80%。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.period_end.isoformat() == "2019-12-31"
+    assert result.period_months == 12
+
+
 def test_multiple_period_concentration_selects_latest_aligned_percentages() -> None:
     result = concentration(
         "customer",
@@ -294,6 +345,65 @@ def test_multiple_period_concentration_selects_latest_aligned_percentages() -> N
     assert result.period_months == 5
     assert result.largest_counterparty_pct == Decimal("2.4")
     assert result.top_five_pct == Decimal("5.1")
+
+
+def test_chinese_word_year_series_aligns_latest_concentration_percentages() -> None:
+    result = concentration(
+        "customer",
+        (
+            "於二零一七財政年度、二零一八財政年度、二零一九財政年度及"
+            "二零二零年八個月，最大客戶佔總收益10.1%、11.8%、13.5%及37.5%，"
+            "五大客戶佔總收益34.3%、36.5%、36.6%及68.0%。"
+        ),
+        header="截至二零二零年八月三十一日止八個月",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-08-31"
+    assert result.period_months == 8
+    assert result.largest_counterparty_pct == Decimal("37.5")
+    assert result.top_five_pct == Decimal("68.0")
+
+
+def test_chinese_word_year_series_with_trailing_percentage_fails_closed() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至二零一七年、二零一八年及二零一九年十二月三十一日止年度，"
+            "最大供應商佔採購額17.4%、19.0%及11.5%，"
+            "五大供應商佔採購額38.0%、37.9%、24.9%及6.2%。"
+        ),
+        header=(
+            "截至二零一七年十二月三十一日止年度\n"
+            "截至二零一八年十二月三十一日止年度\n"
+            "截至二零一九年十二月三十一日止年度"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "localized_series_trailing_percentage_ambiguous" in result.issues
+    assert result.largest_counterparty_pct == Decimal("11.5")
+    assert result.top_five_pct == Decimal("24.9")
+
+
+def test_period_months_survive_pdf_space_between_counter_and_month() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至2017年、2018年及2019年12月31日止年度以及"
+            "截至2020年9月30日止九個 月，最大供應商佔採購"
+            "28.5%、28.4%、30.7%及30.7%，五大供應商佔採購"
+            "35.6%、35.7%、38.9%及41.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-09-30"
+    assert result.period_months == 9
+    assert result.largest_counterparty_pct == Decimal("30.7")
+    assert result.top_five_pct == Decimal("41.0")
 
 
 def test_spaced_decimal_percentages_are_not_truncated_to_fractional_digits() -> None:
@@ -335,6 +445,90 @@ def test_aligned_label_local_period_outranks_newer_adjacent_context_date() -> No
         result.metadata["candidate_diagnostics"][0]["period_reconciliation"]
         == "already_chronological_latest"
     )
+
+
+def test_repeated_layout_can_align_a_companion_concentration_series() -> None:
+    result = concentration(
+        "customer",
+        (
+            "五大客戶佔收益93.7%、93.5%、87.6%及97.3%，"
+            "最大客戶佔收益57.9%、40.4%、30.5%及85.9%。"
+            "客戶D（2017年、2018年、2019年及截至2020年2月29日止兩個月最大客戶）"
+            "分別佔收益57.9%、40.4%、30.5%及85.9%。"
+        ),
+        header="一項產品專利於2023年5月24日屆滿。",
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-02-29"
+    assert result.period_months == 2
+    assert result.largest_counterparty_pct == Decimal("85.9")
+    assert result.top_five_pct == Decimal("97.3")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["top_five"] == (
+        "companion_series_period_count"
+    )
+    assert candidate["concentration_period_selection"] == (
+        "companion_series_label_local_period"
+    )
+
+
+def test_equal_companion_series_use_shared_local_period_when_bare_years_are_unavailable() -> None:
+    result = concentration(
+        "customer",
+        (
+            "截至2020年8月31日止八個月，"
+            "最大客戶佔收益10.1%、11.8%、13.5%及37.5%，"
+            "五大客戶佔收益34.3%、36.5%、36.6%及68.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.period_end.isoformat() == "2020-08-31"
+    assert result.period_months == 8
+    assert result.largest_counterparty_pct == Decimal("37.5")
+    assert result.top_five_pct == Decimal("68.0")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"] == {
+        "largest": "companion_series_period_count",
+        "top_five": "companion_series_period_count",
+    }
+    assert candidate["concentration_period_selection"] == (
+        "companion_series_label_local_period"
+    )
+
+
+def test_missing_period_count_does_not_choose_between_two_companion_pairs() -> None:
+    result = concentration(
+        "supplier",
+        (
+            "截至2019年3月31日止年度，"
+            "最大供應商佔採購18.2%、23.8%及24.0%，"
+            "五大供應商佔採購59.7%、57.8%及60.1%；"
+            "最大供應商佔採購15.0%及16.0%，"
+            "五大供應商佔採購45.0%及46.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "value_period_count_mismatch" in result.issues
+
+
+def test_companion_series_does_not_override_mismatched_value_counts() -> None:
+    result = concentration(
+        "customer",
+        (
+            "五大客戶佔收益93.7%、93.5%及97.3%，"
+            "最大客戶佔收益57.9%、40.4%、30.5%及85.9%。"
+            "客戶D（2017年、2018年、2019年及截至2020年2月29日止兩個月最大客戶）"
+            "分別佔收益57.9%、40.4%、30.5%及85.9%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert "value_period_count_mismatch" in result.issues
 
 
 def test_bare_years_are_not_guessed_as_calendar_year_ends() -> None:
@@ -728,6 +922,51 @@ def test_repeated_detail_label_does_not_overwrite_aggregate_series() -> None:
         "enumerated_period_count"
     )
     assert len(candidate["percentage_occurrences"]["top_five"]) == 2
+
+
+def test_companion_series_selects_unique_equal_length_aggregate_occurrence() -> None:
+    result = concentration(
+        "customer",
+        (
+            "截至2020年12月31日止年度，"
+            "五大客戶佔收益65.2%、60.2%及71.0%，"
+            "五大客戶中的客戶A佔收益5.0%，"
+            "最大客戶佔收益17.2%、19.5%及27.0%。"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("27.0")
+    assert result.top_five_pct == Decimal("71.0")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["top_five"] == (
+        "companion_series_count_match"
+    )
+
+
+def test_companion_series_uses_shared_explicit_enumerated_prefix() -> None:
+    result = concentration(
+        "customer",
+        (
+            "於2018年、2019年及2020年，"
+            "五大客戶佔收益19.1%、33.5%及44.1%，"
+            "最大客戶佔收益16.6%、29.2%、39.0%及85.0%。"
+        ),
+        header=(
+            "截至2018年12月31日止年度\n截至2019年12月31日止年度\n"
+            "截至2020年12月31日止年度"
+        ),
+    )
+
+    assert result.status == ExtractionStatus.EXTRACTED
+    assert result.issues == []
+    assert result.largest_counterparty_pct == Decimal("39.0")
+    assert result.top_five_pct == Decimal("44.1")
+    candidate = result.metadata["candidate_diagnostics"][0]
+    assert candidate["percentage_occurrence_selection"]["largest"] == (
+        "companion_enumerated_prefix"
+    )
 
 
 def test_empty_first_label_yields_to_later_aligned_occurrence() -> None:

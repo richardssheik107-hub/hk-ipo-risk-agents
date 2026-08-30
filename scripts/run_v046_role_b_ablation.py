@@ -34,6 +34,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import time
 from typing import Any, Callable, Mapping, Sequence
 import unicodedata
 
@@ -69,6 +70,7 @@ from ipo_risk.providers.llm import (
     OpenAIResponsesLLMProvider,
     UnavailableLLMProvider,
 )
+from ipo_risk.parsers.pymupdf_parser import PyMuPDFRoleBRecallParser
 from ipo_risk.runtime.llm_journal import (
     JournaledLLMProvider,
     LLMJournalRecord,
@@ -120,6 +122,7 @@ DEFAULT_SMOKE_SUMMARY = Path(
     "reports/v046_role_b/structured_smoke/structured_smoke_summary.json"
 )
 DEFAULT_CATALOG = Path("data/catalog/ipo_prospectus_manifest.csv")
+DEFAULT_CACHE_ROOT = Path("data/cache/role_b")
 REMOTE_PROVIDERS = {
     "openai_responses": OpenAIResponsesLLMProvider,
     "openai_compatible": OpenAICompatibleLLMProvider,
@@ -164,6 +167,11 @@ class _TracingRetriever:
     def __init__(self, delegate: Any, sink: list[dict[str, Any]]) -> None:
         self._delegate = delegate
         self._sink = sink
+
+    @property
+    def last_cache_metrics(self) -> dict[str, Any]:
+        observed = getattr(self._delegate, "last_cache_metrics", None)
+        return dict(observed) if isinstance(observed, dict) else {}
 
     def retrieve(self, chunks: list[Any], query: str, limit: int = 3) -> list[Evidence]:
         candidates = list(self._delegate.retrieve(chunks, query, limit=limit))
@@ -299,6 +307,84 @@ def _safe_json_write(path: Path, payload: Any) -> None:
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+    )
+
+
+def _all_development_subset(
+    path: Path, manifest: Mapping[str, Any], *, size: int
+) -> dict[str, Any] | None:
+    expected_count = int(manifest.get("evaluable_development_case_count") or 0)
+    if size != expected_count or expected_count <= 0:
+        return None
+    cases: dict[str, dict[str, Any]] = {}
+    for row in manifest.get("risk_units") or []:
+        if not isinstance(row, Mapping):
+            continue
+        if row.get("split") != "development" or row.get("primary_scope") is not True:
+            continue
+        case_id = str(row.get("case_id") or "")
+        if not case_id:
+            continue
+        item = cases.setdefault(
+            case_id,
+            {
+                "case_id": case_id,
+                "stock_code": str(row.get("stock_code") or ""),
+                "positive_primary_families": set(),
+                "primary_evidence_unit_count": 0,
+            },
+        )
+        family = row.get("competition_risk_family")
+        if row.get("evaluable_positive") is True and isinstance(family, str) and family:
+            item["positive_primary_families"].add(family)
+    for row in manifest.get("evidence_units") or []:
+        if not isinstance(row, Mapping):
+            continue
+        if row.get("split") != "development" or row.get("primary_scope") is not True:
+            continue
+        case_id = str(row.get("case_id") or "")
+        if case_id in cases:
+            cases[case_id]["primary_evidence_unit_count"] += 1
+    if len(cases) != expected_count:
+        raise RoleBAblationRunnerError(
+            f"evaluable Development universe mismatch:{len(cases)}/{expected_count}"
+        )
+    rows = []
+    for case_id in sorted(cases):
+        item = dict(cases[case_id])
+        item["positive_primary_families"] = sorted(
+            item["positive_primary_families"]
+        )
+        rows.append(item)
+    payload: dict[str, Any] = {
+        "subset_version": "v046_role_b_all_development_subset_v1",
+        "selection_algorithm": "all_evaluable_development_cases_sorted_v1",
+        "metric_protocol_version": manifest.get("metric_protocol_version"),
+        "source_coverage_manifest_hash": manifest.get("manifest_hash"),
+        "split": "development",
+        "case_count": expected_count,
+        "cases": rows,
+        "debug_subset_only": False,
+        "validation_opened": False,
+        "blind_2025_outcome_accessed": False,
+    }
+    payload["subset_hash"] = _subset_identity_hash(payload)
+    if path.is_file():
+        observed = json.loads(path.read_text(encoding="utf-8"))
+        if observed != payload:
+            raise RoleBAblationRunnerError(
+                "frozen ALL-Development subset differs from current Existing-Gold manifest"
+            )
+        return observed
+    _safe_json_write(path, payload)
+    return payload
+
+
+def _load_role_b_subset(
+    path: Path, manifest: dict[str, Any], *, size: int
+) -> dict[str, Any]:
+    return _all_development_subset(path, manifest, size=size) or _load_or_create_subset(
+        path, manifest, size=size
     )
 
 
@@ -440,6 +526,16 @@ def _preflight(
         raise RoleBAblationRunnerError("Role-B ablation requires Final Supervisor disabled")
     if not settings.llm_model:
         raise RoleBAblationRunnerError("Role-B ablation model identity is missing")
+    configured_transport_attempts = profile.get(
+        "max_transport_attempts_per_structured_attempt"
+    )
+    expected_transport_retries = None
+    if configured_transport_attempts is not None:
+        expected_transport_retries = max(0, int(configured_transport_attempts) - 1)
+        if int(settings.llm_max_retries) != expected_transport_retries:
+            raise RoleBAblationRunnerError(
+                "Role-B effective transport retries differ from the frozen profile"
+            )
     prompt_hashes = _prompt_hashes(profile, settings.llm_provider)
     api_key_present = bool(settings.llm_api_key)
     base_url_present = bool(settings.llm_base_url)
@@ -451,6 +547,8 @@ def _preflight(
         "effective_model": settings.llm_model,
         "transport": transport,
         "timeout_seconds": int(settings.llm_timeout_seconds),
+        "effective_transport_retries": int(settings.llm_max_retries),
+        "expected_transport_retries": expected_transport_retries,
         "max_network_calls_per_task": int(
             profile.get("max_network_calls_per_task")
             or (1 + int(settings.llm_max_retries))
@@ -561,8 +659,14 @@ def _registry_for_mode(
     mode: str,
     role_b_provider: Any,
     provider_name: str,
+    *,
+    cache_root: Path | None = None,
+    expected_pdf_sha256: str | None = None,
 ) -> ComponentRegistry:
-    registry = _experiment_registry()
+    registry = _experiment_registry(
+        cache_root=cache_root,
+        expected_pdf_sha256=expected_pdf_sha256,
+    )
     registry.register("llm_provider", provider_name, lambda **_: role_b_provider)
     if mode == RoleBAblationMode.SHADOW.value:
         registry.register(
@@ -590,12 +694,25 @@ def _registry_for_mode(
     return registry
 
 
-def _experiment_registry() -> ComponentRegistry:
+def _experiment_registry(
+    *,
+    cache_root: Path | None = None,
+    expected_pdf_sha256: str | None = None,
+) -> ComponentRegistry:
     registry = default_registry()
+    if cache_root is not None:
+        registry.register(
+            "parser",
+            PyMuPDFRoleBRecallParser.name,
+            lambda **_: PyMuPDFRoleBRecallParser(
+                cache_root=cache_root,
+                expected_pdf_sha256=expected_pdf_sha256,
+            ),
+        )
     registry.register(
         "retriever",
         RoleBFinancialHighRecallRetriever.name,
-        RoleBFinancialHighRecallRetriever,
+        lambda **_: RoleBFinancialHighRecallRetriever(cache_root=cache_root),
     )
     return registry
 
@@ -975,6 +1092,7 @@ def _case_executor(
     runtime_config_hash: str,
     output_root: Path,
     journal: LocalLLMJournal,
+    cache_root: Path | None = None,
 ) -> tuple[ModeExecutor, dict[str, Any]]:
     replay_delegates: dict[str, _ReplayOnlyDelegate] = {}
     shadow_projections: dict[str, Any] = {}
@@ -992,7 +1110,10 @@ def _case_executor(
             return _analyse(
                 settings=_offline_settings(settings, data_dir, report_dir),
                 request=request,
-                registry=_experiment_registry(),
+                registry=_experiment_registry(
+                    cache_root=cache_root,
+                    expected_pdf_sha256=case.prospectus_sha256,
+                ),
                 retrieval_trace_sink=trace_sink,
             )
 
@@ -1011,7 +1132,13 @@ def _case_executor(
         observed = _analyse(
             settings=mode_settings,
             request=request,
-            registry=_registry_for_mode(mode, provider, settings.llm_provider),
+            registry=_registry_for_mode(
+                mode,
+                provider,
+                settings.llm_provider,
+                cache_root=cache_root,
+                expected_pdf_sha256=case.prospectus_sha256,
+            ),
             retrieval_trace_sink=trace_sink,
         )
         if mode == RoleBAblationMode.SHADOW.value:
@@ -1273,6 +1400,8 @@ def _write_governed_run_artifacts(
     journal_manifest: Mapping[str, Any],
     evaluation: Mapping[str, Any],
     modes: Sequence[str],
+    wall_clock_ms: float = 0.0,
+    evaluation_wall_clock_ms: float = 0.0,
 ) -> None:
     mode_results = evaluation.get("modes") or {}
     summaries = {
@@ -1327,6 +1456,44 @@ def _write_governed_run_artifacts(
         and float(summaries["gated"]["m2"]) >= 0.85
     )
     _safe_json_write(output_root / "llm_call_quality.json", call_quality)
+    cache_by_mode: dict[str, dict[str, Any]] = {}
+    for mode in modes:
+        aggregate: dict[str, Any] = {
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 0,
+            "table_cache_hits": 0,
+            "table_cache_misses": 0,
+            "raw_page_cache_hits": 0,
+            "raw_page_cache_misses": 0,
+            "retrieval_cache_hits": 0,
+            "retrieval_cache_misses": 0,
+            "fact_cache_hits": 0,
+            "fact_cache_misses": 0,
+            "stage_wall_clock_ms": {},
+        }
+        case_ids = _case_ids(dict(subset)) if subset.get("cases") else []
+        for case_id in case_ids:
+            result_path = output_root / mode / "run" / case_id / "analysis_result.json"
+            if not result_path.exists():
+                continue
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            metrics = (
+                (result.get("metadata") or {}).get("document") or {}
+            ).get("cache_metrics") or {}
+            for key in tuple(aggregate):
+                if key == "stage_wall_clock_ms":
+                    continue
+                aggregate[key] += int(metrics.get(key) or 0)
+            for key, value in (metrics.get("stage_wall_clock_ms") or {}).items():
+                aggregate["stage_wall_clock_ms"][key] = (
+                    aggregate["stage_wall_clock_ms"].get(key, 0.0) + float(value)
+                )
+        aggregate["stage_wall_clock_ms"] = {
+            key: round(value, 3)
+            for key, value in sorted(aggregate["stage_wall_clock_ms"].items())
+        }
+        cache_by_mode[mode] = aggregate
+
     ablation_summary = {
         "report_version": "v046_role_b_ablation_summary_v1",
         "case_count": subset.get("case_count"),
@@ -1347,6 +1514,16 @@ def _write_governed_run_artifacts(
         "monotonicity_satisfied": monotonicity.get("satisfied"),
         "fixed10_target_reached": fixed10_target_reached,
         "selected_mode": selected_mode,
+        "cache": cache_by_mode,
+        "performance": {
+            "total_wall_clock_ms": round(wall_clock_ms, 3),
+            "evaluation_wall_clock_ms": round(evaluation_wall_clock_ms, 3),
+            "llm_reported_latency_ms": sum(
+                int(item.get("latency_ms") or 0) for item in call_quality.get("calls", [])
+            ),
+            "retrieval_wall_clock_ms": "NOT_YET_INSTRUMENTED",
+            "deterministic_extraction_wall_clock_ms": "NOT_YET_INSTRUMENTED",
+        },
         "validation_opened": False,
         "blind_2025_outcome_accessed": False,
     }
@@ -1396,6 +1573,7 @@ def _parse_modes(value: str) -> tuple[str, ...]:
 
 
 def main() -> int:
+    run_started = time.perf_counter()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -1405,6 +1583,7 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
     parser.add_argument("--smoke-summary", type=Path, default=DEFAULT_SMOKE_SUMMARY)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--cache-root", type=Path, default=DEFAULT_CACHE_ROOT)
     parser.add_argument("--run-id", default="run_001")
     parser.add_argument("--modes", type=_parse_modes, default=MODE_ORDER)
     parser.add_argument("--subset-size", type=int, default=10)
@@ -1434,12 +1613,13 @@ def main() -> int:
     catalog_path = resolved(args.catalog)
     smoke_summary_path = resolved(args.smoke_summary)
     output_root = resolved(args.output_root) / args.run_id
+    cache_root = resolved(args.cache_root)
     replay_journal_root = (
         resolved(args.replay_journal) if args.replay_journal is not None else None
     )
 
     coverage = _ensure_coverage(root, coverage_path)
-    subset = _load_or_create_subset(subset_path, coverage, size=args.subset_size)
+    subset = _load_role_b_subset(subset_path, coverage, size=args.subset_size)
     validate_development_only_manifest(subset)
     case_ids = _case_ids(subset)
     if args.case_id:
@@ -1544,6 +1724,7 @@ def main() -> int:
         runtime_config_hash=journal_identity_runtime_hash,
         output_root=output_root,
         journal=journal,
+        cache_root=cache_root,
     )
 
     statuses: list[dict[str, Any]] = []
@@ -1592,6 +1773,7 @@ def main() -> int:
         },
     )
 
+    evaluation_started = time.perf_counter()
     evaluation = _evaluate_modes(
         root=root,
         output_root=output_root,
@@ -1606,6 +1788,7 @@ def main() -> int:
         profile=profile,
         retrieval_calls=diagnostics["retrieval_calls"],
     )
+    evaluation_wall_clock_ms = (time.perf_counter() - evaluation_started) * 1000
     _write_governed_run_artifacts(
         output_root=output_root,
         subset=subset,
@@ -1616,6 +1799,8 @@ def main() -> int:
         journal_manifest=journal_manifest,
         evaluation=evaluation,
         modes=modes,
+        wall_clock_ms=(time.perf_counter() - run_started) * 1000,
+        evaluation_wall_clock_ms=evaluation_wall_clock_ms,
     )
     print(f"output_root={output_root}")
     print(f"journal_records={journal_manifest['record_count']}")
