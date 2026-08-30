@@ -1,25 +1,33 @@
 {
-  "schema_version": "competition_submission_closeout_status_v1",
+  "schema_version": "competition_submission_closeout_status_v2",
+  "release_version": "1.0.0",
+  "release_type": "competition_submission_product_release",
   "status_date": "2026-08-30",
   "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
   "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
+  "product_release_approved": true,
   "submission_closeout_active": true,
   "competition_ready": false,
+  "competition_ready_blocker": "self_defined_G2_below_threshold",
   "final_development": {
     "best_offline": {
       "cases": 79,
       "m1_correct": 70,
       "m1_total": 102,
+      "m1": 0.6862745098039216,
       "m2_covered": 103,
-      "m2_total": 191
+      "m2_total": 191,
+      "m2": 0.5392670157068062
     },
     "real_llm_gated": {
       "cases": 79,
       "real_llm_cases": 79,
       "m1_correct": 61,
       "m1_total": 102,
+      "m1": 0.5980392156862745,
       "m2_covered": 93,
-      "m2_total": 191
+      "m2_total": 191,
+      "m2": 0.4869109947643979
     }
   },
   "gates": {
@@ -33,27 +41,37 @@
     "G7": "partial"
   },
   "completed": [
-    "Role-B frozen branch merged into main",
     "formal ALL79 Role-B summary recorded",
     "runtime freeze manifest recorded",
-    "G5 product acceptance present and pass",
-    "G6 capability manifest present and pass",
-    "integrated main tests / Role D runtime / Team demo runtime passed"
+    "Development optimization closed",
+    "G3 Dynamic Market-X pass retained",
+    "G4 Dynamic Model/SHAP pass retained",
+    "G5 product acceptance pass retained",
+    "G6 capability manifest pass retained",
+    "v1.0.0 package version set",
+    "v1.0.0 release documentation finalized"
   ],
   "pending_external_or_local_actions": [
     "one-shot ALL19 2024 Existing-Gold Validation",
     "write one_shot_validation_receipt.json",
-    "rehash G5/G6 on the final submission commit",
+    "rehash G5/G6 on the exact final submission tree",
     "fresh-clone verification in a clean directory",
-    "Blind / provenance / determinism / security / licensing / path audits",
+    "Blind/provenance/determinism/security/licensing/path audits",
     "build final artifact index with SHA-256",
-    "build secure submission package and SHA256SUMS",
-    "prepare final PPT / defense script / Q&A / video or recording if required by the competition platform"
+    "build secure competition submission package and SHA256SUMS",
+    "prepare final PPT/defense script/Q&A/video or recording if required by the competition platform"
+  ],
+  "release_claims_allowed": [
+    "v1.0.0 competition submission product release",
+    "real LLM gated 79/79 Development cases",
+    "G3/G4/G5/G6 pass",
+    "G2 blocked under the self-defined target",
+    "best offline result reported separately from real LLM gated result"
   ],
   "forbidden": [
     "claim G2 pass",
+    "claim competition_ready true",
     "replace real-LLM metrics with offline metrics",
-    "set competition_ready true while G2 is blocked",
     "Development or Validation-driven retuning after freeze",
     "include secrets, licensed PDFs, raw market data or raw provider journals in the public/submission bundle"
   ]
