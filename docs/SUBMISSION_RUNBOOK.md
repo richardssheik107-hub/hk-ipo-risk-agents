@@ -279,6 +279,7 @@ rejection reason
 source code / allowed configs
 README / FINAL_SUBMISSION_STATUS / TEAM_QUICKSTART / Runbook
 Role-B benchmark summary
+Role-B ALL79 detailed governed evidence receipt
 freeze manifest
 Validation receipt
 Market / Model audits

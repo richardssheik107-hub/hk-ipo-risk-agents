@@ -52,7 +52,8 @@
 - Role-B freeze `dcc36ab` 已合入最新 main；
 - final runtime identity 冻结在 `ab3390cc`；
 - Role-B 核心 runtime identity 已做 hash 等价核对；
-- 正式 `reports/v045_role_b/document_benchmark_summary.json` 已生成；
+- 正式 `reports/v045_role_b/document_benchmark_summary.json` 与
+  `reports/v045_role_b/all79_final/` 安全、hash-bound 详细证据已生成；
 - `reports/final_status/final_freeze_manifest.json` 已生成；
 - G5/G6 当前 artifact 保持 PASS；
 - 旧分支保留作历史，不要求删除。
@@ -87,6 +88,7 @@
 ### B. 技术与指标证明
 
 - `reports/v045_role_b/document_benchmark_summary.json`；
+- `reports/v045_role_b/all79_final/`（调用质量、hash-only provenance、waterfall、monotonicity、run manifest）；
 - `reports/final_status/final_freeze_manifest.json`；
 - one-shot Validation receipt（运行后补）；
 - G5 `product_acceptance.json`；
