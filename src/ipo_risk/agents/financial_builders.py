@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from datetime import date
 from decimal import Decimal
 from uuid import NAMESPACE_URL, uuid5
 
@@ -41,6 +43,8 @@ from ipo_risk.skills.financial import (
 
 
 _LEVEL_SCORES = {RiskLevel.HIGH: 80, RiskLevel.MEDIUM: 60}
+_LEVEL_RANK = {None: 0, RiskLevel.MEDIUM: 1, RiskLevel.HIGH: 2}
+_DISCLOSED_PERCENTAGE = re.compile(r"\s*([+-]?\d+(?:\s*\.\s*\d+)?)\s*[%％]\s*")
 
 
 @dataclass(frozen=True, slots=True)
@@ -272,6 +276,7 @@ class V03FinancialRiskBuilder:
     ) -> _RiskDecision:
         """Build customer or supplier concentration risk with period traceability."""
 
+        fact = self._select_track_record_peak(fact)
         risk_code = f"{fact.concentration_type}_concentration"
         context, issue = self._map_concentration(fact)
         if issue or context is None:
@@ -345,7 +350,28 @@ class V03FinancialRiskBuilder:
             "largest_counterparty_pct": str(largest) if largest is not None else None,
             "top_five_pct": str(top_five) if top_five is not None else None,
         }
+        for field in (
+            "decision_basis",
+            "track_record_period_binding",
+            "track_record_peak_index",
+            "track_record_largest_series",
+            "track_record_top_five_series",
+            "latest_selected_values_before_track_record",
+        ):
+            if field in fact.metadata:
+                metadata[field] = fact.metadata[field]
         if level is None:
+            unresolved_history = self._track_record_review_fact(fact)
+            if unresolved_history is not None:
+                pending = self._build_unresolved_concentration(
+                    unresolved_history,
+                    risk_code=risk_code,
+                    issue="track_record_series_incomplete_or_conflicting",
+                    evidence_by_id=evidence_by_id,
+                    chunks_by_id=chunks_by_id,
+                )
+                if pending is not None:
+                    return pending
             return self._not_applicable(
                 risk_code,
                 f"Latest {observation.concentration_type} concentration is below configured thresholds.",
@@ -373,15 +399,25 @@ class V03FinancialRiskBuilder:
             error=None,
         )
         label = "Customer" if observation.concentration_type == "customer" else "Supplier"
+        track_record_peak = metadata.get("decision_basis") == "track_record_peak_disclosed_series"
         risk = self._risk(
             risk_code=risk_code,
             risk_type=f"{label} concentration",
             level=level,
             conclusion=(
-                f"For the {context.period_months}-month period ended "
-                f"{observation.period_end.isoformat()}, the largest {label.lower()} "
-                f"represented {metadata['largest_counterparty_pct']}% and the top five "
-                f"represented {metadata['top_five_pct']}%."
+                (
+                    f"Across the disclosed track-record series ending "
+                    f"{observation.period_end.isoformat()}, peak {label.lower()} "
+                    f"concentration was {metadata['largest_counterparty_pct']}% for the "
+                    f"largest counterparty and {metadata['top_five_pct']}% for the top five."
+                )
+                if track_record_peak
+                else (
+                    f"For the {context.period_months}-month period ended "
+                    f"{observation.period_end.isoformat()}, the largest {label.lower()} "
+                    f"represented {metadata['largest_counterparty_pct']}% and the top five "
+                    f"represented {metadata['top_five_pct']}%."
+                )
             ),
             evidence=evidence,
             calculation=calculation,
@@ -394,6 +430,248 @@ class V03FinancialRiskBuilder:
             metadata=metadata,
         )
         return self._generated(risk, metadata)
+
+    def _select_track_record_peak(self, fact: ConcentrationFact) -> ConcentrationFact:
+        """Recover a stronger source-backed point from a clean disclosed series.
+
+        The extractor intentionally keeps a single period in the public fact,
+        but a prospectus table often discloses an aligned percentage pair for
+        every track-record period.  When a clean candidate retains two equally
+        sized, internally valid series, preserve the strongest policy-relevant
+        pair instead of silently discarding it with the non-latest columns.
+
+        The selected Evidence still contains the complete disclosed series.  We
+        bind ``period_end``/``period_months`` only as the series end and state
+        that scope explicitly in metadata and the conclusion; no historical
+        date is invented for the peak column.
+        """
+
+        diagnostics = fact.metadata.get("candidate_diagnostics", [])
+        if not isinstance(diagnostics, Sequence) or isinstance(
+            diagnostics, (str, bytes)
+        ):
+            return fact
+        current_level = self.policy.concentration_level(
+            fact.concentration_type,
+            fact.largest_counterparty_pct,
+            fact.top_five_pct,
+        )
+        best: (
+            tuple[
+                int,
+                int,
+                date,
+                int,
+                Decimal,
+                Decimal,
+                list[str],
+                list[str],
+                list[str],
+            ]
+            | None
+        ) = None
+        for item in diagnostics:
+            if not isinstance(item, Mapping):
+                continue
+            if item.get("status") != ExtractionStatus.EXTRACTED.value or item.get("issues"):
+                continue
+            raw = item.get("raw_percentages")
+            if not isinstance(raw, Mapping):
+                continue
+            largest_series = self._percentage_series(raw.get("largest"))
+            top_five_series = self._percentage_series(raw.get("top_five"))
+            if (
+                largest_series is None
+                or top_five_series is None
+                or len(largest_series) != len(top_five_series)
+                or len(largest_series) < 2
+            ):
+                continue
+            if any(
+                largest > top_five
+                for largest, top_five in zip(largest_series, top_five_series)
+            ):
+                continue
+            raw_end = item.get("period_end")
+            raw_months = item.get("period_months")
+            evidence_ids = [
+                str(value)
+                for value in item.get("evidence_ids", [])
+                if isinstance(value, str)
+            ]
+            if (
+                not isinstance(raw_end, str)
+                or isinstance(raw_months, bool)
+                or not isinstance(raw_months, int)
+                or not 1 <= raw_months <= 12
+                or not evidence_ids
+            ):
+                continue
+            try:
+                series_end = date.fromisoformat(raw_end)
+            except ValueError:
+                continue
+            for index, (largest, top_five) in enumerate(
+                zip(largest_series, top_five_series)
+            ):
+                level = self.policy.concentration_level(
+                    fact.concentration_type, largest, top_five
+                )
+                rank = _LEVEL_RANK[level]
+                candidate = (
+                    rank,
+                    index,
+                    series_end,
+                    raw_months,
+                    largest,
+                    top_five,
+                    evidence_ids,
+                    [str(value) for value in largest_series],
+                    [str(value) for value in top_five_series],
+                )
+                if best is None or candidate[:2] > best[:2]:
+                    best = candidate
+        if best is None or best[0] <= _LEVEL_RANK[current_level]:
+            return fact
+        (
+            _rank,
+            peak_index,
+            series_end,
+            series_end_months,
+            peak_largest,
+            peak_top_five,
+            evidence_ids,
+            largest_series_text,
+            top_five_series_text,
+        ) = best
+        metadata = {
+            **fact.metadata,
+            "decision_basis": "track_record_peak_disclosed_series",
+            "track_record_period_binding": "series_end_only",
+            "track_record_peak_index": peak_index,
+            "track_record_largest_series": largest_series_text,
+            "track_record_top_five_series": top_five_series_text,
+            "latest_selected_values_before_track_record": {
+                "period_end": fact.period_end.isoformat() if fact.period_end else None,
+                "period_months": fact.period_months,
+                "largest_counterparty_pct": (
+                    str(fact.largest_counterparty_pct)
+                    if fact.largest_counterparty_pct is not None
+                    else None
+                ),
+                "top_five_pct": (
+                    str(fact.top_five_pct) if fact.top_five_pct is not None else None
+                ),
+            },
+        }
+        return fact.model_copy(
+            update={
+                "period_end": series_end,
+                "period_months": series_end_months,
+                "largest_counterparty_pct": peak_largest,
+                "top_five_pct": peak_top_five,
+                "evidence_ids": evidence_ids,
+                "status": ExtractionStatus.EXTRACTED,
+                "issues": [],
+                "metadata": metadata,
+            }
+        )
+
+    def _track_record_review_fact(
+        self, fact: ConcentrationFact
+    ) -> ConcentrationFact | None:
+        """Keep a bounded incomplete companion series visible for review."""
+
+        diagnostics = fact.metadata.get("candidate_diagnostics", [])
+        if not isinstance(diagnostics, Sequence) or isinstance(
+            diagnostics, (str, bytes)
+        ):
+            return None
+        clean_paired_series = False
+        unresolved_evidence_ids: list[str] = []
+        unresolved_issue_codes: list[str] = []
+        allowed = {
+            "missing_period",
+            "incomplete_concentration_values",
+            "value_period_count_mismatch",
+            "latest_period_months_ambiguous",
+        }
+        for item in diagnostics:
+            if not isinstance(item, Mapping):
+                continue
+            raw = item.get("raw_percentages")
+            if not isinstance(raw, Mapping):
+                continue
+            largest_series = self._percentage_series(raw.get("largest"))
+            top_five_series = self._percentage_series(raw.get("top_five"))
+            issues = {str(value) for value in item.get("issues", [])}
+            if (
+                item.get("status") == ExtractionStatus.EXTRACTED.value
+                and not issues
+                and largest_series is not None
+                and top_five_series is not None
+                and len(largest_series) == len(top_five_series)
+                and len(largest_series) >= 2
+            ):
+                clean_paired_series = True
+                continue
+            one_sided_series = (
+                largest_series is None
+                and top_five_series is not None
+                and len(top_five_series) >= 2
+            ) or (
+                top_five_series is None
+                and largest_series is not None
+                and len(largest_series) >= 2
+            )
+            if (
+                item.get("status") == ExtractionStatus.NEEDS_REVIEW.value
+                and one_sided_series
+                and issues
+                and issues <= allowed
+            ):
+                unresolved_evidence_ids.extend(
+                    str(value)
+                    for value in item.get("evidence_ids", [])
+                    if isinstance(value, str)
+                )
+                unresolved_issue_codes.extend(sorted(issues))
+        if not clean_paired_series or not unresolved_evidence_ids:
+            return None
+        evidence_ids = list(
+            dict.fromkeys([*fact.evidence_ids, *unresolved_evidence_ids])
+        )
+        return fact.model_copy(
+            update={
+                "evidence_ids": evidence_ids,
+                "status": ExtractionStatus.NEEDS_REVIEW,
+                "issues": ["track_record_series_incomplete_or_conflicting"],
+                "metadata": {
+                    **fact.metadata,
+                    "decision_basis": "track_record_series_requires_review",
+                    "track_record_unresolved_issue_codes": list(
+                        dict.fromkeys(unresolved_issue_codes)
+                    ),
+                },
+            }
+        )
+
+    @staticmethod
+    def _percentage_series(raw: object) -> list[Decimal] | None:
+        if not isinstance(raw, list) or not raw:
+            return None
+        values: list[Decimal] = []
+        for item in raw:
+            if not isinstance(item, str):
+                return None
+            matched = _DISCLOSED_PERCENTAGE.fullmatch(item)
+            if matched is None:
+                return None
+            value = Decimal(re.sub(r"\s+", "", matched.group(1)))
+            if not value.is_finite() or value < 0 or value > 100:
+                return None
+            values.append(value)
+        return values
 
     def build_qualitative_concentration_review(
         self,
@@ -496,6 +774,12 @@ class V03FinancialRiskBuilder:
             "period_end": fact.period_end.isoformat() if fact.period_end else None,
             "period_months": fact.period_months,
         }
+        for field in (
+            "decision_basis",
+            "track_record_unresolved_issue_codes",
+        ):
+            if field in fact.metadata:
+                metadata[field] = fact.metadata[field]
         risk = self._risk(
             risk_code=risk_code,
             risk_type=f"{label} concentration",
