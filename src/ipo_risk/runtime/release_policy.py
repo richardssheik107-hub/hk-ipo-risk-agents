@@ -1,12 +1,12 @@
-"""Active release-policy compatibility for the v0.4.5 submission tooling.
+"""Active release-policy compatibility for the v1.0.0 submission tooling.
 
 The frozen Metric-v2 implementation historically treated M4 human explanation
-reviews as a mandatory release gate.  The current competition release plan no
-longer requires new human annotation.  We intentionally leave the historical
+reviews as a mandatory release gate. The final competition product no longer
+requires new human annotation. We intentionally leave the historical
 metric/audit implementation intact for provenance and apply this small policy
 adapter only at the active submission CLI boundary.
 
-Human Review remains a product capability.  Missing human-review artifacts do
+Human Review remains a product capability. Missing human-review artifacts do
 not fail release readiness; present optional artifacts remain subject to the
 normal security allowlist.
 """
@@ -17,7 +17,7 @@ from copy import deepcopy
 from typing import Any
 
 
-ACTIVE_RELEASE_POLICY_VERSION = "v045_release_policy_current_docs_demo_bundle_v2"
+ACTIVE_RELEASE_POLICY_VERSION = "v100_release_policy_final_docs_demo_bundle_v1"
 DEFAULT_ROLE_E_DIR = "reports/v045_demo_bundle"
 _OPTIONAL_ROLE_E_CASE_FILES = frozenset({"human_review_export.json"})
 _OPTIONAL_ARTIFACT_SUFFIXES = (
@@ -25,12 +25,14 @@ _OPTIONAL_ARTIFACT_SUFFIXES = (
     "/human_review_export.json",
 )
 _ACTIVE_SUBMISSION_DOCS = (
+    "README.md",
     "docs/README.md",
-    "docs/SUBMISSION_RUNBOOK.md",
-    "docs/V0.4_RELEASE_ACCEPTANCE.md",
+    "docs/RELEASE_NOTES_V1.0.0.md",
+    "docs/V1_RELEASE_ACCEPTANCE.md",
     "docs/FINAL_SUBMISSION_STATUS.md",
     "docs/COMPETITION_CLOSURE_PLAN.md",
     "docs/COMPETITION_METRIC_PROTOCOL.md",
+    "docs/SUBMISSION_RUNBOOK.md",
     "docs/TEAM_QUICKSTART.md",
     "docs/PROJECT_SPEC.md",
     "docs/ARCHITECTURE.md",
@@ -38,15 +40,14 @@ _ACTIVE_SUBMISSION_DOCS = (
     "docs/ROLE_D_MODEL_DECISION.md",
     "docs/V045_ROLE_D_FINAL_CLOSURE.md",
     "docs/FRONTEND_JUDGE_FACING_HANDOFF.md",
-    "docs/V1_RELEASE_NOTES_DRAFT.md",
 )
 
 
 def activate_active_release_policy() -> None:
-    """Make legacy discovery match the active release policy.
+    """Make legacy discovery match the active v1.0.0 release policy.
 
     This mutation is process-local and is deliberately performed only by the
-    active readiness/packaging CLIs.  Library callers of the frozen historical
+    active readiness/packaging CLIs. Library callers of the frozen historical
     audit remain unchanged unless they explicitly opt in.
     """
 
@@ -57,8 +58,8 @@ def activate_active_release_policy() -> None:
         for name in legacy.ROLE_E_CASE_REQUIRED
         if name not in _OPTIONAL_ROLE_E_CASE_FILES
     )
-    # Retire references to deleted historical planning files from the final ZIP
-    # allowlist and ship the current active documentation set instead.
+    # Retire historical/superseded planning files from the final ZIP allowlist
+    # and ship the v1.0.0 source-of-truth documentation set instead.
     legacy.SUBMISSION_DOCS = _ACTIVE_SUBMISSION_DOCS
 
 
@@ -70,7 +71,7 @@ def _optional_m4_blocker(blocker: Any) -> bool:
 def apply_active_release_readiness(readiness: dict[str, Any]) -> dict[str, Any]:
     """Remove only the retired human-review Gate from a readiness result.
 
-    All non-M4 failures remain authoritative.  In particular this adapter cannot
+    All non-M4 failures remain authoritative. In particular this adapter cannot
     turn a failed Final Supervisor, trace, Market, B, D, CI, security, provenance
     or determinism check into a PASS.
     """
@@ -126,7 +127,7 @@ def apply_active_release_artifact_index(index: dict[str, Any]) -> dict[str, Any]
     """Make Human Review artifacts optional without weakening security checks.
 
     Missing optional records are omitted because the packager's index/allowlist
-    equality check must not expect a file that is intentionally absent.  A
+    equality check must not expect a file that is intentionally absent. A
     present optional diagnostic remains indexed, hash-bound and security-checked.
     """
 
