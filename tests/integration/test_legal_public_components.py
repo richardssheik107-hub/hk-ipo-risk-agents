@@ -154,13 +154,19 @@ def test_unavailable_provider_degrades_one_component_while_negative_other_comple
         llm_provider=UnavailableLLMProvider("integration unavailable"),
     )
 
-    assert agent.analyze(IPOProfile(company_name="Synthetic IPO"), chunks) == []
+    risks = agent.analyze(IPOProfile(company_name="Synthetic IPO"), chunks)
+
+    assert [item.risk_code for item in risks] == ["redemption_rights"]
+    assert risks[0].verification_status == VerificationStatus.NEEDS_REVIEW
 
     by_code = {item.risk_code: item for item in agent.last_diagnostics}
-    assert by_code["redemption_rights"].code == DiagnosticCode.EXTRACTION_FAILED
+    assert by_code["redemption_rights"].code == DiagnosticCode.NEEDS_REVIEW
     assert "llm_provider_unavailable" in by_code["redemption_rights"].metadata[
         "internal_issue_codes"
     ]
+    assert by_code["redemption_rights"].metadata["provider_fallback_reason"] == (
+        "provider_unavailable"
+    )
     assert by_code["material_litigation_compliance"].code == DiagnosticCode.NOT_APPLICABLE
     assert "negation_detected" in by_code["material_litigation_compliance"].metadata[
         "internal_issue_codes"
@@ -170,7 +176,6 @@ def test_unavailable_provider_degrades_one_component_while_negative_other_comple
 @pytest.mark.parametrize(
     ("kind", "expected_code"),
     [
-        (LLMFailureKind.UNAVAILABLE, DiagnosticCode.EXTRACTION_FAILED),
         (LLMFailureKind.RESPONSE_VALIDATION, DiagnosticCode.EXTRACTION_FAILED),
         (LLMFailureKind.TRANSPORT, DiagnosticCode.COMPONENT_FAILURE),
     ],

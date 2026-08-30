@@ -83,6 +83,35 @@ _RESTORATIVE_RIGHT_ACTION_TERMS = (
     "要求", "购回", "購回", "回购", "回購", "赎回", "贖回",
 )
 
+_EXPLICIT_SPECIAL_RIGHT = re.compile(
+    r"赎回权|贖回權|回购权|回購權|清算优先权|清算優先權|反摊薄|反攤薄|"
+    r"对赌安排|對賭安排|特殊权利|特殊權利|\bredemption rights?\b|"
+    r"\brepurchase right\b|\bbuyback right\b|\bliquidation preference\b|"
+    r"\banti[- ]dilution(?: right)?\b|\bspecial rights?\b|"
+    r"\bvaluation adjustment mechanism\b|\bVAM\b",
+    re.I,
+)
+_EXPLICIT_SPECIAL_INVESTOR = re.compile(
+    r"投资者|投資者|优先股股东|優先股股東|首次公开发售前|首次公開發售前|"
+    r"\binvestors?\b|\bpreferred shareholders?\b|\bpre[- ]IPO\b|"
+    r"\bseries [a-z0-9]+\b",
+    re.I,
+)
+_EXPLICIT_LISTING_CONTEXT = re.compile(
+    r"上市|首次公开发售|首次公開發售|\blisting\b|\bIPO\b",
+    re.I,
+)
+_EXPLICIT_LIFECYCLE_CONTEXT = re.compile(
+    r"终止|終止|失效|届满|屆滿|豁免|放弃|放棄|恢复|恢復|重新生效|"
+    r"重启|重啟|可予行使|再次行使|仍然有效|继续有效|繼續有效|上市后仍|"
+    r"上市後仍|\bterminat(?:e|ed|ion)\b|\bcease[ds]?\b|\blapse[ds]?\b|"
+    r"\bexpir(?:e|ed|y)\b|\bwaiv(?:e|ed|er)\b|\brestor(?:e|ed|ation)\b|"
+    r"\brev(?:ive|ived)\b|\breinstate[dm]?\b|\bresume[ds]?\b|"
+    r"\bremain(?:s|ed)? effective\b|\bcontinue[ds]? (?:to be )?effective\b|"
+    r"\bsurvive[ds]? (?:the )?listing\b",
+    re.I,
+)
+
 
 def _compact(value: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", value)).strip()
@@ -139,6 +168,68 @@ class ShareholderRightsExtractor:
         if not isinstance(candidate, ShareholderRightCandidate):
             candidate = ShareholderRightCandidate.model_validate(candidate)
         return self.normalize(candidate, evidence)
+
+    def extract_explicit_needs_review(
+        self, evidence_candidates: Sequence[Evidence]
+    ) -> ShareholderRightsFact | None:
+        """Preserve only a strong explicit rights signal when the provider is absent.
+
+        This fail-closed path deliberately does not infer the holder, effectiveness,
+        survival, termination timing, or restoration status.  It merely keeps a
+        same-Evidence conjunction of a special right, a special-investor context,
+        Listing context, and lifecycle language available for legal review.
+        """
+
+        matched = [
+            item
+            for item in evidence_candidates[: self.max_evidence]
+            if _EXPLICIT_SPECIAL_RIGHT.search(item.text)
+            and _EXPLICIT_SPECIAL_INVESTOR.search(item.text)
+            and _EXPLICIT_LISTING_CONTEXT.search(item.text)
+            and _EXPLICIT_LIFECYCLE_CONTEXT.search(item.text)
+        ]
+        if not matched:
+            return None
+        selected = matched[:5]
+        right_type = (
+            "redemption_right"
+            if any(
+                re.search(
+                    r"赎回权|贖回權|回购权|回購權|\bredemption rights?\b|"
+                    r"\brepurchase right\b|\bbuyback right\b",
+                    item.text,
+                    re.I,
+                )
+                for item in selected
+            )
+            else "special_right"
+        )
+        return ShareholderRightsFact(
+            right_type=right_type,
+            evidence_ids=[item.evidence_id for item in selected],
+            uncertainty_reason=(
+                "The structured provider is unavailable. Explicit special-right, "
+                "investor, Listing, and lifecycle language requires legal review."
+            ),
+            status=ExtractionStatus.NEEDS_REVIEW,
+            issues=[
+                "llm_provider_unavailable",
+                "deterministic_explicit_right_signal_only",
+                "holder_not_identified",
+                "effectiveness_not_established",
+                "termination_condition_not_established",
+                "restoration_status_not_established",
+            ],
+            extraction_method="deterministic_explicit_signal_needs_review_v1",
+            metadata={
+                "task_name": self.task_name,
+                "prompt_version": self.prompt_version,
+                "provider_name": self.llm_provider.name,
+                "fallback_reason": "provider_unavailable",
+                "matched_evidence_count": len(matched),
+                "selected_evidence_count": len(selected),
+            },
+        )
 
     def normalize(
         self,

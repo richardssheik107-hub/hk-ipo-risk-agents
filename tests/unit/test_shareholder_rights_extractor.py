@@ -234,3 +234,78 @@ def test_llm_uncertainty_and_contradictory_status_are_deterministically_flagged(
     assert "conflicting_effectiveness_status" in result.issues
     assert "llm_reported_uncertainty" in result.issues
     assert "termination date is ambiguous" in result.uncertainty_reason
+
+
+def test_explicit_fallback_requires_all_four_signals_in_the_same_evidence() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id="right-only",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:1",
+            page=1,
+            text="Pre-IPO investors have redemption rights before listing.",
+        ),
+        Evidence(
+            evidence_id="lifecycle-only",
+            document_id="ipo-case",
+            chunk_id="ipo-case:page:2",
+            page=2,
+            text="Those arrangements terminate upon listing.",
+        ),
+    ]
+
+    assert extractor.extract_explicit_needs_review(evidence) is None
+
+
+def test_explicit_fallback_is_bounded_and_does_not_infer_legal_effect() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = [
+        Evidence(
+            evidence_id=f"right-{index}",
+            document_id="ipo-case",
+            chunk_id=f"ipo-case:page:{index}",
+            page=index,
+            text=(
+                "The pre-IPO investors' redemption rights terminate upon listing "
+                "and may be restored if the listing application lapses."
+            ),
+        )
+        for index in range(1, 8)
+    ]
+
+    result = extractor.extract_explicit_needs_review(evidence)
+
+    assert result is not None
+    assert result.right_type == "redemption_right"
+    assert result.status == ExtractionStatus.NEEDS_REVIEW
+    assert result.evidence_ids == [f"right-{index}" for index in range(1, 6)]
+    assert result.holder == ""
+    assert result.is_effective is None
+    assert result.survives_listing is None
+    assert result.termination_event == ""
+    assert result.restoration_clause is None
+    assert result.impact_on_public_shareholders == ""
+    assert result.metadata["matched_evidence_count"] == 7
+    assert result.metadata["selected_evidence_count"] == 5
+    assert "holder_not_identified" in result.issues
+    assert "effectiveness_not_established" in result.issues
+
+
+def test_explicit_fallback_rejects_ordinary_share_redemption_language() -> None:
+    provider = MockLLMProvider()
+    extractor = ShareholderRightsExtractor(provider)
+    evidence = Evidence(
+        evidence_id="ordinary-redemption",
+        document_id="ipo-case",
+        chunk_id="ipo-case:page:1",
+        page=1,
+        text=(
+            "The company may redeem ordinary shares after listing and the authority "
+            "will terminate at the next annual general meeting."
+        ),
+    )
+
+    assert extractor.extract_explicit_needs_review([evidence]) is None
