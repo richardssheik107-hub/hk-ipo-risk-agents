@@ -1,0 +1,54 @@
+{
+  "schema_version": "competition_final_freeze_manifest_v1",
+  "status": "frozen",
+  "freeze_date": "2026-08-30",
+  "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
+  "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
+  "role_b_benchmark_run_id": "finaldayA_bundle10_real_all79_001",
+  "development_optimization_closed": true,
+  "validation_opened_at_freeze": false,
+  "blind_2025_y_accessed": false,
+  "role_b_runtime_equivalence": {
+    "status": "hash_verified_for_core_identity",
+    "checked_files": {
+      "configs/experiments/v046_role_b_ai_responses.yaml": "e7ed63ba45b6deb9805c58155378dbc0adc2a877",
+      "scripts/run_v046_role_b_ablation.py": "7e59a3691db7180f32eb99c634a96f41e9625193",
+      "src/ipo_risk/providers/prompt_registry.py": "d56009c05d5881f54258240586cbd66834cfbaa8",
+      "src/ipo_risk/providers/llm.py": "18db6a1c6aa818802b45b0e958b367cba13a51ba",
+      "src/ipo_risk/extraction/shareholder_rights.py": "6f320e3f8b9c733df5eae653c55bf87881847b62",
+      "src/ipo_risk/extraction/financial.py": "856431d6cc7ddaef4fa00de2db63a8181cdb4272",
+      "src/ipo_risk/evaluation/existing_gold_metrics.py": "74178905ded0247d8fd13cc7a37e4d55428138fa"
+    },
+    "note": "Each listed blob hash is identical between the Role-B benchmark commit and the promoted main runtime freeze."
+  },
+  "provider_identity": {
+    "provider": "openai_responses",
+    "model": "ark-code-latest",
+    "role_b_profile_version": "v046_role_b_ablation_v3_recall_batch_001",
+    "structured_task_count": 4
+  },
+  "market_identity": {
+    "status": "frozen_pass",
+    "runtime": "governed Dynamic Market-X",
+    "missingness_policy": "missing_is_not_zero"
+  },
+  "model_identity": {
+    "status": "frozen_pass",
+    "package": "models/role_d_v2",
+    "model_sha256": "320e810e85dcdb7e6caa40f9ef2b20157005e7a1d1af38ad7d586dd0feee72e2",
+    "score_semantics": "uncalibrated_model_score"
+  },
+  "release_state": {
+    "g2_formal_gate_passed": false,
+    "g3_market_passed": true,
+    "g4_model_shap_passed": true,
+    "g5_product_passed": true,
+    "g6_capabilities_passed": true,
+    "g7_validation_pending": true
+  },
+  "post_freeze_policy": [
+    "No Development-driven tuning after this freeze.",
+    "One-shot Validation may be executed and recorded, but its results must not drive Retriever, Prompt, Agent, Verifier, threshold, model, or evaluator changes.",
+    "Release-document, packaging, hash-manifest, and non-runtime metadata changes remain allowed when they do not alter the frozen runtime identity."
+  ]
+}
