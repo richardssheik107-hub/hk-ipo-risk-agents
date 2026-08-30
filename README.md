@@ -126,8 +126,8 @@ python scripts/check_final_product_capabilities.py
 
 | 入口 | Windows | macOS / Linux |
 |---|---|---|
-| 标准分析工作台 | `START_DEMO.bat` | `./start_demo.sh` |
-| 评委展示界面 | `START_JUDGE_DEMO.bat` | `./start_judge_demo.sh` |
+| 统一分析工作台 | `START_DEMO.bat` | `./start_demo.sh` |
+| 统一评审入口（兼容命令） | `START_JUDGE_DEMO.bat` | `./start_judge_demo.sh` |
 
 启动脚本会先执行 runtime / clone-ready preflight；失败时不会继续启动半可用界面。
 

@@ -11,4 +11,4 @@ if ! python scripts/check_v045_team_clone_ready.py; then
   echo "Judge demo preflight failed. Please complete the clone-ready preparation steps before launching." >&2
   exit 1
 fi
-exec python -m streamlit run app/judge_streamlit_app.py
+exec python -m streamlit run app/streamlit_app.py

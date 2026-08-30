@@ -3,7 +3,10 @@
 > Release: `v1.0.0`  
 > Status: **G5 PASS / FROZEN**
 
-The judge-facing presentation is part of the v1.0.0 competition product and reuses the canonical runtime, demo bundle and clone-ready preflight.
+The judge-facing launch commands now open the same canonical reader workspace as
+the standard launch commands. This prevents a second presentation shell from
+overriding the user-approved frontend while preserving the governed runtime,
+demo bundle and clone-ready preflight.
 
 ## Run
 
@@ -19,15 +22,24 @@ macOS / Linux:
 ./start_judge_demo.sh
 ```
 
-Both launchers fail fast when the governed runtime/demo prerequisites are not ready.
+Both commands are compatibility aliases for `app/streamlit_app.py` and fail fast
+when the governed runtime/demo prerequisites are not ready.
 
 ## Judge-facing information architecture
 
-1. 风险总览
-2. 风险解释与证据
+Top-level product navigation:
+
+1. 首页
+2. 新建分析
+3. 案例工作台
+4. 后台
+
+Case workspace tabs:
+
+1. 案例概览
+2. 原文证据
 3. 市场与模型
-4. 结论形成过程
-5. 专家复核与报告
+4. 综合结论与报告
 
 Risk explanations use four layers:
 

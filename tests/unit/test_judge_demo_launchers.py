@@ -29,7 +29,7 @@ def _assert_unix_runtime_binding(launcher: str, entrypoint: str) -> None:
 def test_windows_judge_launcher_is_clone_ready_and_fail_fast() -> None:
     launcher = (REPO_ROOT / "START_JUDGE_DEMO.bat").read_text(encoding="utf-8")
 
-    _assert_windows_runtime_binding(launcher, "app\\judge_streamlit_app.py")
+    _assert_windows_runtime_binding(launcher, "app\\streamlit_app.py")
     assert 'set "IPO_RISK_DEMO_BUNDLE=reports\\v045_demo_bundle"' in launcher
     assert "if errorlevel 1" in launcher
 
@@ -38,7 +38,7 @@ def test_unix_judge_launcher_matches_the_canonical_contract() -> None:
     launcher = (REPO_ROOT / "start_judge_demo.sh").read_text(encoding="utf-8")
 
     assert launcher.startswith("#!/usr/bin/env sh\nset -eu\n")
-    _assert_unix_runtime_binding(launcher, "app/judge_streamlit_app.py")
+    _assert_unix_runtime_binding(launcher, "app/streamlit_app.py")
     assert 'IPO_RISK_DEMO_BUNDLE="reports/v045_demo_bundle"' in launcher
     assert "exit 1" in launcher
 
@@ -51,7 +51,7 @@ def test_standard_launchers_share_the_same_fail_fast_runtime_binding() -> None:
     _assert_unix_runtime_binding(unix, "app/streamlit_app.py")
 
 
-def test_standard_and_judge_launchers_keep_distinct_entrypoints() -> None:
+def test_standard_and_judge_launchers_share_the_canonical_entrypoint() -> None:
     standard_windows = (REPO_ROOT / "START_DEMO.bat").read_text(encoding="utf-8")
     standard_unix = (REPO_ROOT / "start_demo.sh").read_text(encoding="utf-8")
     judge_windows = (REPO_ROOT / "START_JUDGE_DEMO.bat").read_text(encoding="utf-8")
@@ -59,7 +59,7 @@ def test_standard_and_judge_launchers_keep_distinct_entrypoints() -> None:
 
     assert "app\\streamlit_app.py" in standard_windows
     assert "app/streamlit_app.py" in standard_unix
-    assert "app\\judge_streamlit_app.py" in judge_windows
-    assert "app/judge_streamlit_app.py" in judge_unix
-    assert "app\\streamlit_app.py" not in judge_windows
-    assert "app/streamlit_app.py" not in judge_unix
+    assert "app\\streamlit_app.py" in judge_windows
+    assert "app/streamlit_app.py" in judge_unix
+    assert "app\\judge_streamlit_app.py" not in judge_windows
+    assert "app/judge_streamlit_app.py" not in judge_unix
