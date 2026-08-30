@@ -741,6 +741,149 @@ def test_concentration_policy_boundaries(
         assert risk.calculation.evidence_ids == [item.evidence_id for item in risk.evidence]
 
 
+def test_concentration_builder_preserves_stronger_disclosed_track_record_pair() -> None:
+    evidence = Evidence(
+        evidence_id="e-track-record",
+        document_id="doc",
+        chunk_id="track-record-table",
+        page=30,
+        text=(
+            "Largest supplier percentages were 38.3%, 43.5%, 50.1% and 41.1%; "
+            "top-five supplier percentages were 43.9%, 47.3%, 57.5% and 53.3%."
+        ),
+    )
+    chunk = DocumentChunk(
+        document_id=evidence.document_id,
+        chunk_id=evidence.chunk_id,
+        page=evidence.page,
+        text=evidence.text,
+    )
+    fact = ConcentrationFact(
+        concentration_type="supplier",
+        period_end=date(2020, 4, 30),
+        period_months=4,
+        largest_counterparty_pct=Decimal("41.1"),
+        top_five_pct=Decimal("53.3"),
+        evidence_ids=[evidence.evidence_id],
+        document_id=evidence.document_id,
+        chunk_id=evidence.chunk_id,
+        page=evidence.page,
+        status=ExtractionStatus.EXTRACTED,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "status": "extracted",
+                    "issues": [],
+                    "period_end": "2020-04-30",
+                    "period_months": 4,
+                    "largest_counterparty_pct": "41.1",
+                    "top_five_pct": "53.3",
+                    "evidence_ids": [evidence.evidence_id],
+                    "raw_percentages": {
+                        "largest": ["38.3%", "43.5%", "50.1%", "41.1%"],
+                        "top_five": ["43.9%", "47.3%", "57.5%", "53.3%"],
+                    },
+                }
+            ]
+        },
+    )
+
+    decision = V03FinancialRiskBuilder(
+        load_v03_financial_policy()
+    ).build_concentration(
+        fact,
+        {evidence.evidence_id: evidence},
+        {chunk.chunk_id: chunk},
+    )
+
+    assert decision.risk is not None
+    assert decision.risk.level == RiskLevel.HIGH
+    assert decision.risk.metadata["decision_basis"] == (
+        "track_record_peak_disclosed_series"
+    )
+    assert decision.risk.metadata["track_record_peak_index"] == 2
+    assert decision.risk.calculation is not None
+    assert decision.risk.calculation.inputs["largest_counterparty_pct"] == "50.1"
+    assert decision.risk.calculation.inputs["top_five_pct"] == "57.5"
+    assert "Across the disclosed track-record series" in decision.risk.conclusion
+
+
+def test_low_concentration_with_incomplete_companion_series_requires_review() -> None:
+    evidence = Evidence(
+        evidence_id="e-clean-series",
+        document_id="doc",
+        chunk_id="clean-series",
+        page=30,
+        text="Largest suppliers were 2.2%, 1.5%, 2.4%; top five were 8.8%, 6.8%, 7.4%.",
+    )
+    incomplete = Evidence(
+        evidence_id="e-incomplete-series",
+        document_id="doc",
+        chunk_id="incomplete-series",
+        page=31,
+        text="A separate disclosed supplier series was 0.7% and 1.1%.",
+    )
+    fact = ConcentrationFact(
+        concentration_type="supplier",
+        period_end=date(2020, 12, 31),
+        period_months=12,
+        largest_counterparty_pct=Decimal("2.4"),
+        top_five_pct=Decimal("7.4"),
+        evidence_ids=[evidence.evidence_id],
+        status=ExtractionStatus.EXTRACTED,
+        metadata={
+            "candidate_diagnostics": [
+                {
+                    "status": "extracted",
+                    "issues": [],
+                    "evidence_ids": [evidence.evidence_id],
+                    "raw_percentages": {
+                        "largest": ["2.2%", "1.5%", "2.4%"],
+                        "top_five": ["8.8%", "6.8%", "7.4%"],
+                    },
+                },
+                {
+                    "status": "needs_review",
+                    "issues": ["incomplete_concentration_values", "missing_period"],
+                    "evidence_ids": [incomplete.evidence_id],
+                    "raw_percentages": {
+                        "largest": [],
+                        "top_five": ["0.7%", "1.1%"],
+                    },
+                },
+            ]
+        },
+    )
+    chunks = {
+        item.chunk_id: DocumentChunk(
+            document_id=item.document_id,
+            chunk_id=item.chunk_id,
+            page=item.page,
+            text=item.text,
+        )
+        for item in (evidence, incomplete)
+    }
+
+    decision = V03FinancialRiskBuilder(
+        load_v03_financial_policy()
+    ).build_concentration(
+        fact,
+        {item.evidence_id: item for item in (evidence, incomplete)},
+        chunks,
+    )
+
+    assert decision.risk is not None
+    assert decision.risk.verification_status == VerificationStatus.PENDING
+    assert decision.risk.calculation is None
+    assert decision.risk.metadata["decision_basis"] == (
+        "track_record_series_requires_review"
+    )
+    assert {item.evidence_id for item in decision.risk.evidence} == {
+        evidence.evidence_id,
+        incomplete.evidence_id,
+    }
+
+
 def test_invalid_concentration_relationship_needs_review() -> None:
     agent = v03_agent()
 

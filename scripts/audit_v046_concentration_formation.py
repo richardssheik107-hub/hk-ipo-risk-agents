@@ -71,6 +71,17 @@ def _candidate_summary(candidate: Mapping[str, Any]) -> dict[str, Any]:
         "largest_present": largest is not None,
         "top_five_present": top_five is not None,
         "value_pair_hash": _hash({"largest": largest, "top_five": top_five}),
+        # Numeric-only lifecycle diagnostics are safe to persist locally and
+        # make multi-period loss visible without retaining prospectus text.
+        "percentage_occurrences": candidate.get("percentage_occurrences", {}),
+        "percentage_occurrence_selection": candidate.get(
+            "percentage_occurrence_selection", {}
+        ),
+        "concentration_period_selection": candidate.get(
+            "concentration_period_selection"
+        ),
+        "raw_percentages": candidate.get("raw_percentages", {}),
+        "period_candidates": candidate.get("period_candidates", []),
     }
 
 

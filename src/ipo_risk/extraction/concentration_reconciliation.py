@@ -349,6 +349,8 @@ class _ConcentrationReconciliationMixin:
                     "percentage_occurrences": item.metadata.get(
                         "percentage_occurrences", {}
                     ),
+                    "raw_percentages": item.metadata.get("raw_percentages", {}),
+                    "period_candidates": item.metadata.get("period_candidates", []),
                     "concentration_period_selection": item.metadata.get(
                         "concentration_period_selection"
                     ),
