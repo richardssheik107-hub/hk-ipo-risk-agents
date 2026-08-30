@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hk-ipo-risk-agents"
-version = "0.4.0"
+version = "1.0.0"
 description = "Evidence-driven multi-agent Hong Kong IPO risk analysis and market-warning system"
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.7", "PyYAML>=6.0", "langgraph>=0.2", "streamlit>=1.35", "PyMuPDF>=1.24", "openpyxl>=3.1", "openai>=1.40,<3", "fastapi>=0.110", "uvicorn>=0.30"]
