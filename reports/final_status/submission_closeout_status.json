@@ -1,9 +1,10 @@
 {
-  "schema_version": "competition_submission_closeout_status_v2",
+  "schema_version": "competition_submission_closeout_status_v3",
   "release_version": "1.0.0",
   "release_type": "competition_submission_product_release",
   "status_date": "2026-08-30",
   "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
+  "product_surface_freeze_main_sha": "006c7f302be5c278680d136371f6ef0db45fecc0",
   "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
   "product_release_approved": true,
   "submission_closeout_active": true,
@@ -40,6 +41,15 @@
     "G6": "pass",
     "G7": "partial"
   },
+  "product_surface": {
+    "canonical_entrypoint": "app/streamlit_app.py",
+    "judge_launchers_are_compatibility_aliases": true,
+    "ci": {
+      "tests": "success",
+      "role_d_runtime": "success",
+      "team_demo_runtime": "success"
+    }
+  },
   "completed": [
     "formal ALL79 Role-B summary recorded",
     "runtime freeze manifest recorded",
@@ -49,12 +59,14 @@
     "G5 product acceptance pass retained",
     "G6 capability manifest pass retained",
     "v1.0.0 package version set",
+    "standard and judge launch commands unified on the canonical Streamlit workspace",
+    "final product-surface CI passed",
     "v1.0.0 release documentation finalized"
   ],
   "pending_external_or_local_actions": [
     "one-shot ALL19 2024 Existing-Gold Validation",
     "write one_shot_validation_receipt.json",
-    "rehash G5/G6 on the exact final submission tree",
+    "run exact-tree G5/G6 verification on the final submission tree",
     "fresh-clone verification in a clean directory",
     "Blind/provenance/determinism/security/licensing/path audits",
     "build final artifact index with SHA-256",
@@ -66,7 +78,8 @@
     "real LLM gated 79/79 Development cases",
     "G3/G4/G5/G6 pass",
     "G2 blocked under the self-defined target",
-    "best offline result reported separately from real LLM gated result"
+    "best offline result reported separately from real LLM gated result",
+    "one canonical Streamlit workspace with judge compatibility launch commands"
   ],
   "forbidden": [
     "claim G2 pass",
