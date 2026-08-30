@@ -60,6 +60,11 @@ is exact English evidence provenance. M1 can still score as incorrect under the
 frozen protocol when required evidence does not match, so fact availability
 must not be confused with achieved M1.
 
+The resulting frozen Metric-v2 reachability consequence is recorded in
+`docs/research/V046_ROLE_B_M1_REACHABILITY_PROOF.md`. That proof does not claim
+the facts are unavailable in Chinese; it isolates the exact-Evidence source
+binding required by the project's frozen evaluator.
+
 ## Targeted offline benchmark
 
 The isolated English shadow catalog was run through the current deterministic
