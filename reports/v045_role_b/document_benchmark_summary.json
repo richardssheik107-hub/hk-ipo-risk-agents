@@ -1,0 +1,52 @@
+{
+  "schema_version": "v045_role_b_document_benchmark_summary_v2",
+  "status": "complete_below_formal_gate",
+  "dataset_split": "development",
+  "evaluated_case_count": 79,
+  "real_llm_cases": 79,
+  "benchmark_run_id": "finaldayA_bundle10_real_all79_001",
+  "benchmark_commit": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
+  "promoted_main_commit": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
+  "provider": "openai_responses",
+  "model": "ark-code-latest",
+  "risk_extraction": {
+    "official_aligned_correct": 61,
+    "official_aligned_total": 102,
+    "official_aligned_accuracy": 0.5980392156862745
+  },
+  "evidence_coverage": {
+    "covered_units": 93,
+    "total_units": 191,
+    "coverage_recall": 0.4869109947643979
+  },
+  "best_offline_reference": {
+    "evaluated_case_count": 79,
+    "risk_extraction": {
+      "official_aligned_correct": 70,
+      "official_aligned_total": 102,
+      "official_aligned_accuracy": 0.6862745098039216
+    },
+    "evidence_coverage": {
+      "covered_units": 103,
+      "total_units": 191,
+      "coverage_recall": 0.5392670157068062
+    }
+  },
+  "formal_gate": {
+    "m1_threshold": 0.8,
+    "m2_threshold": 0.85,
+    "m1_passed": false,
+    "m2_passed": false,
+    "real_llm_79_passed": true,
+    "formal_gate_passed": false
+  },
+  "new_manual_annotations_added": false,
+  "existing_gold_modified": false,
+  "validation_opened": false,
+  "blind_2025_outcome_accessed": false,
+  "notes": [
+    "The real-LLM gated ALL79 result is the formal provider-backed Development result and is intentionally not replaced by the higher offline score.",
+    "The best offline result is retained as a separate engineering reference only.",
+    "The project may proceed to submission closeout with this known G2 gap, but the repository's self-defined COMPETITION_READY gate remains blocked."
+  ]
+}
