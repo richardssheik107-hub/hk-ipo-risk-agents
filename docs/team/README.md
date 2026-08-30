@@ -2,7 +2,8 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> 阶段：**PRODUCT DEVELOPMENT CLOSED / SUBMISSION OPERATIONS ONLY**
+> 阶段：**PRODUCT DEVELOPMENT CLOSED / SUBMISSION OPERATIONS ONLY**  
+> Final product-surface freeze: `006c7f302be5c278680d136371f6ef0db45fecc0`
 
 The five development tracks are closed for the competition release. This directory is now an owner-responsibility archive, not an active sprint queue.
 
@@ -37,14 +38,31 @@ seven-stage = 21/21
 Evidence screenshots = 17/17 precise
 canonical replay = 3 cases / 66 files
 G3/G4/G5/G6 = PASS
-main tests / Role D runtime / Team demo runtime = PASS
 ```
+
+Final product-surface CI:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
+```
+
+## Canonical UI contract
+
+All final launch commands converge on:
+
+```text
+app/streamlit_app.py
+```
+
+`START_JUDGE_DEMO.*` is retained as a compatibility alias for presentation workflows. The competition release does not maintain a second active judge-only application shell.
 
 ## Owner documents
 
 ```text
 01_M1_M2_OWNER.md              final Role-B closure / benchmark truth
-02_FRONTEND_OWNER.md           final frontend/product state
+02_FRONTEND_OWNER.md           final canonical frontend/product state
 03_DYNAMIC_MARKET_X_OWNER.md   final Market-X state and frozen contract
 04_DYNAMIC_MODEL_OWNER.md      final Role-D V2 / SHAP state
 05_RELEASE_SUBMISSION_OWNER.md post-freeze submission operations
