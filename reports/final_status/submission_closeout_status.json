@@ -1,0 +1,60 @@
+{
+  "schema_version": "competition_submission_closeout_status_v1",
+  "status_date": "2026-08-30",
+  "runtime_freeze_main_sha": "ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a",
+  "role_b_benchmark_sha": "dcc36abd30ec42cd1d6b83bc6d70b2d1aa74f61b",
+  "submission_closeout_active": true,
+  "competition_ready": false,
+  "final_development": {
+    "best_offline": {
+      "cases": 79,
+      "m1_correct": 70,
+      "m1_total": 102,
+      "m2_covered": 103,
+      "m2_total": 191
+    },
+    "real_llm_gated": {
+      "cases": 79,
+      "real_llm_cases": 79,
+      "m1_correct": 61,
+      "m1_total": 102,
+      "m2_covered": 93,
+      "m2_total": 191
+    }
+  },
+  "gates": {
+    "G0": "pass",
+    "G1": "pass",
+    "G2": "blocked",
+    "G3": "pass",
+    "G4": "pass",
+    "G5": "pass",
+    "G6": "pass",
+    "G7": "partial"
+  },
+  "completed": [
+    "Role-B frozen branch merged into main",
+    "formal ALL79 Role-B summary recorded",
+    "runtime freeze manifest recorded",
+    "G5 product acceptance present and pass",
+    "G6 capability manifest present and pass",
+    "integrated main tests / Role D runtime / Team demo runtime passed"
+  ],
+  "pending_external_or_local_actions": [
+    "one-shot ALL19 2024 Existing-Gold Validation",
+    "write one_shot_validation_receipt.json",
+    "rehash G5/G6 on the final submission commit",
+    "fresh-clone verification in a clean directory",
+    "Blind / provenance / determinism / security / licensing / path audits",
+    "build final artifact index with SHA-256",
+    "build secure submission package and SHA256SUMS",
+    "prepare final PPT / defense script / Q&A / video or recording if required by the competition platform"
+  ],
+  "forbidden": [
+    "claim G2 pass",
+    "replace real-LLM metrics with offline metrics",
+    "set competition_ready true while G2 is blocked",
+    "Development or Validation-driven retuning after freeze",
+    "include secrets, licensed PDFs, raw market data or raw provider journals in the public/submission bundle"
+  ]
+}
