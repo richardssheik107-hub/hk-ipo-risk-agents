@@ -1,9 +1,7 @@
 # Judge-facing frontend handoff
 
-Branch: `feat/frontend-judge-facing-final`
-
-This branch is intentionally **not merged into `main`**. It is based on the current
-`main` snapshot only so the judge-facing UI can be reviewed in isolation.
+The judge-facing presentation is available on `main` and reuses the canonical
+runtime, demo bundle and clone-ready preflight.
 
 ## Run
 
@@ -11,11 +9,13 @@ This branch is intentionally **not merged into `main`**. It is based on the curr
 START_JUDGE_DEMO.bat
 ```
 
-or
+macOS / Linux:
 
-```powershell
-python -m streamlit run app/judge_streamlit_app.py
+```bash
+./start_judge_demo.sh
 ```
+
+Both launchers fail fast when the governed demo bundle is not clone-ready.
 
 ## Product changes
 
