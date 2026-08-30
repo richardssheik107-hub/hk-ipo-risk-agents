@@ -2,7 +2,8 @@
 
 > Release: `v1.0.0`  
 > 状态日期：`2026-08-30`  
-> Runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Role-B runtime freeze main：`ab3390cc548f3d4ec7f08d5d39350a3c1baf1f0a`  
+> Final product-surface freeze：`006c7f302be5c278680d136371f6ef0db45fecc0`  
 > Final status：**PRODUCT RELEASED / SUBMISSION OPERATIONS REMAIN**
 
 ## 1. Role after v1.0.0
@@ -11,7 +12,7 @@ Algorithm and product feature development are closed. The release owner is respo
 
 ```text
 one-shot Validation
-→ final hash rebinding
+→ exact-tree hash verification
 → clean clone
 → security / licensing / provenance audit
 → artifact index
@@ -55,7 +56,23 @@ docs/FINAL_SUBMISSION_STATUS.md
 reports/final_status/submission_closeout_status.json
 ```
 
-## 4. One-shot Validation
+## 4. Product-surface release baseline
+
+The approved product surface is frozen at:
+
+```text
+006c7f302be5c278680d136371f6ef0db45fecc0
+```
+
+All four standard/judge launch commands converge on `app/streamlit_app.py`. On this commit:
+
+```text
+tests = SUCCESS
+Role D runtime = SUCCESS
+Team demo runtime = SUCCESS
+```
+
+## 5. One-shot Validation
 
 Run exactly once on the frozen identity in the authorized environment. Write:
 
@@ -73,7 +90,7 @@ blind_2025_y_accessed = false
 
 Validation results may be recorded and discussed, but may not be used to tune Retriever, Prompt, Agent, Verifier, thresholds, model or evaluator.
 
-## 5. Final exact-tree rehash
+## 6. Final exact-tree G5/G6 verification
 
 After the final submission tree is fixed:
 
@@ -83,7 +100,7 @@ python scripts/check_final_product_capabilities.py
 
 Confirm G5/G6 artifacts match the exact tree. This is hash/provenance maintenance, not feature work.
 
-## 6. Fresh clone
+## 7. Fresh clone
 
 Clone the remote release/main tree into a second clean directory without copying local environment state. Run install, validators, clone-ready checks, demo verification and frontend smoke.
 
@@ -99,7 +116,7 @@ raw provider journals
 private Validation working files
 ```
 
-## 7. Security / licensing / path audit
+## 8. Security / licensing / path audit
 
 Reject from the public/submission package:
 
@@ -113,7 +130,7 @@ Reject from the public/submission package:
 - Blind outcomes;
 - unauthorized model/data artifacts.
 
-## 8. Final artifact index
+## 9. Final artifact index
 
 Create one index with:
 
@@ -129,13 +146,13 @@ allowed_in_submission
 rejection reason
 ```
 
-## 9. Final package
+## 10. Final package
 
-Use the competition platform's exact submission requirements. Typical allowed deliverables include source, configs, final docs, metric summaries, frozen manifests, governed audit summaries, reports, approved screenshots/replay assets, artifact index and SHA256SUMS.
+Use the competition platform's exact submission requirements. Typical allowed deliverables include source, configs, final docs, metric summaries, frozen manifests, governed audit summaries, reports, approved screenshots/replay assets, artifact index and `SHA256SUMS.txt`.
 
 Do not upload the entire repository `reports/` directory blindly.
 
-## 10. Defense materials
+## 11. Defense materials
 
 Prepare:
 
@@ -147,7 +164,7 @@ Prepare:
 - offline replay backup path;
 - one-page architecture / product-flow summary.
 
-## 11. Completion rule
+## 12. Completion rule
 
 The v1.0.0 product release is complete. Person 5 remains responsible only for the external/local submission steps that cannot be completed by repository edits alone.
 
