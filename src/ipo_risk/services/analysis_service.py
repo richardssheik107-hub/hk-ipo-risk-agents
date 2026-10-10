@@ -134,7 +134,7 @@ class IPOAnalysisService:
             result = result.model_copy(update={"agent_logs": [*result.agent_logs, save_log]})
             self.repository.save(result)
             persisted = self.repository.get(result.analysis_id)
-            if persisted is None or persisted.model_dump() != result.model_dump():
+            if persisted is None or persisted.model_dump(mode="json") != result.model_dump(mode="json"):
                 raise RuntimeError("Persisted analysis result failed round-trip verification")
         except Exception as exc:
             error = AnalysisError(stage="repository", component="analysis_repository", code="save_failure", message=str(exc))
