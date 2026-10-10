@@ -225,17 +225,22 @@ def test_failed_pdf_run_keeps_the_previous_result_and_its_pdf(
     previous_result = app.session_state["analysis_result"]
     previous_pdf = b"previous-case-pdf"
     app.session_state["prospectus_bytes"] = previous_pdf
+    new_pdf = b"%PDF-1.4\n%%EOF"
+    received_pdfs: list[bytes] = []
 
-    def fail_analysis(*_args, **_kwargs):
+    def fail_analysis(_service, request):
+        received_pdfs.append(Path(request.prospectus_path).read_bytes())
         raise RuntimeError("controlled test failure")
 
     monkeypatch.setattr(IPOAnalysisService, "analyze", fail_analysis)
     app.segmented_control[0].set_value("新建分析").run()
     uploader = app.get("file_uploader")[0]
-    uploader.upload("new-case.pdf", b"%PDF-1.4\n%%EOF", "application/pdf").run()
+    # AppTest registers pending form uploads on the form's submit run.
+    uploader.upload("new-case.pdf", new_pdf, "application/pdf")
     _button(app, "开始分析").click().run()
 
     assert not app.exception
+    assert received_pdfs == [new_pdf]
     assert app.session_state["analysis_result"].analysis_id == previous_result.analysis_id
     assert app.session_state["prospectus_bytes"] == previous_pdf
     assert any("controlled test failure" in item.value for item in app.error)
